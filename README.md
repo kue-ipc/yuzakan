@@ -1,6 +1,10 @@
 # Yuzakan
 
-Welcome to your new Hanami project!
+ユーザー管理システム Yuzakan(遊佐缶)
+
+「ゆざかん」は山形県飽海郡遊佐町にあるという缶詰です。
+
+このプロジェクトは花見をすることで作成されます。
 
 ## Setup
 
