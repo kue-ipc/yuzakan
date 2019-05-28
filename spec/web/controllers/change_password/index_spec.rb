@@ -1,7 +1,7 @@
 require_relative '../../../spec_helper'
 
-describe Web::Controllers::User::ChangePassword do
-  let(:action) { Web::Controllers::User::ChangePassword.new }
+describe Web::Controllers::ChangePassword::Index do
+  let(:action) { Web::Controllers::ChangePassword::Index.new }
   let(:params) { Hash[] }
 
   it 'is successful' do

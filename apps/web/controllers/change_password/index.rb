@@ -1,7 +1,7 @@
 module Web
   module Controllers
-    module User
-      class ChangePassword
+    module ChangePassword
+      class Index
         include Web::Action
 
         def call(params)

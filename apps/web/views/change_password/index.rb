@@ -1,7 +1,7 @@
 module Web
   module Views
-    module User
-      class ChangePassword
+    module ChangePassword
+      class Index
         include Web::View
       end
     end
