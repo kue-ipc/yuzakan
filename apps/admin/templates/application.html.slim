@@ -4,5 +4,8 @@ html
     title
       | Admin
     = favicon
+    = stylesheet 'bootstrap'
+    = javascript 'application', defer: true, type: 'module'
   body
-    = yield
+    .container
+      = yield

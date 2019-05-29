@@ -8,8 +8,12 @@ gem 'sqlite3'
 
 gem 'slim'
 
-gem 'net-ldap'
+gem 'sass'
+gem 'sassc'
 
+gem 'coffee-script'
+
+gem 'net-ldap'
 
 group :development do
   # Code reloading
