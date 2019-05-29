@@ -5,7 +5,7 @@ Hanami::Model.migration do
 
       column :name, String, null: false, unique: true
       column :display_name, String
-      column :encrypted_password, String, null: false
+      column :hashed_password, String, null: false
       column :email, String
 
       column :created_at, DateTime, null: false

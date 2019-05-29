@@ -13,7 +13,9 @@ gem 'sassc'
 
 gem 'coffee-script'
 
+gem 'bcrypt'
 gem 'net-ldap'
+
 
 group :development do
   # Code reloading
