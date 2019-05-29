@@ -1,6 +1,6 @@
 p ローカル管理者のユーザー名とパスワードを入力してください。
 
-== form_for :admin_user, routes.path(:setup), method: :put do
+== form_for :admin_user, routes.path(:setup) do
   - div do
     - label 'ユーザー名', for: :name
     - password_field :name, class: 'form-control'
