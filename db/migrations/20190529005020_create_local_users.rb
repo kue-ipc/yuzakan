@@ -5,7 +5,8 @@ Hanami::Model.migration do
     create_table :local_users do
       primary_key :id
 
-      column :name, String, null: false, unique: true
+      column :name, String, null: false, unique: true, index: true
+
       column :display_name, String
       column :hashed_password, String, null: false
       column :email, String

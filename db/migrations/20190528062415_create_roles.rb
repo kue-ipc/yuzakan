@@ -7,6 +7,9 @@ Hanami::Model.migration do
 
       column :name, String, null: false, unique: true
 
+      # 不変
+      column :immutable, String, null: false, default: false
+
       # 管理権限(全て可能)
       column :admin, TrueClass, null: false, default: false
 

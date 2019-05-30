@@ -5,9 +5,9 @@ Hanami::Model.migration do
     create_table :users do
       primary_key :id
 
-      column :name, String, null: false, unique: true
+      column :name, String, null: false, unique: true, index: true
 
-      foreign_key :role_id, :roles, null: true
+      foreign_key :role_id, :roles, on_delete: :cascade, null: false
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

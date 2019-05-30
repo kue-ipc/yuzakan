@@ -7,6 +7,9 @@ module Admin
         include Admin::Action
 
         def call(params)
+          if ConfigRepository.new.initialized?
+            redirect_to routes.path(:setup_done)
+          end
         end
       end
     end
