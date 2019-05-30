@@ -1,13 +1,15 @@
-# frozen_string_literal: true
-
 module Web
   module Controllers
-    module Logout
-      class Index
+    module Session
+      class New
         include Web::Action
 
         def call(params)
         end
+
+        private
+
+        def authenicate!; end
       end
     end
   end

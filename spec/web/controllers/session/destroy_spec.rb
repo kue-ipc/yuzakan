@@ -1,9 +1,7 @@
-# frozen_string_literal: true
-
 require_relative '../../../spec_helper'
 
-describe Web::Controllers::Login::Index do
-  let(:action) { Web::Controllers::Login::Index.new }
+describe Web::Controllers::Session::Destroy do
+  let(:action) { Web::Controllers::Session::Destroy.new }
   let(:params) { Hash[] }
 
   it 'is successful' do

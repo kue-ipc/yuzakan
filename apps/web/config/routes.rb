@@ -7,6 +7,8 @@
 # get '/hello', to: ->(env) { [200, {}, ['Hello from Hanami!']] }
 root to: 'home#index'
 get '/dashboard', to: 'dashboard#index'
-get '/login', to: 'login#index'
-get '/logout', to: 'logout#index'
 get '/change_password', to: 'change_password#index'
+get '/login', to: 'session#new'
+get '/logout', to: 'session#destroy'
+resource 'session', only: [:new, :destroy]
+post '/session', to: 'session#create'

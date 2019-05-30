@@ -5,6 +5,10 @@ module Web
     module Home
       class Index
         include Web::View
+
+        def title
+          'ユーザー管理システム'
+        end
       end
     end
   end
