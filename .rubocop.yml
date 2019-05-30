@@ -1,0 +1,49 @@
+AllCops:
+  TargetRubyVersion: 2.6
+
+Layout/EndOfLine:
+  EnforcedStyle: lf
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Metrics/AbcSize:
+  Max: 30
+Metrics/BlockNesting:
+  Max: 6
+Metrics/ClassLength:
+  CountComments: false
+  Max: 200
+Metrics/ModuleLength:
+  CountComments: false
+  Max: 200
+Metrics/CyclomaticComplexity:
+  Max: 12
+Metrics/LineLength:
+  Max: 80
+  AllowHeredoc: true
+  AllowURI: true
+  URISchemes:
+    - http
+    - https
+Metrics/MethodLength:
+  CountComments: false
+  Max: 20
+Metrics/ParameterLists:
+  Max: 10
+  CountKeywordArgs: true
+Metrics/PerceivedComplexity:
+  Max: 14
+
+Style/AsciiComments:
+  Enabled: false
+Style/Documentation:
+  Enabled: false
+Style/SpecialGlobalVars:
+  EnforcedStyle: use_perl_names
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: no_comma
