@@ -7,7 +7,8 @@ Hanami::Model.migration do
 
       column :name, String, null: false, unique: true, index: true
 
-      foreign_key :role_id, :roles, on_delete: :cascade, null: false
+      # TODO: デフォルトは1で良いのか？
+      foreign_key :role_id, :roles, on_delete: :default_set, null: false, default: 1
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

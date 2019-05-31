@@ -20,9 +20,9 @@ module Yuzakan
     class LocalAdapter
       NAME = 'ローカル'
 
-      PARAMETERS = []
+      PARAMS = []
 
-      def initalize(params)
+      def initialize(params)
         @params = params
       end
 
@@ -43,7 +43,8 @@ module Yuzakan
       end
 
       def auth(name, pass)
-        raise NotImplementedError
+        user = LocalUserRepository.new.by_name(name)
+        user && BCrypt::Password.new(user.hashed_password) == pass
       end
 
       def change_passwd(name, pass)

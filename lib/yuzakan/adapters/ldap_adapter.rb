@@ -20,7 +20,7 @@ module Yuzakan
   module Adapters
     class LdapAdapter
       NAME = 'LDAP'
-      PARAMATERS = {
+      PARAMS = {
         server: {
           name: 'LDAPサーバーURL',
           description: 'LDAPサーバーのURLです。ldaps://サーバー名/',
@@ -71,7 +71,7 @@ module Yuzakan
       }
     end
 
-    def initalize(params)
+    def initialize(params)
       @params = params
     end
 
