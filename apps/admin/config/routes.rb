@@ -9,3 +9,4 @@ root to: 'home#index'
 get '/setup', to: 'setup#index', as: :setup
 post '/setup', to: 'setup#create'
 get '/setup/done', to: 'setup#done', as: :setup_done
+resources 'providers'

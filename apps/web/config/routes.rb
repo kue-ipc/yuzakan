@@ -10,5 +10,4 @@ get '/dashboard', to: 'dashboard#index', as: :dashboard
 get '/change_password', to: 'change_password#index'
 get '/login', to: 'session#new'
 get '/logout', to: 'session#destroy'
-resource 'session', only: [:new, :destroy]
-post '/session', to: 'session#create'
+resource 'session', only: [:new, :destroy, :create]
