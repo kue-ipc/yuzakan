@@ -6,7 +6,7 @@
 # Example:
 # get '/hello', to: ->(env) { [200, {}, ['Hello from Hanami!']] }
 root to: 'home#index'
-get '/dashboard', to: 'dashboard#index'
+get '/dashboard', to: 'dashboard#index', as: :dashboard
 get '/change_password', to: 'change_password#index'
 get '/login', to: 'session#new'
 get '/logout', to: 'session#destroy'

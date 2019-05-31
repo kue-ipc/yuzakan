@@ -6,10 +6,17 @@ require_relative './adapters/ldap_adapter'
 
 module Yuzakan
   module Adapters
-    LIST = [
-      Yuzakan::Adapters::DummyAdapter,
-      Yuzakan::Adapters::LocalAdapter,
-      Yuzakan::Adapters::LdapAdapter,
-    ].freeze
+    module_function
+    def list
+      [
+        Yuzakan::Adapters::DummyAdapter,
+        Yuzakan::Adapters::LocalAdapter,
+        Yuzakan::Adapters::LdapAdapter,
+      ]
+    end
+
+    def get(id)
+      list[id]
+    end
   end
 end

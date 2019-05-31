@@ -18,9 +18,13 @@ require 'bcrypt'
 module Yuzakan
   module Adapters
     class LocalAdapter
-      NAME = 'ローカル'
+      def self.name
+        'ローカル'
+      end
 
-      PARAMS = []
+      def self.params
+        []
+      end
 
       def initialize(params)
         @params = params

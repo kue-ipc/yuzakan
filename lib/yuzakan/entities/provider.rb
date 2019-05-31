@@ -7,7 +7,7 @@ class Provider < Hanami::Entity
 
   def params
     data = {}
-    ProviderRepository::PARAMS.each do |param_name|
+    ProviderRepository.params.each do |param_name|
       __send__(param_name).each do |param|
         data[param.name] = param.value
       end

@@ -1,15 +1,17 @@
 # frozen_string_literal: true
 
 class ProviderRepository < Hanami::Repository
-  PARAMS = [
-    :provider_string_params,
-    :provider_integer_params,
-    :provider_boolean_params,
-    :provider_secret_params,
-  ]
+  def self.params
+    %i[
+      provider_string_params
+      provider_integer_params
+      provider_boolean_params
+      provider_secret_params
+    ]
+  end
 
   associations do
-    PARAMS.each do |param|
+    ProviderRepository.params.each do |param|
       has_many param
     end
   end
@@ -21,7 +23,7 @@ class ProviderRepository < Hanami::Repository
   end
 
   def authenticatables_with_params
-    aggregate(*PARAMS)
+    aggregate(*ProviderRepository.params)
       .where(authenticatable: true)
       .order { order.asc }
       .map_to(Provider)

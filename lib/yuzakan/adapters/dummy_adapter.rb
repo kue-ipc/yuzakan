@@ -15,9 +15,13 @@
 module Yuzakan
   module Adapters
     class DummyAdapter
-      NAME = 'ダミー'
+      def self.name
+        'ダミー'
+      end
 
-      PARAMS = []
+      def self.params
+        []
+      end
 
       def initialize(params)
         @params = params
