@@ -16,7 +16,7 @@ require 'bcrypt'
 #
 
 module Yuzakan
-  module Adapter
+  module Adapters
     class LocalAdapter
       NAME = 'ローカル'
 

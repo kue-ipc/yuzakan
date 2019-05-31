@@ -1,4 +1,7 @@
 class ConfigRepository < Hanami::Repository
+  associations do
+    belongs_to :role
+  end
   def initialized?
     configs.first&.initialized
   end

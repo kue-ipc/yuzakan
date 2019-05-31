@@ -7,7 +7,7 @@ Hanami::Model.migration do
 
       column :name, String, null: false, unique: true
 
-      # 普遍
+      # 不変
       column :immutable, String, null: false, default: false
 
       column :order, Integer, null: false, unique: true

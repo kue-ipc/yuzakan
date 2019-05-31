@@ -6,8 +6,6 @@ gem 'rake'
 gem 'hanami',       '~> 1.3'
 gem 'hanami-model', '~> 1.3'
 
-gem 'sqlite3'
-
 gem 'slim'
 
 gem 'sass'
@@ -29,6 +27,8 @@ end
 group :test, :development do
   gem 'dotenv', '~> 2.4'
   gem 'pry'
+  gem 'sqlite3'
+
 end
 
 group :test do
@@ -38,4 +38,6 @@ end
 
 group :production do
   gem 'puma'
+  # gem 'mysql2'
+  # gem 'pg'
 end

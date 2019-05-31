@@ -13,7 +13,7 @@
 #
 
 module Yuzakan
-  module Adapter
+  module Adapters
     class DummyAdapter
       NAME = 'ダミー'
 

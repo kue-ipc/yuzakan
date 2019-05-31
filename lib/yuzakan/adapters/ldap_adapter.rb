@@ -17,7 +17,7 @@ require 'net/ldap'
 #
 
 module Yuzakan
-  module Adapter
+  module Adapters
     class LdapAdapter
       NAME = 'LDAP'
       PARAMATERS = {
