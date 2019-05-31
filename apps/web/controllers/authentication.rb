@@ -7,7 +7,7 @@ module Web
     end
 
     private def authenticated?
-      !!current_user
+      !current_user.nil?
     end
 
     private def current_user

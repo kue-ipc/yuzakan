@@ -5,4 +5,6 @@ html
       | Web
     = favicon
   body
+    = form_for :session, routes.session_path, method: :delete do
+      - submit 'ログアウト'
     = yield
