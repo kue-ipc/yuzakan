@@ -10,12 +10,14 @@ module Web
             params[:session][:password]
           )
           if user
-            session[:usner_id] = user.id
+            session[:user_id] = user.id
             redirect_to routes.path(:dashboard)
           else
             redirect_to routes.path(:new_session)
           end
         end
+
+        def authenticate!; end
       end
     end
   end

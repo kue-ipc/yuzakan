@@ -6,7 +6,7 @@ class UserRepository < Hanami::Repository
   end
 
   def by_name(name)
-    users.where(name: name).first
+    users.where(name: name).one
   end
 
   def auth(name, password)

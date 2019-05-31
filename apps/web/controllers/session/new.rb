@@ -9,7 +9,7 @@ module Web
 
         private
 
-        def authenicate!; end
+        def authenticate!; end
       end
     end
   end
