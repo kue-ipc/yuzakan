@@ -4,5 +4,11 @@
     "bootstrap": "^4.3.1",
     "bootstrap.native": "^2.0.26",
     "hyperapp": "^1.2.9"
+  },
+  "devDependencies": {
+    "coffeescript": "^2.4.1",
+    "rollup": "^1.13.1",
+    "rollup-plugin-coffee-script": "^2.0.0",
+    "rollup-plugin-node-resolve": "^5.0.1"
   }
 }

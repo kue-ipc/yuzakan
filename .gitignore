@@ -3,3 +3,6 @@
 /tmp
 /node_modules
 /apps/*/vendor/assets*
+
+/rollup.config.js
+/yarn-error.log
