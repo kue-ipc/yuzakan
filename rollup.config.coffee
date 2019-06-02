@@ -1,7 +1,8 @@
 # rollup config
 
-import coffee from 'rollup-plugin-coffee-script'
-import resolve from 'rollup-plugin-node-resolve'
+import nodeResolve from 'rollup-plugin-node-resolve'
+import commonjs from 'rollup-plugin-commonjs'
+import coffeeScript from 'rollup-plugin-coffee-script'
 
 srcDir = 'src'
 distDirs = [
@@ -10,6 +11,7 @@ distDirs = [
 ]
 targets = [
   {name: 'hyperapp', ext: 'coffee'}
+  {name: 'bootstrap-native', ext: 'coffee'}
 ]
 
 export default targets.map (target) ->
@@ -18,9 +20,12 @@ export default targets.map (target) ->
     file: "#{dir}/#{target.name}.js"
     format: 'esm'
   plugins: [
-    resolve(
+    nodeResolve(
       customResolveOptions:
         moduleDirectory: 'node_modules'
     ),
-    if target.ext == 'coffee' then coffee() else undefined
+    commonjs(
+      include: /node_modules/
+    ),
+    if target.ext == 'coffee' then coffeeScript() else undefined
   ]
