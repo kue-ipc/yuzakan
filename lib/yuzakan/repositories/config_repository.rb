@@ -3,7 +3,7 @@ class ConfigRepository < Hanami::Repository
     belongs_to :role
   end
   def initialized?
-    configs.first&.initialized
+    self.first&.initialized
   end
 
   def default_role
