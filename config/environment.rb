@@ -8,11 +8,10 @@ require_relative '../apps/web/application'
 require_relative '../apps/admin/application'
 
 # CoffeeScript v2 (from node_modulses)
-ENV['COFFEESCRIPT_SOURCE_PATH'] = ENV['COFFEESCRIPT_SOURCE_PATH'] ||
-  File.expand_path(
-    '../node_modules/coffeescript/' \
+ENV['COFFEESCRIPT_SOURCE_PATH'] ||= File.expand_path(
+  '../node_modules/coffeescript/' \
     'lib/coffeescript-browser-compiler-legacy/coffeescript.js',
-    __dir__)
+  __dir__)
 
 Hanami.configure do
   mount Admin::Application, at: '/admin'
