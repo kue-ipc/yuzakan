@@ -25,8 +25,19 @@
 
 ここから下はまだちゃんと書いていない。
 
+## 動作環境
+
+* Ruby 2.6以上
+* Node.js
+
 ## Setup
 
+
+```
+$ bundle insntall
+```
+
+``
 
 
 How to run tests:
