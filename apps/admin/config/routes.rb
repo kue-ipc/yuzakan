@@ -10,3 +10,6 @@ get '/setup', to: 'setup#index', as: :setup
 post '/setup', to: 'setup#create'
 get '/setup/done', to: 'setup#done', as: :setup_done
 resources 'providers'
+resources 'adapters', only: [:show] do
+  resources 'params', only: [:index]
+end
