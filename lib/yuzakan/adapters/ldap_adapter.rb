@@ -3,28 +3,17 @@
 require 'securerandom'
 require 'net/ldap'
 
-# adapter
-#
-# CRUD
-# create(name, attrs)
-# read(name) -> attrs
-# update(name, attrs)
-# delete(name)
-#
-# search(name)
-# chaneg_passwd(user, pass)
-# auth(name, pass)
-#
+require_relative 'base_adapter'
 
 module Yuzakan
   module Adapters
-    class LdapAdapter
+    class LdapAdapter < BaseAdapter
       def self.name
         'LDAP'
       end
 
       def self.params
-        [
+        @params ||= [
           {
             name: 'host',
             title: 'サーバーのホスト名/IPアドレス',
@@ -74,7 +63,7 @@ module Yuzakan
           }, {
             name: 'user_name_attr',
             title: 'ユーザー名の属性',
-            type: :secret,
+            type: :string,
             required: true,
             placeholder: 'cn',
           }, {
@@ -114,26 +103,6 @@ module Yuzakan
             required: false,
           },
         ]
-      end
-
-      def initialize(params)
-        @params = params
-      end
-
-      def create(name)
-        raise NotImplementError
-      end
-
-      def read(name)
-        raise NotImplementError
-      end
-
-      def udpate(name)
-        raise NotImplementError
-      end
-
-      def delete(name)
-        raise NotImplementError
       end
 
       def ldap_connect

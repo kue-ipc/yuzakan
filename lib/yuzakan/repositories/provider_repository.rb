@@ -29,4 +29,8 @@ class ProviderRepository < Hanami::Repository
       .map_to(Provider)
   end
 
+  def last_order
+    providers.order { order.desc }.first
+  end
+
 end
