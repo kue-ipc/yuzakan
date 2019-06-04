@@ -5,6 +5,7 @@ module Admin
         include Admin::Action
 
         def call(params)
+          pp params
         end
       end
     end

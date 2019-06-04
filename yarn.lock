@@ -59,10 +59,10 @@ estree-walker@^0.6.0, estree-walker@^0.6.1:
   resolved "https://registry.yarnpkg.com/estree-walker/-/estree-walker-0.6.1.tgz#53049143f40c6eb918b23671d1fe3219f3a1b362"
   integrity sha512-SqmZANLWS0mnatqbSfRP5g8OXZC12Fgg1IwNtLsyHDzJizORW4khDfjPqJZsemPWBB2uqykUah5YpQ6epsqC/w==
 
-hyperapp@^2.0.0-beta.18:
-  version "2.0.0-beta.18"
-  resolved "https://registry.yarnpkg.com/hyperapp/-/hyperapp-2.0.0-beta.18.tgz#592fb341328577dda26f167829a1d486dfc6521a"
-  integrity sha512-l6hXXU5P/2Oe0iULOTQkA2oPGx3IDrVCXDChVCUbKpB7yKapsuNAvfHYOh8V2HS9k6P7TQQrbGcIUSqWMyAwXA==
+hyperapp@^1.2.9:
+  version "1.2.9"
+  resolved "https://registry.yarnpkg.com/hyperapp/-/hyperapp-1.2.9.tgz#a17ec09634968a5fa5f6b7d649e7a03d9680fcf2"
+  integrity sha512-bIzi12am7pyQ5nc2qnQpN6GWonjdJp+AghY7j9H9L0vccM1OQ3Cqn13cZlmS9KYm91Nf9fwF4KjvbQekFBxHVw==
 
 is-module@^1.0.0:
   version "1.0.0"

@@ -24,55 +24,96 @@ module Yuzakan
       end
 
       def self.params
-        {
-          server: {
-            name: 'LDAPサーバーURL',
-            description: 'LDAPサーバーのURLです。ldaps://サーバー名/',
+        [
+          {
+            name: 'host',
+            title: 'サーバーのホスト名/IPアドレス',
+            description:
+              'LDAPサーバーのホスト名またはIPアドレスを指定します。',
             type: :string,
             required: true,
-          },
-          uri: {
-            name: 'LDAPサーバーURL',
-            description: 'LDAPサーバーのURLです。ldaps://サーバー名/',
+            placeholder: 'ldap.example.jp',
+          }, {
+            name: 'port',
+            title: 'ポート',
+            description:
+              'LDAPサーバーにアクセスするポート番号をして指定します。' \
+              '指定しない場合は既定値(LDAPは389、LDAPSは636)を使用します。',
+            type: :integer,
+            required: false,
+            placeholder: '389',
+          }, {
+            name: 'protocol',
+            title: 'プロトコル',
+            description:
+              'LDAPサーバーにアクセスするプロトコルを指定します。' \
+              'LDAPSを使用することを強く推奨します。',
             type: :string,
             required: true,
-          },
-          bind_user: {
-            name: 'LDAPサーバーURL',
+            list: [
+              {
+                name: 'LDAP(平文)',
+                value: 'ldap',
+              }, {
+                name: 'LDAPS(暗号化)',
+                value: 'ldaps',
+              },
+            ],
+            default: 'ldaps',
+          }, {
+            name: 'bind_user',
+            title: '接続ユーザー',
             type: :string,
             required: true,
-          },
-          bind_pass: {
-            name: 'LDAPサーバーURL',
+            placeholder: 'cn=Admin,dn=example,dn=jp',
+          }, {
+            name: 'bind_pass',
+            title: '接続ユーザーのパスワード',
             type: :secret,
             required: true,
-          },
-          user_name_attr: {
-            name: 'ユーザー名の属性',
+          }, {
+            name: 'user_name_attr',
+            title: 'ユーザー名の属性',
             type: :secret,
             required: true,
-          },
-          user_base: {
-            name: 'ユーザー検索のベース',
+            placeholder: 'cn',
+          }, {
+            name: 'user_base',
+            title: 'ユーザー検索のベース',
             description: 'ユーザー検索を行うときのツリーベースです。指定しない場合はLDAPサーバーのベースから検索します。',
             type: :string,
             required: false,
-          },
-          user_scope: {
-            name: 'ユーザー検索のスコープ',
+            placeholder: 'ou=Users,dn=example,dn=jp',
+          }, {
+            name: 'user_scope',
+            title: 'ユーザー検索のスコープ',
             description: 'ユーザー検索を行うときのスコープです。デフォルトは sub です。',
             type: :string,
             required: true,
+            list: [
+              {
+                name: 'ベースのみ検索(base)',
+                value: 'base',
+              }, {
+                name: 'ベース直下のみ検索(one)',
+                value: 'one',
+              }, {
+                name: 'ベース配下全て検索(sub)',
+                value: 'sub',
+              },
+            ],
             default: 'sub',
-            list: %w[base one sub],
-          },
-          user_filter: {
-            name: 'ユーザー検索のフィルター',
-            description: 'ユーザー検索を行うときのフィルターです。LDAPの形式で指定します。何も指定しない場合は(objectclass=*)',
+          }, {
+            name: 'user_filter',
+            title: 'ユーザー検索のフィルター',
+            description:
+              'ユーザー検索を行うときのフィルターです。' \
+              'LDAPの形式で指定します。' \
+              '何も指定しない場合は(objectclass=*)になります。',
             type: :string,
             required: false,
           },
-        }
+        ]
       end
 
       def initialize(params)

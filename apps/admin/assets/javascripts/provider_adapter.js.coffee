@@ -1,3 +1,6 @@
+# Hyperapp v1
+# v2はまだ手を出すのが早かった模様
+
 import {h, app} from './hyperapp.js'
 
 mainNode = document.getElementById('provider-adapter')
@@ -12,12 +15,17 @@ getParamsByAdapter = (adapter_id) ->
     credentials: 'same-origin'
     headers:
       accept: 'application/json'
-  console.log result
+  result.json()
 
 AdapterSelect = (props) ->
   h 'div', class: 'form-group', [
-    h 'label', for: 'provider-adapter', 'アダプター'
-    h 'select', class: 'form-control', onChange: props.onSelect,
+    h 'label', for: 'provider[adapter_id]', 'アダプター'
+    h 'select',
+      class: 'form-control',
+      name: 'provider[adapter_id]',
+      onchange: (event) =>
+        props.onselect(event.target.value)
+      ,
       adapters.map (adapter) ->
         if props.selected == adapter.id
           h 'option', value: adapter.id, selected: true, adapter.name
@@ -25,39 +33,145 @@ AdapterSelect = (props) ->
           h 'option', value: adapter.id, adapter.name
   ]
 
-Paramss = (props) ->
-  h 'div', {},
-    props.paramss.map (params) ->
-      switch params.type
-        when 'string'
-          h InputString, params...
-        when 'integer'
-          h InputInteger, params...
-        when 'boolean'
-          h InputBoolean, params...
-        when 'secret'
-          h InputSecret, params...
-        when 'list'
-          h InputList, params...
+InputString = (props) ->
+  title = props.title
+  name = "provider[params][#{props.name}]"
+
+  inputOpts =
+    name: name
+    type: 'text'
+    class: 'form-control'
+  for key in ['value', 'required', 'placeholder', 'maxlength', 'minlength', 'pattern', 'size']
+    inputOpts[key] = props[key] if props[key]?
+
+  h 'div', class: 'form-group', [
+    h 'label', for: name, title
+    h 'input', inputOpts
+  ]
+
+InputInteger = (props) ->
+  title = props.title
+  name = "provider[params][#{props.name}]"
+
+  inputOpts =
+    name: name
+    type: 'number'
+    class: 'form-control'
+  for key in ['value', 'required', 'placeholder', 'max', 'min', 'step']
+    inputOpts[key] = props[key] if props[key]?
+
+  h 'div', class: 'form-group', [
+    h 'label', for: name, title
+    h 'input', inputOpts
+  ]
+
+InputBoolean = (props) ->
+  title = props.title
+  name = "provider[params][#{props.name}]"
+
+  inputOpts =
+    name: name
+    type: 'checkbox'
+    class: 'form-control'
+    volue: '1'
+  if props.value
+    inputOpts['checked'] = true
+
+  h 'div', class: 'form-group', [
+    h 'label', for: name, title
+    h 'input', inputOpts
+  ]
+
+
+InputSecret = (props) ->
+  title = props.title
+  name = "provider[params][#{props.name}]"
+
+  inputOpts =
+    name: name
+    type: 'password'
+    class: 'form-control'
+  for key in ['value', 'required', 'placeholder', 'maxlength', 'minlength', 'pattern', 'size']
+    inputOpts[key] = props[key] if props[key]?
+
+  h 'div', class: 'form-group', [
+    h 'label', for: name, title
+    h 'input', inputOpts
+  ]
+
+InputList = (props) ->
+  title = props.title
+  name = "provider[params][#{props.name}]"
+
+  selected = props.value ? props.default
+
+  h 'div', class: 'form-group', [
+    h 'label', for: name, title
+    h 'select',
+      class: 'form-control',
+      name: name,
+      props.list.map (option) ->
+        if selected == option.value
+          h 'option', value: option.value, selected: true, option.name
         else
-          raise 'パラメーターのタイプが正しくない。'
+          h 'option', value: option.value, option.name
+  ]
 
-selectAdapter = (state, event) ->
-  newAdapterId = Number.parseInt(event.target.value, 10)
-  getParamsByAdapter newAdapterId
-  {
-    state...
-    adapterId: newAdapterId
-  }
 
-app
-  init: () -> {
-    adapterId: initAdapter
-  }
-  view: (state) ->
-    h 'div', {}, [
-      h AdapterSelect,
-        selected: state.adapterId
-        onSelect: selectAdapter
-    ]
-  node: mainNode
+Params = (props) ->
+  h 'div', {},
+    if props.params
+      props.params.map (param) ->
+        if param.list?
+          h InputList, {param...}
+        else
+          switch param.type
+            when 'string'
+              h InputString, {param...}
+            when 'integer'
+              h InputInteger, {param...}
+            when 'boolean'
+              h InputBoolean, {param...}
+            when 'secret'
+              h InputSecret, {param...}
+            else
+              'none'
+    else
+      "パラメーター一覧が表示されるまでお待ち下さい。"
+
+
+# selectAdapter = (state, event) ->
+#   newAdapterId = Number.parseInt(event.target.value, 10)
+#   {
+#     state...
+#     adapterId: newAdapterId
+#   }
+
+
+state =
+  adapterId: initAdapter
+  params: []
+
+actions =
+  selectAdapter: (value) => (state, actions) =>
+    newAdapterId = Number.parseInt(value, 10)
+    actions.updateAdapterId(newAdapterId)
+    params = await getParamsByAdapter(newAdapterId)
+    actions.updateParams(params)
+  updateAdapterId: (value) => (state) =>
+    adapterId: value
+  updateParams: (value) => (satte) =>
+    params: value
+
+view = (state, actions) ->
+  h 'div', {}, [
+    h AdapterSelect,
+      selected: state.adapterId
+      onselect: actions.selectAdapter
+    h 'p', {}, 'パラメーター'
+    h Params,
+      params: state.params
+  ]
+
+
+app(state, actions, view, mainNode)

@@ -17,9 +17,7 @@ module Admin
               text_field :name, class: 'form-control'
             end
             div id: 'provider-adapter',
-                'data-adapters': "#{ha(JSON.generate(adapters))}" do
-              '読み込み中…'
-            end
+                'data-adapters': "#{ha(JSON.generate(adapters))}"
             submit '作成', class: 'btn btn-primary'
           end
         end
