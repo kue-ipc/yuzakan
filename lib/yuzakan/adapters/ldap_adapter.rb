@@ -34,7 +34,7 @@ module Yuzakan
               '指定しない場合は既定値(LDAPは389、LDAPSは636)を使用します。',
             type: :integer,
             required: false,
-            placeholder: '389',
+            placeholder: '636',
           }, {
             name: 'protocol',
             title: 'プロトコル',
@@ -54,11 +54,18 @@ module Yuzakan
             ],
             default: 'ldaps',
           }, {
+            name: 'base_dn',
+            title: 'ベースDN',
+            description: '全てベースです。',
+            type: :string,
+            required: false,
+            placeholder: 'dc=example,dc=jp',
+          }, {
             name: 'bind_user',
             title: '接続ユーザー',
             type: :string,
             required: true,
-            placeholder: 'cn=Admin,dn=example,dn=jp',
+            placeholder: 'cn=Admin,dc=example,dc=jp',
           }, {
             name: 'bind_pass',
             title: '接続ユーザーのパスワード',
@@ -76,7 +83,7 @@ module Yuzakan
             description: 'ユーザー検索を行うときのツリーベースです。指定しない場合はLDAPサーバーのベースから検索します。',
             type: :string,
             required: false,
-            placeholder: 'ou=Users,dn=example,dn=jp',
+            placeholder: 'ou=Users,dc=example,dc=jp',
           }, {
             name: 'user_scope',
             title: 'ユーザー検索のスコープ',
@@ -109,29 +116,52 @@ module Yuzakan
         ]
       end
 
-      def ldap_connect
+      def auth(name, pass)
+        ldap = generate_ldap
+        opts = search_user_opts(name).merge(password: pass)
+        result = ldap.bind_as(opts)
+        # TODO: 将来は表示名なども考える。
+        if result
+          result
+        else
+          nil
+        end
+      end
+
+      def generate_ldap
         opts = {
           host: @params[:host],
           port: @params[:port],
           base: @params[:base],
           auth: {
-            method: @params[:auth_method],
+            method: :simple,
             username: @params[:bind_user],
             password: @params[:bind_pass],
           },
         }
 
-        opts[:encryption] = :simple_tls if @params[:tls]
-
-        Net::LDAP.open(opts) do |ldap|
-          yield ldap
+        port = @params[:port] if @params[:port] && !@params[:port].zero?
+        case @params[:protocol]
+        when 'ldap'
+          opts[:port] = port || 389
+        when 'ldaps'
+          opts[:port] = port || 636
+          opts[:encryption] = :simple_tls
+        else
+          raise "invalid protcol: #{@params[:protocol]}"
         end
+
+        Net::LDAP.new(opts)
       end
 
-      def search_user(ldap, name)
+      def search_user(name, ldap: generate_ldap)
+        ldap.search(search_user_opts(name))&.first
+      end
+
+      def search_user_opts(name)
         opts = {}
         opts[:base] = @params[:user_base] if @params[:user_base]
-        opts[:scop] =
+        opts[:scope] =
           case @params[:user_scope]
           when 'base'
             Net::LDAP::SearchScope_BaseObject
@@ -144,7 +174,7 @@ module Yuzakan
           end
 
         common_filter =
-          if @params[:user_filter]
+          if @params[:user_filter] && !@params[:user_filter].empty?
             Net::LDAP::Filter.construct(@params[:user_filter])
           else
             Net::LDAP::Filter.pres('objectclass')
@@ -153,47 +183,18 @@ module Yuzakan
         opts[:filter] = common_filter &
           Net::LDAP::Filter.eq(@params[:user_name_attr], name)
 
-        result_entry = nil
-        ldap.search(opts) do |entry|
-          raise 'Duplicated user name' if result_entry
-          result_entry = entry
-        end
-        return result_entry
-      end
-
-      def ldap_auth(name, pass)
-        ldap_connect do |ldap|
-          dn = get_user_dn(ldap, name)
-          ldap.bind_as(name)
-        end
-        opts = {
-          host: @params[:host],
-          port: @params[:port],
-          base: @params[:base],
-          auth: {
-            method: @params[:auth_method],
-            username: name,
-            password: pass,
-          }
-        }
-
-        opts[:encryption] = :simple_tls if @params[:tls]
-
-        ldap Net::LDAP.new(opts)
-        if ldap.bind
-        end
+        opts
       end
 
       def change_password(user, pass)
-        ldap_connect do |ldap|
-          user_dn = get_user_dn(user.name)
-          ldap.modify(
-            dn: user_dn,
-            operations: [
-              [:repalce, :passwd, generate_crypt(pass)]
-            ]
-          )
-        end
+        ldap = generate_ldap
+        user_dn = search_user(user.name, ldap: ldap)
+        ldap.modify(
+          dn: user_dn,
+          operations: [
+            [:repalce, :passwd, generate_crypt(pass)],
+          ]
+        )
       end
 
       # 現在のところ CRYPT-MD5のみ実装
