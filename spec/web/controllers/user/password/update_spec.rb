@@ -1,9 +1,7 @@
-# frozen_string_literal: true
-
 require_relative '../../../spec_helper'
 
-describe Web::Controllers::ChangePassword::Index do
-  let(:action) { Web::Controllers::ChangePassword::Index.new }
+describe Web::Controllers::User::Password::Update do
+  let(:action) { Web::Controllers::User::Password::Update.new }
   let(:params) { Hash[] }
 
   it 'is successful' do

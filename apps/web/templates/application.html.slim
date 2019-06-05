@@ -3,8 +3,10 @@ html
   head
     title
       | Web
+    = stylesheet 'application'
     = favicon
   body
-    = form_for :session, routes.session_path, method: :delete do
-      - submit 'ログアウト'
-    = yield
+    .container
+      = form_for :session, routes.session_path, method: :delete do
+        - submit 'ログアウト'
+      = yield

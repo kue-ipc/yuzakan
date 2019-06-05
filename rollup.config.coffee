@@ -12,6 +12,7 @@ distDirs = [
 targets = [
   {name: 'hyperapp', ext: 'coffee'}
   {name: 'bootstrap-native', ext: 'coffee'}
+  {name: 'zxcvbn', ext: 'coffee'}
 ]
 
 export default targets.map (target) ->
