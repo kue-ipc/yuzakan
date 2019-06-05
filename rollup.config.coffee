@@ -13,6 +13,7 @@ targets = [
   {name: 'hyperapp', ext: 'coffee'}
   {name: 'bootstrap-native', ext: 'coffee'}
   {name: 'zxcvbn', ext: 'coffee'}
+  {name: 'fontawesome', ext: 'coffee'}
 ]
 
 export default targets.map (target) ->
