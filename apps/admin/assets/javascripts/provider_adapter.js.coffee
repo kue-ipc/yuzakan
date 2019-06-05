@@ -5,8 +5,12 @@ import {h, app} from './hyperapp.js'
 
 mainNode = document.getElementById('provider-adapter')
 adapters = JSON.parse(mainNode.getAttribute('data-adapters'))
-initAdapter = Number.parseInt(
-  mainNode.getAttribute('data-init-adapter'), 10)
+initAdapter =
+  if mainNode.getAttribute('data-init-adapter')
+    Number.parseInt(mainNode.getAttribute('data-init-adapter'), 10)
+  else
+    adapters[0].id
+
 
 getParamsByAdapter = (adapter_id) ->
   result = await fetch "/admin/adapters/#{adapter_id}/params",
@@ -173,5 +177,6 @@ view = (state, actions) ->
       params: state.params
   ]
 
+main = app(state, actions, view, mainNode)
 
-app(state, actions, view, mainNode)
+main.selectAdapter(initAdapter)

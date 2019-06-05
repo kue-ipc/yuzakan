@@ -7,6 +7,7 @@ require_relative 'adapters/ldap_adapter'
 module Yuzakan
   module Adapters
     module_function
+
     def list
       [
         Yuzakan::Adapters::DummyAdapter,

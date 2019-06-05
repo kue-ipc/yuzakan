@@ -8,7 +8,7 @@ Hanami::Model.migration do
       column :name, String, null: false, unique: true
 
       # 不変
-      column :immutable, String, null: false, default: false
+      column :immutable, TrueClass, null: false, default: false
 
       column :order, Integer, null: false, unique: true
       column :adapter_id, Integer, null: true

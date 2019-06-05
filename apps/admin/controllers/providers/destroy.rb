@@ -5,6 +5,14 @@ module Admin
         include Admin::Action
 
         def call(params)
+          id = params[:id]
+          repo = ProviderRepository.new
+          provider = repo.find(id)
+          pp provider.immutable
+          unless provider.immutable
+            repo.delete(id)
+          end
+          redirect_to routes.providers_path
         end
       end
     end

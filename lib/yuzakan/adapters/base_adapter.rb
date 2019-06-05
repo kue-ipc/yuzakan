@@ -19,6 +19,10 @@ module Yuzakan
         raise NotImplementedError
       end
 
+      def self.usable?
+        false
+      end
+
       def self.params
         @param ||= []
       end

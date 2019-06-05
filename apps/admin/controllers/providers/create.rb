@@ -12,7 +12,7 @@ module Admin
           provider = repo.create(
             name: params[:provider][:name],
             order: repo.last_order.order + 1,
-            adapter_id: params[:provider][:id].to_i,
+            adapter_id: adapter_id,
             authenticatable: true,
             has_password: true
           )
@@ -46,7 +46,7 @@ module Admin
             end
           end
 
-          redirect_to routse.providers_path
+          redirect_to routes.providers_path
         end
       end
     end

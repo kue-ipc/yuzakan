@@ -12,6 +12,10 @@ module Yuzakan
         'LDAP'
       end
 
+      def self.usable?
+        true
+      end
+
       def self.params
         @params ||= [
           {

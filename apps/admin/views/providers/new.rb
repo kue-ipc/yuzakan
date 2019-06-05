@@ -9,6 +9,7 @@ module Admin
         def form
           adapters = Yuzakan::Adapters.list
             .each_with_index
+            .filter { |adapter, _| adapter.usable? }
             .map { |adapter, idx| {id: idx, name: adapter.name} }
 
           form_for :provider, routes.providers_path do
