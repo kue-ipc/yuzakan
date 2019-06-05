@@ -1,6 +1,7 @@
 class ProviderSecretParam < Hanami::Entity
-  # TODO: あとで
+  include Yuzakan::Utils::Cipher
+
   def value
-    'dummy'
+    decrypt_text(salt, encrypted_value)
   end
 end

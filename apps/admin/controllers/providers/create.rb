@@ -33,7 +33,7 @@ module Admin
               string_param_repo.create(data)
             when :secret
               data[:value] = value
-              secret_param_repo.create(data)
+              secret_param_repo.create_with_encrypt(data)
             when :integer
               data[:value] = value.to_i
               integer_param_repo.create(data)
