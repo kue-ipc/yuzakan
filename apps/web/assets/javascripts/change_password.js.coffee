@@ -68,38 +68,46 @@ class PasswordInputGenerator
 
   createView: ->
     ({visible, valid, wasValidated, message,
-      showPassword, inputPassword, colSize}) =>
+      showPassword, inputPassword, colSize, parentName}) =>
       vaildState = if wasValidated
         if valid
           'is-valid'
         else
           'is-invalid'
 
+      fieldName =
+        if parentName
+          "#{parentName}[#{@name}]"
+        else
+          @name
+
       h 'div', class: 'form-group row', [
-        h 'label', class: "col-form-label #{colSize(0)}", for: @name, @label
+        h 'label', class: "col-form-label #{colSize(0)}", for: fieldName, @label
         h 'div', class: "input-group #{colSize(1)}", [
           h 'input', {
-            id: @name
+            id: fieldName
+            name: fieldName
             class: "form-control #{vaildState}"
             type: if visible then 'text' else 'password'
             placeholder: "パスワードを入力"
-            'aria-describedby': "#{@name}-visible-button"
+            'aria-describedby': "#{fieldName}-visible-button"
             oninput: (e) =>
               inputPassword(e.target.value)
             required: true
           }
           h 'div', class: "input-group-append",
             h 'span', {
-              id: "#{@name}-visible-button"
+              id: "#{fieldName}-visible-button"
               class: "input-group-text #{if visible then 'text-primary' else ''}"
               onmousedown: => showPassword(true)
               onmouseup: => showPassword(false)
               onmouseleave: => showPassword(false)
             },
-              h 'i'
+              h 'i', {
                 class: "fas #{if visible then 'fa-eye' else 'fa-eye-slash'}"
                 style:
                   width: '1em'
+              }, ''
           h 'div', class: 'valid-feedback', message
           h 'div', class: 'invalid-feedback', message
         ]
@@ -131,9 +139,14 @@ actions =
 cs = new ColSizer
 colSize = (idecies) -> cs.colSize(idecies)
 
+changePasswodNode = document.getElementById('change-password')
+state.name = changePasswodNode.getAttribute('data-name')
+
+
 view = (state, actions) ->
   h 'div', {}, [
     h currentPassword.view, {
+      parentName: state.name
       inputPassword: (text) ->
         if text
           actions.currentPassword.setValid('')
@@ -144,6 +157,7 @@ view = (state, actions) ->
       actions.currentPassword...
     }
     h newPassword.view, {
+      parentName: state.name
       inputPassword: (text) ->
         if text
           score = zxcvbn(text).guesses_log10 * 10
@@ -152,7 +166,7 @@ view = (state, actions) ->
             actions.newPassword.setValid('強いパスワードです。')
           else
             actions.newPassword.setInvalid('弱いパスワードです。')
-          confirmText = document.getElementById('confirm-password').value
+          confirmText = document.getElementById("#{state.name}[confirm-password]").value
           if confirmText
             if text == confirmText
               actions.confirmPassword.setValid('一致します。')
@@ -167,11 +181,12 @@ view = (state, actions) ->
     }
     h StrengthIndicator, strength: state.strength, colSize: colSize
     h confirmPassword.view, {
+      parentName: state.name
       inputPassword: (text) ->
         if text == ''
           actions.confirmPassword.setInvalid('パスワードが空です')
         else
-          if text == document.getElementById('new-password').value
+          if text == document.getElementById("#{state.name}[new-password]").value
             actions.confirmPassword.setValid('一致します。')
           else
             actions.confirmPassword.setInvalid('一致しません。')
@@ -182,4 +197,4 @@ view = (state, actions) ->
     h 'button', class: 'btn btn-primary', type:'submit', '送信'
   ]
 
-app state, actions, view, document.getElementById('change-password')
+app state, actions, view, changePasswodNode

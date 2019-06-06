@@ -5,10 +5,8 @@ module Web
         class Edit
           include Web::View
 
-          def form_change_password
-            form_for :password, routes.user_password_path, method: :patch do
-              div id: 'change-password'
-            end
+          def form
+            Form.new(:password, routes.user_password_path, {}, {method: :patch})
           end
         end
       end

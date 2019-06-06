@@ -1,7 +1,9 @@
+h2 パスワード変更
 
-
-i.fas.fa-key
-i.fas.fa-eye
+/ = form_change_password
 
 = javascript 'change_password', type: 'module', defer: true
-= form_change_password
+- password_form = form
+= form_for password_form do
+  - div id: 'change-password', 'data-name': password_form.name
+  - text_field :test
