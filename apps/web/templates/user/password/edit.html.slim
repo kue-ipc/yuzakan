@@ -3,4 +3,15 @@ h2 パスワード変更
 = javascript 'change_password', type: 'module', defer: true
 - password_form = form
 = form_for password_form do
-  - div id: 'change-password', 'data-name': password_form.name
+  - div id: 'change-password', 'data-name': password_form.name, 'data-config': ha(JSON.generate(change_password_config))
+
+hr
+p パスワードは次の条件を満たす必要があります。
+ul
+  li 8文字以上 32文字以下
+  li 一定以上の強度
+p
+  | パスワードの強度は含まれる文字、長さ、パターン等からエントロピーを計測して数値化しています。
+  | 英単語の一部のみ変更やキーボードのキー配列などは記号が含まれていても「弱い」と判断され、
+  | 数字のみなどであっても十分に長ければ「強い」と判断される場合があります。
+  | 他人には推測しづらく、覚えやすいパスワードを設定してください。

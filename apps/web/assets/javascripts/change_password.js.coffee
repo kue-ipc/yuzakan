@@ -3,6 +3,7 @@ import zxcvbn from './zxcvbn.js'
 
 changePasswodNode = document.getElementById('change-password')
 parentName = changePasswodNode.getAttribute('data-name')
+config = JSON.parse(changePasswodNode.getAttribute('data-config'))
 
 class ColSizer
   @colNames = ['sm', 'md', 'lg', 'xl']
@@ -20,20 +21,22 @@ class ColSizer
       ['col', name, size.toString()].join('-')
     list.join(' ')
 
-StrengthIndicator = ({ strength, colSize }) =>
-  [bgColor, label] = switch
-    when strength >= 100 then ['bg-success', '非常に強い']
-    when strength >= 80 then ['bg-success', '十分強い']
-    when strength >= 60 then ['bg-info', '強い']
-    when strength >= 30 then ['bg-warning', '弱い']
-    when strength > 0 then ['bg-danger', 'とても弱い']
-    else ['bg-danger']
-  if strength >= 100
-    strength = 100
+StrengthIndicator = ({ score, strength, colSize } ) =>
+  [bgColor, label] =
+    if score >= config.min_score
+      ['bg-success', '強い']
+    else if score > 0
+      ['bg-warning', '弱い']
+    else if strength > 0
+      ['bg-danger', '危険']
+    else
+      ['bg-danger']
+
+  strength = 100 if strength >= 100
   h 'div', class: 'row mb-3', [
     h 'div', class: colSize(0)
     h 'div', class: colSize(1),
-      h 'div', class: 'progress', style: {height: "2em"},
+      h 'div', class: 'progress', style: {height: "2em"} ,
         h 'div', {
           class: "progress-bar #{bgColor}",
           style:
@@ -42,11 +45,11 @@ StrengthIndicator = ({ strength, colSize }) =>
           'aria-valuenow': strength
           'aria-valuemin': '0'
           'aria-valuemax': '100'
-        }, label
+        } , label
   ]
 
 class PasswordInputGenerator
-  constructor: ({@name, @label, parentName}) ->
+  constructor: ({@name, @label, parentName} ) ->
     @state =
       visible: false
       valid: false
@@ -70,14 +73,14 @@ class PasswordInputGenerator
     @view = @createView()
 
     @fieldName =
-        if parentName
-          "#{parentName}[#{@name.replace('-', '_')}]"
-        else
-          @name.replace('-', '_')
+      if parentName
+        "#{parentName}[#{@name.replace('-', '_')}]"
+      else
+        @name.replace('-', '_')
 
   createView: ->
     ({visible, valid, wasValidated, message,
-      showPassword, inputPassword, colSize}) =>
+      showPassword, inputPassword, colSize} ) =>
       vaildState = if wasValidated
         if valid
           'is-valid'
@@ -98,103 +101,115 @@ class PasswordInputGenerator
               inputPassword(e.target.value)
             required: true
           }
-          h 'div', class: "input-group-append",
-            h 'span', {
+          h 'div', class: 'input-group-append',
+            h 'div', {
               id: "#{@name}-visible-button"
               class: "input-group-text #{if visible then 'text-primary' else ''}"
               onmousedown: => showPassword(true)
               onmouseup: => showPassword(false)
               onmouseleave: => showPassword(false)
-            },
+            } ,
               h 'i', {
                 class: "fas #{if visible then 'fa-eye' else 'fa-eye-slash'}"
                 style:
                   width: '1em'
-              }, ''
+              } , ''
           h 'div', class: 'valid-feedback', message
           h 'div', class: 'invalid-feedback', message
         ]
       ]
 
-currentPassword = new PasswordInputGenerator
-  name: 'current-password'
+passwordCurrent = new PasswordInputGenerator
+  name: 'password-current'
   label: '現在のパスワード'
   parentName: parentName
 newPassword = new PasswordInputGenerator
-  name: 'new-password'
+  name: 'password'
   label: '新しいパスワード'
   parentName: parentName
-confirmPassword = new PasswordInputGenerator
-  name: 'confirm-password'
+passwordConfirmation = new PasswordInputGenerator
+  name: 'password-confirmation'
   label: 'パスワードの確認'
   parentName: parentName
 
 state =
-  currentPassword: currentPassword.state
+  passwordCurrent: passwordCurrent.state
   newPassword: newPassword.state
-  confirmPassword: confirmPassword.state
+  passwordConfirmation: passwordConfirmation.state
+  score: 0
   strength: 0
 
 actions =
-  currentPassword: currentPassword.actions
+  passwordCurrent: passwordCurrent.actions
   newPassword: newPassword.actions
-  confirmPassword: confirmPassword.actions
-  setStrength: (value) =>
-    strength: value
+  passwordConfirmation: passwordConfirmation.actions
+  setScoreStrength: (value) =>
+    score: value.score
+    strength: value.strength
 
 cs = new ColSizer
 colSize = (idecies) -> cs.colSize(idecies)
 
 
 view = (state, actions) ->
-  h 'div', {}, [
-    h currentPassword.view, {
+  h 'div', {} , [
+    h passwordCurrent.view, {
       inputPassword: (text) ->
         if text
-          actions.currentPassword.setValid('')
+          actions.passwordCurrent.setValid('')
         else
-          actions.currentPassword.setInvalid('パスワードが空です')
+          actions.passwordCurrent.setInvalid('パスワードが空です')
       colSize: colSize
-      state.currentPassword...
-      actions.currentPassword...
+      state.passwordCurrent...
+      actions.passwordCurrent...
     }
     h newPassword.view, {
       inputPassword: (text) ->
         if text
-          score = zxcvbn(text).guesses_log10 * 10
-          actions.setStrength(score)
-          if score >= 60
+          result = zxcvbn(text)
+          actions.setScoreStrength
+            score: result.score
+            strength: result.guesses_log10 * 10
+          if result.score >= config.min_score
             actions.newPassword.setValid('強いパスワードです。')
           else
             actions.newPassword.setInvalid('弱いパスワードです。')
-          confirmText = document.getElementById(confirmPassword.name).value
+          confirmText = document.getElementById(passwordConfirmation.name).value
           if confirmText
             if text == confirmText
-              actions.confirmPassword.setValid('一致します。')
+              actions.passwordConfirmation.setValid('一致します。')
             else
-              actions.confirmPassword.setInvalid('一致しません。')
+              actions.passwordConfirmation.setInvalid('一致しません。')
         else
-          actions.setStrength(0)
+          actions.setScoreStrength(score: 0, strength: 0)
           actions.newPassword.setInvalid('パスワードが空です')
       colSize: colSize
       state.newPassword...
       actions.newPassword...
     }
-    h StrengthIndicator, strength: state.strength, colSize: colSize
-    h confirmPassword.view, {
+    h StrengthIndicator, score: state.score, strength: state.strength, colSize: colSize
+    h passwordConfirmation.view, {
       inputPassword: (text) ->
         if text == ''
-          actions.confirmPassword.setInvalid('パスワードが空です')
+          actions.passwordConfirmation.setInvalid('パスワードが空です')
         else
           if text == document.getElementById(newPassword.name).value
-            actions.confirmPassword.setValid('一致します。')
+            actions.passwordConfirmation.setValid('一致します。')
           else
-            actions.confirmPassword.setInvalid('一致しません。')
+            actions.passwordConfirmation.setInvalid('一致しません。')
       colSize: colSize
-      state.confirmPassword...
-      actions.confirmPassword...
+      state.passwordConfirmation...
+      actions.passwordConfirmation...
     }
-    h 'button', class: 'btn btn-primary', type:'submit', '送信'
+    h 'div', class: 'row',
+      h 'div', class: "#{colSize(0)}"
+      h 'div', class: "#{colSize(1)}",
+        if state.passwordCurrent.valid &&
+            state.newPassword.valid &&
+            state.passwordConfirmation.valid
+          h 'button', class: 'btn btn-primary', type:'submit', '送信'
+        else
+          h 'button', class: 'btn btn-primary', type:'submit', disabled: true, '送信'
   ]
 
 app state, actions, view, changePasswodNode

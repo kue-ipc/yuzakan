@@ -6,7 +6,15 @@ module Web
           include Web::View
 
           def form
-            Form.new(:password, routes.user_password_path, {}, {method: :patch})
+            Form.new(:user, routes.user_password_path, {}, {method: :patch})
+          end
+
+          def change_password_config
+            {
+              min_size: 8,
+              max_size: 32,
+              min_score: 3,
+            }
           end
         end
       end

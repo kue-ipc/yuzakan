@@ -15,7 +15,7 @@ gem 'coffee-script'
 
 gem 'bcrypt'
 gem 'net-ldap'
-
+gem 'zxcvbn-ruby'
 
 group :development do
   # Code reloading
