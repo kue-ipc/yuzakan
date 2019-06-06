@@ -5,8 +5,13 @@ module Web
         class Update
           include Web::Action
 
+          def initailze
+            @change_password = ChangePassword.new
+          end
+
           def call(params)
-            pp params[:password]
+            @change_password.call(
+              params[:user].merge(username: current_user.name))
           end
         end
       end

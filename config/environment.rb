@@ -47,7 +47,7 @@ Hanami.configure do
   environment :development do
     # See: http://hanamirb.org/guides/projects/logging
     logger level: :debug, filter: %w[
-      password
+      password password_current password_confirmation
     ]
   end
 

@@ -7,29 +7,35 @@
 
 require 'hanami/interactor'
 require 'hanami/validations'
+require 'zxcvbn'
 
 class ChangePassword
   include Hanami::Interactor
 
-  # class Validation
-  #   include Hanami::Validations
-  #
-  #   predicate :strong?, message: 'パスワードが弱すぎます。' do |current|
-  #
-  #   end
-  #
-  #   validations do
-  #     required(:name) { filled? & min_size?(8) }
-  #     required(:password_current) { filled? }
-  #     required(:password) { filled? & min_size?(8) }.confirmation
-  #   end
-  #
-  # end
+  class Validation
+    include Hanami::Validations
 
-  def initialize
+    predicate :strong?, message: 'パスワードが弱すぎます。' do |current|
+      result = Zxcvbn.test(current)
+      result.score >= 3
+    end
+
+    validations do
+      required(:username) { filled? }
+      required(:password_current) { filled? }
+      required(:password).filled(
+        :strong?,
+        min_size?: 8,
+        max_size?: 32
+      ).confirmation
+    end
   end
 
-  def call()
+  def initialize(@params)
+    @params = params
+  end
+
+  def call
 
   end
 
