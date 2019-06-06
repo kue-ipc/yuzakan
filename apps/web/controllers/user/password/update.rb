@@ -6,6 +6,7 @@ module Web
           include Web::Action
 
           def call(params)
+            pp params[:password]
           end
         end
       end

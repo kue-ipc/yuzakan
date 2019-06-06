@@ -1,9 +1,6 @@
 h2 パスワード変更
 
-/ = form_change_password
-
 = javascript 'change_password', type: 'module', defer: true
 - password_form = form
 = form_for password_form do
   - div id: 'change-password', 'data-name': password_form.name
-  - text_field :test

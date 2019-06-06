@@ -1,6 +1,9 @@
 import { h, app } from './hyperapp.js'
 import zxcvbn from './zxcvbn.js'
 
+changePasswodNode = document.getElementById('change-password')
+parentName = changePasswodNode.getAttribute('data-name')
+
 class ColSizer
   @colNames = ['sm', 'md', 'lg', 'xl']
 
@@ -43,7 +46,7 @@ StrengthIndicator = ({ strength, colSize }) =>
   ]
 
 class PasswordInputGenerator
-  constructor: ({@name, @label}) ->
+  constructor: ({@name, @label, parentName}) ->
     @state =
       visible: false
       valid: false
@@ -66,38 +69,38 @@ class PasswordInputGenerator
 
     @view = @createView()
 
+    @fieldName =
+        if parentName
+          "#{parentName}[#{@name.replace('-', '_')}]"
+        else
+          @name.replace('-', '_')
+
   createView: ->
     ({visible, valid, wasValidated, message,
-      showPassword, inputPassword, colSize, parentName}) =>
+      showPassword, inputPassword, colSize}) =>
       vaildState = if wasValidated
         if valid
           'is-valid'
         else
           'is-invalid'
 
-      fieldName =
-        if parentName
-          "#{parentName}[#{@name}]"
-        else
-          @name
-
       h 'div', class: 'form-group row', [
-        h 'label', class: "col-form-label #{colSize(0)}", for: fieldName, @label
+        h 'label', class: "col-form-label #{colSize(0)}", for: @name, @label
         h 'div', class: "input-group #{colSize(1)}", [
           h 'input', {
-            id: fieldName
-            name: fieldName
+            id: @name
+            name: @fieldName
             class: "form-control #{vaildState}"
             type: if visible then 'text' else 'password'
             placeholder: "パスワードを入力"
-            'aria-describedby': "#{fieldName}-visible-button"
+            'aria-describedby': "#{@name}-visible-button"
             oninput: (e) =>
               inputPassword(e.target.value)
             required: true
           }
           h 'div', class: "input-group-append",
             h 'span', {
-              id: "#{fieldName}-visible-button"
+              id: "#{@name}-visible-button"
               class: "input-group-text #{if visible then 'text-primary' else ''}"
               onmousedown: => showPassword(true)
               onmouseup: => showPassword(false)
@@ -116,12 +119,15 @@ class PasswordInputGenerator
 currentPassword = new PasswordInputGenerator
   name: 'current-password'
   label: '現在のパスワード'
+  parentName: parentName
 newPassword = new PasswordInputGenerator
   name: 'new-password'
   label: '新しいパスワード'
+  parentName: parentName
 confirmPassword = new PasswordInputGenerator
   name: 'confirm-password'
   label: 'パスワードの確認'
+  parentName: parentName
 
 state =
   currentPassword: currentPassword.state
@@ -139,14 +145,10 @@ actions =
 cs = new ColSizer
 colSize = (idecies) -> cs.colSize(idecies)
 
-changePasswodNode = document.getElementById('change-password')
-state.name = changePasswodNode.getAttribute('data-name')
-
 
 view = (state, actions) ->
   h 'div', {}, [
     h currentPassword.view, {
-      parentName: state.name
       inputPassword: (text) ->
         if text
           actions.currentPassword.setValid('')
@@ -157,7 +159,6 @@ view = (state, actions) ->
       actions.currentPassword...
     }
     h newPassword.view, {
-      parentName: state.name
       inputPassword: (text) ->
         if text
           score = zxcvbn(text).guesses_log10 * 10
@@ -166,7 +167,7 @@ view = (state, actions) ->
             actions.newPassword.setValid('強いパスワードです。')
           else
             actions.newPassword.setInvalid('弱いパスワードです。')
-          confirmText = document.getElementById("#{state.name}[confirm-password]").value
+          confirmText = document.getElementById(confirmPassword.name).value
           if confirmText
             if text == confirmText
               actions.confirmPassword.setValid('一致します。')
@@ -181,12 +182,11 @@ view = (state, actions) ->
     }
     h StrengthIndicator, strength: state.strength, colSize: colSize
     h confirmPassword.view, {
-      parentName: state.name
       inputPassword: (text) ->
         if text == ''
           actions.confirmPassword.setInvalid('パスワードが空です')
         else
-          if text == document.getElementById("#{state.name}[new-password]").value
+          if text == document.getElementById(newPassword.name).value
             actions.confirmPassword.setValid('一致します。')
           else
             actions.confirmPassword.setInvalid('一致しません。')
