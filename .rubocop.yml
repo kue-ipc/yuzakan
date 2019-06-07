@@ -50,3 +50,6 @@ Style/TrailingCommaInArguments:
 
 Style/AccessModifierDeclarations:
   EnforcedStyle: inline
+
+Bundler/OrderedGems:
+  Enabled: false

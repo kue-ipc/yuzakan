@@ -15,8 +15,10 @@ gem 'sassc'
 gem 'coffee-script'
 
 gem 'bcrypt'
-gem 'net-ldap'
 gem 'zxcvbn-ruby'
+
+gem 'net-ldap'
+gem 'smbhash'
 
 group :development do
   # Code reloading

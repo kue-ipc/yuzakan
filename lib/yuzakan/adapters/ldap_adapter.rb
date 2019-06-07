@@ -2,6 +2,12 @@
 
 require 'securerandom'
 require 'net/ldap'
+require 'smbhash'
+
+# パスワード変更について
+# userPassword は {CRYPT}$1$%.8s をデフォルトする。
+# sambaLMPassword はデフォルト無効とし、設定済みは削除する。
+# sambaNTPassword はデフォルト有効とし、設定する。
 
 require_relative 'base_adapter'
 
@@ -112,23 +118,108 @@ module Yuzakan
               '何も指定しない場合は(objectclass=*)になります。',
             type: :string,
             required: false,
+          }, {
+            name: 'password_scheme',
+            title: 'パスワードのスキーム',
+            description:
+              'パスワード設定時に使うスキームです。{CRYPT}はソルトフォーマットも選択してください。',
+            type: :string,
+            required: true,
+            list: [
+              {
+                name: '{SHA} SHA-1 (非推奨)',
+                value: '{SHA}',
+              }, {
+                name: '{SSHA} ソルト付SHA-1',
+                value: '{SSHA}',
+              }, {
+                name: '{MD5} MD5 (非推奨)',
+                value: '{MD5}',
+              }, {
+                name: '{SMD5} ソルト付MD5',
+                value: '{SMD5}',
+              }, {
+                name: '{CRYPT} CRYPT (ソルトフォーマットも記入してください)',
+                value: '{CRYPT}',
+              }, {
+                name: '平文 (非推奨)',
+                value: '{CLEARTEXT}',
+              },
+            ],
+            default: '{CRYPT}',
+          }, {
+            name: 'crypt_salt_format',
+            title: 'CRYPTのソルトフォーマット',
+            description:
+              'パスワードのスキームに{CRYPT}を使用している場合は、' \
+              '記載のフォーマットでソルト値が作成されます。' \
+              '作成できる形式はサーバーのcryptの実装によります。' \
+              '何も指定しない場合はCRYPT-MD5("$1$%.8s")を使用します。',
+            type: :string,
+            required: false,
+          }, {
+            name: 'samba_password',
+            title: 'Sambaパスワード設定',
+            description:
+              'パスワード設定時にSambaパスワードも設定します。ただし、LMパスワードは設定しません。',
+            type: :boolean,
+            default: false,
           },
         ]
       end
 
-      def auth(name, pass)
+      # def create(username, attrs)
+      #   raise NotImplementedError
+      # end
+
+      def read(username)
         ldap = generate_ldap
-        opts = search_user_opts(name).merge(password: pass)
-        result = ldap.bind_as(opts)
-        # TODO: 将来は表示名なども考える。
-        if result
-          result
-        else
-          nil
-        end
+        user = ldap.search(search_user_opts(username))&.first
+        normalize_user(user)
       end
 
-      def generate_ldap
+      # def udpate(username, attrs)
+      #   raise NotImplementedError
+      # end
+
+      # def delete(username)
+      #   raise NotImplementedError
+      # end
+
+      def auth(username, password)
+        ldap = generate_ldap
+        opts = search_user_opts(username).merge(password: password)
+        user = ldap.bind_as(opts)
+        normalize_user(user)
+      end
+
+      def change_password(username, password)
+        ldap = generate_ldap
+        user = ldap.search(search_user_opts(username))&.first
+
+        operations = []
+
+        operations << [
+          user[:userpassword] ? :repalce : :add,
+          :userpassword,
+          generate_password(password),
+        ]
+
+        operations << [
+          user[:sambantpassword] ? :repalce : :add,
+          :sambantpassword,
+          generate_ntpassword(password),
+        ]
+
+        operations << [:delete, :sambalmpassword, nil] if user[:sambalmpassword]
+
+        ldap.modify(
+          dn: user.dn,
+          operations: operations
+        )
+      end
+
+      private def generate_ldap
         opts = {
           host: @params[:host],
           port: @params[:port],
@@ -154,23 +245,15 @@ module Yuzakan
         Net::LDAP.new(opts)
       end
 
-      def search_user(name, ldap: generate_ldap)
-        ldap.search(search_user_opts(name))&.first
-      end
-
-      def search_user_opts(name)
+      private def search_user_opts(name)
         opts = {}
         opts[:base] = @params[:user_base] if @params[:user_base]
         opts[:scope] =
           case @params[:user_scope]
-          when 'base'
-            Net::LDAP::SearchScope_BaseObject
-          when 'one'
-            Net::LDAP::SearchScope_SingleLevel
-          when 'sub'
-            Net::LDAP::SearchScope_WholeSubtree
-          else
-            raise 'Invalid scope'
+          when 'base' then Net::LDAP::SearchScope_BaseObject
+          when 'one' then Net::LDAP::SearchScope_SingleLevel
+          when 'sub' then Net::LDAP::SearchScope_WholeSubtree
+          else raise 'Invalid scope'
           end
 
         common_filter =
@@ -181,31 +264,49 @@ module Yuzakan
           end
 
         opts[:filter] = common_filter &
-          Net::LDAP::Filter.eq(@params[:user_name_attr], name)
+                        Net::LDAP::Filter.eq(@params[:user_name_attr], name)
 
         opts
       end
 
-      def change_password(user, pass)
-        ldap = generate_ldap
-        user_dn = search_user(user.name, ldap: ldap)
-        ldap.modify(
-          dn: user_dn,
-          operations: [
-            [:repalce, :passwd, generate_crypt(pass)],
-          ]
-        )
+      private def normalize_user(user)
+        return unless user
+
+        data = {
+          name: user[@params[:user_name_attr]]&.first,
+          display_name: user[:'displayname;lang-ja']&.first ||
+                        user[:displayname]&.first ||
+                        user[@params[:user_name_attr]]&.first,
+          email: user[:email]&.first || user[:mail]&.first,
+        }
+        user.each do |key, value|
+          # skip: userPassword, samba((Previous)?ClearText|LM|NT)Password
+          next if key.to_s =~ /password$/i
+          next if key == :email
+
+          data[key] = value
+        end
+        data
       end
 
       # 現在のところ CRYPT-MD5のみ実装
       # slappasswd -h '{CRYPT}' -c '$1$%.8s'
       # $1$vuIZLw8r$d9mkddv58FuCPxOh6nO8f0
-      def generate_crypt(str)
-        salt = '$1$' + SecureRandom.base64(6).gsub('+', '.')
-        '{CRYPT}' + str.crypt(salt)
+      private def generate_password(password)
+        salt = SecureRandom.base64(12).gsub('+', '.')
+        '{CRYPT}' + password.crypt(format('$1$%.8s', salt))
       end
 
-      def lock_password(str)
+      private def generate_ntpassword(password)
+        Smbhash.ntlm_hash(password)
+      end
+
+      # TODO: 14文字までしか対できない
+      private def generate_lmpassword(password)
+        Smbhash.lm_hash(password)
+      end
+
+      private def lock_password(str)
         if (m = /\A({[A-Z]+})(.*)\z/.match(str))
           m[1] + '!' + m[2]
         else
@@ -214,7 +315,7 @@ module Yuzakan
         end
       end
 
-      def unlock_password(str)
+      private def unlock_password(str)
         if (m = /\A({[A-Z]+})!(.*)\z/.match(str))
           m[1] + m[2]
         else

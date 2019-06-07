@@ -3,14 +3,17 @@
 # adapter
 #
 # CRUD
-# create(username, attrs) -> user or nil
-# read(username) -> attrs
-# update(username, attrs) -> true/false
-# delete(username) -> true/false
+# create(username, attrs) -> user or nil [writable]
+# read(username) -> user or nil [readable]
+# update(username, attrs) -> user or nil [writeable]
+# delete(username) -> user or nil [writable]
 #
-# auth(username, password)
-# change_password(username, password)
+# auth(username, password) -> user or nil [authenticatable]
+# change_password(username, password) -> user ro nil [password_changeable]
 #
+# lock(username) -> locked?(username) [lockable]
+# unlock(username) -> locked?(username) [lockable]
+# locked?(username) -> true or false [lockable]
 
 module Yuzakan
   module Adapters

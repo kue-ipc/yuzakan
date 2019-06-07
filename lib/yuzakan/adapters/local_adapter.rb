@@ -27,7 +27,7 @@ module Yuzakan
 
       def read(username)
         user = @repository.by_name(username)
-        user && normalize_user(user)
+        normalize_user(user)
       end
 
       def udpate(username, attrs)
@@ -39,7 +39,7 @@ module Yuzakan
           data[key] = attrs[key] if attrs[key]
         end
         updated_user = @repository.update(user.id, data)
-        updated_user && normalize_user(updated_user)
+        normalize_user(updated_user)
       end
 
       def delete(_username)
@@ -69,7 +69,7 @@ module Yuzakan
           user.id,
           hashed_password: BCrypt::Password.create(password)
         )
-        updated_user && normalize_user(updated_user)
+        normalize_user(updated_user)
       end
 
       def lock(username)
@@ -101,6 +101,8 @@ module Yuzakan
       end
 
       private def normalize_user(user)
+        return unless user
+
         {
           name: user.name,
           display_name: user.display_name,

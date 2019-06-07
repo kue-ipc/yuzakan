@@ -8,6 +8,9 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
+    active_directory (1.6.1.1)
+      bindata (~> 2)
+      net-ldap (~> 0)
     addressable (2.6.0)
       public_suffix (>= 2.0.2, < 4.0)
     bcrypt (3.1.13)
@@ -15,6 +18,7 @@ GEM
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
       rack (>= 0.9.0)
+    bindata (2.4.4)
     binding_of_caller (0.8.0)
       debug_inspector (>= 0.0.1)
     capybara (3.22.0)
@@ -187,6 +191,7 @@ GEM
     slim (4.0.1)
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
+    smbhash (1.0.2)
     sqlite3 (1.4.1)
     temple (0.8.1)
     tilt (2.0.9)
@@ -201,6 +206,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  active_directory
   bcrypt
   capybara
   coffee-script
@@ -218,6 +224,7 @@ DEPENDENCIES
   sassc
   shotgun
   slim
+  smbhash
   sqlite3
   zxcvbn-ruby
 
