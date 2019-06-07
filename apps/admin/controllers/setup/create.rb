@@ -5,7 +5,6 @@ module Admin
     module Setup
       class Create
         include Admin::Action
-        include BCrypt
 
         def call(params)
           if ConfigRepository.new.initialized?
@@ -21,28 +20,30 @@ module Admin
                              params[:admin_user][:password])
         end
 
-        def setup_initial_data(name, password)
-          hashed_password = Password.create(password)
-
-          lu_repo = LocalUserRepository.new.create(
-            name: name,
-            hashed_password: hashed_password
-          )
-
-          ProviderRepository.new.create(
+        def setup_initial_data(username, password)
+          local_provider = ProviderRepository.new.create(
             name: 'ローカル',
             immutable: true,
             order: '0',
             adapter_id: 1,
+            readable: true,
+            writable: true,
             authenticatable: true,
-            has_password: true
+            password_changeable: true,
+            lockable: true
           )
+          local_provider_adapter = local_provider.adapter.new({})
+          local_provider_adapter.create(
+            username,
+            display_name: 'ローカル管理者'
+          )
+          local_provider_adapter.change_password(username, password)
 
           role_repo = RoleRepository.new
           none_role = role_repo.create(
             name: '権限なし',
             immutable: true,
-            admin: true
+            admin: false
           )
 
           admin_role = role_repo.create(
@@ -52,7 +53,7 @@ module Admin
           )
 
           UserRepository.new.create(
-            name: name,
+            name: username,
             role_id: admin_role.id
           )
 

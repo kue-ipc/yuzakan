@@ -3,13 +3,13 @@
 # adapter
 #
 # CRUD
-# create(name, attrs) -> true/false
-# read(name) -> attrs
-# update(name, attrs) -> true/false
-# delete(name) -> true/false
+# create(username, attrs) -> user or nil
+# read(username) -> attrs
+# update(username, attrs) -> true/false
+# delete(username) -> true/false
 #
-# auth(name, pass)
-# change_passwd(user, pass)
+# auth(username, password)
+# change_passwd(user, password)
 #
 
 module Yuzakan
@@ -24,7 +24,7 @@ module Yuzakan
       end
 
       def self.params
-        @param ||= []
+        @params ||= []
       end
 
       def self.param_type(name)
@@ -38,27 +38,39 @@ module Yuzakan
         @params = params
       end
 
-      def create(name, attrs)
+      def create(_username, _attrs)
         raise NotImplementedError
       end
 
-      def read(name)
+      def read(_username)
         raise NotImplementedError
       end
 
-      def udpate(name, attrs)
+      def udpate(_username, _attrs)
         raise NotImplementedError
       end
 
-      def delete(name)
+      def delete(_username)
         raise NotImplementedError
       end
 
-      def auth(name, pass)
+      def auth(_username, _password)
         raise NotImplementedError
       end
 
-      def change_passwd(name, pass)
+      def change_password(_username, _password)
+        raise NotImplementedError
+      end
+
+      def lock(_username)
+        raise NotImplementedError
+      end
+
+      def unlock(_username)
+        raise NotImplementedError
+      end
+
+      def locked?(_username)
         raise NotImplementedError
       end
     end

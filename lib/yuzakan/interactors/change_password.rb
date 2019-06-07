@@ -31,7 +31,7 @@ class ChangePassword
     end
   end
 
-  def initialize(@params)
+  def initialize(params)
     @params = params
   end
 

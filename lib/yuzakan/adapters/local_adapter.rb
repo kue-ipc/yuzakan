@@ -11,13 +11,101 @@ module Yuzakan
         'ローカル'
       end
 
-      def auth(name, pass)
-        user = LocalUserRepository.new.by_name(name)
-        user && BCrypt::Password.new(user.hashed_password) == pass
+      def initialize(params)
+        super
+        @repository = LocalUserRepository.new
       end
 
-      def change_passwd(name, pass)
-        raise NotImplementedError
+      def create(username, attrs)
+        @repository.create(
+          name: username,
+          display_name: attrs[:display_name] || username,
+          email: attrs[:email],
+          hashed_password: '!'
+        )
+      end
+
+      def read(username)
+        user = @repository.by_name(username)
+        user && normalize_user(user)
+      end
+
+      def udpate(username, attrs)
+        user = @repository.by_name(username)
+        return unless user
+
+        data = {}
+        %i[display_name email].each do |key|
+          data[key] = attrs[key] if attrs[key]
+        end
+        updated_user = @repository.update(user.id, data)
+        updated_user && normalize_user(updated_user)
+      end
+
+      def delete(_username)
+        user = @repository.by_name(username)
+        return unless user
+
+        @repository.delete(user.id)
+      end
+
+      def auth(username, password)
+        user = LocalUserRepository.new.by_name(username)
+
+        if user &&
+           !user.hashed_password.start_with?('!') &&
+           BCrypt::Password.new(user.hashed_password) == password
+          return normalize_user(user)
+        end
+
+        nil
+      end
+
+      def change_password(username, password)
+        user = @repository.by_name(username)
+        return unless user
+
+        updated_user = @repository.update(
+          user.id,
+          hashed_password: BCrypt::Password.create(password)
+        )
+        updated_user && normalize_user(updated_user)
+      end
+
+      def lock(username)
+        user = @repository.by_name(username)
+        return unless user && !user.hashed_password.start_with?('!')
+
+        @repository.update(
+          user.id,
+          hashed_password: '!' + user.hashed_password
+        )
+      end
+
+      def unlock(username)
+        user = @repository.by_name(username)
+        return unless user&.hashed_password&.start_with?('!$')
+
+        @repository.update(
+          user.id,
+          hashed_password: user.hashed_password[1..]
+        )
+      end
+
+      def locked?(username)
+        user = @repository.by_name(username)
+        # 存在しないユーザーは常にロックされているとみなす。
+        return true unless user
+
+        user.hashed_password.start_with?('!')
+      end
+
+      private def normalize_user(user)
+        {
+          name: user.name,
+          display_name: user.display_name,
+          email: user.email,
+        }
       end
     end
   end

@@ -28,8 +28,8 @@ Hanami::Model.migration do
       # グループ登録・変更・削除
       column :group_write, TrueClass, null: false, default: false
 
-      # パスワード変更
-      column :password, TrueClass, null: false, default: false
+      # パスワードリセット
+      column :password_reset, TrueClass, null: false, default: false
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
