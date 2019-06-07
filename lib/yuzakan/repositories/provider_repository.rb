@@ -16,21 +16,39 @@ class ProviderRepository < Hanami::Repository
     end
   end
 
-  def authenticatables
-    providers
-      .where(authenticatable: true)
-      .order { order.asc }
-  end
-
-  def authenticatables_with_params
-    aggregate(*ProviderRepository.params)
-      .where(authenticatable: true)
-      .order { order.asc }
-      .map_to(Provider)
-  end
+  # def authenticatables
+  #   aggregate(*ProviderRepository.params)
+  #     .where(authenticatable: true)
+  #     .order { order.asc }
+  #     .map_to(Provider)
+  # end
 
   def last_order
     providers.order { order.desc }.first
   end
+
+  def operational_all(operation)
+    operation_ability = {
+      create: :writable,
+      read: :readable,
+      update: :writable,
+      delete: :writable,
+      auth: :authenticatable,
+      change_password: :password_changeable,
+      lock: :lockable,
+      unlcok: :lockable,
+      locked?: :lockable,
+    }
+    ability = operation_ability[operation]
+    raise "不明な操作です。#{operation}" unless ability
+
+    aggregate(*ProviderRepository.params)
+      .where(ability => true)
+      .order { order.asc }
+      .map_to(Provider)
+  end
+
+
+
 
 end

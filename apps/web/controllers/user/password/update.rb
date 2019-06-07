@@ -5,13 +5,23 @@ module Web
         class Update
           include Web::Action
 
-          def initailze
+          expose :succeeded
+          expose :message
+
+          def initialize
             @change_password = ChangePassword.new
           end
 
           def call(params)
-            @change_password.call(
-              params[:user].merge(username: current_user.name))
+            result = @change_password.call(
+              username: current_user.name,
+              password: params[:user][:password]
+            )
+            if result
+              @succeeded = true
+            else
+              @succeeded = false
+            end
           end
         end
       end

@@ -10,7 +10,7 @@ class UserRepository < Hanami::Repository
   end
 
   def auth(name, password)
-    providers = ProviderRepository.new.authenticatables_with_params
+    providers = ProviderRepository.new.operational_all(:auth)
     result = providers.each.any? do |provider|
       provider.adapter.new(provider.params).auth(name, password)
     end

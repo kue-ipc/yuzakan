@@ -9,7 +9,7 @@
 # delete(username) -> true/false
 #
 # auth(username, password)
-# change_passwd(user, password)
+# change_password(username, password)
 #
 
 module Yuzakan
