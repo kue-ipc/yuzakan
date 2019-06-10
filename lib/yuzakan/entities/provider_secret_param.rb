@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ProviderSecretParam < Hanami::Entity
   include Yuzakan::Utils::Cipher
 
