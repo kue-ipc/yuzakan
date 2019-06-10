@@ -5,16 +5,19 @@ module Admin
         include Admin::Action
 
         def call(params)
-          adapter_id = params[:provider][:adapter_id].to_i
-          adapter = Yuzakan::Adapters.get(adapter_id)
+          adapter_name = params[:provider][:adapter_name]
+          adapter = Yuzakan::Adapters.get_by_name(adapter_name)
 
           repo = ProviderRepository.new
           provider = repo.create(
             name: params[:provider][:name],
             order: repo.last_order.order + 1,
-            adapter_id: adapter_id,
-            authenticatable: true,
-            has_password: true
+            adapter_name: adapter_name,
+            readable: params[:provider][:readable],
+            writable: params[:provider][:writable],
+            authenticatable: params[:provider][:authenticatable],
+            password_changeable: params[:provider][:password_changeable],
+            lockable: params[:provider][:lockable]
           )
 
           string_param_repo = ProviderStringParamRepository.new

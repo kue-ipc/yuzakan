@@ -20,7 +20,7 @@
     - abilities.each do |ability|
       - div class: 'form-group form_check' do
         - check_box ability[:name], class: 'form-check-input'
-        - label ability[:label], for: ability[:name]
+        - label ability[:label], class: 'form-check-label', for: ability[:name]
   - div class: 'form-group' do
     - label 'アダプター', for: :adapter_name
     - select :adapter_name, adapters, id: 'provider-adapter-select', class: 'form-control'

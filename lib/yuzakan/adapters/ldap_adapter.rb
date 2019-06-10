@@ -189,8 +189,12 @@ module Yuzakan
       def auth(username, password)
         ldap = generate_ldap
         opts = search_user_opts(username).merge(password: password)
-        user = ldap.bind_as(opts)&.first
-        normalize_user(user)
+        user = ldap.bind_as(opts)
+        if user
+          normalize_user(user&.first)
+        else
+          nil
+        end
       end
 
       def change_password(username, password)
