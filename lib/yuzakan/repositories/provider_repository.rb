@@ -16,6 +16,12 @@ class ProviderRepository < Hanami::Repository
     end
   end
 
+  def find_with_params(id)
+    aggregate(*ProviderRepository.params)
+      .where(id: id)
+      .map_to(Provider)
+  end
+
   def last_order
     providers.order { order.desc }.first
   end

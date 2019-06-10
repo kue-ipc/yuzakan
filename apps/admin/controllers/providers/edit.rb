@@ -6,7 +6,7 @@ module Admin
         expose :provider
 
         def call(params)
-          @provider = ProviderRepository.new.find(params[:id])
+          @provider = ProviderRepository.new.find_with_params(params[:id]).first
         end
       end
     end

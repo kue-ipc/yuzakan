@@ -3,8 +3,10 @@ module Admin
     module Providers
       class New
         include Admin::Action
+        expose :provider
 
-        def call(params)
+        def call(_params)
+          @provider = nil
         end
       end
     end
