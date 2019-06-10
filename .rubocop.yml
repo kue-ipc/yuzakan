@@ -46,7 +46,7 @@ Style/TrailingCommaInArrayLiteral:
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: consistent_comma
 Style/TrailingCommaInArguments:
-  EnforcedStyleForMultiline: no_comma
+  EnforcedStyleForMultiline: consistent_comma
 
 Style/AccessModifierDeclarations:
   EnforcedStyle: inline
