@@ -39,7 +39,7 @@ class ChangePassword
   end
 
   def call(username:, password:)
-    @providers.each.all? do |provider|
+    @providers.each do |provider|
       provider.adapter.new(provider.params).change_password(username, password)
     end
   end

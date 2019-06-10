@@ -204,27 +204,42 @@ module Yuzakan
 
         operations = []
 
-        operations << [
-          user[:userpassword] ? :repalce : :add,
-          :userpassword,
-          generate_password(password),
-        ]
+        if user[:userpassword]&.first
+          operations << [
+            :replace,
+            :userpassword,
+            [generate_password(password)],
+          ]
+        else
+          operations << [
+            :add,
+            :userpassword,
+            generate_password(password),
+          ]
+        end
 
-        operations << [
-          user[:sambantpassword] ? :repalce : :add,
-          :sambantpassword,
-          generate_ntpassword(password),
-        ]
+        if user[:sambantpassword]&.first
+          operations << [
+            :replace,
+            :sambantpassword,
+            [generate_ntpassword(password)],
+          ]
+        else
+          operations << [
+            :add,
+            :sambantpassword,
+            generate_ntpassword(password),
+          ]
+        end
 
-        operations << [:delete, :sambalmpassword, nil] if user[:sambalmpassword]
+        if user[:sambalmpassword]&.first
+          operations << [:delete, :sambalmpassword, nil]
+        end
 
-        # test
-        pp user.dn
-        pp operations
-        # ldap.modify(
-        #   dn: user.dn,
-        #   operations: operations
-        # )
+        ldap.modify(
+          dn: user.dn,
+          operations: operations
+        )
         true
       end
 

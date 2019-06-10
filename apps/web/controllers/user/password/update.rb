@@ -6,7 +6,6 @@ module Web
           include Web::Action
 
           expose :succeeded
-          expose :message
 
           def initialize
             @change_password = ChangePassword.new
@@ -15,7 +14,7 @@ module Web
           def call(params)
             result = @change_password.call(
               username: current_user.name,
-              password: params[:user][:password]
+              password: params[:user][:password],
             )
             if result
               @succeeded = true
