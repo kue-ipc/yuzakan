@@ -8,6 +8,7 @@ Hanami::Model.migration do
       foreign_key :role_id, :roles, null: true
 
       column :name, String, null: false, unique: true, index: true
+
       column :display_name, String, null: true
       column :email, String, null: true
 

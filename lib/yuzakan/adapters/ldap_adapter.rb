@@ -14,7 +14,7 @@ require_relative 'base_adapter'
 module Yuzakan
   module Adapters
     class LdapAdapter < BaseAdapter
-      def self.name
+      def self.label
         'LDAP'
       end
 
@@ -26,7 +26,7 @@ module Yuzakan
         @params ||= [
           {
             name: 'host',
-            title: 'サーバーのホスト名/IPアドレス',
+            label: 'サーバーのホスト名/IPアドレス',
             description:
               'LDAPサーバーのホスト名またはIPアドレスを指定します。',
             type: :string,
@@ -34,7 +34,7 @@ module Yuzakan
             placeholder: 'ldap.example.jp',
           }, {
             name: 'port',
-            title: 'ポート',
+            label: 'ポート',
             description:
               'LDAPサーバーにアクセスするポート番号をして指定します。' \
               '指定しない場合は既定値(LDAPは389、LDAPSは636)を使用します。',
@@ -43,7 +43,7 @@ module Yuzakan
             placeholder: '636',
           }, {
             name: 'protocol',
-            title: 'プロトコル',
+            label: 'プロトコル',
             description:
               'LDAPサーバーにアクセスするプロトコルを指定します。' \
               'LDAPSを使用することを強く推奨します。',
@@ -61,38 +61,38 @@ module Yuzakan
             default: 'ldaps',
           }, {
             name: 'base_dn',
-            title: 'ベースDN',
+            label: 'ベースDN',
             description: '全てベースです。',
             type: :string,
             required: false,
             placeholder: 'dc=example,dc=jp',
           }, {
             name: 'bind_user',
-            title: '接続ユーザー',
+            label: '接続ユーザー',
             type: :string,
             required: true,
             placeholder: 'cn=Admin,dc=example,dc=jp',
           }, {
             name: 'bind_pass',
-            title: '接続ユーザーのパスワード',
+            label: '接続ユーザーのパスワード',
             type: :secret,
             required: true,
           }, {
             name: 'user_name_attr',
-            title: 'ユーザー名の属性',
+            label: 'ユーザー名の属性',
             type: :string,
             required: true,
             placeholder: 'cn',
           }, {
             name: 'user_base',
-            title: 'ユーザー検索のベース',
+            label: 'ユーザー検索のベース',
             description: 'ユーザー検索を行うときのツリーベースです。指定しない場合はLDAPサーバーのベースから検索します。',
             type: :string,
             required: false,
             placeholder: 'ou=Users,dc=example,dc=jp',
           }, {
             name: 'user_scope',
-            title: 'ユーザー検索のスコープ',
+            label: 'ユーザー検索のスコープ',
             description: 'ユーザー検索を行うときのスコープです。デフォルトは sub です。',
             type: :string,
             required: true,
@@ -111,7 +111,7 @@ module Yuzakan
             default: 'sub',
           }, {
             name: 'user_filter',
-            title: 'ユーザー検索のフィルター',
+            label: 'ユーザー検索のフィルター',
             description:
               'ユーザー検索を行うときのフィルターです。' \
               'LDAPの形式で指定します。' \
@@ -120,7 +120,7 @@ module Yuzakan
             required: false,
           }, {
             name: 'password_scheme',
-            title: 'パスワードのスキーム',
+            label: 'パスワードのスキーム',
             description:
               'パスワード設定時に使うスキームです。{CRYPT}はソルトフォーマットも選択してください。',
             type: :string,
@@ -149,7 +149,7 @@ module Yuzakan
             default: '{CRYPT}',
           }, {
             name: 'crypt_salt_format',
-            title: 'CRYPTのソルトフォーマット',
+            label: 'CRYPTのソルトフォーマット',
             description:
               'パスワードのスキームに{CRYPT}を使用している場合は、' \
               '記載のフォーマットでソルト値が作成されます。' \
@@ -159,7 +159,7 @@ module Yuzakan
             required: false,
           }, {
             name: 'samba_password',
-            title: 'Sambaパスワード設定',
+            label: 'Sambaパスワード設定',
             description:
               'パスワード設定時にSambaパスワードも設定します。ただし、LMパスワードは設定しません。',
             type: :boolean,
@@ -189,13 +189,14 @@ module Yuzakan
       def auth(username, password)
         ldap = generate_ldap
         opts = search_user_opts(username).merge(password: password)
-        user = ldap.bind_as(opts)
+        user = ldap.bind_as(opts)&.first
         normalize_user(user)
       end
 
       def change_password(username, password)
         ldap = generate_ldap
         user = ldap.search(search_user_opts(username))&.first
+        return false unless user
 
         operations = []
 
@@ -213,10 +214,14 @@ module Yuzakan
 
         operations << [:delete, :sambalmpassword, nil] if user[:sambalmpassword]
 
-        ldap.modify(
-          dn: user.dn,
-          operations: operations
-        )
+        # test
+        pp user.dn
+        pp operations
+        # ldap.modify(
+        #   dn: user.dn,
+        #   operations: operations
+        # )
+        true
       end
 
       private def generate_ldap

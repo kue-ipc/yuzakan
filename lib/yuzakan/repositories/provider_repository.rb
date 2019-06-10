@@ -16,13 +16,6 @@ class ProviderRepository < Hanami::Repository
     end
   end
 
-  # def authenticatables
-  #   aggregate(*ProviderRepository.params)
-  #     .where(authenticatable: true)
-  #     .order { order.asc }
-  #     .map_to(Provider)
-  # end
-
   def last_order
     providers.order { order.desc }.first
   end
@@ -47,8 +40,4 @@ class ProviderRepository < Hanami::Repository
       .order { order.asc }
       .map_to(Provider)
   end
-
-
-
-
 end

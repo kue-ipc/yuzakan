@@ -2,12 +2,12 @@ p ローカル管理者のユーザー名とパスワードを入力してくだ
 
 == form_for :admin_user, routes.path(:setup) do
   - div do
-    - label 'ユーザー名', for: :name
-    - text_field :name, class: 'form-control'
+    - label 'ユーザー名', for: :username
+    - text_field :username, class: 'form-control'
   - div do
     - label 'パスワード', for: :password
     - password_field :password, class: 'form-control'
   - div do
     - label 'パスワード(確認)', for: :confirm_password
-    - password_field :confirm_password, class: 'form-control'
+    - password_field :password_confirmation, class: 'form-control'
   - submit 'セットアップ'

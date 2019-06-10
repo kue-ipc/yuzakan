@@ -7,7 +7,7 @@ require_relative 'base_adapter'
 module Yuzakan
   module Adapters
     class LocalAdapter < BaseAdapter
-      def self.name
+      def self.label
         'ローカル'
       end
 

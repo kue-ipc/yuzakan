@@ -1,0 +1,30 @@
+- abilities = [ \
+   { name: :readable, label: '読み取り' }, \
+   { name: :writale, label: '書き込み' }, \
+   { name: :authenticatable, label: '認証' }, \
+   { name: :password_changeable, label: 'パスワード変更' }, \
+   { name: :lockable, label: 'ロック' }, \
+ ]
+
+- adapters = Yuzakan::Adapters.list \
+   .each_with_index.filter { |adapter, _| adapter.usable? } \
+   .map { |adapter, idx| [adapter.name, idx] }
+
+= javascript 'provider_adapter', type: 'module', defer: true
+= form_for form do
+  - div class: 'form-group' do
+    - label 'プロバイダー名', for: :name
+    - text_field :name, class: 'form-control'
+  - div do
+    - h3 '可能な操作'
+    - abilities.each do |ability|
+      - div class: 'form-group form_check' do
+        - check_box ability[:name], class: 'form-check-input'
+        - label ability[:label], for: ability[:name]
+  - div class: 'form-group' do
+    - label 'アダプター', for: :adapter_id
+    - select: adapter_id,
+    # - text_field :name, class: 'form-control'
+
+  / - div id: 'provider-adapter', 'data-adapters': "#{ha(JSON.generate(adapters))}", 'data-adapter-id': '1'
+  - submit submit_label, class: 'btn btn-primary'

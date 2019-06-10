@@ -8,4 +8,12 @@ html
     = javascript 'application', defer: true, type: 'module'
   body
     .container
+      - flash[:errors]&.each do |error|
+        - error.each do |name, messages|
+          - messages.each do |message|
+            .alert.alert-danger role="alert"
+              strong
+                = name
+                | :&nbsp;
+              = message
       = yield

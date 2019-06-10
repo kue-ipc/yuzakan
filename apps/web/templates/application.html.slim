@@ -8,6 +8,7 @@ html
     = favicon
   body
     .container
-      = form_for :session, routes.session_path, method: :delete do
-        - submit 'ログアウト'
+      - if current_user
+        = form_for :session, routes.session_path, method: :delete do
+          - submit 'ログアウト'
       = yield

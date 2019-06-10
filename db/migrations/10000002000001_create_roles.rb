@@ -5,7 +5,7 @@ Hanami::Model.migration do
     create_table :roles do
       primary_key :id
 
-      column :name, String, null: false, unique: true
+      column :name, String, null: false, unique: true, index: true
 
       # 不変
       column :immutable, String, null: false, default: false

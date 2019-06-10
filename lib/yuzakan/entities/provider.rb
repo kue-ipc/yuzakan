@@ -2,7 +2,7 @@
 
 class Provider < Hanami::Entity
   def adapter
-    Yuzakan::Adapters.get(adapter_id)
+    Yuzakan::Adapters.get_by_name(adapter_name)
   end
 
   def params

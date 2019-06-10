@@ -5,7 +5,7 @@ require_relative 'base_adapter'
 module Yuzakan
   module Adapters
     class DummyAdapter < BaseAdapter
-      def self.name
+      def self.label
         'ダミー'
       end
     end

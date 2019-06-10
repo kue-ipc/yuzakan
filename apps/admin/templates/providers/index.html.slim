@@ -12,7 +12,7 @@ table.table
       td
         = provider.name
       td
-        = provider.adapter.name
+        = provider.adapter.label
       td
         = link_to '編集', routes.edit_provider_path(provider.id)
         = form_for provider, routes.provider_path(provider.id), method: :delete do
