@@ -6,8 +6,14 @@ describe Admin::Controllers::Setup::Create do
   let(:action) { Admin::Controllers::Setup::Create.new }
   let(:params) { Hash[] }
 
-  # it 'is successful' do
-  #   response = action.call(params)
-  #   response[0].must_equal 200
-  # end
+  before do
+    db_reset
+    db_initialize
+  end
+
+  it 'is successful' do
+    db_clear
+    response = action.call(params)
+    response[0].must_equal 200
+  end
 end

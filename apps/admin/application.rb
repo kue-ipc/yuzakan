@@ -3,6 +3,10 @@
 require 'hanami/helpers'
 require 'hanami/assets'
 
+# TODO: 読み込んでおかないと動かない
+require_relative 'controllers/authentication'
+require_relative 'controllers/configuration'
+
 module Admin
   class Application < Hanami::Application
     configure do
@@ -248,9 +252,17 @@ module Admin
       # This is useful for sharing common functionality
       #
       # See: http://www.rubydoc.info/gems/hanami-controller#Configuration
+      # controller.prepare do
+      #   # include MyAuthentication # included in all the actions
+      #   # before :authenticate!    # run an authentication before callback
+      # end
       controller.prepare do
-        # include MyAuthentication # included in all the actions
-        # before :authenticate!    # run an authentication before callback
+        include Authentication
+        include Configuration
+        before :configurate!
+        before :authenticate!
+        expose :current_config
+        expose :current_user
       end
 
       # Configure the code that will yield each time Admin::View is included

@@ -6,8 +6,25 @@ describe Admin::Controllers::Providers::Show do
   let(:action) { Admin::Controllers::Providers::Show.new }
   let(:params) { Hash[] }
 
-  it 'is successful' do
-    response = action.call(params)
-    response[0].must_equal 200
+  before do
+    db_reset
   end
+
+  it 'redirect setup before initialized' do
+    db_clear
+    response = action.call(params)
+    response[0].must_equal 302
+    response[1]['Location'].must_equal '/admin/setup'
+  end
+
+  it 'redirect new_session before login after initialized' do
+    response = action.call(params)
+    response[0].must_equal 302
+    response[1]['Location'].must_equal '/admin/session/new'
+  end
+
+  # it 'is successful after initialized' do
+  #   response = action.call(params)
+  #   response[0].must_equal 200
+  # end
 end
