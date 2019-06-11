@@ -147,13 +147,10 @@ module Yuzakan
           [generate_password(password)],
         ]
 
-        pp user.dn
-        pp operations
         result = ldap.modify(
           dn: user.dn,
           operations: operations
         )
-        pp result
         true
       end
 
