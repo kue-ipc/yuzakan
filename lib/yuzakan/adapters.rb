@@ -3,6 +3,7 @@
 require_relative 'adapters/dummy_adapter'
 require_relative 'adapters/local_adapter'
 require_relative 'adapters/ldap_adapter'
+require_relative 'adapters/active_directory_adapter'
 
 module Yuzakan
   module Adapters
@@ -20,6 +21,7 @@ module Yuzakan
         Yuzakan::Adapters::DummyAdapter,
         Yuzakan::Adapters::LocalAdapter,
         Yuzakan::Adapters::LdapAdapter,
+        Yuzakan::Adapters::ActiveDirectoryAdapter,
       ].freeze
     end
 
