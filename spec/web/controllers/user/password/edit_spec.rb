@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../spec_helper'
+require_relative '../../../../spec_helper'
 
 describe Web::Controllers::User::Password::Edit do
   let(:action) { Web::Controllers::User::Password::Edit.new }

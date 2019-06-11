@@ -5,6 +5,12 @@ require 'hanami/rake_tasks'
 require 'rake/testtask'
 require 'fileutils'
 
+Rake::TestTask.new do |t|
+  t.pattern = 'spec/**/*_spec.rb'
+  t.libs    << 'spec'
+  t.warning = false
+end
+
 def copy_css(src, dst)
   if FileTest.file?(src)
     if %w[.css .scss .sass].include?(File.extname(src))
@@ -21,12 +27,6 @@ def copy_css(src, dst)
       copy_css(File.join(src, child), File.join(dst, child))
     end
   end
-end
-
-Rake::TestTask.new do |t|
-  t.pattern = 'spec/**/*_spec.rb'
-  t.libs    << 'spec'
-  t.warning = false
 end
 
 task default: :test
