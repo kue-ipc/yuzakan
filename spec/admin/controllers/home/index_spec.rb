@@ -6,8 +6,9 @@ describe Admin::Controllers::Home::Index do
   let(:action) { Admin::Controllers::Home::Index.new }
   let(:params) { Hash[] }
 
-  it 'is successful' do
+  it 'redirect setup' do
     response = action.call(params)
-    response[0].must_equal 200
+    response[0].must_equal 302
+    response[1]['Location'].must_equal routes.path('setup')
   end
 end

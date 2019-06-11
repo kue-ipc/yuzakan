@@ -6,8 +6,8 @@ describe Web::Controllers::User::Password::Edit do
   let(:action) { Web::Controllers::User::Password::Edit.new }
   let(:params) { Hash[] }
 
-  it 'is successful' do
-    response = action.call(params)
-    response[0].must_equal 200
-  end
+  # it 'is successful' do
+  #   response = action.call(params)
+  #   response[0].must_equal 200
+  # end
 end

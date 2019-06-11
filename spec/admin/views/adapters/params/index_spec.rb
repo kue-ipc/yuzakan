@@ -8,7 +8,7 @@ describe Admin::Views::Adapters::Params::Index do
   let(:view)      { Admin::Views::Adapters::Params::Index.new(template, exposures) }
   let(:rendered)  { view.render }
 
-  it 'exposes #format' do
-    view.format.must_equal exposures.fetch(:format)
-  end
+  # it 'exposes #format' do
+  #   view.format.must_equal exposures.fetch(:format)
+  # end
 end
