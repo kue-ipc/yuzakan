@@ -9,6 +9,9 @@ module Admin
         def call(params)
           self.body = 'OK'
         end
+
+        def authenticate!; end
+        def configurate!; end
       end
     end
   end

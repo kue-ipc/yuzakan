@@ -17,6 +17,9 @@ module Admin
                 Yuzakan::Adapters.get_by_name(adapter_id)
               end
           end
+
+          def authenticate!; end
+          def configurate!; end
         end
       end
     end
