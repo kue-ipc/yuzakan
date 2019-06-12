@@ -8,9 +8,6 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    active_directory (1.6.1.1)
-      bindata (~> 2)
-      net-ldap (~> 0)
     addressable (2.6.0)
       public_suffix (>= 2.0.2, < 4.0)
     bcrypt (3.1.13)
@@ -18,10 +15,9 @@ GEM
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
       rack (>= 0.9.0)
-    bindata (2.4.4)
     binding_of_caller (0.8.0)
       debug_inspector (>= 0.0.1)
-    capybara (3.22.0)
+    capybara (3.23.0)
       addressable
       mini_mime (>= 0.1.3)
       nokogiri (~> 1.8)
@@ -40,7 +36,7 @@ GEM
     dry-configurable (0.8.3)
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.4, >= 0.4.7)
-    dry-container (0.7.0)
+    dry-container (0.7.1)
       concurrent-ruby (~> 1.0)
       dry-configurable (~> 0.1, >= 0.1.3)
     dry-core (0.4.7)
@@ -206,7 +202,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  active_directory
   bcrypt
   capybara
   coffee-script
