@@ -1,7 +1,7 @@
 module Admin
   module Views
     module Session
-      class Delete
+      class Destroy
         include Admin::View
       end
     end
