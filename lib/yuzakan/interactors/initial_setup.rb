@@ -10,18 +10,28 @@ class InitialSetup
     include Hanami::Validations
 
     validations do
-      required(:username) { filled? }
-      required(:password).filled.confirmation
+      required(:admin_user).schema do
+        required(:username) { filled? }
+        required(:password).filled.confirmation
+      end
     end
   end
 
-  def call(username:, password:, password_confirmation:)
-    setup_local_provider(username, password)
-    setup_role_and_admin(username)
+  def call(params)
+    admin_user = params[:admin_user]
+    setup_local_provider(admin_user[:username], admin_user[:password])
+    setup_role_and_admin(admin_user[:username])
 
     ConfigRepository.new.create(
       initialized: true,
     )
+  end
+
+  private def valid?(params)
+    validation = Validations.new(params).validate
+    error(validation.messages) if validation.failure?
+
+    validation.success?
   end
 
   private def setup_local_provider(username, password)
@@ -63,12 +73,5 @@ class InitialSetup
       name: username,
       role_id: admin_role.id
     )
-  end
-
-  private def valid?(params)
-    validation = Validations.new(params).validate
-    error(validation.messages) if validation.failure?
-
-    validation.success?
   end
 end

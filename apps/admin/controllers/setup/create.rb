@@ -9,7 +9,7 @@ module Admin
         def call(params)
           redirect_to routes.path(:setup_done) if configurated?
 
-          result = InitialSetup.new.call(params[:admin_user])
+          result = InitialSetup.new.call(params[:config])
 
           if result.failure?
             flash[:errors] = result.errors

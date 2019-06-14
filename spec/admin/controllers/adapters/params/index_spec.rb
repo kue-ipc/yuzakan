@@ -10,7 +10,7 @@ describe Admin::Controllers::Adapters::Params::Index do
     let(:format) { 'application/json' }
 
     it 'DummyAdapter is successful' do
-      adapter_name = 'LDAPAdapter'
+      adapter_name = 'DummyAdapter'
       response = action.call(adapter_id: adapter_name, 'HTTP_ACCEPT' => format)
       response[0].must_equal 200
       response[1]['Content-Type'].must_equal "#{format}; charset=utf-8"
@@ -33,7 +33,7 @@ describe Admin::Controllers::Adapters::Params::Index do
     end
 
     it 'ActiveDirectoryAdapter is successful' do
-      adapter_name = 'ActiveDirectory'
+      adapter_name = 'ActiveDirectoryAdapter'
       response = action.call(adapter_id: adapter_name, 'HTTP_ACCEPT' => format)
       response[0].must_equal 200
       response[1]['Content-Type'].must_equal "#{format}; charset=utf-8"

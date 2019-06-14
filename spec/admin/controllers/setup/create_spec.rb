@@ -6,7 +6,7 @@ describe Admin::Controllers::Setup::Create do
   let(:action) { Admin::Controllers::Setup::Create.new }
   let(:params) { {
     config: {
-      admin: {
+      admin_user: {
         username: 'admin',
         password: 'pass',
         password_confirmaiton: 'pass',
