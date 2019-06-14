@@ -11,7 +11,7 @@ describe Admin::Controllers::Setup::Done do
       db_clear
     end
 
-    it 'redirect setup done' do
+    it 'redirect setup' do
       response = action.call(params)
       response[0].must_equal 302
       response[1]['Location'].must_equal '/admin/setup'
