@@ -13,7 +13,7 @@ describe Admin::Controllers::Session::Create do
       db_reset
     end
 
-    it 'redirect setup done' do
+    it 'redirect setup' do
       response = action.call(params)
       response[0].must_equal 302
       response[1]['Location'].must_equal '/admin/setup'

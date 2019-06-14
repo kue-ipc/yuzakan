@@ -16,6 +16,7 @@ module Admin
               else
                 Yuzakan::Adapters.get_by_name(adapter_id)
               end
+            halt 404 unless @adapter
           end
 
           def authenticate!; end

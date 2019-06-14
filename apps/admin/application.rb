@@ -257,8 +257,8 @@ module Admin
       #   # before :authenticate!    # run an authentication before callback
       # end
       controller.prepare do
-        include Authentication
         include Configuration
+        include Authentication
         before :configurate!
         before :authenticate!
         expose :current_config
