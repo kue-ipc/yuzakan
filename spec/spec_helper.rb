@@ -10,5 +10,4 @@ require_relative 'support/db'
 
 Hanami.boot
 
-db_clear
-db_initialize
+db_reset

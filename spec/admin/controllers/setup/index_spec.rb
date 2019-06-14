@@ -6,27 +6,26 @@ describe Admin::Controllers::Setup::Index do
   let(:action) { Admin::Controllers::Setup::Index.new }
   let(:params) { Hash[] }
 
-  before do
-    db_reset
-    db_initialize
+  describe 'before initialized' do
+    before do
+      db_clear
+    end
+
+    it 'is successful' do
+      response = action.call(params)
+      response[0].must_equal 200
+    end
   end
 
-  it 'is successful' do
-    db_clear
-    response = action.call(params)
-    response[0].must_equal 200
-  end
+  describe 'after initialized' do
+    before do
+      db_reset
+    end
 
-  it 'redirect setup done after initialized' do
-    db_clear
-    response = action.call(params)
-    response[0].must_equal 302
-    response[1]['Location'].must_equal '/admin/setup'
+    it 'redirect setup done' do
+      response = action.call(params)
+      response[0].must_equal 302
+      response[1]['Location'].must_equal '/admin/setup/done'
+    end
   end
-
-  it 'is successful after initialized' do
-    response = action.call(params)
-    response[0].must_equal 200
-  end
-
 end

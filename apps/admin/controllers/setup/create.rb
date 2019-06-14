@@ -7,6 +7,8 @@ module Admin
         include Admin::Action
 
         def call(params)
+          redirect_to routes.path(:setup_done) if configurated?
+
           if ConfigRepository.new.initialized?
             redirect_to routes.path(:setup_done)
           end
@@ -20,6 +22,9 @@ module Admin
             redirect_to routes.path(:setup)
           end
         end
+
+        def configurate!; end
+        def authenticate!; end
       end
     end
   end

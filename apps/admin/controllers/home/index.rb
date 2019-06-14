@@ -6,11 +6,11 @@ module Admin
       class Index
         include Admin::Action
 
-        def call(params)
-          unless ConfigRepository.new.initialized?
-            redirect_to routes.path(:setup)
-          end
+        def call(_params)
+          redirect_to routes.path(:dashboard) if authenticated?
         end
+
+        def authenticate!; end
       end
     end
   end

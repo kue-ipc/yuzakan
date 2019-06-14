@@ -4,10 +4,6 @@ describe Admin::Controllers::Providers::Destroy do
   let(:action) { Admin::Controllers::Providers::Destroy.new }
   let(:params) { Hash[] }
 
-  before do
-    db_reset
-  end
-
   it 'redirect setup before initialized' do
     db_clear
     response = action.call(params)

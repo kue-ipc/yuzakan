@@ -6,10 +6,6 @@ describe Admin::Controllers::Providers::Edit do
   let(:action) { Admin::Controllers::Providers::Edit.new }
   let(:params) { Hash[] }
 
-  before do
-    db_reset
-  end
-
   it 'redirect setup before initialized' do
     db_clear
     response = action.call(params)

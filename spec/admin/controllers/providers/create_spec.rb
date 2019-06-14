@@ -5,10 +5,6 @@ describe Admin::Controllers::Providers::Create do
   let(:session) { { user_id: 'admin' } }
   let(:params) { { 'rack.session' => session } }
 
-  before do
-    db_reset
-  end
-
   it 'redirect setup before initialized' do
     db_clear
     response = action.call(params)
