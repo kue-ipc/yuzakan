@@ -18,6 +18,7 @@ module Admin
         end
 
         def configurate!; end
+
         def authenticate!; end
       end
     end

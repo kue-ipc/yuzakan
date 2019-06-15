@@ -4,15 +4,15 @@ require_relative '../../../spec_helper'
 
 describe Admin::Controllers::Setup::Create do
   let(:action) { Admin::Controllers::Setup::Create.new }
-  let(:params) { {
+  let(:params) { Hash[
     config: {
       admin_user: {
         username: 'admin',
         password: 'pass',
-        password_confirmaiton: 'pass',
+        password_confirmation: 'pass',
       },
     },
-  } }
+  ] }
 
   describe 'before initialized' do
     before do
