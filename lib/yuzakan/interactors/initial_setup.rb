@@ -8,6 +8,7 @@ class InitialSetup
 
   class Validations
     include Hanami::Validations
+    messages_path 'config/messages.yml'
 
     validations do
       required(:admin_user).schema do

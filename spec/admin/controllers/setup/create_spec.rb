@@ -5,7 +5,7 @@ require_relative '../../../spec_helper'
 describe Admin::Controllers::Setup::Create do
   let(:action) { Admin::Controllers::Setup::Create.new }
   let(:params) { Hash[
-    config: {
+    setup: {
       admin_user: {
         username: 'admin',
         password: 'pass',

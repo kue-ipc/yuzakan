@@ -1,13 +1,15 @@
-p ローカル管理者のユーザー名とパスワードを入力してください。
+h1 初期セットアップ
 
-== form_for :admin_user, routes.path(:setup) do
-  - div do
-    - label 'ユーザー名', for: :username
-    - text_field :username, class: 'form-control'
-  - div do
-    - label 'パスワード', for: :password
-    - password_field :password, class: 'form-control'
-  - div do
-    - label 'パスワード(確認)', for: :confirm_password
-    - password_field :password_confirmation, class: 'form-control'
+== form_for :setup, routes.path(:setup) do
+  - p 'ローカル管理者のユーザー名とパスワードを入力してください。'
+  - fields_for :admin_user do
+    - div do
+      - label 'ユーザー名', for: :username
+      - text_field :username, class: 'form-control'
+    - div do
+      - label 'パスワード', for: :password
+      - password_field :password, class: 'form-control'
+    - div do
+      - label 'パスワード(確認)', for: :confirm_password
+      - password_field :password_confirmation, class: 'form-control'
   - submit 'セットアップ'
