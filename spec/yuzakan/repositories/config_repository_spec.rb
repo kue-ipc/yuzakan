@@ -3,28 +3,31 @@
 require_relative '../../spec_helper'
 
 describe ConfigRepository do
-  # place your tests here
+  let(:repository) { ConfigRepository.new }
 
-  before do
-    db_clear
-    db_initialize
-  end
+  describe 'before initialized' do
+    before do
+      db_clear
+    end
 
-  it 'current is nil before initialized' do
-    db_clear
-    ConfigRepository.new.current.must_be_nil
+    after do
+      db_reset
+    end
+
+    it 'current is nil' do
+      repository.current.must_be_nil
+    end
+
+    it 'initialized? is false' do
+      repository.initialized?.must_equal false
+    end
   end
 
   it 'current is config after initialized' do
-    ConfigRepository.new.current.wont_be_nil
-  end
-
-  it 'initialized? is false before initialized' do
-    db_clear
-    ConfigRepository.new.initialized?.must_equal false
+    repository.current.wont_be_nil
   end
 
   it 'initialized? is true after initialized' do
-    ConfigRepository.new.initialized?.must_equal true
+    repository.initialized?.must_equal true
   end
 end

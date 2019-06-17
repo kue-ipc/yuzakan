@@ -11,6 +11,10 @@ describe Admin::Controllers::Setup::Index do
       db_clear
     end
 
+    after do
+      db_reset
+    end
+
     it 'is successful' do
       response = action.call(params)
       response[0].must_equal 200
@@ -18,10 +22,6 @@ describe Admin::Controllers::Setup::Index do
   end
 
   describe 'after initialized' do
-    before do
-      db_reset
-    end
-
     it 'redirect setup done' do
       response = action.call(params)
       response[0].must_equal 302

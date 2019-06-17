@@ -34,5 +34,4 @@ describe InitialSetup do
     result = interactor.call(params)
     result.successful?.must_equal false
   end
-
 end
