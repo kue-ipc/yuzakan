@@ -12,6 +12,7 @@ module Admin
           result = InitialSetup.new.call(params[:setup])
 
           if result.failure?
+            pp result.errors
             flash[:errors] = result.errors
             redirect_to routes.path(:setup)
           end

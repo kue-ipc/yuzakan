@@ -1,5 +1,4 @@
 en:
   errors:
-    confirmation: ほげ
-    eql?: ふが
-    filled?: もえ
+    eql?: 値が一致しません。
+    filled?: 必須項目です。

@@ -11,6 +11,9 @@ class InitialSetup
     messages_path 'config/messages.yml'
 
     validations do
+      required(:config).schema do
+        required(:title) { filled? }
+      end
       required(:admin_user).schema do
         required(:username) { filled? }
         required(:password).filled.confirmation
@@ -18,21 +21,35 @@ class InitialSetup
     end
   end
 
+  def initialize
+    @config_repostiory = ConfigRepository.new
+  end
+
   def call(params)
+    config = params[:config]
     admin_user = params[:admin_user]
     setup_local_provider(admin_user[:username], admin_user[:password])
     setup_role_and_admin(admin_user[:username])
 
-    ConfigRepository.new.create(
+    @config_repostiory.create(
       initialized: true,
+      title: config[:title],
     )
   end
 
   private def valid?(params)
     validation = Validations.new(params).validate
-    error(validation.messages) if validation.failure?
-
+    if validation.failure?
+      error(params: validation.messages)
+      return false
+    end
     validation.success?
+
+    if @config_repostiory.initialized?
+      error(setup: 'すでに初期化済みです。')
+      return false
+    end
+    true
   end
 
   private def setup_local_provider(username, password)

@@ -11,6 +11,9 @@ end
 def db_initialize
   unless ConfigRepository.new.initialized?
     InitialSetup.new.call(
+      config: {
+        title: 'テスト',
+      },
       admin_user: {
         username: 'admin',
         password: 'pass',
