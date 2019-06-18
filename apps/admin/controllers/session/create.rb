@@ -5,6 +5,14 @@ module Admin
         include Admin::Action
 
         def call(params)
+          result = Login.new.call(params[:session])
+          if result.successful?
+            session[:user_id] = result.user.id
+          else
+            flash[:errors] = result.errors
+            redirect_to routes.path(:new_session)
+          end
+          flash[:success] = ['ログインしました。']
         end
 
         def authenticate!; end

@@ -46,7 +46,7 @@ class InitialSetup
     validation.success?
 
     if @config_repostiory.initialized?
-      error(setup: 'すでに初期化済みです。')
+      error('すでに初期化済みです。')
       return false
     end
     true

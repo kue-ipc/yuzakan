@@ -9,7 +9,7 @@ module Web
         def call(params)
           user = UserRepository.new.auth(
             params[:session][:username],
-            params[:session][:password]
+            params[:session][:password],
           )
           if user
             session[:user_id] = user.id

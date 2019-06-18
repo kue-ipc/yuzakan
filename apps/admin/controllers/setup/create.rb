@@ -12,8 +12,14 @@ module Admin
           result = InitialSetup.new.call(params[:setup])
 
           if result.failure?
-            pp result.errors
-            flash[:errors] = result.errors
+            flash[:errors] = []
+            result.errors.each do |error|
+              if error.is_a?(Hash) && error[:params]
+                flash[:param_errors] = error
+              else
+                flash[:errors] << error
+              end
+            end
             redirect_to routes.path(:setup)
           end
         end

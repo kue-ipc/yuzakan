@@ -36,13 +36,20 @@ html
               = link_to  'Disabled', '#', class: 'nav-link disabled', tabindex: -1, 'aria-disabled': true
           = form_for :session, routes.session_path, method: :delete, class: 'form-inline my-2 my-lg-0' do
             - submit 'ログアウト', class: 'btn btn-outline-secondary my-2 my-sm-0'
-    .container.mt-2
-      - flash[:errors]&.each do |error|
-        - error.each do |name, messages|
-          - messages.each do |message|
-            .alert.alert-danger role="alert"
-              strong
-                = name
-                | :&nbsp;
-              = message
+    .container-fluid.mt-2
+      - flash[:errors]&.each do |msg|
+        .alert.alert-danger role="alert"
+          = h(msg)
+      - flash[:warns]&.each do |msg|
+        .alert.alert-warning role="alert"
+          = h(msg)
+      - flash[:notes]&.each do |msg|
+        .alert.alert-info role="alert"
+          = h(msg)
+      - flash[:messages]&.each do |msg|
+        .alert.alert-primary role="alert"
+          = h(msg)
+      - flash[:successes]&.each do |msg|
+        .alert.alert-success role="alert"
+          = h(msg)
       = yield
