@@ -12,7 +12,7 @@ module Admin
             flash[:errors] = result.errors
             redirect_to routes.path(:new_session)
           end
-          flash[:success] = ['ログインしました。']
+          flash[:successes] = ['ログインしました。']
         end
 
         def authenticate!; end

@@ -5,7 +5,7 @@ Hanami::Model.migration do
     create_table :users do
       primary_key :id
 
-      foreign_key :role_id, :roles, null: true
+      foreign_key :role_id, :roles, on_delete: :set_null, null: true
 
       column :name, String, null: false, unique: true, index: true
 

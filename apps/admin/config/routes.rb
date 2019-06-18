@@ -14,3 +14,4 @@ resources 'adapters', only: [:show] do
   resources 'params', only: [:index]
 end
 resource 'session', only: %i[new destroy create]
+get '/dashboard', to: 'dashboard#index', as: :dashboard

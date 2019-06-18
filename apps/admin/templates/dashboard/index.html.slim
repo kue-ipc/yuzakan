@@ -1,0 +1,4 @@
+h2 管理画面
+
+- if current_user.role.admin || current_user.role.config
+  = link_to 'プロバイダー', routes.path(:providers)

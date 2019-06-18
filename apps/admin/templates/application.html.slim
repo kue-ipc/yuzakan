@@ -34,8 +34,11 @@ html
                 = link_to 'Something else here', '#', class: 'dropdown-item'
             li.nav-item
               = link_to  'Disabled', '#', class: 'nav-link disabled', tabindex: -1, 'aria-disabled': true
-          = form_for :session, routes.session_path, method: :delete, class: 'form-inline my-2 my-lg-0' do
-            - submit 'ログアウト', class: 'btn btn-outline-secondary my-2 my-sm-0'
+          - if current_user
+            span.navbar-text
+              = h(current_user.display_name)
+            = form_for :session, routes.session_path, method: :delete, class: 'form-inline my-2 my-lg-0' do
+              - submit 'ログアウト', class: 'btn btn-outline-secondary my-2 my-sm-0'
     .container-fluid.mt-2
       - flash[:errors]&.each do |msg|
         .alert.alert-danger role="alert"

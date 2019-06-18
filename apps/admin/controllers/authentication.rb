@@ -11,7 +11,7 @@ module Admin
     end
 
     private def current_user
-      @current_user ||= UserRepository.new.find(session[:user_id])
+      @current_user ||= UserRepository.new.find_with_role(session[:user_id])
     end
   end
 end
