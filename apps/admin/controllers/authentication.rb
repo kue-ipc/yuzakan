@@ -9,7 +9,7 @@ module Admin
     private def authenticated?
       # TODO: 将来は管理者以外も権限があれば使用可能にする。
       # 現在のところ管理者のみログイン可能にする。
-      !current_user.nil? && current_user.role.admin
+      !current_user.nil? && current_user.role&.admin
     end
 
     private def current_user

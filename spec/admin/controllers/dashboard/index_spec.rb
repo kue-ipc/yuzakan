@@ -3,10 +3,8 @@ require_relative '../../../spec_helper'
 describe Admin::Controllers::Dashboard::Index do
   let(:action) { Admin::Controllers::Dashboard::Index.new }
   let(:params) { Hash['rack.session' => session] }
-  let(:user) { { username: 'admin', password: 'pass' }}
-  let(:session) { {
-    user_id: UserRepository.new.auth(user[:username], user[:password])&.id
-  } }
+  let(:auth) { { username: 'admin', password: 'pass' } }
+  let(:session) { { user_id: Login.new.call(auth).user&.id } }
 
   describe 'before initialized' do
     before do
@@ -26,6 +24,16 @@ describe Admin::Controllers::Dashboard::Index do
 
   describe 'before login' do
     let(:session) { {} }
+
+    it 'redirect login' do
+      response = action.call(params)
+      response[0].must_equal 302
+      response[1]['Location'].must_equal '/admin/session/new'
+    end
+  end
+
+  describe 'user login' do
+    let(:auth) { { username: 'user', password: 'word' }}
 
     it 'redirect login' do
       response = action.call(params)
