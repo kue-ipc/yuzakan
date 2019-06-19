@@ -7,7 +7,6 @@ module Admin
         include Admin::Action
 
         def call(params)
-          self.body = 'OK'
         end
       end
     end

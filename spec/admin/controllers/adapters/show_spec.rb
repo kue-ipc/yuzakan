@@ -8,8 +8,8 @@ describe Admin::Controllers::Adapters::Show do
   let(:auth) { { username: 'admin', password: 'pass' } }
   let(:session) { { user_id: Login.new.call(auth).user&.id } }
 
-  it 'is successful' do
-    response = action.call(params)
-    response[0].must_equal 200
-  end
+  # it 'is successful' do
+  #   response = action.call(params)
+  #   response[0].must_equal 200
+  # end
 end

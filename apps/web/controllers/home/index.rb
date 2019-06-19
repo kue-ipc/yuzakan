@@ -6,8 +6,11 @@ module Web
       class Index
         include Web::Action
 
-        def call(params)
+        def call(_params)
+          redirect_to routes.path(:dashboard) if authenticated?
         end
+
+        def authenticate!; end
       end
     end
   end

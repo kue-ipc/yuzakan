@@ -5,6 +5,7 @@ module Web
     module Home
       class Index
         include Web::View
+        layout false
 
         def title
           'ユーザー管理システム'
