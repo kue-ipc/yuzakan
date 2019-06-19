@@ -3,7 +3,10 @@
 module Admin
   module Authentication
     private def authenticate!
-      redirect_to routes.path(:new_session) unless authenticated?
+      unless authenticated?
+        flash[:warns] = ['ログインが必要です。']
+        redirect_to routes.path(:new_session)
+      end
     end
 
     private def authenticated?

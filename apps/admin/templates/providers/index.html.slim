@@ -4,6 +4,8 @@
 table.table
   tr
     th
+      | 識別名
+    th
       | 名前
     th
       | アダプター
@@ -11,6 +13,8 @@ table.table
     tr
       td
         = provider.name
+      td
+        = provider.display_name
       td
         = provider.adapter.label
       td

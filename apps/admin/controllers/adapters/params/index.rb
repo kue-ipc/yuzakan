@@ -18,9 +18,6 @@ module Admin
               end
             halt 404 unless @adapter
           end
-
-          def authenticate!; end
-          def configurate!; end
         end
       end
     end

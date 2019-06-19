@@ -13,8 +13,11 @@
 = javascript 'provider_adapter', type: 'module', defer: true
 = form_for form do
   - div class: 'form-group' do
-    - label 'プロバイダー名', for: :name
+    - label '識別名', for: :name
     - text_field :name, class: 'form-control'
+  - div class: 'form-group' do
+    - label 'プロバイダー名', for: :display_name
+    - text_field :display_name, class: 'form-control'
   - div do
     - h3 '可能な操作'
     - abilities.each do |ability|

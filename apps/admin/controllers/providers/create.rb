@@ -13,6 +13,7 @@ module Admin
           repo = ProviderRepository.new
           provider = repo.create(
             name: params[:provider][:name],
+            display_name: params[:provider][:display_name],
             order: repo.last_order.order + 1,
             adapter_name: adapter_name,
             readable: params[:provider][:readable],
