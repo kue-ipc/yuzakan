@@ -8,7 +8,13 @@ class Provider < Hanami::Entity
   def params
     data = {}
     ProviderRepository.params.each do |param_name|
-      __send__(param_name).each do |param|
+      params = __send__(param_name)
+      if params.nil?
+        data = nil
+        break
+      end
+
+      params.each do |param|
         data[param.name.intern] = param.value
       end
     end

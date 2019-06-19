@@ -2,7 +2,7 @@
 
 class ConfigRepository < Hanami::Repository
   def initialized?
-    !!current&.initialized
+    !!current
   end
 
   def current

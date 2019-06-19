@@ -9,7 +9,6 @@ def db_clear
 end
 
 def db_initialize
-  # unless ConfigRepository.new.initialized?
   InitialSetup.new.call(
     config: {
       title: 'テスト',
@@ -20,7 +19,15 @@ def db_initialize
       password_confirmation: 'pass',
     }
   )
-  # end
+  # 一般ユーザー
+  local_provider = ProviderRepository.new.by_name_with_params('local')
+  adapter = local_provider.one.adapter.new({})
+  adapter.create(
+    'user',
+    display_name: '一般ユーザー',
+    email: 'user@yuzakan.test',
+  )
+  adapter.change_password('user', 'word')
 end
 
 def db_reset

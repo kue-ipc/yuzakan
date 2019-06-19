@@ -20,6 +20,13 @@ class ProviderRepository < Hanami::Repository
     aggregate(*ProviderRepository.params)
       .where(id: id)
       .map_to(Provider)
+      .one
+  end
+
+  def by_name_with_params(name)
+    aggregate(*ProviderRepository.params)
+      .where(name: name)
+      .map_to(Provider)
   end
 
   def last_order

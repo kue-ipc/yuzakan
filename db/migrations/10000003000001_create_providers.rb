@@ -6,6 +6,7 @@ Hanami::Model.migration do
       primary_key :id
 
       column :name, String, null: false, unique: true, index: true
+      column :display_name, String, null: false, unique: true
 
       column :adapter_name, String, null: false
       column :order, Integer, null: false, unique: true

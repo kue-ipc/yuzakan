@@ -5,8 +5,6 @@ Hanami::Model.migration do
     create_table :configs do
       primary_key :id
 
-      column :initialized, TrueClass, null: false
-
       column :title, String, null: false
 
       column :created_at, DateTime, null: false

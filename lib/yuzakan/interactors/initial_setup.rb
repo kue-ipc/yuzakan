@@ -54,7 +54,8 @@ class InitialSetup
 
   private def setup_local_provider(username, password)
     local_provider = ProviderRepository.new.create(
-      name: 'ローカル',
+      name: 'local',
+      display_name: 'ローカル',
       immutable: true,
       order: '0',
       adapter_name: 'LocalAdapter',
@@ -62,34 +63,36 @@ class InitialSetup
       writable: true,
       authenticatable: true,
       password_changeable: true,
-      lockable: true
+      lockable: true,
     )
 
     local_provider_adapter = local_provider.adapter.new({})
     local_provider_adapter.create(
       username,
-      display_name: 'ローカル管理者'
+      display_name: 'ローカル管理者',
     )
     local_provider_adapter.change_password(username, password)
   end
 
   private def setup_role_and_admin(username)
     role_repo = RoleRepository.new
-    none_role = role_repo.create(
-      name: '権限なし',
+    role_repo.create(
+      name: 'default',
+      display_name: 'デフォルト',
       immutable: true,
-      admin: false
+      admin: false,
     )
 
     admin_role = role_repo.create(
-      name: '管理者',
+      name: 'admin',
+      display_name: '管理者',
       immutable: true,
-      admin: true
+      admin: true,
     )
 
     UserRepository.new.create(
       name: username,
-      role_id: admin_role.id
+      role_id: admin_role.id,
     )
   end
 end
