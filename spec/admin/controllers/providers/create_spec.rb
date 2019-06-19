@@ -2,8 +2,8 @@ require_relative '../../../spec_helper'
 
 describe Admin::Controllers::Providers::Create do
   let(:action) { Admin::Controllers::Providers::Create.new }
-  let(:session) { { user_id: 'admin' } }
   let(:params) { { 'rack.session' => session } }
+  let(:session) { { user_id: 1 } }
 
   describe 'before initialized' do
     before do

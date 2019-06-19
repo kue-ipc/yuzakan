@@ -14,6 +14,8 @@ table.table
       td
         = provider.adapter.label
       td
-        = link_to '編集', routes.edit_provider_path(provider.id)
-        = form_for provider, routes.provider_path(provider.id), method: :delete do
-          - submit '削除'
+        - unless provider.immutable
+          .d-flex.flex-row
+            = link_to '編集', routes.edit_provider_path(provider.id), class: 'btn btn-primary'
+            = form_for provider, routes.provider_path(provider.id), method: :delete, class: 'form-inline ml-2' do
+              - submit '削除', class: 'btn btn-danger'

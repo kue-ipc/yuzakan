@@ -18,7 +18,7 @@
   - div do
     - h3 '可能な操作'
     - abilities.each do |ability|
-      - div class: 'form-group form_check' do
+      - div class: 'form-check' do
         - check_box ability[:name], class: 'form-check-input'
         - label ability[:label], class: 'form-check-label', for: ability[:name]
   - div class: 'form-group' do

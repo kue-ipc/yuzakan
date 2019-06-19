@@ -10,7 +10,6 @@ module Admin
           id = params[:id]
           repo = ProviderRepository.new
           provider = repo.find(id)
-          pp provider.immutable
           unless provider.immutable
             repo.delete(id)
           end
