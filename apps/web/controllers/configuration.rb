@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-module Admin
+module Web
   module Configuration
     private def configurate!
-      redirect_to routes.path(:setup) unless configurated?
+      flash[:warns] ||= []
+      flash[:warns] << '現在ベータ版です。不具合がある場合は管理者にお問い合わせください。'
+      redirect_to routes.path(:maintenance) unless configurated?
     end
 
     private def configurated?

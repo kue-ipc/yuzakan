@@ -1,8 +1,10 @@
 doctype html
-html
+html lang="ja"
   head
+    meta charset="utf-8"
+    meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"
     title
-      = current_config&.title || '未初期化'
+      = current_config&.title
     = favicon
     = stylesheet 'application'
     = javascript 'application', defer: true, type: 'module'
@@ -39,19 +41,5 @@ html
           = form_for :session, routes.session_path, method: :delete, class: 'form-inline my-2 my-lg-0' do
             - submit 'ログアウト', class: 'btn btn-outline-secondary my-2 my-sm-0'
     .container-fluid.mt-2
-      - flash[:errors]&.each do |msg|
-        .alert.alert-danger role="alert"
-          = h(msg)
-      - flash[:warns]&.each do |msg|
-        .alert.alert-warning role="alert"
-          = h(msg)
-      - flash[:notes]&.each do |msg|
-        .alert.alert-info role="alert"
-          = h(msg)
-      - flash[:messages]&.each do |msg|
-        .alert.alert-primary role="alert"
-          = h(msg)
-      - flash[:successes]&.each do |msg|
-        .alert.alert-success role="alert"
-          = h(msg)
+      = render partial: 'partial/alert'
       = yield

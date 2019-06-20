@@ -1,0 +1,17 @@
+.alerts
+  - flash[:errors]&.each do |msg|
+    - next if msg.is_a?(Hash) && msg.key?(:params)
+    .alert.alert-danger role="alert"
+      = h(msg)
+  - flash[:warns]&.each do |msg|
+    .alert.alert-warning role="alert"
+      = h(msg)
+  - flash[:notes]&.each do |msg|
+    .alert.alert-info role="alert"
+      = h(msg)
+  - flash[:messages]&.each do |msg|
+    .alert.alert-primary role="alert"
+      = h(msg)
+  - flash[:successes]&.each do |msg|
+    .alert.alert-success role="alert"
+      = h(msg)

@@ -1,0 +1,15 @@
+doctype html
+html
+  head
+    title メンテナンス
+    = favicon
+    = stylesheet 'application'
+    = javascript 'application', defer: true, type: 'module'
+  body
+    - if current_config.nil? || current_config.maintenance
+      p メンテナンス中です。しばらく後に接続してください。
+    - else
+      p
+        | メンテナンスが完了しました。
+        = link_to 'トップページ', routes.root_path
+        | にアクセスしてください。
