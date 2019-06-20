@@ -31,9 +31,9 @@ class InitialSetup
     setup_local_provider(admin_user[:username], admin_user[:password])
     setup_role_and_admin(admin_user[:username])
 
-    @config_repostiory.create(
-      initialized: true,
+    @config_repostiory.setup(
       title: config[:title],
+      maintenace: false,
     )
   end
 

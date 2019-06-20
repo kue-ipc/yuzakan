@@ -6,6 +6,20 @@ class ConfigRepository < Hanami::Repository
   end
 
   def current
-    first
+    @@curent_config ||= first
   end
+
+  def cache_clear
+    @@curent_config = nil
+  end
+
+  def setup(data)
+    if current
+      update(@@curent_config.id, data)
+      cache_clear
+    else
+      create(data)
+    end
+  end
+
 end

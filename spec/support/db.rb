@@ -6,6 +6,7 @@ def db_clear
   LocalUserRepository.new.clear
   ProviderRepository.new.clear
   ConfigRepository.new.clear
+  ConfigRepository.new.cache_clear
 end
 
 def db_initialize
