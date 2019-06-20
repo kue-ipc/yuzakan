@@ -12,3 +12,5 @@ resource 'session', only: [:new, :destroy, :create]
 resource 'user', only: [] do
   resource 'password', only: [:edit, :update]
 end
+get '/about', to: 'about#index'
+get '/about/legacy', to: 'about#legacy'
