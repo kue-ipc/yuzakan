@@ -10,6 +10,7 @@ module Web
           result = Login.new.call(params[:session])
           if result.successful?
             session[:user_id] = result.user.id
+            session[:access_time] = Time.now
           else
             flash[:errors] = result.errors
             redirect_to routes.path(:new_session)
