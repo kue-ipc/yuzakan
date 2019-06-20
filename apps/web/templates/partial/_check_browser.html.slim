@@ -1,0 +1,12 @@
+.check-browser
+  noscript
+    .alert.alert-danger role="alert"
+      | JavaScriptが無効です。サイトの操作にはJavaScripnが必須です。JavaScriptを有効にしてください。
+  .legacy-browser.d-none
+    .alert.alert-danger role="alert"
+      | ブラウザの機能が古いため、JavaScriptを正常に動作させることができません。
+      | 最新のブラウザを使用してください。
+      | 対応ブラウザについての詳細は
+      =<> link_to '対応ブラウザについて', '/about/legacy'
+      | を確認してください。
+  = javascript 'legacy-browser', nomodule: true

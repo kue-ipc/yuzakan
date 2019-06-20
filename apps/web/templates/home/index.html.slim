@@ -18,5 +18,6 @@ html lang="ja"
         hr.my-4
         p 現在、パスワード変更のみ利用可能です。
     .container-fluid
+      = render partial: 'partial/check_browser'
       = render partial: 'partial/alert'
       = render partial: 'session/form'

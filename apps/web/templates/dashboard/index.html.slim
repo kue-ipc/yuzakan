@@ -1,6 +1,8 @@
-| ようこそ
-= current_user.name
-| さん
-
-p
-  = link_to 'パスワード変更', routes.edit_user_password_path
+.menu.px-4
+  .row
+    h2 利用者用メニュー
+  .row
+    .col-md-4.m-3
+      h3
+        = link_to 'パスワード変更', routes.edit_user_password_path, class: 'btn bt-lg btn-primary'
+      p パスワード変更ができます。

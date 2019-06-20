@@ -1,17 +1,32 @@
 .alerts
   - flash[:errors]&.each do |msg|
     - next if msg.is_a?(Hash) && msg.key?(:params)
-    .alert.alert-danger role="alert"
+    .alert.alert-danger.alert-dismissible.fade.show role="alert"
+      button.close type="button" data-dismiss="alert" aria-label="閉じる"
+        span aria-hidden="true"
+          i.fas.fa-times
       = h(msg)
   - flash[:warns]&.each do |msg|
-    .alert.alert-warning role="alert"
+    .alert.alert-warning.alert-dismissible.fade.show role="alert"
+      button.close type="button" data-dismiss="alert" aria-label="閉じる"
+        span aria-hidden="true"
+          i.fas.fa-times
       = h(msg)
   - flash[:notes]&.each do |msg|
-    .alert.alert-info role="alert"
+    .alert.alert-info.alert-dismissible.fade.show role="alert"
+      button.close type="button" data-dismiss="alert" aria-label="閉じる"
+        span aria-hidden="true"
+          i.fas.fa-times
       = h(msg)
   - flash[:messages]&.each do |msg|
-    .alert.alert-primary role="alert"
+    .alert.alert-primary.alert-dismissible.fade.show role="alert"
+      button.close type="button" data-dismiss="alert" aria-label="閉じる"
+        span aria-hidden="true"
+          i.fas.fa-times
       = h(msg)
   - flash[:successes]&.each do |msg|
-    .alert.alert-success role="alert"
+    .alert.alert-success.alert-dismissible.fade.show role="alert"
+      button.close type="button" data-dismiss="alert" aria-label="閉じる"
+        span aria-hidden="true"
+          i.fas.fa-times
       = h(msg)
