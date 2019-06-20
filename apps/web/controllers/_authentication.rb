@@ -11,7 +11,8 @@ module Web
     end
 
     private def current_user
-      @current_user ||= UserRepository.new.find(session[:user_id])
+      @current_user ||= session[:user_id] &&
+        UserRepository.new.find(session[:user_id])
     end
   end
 end
