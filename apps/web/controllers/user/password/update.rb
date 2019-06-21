@@ -7,10 +7,8 @@ module Web
         class Update
           include Web::Action
 
-          expose :succeeded
-
           def initialize
-            @change_password = ChangePassword.new
+            @change_password = PasswordChange.new
           end
 
           def call(params)
@@ -18,10 +16,11 @@ module Web
               username: current_user.name,
               password: params[:user][:password],
             )
-            if result
-              @succeeded = true
+            if result.failure?
+              flash[:errors] = result.errors
+              redirect_to routes.path(:edit_user_password)
             else
-              @succeeded = false
+              flash[:successes] = 'パスワードを変更しました。'
             end
           end
         end

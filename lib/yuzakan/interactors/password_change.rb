@@ -12,7 +12,7 @@ require 'zxcvbn'
 class PasswordChange
   include Hanami::Interactor
 
-  class Validaiton
+  class Validations
     include Hanami::Validations
 
     predicate :strong?, message: 'パスワードが弱すぎます。' do |current|

@@ -7,7 +7,7 @@ module Web
         include Web::Action
 
         def call(params)
-          result = Login.new.call(params[:session])
+          result = Authenticate.new.call(params[:session])
           if result.successful?
             session[:user_id] = result.user.id
             session[:access_time] = Time.now
