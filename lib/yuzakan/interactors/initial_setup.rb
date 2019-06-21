@@ -53,7 +53,7 @@ class InitialSetup
   end
 
   private def setup_local_provider(username, password)
-    local_provider = ProviderRepository.new.create(
+    ProviderRepository.new.create(
       name: 'local',
       display_name: 'ローカル',
       immutable: true,
@@ -65,8 +65,8 @@ class InitialSetup
       password_changeable: true,
       lockable: true,
     )
-
-    local_provider_adapter = local_provider.adapter.new({})
+    local_provider = ProviderRepository.new.by_name_with_params('local')
+    local_provider_adapter = local_provider.one.adapter
     local_provider_adapter.create(
       username,
       display_name: 'ローカル管理者',

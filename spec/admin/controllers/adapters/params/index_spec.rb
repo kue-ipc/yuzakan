@@ -6,7 +6,7 @@ describe Admin::Controllers::Adapters::Params::Index do
   let(:action) { Admin::Controllers::Adapters::Params::Index.new }
   let(:params) { Hash['rack.session' => session] }
   let(:auth) { { username: 'admin', password: 'pass' } }
-  let(:session) { { user_id: Login.new.call(auth).user&.id } }
+  let(:session) { { user_id: Authenticate.new.call(auth).user&.id } }
 
   describe 'json format' do
     let(:format) { 'application/json' }

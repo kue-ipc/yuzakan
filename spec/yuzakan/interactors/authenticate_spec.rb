@@ -2,8 +2,8 @@
 
 require_relative '../../spec_helper'
 
-describe Login do
-  let(:interactor) { Login.new }
+describe Authenticate do
+  let(:interactor) { Authenticate.new }
   let(:params) { Hash[
     username: 'admin',
     password: 'pass',

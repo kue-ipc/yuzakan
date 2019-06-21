@@ -4,7 +4,7 @@ describe Admin::Controllers::Dashboard::Index do
   let(:action) { Admin::Controllers::Dashboard::Index.new }
   let(:params) { Hash['rack.session' => session] }
   let(:auth) { { username: 'admin', password: 'pass' } }
-  let(:session) { { user_id: Login.new.call(auth).user&.id } }
+  let(:session) { { user_id: Authenticate.new.call(auth).user&.id } }
 
   describe 'before initialized' do
     before do

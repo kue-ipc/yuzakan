@@ -14,10 +14,10 @@ class UserRepository < Hanami::Repository
   end
 
   def auth(name, password)
-    providers = ProviderRepository.new.operational_all(:auth)
+    providers = ProviderRepository.new.operational_all_with_params(:auth)
     result = nil
     providers.each do |provider|
-      result = provider.adapter.new(provider.params).auth(name, password)
+      result = provider.adapter.auth(name, password)
       break if result
     end
 

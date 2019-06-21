@@ -48,7 +48,7 @@ module Yuzakan
 
         @@adapter_cache[provider.name] = {
           update_at: provider.update_at,
-          adapter: provider.adapter.new(provider.params),
+          adapter: provider.adapter,
         }
       end
       @@adapter_cache[provider.name][:adapter]

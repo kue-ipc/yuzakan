@@ -33,7 +33,7 @@ class ProviderRepository < Hanami::Repository
     providers.order { order.desc }.first
   end
 
-  def operational_all(operation)
+  def operational_all_with_params(operation)
     operation_ability = {
       create: :writable,
       read: :readable,

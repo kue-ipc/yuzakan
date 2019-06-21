@@ -6,7 +6,7 @@ describe Admin::Controllers::Adapters::Show do
   let(:action) { Admin::Controllers::Adapters::Show.new }
   let(:params) { Hash[] }
   let(:auth) { { username: 'admin', password: 'pass' } }
-  let(:session) { { user_id: Login.new.call(auth).user&.id } }
+  let(:session) { { user_id: Authenticate.new.call(auth).user&.id } }
 
   # it 'is successful' do
   #   response = action.call(params)
