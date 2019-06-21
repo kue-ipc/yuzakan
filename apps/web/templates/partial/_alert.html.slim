@@ -1,11 +1,14 @@
 .alerts
   - flash[:errors]&.each do |msg|
-    - next if msg.is_a?(Hash) && msg.key?(:params)
-    .alert.alert-danger.alert-dismissible.fade.show role="alert"
-      button.close type="button" data-dismiss="alert" aria-label="閉じる"
-        span aria-hidden="true"
-          i.fas.fa-times
-      = h(msg)
+    - if msg.is_a?(Hash) && msg.key?('params')
+      script.param-errors type="application/json"
+        = h(msg.to_json)
+    - else
+      .alert.alert-danger.alert-dismissible.fade.show role="alert"
+        button.close type="button" data-dismiss="alert" aria-label="閉じる"
+          span aria-hidden="true"
+            i.fas.fa-times
+        = h(msg)
   - flash[:warns]&.each do |msg|
     .alert.alert-warning.alert-dismissible.fade.show role="alert"
       button.close type="button" data-dismiss="alert" aria-label="閉じる"

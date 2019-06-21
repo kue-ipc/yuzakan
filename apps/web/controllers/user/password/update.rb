@@ -14,7 +14,9 @@ module Web
           def call(params)
             result = @change_password.call(
               username: current_user.name,
+              password_current: params[:user][:password],
               password: params[:user][:password],
+              password_confirmation: params[:user][:password_confirmation],
             )
             if result.failure?
               flash[:errors] = result.errors
