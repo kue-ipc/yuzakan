@@ -6,7 +6,8 @@ describe Web::Controllers::Home::Index do
   let(:action) { Web::Controllers::Home::Index.new }
   let(:params) { Hash['rack.session' => session] }
   let(:auth) { { username: 'user', password: 'word' } }
-  let(:session) { { user_id: Login.new.call(auth).user&.id } }
+  let(:session) { { user_id: Login.new.call(auth).user&.id,
+                    access_time: Time.now } }
 
   it 'redirect to dashboard' do
     response = action.call(params)

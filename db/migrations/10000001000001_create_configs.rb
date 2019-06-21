@@ -8,6 +8,8 @@ Hanami::Model.migration do
       column :title, String, null: false
       column :maintenance, TrueClass, null: false, default: false
 
+      column :session_timeout, Integer, null: false, default: 3600
+
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
     end

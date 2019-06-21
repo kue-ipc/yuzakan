@@ -11,15 +11,13 @@ module Web
     end
 
     private def current_user
-      # TODO: タイムアウトの時間は後ほど考える。
-      unless session[:access_time] && session[:access_time] + 10 > Time.now
-        @current_user = nil
+      if session[:access_time].nil? ||
+         session[:access_time] + current_config&.session_timeout.to_i < Time.now
         session[:user_id] = nil
       end
-
       session[:access_time] = Time.now
       @current_user ||= session[:user_id] &&
-        UserRepository.new.find(session[:user_id])
+                        UserRepository.new.find(session[:user_id])
     end
   end
 end
