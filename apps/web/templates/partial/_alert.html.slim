@@ -1,7 +1,7 @@
 .alerts
   - flash[:errors]&.each do |msg|
     - if msg.is_a?(Hash) && msg.key?('params')
-      script.param-errors type="application/json"
+      script#param-errors type="application/json"
         = h(msg.to_json)
     - else
       .alert.alert-danger.alert-dismissible.fade.show role="alert"
