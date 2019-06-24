@@ -41,6 +41,6 @@ end
 
 group :production do
   gem 'puma'
-  # gem 'mysql2'
+  gem 'mysql2'
   # gem 'pg'
 end
