@@ -32,7 +32,7 @@ task default: :test
 task spec: :test
 
 namespace :vendor do
-  rule %r{^node_modules/.bin/*$} do
+  rule %r{^node_modules/.bin/.*$} do
     sh 'npm install'
   end
 
