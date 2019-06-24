@@ -8,7 +8,7 @@ Hanami::Model.migration do
       foreign_key :provider_id, :providers, on_delete: :cascade, null: false
 
       column :name, String, null: false
-      column :salt, String, null: false, size: 12 # 8 バイトのBASE64
+      column :salt, String, null: false
       column :encrypted_value, String, null: false
 
       column :created_at, DateTime, null: false
