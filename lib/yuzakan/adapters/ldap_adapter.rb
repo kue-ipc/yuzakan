@@ -204,33 +204,35 @@ module Yuzakan
 
         operations = []
 
-        if user[:userpassword]&.first
-          operations << [
-            :replace,
-            :userpassword,
-            [generate_password(password)],
-          ]
-        else
-          operations << [
-            :add,
-            :userpassword,
-            generate_password(password),
-          ]
-        end
+        operations <<
+          if user[:userpassword]&.first
+            [
+              :replace,
+              :userpassword,
+              [generate_password(password)],
+            ]
+          else
+            [
+              :add,
+              :userpassword,
+              generate_password(password),
+            ]
+          end
 
-        if user[:sambantpassword]&.first
-          operations << [
-            :replace,
-            :sambantpassword,
-            [generate_ntpassword(password)],
-          ]
-        else
-          operations << [
-            :add,
-            :sambantpassword,
-            generate_ntpassword(password),
-          ]
-        end
+        operations <<
+          if user[:sambantpassword]&.first
+            [
+              :replace,
+              :sambantpassword,
+              [generate_ntpassword(password)],
+            ]
+          else
+            [
+              :add,
+              :sambantpassword,
+              generate_ntpassword(password),
+            ]
+          end
 
         if user[:sambalmpassword]&.first
           operations << [:delete, :sambalmpassword, nil]
