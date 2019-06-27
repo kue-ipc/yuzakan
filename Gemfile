@@ -13,6 +13,7 @@ gem 'sass'
 gem 'sassc'
 
 gem 'coffee-script'
+gem 'uglifier'
 
 gem 'bcrypt'
 gem 'zxcvbn-ruby'

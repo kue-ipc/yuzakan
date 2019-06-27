@@ -2,6 +2,7 @@
 
 require 'hanami/helpers'
 require 'hanami/assets'
+require 'uglifier'
 
 # TODO: 読み込んでおかないと動かない
 require_relative 'controllers/authentication'
@@ -131,7 +132,8 @@ module Admin
         # See: http://hanamirb.org/guides/assets/compressors
         #
         # In order to skip JavaScript compression comment the following line
-        javascript_compressor :builtin
+        # javascript_compressor :uglifier
+        javascript_compressor Uglifier.new(harmony: true)
 
         # Stylesheet compressor
         #
@@ -144,7 +146,7 @@ module Admin
         # See: http://hanamirb.org/guides/assets/compressors
         #
         # In order to skip stylesheet compression comment the following line
-        stylesheet_compressor :builtin
+        stylesheet_compressor :sass
 
         # Specify sources for assets
         #

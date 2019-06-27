@@ -137,13 +137,15 @@ GEM
     minitest (5.11.3)
     mysql2 (0.5.2)
     net-ldap (0.16.1)
+    nio4r (2.3.1)
     nokogiri (1.10.3)
       mini_portile2 (~> 2.4.0)
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
-    public_suffix (3.1.0)
-    puma (3.12.1)
+    public_suffix (3.1.1)
+    puma (4.0.0)
+      nio4r (~> 2.0)
     rack (2.0.7)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -193,6 +195,8 @@ GEM
     temple (0.8.1)
     tilt (2.0.9)
     transproc (1.0.3)
+    uglifier (4.1.20)
+      execjs (>= 0.3.0, < 3)
     url_mount (0.2.1)
       rack
     xpath (3.2.0)
@@ -223,6 +227,7 @@ DEPENDENCIES
   slim
   smbhash
   sqlite3
+  uglifier
   zxcvbn-ruby
 
 BUNDLED WITH
