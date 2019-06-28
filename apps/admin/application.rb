@@ -2,7 +2,6 @@
 
 require 'hanami/helpers'
 require 'hanami/assets'
-require 'uglifier'
 
 # TODO: 読み込んでおかないと動かない
 require_relative 'controllers/authentication'
@@ -133,7 +132,7 @@ module Admin
         #
         # In order to skip JavaScript compression comment the following line
         # javascript_compressor :uglifier
-        javascript_compressor Uglifier.new(harmony: true)
+        javascript_compressor Yuzakan::Utils::UglifierEsCompressor.new
 
         # Stylesheet compressor
         #

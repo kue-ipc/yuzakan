@@ -2,7 +2,6 @@
 
 require 'hanami/helpers'
 require 'hanami/assets'
-require 'uglifier'
 
 module Web
   class Application < Hanami::Application
@@ -129,7 +128,7 @@ module Web
         #
         # In order to skip JavaScript compression comment the following line
         # javascript_compressor :uglifier
-        javascript_compressor Uglifier.new(harmony: true)
+        javascript_compressor Yuzakan::Utils::UglifierEsCompressor.new
 
         # Stylesheet compressor
         #
