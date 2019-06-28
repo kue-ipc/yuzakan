@@ -52,7 +52,12 @@ Hanami.configure do
   end
 
   environment :production do
-    logger level: :info, formatter: :json, filter: []
+    logger 'daily', level: :info,
+                    formatter: :json,
+                    stream: 'log/production.log',
+                    filter: %w[
+                      password password_current password_confirmation
+                    ]
 
     mailer do
       delivery :smtp, address: ENV.fetch('SMTP_HOST'), port: ENV.fetch('SMTP_PORT')
