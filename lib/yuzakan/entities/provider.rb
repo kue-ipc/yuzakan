@@ -5,14 +5,13 @@ class Provider < Hanami::Entity
     Yuzakan::Adapters.get_by_name(adapter_name)
   end
 
-
   def adapter
     adapter_class.new(params)
   end
 
-  def params
+  def params(secret: true)
     data = {}
-    ProviderRepository.params.each do |param_name|
+    ProviderRepository.params(secret: secret).each do |param_name|
       params = __send__(param_name)
       if params.nil?
         data = nil

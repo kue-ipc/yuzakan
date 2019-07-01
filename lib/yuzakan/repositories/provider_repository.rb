@@ -1,13 +1,17 @@
 # frozen_string_literal: true
 
 class ProviderRepository < Hanami::Repository
-  def self.params
-    %i[
+  def self.params(secret: true)
+    list = %i[
       provider_string_params
       provider_integer_params
       provider_boolean_params
-      provider_secret_params
     ]
+    list.push(:provider_secret_params) if secret
+    list.freeze
+  end
+
+  def self.secret_params
   end
 
   associations do

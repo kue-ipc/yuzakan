@@ -8,7 +8,7 @@ module Admin
         expose :provider
 
         def call(params)
-          @provider = ProviderRepository.new.find_with_params(params[:id]).first
+          @provider = ProviderRepository.new.find_with_params(params[:id])
         end
       end
     end
