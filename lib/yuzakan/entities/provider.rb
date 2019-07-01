@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 class Provider < Hanami::Entity
+  def adapter_class
+    Yuzakan::Adapters.get_by_name(adapter_name)
+  end
+
+
   def adapter
-    adapter_class = Yuzakan::Adapters.get_by_name(adapter_name)
     adapter_class.new(params)
   end
 

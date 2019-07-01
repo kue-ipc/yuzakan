@@ -3,10 +3,6 @@
 require 'hanami/helpers'
 require 'hanami/assets'
 
-# TODO: 読み込んでおかないと動かない
-require_relative 'controllers/authentication'
-require_relative 'controllers/configuration'
-
 module Admin
   class Application < Hanami::Application
     configure do

@@ -2,7 +2,13 @@ require_relative '../../../spec_helper'
 
 describe Admin::Controllers::Providers::Create do
   let(:action) { Admin::Controllers::Providers::Create.new }
-  let(:params) { { 'rack.session' => session } }
+  let(:params) { {
+    'rack.session' => session,
+    provider: {
+      name: 'test',
+      display_name: 'テスト',
+    },
+  } }
   let(:session) { { user_id: 1 } }
 
   describe 'before initialized' do
@@ -35,8 +41,8 @@ describe Admin::Controllers::Providers::Create do
   #   response[1]['Location'].must_equal '/admin/session/new'
   # end
   #
-  # it 'is successful after initialized' do
-  #   response = action.call(params)
-  #   response[0].must_equal 200
-  # end
+  it 'is successful' do
+    response = action.call(params)
+    response[0].must_equal 200
+  end
 end
