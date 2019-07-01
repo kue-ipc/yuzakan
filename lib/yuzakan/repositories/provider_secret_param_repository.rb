@@ -3,6 +3,16 @@
 class ProviderSecretParamRepository < Hanami::Repository
   include Yuzakan::Utils::Cipher
 
+  associations do
+    belongs_to :provider
+  end
+
+  def by_provider_and_name(provider_id:, name:)
+    provider_secret_params
+      .where(provider_id: provider_id)
+      .where(name: name)
+  end
+
   def create_with_encrypt(data)
     create(encrypt_value(data))
   end

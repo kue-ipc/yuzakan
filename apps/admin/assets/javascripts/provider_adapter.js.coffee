@@ -6,14 +6,14 @@ import {h, app} from './hyperapp.js'
 mainNode = document.getElementById('provider-adapter')
 adapterSelectNode = document.getElementById(
   mainNode.getAttribute('data-adapter-select'))
-# params = JSON.parse(mainNode.getAttribute('data-params'))
+providerParamsData = mainNode.getAttribute('data-provider-params')
 
-# initAdapter =
-#   if mainNode.getAttribute('data-init-adapter')
-#     Number.parseInt(mainNode.getAttribute('data-init-adapter'), 10)
-#   else
-#     adapters[0].id
-
+if providerParamsData ? providerParamsData.length > 0
+  providerParams = JSON.parse(providerParamsData)
+  providerParamsSetted = true
+else
+  providerParams =　{}
+  providerParamsSetted = false
 
 getParamsByAdapter = (adapterName) ->
   result = await fetch "/admin/adapters/#{adapterName}/params",
@@ -34,6 +34,7 @@ InputString = (props) ->
     name: name
     type: 'text'
     class: 'form-control'
+    value: providerParams[props.name] ? ''
   for key in ['value', 'required', 'placeholder', 'maxlength', 'minlength', 'pattern', 'size']
     inputOpts[key] = props[key] if props[key]?
 
@@ -54,6 +55,8 @@ InputSecret = (props) ->
     class: 'form-control'
   for key in ['value', 'required', 'placeholder', 'maxlength', 'minlength', 'pattern', 'size']
     inputOpts[key] = props[key] if props[key]?
+  if providerParamsSetted
+    inputOpts['required'] = false
 
   h 'div', class: 'form-group', [
     h 'label', for: id, label
@@ -70,6 +73,7 @@ InputInteger = (props) ->
     name: name
     type: 'number'
     class: 'form-control'
+    value: providerParams[props.name] ? ''
   for key in ['value', 'required', 'placeholder', 'max', 'min', 'step']
     inputOpts[key] = props[key] if props[key]?
 
@@ -90,7 +94,7 @@ InputBoolean = (props) ->
     class: 'form-check-input'
     volue: '1'
 
-  if props.value
+  if props.value ? providerParams[props.name]
     inputOpts['checked'] = true
 
   h 'div', class: 'form-check', [
@@ -103,7 +107,7 @@ InputList = (props) ->
   name = "provider[params][#{props.name}]"
   id = "provider-params-#{props.name}]"
 
-  selected = props.value ? props.default
+  selected = props.value ? providerParams[props.name] ? props.default
 
   h 'div', class: 'form-group', [
     h 'label', for: id, label

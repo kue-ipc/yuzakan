@@ -11,9 +11,6 @@ class ProviderRepository < Hanami::Repository
     list.freeze
   end
 
-  def self.secret_params
-  end
-
   associations do
     ProviderRepository.params.each do |param|
       has_many param
