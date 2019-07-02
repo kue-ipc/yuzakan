@@ -42,13 +42,13 @@ module Yuzakan
             required: false,
             placeholder: 'dc=example,dc=jp',
           }, {
-            name: 'bind_user',
+            name: 'bind_username',
             label: '接続ユーザー',
             type: :string,
             required: true,
             placeholder: 'Administrator@example.jp',
           }, {
-            name: 'bind_pass',
+            name: 'bind_password',
             label: '接続ユーザーのパスワード',
             type: :secret,
             required: true,
@@ -103,35 +103,6 @@ module Yuzakan
         end
       end
 
-      # def create(username, attrs)
-      #   raise NotImplementedError
-      # end
-
-      # def read(username)
-      #   ldap = generate_ldap
-      #   user = ldap.search(search_user_opts(username))&.first
-      #   normalize_user(user)
-      # end
-
-      # def udpate(username, attrs)
-      #   raise NotImplementedError
-      # end
-
-      # def delete(username)
-      #   raise NotImplementedError
-      # end
-
-      # def auth(username, password)
-      #   ldap = generate_ldap
-      #   opts = search_user_opts(username).merge(password: password)
-      #   user = ldap.bind_as(opts)
-      #   if user
-      #     normalize_user(user&.first)
-      #   else
-      #     nil
-      #   end
-      # end
-
       # TODO: 要確認
       # 初期作成のユーザーは'add'じゃないとエラーになるかもしれない。
       # パスワードが削除されている状況はあり得るのだろうか？
@@ -153,76 +124,6 @@ module Yuzakan
         )
         true
       end
-
-      # private def generate_ldap
-      #   opts = {
-      #     host: @params[:host],
-      #     port: @params[:port],
-      #     base: @params[:base],
-      #     auth: {
-      #       method: :simple,
-      #       username: @params[:bind_user],
-      #       password: @params[:bind_pass],
-      #     },
-      #   }
-      #
-      #   port = @params[:port] if @params[:port] && !@params[:port].zero?
-      #   case @params[:protocol]
-      #   when 'ldap'
-      #     opts[:port] = port || 389
-      #   when 'ldaps'
-      #     opts[:port] = port || 636
-      #     opts[:encryption] = :simple_tls
-      #   else
-      #     raise "invalid protcol: #{@params[:protocol]}"
-      #   end
-      #
-      #   Net::LDAP.new(opts)
-      # end
-
-      # private def search_user_opts(name)
-      #   opts = {}
-      #   opts[:base] = @params[:user_base] if @params[:user_base]
-      #   opts[:scope] =
-      #     case @params[:user_scope]
-      #     when 'base' then Net::LDAP::SearchScope_BaseObject
-      #     when 'one' then Net::LDAP::SearchScope_SingleLevel
-      #     when 'sub' then Net::LDAP::SearchScope_WholeSubtree
-      #     else raise 'Invalid scope'
-      #     end
-      #
-      #   common_filter =
-      #     if @params[:user_filter] && !@params[:user_filter].empty?
-      #       Net::LDAP::Filter.construct(@params[:user_filter])
-      #     else
-      #       Net::LDAP::Filter.pres('objectclass')
-      #     end
-      #
-      #   opts[:filter] = common_filter &
-      #                   Net::LDAP::Filter.eq(@params[:user_name_attr], name)
-      #
-      #   opts
-      # end
-
-      # private def normalize_user(user)
-      #   return unless user
-      #
-      #   data = {
-      #     name: user[@params[:user_name_attr]]&.first,
-      #     display_name: user[:'displayname;lang-ja']&.first ||
-      #                   user[:displayname]&.first ||
-      #                   user[@params[:user_name_attr]]&.first,
-      #     email: user[:email]&.first || user[:mail]&.first,
-      #   }
-      #   user.each do |key, value|
-      #     # skip: userPassword, samba((Previous)?ClearText|LM|NT)Password
-      #     next if key.to_s =~ /password$/i
-      #     next if key == :email
-      #
-      #     data[key] = value
-      #   end
-      #   data
-      # end
 
       # ダブルコーテーションで囲ってUTF-16LEに変更する。
       private def generate_password(password)

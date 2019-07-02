@@ -67,13 +67,13 @@ module Yuzakan
             required: false,
             placeholder: 'dc=example,dc=jp',
           }, {
-            name: 'bind_user',
-            label: '接続ユーザー',
+            name: 'bind_username',
+            label: '接続ユーザー名',
             type: :string,
             required: true,
             placeholder: 'cn=Admin,dc=example,dc=jp',
           }, {
-            name: 'bind_pass',
+            name: 'bind_password',
             label: '接続ユーザーのパスワード',
             type: :secret,
             required: true,
@@ -265,8 +265,8 @@ module Yuzakan
           base: @params[:base],
           auth: {
             method: :simple,
-            username: @params[:bind_user],
-            password: @params[:bind_pass],
+            username: @params[:bind_username],
+            password: @params[:bind_password],
           },
         }
 

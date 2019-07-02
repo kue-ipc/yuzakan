@@ -48,6 +48,7 @@ Hanami.configure do
     # See: http://hanamirb.org/guides/projects/logging
     logger level: :debug, filter: %w[
       password password_current password_confirmation
+      bind_password
     ]
   end
 
@@ -57,6 +58,7 @@ Hanami.configure do
                     stream: 'log/production.log',
                     filter: %w[
                       password password_current password_confirmation
+                      bind_password
                     ]
 
     mailer do
