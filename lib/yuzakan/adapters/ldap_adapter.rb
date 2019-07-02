@@ -168,6 +168,19 @@ module Yuzakan
         ]
       end
 
+      def check
+        ldap = generate_ldap
+        base = ldap.search(
+          base: @params[:base_dn],
+          scope: Net::LDAP::SearchScope_BaseObject,
+        )&.first
+        if base
+          true
+        else
+          false
+        end
+      end
+
       # def create(username, attrs)
       #   raise NotImplementedError
       # end

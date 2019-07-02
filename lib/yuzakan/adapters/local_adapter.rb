@@ -16,6 +16,10 @@ module Yuzakan
         @repository = LocalUserRepository.new
       end
 
+      def check
+        true
+      end
+
       def create(username, attrs)
         @repository.create(
           name: username,

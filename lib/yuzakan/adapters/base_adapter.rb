@@ -41,6 +41,10 @@ module Yuzakan
         @params = params
       end
 
+      def check
+        raise NotImplementedError
+      end
+
       def create(_username, _attrs)
         raise NotImplementedError
       end
