@@ -35,7 +35,7 @@ class PasswordChange
     @provider_repository = provider_repository
   end
 
-  def call(username:, password:)
+  def call(username:, password:, **_)
     @provider_repository.operational_all_with_params(:change_password)
       .each do |provider|
         provider.adapter.change_password(username, password)

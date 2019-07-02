@@ -14,7 +14,7 @@ module Web
           def call(params)
             result = @change_password.call(
               username: current_user.name,
-              password_current: params[:user][:password],
+              password_current: params[:user][:password_current],
               password: params[:user][:password],
               password_confirmation: params[:user][:password_confirmation],
             )
@@ -22,7 +22,8 @@ module Web
               flash[:errors] = result.errors
               redirect_to routes.path(:edit_user_password)
             else
-              flash[:successes] = 'パスワードを変更しました。'
+              flash[:successes] ||= []
+              flash[:successes] << 'パスワードを変更しました。'
             end
           end
         end

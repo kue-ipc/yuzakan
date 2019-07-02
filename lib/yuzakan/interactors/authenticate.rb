@@ -59,7 +59,6 @@ class Authenticate
       @result = provider.adapter.auth(params[:username], params[:password])
       break if @result
     end
-
     unless @result && @result[:name] == params[:username]
       error('ユーザー名またはパスワードが違います。')
       return false
