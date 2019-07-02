@@ -286,7 +286,11 @@ module Yuzakan
 
       private def search_user_opts(name)
         opts = {}
-        opts[:base] = @params[:user_base] if @params[:user_base]
+        if @params[:user_base] && !@params[:user_base].empty?
+          opts[:base] = @params[:user_base] if @params[:user_base]
+        else
+          opts[:base] = @params[:base_dn]
+        end
         opts[:scope] =
           case @params[:user_scope]
           when 'base' then Net::LDAP::SearchScope_BaseObject
@@ -321,6 +325,8 @@ module Yuzakan
         user.each do |key, value|
           # skip: userPassword, samba((Previous)?ClearText|LM|NT)Password
           next if key.to_s =~ /password$/i
+          next if key == :name
+          next if key == :display_name
           next if key == :email
 
           data[key] = value
