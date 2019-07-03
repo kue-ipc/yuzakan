@@ -8,7 +8,7 @@ module Admin
 
         def call(params)
           adapter_name = params[:provider][:adapter_name]
-          adapter = Yuzakan::Adapters.get_by_name(adapter_name)
+          adapter = ADAPTERS.by_name(adapter_name)
 
           repo = ProviderRepository.new
           provider = repo.find(params[:id])

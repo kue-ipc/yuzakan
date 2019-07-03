@@ -9,15 +9,19 @@ module Yuzakan
   module Adapters
     class Manager
       def initialize
-        @adapters = search_adapters(base: :abstract)
+        @adapters = search_adapters(base: :abstract).freeze
       end
 
-      def class_list
-        @adapters.values
+      def hash
+        @adapters
       end
 
       def list
         @adapters.keys
+      end
+
+      def class_list
+        @adapters.values
       end
 
       def by_name(name)

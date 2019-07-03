@@ -2,6 +2,9 @@ require_relative '../../../spec_helper'
 
 describe Admin::Controllers::Providers::Destroy do
   let(:action) { Admin::Controllers::Providers::Destroy.new }
+  let(:params) { Hash['rack.session' => session] }
+  let(:auth) { { username: 'admin', password: 'pass' } }
+  let(:session) { { user_id: Authenticate.new.call(auth).user&.id } }
   let(:params) { Hash[] }
 
   describe 'before initialized' do

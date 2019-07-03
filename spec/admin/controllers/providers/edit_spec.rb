@@ -4,7 +4,9 @@ require_relative '../../../spec_helper'
 
 describe Admin::Controllers::Providers::Edit do
   let(:action) { Admin::Controllers::Providers::Edit.new }
-  let(:params) { Hash[] }
+  let(:params) { Hash['rack.session' => session] }
+  let(:auth) { { username: 'admin', password: 'pass' } }
+  let(:session) { { user_id: Authenticate.new.call(auth).user&.id } }
 
   describe 'before initialized' do
     before do

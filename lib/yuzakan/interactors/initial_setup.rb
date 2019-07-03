@@ -58,7 +58,7 @@ class InitialSetup
       display_name: 'ローカル',
       immutable: true,
       order: '0',
-      adapter_name: 'LocalAdapter',
+      adapter_name: 'local',
       readable: true,
       writable: true,
       authenticatable: true,

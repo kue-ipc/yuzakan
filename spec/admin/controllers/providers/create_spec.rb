@@ -7,9 +7,11 @@ describe Admin::Controllers::Providers::Create do
     provider: {
       name: 'test',
       display_name: 'テスト',
+      adapter_name: 'dummy',
     },
   } }
-  let(:session) { { user_id: 1 } }
+  let(:auth) { { username: 'admin', password: 'pass' } }
+  let(:session) { { user_id: Authenticate.new.call(auth).user&.id } }
 
   describe 'before initialized' do
     before do
@@ -42,7 +44,9 @@ describe Admin::Controllers::Providers::Create do
   # end
   #
   it 'is successful' do
+    pp params
     response = action.call(params)
-    response[0].must_equal 200
+    response[0].must_equal 302
+    response[1]['Location'].must_equal '/admin/providers'
   end
 end

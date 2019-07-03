@@ -4,71 +4,59 @@ require_relative '../../../../spec_helper'
 
 describe Admin::Controllers::Adapters::Params::Index do
   let(:action) { Admin::Controllers::Adapters::Params::Index.new }
-  let(:params) { Hash['rack.session' => session] }
+  let(:params) { Hash[
+    adapter_id: adapter_name,
+    'HTTP_ACCEPT' => format,
+    'rack.session' => session,
+  ] }
   let(:auth) { { username: 'admin', password: 'pass' } }
   let(:session) { { user_id: Authenticate.new.call(auth).user&.id } }
+  let(:format) { '*/*' }
+  let(:adapter_name) { 'dummy' }
 
   describe 'json format' do
     let(:format) { 'application/json' }
 
-    it 'DummyAdapter is successful' do
-      adapter_name = 'DummyAdapter'
-      response = action.call(params.merge(
-        adapter_id: adapter_name,
-        'HTTP_ACCEPT' => format,
-      ))
+    it 'dummy is successful' do
+      adapter_name = 'dummy'
+      response = action.call(params.merge(adapter_id: adapter_name))
       response[0].must_equal 200
       response[1]['Content-Type'].must_equal "#{format}; charset=utf-8"
       response[2].must_equal []
     end
 
-    it 'LocalAdapter is successful' do
-      adapter_name = 'LocalAdapter'
-      response = action.call(params.merge(
-        adapter_id: adapter_name,
-        'HTTP_ACCEPT' => format,
-      ))
+    it 'local is successful' do
+      adapter_name = 'local'
+      response = action.call(params.merge(adapter_id: adapter_name))
       response[0].must_equal 200
       response[1]['Content-Type'].must_equal "#{format}; charset=utf-8"
       response[2].must_equal []
     end
 
-    it 'LadpAdapter is successful' do
-      adapter_name = 'LdapAdapter'
-      response = action.call(params.merge(
-        adapter_id: adapter_name,
-        'HTTP_ACCEPT' => format,
-      ))
+    it 'ldap is successful' do
+      adapter_name = 'ldap'
+      response = action.call(params.merge(adapter_id: adapter_name))
       response[0].must_equal 200
       response[1]['Content-Type'].must_equal "#{format}; charset=utf-8"
     end
 
-    it 'ActiveDirectoryAdapter is successful' do
-      adapter_name = 'ActiveDirectoryAdapter'
-      response = action.call(params.merge(
-        adapter_id: adapter_name,
-        'HTTP_ACCEPT' => format,
-      ))
+    it 'ad is successful' do
+      adapter_name = 'ad'
+      response = action.call(params.merge(adapter_id: adapter_name))
       response[0].must_equal 200
       response[1]['Content-Type'].must_equal "#{format}; charset=utf-8"
     end
 
-    it 'NonAdapter is faild' do
-      adapter_name = 'NonAdapter'
-      response = action.call(params.merge(
-        adapter_id: adapter_name,
-        'HTTP_ACCEPT' => format,
-      ))
+    it 'none is faild' do
+      adapter_name = 'none'
+      response = action.call(params.merge(adapter_id: adapter_name))
       response[0].must_equal 404
     end
   end
 
   describe 'normal format' do
-    it 'LdapAdapter is successful' do
-      adapter_name = 'LdapAdapter'
-      response = action.call(params.merge(
-        adapter_id: adapter_name,
-      ))
+    it 'is successful' do
+      response = action.call(params)
       response[0].must_equal 200
       response[1]['Content-Type'].must_equal 'text/html; charset=utf-8'
     end
