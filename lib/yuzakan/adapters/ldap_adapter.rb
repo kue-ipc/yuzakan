@@ -18,7 +18,7 @@ module Yuzakan
         'LDAP'
       end
 
-      def self.usable?
+      def self.selectable?
         true
       end
 

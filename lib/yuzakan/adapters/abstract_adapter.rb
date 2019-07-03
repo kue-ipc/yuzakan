@@ -22,7 +22,7 @@ module Yuzakan
         raise NotImplementedError
       end
 
-      def self.usable?
+      def self.selectable?
         false
       end
 

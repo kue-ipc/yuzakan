@@ -19,7 +19,7 @@ module Yuzakan
         'Active Directory'
       end
 
-      def self.usable?
+      def self.selectable?
         true
       end
 

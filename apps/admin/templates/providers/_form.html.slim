@@ -7,7 +7,7 @@
  ]
 
 - select_adapters = ADAPTERS.hash \
-   .filter { |name, klass| klass.usable? } \
+   .filter { |name, klass| klass.selectable? } \
    .transform_values(&:label) \
    .invert
 
