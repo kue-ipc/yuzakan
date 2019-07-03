@@ -2,11 +2,11 @@
 
 require 'bcrypt'
 
-require_relative 'base_adapter'
+require_relative 'abstract_adapter'
 
 module Yuzakan
   module Adapters
-    class LocalAdapter < BaseAdapter
+    class LocalAdapter < AbstractAdapter
       def self.label
         'ローカル'
       end

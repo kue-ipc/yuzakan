@@ -17,7 +17,7 @@
 
 module Yuzakan
   module Adapters
-    class BaseAdapter
+    class AbstractAdapter
       def self.label
         raise NotImplementedError
       end

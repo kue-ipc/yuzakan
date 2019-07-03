@@ -9,11 +9,11 @@ require 'smbhash'
 # sambaLMPassword はデフォルト無効とし、設定済みは削除する。
 # sambaNTPassword はデフォルト有効とし、設定する。
 
-require_relative 'base_adapter'
+require_relative 'abstract_adapter'
 
 module Yuzakan
   module Adapters
-    class LdapAdapter < BaseAdapter
+    class LdapAdapter < AbstractAdapter
       def self.label
         'LDAP'
       end

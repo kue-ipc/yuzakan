@@ -10,12 +10,11 @@ require 'base64'
 # sambaLMPassword はデフォルト無効とし、設定済みは削除する。
 # sambaNTPassword はデフォルト有効とし、設定する。
 
-require_relative 'base_adapter'
 require_relative 'ldap_adapter'
 
 module Yuzakan
   module Adapters
-    class ActiveDirectoryAdapter < LdapAdapter
+    class AdAdapter < LdapAdapter
       def self.label
         'Active Directory'
       end

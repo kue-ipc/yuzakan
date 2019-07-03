@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative 'base_adapter'
+require_relative 'abstract_adapter'
 
 module Yuzakan
   module Adapters
-    class DummyAdapter < BaseAdapter
+    class DummyAdapter < AbstractAdapter
       def self.label
         'ダミー'
       end
