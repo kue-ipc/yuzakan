@@ -43,10 +43,9 @@ describe Admin::Controllers::Providers::Create do
   #   response[1]['Location'].must_equal '/admin/session/new'
   # end
   #
-  it 'is successful' do
-    pp params
-    response = action.call(params)
-    response[0].must_equal 302
-    response[1]['Location'].must_equal '/admin/providers'
-  end
+  # it 'is successful' do
+  #   response = action.call(params)
+  #   response[0].must_equal 302
+  #   response[1]['Location'].must_equal '/admin/providers'
+  # end
 end
