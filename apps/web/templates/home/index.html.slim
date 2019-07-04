@@ -9,14 +9,17 @@ html lang="ja"
     = stylesheet 'application'
     = javascript 'application', defer: true, type: 'module'
   body
-    .jumbotron.jumbotron-fluid
+    .jumbotron.jumbotron-fluid.mb-2
       .container-fluid
         h1.text-center.display-5
           = current_config.title
-        p.lead.text-center
-          | アカウント管理システム　利用者向け
-        hr.my-4
-        p 現在、パスワード変更のみ利用可能です。
+        p.lead.text-center.smaller
+          | アカウント管理システム
+        hr.my-2
+        p パスワード変更のみ利用可能です。
+        p
+          span.text-danger.font-weight-bold 現在、ベータ版です。
+          | 不具合が出た場合は、管理者までお問い合わせください。
     .container-fluid
       = render partial: 'partial/check_browser'
       = render partial: 'partial/alert'

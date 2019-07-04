@@ -3,8 +3,6 @@
 module Web
   module Configuration
     private def configurate!
-      flash[:warns] ||= []
-      flash[:warns] << '現在ベータ版です。不具合がある場合は管理者にお問い合わせください。'
       redirect_to routes.path(:maintenance) unless configurated?
     end
 
