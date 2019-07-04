@@ -2,8 +2,11 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.8.2",
     "bootstrap": "^4.3.1",
+    "bootstrap-material-design": "^4.1.2",
     "bootstrap.native": "^2.0.26",
     "hyperapp": "^1.2.9",
+    "startbootstrap-sb-admin": "^5.1.1",
+    "startbootstrap-sb-admin-2": "^4.0.6",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {

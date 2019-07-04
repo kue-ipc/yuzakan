@@ -10,24 +10,6 @@ Rake::TestTask.new do |t|
   t.warning = false
 end
 
-def copy_css(src, dst)
-  if FileTest.file?(src)
-    if %w[.css .scss .sass].include?(File.extname(src))
-      if File.basename(src) !~ /\A_/
-        dst = File.join(File.dirname(dst), '_' + File.basename(src))
-      end
-      if !FileTest.file?(dst) || File.mtime(src) > File.mtime(dst)
-        cp src, dst
-      end
-    end
-  elsif FileTest.directory?(src)
-    mkdir_p(dst) unless FileTest.directory?(dst)
-    Dir.each_child(src) do |child|
-      copy_css(File.join(src, child), File.join(dst, child))
-    end
-  end
-end
-
 task default: :test
 task spec: :test
 
@@ -46,13 +28,17 @@ namespace :vendor do
 
   task :build_css do
     [
-      {src: 'bootstrap/scss', dst: 'bootstrap'},
+      {src: 'bootstrap/dist/css/bootstrap.css', dst: 'bootstrap.css'},
+      {src: 'startbootstrap-sb-admin/css/sb-admin.css',dst: 'sb-admin.css'},
+      {src: 'startbootstrap-sb-admin-2/css/sb-admin-2.css',dst: 'sb-admin-2.css'},
     ].each do |target|
       [
         'apps/web/vendor/assets/stylesheets',
         'apps/admin/vendor/assets/stylesheets',
       ].each do |asset|
-        copy_css "node_modules/#{target[:src]}", "#{asset}/#{target[:dst]}"
+        parent_dir = "#{asset}"
+        mkdir_p(parent_dir) unless FileTest.directory?(parent_dir)
+        cp "node_modules/#{target[:src]}", "#{parent_dir}/#{target[:dst]}"
       end
     end
   end
