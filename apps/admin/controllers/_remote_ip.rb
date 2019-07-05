@@ -26,8 +26,7 @@ module Admin
         .compact
         .lazy
         .map { |name| request.get_header(name)&.split&.last }
-        .find.first
-        .tap(&method(:pp))
+        .find(&:itself)
         &.then(&IPAddr.method(:new))
     end
   end
