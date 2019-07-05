@@ -15,3 +15,5 @@ resources 'adapters', only: [:show] do
 end
 resource 'session', only: %i[new destroy create]
 get '/dashboard', to: 'dashboard#index', as: :dashboard
+get '/config/:id/edit', to: 'config#edit'
+patch '/config/:id', to: 'config#update'
