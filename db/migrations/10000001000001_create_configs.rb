@@ -16,6 +16,8 @@ Hanami::Model.migration do
       column :password_max_size, Integer, null: false, default: 255
       column :password_strength, Integer, null: false, default: 3
 
+      column :remote_ip_header, String
+
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
     end
