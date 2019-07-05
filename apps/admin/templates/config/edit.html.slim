@@ -1,0 +1,47 @@
+h2 全体設定
+
+= form_for form do
+  - div class: 'form-group' do
+    - label 'サイト名', for: :title
+    - text_field :title, class: 'form-control'
+
+  - div class: 'form-check' do
+    - check_box :maintenance, class: 'form-check-input'
+    - label 'メンテナンスモード', for: :maintenance, class: 'form-check-label'
+
+  - div class: 'form-group' do
+    - label 'セッションタイムアウト', for: :session_timeout
+    - div class: 'input-group' do
+      - number_field :session_timeout, class: 'form-control', min: 0
+      - div class: 'input-group-append'
+        - span '秒', class: 'input-group-text'
+
+  - div class: 'form-group' do
+    - label 'パスワード最小サイズ', for: :password_min_size
+    - div class: 'input-group' do
+      - number_field :password_min_size, class: 'form-control', min: 1, max: 255
+      - div class: 'input-group-append'
+        - span '文字', class: 'input-group-text'
+
+  - div class: 'form-group' do
+    - label 'パスワード最大サイズ', for: :password_max_size
+    - div class: 'input-group' do
+      - number_field :password_max_size, class: 'form-control', min: 1, max: 255
+      - div class: 'input-group-append'
+        - span '文字', class: 'input-group-text'
+
+  - div class: 'form-group' do
+    - label 'パスワードの強さ', for: :password_strength
+    - select :password_strength, password_strength_values, class: 'form-control', size: password_strength_values.size
+
+  - div class: 'form-group' do
+    - label 'リモートIPアドレスのHTTPヘッダ', for: :remote_ip_header
+    - text_field :remote_ip_header, class: 'form-control'
+    - small class: 'form-text text-muted' do
+      - 'リバースプロキシで付与されるもともとのクライアントIPアドレスが含まれているヘッダ、X-Fowarded-ForやX-Real-Ip等を指定します。リバースプロキシを経由しない環境では設定してはいけません。リバースプロキシ側で、正しく設定しておく必要があります。X-Forworded-Forなどをしてしいます。'
+
+  - div class: 'form-group' do
+    - label '', for: :remote_ip_header
+    - text_field :remote_ip_header, class: 'form-control'
+    - small class: 'form-text text-muted' do
+      - 'リバースプロキシで付与されるもともとのクライアントIPアドレスが含まれているヘッダ、X-Fowarded-ForやX-Real-Ip等を指定します。リバースプロキシを経由しない環境では設定してはいけません。リバースプロキシ側で、正しく設定しておく必要があります。X-Forworded-Forなどをしてしいます。'
