@@ -4,7 +4,7 @@ require_relative '../../../spec_helper'
 
 describe Admin::Controllers::Providers::Index do
   let(:action) { Admin::Controllers::Providers::Index.new }
-  let(:params) { Hash['rack.session' => session] }
+  let(:params) { {'REMOTE_ADDR' => '::1', 'rack.session' => session} }
   let(:auth) { { username: 'admin', password: 'pass' } }
   let(:session) { { user_id: Authenticate.new.call(auth).user&.id } }
 

@@ -4,18 +4,23 @@ require_relative '../../../spec_helper'
 
 describe Admin::Controllers::Setup::Create do
   let(:action) { Admin::Controllers::Setup::Create.new }
-  let(:params) { Hash[
-    setup: {
-      config: {
-        title: 'テスト',
+  let(:params) do
+    {
+      'REMOTE_ADDR' => '::1',
+      setup: {
+        config: {
+          title: 'テスト',
+        },
+        admin_user: {
+          username: 'admin',
+          password: 'pass',
+          password_confirmation: 'pass',
+        },
       },
-      admin_user: {
-        username: 'admin',
-        password: 'pass',
-        password_confirmation: 'pass',
-      },
-    },
-  ] }
+    }
+  end
+
+  let(:params) { {'REMOTE_ADDR' => '::1'} }
 
   describe 'before initialized' do
     before do

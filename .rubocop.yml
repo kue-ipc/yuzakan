@@ -5,6 +5,8 @@ Layout/EndOfLine:
   EnforcedStyle: lf
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
 
 Metrics/AbcSize:
   Max: 30

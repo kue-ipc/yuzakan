@@ -4,14 +4,17 @@ require_relative '../../../spec_helper'
 
 describe Admin::Controllers::Providers::Create do
   let(:action) { Admin::Controllers::Providers::Create.new }
-  let(:params) { {
-    'rack.session' => session,
-    provider: {
-      name: 'test',
-      display_name: 'テスト',
-      adapter_name: 'dummy',
-    },
-  } }
+  let(:params) do
+    {
+      'REMOTE_ADDR' => '::1',
+      'rack.session' => session,
+      provider: {
+        name: 'test',
+        display_name: 'テスト',
+        adapter_name: 'dummy',
+      },
+    }
+  end
   let(:auth) { { username: 'admin', password: 'pass' } }
   let(:session) { { user_id: Authenticate.new.call(auth).user&.id } }
 

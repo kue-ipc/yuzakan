@@ -4,7 +4,7 @@ require_relative '../../../spec_helper'
 
 describe Admin::Controllers::Session::Destroy do
   let(:action) { Admin::Controllers::Session::Destroy.new }
-  let(:params) { Hash[] }
+  let(:params) { {'REMOTE_ADDR' => '::1'} }
 
   describe 'before initialized' do
     before do

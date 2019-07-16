@@ -4,11 +4,14 @@ require_relative '../../../../spec_helper'
 
 describe Admin::Controllers::Adapters::Params::Index do
   let(:action) { Admin::Controllers::Adapters::Params::Index.new }
-  let(:params) { Hash[
-    adapter_id: adapter_name,
-    'HTTP_ACCEPT' => format,
-    'rack.session' => session,
-  ] }
+  let(:params) do
+    {
+      adapter_id: adapter_name,
+      'HTTP_ACCEPT' => format,
+      'rack.session' => session,
+      'REMOTE_ADDR' => '::1',
+    }
+  end
   let(:auth) { { username: 'admin', password: 'pass' } }
   let(:session) { { user_id: Authenticate.new.call(auth).user&.id } }
   let(:format) { '*/*' }

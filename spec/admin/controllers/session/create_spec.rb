@@ -4,7 +4,7 @@ require_relative '../../../spec_helper'
 
 describe Admin::Controllers::Session::Create do
   let(:action) { Admin::Controllers::Session::Create.new }
-  let(:params) { Hash[] }
+  let(:params) { {'REMOTE_ADDR' => '::1'} }
 
   describe 'before initialized' do
     before do
