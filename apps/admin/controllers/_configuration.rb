@@ -13,5 +13,9 @@ module Admin
     private def current_config
       @current_config ||= ConfigRepository.new.current
     end
+
+    private def curret_theme
+      current_config&.theme || 'defalut'
+    end
   end
 end
