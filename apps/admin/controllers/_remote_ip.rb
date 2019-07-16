@@ -5,29 +5,24 @@ require 'ipaddr'
 module Admin
   module RemoteIp
     include Configuration
+    include Yuzakan::Utils::IPList
 
     private def check_remote_ip!
       halt 403 unless allow_remote_ip?
     end
 
     private def allow_remote_ip?
-      admin_nework_repository = AdminNetworkRepository.new
+      # 未設定の場合は常に許可
+      return true unless current_config&.admin_networks&.size&.positive?
 
-      # リストが空の場合は制限しない。
-      return true if admin_nework_repository.count.zero?
-
-      admin_network_repository.any? do |network|
-        IPAddr.new(network.address).include?(remote_ip)
-      end
+      include_net?(remote_ip, current_config.admin_networks)
     end
 
     private def remote_ip
-      @remote_ip ||= [current_config&.remote_ip_header, 'REMOTE_ADDR']
-        .compact
-        .lazy
-        .map { |name| request.get_header(name)&.split&.last }
-        .find(&:itself)
-        &.then(&IPAddr.method(:new))
+      return @remote_ip if @remote_ip
+
+      result = CheckRemoteIp.new(config: current_config).call(request: request)
+      @remote_ip = result.remote_ip
     end
   end
 end

@@ -17,6 +17,9 @@ Hanami::Model.migration do
       column :password_strength, Integer, null: false, default: 3
 
       column :remote_ip_header, String
+      column :trusted_reverse_proxies, String, size: 4095
+
+      column :admin_networks, String, size: 4095
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

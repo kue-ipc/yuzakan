@@ -21,6 +21,8 @@ gem 'zxcvbn-ruby'
 gem 'net-ldap'
 gem 'smbhash'
 
+gem 'ipaddress'
+
 group :development do
   # Code reloading
   # See: http://hanamirb.org/guides/projects/code-reloading
