@@ -13,9 +13,18 @@ module Web
 
           def change_password_config
             {
-              min_size: 8,
-              max_size: 32,
-              min_score: 3,
+              min_size: current_config.password_min_size,
+              max_size: current_config.password_max_size,
+              min_score: current_config.password_min_score,
+              min_types: current_config.password_min_types,
+              unusable_chars: currrent_config.password_unusable_chars,
+              dict: current_config.password_extra_dict.split +
+                [
+                  current_user.name,
+                  current_user.display_name.split,
+                  current_user.email,
+                  current_user.email.slpit('@'),
+                ].flatten,
             }
           end
         end
