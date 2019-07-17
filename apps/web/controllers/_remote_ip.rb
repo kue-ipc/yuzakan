@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Admin
+module Web
   module RemoteIp
     include Configuration
     include Yuzakan::Utils::IPList
@@ -10,10 +10,8 @@ module Admin
     end
 
     private def allow_remote_ip?
-      # 未設定の場合は常に許可
-      return true unless current_config&.admin_networks&.size&.positive?
-
-      include_net?(remote_ip, current_config.admin_networks)
+      # 現行は常に許可
+      true
     end
 
     private def remote_ip

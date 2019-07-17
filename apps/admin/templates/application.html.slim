@@ -6,6 +6,7 @@ html lang="ja"
     title
       = current_config&.title || '未初期化'
     = favicon
+    = stylesheet "theme_#{current_theme}"
     = stylesheet 'application'
     = javascript 'application', defer: true, type: 'module'
   body

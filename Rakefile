@@ -27,14 +27,28 @@ namespace :vendor do
   end
 
   task :build_css do
-    [
-      {src: 'bootstrap/dist/css/bootstrap.css', dst: 'theme_default.css'},
-      {src: 'bootstrap/dist/css/bootstrap.css', dst: 'theme_bootstrap.css'},
-      {src: 'startbootstrap-sb-admin/css/sb-admin.css',
-        dst: 'theme_sb-admin.css'},
-      {src: 'startbootstrap-sb-admin-2/css/sb-admin-2.css',
-        dst: 'theme_sb-admin-2.css'},
-    ].each do |target|
+    list = [
+      {
+        src: 'bootstrap/dist/css/bootstrap.css',
+        dst: 'theme_bootstrap.css'},
+      {
+        src: 'startbootstrap-sb-admin-2/css/sb-admin-2.css',
+        dst: 'theme_startbootstrap-sb-admin-2.css',
+      },
+    ]
+
+    bootswatch_list = %w[
+      cerulean cosmo cyborg darkly flatly journal litera lumen lux materia
+      minty pulse sandstone simplex sketchy slate solar spacelab Superhero
+      united yeti
+    ].map do |name|
+      {
+        src: "bootswatch/dist/#{name}/bootstrap.css",
+        dst: "theme_bootswatch-#{name}.css"
+      }
+    end
+
+    (list + bootswatch_list).each do |target|
       [
         'apps/web/vendor/assets/stylesheets',
         'apps/admin/vendor/assets/stylesheets',

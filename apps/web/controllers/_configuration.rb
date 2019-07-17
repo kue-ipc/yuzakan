@@ -13,5 +13,9 @@ module Web
     private def current_config
       @current_config ||= ConfigRepository.new.current
     end
+
+    private def current_theme
+      current_config&.theme || DEFAULT_THEME
+    end
   end
 end

@@ -92,7 +92,7 @@ module Yuzakan
 
         @repository.update(
           user.id,
-          hashed_password: user.hashed_password[1..]
+          hashed_password: user.hashed_password[1..-1]
         )
       end
 
