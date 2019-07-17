@@ -28,9 +28,12 @@ namespace :vendor do
 
   task :build_css do
     [
-      {src: 'bootstrap/dist/css/bootstrap.css', dst: 'bootstrap.css'},
-      {src: 'startbootstrap-sb-admin/css/sb-admin.css',dst: 'sb-admin.css'},
-      {src: 'startbootstrap-sb-admin-2/css/sb-admin-2.css',dst: 'sb-admin-2.css'},
+      {src: 'bootstrap/dist/css/bootstrap.css', dst: 'theme_default.css'},
+      {src: 'bootstrap/dist/css/bootstrap.css', dst: 'theme_bootstrap.css'},
+      {src: 'startbootstrap-sb-admin/css/sb-admin.css',
+        dst: 'theme_sb-admin.css'},
+      {src: 'startbootstrap-sb-admin-2/css/sb-admin-2.css',
+        dst: 'theme_sb-admin-2.css'},
     ].each do |target|
       [
         'apps/web/vendor/assets/stylesheets',
