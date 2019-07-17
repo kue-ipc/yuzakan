@@ -7,6 +7,7 @@ require 'ipaddress'
 
 class CheckRemoteIp
   include Hanami::Interactor
+  include Yuzakan::Utils::IPList
 
   class Validations
     include Hanami::Validations
@@ -27,7 +28,7 @@ class CheckRemoteIp
     remote_addr_ip = IPAddress(request.fetch_header('REMOTE_ADDR'))
 
     if @config && @config.remote_ip_header && @config.trusted_reverse_proxies &&
-        include_net(remote_addr_ip, @config.trusted_reverse_proxies)
+        include_net?(remote_addr_ip, @config.trusted_reverse_proxies)
 
       header = request.get_header(header_env_name(@config.remote_ip_header))
       @romet_ip = str_to_ips(header).first if header

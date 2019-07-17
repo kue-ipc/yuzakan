@@ -5,9 +5,9 @@ h2 全体設定
     - label 'サイト名', for: :title
     - text_field :title, class: 'form-control'
 
-  - div class: 'form-check' do
-    - check_box :maintenance, class: 'form-check-input'
-    - label 'メンテナンスモード', for: :maintenance, class: 'form-check-label'
+  - div class: 'form-group' do
+    - label 'テーマ', for: :theme
+    - select :theme, THEMES_SELECTION, class: 'form-control'
 
   - div class: 'form-group' do
     - label 'セッションタイムアウト', for: :session_timeout
@@ -51,3 +51,5 @@ h2 全体設定
     - text_area :admin_networks, class: 'form-control', rows: 3
     - small class: 'form-text text-muted' do
       - '管理者機能にアクセス可能なネットワークを指定します。改行または空白で区切ってください。空の場合はすべてのIPアドレスからの接続を許可します。'
+
+  - submit '変更', class: 'btn btn-primary'

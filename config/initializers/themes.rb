@@ -27,3 +27,5 @@ THEMES = {
   'bootswatch-united' => 'United (by Bootswatch)',
   'bootswatch-yeti' => 'Yeti (by Bootswatch)',
 }
+
+THEMES_SELECTION = THEMES.map { |k, v| [v, k] }.to_h

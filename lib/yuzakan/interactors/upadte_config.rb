@@ -31,12 +31,12 @@ class UpdateConfig
     end
   end
 
-  def initialize(cofigu_repository = ConfigRepository.new)
+  def initialize(config_repository: ConfigRepository.new)
     @config_repository = config_repository
   end
 
   def call(params)
-    @config_repository.update(@config_repository.current_config.id,
+    @config_repository.update(@config_repository.current.id,
       params
     )
   end
@@ -53,7 +53,5 @@ class UpdateConfig
   private def check_ip_addr_list(list_str)
     list = list_str.split(/[,\s]\s*/).reject(&:empty?)
     ip_list = list.map { |str| IPAddr.new(str) }
-
-
   end
 end
