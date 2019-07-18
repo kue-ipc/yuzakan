@@ -14,7 +14,10 @@ Hanami::Model.migration do
 
       column :password_min_size, Integer, unll: false, default: 8
       column :password_max_size, Integer, null: false, default: 255
-      column :password_strength, Integer, null: false, default: 3
+      column :password_min_types, Integer, null: false, default: 1
+      column :password_min_score, Integer, null: false, default: 3
+      column :password_unusable_chars, String
+      column :password_extra_dict, String, size: 4095
 
       column :remote_ip_header, String
       column :trusted_reverse_proxies, String, size: 4095

@@ -17,14 +17,14 @@ module Web
               max_size: current_config.password_max_size,
               min_score: current_config.password_min_score,
               min_types: current_config.password_min_types,
-              unusable_chars: currrent_config.password_unusable_chars,
-              dict: current_config.password_extra_dict.split +
+              unusable_chars: current_config.password_unusable_chars,
+              dict: (current_config.password_extra_dict&.split || []) +
                 [
                   current_user.name,
-                  current_user.display_name.split,
+                  current_user.display_name&.split,
                   current_user.email,
-                  current_user.email.slpit('@'),
-                ].flatten,
+                  current_user.email&.split('@'),
+                ].flatten.compact,
             }
           end
         end

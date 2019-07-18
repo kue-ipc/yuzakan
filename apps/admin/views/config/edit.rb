@@ -13,8 +13,8 @@ module Admin
           )
         end
 
-        def password_strength_values
-          # zxcvbn strength
+        def password_scores
+          # zxcvbn score
           # https://github.com/dropbox/zxcvbn
           {
             '0 (解読推定数 < 10^3) 非常に危険' => 0,

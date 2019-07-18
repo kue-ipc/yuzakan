@@ -1,5 +1,7 @@
 h2 パスワード変更
 
+p 現在のパスワードと新しいパスワードを入力してください。新しいパスワード下記の「パスワードの要件」を満たす必要があります。
+
 = javascript 'change_password', type: 'module', defer: true
 - password_form = form
 = form_for password_form do
@@ -7,18 +9,62 @@ h2 パスワード変更
         'data-config': ha(JSON.generate(change_password_config))
 
 hr
-p パスワードは次の条件を満たす必要があります。
+
+h4 パスワードの要件
+p 新しいパスワードは次の要件を満たす必要があります。
 ul
-  li ASCII以外の文字および制御文字が含まれない。
-  li 長さが
-    = h(current_config.password_min_size)
-    | 文字以上
-    = h(current_config.password_max_size)
+  li
+    | 長さが
+    strong<>
+      = h(current_config.password_min_size)
+    | 文字以上、
+    strong<>
+      = h(current_config.password_max_size)
     | 文字以下である。
-  - if current_config.password_strength > 0
-    li 複雑性に一定以上の強度がある。
+  li
+    - if current_config.password_unusable_chars&.include?(' ')
+      - if current_config.password_unusable_chars&.delete(' ')&.size&.positive?
+        | 下記を除くASCII印字可能文字(半角の英数字と記号)のみを使用している。
+        strong 空白(スペース)は使用できない。
+        br
+        | 使用できないASCII印字可能文字:
+        - current_config.password_unusable_chars.delete(' ').each_char do |char|
+          strong<>
+            code
+              = h(char)
+      - else
+        | すべてのASCII印字可能文字(半角の英数字と記号)のみを使用している。
+        strong 空白(スペース)は使用できない。
+    - else
+      - if current_config.password_unusable_chars&.size&.positive?
+        | 下記を除くASCII印字可能文字(半角の英数字と記号)、および、空白(スペース)のみが使用している。
+        br
+        | 使用できないASCII印字可能文字:
+        - current_config.password_unusable_chars.each_char do |char|
+          strong<>
+            code
+              = h(char)
+      - else
+          | すべてのASCII印字可能文字(半角の英数字と記号)、および、空白(スペース)のみを使用しっている。
+    br
+    small.text-muted タブ等の制御文字、漢字やカナ等のASCII以外の文字は使用できない。
+  - if current_config.password_min_types > 2
+    - if current_config.password_min_types == 4
+      li
+        | 数字、英小文字、英大文字、記号の文字種4つをすべて使用している。
+    - else
+      li
+        | 数字、英小文字、英大文字、記号の文字種4つのうち
+        strong<>
+          = current_config.password_min_types
+        | 種類以上使用している。
+
+  - if current_config.password_min_score > 0
+    li パスワードの強度が一定以上のスコアである。
+
+h4 パスワードの強度
 p
-  | パスワードの強度は含まれる文字、長さ、パターン等からエントロピーを計測して数値化しています。
+  | 新しいパスワードを入力時に変化するパラメーターはパスワードの強度であり、そのパスワードを総当たりで解読するのにどれほど困難であるかを示しています。パスワードの強度は含まれる文字、長さ、パターン等からエントロピーを計測して内部で数値化して、そのスコアから強弱を判断しています。
   | 英単語の一部のみ変更やキーボードのキー配列などは記号が含まれていても「弱い」と判断され、
   | 数字のみなどであっても十分に長ければ「強い」と判断される場合があります。
   | 他人には推測しづらく、覚えやすいパスワードを設定してください。

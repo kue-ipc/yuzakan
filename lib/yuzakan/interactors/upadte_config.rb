@@ -22,7 +22,7 @@ class UpdateConfig
 
       required(:password_min_size) { int? & gteq?(1) & lteq?(255) }
       required(:password_max_size) { int? & gteq?(1) & lteq?(255) }
-      required(:password_strength) { int? & gteq?(0) & lteq?(4) }
+      required(:password_min_score) { int? & gteq?(0) & lteq?(4) }
 
       required(:remote_ip_header)
       required(:trusted_reverse_proxies)
