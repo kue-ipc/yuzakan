@@ -4,9 +4,10 @@ p 現在のパスワードと新しいパスワードを入力してください
 
 = javascript 'change_password', type: 'module', defer: true
 - password_form = form
-= form_for password_form do
-  - div id: 'change-password', 'data-name': password_form.name, \
-        'data-config': ha(JSON.generate(change_password_config))
+.change_password
+  = form_for password_form do
+    - div id: 'change-password', 'data-name': password_form.name, \
+          'data-config': ha(JSON.generate(change_password_config))
 
 hr
 
