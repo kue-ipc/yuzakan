@@ -4,10 +4,11 @@ p 現在のパスワードと新しいパスワードを入力してください
 
 = javascript 'change_password', type: 'module', defer: true
 - password_form = form
-.change_password
+.change_password.mx-auto.p-3.border.rounded
   = form_for password_form do
     - div id: 'change-password', 'data-name': password_form.name, \
-          'data-config': ha(JSON.generate(change_password_config))
+          'data-config': ha(JSON.generate(change_password_config)), \
+          'data-cols': ha(JSON.generate(change_password_cols))
 
 hr
 

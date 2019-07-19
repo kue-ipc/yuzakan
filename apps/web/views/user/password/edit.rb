@@ -27,6 +27,13 @@ module Web
                 ].flatten.compact,
             }
           end
+
+          def change_password_cols
+            {
+              left: 'col-sm-4',
+              right: 'col-sm-8',
+            }
+          end
         end
       end
     end

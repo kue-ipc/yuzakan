@@ -1,44 +1,44 @@
 import { h, app } from './hyperapp.js'
 import zxcvbn from './zxcvbn.js'
 
-changePasswodNode = document.getElementById('change-password')
-parentName = changePasswodNode.getAttribute('data-name')
-config = JSON.parse(changePasswodNode.getAttribute('data-config'))
+changePasswordNode = document.getElementById('change-password')
 
-class ColSizer
-  @colNames = ['sm', 'md', 'lg', 'xl']
+parentName = changePasswordNode.getAttribute('data-name')
+config = JSON.parse(changePasswordNode.getAttribute('data-config'))
+dataCols = JSON.parse(changePasswordNode.getAttribute('data-cols'))
 
-  constructor: ->
-    @cols =
-      sm: [4, 8, 12]
-      md: [3, 6, 3]
-      lg: [2, 4, 6]
-      xl: [2, 4, 6]
+paramErrorsNode = document.getElementById('param-errors')
+paramErrors =
+  if paramErrorsNode?
+    console.log(paramErrorsNode.innerText)
+    JSON.parse(paramErrorsNode.innerText)
+  else
+    {}
 
-  colSize: (indices...) ->
-    list = for name in ColSizer.colNames
-      size = (@cols[name][idx] for idx in indices).reduce((a, b) -> a + b)
-      ['col', name, size.toString()].join('-')
-    list.join(' ')
 
-StrengthIndicator = ({ score, strength, colSize } ) =>
-  [bgColor, label] =
-    if score >= config.min_score
-      ['bg-success', '強い']
-    else if score > 0
-      ['bg-warning', '弱い']
-    else if strength > 0
-      ['bg-danger', '危険']
+SCORE_LABELS = [
+  {tag: 'danger', label: '危険'}
+  {tag: 'warning', label: '弱い'}
+  {tag: 'secondary', label: '少し弱い'}
+  {tag: 'info', label: '強い'}
+  {tag: 'success', label: '安全'}
+]
+
+StrengthIndicator = ({score, strength, cols}) =>
+  {tag, label} =
+    if score == 0 && strength == 0
+      {tag: 'danger', label: ''}
     else
-      ['bg-danger']
+      SCORE_LABELS[score]
 
   strength = 100 if strength >= 100
+
   h 'div', class: 'row mb-3', [
-    h 'div', class: colSize(0)
-    h 'div', class: colSize(1),
+    h 'div', class: cols.left
+    h 'div', class: cols.right,
       h 'div', class: 'progress', style: {height: "2em"} ,
         h 'div', {
-          class: "progress-bar #{bgColor}",
+          class: "progress-bar bg-#{tag}",
           style:
             width: "#{strength}%"
           role: 'progressbar'
@@ -49,12 +49,18 @@ StrengthIndicator = ({ score, strength, colSize } ) =>
   ]
 
 class PasswordInputGenerator
-  constructor: ({@name, @label, parentName} ) ->
+  constructor: ({@name, @label, parentName, error = null} ) ->
     @state =
-      visible: false
-      valid: false
-      wasValidated: false
-      message: 'パスワードを入力してください。'
+      if error?
+        visible: false
+        valid: false
+        wasValidated: true
+        message: error
+      else
+        visible: false
+        valid: false
+        wasValidated: false
+        message: 'パスワードを入力してください。'
 
     @actions =
       showPassword: (value) => (state, actions) =>
@@ -79,8 +85,8 @@ class PasswordInputGenerator
         @name.replace('-', '_')
 
   createView: ->
-    ({visible, valid, wasValidated, message,
-      showPassword, inputPassword, colSize} ) =>
+    ({visible, valid, wasValidated, message, showPassword, inputPassword,
+        cols} ) =>
       vaildState = if wasValidated
         if valid
           'is-valid'
@@ -88,8 +94,8 @@ class PasswordInputGenerator
           'is-invalid'
 
       h 'div', class: 'form-group row', [
-        h 'label', class: "col-form-label #{colSize(0)}", for: @name, @label
-        h 'div', class: "input-group #{colSize(1)}", [
+        h 'label', class: "col-form-label #{cols.left}", for: @name, @label
+        h 'div', class: "input-group #{cols.right}", [
           h 'input', {
             id: @name
             name: @fieldName
@@ -123,14 +129,19 @@ passwordCurrent = new PasswordInputGenerator
   name: 'password-current'
   label: '現在のパスワード'
   parentName: parentName
+  error: paramErrors['password-current']?[0]
+
 newPassword = new PasswordInputGenerator
   name: 'password'
   label: '新しいパスワード'
   parentName: parentName
+  error: paramErrors['password']?[0]
+
 passwordConfirmation = new PasswordInputGenerator
   name: 'password-confirmation'
   label: 'パスワードの確認'
   parentName: parentName
+  error: paramErrors['password-confirmation']?[0]
 
 state =
   passwordCurrent: passwordCurrent.state
@@ -138,6 +149,7 @@ state =
   passwordConfirmation: passwordConfirmation.state
   score: 0
   strength: 0
+  cols: dataCols
 
 actions =
   passwordCurrent: passwordCurrent.actions
@@ -147,10 +159,6 @@ actions =
     score: value.score
     strength: value.strength
 
-cs = new ColSizer
-colSize = (idecies) -> cs.colSize(idecies)
-
-
 view = (state, actions) ->
   h 'div', {} , [
     h passwordCurrent.view, {
@@ -159,7 +167,7 @@ view = (state, actions) ->
           actions.passwordCurrent.setValid('')
         else
           actions.passwordCurrent.setInvalid('パスワードが空です')
-      colSize: colSize
+      cols: state.cols
       state.passwordCurrent...
       actions.passwordCurrent...
     }
@@ -169,7 +177,7 @@ view = (state, actions) ->
           result = zxcvbn(text)
           actions.setScoreStrength
             score: result.score
-            strength: result.guesses_log10 * 10
+            strength: result.guesses_log10 * 7
           if result.score >= config.min_score
             actions.newPassword.setValid('強いパスワードです。')
           else
@@ -183,11 +191,15 @@ view = (state, actions) ->
         else
           actions.setScoreStrength(score: 0, strength: 0)
           actions.newPassword.setInvalid('パスワードが空です')
-      colSize: colSize
+      cols: state.cols
       state.newPassword...
       actions.newPassword...
     }
-    h StrengthIndicator, score: state.score, strength: state.strength, colSize: colSize
+    h StrengthIndicator, {
+      score: state.score
+      strength: state.strength
+      cols: state.cols
+    }
     h passwordConfirmation.view, {
       inputPassword: (text) ->
         if text == ''
@@ -197,19 +209,19 @@ view = (state, actions) ->
             actions.passwordConfirmation.setValid('一致します。')
           else
             actions.passwordConfirmation.setInvalid('一致しません。')
-      colSize: colSize
+      cols: state.cols
       state.passwordConfirmation...
       actions.passwordConfirmation...
     }
     h 'div', class: 'row',
-      h 'div', class: "#{colSize(0)}"
-      h 'div', class: "#{colSize(1)}",
+      h 'div', class: "#{state.cols.left}"
+      h 'div', class: "#{state.cols.right}",
         if state.passwordCurrent.valid &&
             state.newPassword.valid &&
             state.passwordConfirmation.valid
-          h 'button', class: 'btn btn-primary', type:'submit', '送信'
+          h 'button', class: 'btn btn-primary btn-block', type:'submit', '変更'
         else
-          h 'button', class: 'btn btn-primary', type:'submit', disabled: true, '送信'
+          h 'button', class: 'btn btn-primary btn-block', type:'submit', disabled: true, '変更'
   ]
 
-app state, actions, view, changePasswodNode
+app state, actions, view, changePasswordNode
