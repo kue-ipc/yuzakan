@@ -128,19 +128,19 @@ passwordCurrent = new PasswordInputGenerator
   name: 'password-current'
   label: '現在のパスワード'
   parentName: parentName
-  error: paramErrors['password-current']?[0]
+  error: paramErrors['password_current']
 
 newPassword = new PasswordInputGenerator
   name: 'password'
   label: '新しいパスワード'
   parentName: parentName
-  error: paramErrors['password']?[0]
+  error: paramErrors['password']
 
 passwordConfirmation = new PasswordInputGenerator
   name: 'password-confirmation'
   label: 'パスワードの確認'
   parentName: parentName
-  error: paramErrors['password-confirmation']?[0]
+  error: paramErrors['password_confirmation']
 
 state =
   passwordCurrent: passwordCurrent.state

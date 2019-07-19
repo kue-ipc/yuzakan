@@ -73,6 +73,21 @@ class ChangePassword
       ok = false
     end
 
+    if @config.password_min_types > 1
+      types = [
+        /[0-9]/,
+        /[a-z]/,
+        /[A-Z]/,
+        /[^0-9a-zA-Z]/,
+      ].select { |reg| reg.match(params[:passowrd]) }.size
+      if types < @config.password_min_types
+        error({password:
+          '文字種は%d種類以上でなければなりません。' %
+          @config.password_min_types})
+        ok = false
+      end
+    end
+
     dict = (@config.password_extra_dict&.split || []) +
       [
         @user.name,
@@ -89,7 +104,6 @@ class ChangePassword
     end
 
     # 現在のパスワード確認
-    pp @user
     result = Authenticate.new(provider_repository: @provider_repository).call(
       username: @user.name,
       password: params[:password_current],

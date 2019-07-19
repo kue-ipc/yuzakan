@@ -1,8 +1,9 @@
 .alerts
+  - param_errors = Hash.new { [] }
   - flash[:errors]&.each do |msg|
-    - if msg.is_a?(Hash) && msg.key?('params')
-      script#param-errors type="application/json"
-        = hj(msg['params'].to_json)
+    - if msg.is_a?(Hash)
+      - msg.each do |key, value|
+        - param_errors[key] += [value].flatten
     - else
       .alert.alert-danger.alert-dismissible.fade.show role="alert"
         button.close type="button" data-dismiss="alert" aria-label="閉じる"
@@ -37,3 +38,7 @@
         span aria-hidden="true"
           i.fas.fa-times
       = h(msg)
+
+  - if param_errors.size.positive?
+    script#param-errors type="application/json"
+      = hj(param_errors.to_json)
