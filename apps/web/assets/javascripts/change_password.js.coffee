@@ -10,7 +10,6 @@ dataCols = JSON.parse(changePasswordNode.getAttribute('data-cols'))
 paramErrorsNode = document.getElementById('param-errors')
 paramErrors =
   if paramErrorsNode?
-    console.log(paramErrorsNode.innerText)
     JSON.parse(paramErrorsNode.innerText)
   else
     {}

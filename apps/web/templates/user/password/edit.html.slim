@@ -3,12 +3,13 @@ h2 パスワード変更
 p 現在のパスワードと新しいパスワードを入力してください。新しいパスワード下記の「パスワードの要件」を満たす必要があります。
 
 = javascript 'change_password', type: 'module', defer: true
-- password_form = form
+- form
 .change_password.mx-auto.p-3.border.rounded
-  = form_for password_form do
-    - div id: 'change-password', 'data-name': password_form.name, \
-          'data-config': ha(JSON.generate(change_password_config)), \
-          'data-cols': ha(JSON.generate(change_password_cols))
+  = form_for form do
+    - fields_for :password do
+      - div id: 'change-password', 'data-name': 'user[password]', \
+            'data-config': ha(JSON.generate(change_password_config)), \
+            'data-cols': ha(JSON.generate(change_password_cols))
 
 hr
 

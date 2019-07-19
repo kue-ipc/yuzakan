@@ -8,18 +8,17 @@ module Web
           include Web::Action
 
           def initialize
-            @change_password = PasswordChange.new
           end
 
           def call(params)
-            result = @change_password.call(
-              username: current_user.name,
-              password_current: params[:user][:password_current],
-              password: params[:user][:password],
-              password_confirmation: params[:user][:password_confirmation],
+            @change_password = ChangePassword.new(
+              config: current_config,
+              user: current_user,
             )
+            result = @change_password.call(params[:user][:password])
             if result.failure?
               flash[:errors] = result.errors
+              flash[:errors] << 'パスワード変更に失敗しました。'
               redirect_to routes.path(:edit_user_password)
             else
               flash[:successes] ||= []
