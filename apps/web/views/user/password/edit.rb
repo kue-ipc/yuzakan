@@ -12,7 +12,7 @@ module Web
           end
 
           def change_password_config
-            {
+            @change_password_config ||= {
               min_size: current_config.password_min_size,
               max_size: current_config.password_max_size,
               min_score: current_config.password_min_score,
@@ -29,11 +29,18 @@ module Web
           end
 
           def change_password_cols
-            {
+            @change_password_cols ||= {
               left: 'col-sm-4',
               right: 'col-sm-8',
             }
           end
+
+          # def change_password_pattern
+          #   current_config.password_unusable_chars
+          #     .chars
+          #     .uniq
+          #     .map { |c| }
+          # end
         end
       end
     end

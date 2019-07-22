@@ -10,7 +10,38 @@ p 現在のパスワードと新しいパスワードを入力してください
       - div id: 'change-password', 'data-name': 'user[password]', \
             'data-config': ha(JSON.generate(change_password_config)), \
             'data-cols': ha(JSON.generate(change_password_cols))
-
+        - div do
+          - { \
+              password_current: '現在のパスワード', \
+              password: '新しいパスワード', \
+              password_confirmation: 'パスワードの確認' \
+            }.each do |key, value|
+            - div class: 'form-group row'
+              - label value, \
+                      class: ['col-form-label', change_password_cols[:left]], \
+                      for: key
+              - div class: ['input-group', change_password_cols[:right]] do
+                - password_class = ['form-control']
+                - password_class << 'is-invalid' if param_errors.key?(key)
+                - if key == :password
+                  - password_field key, \
+                      class: password_class, \
+                      placeholder: 'パスワードを入力', \
+                      required: true, \
+                      minlength: change_password_config[:min_size], \
+                      maxlength: change_password_config[:max_size]
+                - else
+                  - password_field key,
+                      class: password_class, \
+                      placeholder: 'パスワードを入力', \
+                      required: true
+                - if param_errors.key?(key)
+                  - div class: 'invalid-feedback' do
+                    - h(param_errors[key].join)
+          - div class: 'row'
+            - div class: change_password_cols[:left]
+            - div class: change_password_cols[:right]
+              - submit '変更', class: 'login-submit btn btn-primary btn-block'
 hr
 
 h4 パスワードの要件

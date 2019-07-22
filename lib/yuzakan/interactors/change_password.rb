@@ -14,6 +14,7 @@ class ChangePassword
 
   class Validations
     include Hanami::Validations::Form
+    messages_path 'config/messages.yml'
 
     validations do
       required(:password_current).filled
@@ -54,64 +55,69 @@ class ChangePassword
       ok = false
     end
 
-    if params[:password].size < @config.password_min_size
-      error({password:
-        '%d文字以上でなければなりません。' % @config.password_min_size})
-      ok = false
-    end
-
-    if params[:password].size > @config.password_max_size
-      error({password:
-        '%d文字以下でなければなりません。' % @config.password_max_size})
-      ok = false
-    end
-
-    if params[:passowrd] != /\A[\u0020-\u007e]*\z/ ||
-        !(@config.password_unusable_chars.chars -
-            params[:passowrd].chars).empty?
-      error({password: '使用できない文字が含まれています。'})
-      ok = false
-    end
-
-    if @config.password_min_types > 1
-      types = [
-        /[0-9]/,
-        /[a-z]/,
-        /[A-Z]/,
-        /[^0-9a-zA-Z]/,
-      ].select { |reg| reg.match(params[:passowrd]) }.size
-      if types < @config.password_min_types
+    if params[:password] && !params[:password].empty?
+      if params[:password].size < @config.password_min_size
         error({password:
-          '文字種は%d種類以上でなければなりません。' %
-          @config.password_min_types})
+          '%d文字以上でなければなりません。' % @config.password_min_size})
+        ok = false
+      end
+
+      if params[:password].size > @config.password_max_size
+        error({password:
+          '%d文字以下でなければなりません。' % @config.password_max_size})
+        ok = false
+      end
+
+      if params[:password] !~ /\A[\u0020-\u007e]*\z/ ||
+          !(@config.password_unusable_chars.chars &
+              params[:password].chars).empty?
+        error({password: '使用できない文字が含まれています。'})
+        ok = false
+      end
+
+      if @config.password_min_types > 1
+        types = [
+          /[0-9]/,
+          /[a-z]/,
+          /[A-Z]/,
+          /[^0-9a-zA-Z]/,
+        ].select { |reg| reg.match(params[:password]) }.size
+        if types < @config.password_min_types
+          error({password:
+            '文字種は%d種類以上でなければなりません。' %
+            @config.password_min_types})
+          ok = false
+        end
+      end
+
+      dict = (@config.password_extra_dict&.split || []) +
+        [
+          @user.name,
+          @user.display_name&.split,
+          @user.email,
+          @user.email&.split('@'),
+          params[:password_current],
+        ].flatten.compact
+
+      result = Zxcvbn.test(params[:password], dict)
+      if result.score < @config.password_min_score
+        error({password: 'パスワードが弱すぎます。'})
         ok = false
       end
     end
 
-    dict = (@config.password_extra_dict&.split || []) +
-      [
-        @user.name,
-        @user.display_name&.split,
-        @user.email,
-        @user.email&.split('@'),
-        params[:password_current],
-      ].flatten.compact
-
-    result = Zxcvbn.test(params[:password], dict)
-    if result.score < @config.password_min_score
-      error({password: 'パスワードが弱すぎます。'})
-      ok = false
-    end
-
     # 現在のパスワード確認
-    result = Authenticate.new(provider_repository: @provider_repository).call(
-      username: @user.name,
-      password: params[:password_current],
-    )
-    if result.failure?
-      error(password_current: 'パスワードが違います。')
-      ok = false
+    if params[:password_current] && !params[:password_current].empty?
+      result = Authenticate.new(provider_repository: @provider_repository).call(
+        username: @user.name,
+        password: params[:password_current],
+      )
+      if result.failure?
+        error(password_current: 'パスワードが違います。')
+        ok = false
+      end
     end
+
     ok
   end
 end
