@@ -48,7 +48,7 @@ class Authenticate
   private def valid?(params)
     validation = Validations.new(params).validate
     if validation.failure?
-      error(params: validation.messages)
+      error(validation.messages)
       return false
     end
 

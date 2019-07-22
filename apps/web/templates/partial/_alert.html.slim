@@ -1,10 +1,6 @@
 .alerts
-  - param_errors = Hash.new { [] }
   - flash[:errors]&.each do |msg|
-    - if msg.is_a?(Hash)
-      - msg.each do |key, value|
-        - param_errors[key] += [value].flatten
-    - else
+    - unless msg.is_a?(Hash)
       .alert.alert-danger.alert-dismissible.fade.show role="alert"
         button.close type="button" data-dismiss="alert" aria-label="閉じる"
           span aria-hidden="true"
@@ -12,33 +8,41 @@
         = h(msg)
 
   - flash[:warns]&.each do |msg|
-    .alert.alert-warning.alert-dismissible.fade.show role="alert"
-      button.close type="button" data-dismiss="alert" aria-label="閉じる"
-        span aria-hidden="true"
-          i.fas.fa-times
-      = h(msg)
+    - unless msg.is_a?(Hash)
+      .alert.alert-warning.alert-dismissible.fade.show role="alert"
+        button.close type="button" data-dismiss="alert" aria-label="閉じる"
+          span aria-hidden="true"
+            i.fas.fa-times
+        = h(msg)
 
   - flash[:notes]&.each do |msg|
-    .alert.alert-info.alert-dismissible.fade.show role="alert"
-      button.close type="button" data-dismiss="alert" aria-label="閉じる"
-        span aria-hidden="true"
-          i.fas.fa-times
-      = h(msg)
+    - unless msg.is_a?(Hash)
+      .alert.alert-info.alert-dismissible.fade.show role="alert"
+        button.close type="button" data-dismiss="alert" aria-label="閉じる"
+          span aria-hidden="true"
+            i.fas.fa-times
+        = h(msg)
 
   - flash[:messages]&.each do |msg|
-    .alert.alert-primary.alert-dismissible.fade.show role="alert"
-      button.close type="button" data-dismiss="alert" aria-label="閉じる"
-        span aria-hidden="true"
-          i.fas.fa-times
-      = h(msg)
+    - unless msg.is_a?(Hash)
+      .alert.alert-primary.alert-dismissible.fade.show role="alert"
+        button.close type="button" data-dismiss="alert" aria-label="閉じる"
+          span aria-hidden="true"
+            i.fas.fa-times
+        = h(msg)
 
   - flash[:successes]&.each do |msg|
-    .alert.alert-success.alert-dismissible.fade.show role="alert"
-      button.close type="button" data-dismiss="alert" aria-label="閉じる"
-        span aria-hidden="true"
-          i.fas.fa-times
-      = h(msg)
+    - unless msg.is_a?(Hash)
+      .alert.alert-success.alert-dismissible.fade.show role="alert"
+        button.close type="button" data-dismiss="alert" aria-label="閉じる"
+          span aria-hidden="true"
+            i.fas.fa-times
+        = h(msg)
 
   - if param_errors.size.positive?
     script#param-errors type="application/json"
       = hj(param_errors.to_json)
+
+  - if param_successes.size.positive?
+    script#param_successes type="application/json"
+      = hj(param_successes.to_json)

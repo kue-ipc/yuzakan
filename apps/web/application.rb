@@ -271,6 +271,7 @@ module Web
         include Hanami::Helpers
         include Web::Assets::Helpers
         include Web::Helpers::Escaper
+        include Web::Helpers::Alerter
       end
     end
 

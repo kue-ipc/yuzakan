@@ -4,32 +4,38 @@ html lang="ja"
     meta charset="utf-8"
     meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"
     title
-      | 対応ブラウザーについて
+      | レガシーモード
+    = favicon
+    = stylesheet "theme_#{current_theme}"
   body
-    h1 対応ブラウザーについて
-    h2 モダンブラウザー
-    p
-      | このシステムは最新のWeb技術を数多く使用しています。
-      | そのため、最新のモダンブラウザーでなければ、正しく表示できません。
-      | 下記ブラウザーの最新版を使用してください。
-    ul
-      - supported_browsers.each do |browser|
-        li
-          => link_to browser[:name], browser[:url], target: '_blank'
-          | (バージョン
-          = browser[:version]
-          | 以上)
-          - if browser[:note]&.size&.positive?
-            small.text-muted<
-              = browser[:note]
-    h2 レガシーブラウザー
-    p
-      | 下記ブラウザはモダンブラウザーとしての機能が不足しているため、未対応です。今後も対応する予定はありません。
-    ul
-      - unsupported_browsers.each do |browser|
-        li
-          = browser
-    h2 レガシーモード
-    p
-      | 未対応のブラウザを使用、または、JavaScriptを無効にした場合、レガシーモードで表示されます。
-      | レガシーモードではアイコン等の一部が表示されず、機能も制限されます。
+    .container-fluid.mt-2
+      h1 レガシーモード
+      h2 レガシーモードについて
+      p
+        | 未対応のブラウザを使用、または、JavaScriptを無効にした場合、
+        | レガシーモードで表示されます。
+        | レガシーモードではアイコン等の一部が表示されず、機能も制限されます。
+        | 通常のモダンモードで表示させたい場合は、
+        | 最新のモダンブラウザーを使用し、JavaScriptを有効にしてください。
+      h2 対応ブラウザー (モダンブラウザー)
+      p
+        | このシステムは最新のWeb技術を数多く使用しています。
+        | そのため、最新のモダンブラウザーでなければ、正しく表示できません。
+        | 下記ブラウザーの最新版を使用してください。
+      ul
+        - supported_browsers.each do |browser|
+          li
+            => link_to browser[:name], browser[:url], target: '_blank'
+            | (バージョン
+            = browser[:version]
+            | 以上)
+            - if browser[:note]&.size&.positive?
+              small.text-muted<
+                = browser[:note]
+      h2 未対応ブラウザー (レガシーブラウザー)
+      p
+        | 下記ブラウザはモダンブラウザーとしての機能が不足しているため、未対応です。今後も対応する予定はありません。
+      ul
+        - unsupported_browsers.each do |browser|
+          li
+            = browser

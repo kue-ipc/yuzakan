@@ -1,12 +1,14 @@
 .check-browser
   noscript
     .alert.alert-warning role="alert"
-      | JavaScriptが無効のため、レガシーモードで表示されます。一部は正しく表示されず、機能が制限されます。モダンモードで表示するには、JavaScriptを有効にしてください。
+      | JavaScriptが無効のため、
+      = link_to 'レガシーモード', routes.path(:about_legacy)
+      | で表示されます。
   .legacy-browser.d-none
     .alert.alert-warning role="alert"
-      | お使いのブラウザーは最新のモダンブラウザーではないため、レガシーモードで表示されます。一部は正しく表示されず、機能が制限されます。モダンモードで表示するには、
-      =<> link_to '対応ブラウザ', '/about/legacy'
-      | を確認し、別のブラウザーでアクセスしてください。
+      | お使いのブラウザーは最新のモダンブラウザーではないため、
+      = link_to 'レガシーモード', routes.path(:about_legacy)
+      | で表示されます。
   = javascript 'legacy_browser', nomodule: true
   = javascript 'modern_browser', type: 'module', defer: true
   = javascript 'no_modern_browser', type: 'module', defer: true

@@ -2,6 +2,7 @@ import './modern_browser.js'
 
 loginSet = (node) ->
   submitButtonNodes = node.getElementsByClassName('login-submit')
+  submit.disabled = true for submit in submitButtonNodes
   inputNodes = node.getElementsByTagName('INPUT')
   checkValid = ->
     if Array::every.call inputNodes, (input) -> input.checkValidity()

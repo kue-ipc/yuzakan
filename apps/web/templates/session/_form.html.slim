@@ -3,7 +3,19 @@
   h3.login-title.text-center.mb-2 ログイン
   = form_for :session, routes.session_path, class: 'login-form' do
     - div class: 'form-group' do
-      - text_field :username, class: 'form-control', placeholder: 'ユーザー名', required: true
+      - field_class = ['form-control']
+      - field_class << 'is-invalid' if param_errors.key?(:username)
+      - text_field :username, class: field_class, \
+                   placeholder: 'ユーザー名', required: true
+      - if param_errors.key?(:username)
+        - div class: 'invalid-feedback' do
+          - h(param_errors[:username].join)
     - div class: 'form-group' do
-      - password_field :password, class: 'form-control', placeholder: 'パスワード', required: true
-    - submit 'ログイン', class: 'login-submit btn btn-primary btn-block', disabled: true
+      - field_class = ['form-control']
+      - field_class << 'is-invalid' if param_errors.key?(:password)
+      - password_field :password, class: field_class, \
+                       placeholder: 'パスワード', required: true
+      - if param_errors.key?(:password)
+        - div class: 'invalid-feedback' do
+          - h(param_errors[:password].join)
+    - submit 'ログイン', class: 'login-submit btn btn-primary btn-block'
