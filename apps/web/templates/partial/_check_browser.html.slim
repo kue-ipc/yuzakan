@@ -1,12 +1,12 @@
 .check-browser
   noscript
-    .alert.alert-danger role="alert"
-      | JavaScriptが無効です。サイトの操作にはJavaScripnが必須です。JavaScriptを有効にしてください。
+    .alert.alert-warning role="alert"
+      | JavaScriptが無効のため、レガシーモードで表示されます。一部は正しく表示されず、機能が制限されます。モダンモードで表示するには、JavaScriptを有効にしてください。
   .legacy-browser.d-none
-    .alert.alert-danger role="alert"
-      | ブラウザの機能が古いため、JavaScriptを正常に動作させることができません。
-      | 最新のブラウザを使用してください。
-      | 対応ブラウザについての詳細は
-      =<> link_to '対応ブラウザについて', '/about/legacy'
-      | を確認してください。
-  = javascript 'legacy-browser', nomodule: true
+    .alert.alert-warning role="alert"
+      | お使いのブラウザーは最新のモダンブラウザーではないため、レガシーモードで表示されます。一部は正しく表示されず、機能が制限されます。モダンモードで表示するには、
+      =<> link_to '対応ブラウザ', '/about/legacy'
+      | を確認し、別のブラウザーでアクセスしてください。
+  = javascript 'legacy_browser', nomodule: true
+  = javascript 'modern_browser', type: 'module', defer: true
+  = javascript 'no_modern_browser', type: 'module', defer: true

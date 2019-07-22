@@ -1,3 +1,5 @@
+import './modern_browser.js'
+
 import './fontawesome.js'
 import bsn from './bootstrap-native.js'
 

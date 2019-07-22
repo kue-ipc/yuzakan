@@ -1,3 +1,5 @@
+import './modern_browser.js'
+
 import { h, app } from './hyperapp.js'
 import zxcvbn from './zxcvbn.js'
 

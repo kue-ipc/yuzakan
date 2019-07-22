@@ -4,9 +4,10 @@ html lang="ja"
     meta charset="utf-8"
     meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"
     title
-      | ブラウザー対応について
+      | 対応ブラウザーについて
   body
-    h1 ブラウザー対応について
+    h1 対応ブラウザーについて
+    h2 モダンブラウザー
     p
       | このシステムは最新のWeb技術を数多く使用しています。
       | そのため、最新のモダンブラウザーでなければ、正しく表示できません。
@@ -21,9 +22,14 @@ html lang="ja"
           - if browser[:note]&.size&.positive?
             small.text-muted<
               = browser[:note]
+    h2 レガシーブラウザー
     p
-      | 下記ブラウザは非対応です。今後も対応する予定はありません。
+      | 下記ブラウザはモダンブラウザーとしての機能が不足しているため、未対応です。今後も対応する予定はありません。
     ul
       - unsupported_browsers.each do |browser|
         li
           = browser
+    h2 レガシーモード
+    p
+      | 未対応のブラウザを使用、または、JavaScriptを無効にした場合、レガシーモードで表示されます。
+      | レガシーモードではアイコン等の一部が表示されず、機能も制限されます。

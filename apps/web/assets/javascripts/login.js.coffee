@@ -1,3 +1,5 @@
+import './modern_browser.js'
+
 loginSet = (node) ->
   submitButtonNodes = node.getElementsByClassName('login-submit')
   inputNodes = node.getElementsByTagName('INPUT')
