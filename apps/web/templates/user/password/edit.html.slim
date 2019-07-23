@@ -22,20 +22,6 @@ p 現在のパスワードと新しいパスワードを入力してください
                       for: key
               - div class: ['input-group', change_password_cols[:right]] do
                 - password_field key, change_password_field_opt(key)
-                / - password_class = ['form-control']
-                / - password_class << 'is-invalid' if param_errors.key?(key)
-                / - if key == :password
-                /   - password_field key, \
-                /       class: password_class, \
-                /       placeholder: 'パスワードを入力', \
-                /       required: true, \
-                /       minlength: change_password_config[:min_size], \
-                /       maxlength: change_password_config[:max_size]
-                / - else
-                /   - password_field key,
-                /       class: password_class, \
-                /       placeholder: 'パスワードを入力', \
-                /       required: true
                 - if param_errors.key?(key)
                   - div class: 'invalid-feedback' do
                     - h(param_errors[key].join)
@@ -100,6 +86,5 @@ ul
 h4 パスワードの強度
 p
   | 新しいパスワードを入力時に変化するパラメーターはパスワードの強度であり、そのパスワードを総当たりで解読するのにどれほど困難であるかを示しています。パスワードの強度は含まれる文字、長さ、パターン等からエントロピーを計測して内部で数値化して、そのスコアから強弱を判断しています。
-  | 英単語の一部のみ変更やキーボードのキー配列などは記号が含まれていても「弱い」と判断され、
-  | 数字のみなどであっても十分に長ければ「強い」と判断される場合があります。
+  | ユーザー名、旧パスワード、固有の名前、英単語等の一部のみ変更やキーボードのキー配列などは記号が含まれていても「弱い」と判断され、数字のみなどであっても十分に長ければ「強い」と判断される場合があります。
   | 他人には推測しづらく、覚えやすいパスワードを設定してください。
