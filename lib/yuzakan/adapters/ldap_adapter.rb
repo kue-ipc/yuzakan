@@ -269,7 +269,7 @@ module Yuzakan
         opts = {
           host: @params[:host],
           port: @params[:port],
-          base: @params[:base],
+          base: @params[:base_dn],
           auth: {
             method: :simple,
             username: @params[:bind_username],
