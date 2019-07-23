@@ -1,13 +1,13 @@
 .check-browser
   noscript
-    .alert.alert-warning role="alert"
+    .alert.alert-secondary role="alert"
       | JavaScriptが無効のため、
-      = link_to 'レガシーモード', routes.path(:about_legacy)
+      =<> link_to 'レガシーモード', routes.path(:about_legacy)
       | で表示されます。
   .legacy-browser.d-none
-    .alert.alert-warning role="alert"
+    .alert.alert-secondary role="alert"
       | お使いのブラウザーは最新のモダンブラウザーではないため、
-      = link_to 'レガシーモード', routes.path(:about_legacy)
+      =<> link_to 'レガシーモード', routes.path(:about_legacy)
       | で表示されます。
   = javascript 'legacy_browser', nomodule: true
   = javascript 'modern_browser', type: 'module', defer: true
