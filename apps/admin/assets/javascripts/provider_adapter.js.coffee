@@ -91,17 +91,23 @@ InputBoolean = (props) ->
   name = fieldName(props.name, parentNames)
   id = fieldId(props.name, parentNames)
 
+  hiddenInputOpts =
+    name: name
+    type: 'hidden'
+    value: '0'
+
   inputOpts =
     id: id
     name: name
     type: 'checkbox'
     class: 'form-check-input'
-    volue: '1'
+    value: '1'
 
   if props.value ? providerParams[props.name]
     inputOpts['checked'] = true
 
   h 'div', class: 'form-check', [
+    h 'input', hiddenInputOpts
     h 'input', inputOpts
     h 'label', class: 'form-check-label', for: id, label
   ]

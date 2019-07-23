@@ -60,6 +60,13 @@ module Yuzakan
             ],
             default: 'ldaps',
           }, {
+            name: 'certificate_check',
+            label: '証明書チェックを行う。',
+            description:
+              'サーバー証明書のチェックを行います。LDAPサーバーには正式証明書が必要になります。。',
+            type: :boolean,
+            default: true,
+          }, {
             name: 'base_dn',
             label: 'ベースDN',
             description: '全てベースです。',
@@ -276,7 +283,17 @@ module Yuzakan
           opts[:port] = port || 389
         when 'ldaps'
           opts[:port] = port || 636
-          opts[:encryption] = :simple_tls
+          opts[:encryption] =
+            if @params[:certificate_check]
+              :simple_tls
+            else
+              {
+                method: :simple_tls,
+                tls_options: {
+                  verify_mode: OpenSSL::SSL::VERIFY_NONE,
+                },
+              }
+            end
         else
           raise "invalid protcol: #{@params[:protocol]}"
         end

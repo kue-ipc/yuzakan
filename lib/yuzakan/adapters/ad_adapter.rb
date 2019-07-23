@@ -34,6 +34,13 @@ module Yuzakan
             required: true,
             placeholder: 'dc.example.jp',
           }, {
+            name: 'certificate_check',
+            label: '証明書チェックを行う。',
+            description:
+              'サーバー証明書のチェックを行います。ドメインコントローラーには正式証明書が必要になります。',
+            type: :boolean,
+            default: false,
+          }, {
             name: 'base_dn',
             label: 'ベースDN',
             description: '全てベースです。',

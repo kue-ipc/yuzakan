@@ -7,7 +7,6 @@ module Admin
         include Admin::Action
 
         def call(params)
-          # pp current_user
         end
       end
     end
