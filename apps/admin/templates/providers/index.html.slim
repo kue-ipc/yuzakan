@@ -12,7 +12,7 @@ table.table
   - providers.each do |provider|
     tr
       td
-        = provider.name
+        = link_to provider.name, routes.provider_path(provider.id)
       td
         = provider.display_name
       td

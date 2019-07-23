@@ -3,16 +3,20 @@
 
 import {h, app} from './hyperapp.js'
 
+import {fieldName, fieldId} from './form_helper.js'
+
 mainNode = document.getElementById('provider-adapter')
 adapterSelectNode = document.getElementById(
   mainNode.getAttribute('data-adapter-select'))
 providerParamsData = mainNode.getAttribute('data-provider-params')
 
+parentNames = ['provider', 'params']
+
 if providerParamsData ? providerParamsData.length > 0
   providerParams = JSON.parse(providerParamsData)
   providerParamsSetted = true
 else
-  providerParams =　{}
+  providerParams = {}
   providerParamsSetted = false
 
 getParamsByAdapter = (adapterName) ->
@@ -26,8 +30,8 @@ getParamsByAdapter = (adapterName) ->
 
 InputString = (props) ->
   label = props.label
-  name = "provider[params][#{props.name}]"
-  id = "provider-params-#{props.name}]"
+  name = fieldName(props.name, parentNames)
+  id = fieldId(props.name, parentNames)
 
   inputOpts =
     id: id
@@ -45,8 +49,8 @@ InputString = (props) ->
 
 InputSecret = (props) ->
   label = props.label
-  name = "provider[params][#{props.name}]"
-  id = "provider-params-#{props.name}]"
+  name = fieldName(props.name, parentNames)
+  id = fieldId(props.name, parentNames)
 
   inputOpts =
     id: id
@@ -65,8 +69,8 @@ InputSecret = (props) ->
 
 InputInteger = (props) ->
   label = props.label
-  name = "provider[params][#{props.name}]"
-  id = "provider-params-#{props.name}]"
+  name = fieldName(props.name, parentNames)
+  id = fieldId(props.name, parentNames)
 
   inputOpts =
     id: id
@@ -84,8 +88,8 @@ InputInteger = (props) ->
 
 InputBoolean = (props) ->
   label = props.label
-  name = "provider[params][#{props.name}]"
-  id = "provider-params-#{props.name}]"
+  name = fieldName(props.name, parentNames)
+  id = fieldId(props.name, parentNames)
 
   inputOpts =
     id: id
@@ -104,8 +108,8 @@ InputBoolean = (props) ->
 
 InputList = (props) ->
   label = props.label
-  name = "provider[params][#{props.name}]"
-  id = "provider-params-#{props.name}]"
+  name = fieldName(props.name, parentNames)
+  id = fieldId(props.name, parentNames)
 
   selected = props.value ? providerParams[props.name] ? props.default
 

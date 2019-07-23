@@ -1,0 +1,12 @@
+
+p
+  = provider.name
+p
+  = provider.display_name
+p
+  = provider.adapter_class.label
+p
+  - if provider.adapter.check
+    | OK
+  - else
+    | NG
