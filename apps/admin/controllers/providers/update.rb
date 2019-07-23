@@ -61,10 +61,11 @@ module Admin
               data[:value] = value.to_i
               integer_param_repo.create(data)
             when :boolean
+              pp [name, value]
               boolean_param_repo.by_provider_and_name(data).each do |param|
                 boolean_param_repo.delete(param.id)
               end
-              data[:value] = value.to_i.positive?
+              data[:value] = value
               boolean_param_repo.create(data)
             else
               raise "Unknown param type: #{adapter.param_type(name)} " \

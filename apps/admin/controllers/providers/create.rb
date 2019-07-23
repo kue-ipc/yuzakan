@@ -44,7 +44,7 @@ module Admin
               data[:value] = value.to_i
               integer_param_repo.create(data)
             when :boolean
-              data[:value] = value.to_i.positive?
+              data[:value] = value
               boolean_param_repo.create(data)
             else
               raise "Unknown param type: #{adapter.param_type(name)} " \
