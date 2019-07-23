@@ -3,8 +3,18 @@
 require_relative '../../../spec_helper'
 
 describe Admin::Views::Setup::Index do
-  let(:exposures) { Hash[format: :html, params: {}, flash: {}, current_config: nil] }
-  let(:template)  { Hanami::View::Template.new('apps/admin/templates/setup/index.html.slim') }
+  let(:exposures) do
+    {
+      format: :html,
+      params: {},
+      flash: {},
+      current_config: nil,
+      current_theme: DEFAULT_THEME,
+    }
+  end
+  let(:template)  {
+    Hanami::View::Template.new('apps/admin/templates/setup/index.html.slim')
+  }
   let(:view)      { Admin::Views::Setup::Index.new(template, exposures) }
   let(:rendered)  { view.render }
 

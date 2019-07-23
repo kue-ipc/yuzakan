@@ -4,7 +4,10 @@ require_relative '../../../spec_helper'
 
 describe Admin::Controllers::Home::Index do
   let(:action) { Admin::Controllers::Home::Index.new }
-  let(:params) { {'REMOTE_ADDR' => '::1'} }
+  let(:params) { {'REMOTE_ADDR' => '::1', 'rack.session' => session} }
+  let(:session) { {user_id: user_id, access_time: Time.now} }
+  let(:user_id) { Authenticate.new.call(auth).user&.id }
+  let(:auth) { {username: 'admin', password: 'pass'} }
 
   describe 'before initialized' do
     before do
@@ -22,7 +25,9 @@ describe Admin::Controllers::Home::Index do
     end
   end
 
-  describe 'after initialized' do
+  describe 'before login' do
+    let(:user_id) { nil }
+
     it 'is successful' do
       response = action.call(params)
       response[0].must_equal 200

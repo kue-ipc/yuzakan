@@ -4,19 +4,10 @@ require_relative '../../../spec_helper'
 
 describe Admin::Controllers::Providers::Create do
   let(:action) { Admin::Controllers::Providers::Create.new }
-  let(:params) do
-    {
-      'REMOTE_ADDR' => '::1',
-      'rack.session' => session,
-      provider: {
-        name: 'test',
-        display_name: 'テスト',
-        adapter_name: 'dummy',
-      },
-    }
-  end
-  let(:auth) { { username: 'admin', password: 'pass' } }
-  let(:session) { { user_id: Authenticate.new.call(auth).user&.id } }
+  let(:params) { {'REMOTE_ADDR' => '::1', 'rack.session' => session} }
+  let(:session) { {user_id: user_id, access_time: Time.now} }
+  let(:user_id) { Authenticate.new.call(auth).user&.id }
+  let(:auth) { {username: 'admin', password: 'pass'} }
 
   describe 'before initialized' do
     before do
@@ -28,7 +19,13 @@ describe Admin::Controllers::Providers::Create do
     end
 
     it 'redirect setup' do
-      response = action.call(params)
+      response = action.call(params.merge(
+        provider: {
+          name: 'test',
+          display_name: 'テスト',
+          adapter_name: 'dummy',
+        },
+      ))
       response[0].must_equal 302
       response[1]['Location'].must_equal '/admin/setup'
     end

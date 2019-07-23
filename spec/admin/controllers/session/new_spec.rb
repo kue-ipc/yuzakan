@@ -4,7 +4,10 @@ require_relative '../../../spec_helper'
 
 describe Admin::Controllers::Session::New do
   let(:action) { Admin::Controllers::Session::New.new }
-  let(:params) { {'REMOTE_ADDR' => '::1'} }
+  let(:params) { {'REMOTE_ADDR' => '::1', 'rack.session' => session} }
+  let(:session) { {user_id: user_id, access_time: Time.now} }
+  let(:user_id) { Authenticate.new.call(auth).user&.id }
+  let(:auth) { {username: 'admin', password: 'pass'} }
 
   describe 'before initialized' do
     before do
@@ -19,12 +22,6 @@ describe Admin::Controllers::Session::New do
       response = action.call(params)
       response[0].must_equal 302
       response[1]['Location'].must_equal '/admin/setup'
-    end
-  end
-
-  describe 'before initialized' do
-    before do
-      db_clear
     end
   end
 

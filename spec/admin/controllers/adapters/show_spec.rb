@@ -4,19 +4,13 @@ require_relative '../../../spec_helper'
 
 describe Admin::Controllers::Adapters::Show do
   let(:action) { Admin::Controllers::Adapters::Show.new }
-  let(:params) do
-    {
-      id: adapter_name,
-      'rack.session' => session,
-      'REMOTE_ADDR' => '::1',
-    }
-  end
+  let(:params) { {'REMOTE_ADDR' => '::1', 'rack.session' => session} }
+  let(:session) { {user_id: user_id, access_time: Time.now} }
+  let(:user_id) { Authenticate.new.call(auth).user&.id }
   let(:auth) { {username: 'admin', password: 'pass'} }
-  let(:session) { {user_id: Authenticate.new.call(auth).user&.id} }
-  let(:adapter_name) { 'dummy' }
 
   it 'is successful' do
-    response = action.call(params)
+    response = action.call(params.merge(id: 'dummy'))
     response[0].must_equal 200
   end
 end

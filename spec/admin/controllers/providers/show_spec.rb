@@ -5,8 +5,9 @@ require_relative '../../../spec_helper'
 describe Admin::Controllers::Providers::Show do
   let(:action) { Admin::Controllers::Providers::Show.new }
   let(:params) { {'REMOTE_ADDR' => '::1', 'rack.session' => session} }
-  let(:auth) { { username: 'admin', password: 'pass' } }
-  let(:session) { { user_id: Authenticate.new.call(auth).user&.id } }
+  let(:session) { {user_id: user_id, access_time: Time.now} }
+  let(:user_id) { Authenticate.new.call(auth).user&.id }
+  let(:auth) { {username: 'admin', password: 'pass'} }
 
   describe 'before initialized' do
     before do

@@ -5,17 +5,13 @@ require_relative '../../../spec_helper'
 describe Admin::Controllers::Dashboard::Index do
   let(:action) { Admin::Controllers::Dashboard::Index.new }
   let(:params) { {'REMOTE_ADDR' => '::1', 'rack.session' => session} }
-  let(:auth) { { username: 'admin', password: 'pass' } }
-  let(:session) { { user_id: Authenticate.new.call(auth).user&.id } }
+  let(:session) { {user_id: user_id, access_time: Time.now} }
+  let(:user_id) { Authenticate.new.call(auth).user&.id }
+  let(:auth) { {username: 'admin', password: 'pass'} }
 
   describe 'before initialized' do
-    before do
-      db_clear
-    end
-
-    after do
-      db_reset
-    end
+    before { db_clear }
+    after { db_reset }
 
     it 'redirect setup' do
       response = action.call(params)
