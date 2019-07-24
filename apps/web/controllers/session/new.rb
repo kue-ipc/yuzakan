@@ -7,6 +7,9 @@ module Web
         include Web::Action
 
         def call(params)
+          if authenticated?
+            redirect_to routes.path(:dashboard)
+          end
         end
 
         private

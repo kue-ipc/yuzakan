@@ -8,6 +8,7 @@ module Web
 
         def call(params)
           session[:user_id] = nil
+          session[:access_time] = nil
           redirect_to routes.root_path
         end
       end
