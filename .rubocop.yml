@@ -1,13 +1,6 @@
 AllCops:
   TargetRubyVersion: 2.5
 
-Layout/EndOfLine:
-  EnforcedStyle: lf
-Layout/MultilineMethodCallIndentation:
-  EnforcedStyle: indented
-Layout/SpaceInsideHashLiteralBraces:
-  EnforcedStyle: no_space
-
 Metrics/AbcSize:
   Max: 30
 Metrics/BlockNesting:
@@ -35,6 +28,13 @@ Metrics/ParameterLists:
   CountKeywordArgs: true
 Metrics/PerceivedComplexity:
   Max: 14
+
+Layout/EndOfLine:
+  EnforcedStyle: lf
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space  
 
 Style/AsciiComments:
   Enabled: false
