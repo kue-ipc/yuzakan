@@ -28,8 +28,8 @@ class JobRepository < Hanami::Repository
     belongs_to :user
   end
 
-  def job_create(owner_id: nil, client: nil, user_id: nil, action:, params: nil)
-    create(owner_id: owner_id, client: client, user_id: user_id,
+  def job_create(owner: nil, client: nil, user: nil, action:, params: nil)
+    create(owner_id: owner&.id, client: client&.to_s, user_id: user&.id,
            action: action, params: params, status: 'new')
   end
 

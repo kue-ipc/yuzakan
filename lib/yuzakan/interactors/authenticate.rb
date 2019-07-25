@@ -33,9 +33,9 @@ class Authenticate
   def call(username:, password:, **_)
     # パラメーターはユーザー名のみを記録する。
     # ユーザーは未定のままにする。
-    job = @job_repository.job_create(owner_id: @owner&.id,
-                                     client: @client&.to_s,
-                                     user_id: nil,
+    job = @job_repository.job_create(owner: @owner,
+                                     client: @client,
+                                     user: nil,
                                      action: 'authenticate',
                                      params: username)
     user_data = nil
