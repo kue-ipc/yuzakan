@@ -33,6 +33,8 @@ Layout/EndOfLine:
   EnforcedStyle: lf
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
+Layout/MultilineMethodCallBraceLayout:
+  EnofrecdStyle: same_lien
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
 

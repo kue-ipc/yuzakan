@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-# パスワードの制限値について
-# configで持たせるべきでは？
-# 8以上 32以下
-# zxcvbnも使用
+# パスワードの制限値はconifgで管理
+# 強度チェックはzxcvbnを使用
 
 require 'hanami/interactor'
 require 'hanami/validations/form'
@@ -25,26 +23,52 @@ class ChangePassword
 
   expose :count
 
-  def initialize(
-      user:,
-      config: ConfigRepostitory.new.current,
-      provider_repository: ProviderRepository.new
-    )
+  def initialize(user:,
+                 client: nil,
+                 config: ConfigRepostitory.new.current,
+                 provider_repository: ProviderRepository.new,
+                 job_repository: JobRepository.new)
     @user = user
+    @client = client
     @config = config
     @provider_repository = provider_repository
+    @job_repository = job_repository
   end
 
-  def call(password:, **_opts)
+  def call(password:, **_)
+    job = @job_repository.job_create(owner: @user,
+                                     client: @client,
+                                     user: @user,
+                                     action: 'change_password',
+                                     params: nil)
     @count = 0
+
+    @job_repository.job_begin(job.id)
     @provider_repository.operational_all_with_params(:change_password)
       .each do |provider|
-        if provider.adapter.change_password(user.name, password)
-          @count += 1
-        end
-      rescue => e
-        error!('エラーが発生しました。')
+      @count += 1 if provider.adapter.change_password(user.name, password)
+    rescue => e
+      @job_repository.job_errored(job.id)
+      if @count.positive?
+        error <<~'ERROR_MESSAGE'
+          一部のシステムのパスワードは変更されましたが、
+          エラーにより処理が中断されました。
+          変更されていないシステムが存在する可能性があるため、
+          再度パスワードを変更してください。
+          現在のパスワードはすでに変更されている場合があります。
+        ERROR_MESSAGE
       end
+      error!("パスワード変更時にエラーが発生しました。: #{e.message}")
+    end
+
+    if @count.negative!
+      @job_repository.job_failed(job.id)
+      error! <<~'ERROR_MESSAGE'
+        どのシステムでもパスワードは変更されませんでした。
+      ERROR_MESSAGE
+    end
+
+    @job_repository.job_succeeded(job.id)
   end
 
   private def valid?(params)
