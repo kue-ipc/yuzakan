@@ -18,31 +18,51 @@ class Authenticate
 
   expose :user
 
-  def initialize(user_repository: UserRepository.new,
-                 provider_repository: ProviderRepository.new)
+  def initialize(owner: nil,
+                 client: nil,
+                 user_repository: UserRepository.new,
+                 provider_repository: ProviderRepository.new,
+                 job_repository: JobRepository.new)
+    @owner = owner
+    @client = client
     @user_repository = user_repository
     @provider_repository = provider_repository
+    @job_repository = job_repository
   end
 
-  def call(username:, **_)
-    display_name = @result[:display_name] || @result[:name]
-    email = @result[:email]
-    @user = @user_repository.by_name(username)
-    if @user
-      if @user.display_name != display_name || @user.email != email
-        @user = @user_repository.update(
-          @user.id,
-          display_name: display_name,
-          email: email,
-        )
-      end
-    else
-      @user = @user_repository.create(
-        name: username,
-        display_name: display_name,
-        email: email,
-      )
+  def call(username:, password:, **_)
+    # パラメーターはユーザー名のみを記録する。
+    # ユーザーは未定のままにする。
+    job = @job_repository.job_create(owner_id: @owner&.id,
+                                     client: @client&.to_s,
+                                     user_id: nil,
+                                     action: 'authenticate',
+                                     params: username)
+    user_data = nil
+
+    @job_repository.job_begin(job.id)
+    # 最初に認証されたところを正とする。
+    @provider_repository.operational_all_with_params(:auth).each do |provider|
+      user_data = provider.adapter.auth(username, password)
+      break if user_data
+    rescue => e
+      @job_repository.job_errored(job.id)
+      error!("認証時にエラーが発生しました。: #{e.message}")
     end
+
+    unless user_data
+      @job_repository.job_failed(job.id)
+      error!('ユーザー名またはパスワードが違います。')
+    end
+
+    unless user_data[:name] == username
+      @job_repository.job_errored(job.id)
+      error!('認証には成功しましたが、ユーザー名が一致しません。')
+    end
+
+    @job_repository.job_succeeded(job.id)
+
+    @user = create_or_upadte_user(user_data)
   end
 
   private def valid?(params)
@@ -51,18 +71,24 @@ class Authenticate
       error(validation.messages)
       return false
     end
-
-    providers = @provider_repository.operational_all_with_params(:auth)
-    @result = nil
-    # 最初に認証されたところを正とする。
-    providers.each do |provider|
-      @result = provider.adapter.auth(params[:username], params[:password])
-      break if @result
-    end
-    unless @result && @result[:name] == params[:username]
-      error('ユーザー名またはパスワードが違います。')
-      return false
-    end
     true
+  end
+
+  private def create_or_upadte_user(user_data)
+    name = user_data[:name]
+    display_name = user_data[:display_name] || user_data[:name]
+    email = user_data[:email]
+    user = @user_repository.by_name(name)
+    if user.nil?
+      @user_repository.create(name: name,
+                              display_name: display_name,
+                              email: email)
+    elsif user.display_name != display_name || user.email != email
+      @user_repository.update(user.id,
+                              display_name: display_name,
+                              email: email)
+    else
+      user
+    end
   end
 end

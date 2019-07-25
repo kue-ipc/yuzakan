@@ -34,7 +34,7 @@ Layout/EndOfLine:
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
 Layout/SpaceInsideHashLiteralBraces:
-  EnforcedStyle: no_space  
+  EnforcedStyle: no_space
 
 Style/AsciiComments:
   Enabled: false
@@ -50,6 +50,9 @@ Style/TrailingCommaInHashLiteral:
 
 Style/AccessModifierDeclarations:
   EnforcedStyle: inline
+Style/RescueStandardError:
+  EnforcedStyle: implicit
+
 
 Bundler/OrderedGems:
   Enabled: false

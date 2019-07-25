@@ -8,7 +8,8 @@ module Web
         expose :data
 
         def call(params)
-          result = Authenticate.new.call(params[:session])
+          result = Authenticate.new(client: remote_ip.to_s)
+            .call(params[:session])
 
           if result.successful?
             session[:user_id] = result.user.id

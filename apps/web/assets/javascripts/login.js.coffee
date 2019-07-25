@@ -62,15 +62,13 @@ loginSet = (form) ->
             input.disabled = false
           for submit in submitButtonNodes
             submit.textContent = 'ログイン'
-          enableSubmit()
-      .catch (errror) ->
+      .catch (error) ->
         console.log error
         for input in inputTextNodes
           input.value = ''
           input.disabled = false
         for submit in submitButtonNodes
           submit.textContent = 'ログイン'
-        enableSubmit()
 
     false
 

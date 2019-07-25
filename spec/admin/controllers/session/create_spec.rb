@@ -25,7 +25,7 @@ describe Admin::Controllers::Session::Create do
     end
   end
 
-  # describe 'not authenicated' do
+  # describe 'not authenticated' do
   #   it 'is successful' do
   #     response = action.call(params)
   #     response[0].must_equal 200
