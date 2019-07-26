@@ -1,5 +1,7 @@
 import './modern_browser.js'
 
+import {alertAdd, alertClear} from './alert.js'
+
 addAlert = (message) ->
   for alerts in document.getElementsByClassName('alerts')
     div = document.createElement('div')
@@ -40,6 +42,8 @@ loginSet = (form) ->
     for submit in submitButtonNodes
       submit.textContent = 'ログイン処理中...'
     input.disabled = true for input in inputTextNodes
+    alertClear()
+    alertAdd('ログイン処理を実行中です。しばらくお待ち下さい。', 'info')
 
     loginAction = fetch form.action,
       method: 'POST'
@@ -53,10 +57,14 @@ loginSet = (form) ->
       .then (response) ->
         data = await response.json()
         if data.result == 'success'
+          alertClear()
+          alertAdd(data.message, 'success')
+          alertAdd('画面を切り替えています。しばらくお待ち下さい。', 'info')
           location.reload()
           return
         else
-          addAlert(data.message)
+          alertClear()
+          alertAdd(data.message, 'failure')
           for input in inputTextNodes
             input.value = ''
             input.disabled = false
@@ -64,6 +72,8 @@ loginSet = (form) ->
             submit.textContent = 'ログイン'
       .catch (error) ->
         console.log error
+        alertClear()
+        alertAdd("サーバー接続時にエラーが発生しました。: #{error}")
         for input in inputTextNodes
           input.value = ''
           input.disabled = false

@@ -20,7 +20,7 @@ p 現在のパスワードと新しいパスワードを入力してください
               - label value, \
                       class: ['col-form-label', change_password_cols[:left]], \
                       for: key
-              - div class: ['input-group', change_password_cols[:right]] do
+              - div class: [change_password_cols[:right]] do
                 - password_field key, change_password_field_opt(key)
                 - if param_errors.key?(key)
                   - div class: 'invalid-feedback' do

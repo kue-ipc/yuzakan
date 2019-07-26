@@ -6,18 +6,35 @@ module Web
       module Password
         class Update
           include Web::Action
+          expose :data
 
           def call(params)
             @change_password = ChangePassword.new(config: current_config,
                                                   user: current_user,
                                                   client: remote_ip)
             result = @change_password.call(params[:user][:password])
-            if result.failure?
-              flash[:errors] = result.errors
-              flash[:errors] << 'パスワード変更に失敗しました。'
-              redirect_to routes.path(:edit_user_password)
-            else
-              flash[:successes] = ['パスワードを変更しました。']
+
+            case format
+            when :html
+              if result.successful?
+                flash[:successes] = ['パスワードを変更しました。']
+              else
+                flash[:errors] = result.errors
+                flash[:errors] << 'パスワード変更に失敗しました。'
+                redirect_to routes.path(:edit_user_password)
+              end
+            when :json
+              if result.successful?
+                @data = {
+                  result: 'success',
+                  message: ['パスワードを変更しました。'],
+                }
+              else
+                @data = {
+                  result: 'failure',
+                  message: result.errors + ['パスワード変更に失敗しました。'],
+                }
+              end
             end
           end
         end
