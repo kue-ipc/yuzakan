@@ -3,20 +3,22 @@ h2 パスワード変更
 p 現在のパスワードと新しいパスワードを入力してください。新しいパスワード下記の「パスワードの要件」を満たす必要があります。
 
 = javascript 'change_password', type: 'module', defer: true
-- form
 .change_password.mx-auto.p-3.border.rounded
   = form_for form do
     - fields_for :password do
-      - div id: 'change-password', 'data-name': 'user[password]', \
-            'data-config': ha(JSON.generate(change_password_config)), \
-            'data-cols': ha(JSON.generate(change_password_cols))
+      - div id: 'change-password', \
+            'data-change-password': ha(JSON.generate(change_password_data) do
+            / 'data-form': ha(JSON.generate('user-form')), \
+            / 'data-parents': ha(JSON.generate([:user, :password])), \
+            / 'data-config': ha(JSON.generate(change_password_config)), \
+            / 'data-cols': ha(JSON.generate(change_password_cols))
         - div do
           - { \
               password_current: '現在のパスワード', \
               password: '新しいパスワード', \
               password_confirmation: 'パスワードの確認' \
             }.each do |key, value|
-            - div class: 'form-group row'
+            - div class: 'form-group row' do
               - label value, \
                       class: ['col-form-label', change_password_cols[:left]], \
                       for: key
@@ -25,9 +27,9 @@ p 現在のパスワードと新しいパスワードを入力してください
                 - if param_errors.key?(key)
                   - div class: 'invalid-feedback' do
                     - h(param_errors[key].join)
-          - div class: 'row'
+          - div class: 'row' do
             - div class: change_password_cols[:left]
-            - div class: change_password_cols[:right]
+            - div class: change_password_cols[:right] do
               - submit '変更', class: 'login-submit btn btn-primary btn-block'
 hr
 
