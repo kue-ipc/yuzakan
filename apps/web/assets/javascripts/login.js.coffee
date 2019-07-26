@@ -2,32 +2,6 @@ import './modern_browser.js'
 
 import {alertAdd, alertClear} from './alert.js'
 
-addAlert = (message) ->
-  for alerts in document.getElementsByClassName('alerts')
-    div = document.createElement('div')
-    div.className = 'alert alert-danger alert-dismissible fade show'
-    div.setAttribute('role', 'alert')
-
-    text = document.createTextNode(message)
-
-    button = document.createElement('button')
-    button.className = 'close'
-    button.setAttribute('type', 'button')
-    button.setAttribute('data-dismiss', 'alert')
-    button.setAttribute('aria-label', '閉じる')
-
-    span = document.createElement('span')
-    span.setAttribute('aria-hidden', 'true')
-
-    i = document.createElement('i')
-    i.className = 'fas fa-times'
-
-    span.appendChild(i)
-    button.appendChild(span)
-    div.appendChild(button)
-    div.appendChild(text)
-    alerts.appendChild(div)
-
 loginSet = (form) ->
   if form.tagName != 'FORM'
     loginSet(elm) for elm in form.getElementsByTagName('form')
