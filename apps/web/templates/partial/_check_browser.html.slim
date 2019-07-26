@@ -1,14 +1,23 @@
 .check-browser
   noscript
-    .alert.alert-secondary role="alert"
-      | JavaScriptが無効のため、
-      =<> link_to 'レガシーモード', routes.path(:about_legacy)
-      | で表示されます。
-  .legacy-browser.d-none
-    .alert.alert-secondary role="alert"
-      | お使いのブラウザーは最新のモダンブラウザーではないため、
-      =<> link_to 'レガシーモード', routes.path(:about_legacy)
-      | で表示されます。
+    .mb-2
+      = link_to 'レガシーモード', routes.path(:about_legacy), \
+                class: 'badge badge-secondary'
+  .legacy-browser.d-none.mb-2
+    = link_to 'レガシーモード', routes.path(:about_legacy), \
+              class: 'badge badge-secondary'
+  / ローカルで取得する場合、なければ、NullLocalを返す。
+  - unless local(:legacy_message).nil?
+    noscript
+      .alert.alert-secondary role="alert"
+        | JavaScriptが無効のため、
+        =<> link_to 'レガシーモード', routes.path(:about_legacy)
+        | で表示されます。一部正しく表示できない場合があります。
+    .legacy-browser.d-none
+      .alert.alert-secondary role="alert"
+        | お使いのブラウザーは最新のモダンブラウザーではないため、
+        =<> link_to 'レガシーモード', routes.path(:about_legacy)
+        | で表示されます。一部正しく表示できない場合があります。
   = javascript 'legacy_browser', nomodule: true
   = javascript 'modern_browser', type: 'module', defer: true
   = javascript 'no_modern_browser', type: 'module', defer: true

@@ -22,6 +22,6 @@ html lang="ja"
           span.text-danger.font-weight-bold 現在、ベータ版です。
           | 不具合が出た場合は、管理者までお問い合わせください。
     .container-fluid
-      = render partial: 'partial/check_browser'
+      = render partial: 'partial/check_browser', locals: {legacy_message: true}
       = render partial: 'partial/alert'
       = render partial: 'session/form'
