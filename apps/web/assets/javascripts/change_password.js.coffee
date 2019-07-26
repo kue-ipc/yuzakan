@@ -210,7 +210,8 @@ actions =
           "(#{changePasswordData.config.max_size}以下必須)")
 
       when changePasswordData.config.min_types > 1 &&
-          countCharType(state.password.value) < changePasswordData.config.min_types
+          countCharType(state.password.value) <
+            changePasswordData.config.min_types
         actions.password.setInvalid("文字の種類が少なすぎます。")
 
       when changePasswordData.config.min_score > 0 && result.score < changePasswordData.config.min_score
