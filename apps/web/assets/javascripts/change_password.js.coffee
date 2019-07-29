@@ -309,29 +309,23 @@ changePasswordForm.onsubmit = (e) ->
   changeAction
     .then (response) ->
       data = await response.json()
-      console.log data
-      if data.result == 'success'
-        alertClear()
-        alertAdd(data.message, 'success')
-        alertAdd('画面を切り替えています。しばらくお待ち下さい。', 'info')
-        location.reload('/')
-        return
-      else
-        errors = []
-        inputErrors = {}
-        if data.message instanceof Array
-          for msg in data.message
-            if typeof msg == 'string'
-              errors.push(msg)
-            else
-              for name, value of msg
-                inputErrors[name] = value
-        else
-          errors.push(data.message)
+      alertClear()
 
-        alertClear()
-        for err in errors
-          alertAdd(err, 'failure')
+      if data.result == 'success'
+        for msg in data.messages
+          alertAdd(msg, 'success')
+        alertAdd('約10秒後にトップページに戻ります。', 'info')
+        setTimeout ->
+          location.href = '/'
+        , 10 * 1000
+      else
+        inputErrors = {}
+        for msg in data.messages
+          if typeof msg == 'string'
+            alertAdd(msg, 'failure')
+          else
+            for name, value of msg
+              inputErrors[name] = value
         changePasswordApp.inputErrorMessage(inputErrors)
         changePasswordApp.stopSubmit()
     .catch (error) ->

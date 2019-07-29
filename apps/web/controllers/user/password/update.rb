@@ -27,13 +27,13 @@ module Web
               if result.successful?
                 @data = {
                   result: 'success',
-                  message: ['パスワードを変更しました。'],
+                  messages: ['パスワードを変更しました。'],
                 }
               else
                 @data = {
                   result: 'failure',
-                  message: result.errors +
-                           ['パスワードを変更することができませんでした。'],
+                  messages: result.errors +
+                            ['パスワードを変更することができませんでした。'],
                 }
               end
             end

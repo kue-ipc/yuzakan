@@ -48,4 +48,5 @@ export alertAdd = (message, level = 'error') ->
 export alertClear = ->
   for alerts in document.getElementsByClassName(ALERTS_CLASS)
     for alert in alerts.getElementsByClassName('alert')
-      alerts.removeChild(alert)
+      if alert instanceof Node
+        alerts.removeChild(alert)

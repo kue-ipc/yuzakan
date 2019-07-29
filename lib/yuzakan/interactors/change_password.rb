@@ -46,7 +46,7 @@ class ChangePassword
     @job_repository.job_begin(job.id)
     @provider_repository.operational_all_with_params(:change_password)
       .each do |provider|
-      @count += 1 if provider.adapter.change_password(user.name, password)
+      @count += 1 if provider.adapter.change_password(@user.name, password)
     rescue => e
       @job_repository.job_errored(job.id)
       if @count.positive?
@@ -61,7 +61,7 @@ class ChangePassword
       error!("パスワード変更時にエラーが発生しました。: #{e.message}")
     end
 
-    if @count.negative!
+    if @count.negative?
       @job_repository.job_failed(job.id)
       error! <<~'ERROR_MESSAGE'
         どのシステムでもパスワードは変更されませんでした。
