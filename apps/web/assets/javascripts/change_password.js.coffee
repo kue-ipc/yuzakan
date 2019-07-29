@@ -3,10 +3,10 @@ import './modern_browser.js'
 import { h, app } from './hyperapp.js'
 import zxcvbn from './zxcvbn.js'
 
-import {listToField} from './string_utils.js'
+import {listToField, listToKebab} from './string_utils.js'
 
 changePasswordNode = document.getElementById('change-password')
-chanegPasswordData = JSON.parse(changePasswordNode.getAttribute(
+changePasswordData = JSON.parse(changePasswordNode.getAttribute(
   'data-change-password'))
 
 paramErrorsNode = document.getElementById('param-errors')
@@ -103,8 +103,8 @@ class PasswordInputGenerator
 
 
   createView: ->
-    nameList = [data.parents..., @name]
-    idName = listToSnake(nameList...)
+    nameList = [changePasswordData.parents..., @name]
+    idName = listToKebab(nameList...)
     fieldName = listToField(nameList...)
 
     ({visible, valid, wasValidated, message, showPassword, inputPassword}) =>
