@@ -17,10 +17,11 @@ module Web
             case format
             when :html
               if result.successful?
-                flash[:successes] = ['パスワードを変更しました。']
+                flash[:success] = 'パスワードを変更しました。'
               else
-                flash[:errors] = result.errors
-                flash[:errors] << 'パスワードを変更することができませんでした。'
+                flash[:errors], flash[:param_errors] =
+                  devide_errors(result.errors)
+                flash[:failure] = 'パスワードを変更することができませんでした。'
                 redirect_to routes.path(:edit_user_password)
               end
             when :json
@@ -30,6 +31,7 @@ module Web
                   messages: ['パスワードを変更しました。'],
                 }
               else
+                errors, param_errors = devide_errors(result.errors)
                 @data = {
                   result: 'failure',
                   messages: result.errors +
