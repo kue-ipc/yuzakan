@@ -3,16 +3,27 @@
 ALERTS_CLASS = 'alerts'
 
 LEVELS_COLOR =
+  success: 'success'
+  failure: 'warning'
   fatal: 'danger'
   error: 'danger'
   warn: 'warning'
   info: 'info'
   debug: 'secondary'
   unknown: 'primary'
-  failure: 'danger'
-  success: 'success'
 
 DEFALT_COLOR = 'primary'
+
+export ALERT_LEVELS = [
+  'success'
+  'failure'
+  'fatal'
+  'error'
+  'warn'
+  'info'
+  'debug'
+  'unknown'
+]
 
 # アラートの追加
 export alertAdd = (message, level = 'error') ->
@@ -47,6 +58,4 @@ export alertAdd = (message, level = 'error') ->
 # 全アラートを削除
 export alertClear = ->
   for alerts in document.getElementsByClassName(ALERTS_CLASS)
-    for alert in alerts.getElementsByClassName('alert')
-      if alert instanceof Node
-        alerts.removeChild(alert)
+    alerts.removeChild(alerts.firstChild) while alerts.firstChild

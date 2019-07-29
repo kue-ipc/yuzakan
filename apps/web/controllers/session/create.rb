@@ -12,29 +12,37 @@ module Web
             .call(params[:session])
 
           if result.successful?
+            # セッション情報を保存
             session[:user_id] = result.user.id
             session[:access_time] = Time.now
-          end
 
-          case format
-          when :html
-            if result.successful?
-              flash[:successes] = ['ログインしました。']
+            if format == :html
+              flash[:success] = 'ログインしました。'
               redirect_to routes.path(:dashboard)
-            else
-              flash[:errors] = result.errors
-              redirect_to routes.path(:new_session)
-            end
-          when :json
-            if result.successful?
+            elsif format == :json
               @data = {
                 result: 'success',
-                message: ['ログインしました。']
+                messages: {success: 'ログインしました。'},
               }
-            else
+            end
+          else
+            errors, param_errors = devide_errors(result.errors)
+            pp errors
+            pp param_errors
+
+            if format == :html
+              flash[:errors] = errors
+              flash[:param_errors] = param_errors
+              flash[:failure] = 'ログインに失敗しました。'
+              redirect_to routes.path(:new_session)
+            elsif format == :json
               @data = {
                 result: 'failure',
-                message: result.errors
+                messages: {
+                  errors: errors,
+                  param_errors: param_errors,
+                  failure: 'ログインに失敗しました。',
+                },
               }
             end
           end

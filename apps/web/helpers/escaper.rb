@@ -5,13 +5,12 @@ module Web
     module Escaper
       using Yuzakan::Utils::RefineEscape
 
-      private
-
-      def escape_json(input)
+      private def escape_json(input)
         Hanami::Utils::Escape.json(input)
       end
 
-      alias hj escape_json
+      alias :hj :escape_json
+      private :hj
     end
   end
 end

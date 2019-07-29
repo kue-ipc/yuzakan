@@ -1,6 +1,15 @@
 import './modern_browser.js'
 
-import {alertAdd, alertClear} from './alert.js'
+import {alertAdd, alertClear, ALERT_LEVELS} from './alert.js'
+
+alertMessage = (messages) ->
+  alertClear()
+  for level in ALERT_LEVELS
+    if messages[level]
+      alertAdd(messages[level], level)
+  if messages['errors']?.length > 0
+    for error in messages['errors']
+      alertAdd(error, 'error')
 
 loginSet = (form) ->
   if form.tagName != 'FORM'
@@ -8,16 +17,15 @@ loginSet = (form) ->
     return
 
   form.onsubmit = (e) ->
-
     formData = new FormData(e.target)
-
 
     disableSubmit()
     for submit in submitButtonNodes
       submit.textContent = 'ログイン処理中...'
     input.disabled = true for input in inputTextNodes
-    alertClear()
-    alertAdd('ログイン処理を実行中です。しばらくお待ち下さい。', 'info')
+    alertMessage {
+      info: 'ログイン処理を実行中です。しばらくお待ち下さい。'
+    }
 
     loginAction = fetch form.action,
       method: 'POST'
@@ -31,23 +39,26 @@ loginSet = (form) ->
       .then (response) ->
         data = await response.json()
         if data.result == 'success'
-          alertClear()
-          alertAdd(data.message, 'success')
-          alertAdd('画面を切り替えています。しばらくお待ち下さい。', 'info')
+          alertMessage {
+            info: '画面を切り替えています。しばらくお待ち下さい。'
+            data.messages...
+          }
           location.reload()
           return
         else
-          alertClear()
-          alertAdd(data.message, 'failure')
+          alertMessage data.messages
+
           for input in inputTextNodes
             input.value = ''
             input.disabled = false
           for submit in submitButtonNodes
             submit.textContent = 'ログイン'
+
       .catch (error) ->
         console.log error
         alertClear()
-        alertAdd("サーバー接続時にエラーが発生しました。: #{error}")
+        alertMessage
+          error: "サーバー接続時にエラーが発生しました。: #{error}"
         for input in inputTextNodes
           input.value = ''
           input.disabled = false

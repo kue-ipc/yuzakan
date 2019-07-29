@@ -9,8 +9,39 @@ describe Web::Controllers::Dashboard::Index do
   let(:user_id) { Authenticate.new.call(auth).user&.id }
   let(:auth) { {username: 'user', password: 'word'} }
 
-  # it 'is successful' do
-  #   response = action.call(params)
-  #   response[0].must_equal 200
-  # end
+  it 'is successful' do
+    response = action.call(params)
+    response[0].must_equal 200
+  end
+
+  describe 'admin login' do
+    let(:auth) { {username: 'admin', password: 'pass'} }
+
+    it 'is successful' do
+      response = action.call(params)
+      response[0].must_equal 200
+    end
+  end
+
+  describe 'before login' do
+    let(:session) { {} }
+
+    it 'redirect login' do
+      response = action.call(params)
+      response[0].must_equal 302
+      response[1]['Location'].must_equal '/session/new'
+    end
+  end
+
+  describe 'session timeout' do
+    let(:session) { {user_id: user_id, access_time: Time.now - 24 * 60 * 60} }
+
+    it 'redirect login' do
+      response = action.call(params)
+      flash = action.exposures[:flash]
+      response[0].must_equal 302
+      response[1]['Location'].must_equal '/session/new'
+      flash[:errors].must_equal ['セッションがタイムアウトしました。']
+    end
+  end
 end

@@ -254,6 +254,7 @@ module Web
         include Configuration
         include Authentication
         include RemoteIp
+        include Error
         before :configurate!
         before :authenticate!
         before :check_remote_ip!
