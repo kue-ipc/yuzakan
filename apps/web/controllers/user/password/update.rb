@@ -20,7 +20,7 @@ module Web
                 flash[:successes] = ['パスワードを変更しました。']
               else
                 flash[:errors] = result.errors
-                flash[:errors] << 'パスワード変更に失敗しました。'
+                flash[:errors] << 'パスワードを変更することができませんでした。'
                 redirect_to routes.path(:edit_user_password)
               end
             when :json
@@ -32,7 +32,8 @@ module Web
               else
                 @data = {
                   result: 'failure',
-                  message: result.errors + ['パスワード変更に失敗しました。'],
+                  message: result.errors +
+                           ['パスワードを変更することができませんでした。'],
                 }
               end
             end

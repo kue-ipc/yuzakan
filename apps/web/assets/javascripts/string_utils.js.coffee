@@ -19,24 +19,24 @@ export listToField = (list...) ->
     ("[#{str}]" for str in list[1..]).join('')
 
 export strToList = (str) ->
-  str.replace(/[A-Z]+/g, '_$&').toLowercCase().split(/[-_\s]+/)
+  str.replace(/[A-Z]+/g, '_$&').toLowerCase().split(/[-_\s]+/)
 
 # camelCase
 export camelize = (str) ->
-  listToCamel(strToList(str))
+  listToCamel(strToList(str)...)
 
 # PascalCase
 export pascalize = (str) ->
-  listToPascal(strToList(str))
+  listToPascal(strToList(str)...)
 
 # snake_case
 export snakize = (str) ->
-  listToSnake(strToList(str))
+  listToSnake(strToList(str)...)
 
 # kebab-case
 export kebabize = (str) ->
-  listToKebab(strToList(str))
+  listToKebab(strToList(str)...)
 
 # form[field][name]
 export fieldize = (str) ->
-  listToField(strToList(str))
+  listToField(strToList(str)...)

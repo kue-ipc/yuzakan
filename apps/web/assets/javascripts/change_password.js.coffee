@@ -3,11 +3,14 @@ import './modern_browser.js'
 import { h, app } from './hyperapp.js'
 import zxcvbn from './zxcvbn.js'
 
-import {listToField, listToKebab} from './string_utils.js'
+import {alertAdd, alertClear} from './alert.js'
+import {listToField, listToKebab, camelize} from './string_utils.js'
 
 changePasswordNode = document.getElementById('change-password')
 changePasswordData = JSON.parse(changePasswordNode.getAttribute(
   'data-change-password'))
+
+changePasswordForm = document.getElementById(changePasswordData.form)
 
 paramErrorsNode = document.getElementById('param-errors')
 paramErrors =
@@ -107,7 +110,8 @@ class PasswordInputGenerator
     idName = listToKebab(nameList...)
     fieldName = listToField(nameList...)
 
-    ({visible, valid, wasValidated, message, showPassword, inputPassword}) =>
+    ({visible, valid, wasValidated, message, showPassword, inputPassword,
+      disabled}) =>
       vaildState = if wasValidated
         if valid
           'is-valid'
@@ -125,6 +129,7 @@ class PasswordInputGenerator
             name: fieldName
             class: "form-control #{vaildState}"
             type: if visible then 'text' else 'password'
+            disabled: disabled
             placeholder: 'パスワードを入力'
             'aria-describedby': "#{idName}-visible-button"
             oninput: (e) => inputPassword(e.target.value)
@@ -143,7 +148,7 @@ class PasswordInputGenerator
           h 'div', class: 'invalid-feedback', message
 
 passwordCurrent = new PasswordInputGenerator
-  name: 'password-current'
+  name: 'password_current'
   label: '現在のパスワード'
   error: paramErrors['password_current']
 
@@ -153,7 +158,7 @@ password = new PasswordInputGenerator
   error: paramErrors['password']
 
 passwordConfirmation = new PasswordInputGenerator
-  name: 'password-confirmation'
+  name: 'password_confirmation'
   label: 'パスワードの確認'
   error: paramErrors['password_confirmation']
 
@@ -163,14 +168,17 @@ state =
   passwordConfirmation: passwordConfirmation.state
   score: 0
   strength: 0
+  submitting: false
 
 actions =
   passwordCurrent: passwordCurrent.actions
   password: password.actions
   passwordConfirmation: passwordConfirmation.actions
+
   setScoreStrength: (value) =>
     score: value.score
     strength: value.strength
+
   checkPassword: => (state, actions) =>
     result =
       if state.password.value?.length > 0
@@ -228,12 +236,23 @@ actions =
       else
         actions.passwordConfirmation.setValid('')
 
+  startSubmit: =>
+    submitting: true
+
+  stopSubmit: =>
+    submitting: false
+
+  inputErrorMessage: (messages) => (state, actions) =>
+    for name, message of messages
+      actions[camelize(name)].setInvalid(message)
+
 view = (state, actions) ->
   h 'div', {} , [
     h passwordCurrent.view, {
       inputPassword: (text) ->
         actions.passwordCurrent.setValue(text)
         actions.checkPassword()
+      disabled: state.submitting
       state.passwordCurrent...
       actions.passwordCurrent...
     }
@@ -241,6 +260,7 @@ view = (state, actions) ->
       inputPassword: (text) ->
         actions.password.setValue(text)
         actions.checkPassword()
+      disabled: state.submitting
       state.password...
       actions.password...
     }
@@ -252,13 +272,16 @@ view = (state, actions) ->
       inputPassword: (text) ->
         actions.passwordConfirmation.setValue(text)
         actions.checkPassword()
+      disabled: state.submitting
       state.passwordConfirmation...
       actions.passwordConfirmation...
     }
     h 'div', class: 'row',
       h 'div', class: "#{changePasswordData.cols.left}"
       h 'div', class: "#{changePasswordData.cols.right}",
-        if state.passwordCurrent.valid &&
+        if state.submitting
+          h 'button', class: 'btn btn-primary btn-block', type:'submit', disabled: true, '変更処理中...'
+        else if state.passwordCurrent.valid &&
             state.password.valid &&
             state.passwordConfirmation.valid
           h 'button', class: 'btn btn-primary btn-block', type:'submit', '変更'
@@ -266,4 +289,55 @@ view = (state, actions) ->
           h 'button', class: 'btn btn-primary btn-block', type:'submit', disabled: true, '変更'
   ]
 
-app state, actions, view, changePasswordNode
+changePasswordApp = app state, actions, view, changePasswordNode
+
+changePasswordForm.onsubmit = (e) ->
+  formData = new FormData(e.target)
+
+  changePasswordApp.startSubmit()
+  alertClear()
+  alertAdd('パスワード変更処理を実行中です。しばらくお待ち下さい。', 'info')
+
+  changeAction = fetch changePasswordForm.action,
+    method: 'POST'
+    mode: 'same-origin'
+    credentials: 'same-origin'
+    headers:
+      'Accept': 'application/json'
+    body: formData
+
+  changeAction
+    .then (response) ->
+      data = await response.json()
+      console.log data
+      if data.result == 'success'
+        alertClear()
+        alertAdd(data.message, 'success')
+        alertAdd('画面を切り替えています。しばらくお待ち下さい。', 'info')
+        location.reload('/')
+        return
+      else
+        errors = []
+        inputErrors = {}
+        if data.message instanceof Array
+          for msg in data.message
+            if typeof msg == 'string'
+              errors.push(msg)
+            else
+              for name, value of msg
+                inputErrors[name] = value
+        else
+          errors.push(data.message)
+
+        alertClear()
+        for err in errors
+          alertAdd(err, 'failure')
+        changePasswordApp.inputErrorMessage(inputErrors)
+        changePasswordApp.stopSubmit()
+    .catch (error) ->
+      console.log error
+      alertClear()
+      alertAdd("サーバー接続時にエラーが発生しました。: #{error}")
+      changePasswordApp.stopSubmit()
+
+  false
