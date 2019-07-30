@@ -20,9 +20,9 @@ p 現在のパスワードと新しいパスワードを入力してください
                       for: key
               - div class: [change_password_cols[:right]] do
                 - password_field key, change_password_field_opt(key)
-                - if flash[:param_errors]&.key?(key)
+                - if flash[:param_errors]&.key?(key.to_s)
                   - div class: 'invalid-feedback' do
-                    - h(flash[:param_errors][key].join)
+                    - h(flash[:param_errors][key.to_s].join)
           - div class: 'row' do
             - div class: change_password_cols[:left]
             - div class: change_password_cols[:right] do

@@ -1,15 +1,6 @@
 import './modern_browser.js'
 
-import {alertAdd, alertClear, ALERT_LEVELS} from './alert.js'
-
-alertMessage = (messages) ->
-  alertClear()
-  for level in ALERT_LEVELS
-    if messages[level]
-      alertAdd(messages[level], level)
-  if messages['errors']?.length > 0
-    for error in messages['errors']
-      alertAdd(error, 'error')
+import {alertMessage} from './alert.js'
 
 loginSet = (form) ->
   if form.tagName != 'FORM'

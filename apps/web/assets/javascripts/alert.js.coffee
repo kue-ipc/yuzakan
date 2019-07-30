@@ -14,7 +14,7 @@ LEVELS_COLOR =
 
 DEFALT_COLOR = 'primary'
 
-export ALERT_LEVELS = [
+ALERT_LEVELS = [
   'success'
   'failure'
   'fatal'
@@ -59,3 +59,13 @@ export alertAdd = (message, level = 'error') ->
 export alertClear = ->
   for alerts in document.getElementsByClassName(ALERTS_CLASS)
     alerts.removeChild(alerts.firstChild) while alerts.firstChild
+
+# クリアしてメッセージをすべて表示
+export alertMessage = (messages) ->
+  alertClear()
+  for level in ALERT_LEVELS
+    if messages[level]
+      alertAdd(messages[level], level)
+  if messages['errors']?.length > 0
+    for error in messages['errors']
+      alertAdd(error, 'error')

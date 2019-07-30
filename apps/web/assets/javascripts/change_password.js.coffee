@@ -3,7 +3,7 @@ import './modern_browser.js'
 import { h, app } from './hyperapp.js'
 import zxcvbn from './zxcvbn.js'
 
-import {alertAdd, alertClear} from './alert.js'
+import {alertMessage} from './alert.js'
 import {listToField, listToKebab, camelize} from './string_utils.js'
 
 changePasswordNode = document.getElementById('change-password')
@@ -295,8 +295,8 @@ changePasswordForm.onsubmit = (e) ->
   formData = new FormData(e.target)
 
   changePasswordApp.startSubmit()
-  alertClear()
-  alertAdd('パスワード変更処理を実行中です。しばらくお待ち下さい。', 'info')
+  alertMessage
+    info: 'パスワード変更処理を実行中です。しばらくお待ち下さい。'
 
   changeAction = fetch changePasswordForm.action,
     method: 'POST'
@@ -309,29 +309,22 @@ changePasswordForm.onsubmit = (e) ->
   changeAction
     .then (response) ->
       data = await response.json()
-      alertClear()
-
       if data.result == 'success'
-        for msg in data.messages
-          alertAdd(msg, 'success')
-        alertAdd('約10秒後にトップページに戻ります。', 'info')
+        alertMessage {
+          data.messages...
+          info: '約10秒後にトップページに戻ります。'
+        }
         setTimeout ->
           location.href = '/'
         , 10 * 1000
       else
-        inputErrors = {}
-        for msg in data.messages
-          if typeof msg == 'string'
-            alertAdd(msg, 'failure')
-          else
-            for name, value of msg
-              inputErrors[name] = value
-        changePasswordApp.inputErrorMessage(inputErrors)
+        alertMessage data.messages
+        changePasswordApp.inputErrorMessage(data.messages['param_errors'])
         changePasswordApp.stopSubmit()
     .catch (error) ->
       console.log error
-      alertClear()
-      alertAdd("サーバー接続時にエラーが発生しました。: #{error}")
+      alertMessage
+        error: "サーバー接続時にエラーが発生しました。: #{error}"
       changePasswordApp.stopSubmit()
 
   false

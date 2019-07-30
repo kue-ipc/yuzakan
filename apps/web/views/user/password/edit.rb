@@ -22,7 +22,9 @@ module Web
 
           def change_password_field_opt(name)
             password_class = ['form-control']
-            password_class << 'is-invalid' if flash[:param_errors]&.key?(name)
+            if flash[:param_errors]&.key?(name.to_s)
+              password_class << 'is-invalid'
+            end
 
             opt = {
               class: password_class,
