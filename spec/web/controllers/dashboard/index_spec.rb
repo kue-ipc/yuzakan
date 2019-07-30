@@ -72,8 +72,4 @@ describe Web::Controllers::Dashboard::Index do
       end
     end
   end
-
-
-
-
 end
