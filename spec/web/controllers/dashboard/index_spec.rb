@@ -41,7 +41,39 @@ describe Web::Controllers::Dashboard::Index do
       flash = action.exposures[:flash]
       response[0].must_equal 302
       response[1]['Location'].must_equal '/session/new'
-      flash[:errors].must_equal ['セッションがタイムアウトしました。']
+      flash[:warn].must_equal 'セッションがタイムアウトしました。' \
+          'ログインし直してください。'
     end
   end
+
+  describe 'short 1min timeout' do
+    before { UpdateConfig.new.call(session_timeout: 60) }
+    after { db_reset}
+
+    describe '10 sec' do
+      let(:session) { {user_id: user_id, access_time: Time.now - 10} }
+
+      it 'is successful' do
+        response = action.call(params)
+        response[0].must_equal 200
+      end
+    end
+
+    describe '120 sec' do
+      let(:session) { {user_id: user_id, access_time: Time.now - 120} }
+
+      it 'redirect login' do
+        response = action.call(params)
+        flash = action.exposures[:flash]
+        response[0].must_equal 302
+        response[1]['Location'].must_equal '/session/new'
+        flash[:warn].must_equal 'セッションがタイムアウトしました。' \
+            'ログインし直してください。'
+      end
+    end
+  end
+
+
+
+
 end

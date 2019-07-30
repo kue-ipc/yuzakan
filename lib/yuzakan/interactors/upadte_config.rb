@@ -14,20 +14,20 @@ class UpdateConfig
     messages_path 'config/messages.yml'
 
     validations do
-      required(:title) { str? & max_size?(255) }
+      optional(:title) { str? & max_size?(255) }
 
-      required(:session_timeout) { int? & gteq?(0) }
+      optional(:session_timeout) { int? & gteq?(0) & lteq?(24 * 60 * 60)}
 
-      required(:theme) { max_size?(255) }
+      optional(:theme) { max_size?(255) }
 
-      required(:password_min_size) { int? & gteq?(1) & lteq?(255) }
-      required(:password_max_size) { int? & gteq?(1) & lteq?(255) }
-      required(:password_min_score) { int? & gteq?(0) & lteq?(4) }
+      optional(:password_min_size) { int? & gteq?(1) & lteq?(255) }
+      optional(:password_max_size) { int? & gteq?(1) & lteq?(255) }
+      optional(:password_min_score) { int? & gteq?(0) & lteq?(4) }
 
-      required(:remote_ip_header)
-      required(:trusted_reverse_proxies)
+      optional(:remote_ip_header)
+      optional(:trusted_reverse_proxies)
 
-      required(:admin_networks)
+      optional(:admin_networks)
     end
   end
 
@@ -48,10 +48,5 @@ class UpdateConfig
       return false
     end
     true
-  end
-
-  private def check_ip_addr_list(list_str)
-    list = list_str.split(/[,\s]\s*/).reject(&:empty?)
-    ip_list = list.map { |str| IPAddr.new(str) }
   end
 end
