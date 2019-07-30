@@ -36,9 +36,7 @@ class UpdateConfig
   end
 
   def call(params)
-    @config_repository.update(@config_repository.current.id,
-      params
-    )
+    @config_repository.update(@config_repository.current.id, params)
   end
 
   private def valid?(params)
@@ -47,6 +45,12 @@ class UpdateConfig
       error(validation.messages)
       return false
     end
+
+    unless params&.size&.positive?
+      error('変更箇所がありません。')
+      return false
+    end
+
     true
   end
 end

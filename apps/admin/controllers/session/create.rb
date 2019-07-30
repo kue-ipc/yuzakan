@@ -8,12 +8,20 @@ module Admin
 
         def call(params)
           result = Authenticate.new.call(params[:session])
-          if result.successful?
-            session[:user_id] = result.user.id
-          else
+
+          if result.failure?
             flash[:errors] = result.errors
-            redirect_to routes.path(:new_session)
+            redirect_to routes.new_session_path
           end
+
+          role = RoleRepository.new.find(result.user.role_id)
+
+          unless role&.admin
+            flash[:warn] = '権限がありません。'
+            redirect_to routes.new_session_path
+          end
+
+          session[:user_id] = result.user.id
           flash[:successes] = ['ログインしました。']
         end
 
