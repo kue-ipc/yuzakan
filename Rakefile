@@ -39,7 +39,7 @@ namespace :vendor do
 
     bootswatch_list = %w[
       cerulean cosmo cyborg darkly flatly journal litera lumen lux materia
-      minty pulse sandstone simplex sketchy slate solar spacelab Superhero
+      minty pulse sandstone simplex sketchy slate solar spacelab superhero
       united yeti
     ].map do |name|
       {
