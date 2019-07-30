@@ -13,4 +13,35 @@ describe Web::Controllers::About::Index do
     response = action.call(params)
     response[0].must_equal 200
   end
+
+  describe 'can access' do
+    describe 'before login' do
+      let(:session) { {} }
+
+      it 'is successful' do
+        response = action.call(params)
+        response[0].must_equal 200
+      end
+    end
+
+    describe 'before initialized' do
+      before { db_clear }
+      after { db_reset }
+
+      it 'is successful' do
+        response = action.call(params)
+        response[0].must_equal 200
+      end
+    end
+
+    describe 'in maintenace' do
+      before { UpdateConfig.new.call(maintenance: true) }
+      after { db_reset }
+
+      it 'is successful' do
+        response = action.call(params)
+        response[0].must_equal 200
+      end
+    end
+  end
 end

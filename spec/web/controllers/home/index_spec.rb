@@ -23,4 +23,28 @@ describe Web::Controllers::Home::Index do
       response[0].must_equal 200
     end
   end
+
+  describe 'do not access' do
+    describe 'before initialized' do
+      before { db_clear }
+      after { db_reset }
+
+      it 'redirect maintenance' do
+        response = action.call(params)
+        response[0].must_equal 302
+        response[1]['Location'].must_equal '/maintenance'
+      end
+    end
+
+    describe 'in maintenace' do
+      before { UpdateConfig.new.call(maintenance: true) }
+      after { db_reset }
+
+      it 'redirect maintenance' do
+        response = action.call(params)
+        response[0].must_equal 302
+        response[1]['Location'].must_equal '/maintenance'
+      end
+    end
+  end
 end

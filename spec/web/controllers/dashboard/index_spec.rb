@@ -38,7 +38,7 @@ describe Web::Controllers::Dashboard::Index do
 
   describe 'short 1min timeout' do
     before { UpdateConfig.new.call(session_timeout: 60) }
-    after { db_reset}
+    after { db_reset }
 
     describe '10 sec' do
       let(:session) { {user_id: user_id, access_time: Time.now - 10} }
@@ -96,7 +96,4 @@ describe Web::Controllers::Dashboard::Index do
       end
     end
   end
-
-
-
 end

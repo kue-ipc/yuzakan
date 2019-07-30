@@ -29,6 +29,10 @@ Metrics/ParameterLists:
 Metrics/PerceivedComplexity:
   Max: 14
 
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*_spec.rb
+
 Layout/EndOfLine:
   EnforcedStyle: lf
 Layout/MultilineMethodCallIndentation:
