@@ -23,16 +23,6 @@ describe Web::Controllers::Dashboard::Index do
     end
   end
 
-  describe 'before login' do
-    let(:session) { {} }
-
-    it 'redirect login' do
-      response = action.call(params)
-      response[0].must_equal 302
-      response[1]['Location'].must_equal '/session/new'
-    end
-  end
-
   describe 'session timeout' do
     let(:session) { {user_id: user_id, access_time: Time.now - 24 * 60 * 60} }
 
@@ -72,4 +62,41 @@ describe Web::Controllers::Dashboard::Index do
       end
     end
   end
+
+  describe 'do not access' do
+    describe 'before login' do
+      let(:session) { {} }
+
+      it 'redirect login' do
+        response = action.call(params)
+        response[0].must_equal 302
+        response[1]['Location'].must_equal '/session/new'
+      end
+    end
+
+    describe 'before initialized' do
+      before { db_clear }
+      after { db_reset }
+
+      it 'redirect maintenance' do
+        response = action.call(params)
+        response[0].must_equal 302
+        response[1]['Location'].must_equal '/maintenance'
+      end
+    end
+
+    describe 'in maintenace' do
+      before { UpdateConfig.new.call(maintenance: true) }
+      after { db_reset }
+
+      it 'redirect maintenance' do
+        response = action.call(params)
+        response[0].must_equal 302
+        response[1]['Location'].must_equal '/maintenance'
+      end
+    end
+  end
+
+
+
 end
