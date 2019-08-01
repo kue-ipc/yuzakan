@@ -18,7 +18,10 @@ module Yuzakan
       def include_net?(addr, networks)\
         addr = IPAddress(addr) if addr.is_a?(String)
         networks = str_to_ips(networks) if networks.is_a?(String)
-        networks.any? { |net| net.include?(addr) }
+        networks.any? do |net|
+          # 同じクラスでないとinclude?でのチェックでエラーになる。
+          net.class == addr.class && net.include?(addr)
+        end
       end
 
       def ips_str_normalize(str)
