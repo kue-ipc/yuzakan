@@ -69,5 +69,7 @@ h2 全体設定
     - text_area :admin_networks, class: 'form-control', rows: 3
     - small class: 'form-text text-muted' do
       - '管理者機能にアクセス可能なネットワークを指定します。改行または空白で区切ってください。空の場合はすべてのIPアドレスからの接続を許可します。'
+    - small class: 'form-text text-muted' do
+      - "現在接続しているクライアントのIPアドレスは #{remote_ip} です。"
 
   - submit '変更', class: 'btn btn-primary'
