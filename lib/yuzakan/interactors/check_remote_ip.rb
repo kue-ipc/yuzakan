@@ -31,7 +31,7 @@ class CheckRemoteIp
         include_net?(remote_addr_ip, @config.trusted_reverse_proxies)
 
       header = request.get_header(header_env_name(@config.remote_ip_header))
-      @romet_ip = str_to_ips(header).first if header
+      @remote_ip = str_to_ips(header).first if header
     end
 
     @remote_ip ||= remote_addr_ip
