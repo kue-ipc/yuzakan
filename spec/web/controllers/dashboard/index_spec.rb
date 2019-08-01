@@ -26,13 +26,49 @@ describe Web::Controllers::Dashboard::Index do
   describe 'session timeout' do
     let(:session) { {user_id: user_id, access_time: Time.now - 24 * 60 * 60} }
 
-    it 'redirect login' do
+    it 'redirect login with flash' do
       response = action.call(params)
       flash = action.exposures[:flash]
       response[0].must_equal 302
       response[1]['Location'].must_equal '/session/new'
       flash[:warn].must_equal 'セッションがタイムアウトしました。' \
           'ログインし直してください。'
+    end
+  end
+
+  describe 'no usner_id' do
+    let(:session) { {access_time: Time.now} }
+
+    it 'redirect login' do
+      response = action.call(params)
+      flash = action.exposures[:flash]
+      response[0].must_equal 302
+      response[1]['Location'].must_equal '/session/new'
+      flash[:warn].must_be_nil
+    end
+  end
+
+  describe 'no access_time' do
+    let(:session) { {user_id: user_id} }
+
+    it 'redirect login' do
+      response = action.call(params)
+      flash = action.exposures[:flash]
+      response[0].must_equal 302
+      response[1]['Location'].must_equal '/session/new'
+      flash[:warn].must_be_nil
+    end
+  end
+
+  describe 'no session' do
+    let(:session) { {} }
+
+    it 'redirect login' do
+      response = action.call(params)
+      flash = action.exposures[:flash]
+      response[0].must_equal 302
+      response[1]['Location'].must_equal '/session/new'
+      flash[:warn].must_be_nil
     end
   end
 

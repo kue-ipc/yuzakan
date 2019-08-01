@@ -24,10 +24,14 @@ module Web
     end
 
     private def check_session
-      if session[:access_time].nil? ||
-         session[:access_time] + current_config&.session_timeout.to_i < Time.now
+      if session[:access_time].nil?
         session[:user_id] = nil
-        flash[:warn] = 'セッションがタイムアウトしました。ログインし直してください。'
+      elsif session[:access_time] + current_config&.session_timeout.to_i <
+            Time.now
+        if session[:user_id]
+          session[:user_id] = nil
+          flash[:warn] = 'セッションがタイムアウトしました。ログインし直してください。'
+        end
       end
       session[:access_time] = Time.now
     end
