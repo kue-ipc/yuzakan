@@ -1,11 +1,11 @@
 {
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.8.2",
+    "@fortawesome/fontawesome-free": "^5.10.1",
     "bootstrap": "^4.3.1",
     "bootstrap-material-design": "^4.1.2",
     "bootstrap.native": "^2.0.26",
     "bootswatch": "^4.3.1",
-    "hyperapp": "^1.2.9",
+    "hyperapp": "^2.0.1",
     "startbootstrap-sb-admin": "^5.1.1",
     "startbootstrap-sb-admin-2": "^4.0.6",
     "zxcvbn": "^4.4.2"
@@ -14,7 +14,7 @@
     "coffeescript": "^2.4.1",
     "rollup": "^1.17.0",
     "rollup-plugin-coffee-script": "^2.0.0",
-    "rollup-plugin-commonjs": "^10.0.0",
+    "rollup-plugin-commonjs": "^10.0.2",
     "rollup-plugin-node-resolve": "^5.2.0"
   }
 }
