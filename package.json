@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.10.1",
+    "@hyperapp/events": "^0.0.3",
+    "@hyperapp/html": "^1.1.1",
     "bootstrap": "^4.3.1",
     "bootstrap-material-design": "^4.1.2",
     "bootstrap.native": "^2.0.26",
