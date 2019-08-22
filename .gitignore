@@ -1,5 +1,6 @@
 /.*-version
 /db/*.sqlite
+/db/*.sqlite-journal
 /public/assets*
 /tmp
 /node_modules
