@@ -53,9 +53,9 @@ calcStrength = (str, dict = []) ->
   }
 
 StrengthIndicator = ({score, strength}) =>
-  {tag, labelStr} =
+  scoreLabel =
     if score == 0 && strength == 0
-      {tag: 'danger', labelStr: ''}
+      {tag: 'danger', label: ''}
     else
       SCORE_LABELS[score]
 
@@ -66,13 +66,13 @@ StrengthIndicator = ({score, strength}) =>
     div class: changePasswordData.cols.right,
       div class: 'progress', style: {height: '2em'},
         div
-          class: "progress-bar bg-#{tag}",
+          class: "progress-bar bg-#{scoreLabel.tag}",
           style: {width: "#{strength}%"}
           role: 'progressbar'
           'aria-valuenow': strength
           'aria-valuemin': '0'
           'aria-valuemax': '100'
-          labelStr
+          scoreLabel.label
   ]
 
 class PasswordInputGenerator
