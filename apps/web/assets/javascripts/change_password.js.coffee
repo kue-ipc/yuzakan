@@ -76,12 +76,13 @@ StrengthIndicator = ({score, strength}) =>
 
 class PasswordInputGenerator
   constructor: ({@name, @label, error = null} ) ->
+    @camelName = camelize(@name)
     @nameList = [changePasswordData.parents..., @name]
-    @idName = listToKebab(nameList...)
-    @fieldName = listToField(nameList...)
+    @idName = listToKebab(@nameList...)
+    @fieldName = listToField(@nameList...)
 
   init: () ->
-    @state =
+    state =
       visible: false
       valid: false
       value: ''
@@ -90,19 +91,20 @@ class PasswordInputGenerator
       Object.assign @state,
         wasValidated: true
         message: error
+    state
 
   showPassword: (state, visible) => {
     state...
-    [@name]: {
-      state[@name]...
+    [@camelName]: {
+      state[@camelName]...
       visible
     }
   }
 
   resetValid: (state) => {
     state...
-    [@name]: {
-      state[@name]...
+    [@camelName]: {
+      state[@camelName]...
       valid: false
       wasValidated: false
     }
@@ -110,32 +112,33 @@ class PasswordInputGenerator
 
   setValid: (state, message) => {
     state...
-    [@name]: {
-      state[@name]...
+    [@camelName]: {
+      state[@camelName]...
       valid: true
-      wasValidated: state[@name].entered
+      wasValidated: state[@camelName].entered
       message
     }
   }
 
   setInvalid: (state, message) => {
     state...
-    [@name]: {
-      state[@name]...
+    [@camelName]: {
+      state[@camelName]...
       valid: false
-      wasValidated: state[@name].entered
+      wasValidated: state[@camelName].entered
       message
     }
   }
 
-  setValue: (state, value) => {
-    state...
-    [@name]: {
-      state[@name]...
-      value: value
-      entered: true
-    }
-  }
+  setValue: (state, value) =>
+    checkPassword({
+      state...
+      [@camelName]: {
+        state[@camelName]...
+        value: value
+        entered: true
+      }
+    })
 
   view: ({visible, valid, wasValidated, message, inputPassword, disabled}) =>
     vaildState =
@@ -168,9 +171,9 @@ class PasswordInputGenerator
             id: "#{@idName}-visible-button"
             class:
               "input-group-text #{if visible then 'text-primary' else ''}"
-            onmousedown: [@showPassword, true]
-            onmouseup: [@showPassword, false]
-            onmouseleave: [@showPassword, false]
+            onMousedown: [@showPassword, true]
+            onMouseup: [@showPassword, false]
+            onMouseleave: [@showPassword, false]
             h 'i',
               class: "fas #{if visible then 'fa-eye' else 'fa-eye-slash'}"
               style: {width: '1em'}
@@ -193,14 +196,14 @@ passwordConfirmation = new PasswordInputGenerator
   error: paramErrors['password_confirmation']
 
 init =
-  passwordCurrent: passwordCurrent.init()
-  password: password.init()
-  passwordConfirmation: passwordConfirmation.init()
+  [passwordCurrent.camelName]: passwordCurrent.init()
+  [password.camelName]: password.init()
+  [passwordConfirmation.camelName]: passwordConfirmation.init()
   score: 0
   strength: 0
   submitting: false
 
-checkPassword: (state) =>
+checkPassword = (state) =>
   newState = {
     state...
     currentPassword: {state.currentpassword...}
@@ -269,12 +272,12 @@ checkPassword: (state) =>
   newState
 
 startSubmit: (state) => {
-  state....
+  state...
   submitting: true
 }
 
 stopSubmit: (state) => {
-  state....
+  state...
   submitting: false
 }
 
