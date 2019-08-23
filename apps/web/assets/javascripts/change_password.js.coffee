@@ -1,7 +1,7 @@
 import './modern_browser.js'
 
 import {h, app} from './hyperapp.js'
-import {targetValue} from './hyperapp-events.js'
+import {preventDefault, targetValue} from './hyperapp-events.js'
 import {div, i, label, input, button} from './hyperapp-html.js'
 import zxcvbn from './zxcvbn.js'
 
@@ -142,7 +142,7 @@ class PasswordInputGenerator
     })
 
   view: ({visible, valid, wasValidated, message, inputPassword, disabled}) =>
-    vaildState =
+    validState =
       if wasValidated
         if valid
           'is-valid'
@@ -160,7 +160,7 @@ class PasswordInputGenerator
         input
           id: @idName
           name: @fieldName
-          class: "form-control #{vaildState}"
+          class: "form-control #{validState}"
           type: if visible then 'text' else 'password'
           disabled: disabled
           placeholder: 'パスワードを入力'
@@ -197,12 +197,25 @@ passwordConfirmation = new PasswordInputGenerator
   label: 'パスワードの確認'
   error: paramErrors['password_confirmation']
 
+SubmitButton = ({submitting, valid}) =>
+  button
+    class: 'btn btn-primary btn-block'
+    type:'submit'
+    disabled: submitting || !valid
+    onClick: preventDefault (state) =>
+      console.log state
+      state
+    '変更'
+
+
+
 init =
   [passwordCurrent.camelName]: passwordCurrent.init()
   [password.camelName]: password.init()
   [passwordConfirmation.camelName]: passwordConfirmation.init()
   score: 0
   strength: 0
+  valid: false
   submitting: false
 
 checkPassword = (state) =>
@@ -271,7 +284,12 @@ checkPassword = (state) =>
         passwordConfirmation.setInvalid(newState, 'パスワードが一致しません。')
       else
         passwordConfirmation.setValid(newState, '')
-  newState
+  {
+    newState...
+    valid: newState.passwordCurrent.valid &&
+      newState.password.valid &&
+      newState.passwordConfirmation.valid
+  }
 
 startSubmit: (state) => {
   state...
@@ -308,64 +326,48 @@ view = (state) ->
     div class: 'row', [
       div class: "#{changePasswordData.cols.left}"
       div class: "#{changePasswordData.cols.right}",
-        if state.submitting
-          button
-            class: 'btn btn-primary btn-block'
-            type:'submit'
-            disabled: true
-            '変更処理中...'
-        else if state.passwordCurrent.valid &&
-            state.password.valid &&
-            state.passwordConfirmation.valid
-          button
-            class: 'btn btn-primary btn-block'
-            type:'submit'
-            '変更'
-        else
-          button
-            class: 'btn btn-primary btn-block'
-            type:'submit'
-            disabled: true
-            '変更'
+        h SubmitButton,
+          valid: state.valid
+          submitting: state.submitting
     ]
   ]
 
-changePasswordApp = app {init, view, node: changePasswordNode}
-console.log changePasswordApp
-changePasswordForm.onsubmit = (e) ->
-  formData = new FormData(e.target)
+app {init, view, node: changePasswordNode}
 
-  changePasswordApp.startSubmit()
-  alertMessage
-    info: 'パスワード変更処理を実行中です。しばらくお待ち下さい。'
-
-  changeAction = fetch changePasswordForm.action,
-    method: 'POST'
-    mode: 'same-origin'
-    credentials: 'same-origin'
-    headers:
-      'Accept': 'application/json'
-    body: formData
-
-  changeAction
-    .then (response) ->
-      data = await response.json()
-      if data.result == 'success'
-        alertMessage {
-          data.messages...
-          info: '約10秒後にトップページに戻ります。'
-        }
-        setTimeout ->
-          location.href = '/'
-        , 10 * 1000
-      else
-        alertMessage data.messages
-        changePasswordApp.inputErrorMessage(data.messages['param_errors'])
-        changePasswordApp.stopSubmit()
-    .catch (error) ->
-      console.warn error
-      alertMessage
-        error: "サーバー接続時にエラーが発生しました。: #{error}"
-      changePasswordApp.stopSubmit()
-
-  false
+# changePasswordForm.onsubmit = (e) ->
+#   formData = new FormData(e.target)
+#
+#   changePasswordApp.startSubmit()
+#   alertMessage
+#     info: 'パスワード変更処理を実行中です。しばらくお待ち下さい。'
+#
+#   changeAction = fetch changePasswordForm.action,
+#     method: 'POST'
+#     mode: 'same-origin'
+#     credentials: 'same-origin'
+#     headers:
+#       'Accept': 'application/json'
+#     body: formData
+#
+#   changeAction
+#     .then (response) ->
+#       data = await response.json()
+#       if data.result == 'success'
+#         alertMessage {
+#           data.messages...
+#           info: '約10秒後にトップページに戻ります。'
+#         }
+#         setTimeout ->
+#           location.href = '/'
+#         , 10 * 1000
+#       else
+#         alertMessage data.messages
+#         changePasswordApp.inputErrorMessage(data.messages['param_errors'])
+#         changePasswordApp.stopSubmit()
+#     .catch (error) ->
+#       console.warn error
+#       alertMessage
+#         error: "サーバー接続時にエラーが発生しました。: #{error}"
+#       changePasswordApp.stopSubmit()
+#
+#   false
