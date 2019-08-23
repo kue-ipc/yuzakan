@@ -2,7 +2,7 @@ import './modern_browser.js'
 
 import {h, app} from './hyperapp.js'
 import {targetValue} from './hyperapp-events.js'
-import {div} from './hyperapp-html.js'
+import {div, i, label, input, button} from './hyperapp-html.js'
 import zxcvbn from './zxcvbn.js'
 
 import {alertMessage} from './alert.js'
@@ -53,26 +53,27 @@ calcStrength = (str, dict = []) ->
   }
 
 StrengthIndicator = ({score, strength}) =>
-  {tag, label} =
+  {tag, labelStr} =
     if score == 0 && strength == 0
-      {tag: 'danger', label: ''}
+      {tag: 'danger', labelStr: ''}
     else
       SCORE_LABELS[score]
 
   strength = 100 if strength >= 100
 
-  h 'div', class: 'row mb-3',
-    h 'div', class: changePasswordData.cols.left
-    h 'div', class: changePasswordData.cols.right,
-      h 'div', class: 'progress', style: {height: '2em'},
-        h 'div',
+  div class: 'row mb-3', [
+    div class: changePasswordData.cols.left
+    div class: changePasswordData.cols.right,
+      div class: 'progress', style: {height: '2em'},
+        div
           class: "progress-bar bg-#{tag}",
           style: {width: "#{strength}%"}
           role: 'progressbar'
           'aria-valuenow': strength
           'aria-valuemin': '0'
           'aria-valuemax': '100'
-          label
+          labelStr
+  ]
 
 class PasswordInputGenerator
   constructor: ({@name, @label, error = null} ) ->
@@ -150,13 +151,13 @@ class PasswordInputGenerator
       else
         ''
 
-    h 'div', class: 'form-group row',
-      h 'label',
+    div class: 'form-group row', [
+      label
         class: "col-form-label #{changePasswordData.cols.left}"
         for: @idName
         @label
-      h 'div', class: "input-group #{changePasswordData.cols.right}",
-        h 'input',
+      div class: "input-group #{changePasswordData.cols.right}", [
+        input
           id: @idName
           name: @fieldName
           class: "form-control #{vaildState}"
@@ -165,20 +166,21 @@ class PasswordInputGenerator
           placeholder: 'パスワードを入力'
           'aria-describedby': "#{@idName}-visible-button"
           onInput: [@setValue, targetValue]
-          # (state, e) => inputPassword(e.target.value)
-        h 'div', class: 'input-group-append',
-          h 'div',
+        div class: 'input-group-append',
+          div
             id: "#{@idName}-visible-button"
             class:
               "input-group-text #{if visible then 'text-primary' else ''}"
-            onMousedown: [@showPassword, true]
-            onMouseup: [@showPassword, false]
-            onMouseleave: [@showPassword, false]
-            h 'i',
+            onMouseDown: [@showPassword, true]
+            onMouseUp: [@showPassword, false]
+            onMouseLeave: [@showPassword, false]
+            i
               class: "fas #{if visible then 'fa-eye' else 'fa-eye-slash'}"
               style: {width: '1em'}
-        h 'div', class: 'valid-feedback', message
-        h 'div', class: 'invalid-feedback', message
+        div class: 'valid-feedback', message
+        div class: 'invalid-feedback', message
+      ]
+    ]
 
 passwordCurrent = new PasswordInputGenerator
   name: 'password_current'
@@ -226,7 +228,7 @@ checkPassword = (state) =>
   newState =
     switch
       when not state.passwordCurrent.value?.length > 0
-        passwordCurrent.setInvalid(netState, 'パスワードが空です。')
+        passwordCurrent.setInvalid(newState, 'パスワードが空です。')
       else
         passwordCurrent.setValid(newState, '')
 
@@ -286,7 +288,7 @@ inputErrorMessage: (messages) => (state, actions) =>
     actions[camelize(name)].setInvalid(message)
 
 view = (state) ->
-  h 'div', {} , [
+  div [
     h passwordCurrent.view, {
       disabled: state.submitting
       state.passwordCurrent...
@@ -303,21 +305,33 @@ view = (state) ->
       disabled: state.submitting
       state.passwordConfirmation...
     }
-    h 'div', class: 'row',
-      h 'div', class: "#{changePasswordData.cols.left}"
-      h 'div', class: "#{changePasswordData.cols.right}",
+    div class: 'row', [
+      div class: "#{changePasswordData.cols.left}"
+      div class: "#{changePasswordData.cols.right}",
         if state.submitting
-          h 'button', class: 'btn btn-primary btn-block', type:'submit', disabled: true, '変更処理中...'
+          button
+            class: 'btn btn-primary btn-block'
+            type:'submit'
+            disabled: true
+            '変更処理中...'
         else if state.passwordCurrent.valid &&
             state.password.valid &&
             state.passwordConfirmation.valid
-          h 'button', class: 'btn btn-primary btn-block', type:'submit', '変更'
+          button
+            class: 'btn btn-primary btn-block'
+            type:'submit'
+            '変更'
         else
-          h 'button', class: 'btn btn-primary btn-block', type:'submit', disabled: true, '変更'
+          button
+            class: 'btn btn-primary btn-block'
+            type:'submit'
+            disabled: true
+            '変更'
+    ]
   ]
 
 changePasswordApp = app {init, view, node: changePasswordNode}
-
+console.log changePasswordApp
 changePasswordForm.onsubmit = (e) ->
   formData = new FormData(e.target)
 
@@ -349,7 +363,7 @@ changePasswordForm.onsubmit = (e) ->
         changePasswordApp.inputErrorMessage(data.messages['param_errors'])
         changePasswordApp.stopSubmit()
     .catch (error) ->
-      console.log error
+      console.warn error
       alertMessage
         error: "サーバー接続時にエラーが発生しました。: #{error}"
       changePasswordApp.stopSubmit()
