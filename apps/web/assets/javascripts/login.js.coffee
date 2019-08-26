@@ -103,6 +103,7 @@ loginSet = (formNode, modalNode) ->
           ]
           closable: true
         }
+        enableSubmit()
         for input in inputTextNodes
           input.disabled = false
 
