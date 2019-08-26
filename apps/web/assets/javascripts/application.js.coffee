@@ -1,7 +1,4 @@
 import './modern_browser.js'
 
 import './fontawesome.js'
-import bsn from './bootstrap-native.js'
-
-for el in document.getElementsByClassName('alert')
-  new bsn.Alert(el)
+import './bootstrap-native.js'
