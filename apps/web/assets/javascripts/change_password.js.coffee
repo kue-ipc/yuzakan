@@ -5,7 +5,7 @@ import {preventDefault, targetValue} from './hyperapp-events.js'
 import {div, i, label, input, button} from './hyperapp-html.js'
 import zxcvbn from './zxcvbn.js'
 
-import {alertMessage} from './alert.js'
+# import {alertMessage} from './alert.js'
 import {listToField, listToKebab, camelize} from './string_utils.js'
 
 changePasswordNode = document.getElementById('change-password')
@@ -206,8 +206,6 @@ SubmitButton = ({submitting, valid}) =>
       console.log state
       state
     '変更'
-
-
 
 init =
   [passwordCurrent.camelName]: passwordCurrent.init()
