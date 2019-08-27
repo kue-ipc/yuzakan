@@ -1,6 +1,5 @@
 import './modern_browser.js'
 
-import {alertMessage} from './alert.js'
 import bsn from './bootstrap-native.js'
 
 clearChildren = (node) ->
