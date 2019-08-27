@@ -5,6 +5,7 @@
 import {h, app} from './hyperapp.js'
 import {div, h5, button, span, i} from './hyperapp-html.js'
 import bsn from './bootstrap-native.js'
+import {FasIcon} from './fa_icon.js'
 
 export default class WebPostJson
   MESSAGE_EVENT = 'webpostjson.message'
@@ -123,7 +124,7 @@ ModalView = ({status, title, messages, closable}) ->
     div class: 'modal-content', [
       div class: 'modal-header', [
         h5 class: 'modal-title', [
-          h StatusIcon, key: "icon-#{status}", status: status
+          h StatusIcon, status: status
           ' '
           title
         ]
@@ -148,15 +149,25 @@ ModalView = ({status, title, messages, closable}) ->
     ]
 
 StatusIcon = ({status}) ->
-  className =
+  span {}, [
+    status
     switch status
-      when 'running' then 'fas fa-spinner fa-spin text-primary'
-      when 'success' then 'fas fa-check text-success'
-      when 'failure' then 'fas fa-times text-danger'
-      when 'error' then 'fas fa-exclamation-triangle text-warning'
-      else 'fas fa-question text-secondary'
-  i class: className
-
+      when 'running'
+        h FasIcon, name: 'fa-spinner', options: ['fa-spin', 'text-primary'],
+          status
+      when 'success'
+        h FasIcon, name: 'fa-check', options: ['text-success'],
+          status
+      when 'failure'
+        h FasIcon, name: 'fa-times', options: ['text-danger'],
+          status
+      when 'error'
+        h FasIcon, name: 'fa-exclamation-triangle', options: ['text-warning'],
+          status
+      else
+        h FasIcon, name: 'fa-question', options: ['text-secondary'],
+          status
+  ]
 MessageList = ({messages}) ->
   messages = [messages] unless messages instanceof Array
   div {}, messages.filter((x) -> x).map (msg) ->
