@@ -3,9 +3,8 @@
 # その際、modalを使用する。
 
 import {h, app} from './hyperapp.js'
-import {div, h5, button, span, i} from './hyperapp-html.js'
 import bsn from './bootstrap-native.js'
-import {FasIcon} from './fa_icon.js'
+import {FaIcon} from './fa_icon.js'
 
 export default class WebPostJson
   MESSAGE_EVENT = 'webpostjson.message'
@@ -120,28 +119,28 @@ messageAction = (state, params) -> {
 }
 
 ModalView = ({status, title, messages, closable}) ->
-  div class: 'modal-dialog modal-dialog-centered', role: 'document',
-    div class: 'modal-content', [
-      div class: 'modal-header', [
-        h5 class: 'modal-title', [
+  h 'div', class: 'modal-dialog modal-dialog-centered', role: 'document',
+    h 'div', class: 'modal-content', [
+      h 'div', class: 'modal-header', [
+        h 'h5', class: 'modal-title', [
           h StatusIcon, status: status
           ' '
           title
         ]
         if closable
-          button
+          h 'button',
             class: 'close'
             type: 'button'
             'data-dismiss': 'modal'
             'aria-label': "閉じる"
-            span 'aria-hidden': "true",
-              i class: 'fas fa-times'
+            h 'span', 'aria-hidden': "true",
+              h 'i', class: 'fas fa-times'
       ]
-      div class: 'modal-body',
+      h 'div', class: 'modal-body',
         h MessageList, messages: messages
       if closable
-        div class: 'modal-footer',
-          button
+        h 'div', class: 'modal-footer',
+          h 'button',
             class: 'btn btn-secondary'
             type: 'button'
             'data-dismiss': 'modal'
@@ -149,26 +148,37 @@ ModalView = ({status, title, messages, closable}) ->
     ]
 
 StatusIcon = ({status}) ->
-  span {}, [
-    status
+  [textClass, props] =
     switch status
       when 'running'
-        h FasIcon, name: 'fa-spinner', options: ['fa-spin', 'text-primary'],
-          status
+        [
+          'text-primary'
+          {prefix: 'fas', name: 'fa-spinner', options: ['fa-spin']}
+        ]
       when 'success'
-        h FasIcon, name: 'fa-check', options: ['text-success'],
-          status
+        [
+          'text-success'
+          {prefix: 'fas', name: 'fa-check'}
+        ]
       when 'failure'
-        h FasIcon, name: 'fa-times', options: ['text-danger'],
-          status
+        [
+          'text-danger'
+          {prefix: 'fas', name: 'fa-times'}
+        ]
       when 'error'
-        h FasIcon, name: 'fa-exclamation-triangle', options: ['text-warning'],
-          status
+        [
+          'text-warning'
+          {prefix: 'fas', name: 'fa-exclamation-triangle'}
+        ]
       else
-        h FasIcon, name: 'fa-question', options: ['text-secondary'],
-          status
-  ]
+        [
+          'text-secondary'
+          {prefix: 'fas', name: 'fa-question'}
+        ]
+  h 'span', class: textClass,
+    h FaIcon, props
+
 MessageList = ({messages}) ->
   messages = [messages] unless messages instanceof Array
-  div {}, messages.filter((x) -> x).map (msg) ->
-    div {}, msg
+  h 'div', {}, messages.filter((x) -> x).map (msg) ->
+    h 'div', {}, msg
