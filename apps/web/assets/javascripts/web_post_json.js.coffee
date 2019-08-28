@@ -133,13 +133,12 @@ messageAction = (state, params) -> {
 
 ModalView = ({status, title, messages, closable, successLink}) ->
   h 'div', class: 'modal-dialog modal-dialog-centered', role: 'document',
-    h 'div', class: 'modal-content', [
-      h 'div', class: 'modal-header', [
-        h 'h5', class: 'modal-title', [
+    h 'div', class: 'modal-content',
+      h 'div', class: 'modal-header',
+        h 'h5', class: 'modal-title',
           h StatusIcon, status: status
           ' '
           title
-        ]
         if closable
           h 'button',
             class: 'close'
@@ -148,7 +147,6 @@ ModalView = ({status, title, messages, closable, successLink}) ->
             'aria-label': "閉じる"
             h 'span', 'aria-hidden': "true",
               h FaIcon, prefix: 'fas', name: 'fa-times'
-      ]
       h 'div', class: 'modal-body',
         h MessageList, messages: messages
       if closable || successLink?
@@ -165,7 +163,6 @@ ModalView = ({status, title, messages, closable, successLink}) ->
               type: 'button'
               'data-dismiss': 'modal'
               '閉じる'
-    ]
 
 StatusIcon = ({status}) ->
   [textClass, props] =
