@@ -1,5 +1,4 @@
-# Hyperapp v1
-# v2はまだ手を出すのが早かった模様
+# Hyperapp v2 対応済み
 
 import {h, app} from './hyperapp.js'
 
@@ -157,17 +156,17 @@ Params = (props) ->
 state =
   params: []
 
-# actions =
-# selectAdapter: (value) => (state, actions) =>
-#   params = await getParamsByAdapter(value)
-#   actions.updateParams(params)
-
 changeSelectRunner = (dispatch, {action, node}) ->
+  updateAsyncFunc = (value) ->
+    params = await getParamsByAdapter(value)
+    dispatch(action, params)
   func = (event) ->
+    updateAsyncFunc(event.target.value)
     (->
-      params = await getParamsByAdapter(event.target.value)
+      params = await getParamsByAdapter()
       dispatch(action, params)
     )()
+  updateAsyncFunc(node.value)
   node.addEventListener 'change', func
   () -> node.removeListener 'change', func
 
@@ -192,9 +191,3 @@ app
   view: view
   node: mainNode
   subscriptions: (state) -> changeSelect(updateParams, node: adapterSelectNode)
-
-# mainApp = app(state, actions, view, mainNode)
-#
-# mainApp.selectAdapter(adapterSelectNode.value)
-# adapterSelectNode.addEventListener 'change', (event) ->
-#   mainApp.selectAdapter(event.target.value)
