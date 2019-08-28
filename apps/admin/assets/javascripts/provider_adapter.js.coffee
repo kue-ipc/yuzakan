@@ -157,22 +157,44 @@ Params = (props) ->
 state =
   params: []
 
-actions =
-  selectAdapter: (value) => (state, actions) =>
-    params = await getParamsByAdapter(value)
-    actions.updateParams(params)
-  updateParams: (value) => (satte) =>
-    params: value
+# actions =
+# selectAdapter: (value) => (state, actions) =>
+#   params = await getParamsByAdapter(value)
+#   actions.updateParams(params)
 
-view = (state, actions) ->
+changeSelectRunner = (dispatch, {action, node}) ->
+  func = (event) ->
+    (->
+      params = await getParamsByAdapter(event.target.value)
+      dispatch(action, params)
+    )()
+  node.addEventListener 'change', func
+  () -> node.removeListener 'change', func
+
+changeSelect = (action, {node}) ->
+  [
+    changeSelectRunner
+    {action, node}
+  ]
+
+updateParams = (state, value) ->
+  params: value
+
+view = (state) ->
   h 'div', {}, [
     h 'p', {}, 'パラメーター'
     h Params,
       params: state.params
   ]
 
-mainApp = app(state, actions, view, mainNode)
+app
+  init: state
+  view: view
+  node: mainNode
+  subscriptions: (state) -> changeSelect(updateParams, node: adapterSelectNode)
 
-mainApp.selectAdapter(adapterSelectNode.value)
-adapterSelectNode.addEventListener 'change', (event) ->
-  mainApp.selectAdapter(event.target.value)
+# mainApp = app(state, actions, view, mainNode)
+#
+# mainApp.selectAdapter(adapterSelectNode.value)
+# adapterSelectNode.addEventListener 'change', (event) ->
+#   mainApp.selectAdapter(event.target.value)
