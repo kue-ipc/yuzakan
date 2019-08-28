@@ -14,6 +14,8 @@ ENV['COFFEESCRIPT_SOURCE_PATH'] ||= File.expand_path(
   __dir__)
 
 Hanami.configure do
+  middleware.use Yuzakan::Utils::IEBadAccept
+
   mount Admin::Application, at: '/admin'
   mount Web::Application, at: '/'
 
