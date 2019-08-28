@@ -50,16 +50,21 @@ loginSet = (formNode, modalNode) ->
   #   modalNode.getElementsByClassName('modal-footer')[0]
   # ]
 
-  webPost = new WebPostJson(formNode, 'ログイン', {
-    running: 'ログインを実施しています。しばらくお待ち下さい。'
-    success: '画面を切り替えています。しばらくお待ち下さい。'
-  })
+  webPost = new WebPostJson
+    form: formNode
+    title: 'ログイン'
+    messages: {
+      running: 'ログインを実施しています。しばらくお待ち下さい。'
+      success: '画面を切り替えています。しばらくお待ち下さい。'
+    }
+    successLink: '/dashboard'
+    reloadTime: 0
 
   formNode.onsubmit = (e) ->
     (->
       try
-        result = await webPost.submitPromise()
-        if result
+        {result, messages} = await webPost.submitPromise()
+        if result == 'success'
           location.reload()
         else
           for input in inputTextNodes

@@ -9,7 +9,13 @@ import {FaIcon} from './fa_icon.js'
 export default class WebPostJson
   MESSAGE_EVENT = 'webpostjson.message'
 
-  constructor: (@form, @title, @messages = {}) ->
+  constructor: ({
+    @form
+    @title
+    @messages = {}
+    @successLink = null
+    @reloadTime = 0
+  }) ->
     @modalNode = document.createElement('div')
     @modalNode.className = 'modal'
     @modalNode.setAttribute('tabindex', -1)
@@ -28,6 +34,7 @@ export default class WebPostJson
         title: 'no title'
         messages: 'n/a'
         closable: false
+        successLink: null
       }
       view: ModalView
       node: @modalChildNode
@@ -73,27 +80,33 @@ export default class WebPostJson
           status: 'success'
           title: "#{@title}成功"
           closable: false
+          successLink: @successLink
           messages: [
             data.messages.success
             @messages.success
           ]
-        return true
+        setTimeout =>
+          location.href = @successLink
+        , @reloadTime
+        return data
       else
         @modalMessage
           status: 'failure'
           title: "#{@title}失敗"
           closable: true
+          successLink: null
           messages: [
             data.messages.failure
             data.messages.errors...
             @messages.failure
           ]
-        return false
+        return data
     catch error
       @modalMessage
         status: 'error'
         title: '接続エラー'
         closable: true
+        successLink: null
         messages: [
           'サーバー接続時にエラーが発生しました。しばらく待ってから、再度試してください。'
           "エラー内容: #{error}"
@@ -118,7 +131,7 @@ messageAction = (state, params) -> {
   params...
 }
 
-ModalView = ({status, title, messages, closable}) ->
+ModalView = ({status, title, messages, closable, successLink}) ->
   h 'div', class: 'modal-dialog modal-dialog-centered', role: 'document',
     h 'div', class: 'modal-content', [
       h 'div', class: 'modal-header', [
@@ -134,17 +147,24 @@ ModalView = ({status, title, messages, closable}) ->
             'data-dismiss': 'modal'
             'aria-label': "閉じる"
             h 'span', 'aria-hidden': "true",
-              h 'i', class: 'fas fa-times'
+              h FaIcon, prefix: 'fas', name: 'fa-times'
       ]
       h 'div', class: 'modal-body',
         h MessageList, messages: messages
-      if closable
+      if closable || successLink?
         h 'div', class: 'modal-footer',
-          h 'button',
-            class: 'btn btn-secondary'
-            type: 'button'
-            'data-dismiss': 'modal'
-            '閉じる'
+          if successLink?
+            h 'a',
+              class: 'btn btn-primary'
+              role: 'button'
+              href: successLink
+              'すぐに移動'
+          if closable
+            h 'button',
+              class: 'btn btn-secondary'
+              type: 'button'
+              'data-dismiss': 'modal'
+              '閉じる'
     ]
 
 StatusIcon = ({status}) ->

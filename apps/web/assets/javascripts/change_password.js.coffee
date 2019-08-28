@@ -6,6 +6,7 @@ import {FaIcon} from './fa_icon.js'
 import zxcvbn from './zxcvbn.js'
 
 import {listToField, listToKebab, camelize} from './string_utils.js'
+import WebPostJson from './web_post_json.js'
 
 changePasswordNode = document.getElementById('change-password')
 changePasswordData = JSON.parse(changePasswordNode.getAttribute(
@@ -172,10 +173,9 @@ class PasswordInputGenerator
             onMouseDown: [@showPassword, true]
             onMouseUp: [@showPassword, false]
             onMouseLeave: [@showPassword, false]
-            h 'span', style: {width: '1rem'},
-              h FaIcon,
-                prefix: 'fas'
-                name: if visible then 'fa-eye' else 'fa-eye-slash'
+            h FaIcon,
+              prefix: 'fas'
+              name: if visible then 'fa-eye' else 'fa-eye-slash'
         h 'div', class: 'valid-feedback', message
         h 'div', class: 'invalid-feedback', message
 
@@ -194,14 +194,22 @@ passwordConfirmation = new PasswordInputGenerator
   label: 'パスワードの確認'
   error: paramErrors['password_confirmation']
 
+passwordInputs = {
+  passwordCurrent
+  password
+  passwordConfirmation
+}
+
 SubmitButton = ({submitting, valid}) =>
   h 'button',
     class: 'btn btn-primary btn-block'
     type:'submit'
     disabled: submitting || !valid
     onClick: preventDefault (state) =>
-      console.log state
-      state
+      [
+        startSubmit(state)
+        [submitRunner]
+      ]
     '変更'
 
 init =
@@ -286,19 +294,39 @@ checkPassword = (state) =>
       newState.passwordConfirmation.valid
   }
 
-startSubmit: (state) => {
+startSubmit = (state) => {
   state...
   submitting: true
 }
 
-stopSubmit: (state) => {
-  state...
-  submitting: false
-}
+stopSubmit = (state, messages) =>
+  for name, message of messages['param_errors']
+      state = passwordInputs[camelize(name)].setInvalid(state, message)
+  {
+    state...
+    submitting: false
+  }
 
-inputErrorMessage: (messages) => (state, actions) =>
-  for name, message of messages
-    actions[camelize(name)].setInvalid(message)
+webPost = new WebPostJson
+  form: changePasswordForm
+  title: 'パスワード変更'
+  messages: {
+    running: 'パスワード変更を実行しています。しばらくお待ち下さい。'
+    success: '約10秒後にトップページに戻ります。'
+  }
+  successLink: '/dashboard'
+  reloadTime: 10 * 1000
+
+submitRunner = (dispatch) ->
+  (->
+    try
+      {result, messages} = await webPost.submitPromise()
+      if result != 'success'
+        dispatch(stopSubmit, messages)
+    catch error
+      console.log(error)
+      dispatch(stopSubmit, {})
+  )()
 
 view = (state) ->
   h 'div', {},
@@ -326,6 +354,23 @@ view = (state) ->
           submitting: state.submitting
 
 app {init, view, node: changePasswordNode}
+
+  # formNode.onsubmit = (e) ->
+  #   (->
+  #     try
+  #       result = await webPost.submitPromise()
+  #       if result
+  #         location.reload()
+  #       else
+  #         for input in inputTextNodes
+  #           input.value = ''
+  #           disableSubmit()
+  #     catch error
+  #       console.log(error)
+  #       # do nothing
+  #   )()
+  #   false
+
 
 # changePasswordForm.onsubmit = (e) ->
 #   formData = new FormData(e.target)
