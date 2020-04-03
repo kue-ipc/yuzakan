@@ -93,8 +93,8 @@ class ChangePassword
       end
 
       if params[:password] !~ /\A[\u0020-\u007e]*\z/ ||
-          !(@config.password_unusable_chars.chars &
-              params[:password].chars).empty?
+          !((@config.password_unusable_chars&.chars || []) &
+            params[:password].chars).empty?
         error({password: '使用できない文字が含まれています。'})
         ok = false
       end
