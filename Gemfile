@@ -34,8 +34,8 @@ end
 group :test, :development do
   gem 'dotenv', '~> 2.4'
   gem 'pry'
-  gem 'sqlite3'
-
+  # gem 'sqlite3'
+  gem 'mysql2'
 end
 
 group :test do
