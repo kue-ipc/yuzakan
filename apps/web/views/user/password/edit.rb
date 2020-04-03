@@ -59,7 +59,7 @@ module Web
           end
 
           private def change_password_dict
-            dict = current_config.password_extra_dict&.split
+            dict = current_config.password_extra_dict&.split || []
             dict.concat([
               current_user.name,
               current_user.display_name&.split,
