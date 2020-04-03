@@ -7,9 +7,14 @@ gem 'hanami',       '~> 1.3'
 gem 'hanami-model', '~> 1.3'
 gem 'hanami-events', git: 'https://github.com/hanami/events.git'
 
+# Database
+# gem 'sqlite3'
+gem 'mysql2'
+# gem 'pg'
+
 gem 'slim'
 
-gem 'sass'
+# gem 'sass'
 gem 'sassc'
 
 gem 'coffee-script'
@@ -18,10 +23,14 @@ gem 'uglifier'
 gem 'bcrypt'
 gem 'zxcvbn-ruby'
 
+gem 'ipaddress'
+
+# LDAP
 gem 'net-ldap'
 gem 'smbhash'
 
-gem 'ipaddress'
+# G Suite
+gem 'google-api-client'
 
 group :development do
   # Code reloading
@@ -34,8 +43,6 @@ end
 group :test, :development do
   gem 'dotenv', '~> 2.4'
   gem 'pry'
-  # gem 'sqlite3'
-  gem 'mysql2'
 end
 
 group :test do
@@ -45,6 +52,4 @@ end
 
 group :production do
   gem 'puma'
-  gem 'mysql2'
-  # gem 'pg'
 end
