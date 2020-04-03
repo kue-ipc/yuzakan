@@ -20,12 +20,12 @@ describe Authenticate do
 
     it 'call failure' do
       result = interactor.call(params)
-      result.failure?.must_equal true
+      _(result.failure?).must_equal true
     end
   end
 
   it 'call successful' do
     result = interactor.call(params)
-    result.successful?.must_equal true
+    _(result.successful?).must_equal true
   end
 end

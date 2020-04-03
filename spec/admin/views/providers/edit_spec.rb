@@ -9,6 +9,6 @@ describe Admin::Views::Providers::Edit do
   let(:rendered)  { view.render }
 
   it 'exposes #format' do
-    view.format.must_equal exposures.fetch(:format)
+    _(view.format).must_equal exposures.fetch(:format)
   end
 end

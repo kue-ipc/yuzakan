@@ -11,8 +11,8 @@ describe Web::Controllers::Home::Index do
 
   it 'redirect to dashboard' do
     response = action.call(params)
-    response[0].must_equal 302
-    response[1]['Location'].must_equal '/dashboard'
+    _(response[0]).must_equal 302
+    _(response[1]['Location']).must_equal '/dashboard'
   end
 
   describe 'before login' do
@@ -20,7 +20,7 @@ describe Web::Controllers::Home::Index do
 
     it 'is successful' do
       response = action.call(params)
-      response[0].must_equal 200
+      _(response[0]).must_equal 200
     end
   end
 
@@ -31,8 +31,8 @@ describe Web::Controllers::Home::Index do
 
       it 'redirect maintenance' do
         response = action.call(params)
-        response[0].must_equal 302
-        response[1]['Location'].must_equal '/maintenance'
+        _(response[0]).must_equal 302
+        _(response[1]['Location']).must_equal '/maintenance'
       end
     end
 
@@ -42,8 +42,8 @@ describe Web::Controllers::Home::Index do
 
       it 'redirect maintenance' do
         response = action.call(params)
-        response[0].must_equal 302
-        response[1]['Location'].must_equal '/maintenance'
+        _(response[0]).must_equal 302
+        _(response[1]['Location']).must_equal '/maintenance'
       end
     end
   end

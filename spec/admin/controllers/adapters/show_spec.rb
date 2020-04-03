@@ -11,6 +11,6 @@ describe Admin::Controllers::Adapters::Show do
 
   it 'is successful' do
     response = action.call(params.merge(id: 'dummy'))
-    response[0].must_equal 200
+    _(response[0]).must_equal 200
   end
 end

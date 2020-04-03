@@ -26,28 +26,28 @@ describe Admin::Controllers::Providers::Create do
           adapter_name: 'dummy',
         },
       ))
-      response[0].must_equal 302
-      response[1]['Location'].must_equal '/admin/setup'
+      _(response[0]).must_equal 302
+      _(response[1]['Location']).must_equal '/admin/setup'
     end
   end
 
   # it 'redirect setup before initialized' do
   #   db_clear
   #   response = action.call(params)
-  #   response[0].must_equal 302
-  #   response[1]['Location'].must_equal '/admin/setup'
+  #   _(response[0]).must_equal 302
+  #   _(response[1]['Location']).must_equal '/admin/setup'
   # end
   #
   # it 'redirect new_session before login after initialized' do
   #   # let(:session) { {} }
   #   response = action.call(params)
-  #   response[0].must_equal 302
-  #   response[1]['Location'].must_equal '/admin/session/new'
+  #   _(response[0]).must_equal 302
+  #   _(response[1]['Location']).must_equal '/admin/session/new'
   # end
   #
   # it 'is successful' do
   #   response = action.call(params)
-  #   response[0].must_equal 302
-  #   response[1]['Location'].must_equal '/admin/providers'
+  #   _(response[0]).must_equal 302
+  #   _(response[1]['Location']).must_equal '/admin/providers'
   # end
 end

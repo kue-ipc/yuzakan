@@ -19,10 +19,10 @@ describe Admin::Views::Setup::Index do
   let(:rendered)  { view.render }
 
   it 'exposes #format' do
-    view.format.must_equal exposures.fetch(:format)
+    _(view.format).must_equal exposures.fetch(:format)
   end
 
   it 'exist form' do
-    rendered.must_match %(<form)
+    _(rendered).must_match %(<form)
   end
 end

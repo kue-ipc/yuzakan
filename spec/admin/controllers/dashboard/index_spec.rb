@@ -11,7 +11,7 @@ describe Admin::Controllers::Dashboard::Index do
 
   it 'is successful' do
     response = action.call(params)
-    response[0].must_equal 200
+    _(response[0]).must_equal 200
   end
 
   describe 'user login' do
@@ -19,8 +19,8 @@ describe Admin::Controllers::Dashboard::Index do
 
     it 'redirect login' do
       response = action.call(params)
-      response[0].must_equal 302
-      response[1]['Location'].must_equal '/admin/session/new'
+      _(response[0]).must_equal 302
+      _(response[1]['Location']).must_equal '/admin/session/new'
     end
   end
 
@@ -29,8 +29,8 @@ describe Admin::Controllers::Dashboard::Index do
 
     it 'redirect login' do
       response = action.call(params)
-      response[0].must_equal 302
-      response[1]['Location'].must_equal '/admin/session/new'
+      _(response[0]).must_equal 302
+      _(response[1]['Location']).must_equal '/admin/session/new'
     end
   end
 
@@ -40,8 +40,8 @@ describe Admin::Controllers::Dashboard::Index do
 
     it 'redirect setup' do
       response = action.call(params)
-      response[0].must_equal 302
-      response[1]['Location'].must_equal '/admin/setup'
+      _(response[0]).must_equal 302
+      _(response[1]['Location']).must_equal '/admin/setup'
     end
   end
 end

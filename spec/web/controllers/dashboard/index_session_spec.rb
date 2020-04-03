@@ -11,8 +11,8 @@ describe Web::Controllers::Dashboard::Index do
 
   it 'is successful' do
     response = action.call(params)
-    response[0].must_equal 200
-    action.send(:remote_ip).to_s.must_equal '::1'
+    _(response[0]).must_equal 200
+    _(action.send(:remote_ip).to_s).must_equal '::1'
   end
 
   describe 'admin login' do
@@ -20,7 +20,7 @@ describe Web::Controllers::Dashboard::Index do
 
     it 'is successful' do
       response = action.call(params)
-      response[0].must_equal 200
+      _(response[0]).must_equal 200
     end
   end
 
@@ -30,9 +30,9 @@ describe Web::Controllers::Dashboard::Index do
     it 'redirect login with flash' do
       response = action.call(params)
       flash = action.exposures[:flash]
-      response[0].must_equal 302
-      response[1]['Location'].must_equal '/session/new'
-      flash[:warn].must_equal 'セッションがタイムアウトしました。' \
+      _(response[0]).must_equal 302
+      _(response[1]['Location']).must_equal '/session/new'
+      _(flash[:warn]).must_equal 'セッションがタイムアウトしました。' \
           'ログインし直してください。'
     end
   end
@@ -43,9 +43,9 @@ describe Web::Controllers::Dashboard::Index do
     it 'redirect login' do
       response = action.call(params)
       flash = action.exposures[:flash]
-      response[0].must_equal 302
-      response[1]['Location'].must_equal '/session/new'
-      flash[:warn].must_be_nil
+      _(response[0]).must_equal 302
+      _(response[1]['Location']).must_equal '/session/new'
+      _(flash[:warn]).must_be_nil
     end
   end
 
@@ -55,9 +55,9 @@ describe Web::Controllers::Dashboard::Index do
     it 'redirect login' do
       response = action.call(params)
       flash = action.exposures[:flash]
-      response[0].must_equal 302
-      response[1]['Location'].must_equal '/session/new'
-      flash[:warn].must_be_nil
+      _(response[0]).must_equal 302
+      _(response[1]['Location']).must_equal '/session/new'
+      _(flash[:warn]).must_be_nil
     end
   end
 
@@ -67,9 +67,9 @@ describe Web::Controllers::Dashboard::Index do
     it 'redirect login' do
       response = action.call(params)
       flash = action.exposures[:flash]
-      response[0].must_equal 302
-      response[1]['Location'].must_equal '/session/new'
-      flash[:warn].must_be_nil
+      _(response[0]).must_equal 302
+      _(response[1]['Location']).must_equal '/session/new'
+      _(flash[:warn]).must_be_nil
     end
   end
 
@@ -82,7 +82,7 @@ describe Web::Controllers::Dashboard::Index do
 
       it 'is successful' do
         response = action.call(params)
-        response[0].must_equal 200
+        _(response[0]).must_equal 200
       end
     end
 
@@ -92,9 +92,9 @@ describe Web::Controllers::Dashboard::Index do
       it 'redirect login' do
         response = action.call(params)
         flash = action.exposures[:flash]
-        response[0].must_equal 302
-        response[1]['Location'].must_equal '/session/new'
-        flash[:warn].must_equal 'セッションがタイムアウトしました。' \
+        _(response[0]).must_equal 302
+        _(response[1]['Location']).must_equal '/session/new'
+        _(flash[:warn]).must_equal 'セッションがタイムアウトしました。' \
             'ログインし直してください。'
       end
     end

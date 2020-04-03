@@ -7,6 +7,6 @@ describe Web.routes do
 
   it 'generates "/"' do
     actual = routes.path(:root)
-    actual.must_equal('/')
+    _(actual).must_equal('/')
   end
 end

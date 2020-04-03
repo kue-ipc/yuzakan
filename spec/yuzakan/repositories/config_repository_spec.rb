@@ -15,19 +15,19 @@ describe ConfigRepository do
     end
 
     it 'current is nil' do
-      repository.current.must_be_nil
+      _(repository.current).must_be_nil
     end
 
     it 'initialized? is false' do
-      repository.initialized?.must_equal false
+      _(repository.initialized?).must_equal false
     end
   end
 
   it 'current is config after initialized' do
-    repository.current.wont_be_nil
+    _(repository.current).wont_be_nil
   end
 
   it 'initialized? is true after initialized' do
-    repository.initialized?.must_equal true
+    _(repository.initialized?).must_equal true
   end
 end

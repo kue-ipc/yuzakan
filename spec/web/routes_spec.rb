@@ -7,6 +7,6 @@ describe Admin.routes do
 
   it 'generates "/"' do
     actual = routes.path(:root)
-    actual.must_equal('/admin')
+    _(actual).must_equal('/admin')
   end
 end

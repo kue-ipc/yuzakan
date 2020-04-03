@@ -22,45 +22,45 @@ describe Admin::Controllers::Adapters::Params::Index do
     it 'dummy is successful' do
       adapter_name = 'dummy'
       response = action.call(params.merge(adapter_id: adapter_name))
-      response[0].must_equal 200
-      response[1]['Content-Type'].must_equal "#{format}; charset=utf-8"
-      response[2].must_equal []
+      _(response[0]).must_equal 200
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      _(response[2]).must_equal []
     end
 
     it 'local is successful' do
       adapter_name = 'local'
       response = action.call(params.merge(adapter_id: adapter_name))
-      response[0].must_equal 200
-      response[1]['Content-Type'].must_equal "#{format}; charset=utf-8"
-      response[2].must_equal []
+      _(response[0]).must_equal 200
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      _(response[2]).must_equal []
     end
 
     it 'ldap is successful' do
       adapter_name = 'ldap'
       response = action.call(params.merge(adapter_id: adapter_name))
-      response[0].must_equal 200
-      response[1]['Content-Type'].must_equal "#{format}; charset=utf-8"
+      _(response[0]).must_equal 200
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     end
 
     it 'ad is successful' do
       adapter_name = 'ad'
       response = action.call(params.merge(adapter_id: adapter_name))
-      response[0].must_equal 200
-      response[1]['Content-Type'].must_equal "#{format}; charset=utf-8"
+      _(response[0]).must_equal 200
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     end
 
     it 'none is faild' do
       adapter_name = 'none'
       response = action.call(params.merge(adapter_id: adapter_name))
-      response[0].must_equal 404
+      _(response[0]).must_equal 404
     end
   end
 
   describe 'normal format' do
     it 'is successful' do
       response = action.call(params.merge(adapter_id: 'dummy'))
-      response[0].must_equal 200
-      response[1]['Content-Type'].must_equal 'text/html; charset=utf-8'
+      _(response[0]).must_equal 200
+      _(response[1]['Content-Type']).must_equal 'text/html; charset=utf-8'
     end
   end
 end

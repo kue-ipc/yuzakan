@@ -7,6 +7,6 @@ describe Admin::Views::ApplicationLayout do
   let(:rendered) { layout.render }
 
   # it 'contains application name' do
-  #   rendered.must_include('Admin')
+  #   _(rendered).must_include('Admin')
   # end
 end

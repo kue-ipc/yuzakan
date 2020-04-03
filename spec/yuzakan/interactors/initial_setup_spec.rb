@@ -26,12 +26,12 @@ describe InitialSetup do
 
     it 'call successful' do
       result = interactor.call(params)
-      result.successful?.must_equal true
+      _(result.successful?).must_equal true
     end
   end
 
   it 'reject after initialized' do
     result = interactor.call(params)
-    result.successful?.must_equal false
+    _(result.successful?).must_equal false
   end
 end

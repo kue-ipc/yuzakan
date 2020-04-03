@@ -11,7 +11,7 @@ describe Web::Controllers::User::Password::Edit do
 
   it 'is successful' do
     response = action.call(params)
-    response[0].must_equal 200
+    _(response[0]).must_equal 200
   end
 
   describe 'do not access' do
@@ -20,8 +20,8 @@ describe Web::Controllers::User::Password::Edit do
 
       it 'redirect login' do
         response = action.call(params)
-        response[0].must_equal 302
-        response[1]['Location'].must_equal '/session/new'
+        _(response[0]).must_equal 302
+        _(response[1]['Location']).must_equal '/session/new'
       end
     end
 
@@ -31,8 +31,8 @@ describe Web::Controllers::User::Password::Edit do
 
       it 'redirect maintenance' do
         response = action.call(params)
-        response[0].must_equal 302
-        response[1]['Location'].must_equal '/maintenance'
+        _(response[0]).must_equal 302
+        _(response[1]['Location']).must_equal '/maintenance'
       end
     end
 
@@ -42,8 +42,8 @@ describe Web::Controllers::User::Password::Edit do
 
       it 'redirect maintenance' do
         response = action.call(params)
-        response[0].must_equal 302
-        response[1]['Location'].must_equal '/maintenance'
+        _(response[0]).must_equal 302
+        _(response[1]['Location']).must_equal '/maintenance'
       end
     end
   end

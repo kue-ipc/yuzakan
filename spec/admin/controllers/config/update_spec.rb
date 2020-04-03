@@ -9,7 +9,7 @@ describe Admin::Controllers::Config::Update do
 
   it 'is successful' do
     response = action.call(params)
-    response[0].must_equal 302
-    response[1]['Location'].must_equal '/admin/config/edit'
+    _(response[0]).must_equal 302
+    _(response[1]['Location']).must_equal '/admin/config/edit'
   end
 end

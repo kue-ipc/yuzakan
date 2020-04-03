@@ -20,27 +20,27 @@ describe Admin::Controllers::Session::Create do
 
     it 'redirect setup' do
       response = action.call(params)
-      response[0].must_equal 302
-      response[1]['Location'].must_equal '/admin/setup'
+      _(response[0]).must_equal 302
+      _(response[1]['Location']).must_equal '/admin/setup'
     end
   end
 
   # describe 'not authenticated' do
   #   it 'is successful' do
   #     response = action.call(params)
-  #     response[0].must_equal 200
+  #     _(response[0]).must_equal 200
   #   end
   # end
   #
   # describe 'authenticated' do
   #   it 'is successful' do
   #     response = action.call(params)
-  #     response[0].must_equal 200
+  #     _(response[0]).must_equal 200
   #   end
   # end
 
   # it 'is successful' do
   #   response = action.call(params)
-  #   response[0].must_equal 200
+  #   _(response[0]).must_equal 200
   # end
 end

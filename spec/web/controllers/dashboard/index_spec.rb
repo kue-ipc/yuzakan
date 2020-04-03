@@ -11,8 +11,8 @@ describe Web::Controllers::Dashboard::Index do
 
   it 'is successful' do
     response = action.call(params)
-    response[0].must_equal 200
-    action.send(:remote_ip).to_s.must_equal '::1'
+    _(response[0]).must_equal 200
+    _(action.send(:remote_ip).to_s).must_equal '::1'
   end
 
   describe 'admin login' do
@@ -20,7 +20,7 @@ describe Web::Controllers::Dashboard::Index do
 
     it 'is successful' do
       response = action.call(params)
-      response[0].must_equal 200
+      _(response[0]).must_equal 200
     end
   end
 
@@ -30,8 +30,8 @@ describe Web::Controllers::Dashboard::Index do
 
       it 'redirect login' do
         response = action.call(params)
-        response[0].must_equal 302
-        response[1]['Location'].must_equal '/session/new'
+        _(response[0]).must_equal 302
+        _(response[1]['Location']).must_equal '/session/new'
       end
     end
 
@@ -41,8 +41,8 @@ describe Web::Controllers::Dashboard::Index do
 
       it 'redirect maintenance' do
         response = action.call(params)
-        response[0].must_equal 302
-        response[1]['Location'].must_equal '/maintenance'
+        _(response[0]).must_equal 302
+        _(response[1]['Location']).must_equal '/maintenance'
       end
     end
 
@@ -52,8 +52,8 @@ describe Web::Controllers::Dashboard::Index do
 
       it 'redirect maintenance' do
         response = action.call(params)
-        response[0].must_equal 302
-        response[1]['Location'].must_equal '/maintenance'
+        _(response[0]).must_equal 302
+        _(response[1]['Location']).must_equal '/maintenance'
       end
     end
   end
