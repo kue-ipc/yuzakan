@@ -85,6 +85,14 @@ describe Yuzakan::Utils::Cipher do
     _(decrypted_data).must_equal data
   end
 
+  it 'encryt and decrypt last null data' do
+    data = 'Ab\x00\x00\x00\x00\x00\x00\x00\x00'.encode(Encoding::ASCII_8BIT)
+    encrypted_data = Yuzakan::Utils::Cipher.encrypt(data)
+    _(encrypted_data).wont_equal data
+    decrypted_data = Yuzakan::Utils::Cipher.decrypt(encrypted_data)
+    _(decrypted_data).must_equal data
+  end
+
   it 'encryt and decrypt text other environment' do
     text = 'Ab01#'
     encrypted_text = Yuzakan::Utils::Cipher.encrypt_text(text)
