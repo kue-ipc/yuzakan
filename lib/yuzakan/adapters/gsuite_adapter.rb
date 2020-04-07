@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# adapter
+# G Suite Adapter
 #
 # CRUD
 # create(username, attrs) -> user or nil [writable]
@@ -19,17 +19,35 @@
 
 module Yuzakan
   module Adapters
-    class AbstractAdapter
+    class GsuiteAdapter < AbstractAdapter
       def self.label
-        raise NotImplementedError
+        'G Suite'
       end
 
       def self.selectable?
-        false
+        true
       end
 
       def self.params
-        @params ||= []
+        @params ||= [
+          {
+            name: 'domain',
+            label: 'G Suiteのドメイン名',
+            description:
+              'G Suiteでのドメイン名を指定します。',
+            type: :string,
+            required: true,
+            placeholder: 'google.example.jp',
+          }, {
+            name: 'json_key',
+            label: 'JSONキー',
+            description:
+              'G Suiteでのドメイン名を指定します。',
+            type: :string,
+            required: true,
+            placeholder: 'google.example.jp',
+          }
+        ]
       end
 
       def self.param_type(name)
