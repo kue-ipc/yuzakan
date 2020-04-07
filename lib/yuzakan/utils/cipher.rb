@@ -2,11 +2,11 @@
 
 # 現在のところ、暗号方式は PKCS#5 v2.0 で固定とする。
 # 暗号化鍵は環境変数 DB_SECRET を使用する。
-# データはソルトと暗号化済み値をBASE64でエンコードして保存する。
+# データはソルトと暗号化済み値を結合し、BASE64でエンコードして保存する。
 
 # 暗号方式: PKCS#5 v2.0 (RFC2898) 互換
 # 初期ベクトル作成: HMAC SHA1
-# 繰り返し回数: 2000
+# 繰り返し回数: 10,000
 # 暗号: AES-256-CBC
 # ソルトサイズ: 8バイト
 
@@ -17,46 +17,54 @@ require 'base64'
 module Yuzakan
   module Utils
     module Cipher
+      DEFULT_ALGO = 'aes-256-cbc'
+      DEFAULT_ITER = 10_000
+      DEFAULT_SALT_SIZE = 8
+
       module_function
 
-      def encrypt_text(text)
-        salt, encrypted_data = encrypt(text)
-        salt_text = salt.unpack1('h*')
-        encrypted_text = Base64.strict_encode64(encrypted_data)
-        [salt_text, encrypted_text]
+      def encrypt_text(text, **opts)
+        return String.new if text.empty?
+
+        Base64.strict_encode64(encrypt(text, **opts))
       end
 
-      def decrypt_text(salt_text, encrypted_text, encoding: 'utf-8')
-        salt = [salt_text].pack('h*')
-        encrypted_data = Base64.strict_decode64(encrypted_text)
-        data = decrypt(salt, encrypted_data)
-        data
+      def decrypt_text(encrypted_text, encoding: 'utf-8', **opts)
+        return String.new(encoding: encoding) if encrypted_text.empty?
+
+        decrypt(Base64.strict_decode64(encrypted_text), **opts)
+          .force_encoding(encoding)
       end
 
-      def encrypt(data)
-        pass = secret_password
-        salt = generate_salt
+      def encrypt(data, algo: DEFULT_ALGO, iter: DEFAULT_ITER,
+                  salt_size: DEFAULT_SALT_SIZE)
+        return String.new if data.empty?
 
-        enc = OpenSSL::Cipher.new('AES-256-CBC')
+        salt = generate_salt(salt_size)
+
+        enc = OpenSSL::Cipher.new(algo)
         enc.encrypt
 
-        key, iv = generate_key_iv(enc, pass, salt)
+        key, iv = generate_key_iv(enc, secret_password, salt, iter)
         enc.key = key
         enc.iv = iv
 
         encrypted_data = String.new
         encrypted_data << enc.update(data)
         encrypted_data << enc.final
-        [salt, encrypted_data]
+        salt + encrypted_data
       end
 
-      def decrypt(salt, encrypted_data)
-        pass = secret_password
+      def decrypt(salt_encrypted_data, algo: DEFULT_ALGO, iter: DEFAULT_ITER,
+                  salt_size: DEFAULT_SALT_SIZE)
+        return String.new if salt_encrypted_data.empty?
 
-        dec = OpenSSL::Cipher.new('AES-256-CBC')
+        dec = OpenSSL::Cipher.new(algo)
         dec.decrypt
+        salt = salt_encrypted_data[0, salt_size]
+        encrypted_data = salt_encrypted_data[salt_size..]
 
-        key, iv = generate_key_iv(dec, pass, salt)
+        key, iv = generate_key_iv(dec, secret_password, salt, iter)
         dec.key = key
         dec.iv = iv
 
@@ -66,16 +74,16 @@ module Yuzakan
         data
       end
 
-      def generate_key_iv(cipher, pass, salt)
-        key_iv = OpenSSL::PKCS5.pbkdf2_hmac_sha1(pass, salt, 2000,
+      def generate_key_iv(cipher, pass, salt, iter)
+        key_iv = OpenSSL::PKCS5.pbkdf2_hmac_sha1(pass, salt, iter,
                                                  cipher.key_len + cipher.iv_len)
         key = key_iv[0, cipher.key_len]
         iv = key_iv[cipher.key_len, cipher.iv_len]
         [key, iv]
       end
 
-      def generate_salt
-        SecureRandom.random_bytes(8)
+      def generate_salt(size)
+        SecureRandom.random_bytes(size)
       end
 
       def secret_password
