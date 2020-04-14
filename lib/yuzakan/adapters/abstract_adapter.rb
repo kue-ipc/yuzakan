@@ -17,6 +17,22 @@
 #
 # list -> usernames [readable]
 
+# params is Hash Array
+# - name: 識別名
+# - label: 表示名
+# - description: 説明
+# - type: 型
+#     - :string, :intger, :boolean, :text, :file
+# - input: form inputのタイプ
+#     - :text, :password, email, ...
+# - required: 必須かどうか
+# - placeholder: 入力時のプレースホルダー
+# - input:
+#     - :free, select, button
+# - list: string等で自由入６ではなく一覧からの選択になる。
+# - default: 新規作成時のデフォルト値
+
+
 module Yuzakan
   module Adapters
     class AbstractAdapter
