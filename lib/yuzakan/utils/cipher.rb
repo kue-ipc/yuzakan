@@ -61,8 +61,8 @@ module Yuzakan
 
         dec = OpenSSL::Cipher.new(algo)
         dec.decrypt
-        salt = salt_encrypted_data[0, salt_size]
-        encrypted_data = salt_encrypted_data[salt_size..]
+        salt = salt_encrypted_data[0...salt_size]
+        encrypted_data = salt_encrypted_data[salt_size...salt_encrypted_data.size]
 
         key, iv = generate_key_iv(dec, secret_password, salt, iter)
         dec.key = key
