@@ -8,8 +8,4 @@
 
 /rollup.config.js
 /yarn-error.log
-/yarn.lock
 /log/*.log
-
-/Gemfile.lock
-/package-lock.json
