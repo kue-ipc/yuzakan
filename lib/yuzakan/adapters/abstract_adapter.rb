@@ -22,16 +22,19 @@
 # - label: 表示名
 # - description: 説明
 # - type: 型
-#     - :string, :intger, :boolean, :text, :file
+#     - :boolean, :string, :text, :intger, :float, :date, :time, :datetime,
+#       :file
 # - input: form inputのタイプ
 #     - :text, :password, email, ...
-# - required: 必須かどうか
+#     - 省略時はtypeによって自動決定
+# - required: 必須かどうか (デフォルト: fales)
 # - placeholder: 入力時のプレースホルダー
 # - input:
 #     - :free, select, button
-# - list: string等で自由入６ではなく一覧からの選択になる。
+# - list: string等で自由入力ではなく一覧からの選択になる。
 # - default: 新規作成時のデフォルト値
-
+# - encrypted: 暗号化して保存するか (:string, :text, :fileのみ指定可能、
+#              デフォルト: fales)
 
 module Yuzakan
   module Adapters

@@ -7,7 +7,6 @@ class ProviderRepository < Hanami::Repository
       provider_integer_params
       provider_boolean_params
     ]
-    list.push(:provider_secret_params) if secret
     list.freeze
   end
 
