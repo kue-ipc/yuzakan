@@ -10,7 +10,6 @@ GEM
   specs:
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
-    ast (2.4.0)
     bcrypt (3.1.13)
     better_errors (2.7.0)
       coderay (>= 1.0.0)
@@ -152,7 +151,6 @@ GEM
     ice_nine (0.11.2)
     inflecto (0.0.2)
     ipaddress (0.8.3)
-    jaro_winkler (1.5.4)
     jwt (2.2.1)
     mail (2.7.1)
       mini_mime (>= 0.1.1)
@@ -169,9 +167,6 @@ GEM
     nokogiri (1.10.9)
       mini_portile2 (~> 2.4.0)
     os (1.1.0)
-    parallel (1.19.1)
-    parser (2.7.1.2)
-      ast (~> 2.4.0)
     pry (0.13.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -181,7 +176,6 @@ GEM
     rack (2.2.2)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
-    rainbow (3.0.0)
     rake (13.0.1)
     regexp_parser (1.7.0)
     representable (3.0.4)
@@ -189,7 +183,6 @@ GEM
       declarative-option (< 0.2.0)
       uber (< 0.2.0)
     retriable (3.1.2)
-    rexml (3.2.4)
     rom (3.3.3)
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.3)
@@ -212,15 +205,6 @@ GEM
       dry-types (~> 0.11.0)
       rom (~> 3.2, >= 3.2.2)
       sequel (~> 4.43)
-    rubocop (0.82.0)
-      jaro_winkler (~> 1.5.1)
-      parallel (~> 1.10)
-      parser (>= 2.7.0.1)
-      rainbow (>= 2.2.2, < 4.0)
-      rexml
-      ruby-progressbar (~> 1.7)
-      unicode-display_width (>= 1.4.0, < 2.0)
-    ruby-progressbar (1.10.1)
     sassc (2.3.0)
       ffi (~> 1.9)
     sequel (4.49.0)
@@ -241,7 +225,6 @@ GEM
     uber (0.1.0)
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
-    unicode-display_width (1.7.0)
     url_mount (0.2.1)
       rack
     xpath (3.2.0)
@@ -268,7 +251,6 @@ DEPENDENCIES
   pry
   puma
   rake
-  rubocop
   sassc
   shotgun
   slim

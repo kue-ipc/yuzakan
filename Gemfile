@@ -37,7 +37,6 @@ group :development do
   # See: http://hanamirb.org/guides/projects/code-reloading
   gem 'shotgun', platforms: :ruby
   gem 'hanami-webconsole'
-  gem 'rubocop'
 end
 
 group :test, :development do
