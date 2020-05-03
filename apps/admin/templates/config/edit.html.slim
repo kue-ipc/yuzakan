@@ -6,10 +6,6 @@ h2 全体設定
     - text_field :title, class: 'form-control'
 
   - div class: 'form-group' do
-    - label 'テーマ', for: :theme
-    - select :theme, THEMES_SELECTION, class: 'form-control'
-
-  - div class: 'form-group' do
     - label 'セッションタイムアウト', for: :session_timeout
     - div class: 'input-group' do
       - number_field :session_timeout, class: 'form-control', min: 0

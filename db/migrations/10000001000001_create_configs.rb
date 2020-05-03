@@ -10,8 +10,6 @@ Hanami::Model.migration do
 
       column :session_timeout, Integer, null: false, default: 3600
 
-      column :theme, String
-
       column :password_min_size, Integer, unll: false, default: 8
       column :password_max_size, Integer, null: false, default: 255
       column :password_min_types, Integer, null: false, default: 1

@@ -263,7 +263,6 @@ module Admin
         before :check_remote_ip!
         expose :current_config
         expose :current_user
-        expose :current_theme
         expose :remote_ip
       end
 

@@ -18,8 +18,6 @@ class UpdateConfig
 
       optional(:session_timeout) { int? & gteq?(0) & lteq?(24 * 60 * 60)}
 
-      optional(:theme) { max_size?(255) }
-
       optional(:password_min_size) { int? & gteq?(1) & lteq?(255) }
       optional(:password_max_size) { int? & gteq?(1) & lteq?(255) }
       optional(:password_min_score) { int? & gteq?(0) & lteq?(4) }

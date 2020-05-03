@@ -9,7 +9,6 @@ describe Admin::Views::Setup::Index do
       params: {},
       flash: {},
       current_config: nil,
-      current_theme: DEFAULT_THEME,
     }
   end
   let(:template)  {
