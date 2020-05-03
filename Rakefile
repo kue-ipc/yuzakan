@@ -30,28 +30,15 @@ namespace :vendor do
     list = [
       {
         src: 'bootstrap/dist/css/bootstrap.css',
-        dst: 'theme_bootstrap.css'},
-      {
-        src: 'startbootstrap-sb-admin-2/css/sb-admin-2.css',
-        dst: 'theme_startbootstrap-sb-admin-2.css',
+        dst: 'bootstrap.css',
       },
     ]
 
-    bootswatch_list = %w[
-      cerulean cosmo cyborg darkly flatly journal litera lumen lux materia
-      minty pulse sandstone simplex sketchy slate solar spacelab superhero
-      united yeti
-    ].map do |name|
-      {
-        src: "bootswatch/dist/#{name}/bootstrap.css",
-        dst: "theme_bootswatch-#{name}.css"
-      }
-    end
-
-    (list + bootswatch_list).each do |target|
+    list.each do |target|
       [
-        'apps/web/vendor/assets/stylesheets',
         'apps/admin/vendor/assets/stylesheets',
+        'apps/web/vendor/assets/stylesheets',
+        'apps/legacy/vendor/assets/stylesheets',
       ].each do |asset|
         parent_dir = "#{asset}"
         mkdir_p(parent_dir) unless FileTest.directory?(parent_dir)
