@@ -7,10 +7,14 @@
 # get '/hello', to: ->(env) { [200, {}, ['Hello from Hanami!']] }
 root to: 'home#index'
 get '/dashboard', to: 'dashboard#index', as: :dashboard
+
 get '/maintenance', to: 'maintenance#index', as: :maintenance
+
 resource 'session', only: [:new, :destroy, :create]
+
 resource 'user', only: [] do
   resource 'password', only: [:edit, :update]
 end
+
 get '/about', to: 'about#index', as: :about
 get '/about/legacy', to: 'about#legacy', as: :about_legacy

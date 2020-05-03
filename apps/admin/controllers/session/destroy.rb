@@ -8,7 +8,8 @@ module Admin
 
         def call(params)
           session[:user_id] = nil
-          flash[:successes] = ['ログアウトしました。']
+          session[:access_time] = nil
+          flash[:success] = 'ログアウトしました。'
           redirect_to routes.root_path
         end
       end

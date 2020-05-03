@@ -5,6 +5,7 @@ module Admin
     module Setup
       class Index
         include Admin::View
+        layout false
       end
     end
   end

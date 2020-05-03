@@ -11,25 +11,8 @@ module Web
           result = Authenticate.new(client: remote_ip.to_s)
             .call(params[:session])
 
-          if result.successful?
-            # セッション情報を保存
-            session[:user_id] = result.user.id
-            session[:access_time] = Time.now
-
-            if format == :html
-              flash[:success] = 'ログインしました。'
-              redirect_to routes.path(:dashboard)
-            elsif format == :json
-              @data = {
-                result: 'success',
-                messages: {success: 'ログインしました。'},
-              }
-            end
-          else
+          if result.failure?
             errors, param_errors = devide_errors(result.errors)
-            pp errors
-            pp param_errors
-
             if format == :html
               flash[:errors] = errors
               flash[:param_errors] = param_errors
@@ -45,6 +28,21 @@ module Web
                 },
               }
             end
+            return
+          end
+
+          # セッション情報を保存
+          session[:user_id] = result.user.id
+          session[:access_time] = Time.now
+
+          if format == :html
+            flash[:success] = 'ログインしました。'
+            redirect_to routes.path(:dashboard)
+          elsif format == :json
+            @data = {
+              result: 'success',
+              messages: {success: 'ログインしました。'},
+            }
           end
         end
 

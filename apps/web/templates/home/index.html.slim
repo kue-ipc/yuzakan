@@ -4,7 +4,7 @@ html lang="ja"
     meta charset="utf-8"
     meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"
     title
-      = current_config.title
+      = current_config&.title
     = favicon
     = stylesheet "theme_#{current_theme}"
     = stylesheet 'application'
@@ -13,7 +13,7 @@ html lang="ja"
     .jumbotron.jumbotron-fluid.mb-2
       .container-fluid
         h1.text-center.display-5
-          = current_config.title
+          = current_config&.title
         p.lead.text-center.smaller
           | アカウント管理システム
         hr.my-2

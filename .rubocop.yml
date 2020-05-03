@@ -81,3 +81,5 @@ Style/RescueStandardError:
 Bundler/OrderedGems:
   Enabled: false
 
+Style/SymbolArray:
+  MinSize: 8
