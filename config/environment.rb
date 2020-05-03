@@ -6,6 +6,7 @@ require 'hanami/model'
 require_relative '../lib/yuzakan'
 require_relative '../apps/web/application'
 require_relative '../apps/admin/application'
+require_relative '../apps/legacy/application'
 
 # CoffeeScript v2 (from node_modulses)
 ENV['COFFEESCRIPT_SOURCE_PATH'] ||= File.expand_path(
@@ -14,6 +15,7 @@ ENV['COFFEESCRIPT_SOURCE_PATH'] ||= File.expand_path(
   __dir__)
 
 Hanami.configure do
+  mount Legacy::Application, at: '/legacy'
   middleware.use Yuzakan::Utils::IEBadAccept
 
   mount Admin::Application, at: '/admin'

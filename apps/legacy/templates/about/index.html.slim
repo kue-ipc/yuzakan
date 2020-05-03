@@ -1,0 +1,39 @@
+h1 レガシーモード
+h2 レガシーモードについて
+p |
+  レガシーブラウザーを使用使用している場合、レガシーモードに移動します。
+  また、JavaScriptが無効の場合は手動でレガシーモードに移動する必要があります。
+  レガシーモードではアイコン等の一部が表示されず、機能も制限されます。
+  通常モードで使用したい場合は、最新のモダンブラウザーを使用し、
+  JavaScriptを有効にしてください。
+h2 サポートしているブラウザー (モダンブラウザー)
+p |
+  このシステムは最新のWeb技術を数多く使用しています。
+  そのため、最新のモダンブラウザーでなければ、
+  通常モードを正しく表示できません。
+  下記ブラウザーの最新版を使用してください。
+ul
+  - supported_browsers.each do |browser|
+    li
+      => link_to browser[:name], browser[:url], target: '_blank'
+      | (バージョン
+      = browser[:version]
+      | 以上)
+      - if browser[:note]&.size&.positive?
+        small.text-muted<
+          = browser[:note]
+h2 サポートしていないブラウザー (レガシーブラウザー)
+p |
+  下記ブラウザは、機能が不足している、または、
+  対応状況が不確かなため、サポートしていません。
+  今後も対応する予定はありません。
+  Blink(Chromium)、WebKit、Geckoを使用するブラウザーの場合、
+  正常に表示できる場合がありますが、動作の保証は行っていません。
+ul
+  - unsupported_browsers.each do |browser|
+    li
+      = browser
+h2 Microsoft Edgeのバージョンについて
+p |
+  Microsoft EdgeにはChromiumベースの新バージョンとEdgeHTMLベースの
+  旧バージョンがあります。
