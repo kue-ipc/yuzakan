@@ -4,6 +4,7 @@ require 'rake'
 require 'hanami/rake_tasks'
 require 'rake/testtask'
 require 'rake/clean'
+require 'shell'
 
 Rake::TestTask.new do |t|
   t.pattern = 'spec/**/*_spec.rb'
@@ -43,7 +44,14 @@ namespace :vendor do
       ].each do |asset|
         parent_dir = "#{asset}"
         mkdir_p(parent_dir) unless FileTest.directory?(parent_dir)
-        copy_entry "node_modules/#{target[:src]}", "#{parent_dir}/#{target[:dst]}"
+        copy_entry "node_modules/#{target[:src]}",
+                   "#{parent_dir}/#{target[:dst]}"
+        Dir.glob("#{parent_dir}/#{target[:dst]}/**").each do |name|
+          next unless FileTest.file?(name)
+          if File.basename(name).start_with?(/[0-9A-Za-z]/)
+            mv name, File.join(File.dirname(name), "_#{File.basename(name)}")
+          end
+        end
       end
     end
   end
