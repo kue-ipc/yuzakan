@@ -9,7 +9,7 @@ module Web
         Hanami::Utils::Escape.json(input)
       end
 
-      alias :hj :escape_json
+      alias hj escape_json
       private :hj
     end
   end

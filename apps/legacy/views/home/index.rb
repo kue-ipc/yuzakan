@@ -3,6 +3,7 @@ module Legacy
     module Home
       class Index
         include Legacy::View
+        layout false
       end
     end
   end

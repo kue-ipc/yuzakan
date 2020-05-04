@@ -3,6 +3,7 @@
 require 'rake'
 require 'hanami/rake_tasks'
 require 'rake/testtask'
+require 'rake/clean'
 
 Rake::TestTask.new do |t|
   t.pattern = 'spec/**/*_spec.rb'
@@ -15,7 +16,7 @@ task spec: :test
 
 namespace :vendor do
   rule %r{^node_modules/.bin/.*$} do
-    sh 'npm install'
+    sh 'yarn install'
   end
 
   rule '.js' => ['.coffee', 'node_modules/.bin/coffee'] do |t|
@@ -29,8 +30,8 @@ namespace :vendor do
   task :build_css do
     list = [
       {
-        src: 'bootstrap/dist/css/bootstrap.css',
-        dst: 'bootstrap.css',
+        src: 'bootstrap/scss',
+        dst: 'bootstrap',
       },
     ]
 
@@ -42,11 +43,14 @@ namespace :vendor do
       ].each do |asset|
         parent_dir = "#{asset}"
         mkdir_p(parent_dir) unless FileTest.directory?(parent_dir)
-        cp "node_modules/#{target[:src]}", "#{parent_dir}/#{target[:dst]}"
+        copy_entry "node_modules/#{target[:src]}", "#{parent_dir}/#{target[:dst]}"
       end
     end
   end
 
   desc 'ベンダービルド'
   task build: [:build_js, :build_css]
+
+  desc 'ベンダークリーン'
+
 end

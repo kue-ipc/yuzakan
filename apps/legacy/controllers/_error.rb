@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module Web
+module Legacy
   module Error
     private def devide_errors(errors)
-      str_errors = []
+      msg_errors = []
       param_errors = {}
 
       errors.each do |msg|
@@ -13,10 +13,10 @@ module Web
             param_errors[key.to_s] += [value].flatten
           end
         else
-          str_errors << msg
+          msg_errors << msg
         end
       end
-      [str_errors, param_errors]
+      [msg_errors, param_errors]
     end
   end
 end
