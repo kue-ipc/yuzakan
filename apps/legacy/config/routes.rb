@@ -2,8 +2,8 @@
 
 root to: 'home#index'
 
-get '/dashboard', to: 'dashboard#index'
-get '/about', to: 'about#index'
+get '/dashboard', to: 'dashboard#index', as: 'dashboard'
+get '/about', to: 'about#index', as: 'about'
 
 resource 'session', only: [:create, :destroy]
 

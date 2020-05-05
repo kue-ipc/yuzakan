@@ -4,7 +4,7 @@ module Legacy
       class Index
         include Legacy::Action
 
-        def call(params)
+        def call(_params)
           redirect_to routes.path(:dashboard) if authenticated?
         end
 

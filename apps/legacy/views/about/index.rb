@@ -12,7 +12,7 @@ module Legacy
             {
               name: 'Google Chrome',
               url: 'https://www.google.co.jp/intl/ja/chrome/',
-              versino: '79',
+              version: '79',
             },
             {
               name: '新Microsoft Edge (Chromium)',

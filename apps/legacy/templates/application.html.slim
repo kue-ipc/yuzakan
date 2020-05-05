@@ -1,8 +1,15 @@
 doctype html
-html
+html lang="ja"
   head
+    meta charset="utf-8"
+    meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"
     title
-      | Legacy
+      = current_config&.title
     = favicon
+    = stylesheet 'application'
   body
-    = yield
+    = render partial: 'partial/navbar'
+    .container-fluid.mt-2
+      = render partial: 'partial/alert'
+      = yield
+    = render partial: 'partial/footer'
