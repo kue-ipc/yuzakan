@@ -5,6 +5,7 @@ module Web
     module About
       class Index
         include Web::View
+        layout :about
       end
     end
   end

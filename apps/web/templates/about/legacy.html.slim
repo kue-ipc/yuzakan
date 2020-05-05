@@ -1,40 +1,51 @@
-doctype html
-html lang="ja"
-  head
-    meta charset="utf-8"
-    meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    title
-      | レガシーモード
-    = favicon
-  body
-    .container-fluid.mt-2
-      h1 レガシーモード
-      h2 レガシーモードについて
-      p
-        | 未対応のブラウザを使用、または、JavaScriptを無効にした場合、
-        | レガシーモードで表示されます。
-        | レガシーモードではアイコン等の一部が表示されず、機能も制限されます。
-        | 通常のモダンモードで表示させたい場合は、
-        | 最新のモダンブラウザーを使用し、JavaScriptを有効にしてください。
-      h2 対応ブラウザー (モダンブラウザー)
-      p
-        | このシステムは最新のWeb技術を数多く使用しています。
-        | そのため、最新のモダンブラウザーでなければ、正しく表示できません。
-        | 下記ブラウザーの最新版を使用してください。
-      ul
-        - supported_browsers.each do |browser|
-          li
-            => link_to browser[:name], browser[:url], target: '_blank'
-            | (バージョン
-            = browser[:version]
-            | 以上)
-            - if browser[:note]&.size&.positive?
-              small.text-muted<
-                = browser[:note]
-      h2 未対応ブラウザー (レガシーブラウザー)
-      p
-        | 下記ブラウザはモダンブラウザーとしての機能が不足しているため、未対応です。今後も対応する予定はありません。
-      ul
-        - unsupported_browsers.each do |browser|
-          li
-            = browser
+h1 レガシー版について
+h2 レガシー版とは
+p
+  |
+    このシステムは最新のWeb技術を数多く使用しており、
+    最新のモダンブラウザーでJavaScriptを有効にしなければ、
+    通常版を正しく表示することはできません。
+    レガシーブラウザーを使用している場合や、
+    JavaScriptを無効にしてい場合でも使用できるようにするため、
+    レガシー版を用意しています。
+    レガシー版ではアイコン等が表示されず、機能も制限されます。
+    通常モードで使用したい場合は、最新のモダンブラウザーを使用し、
+    JavaScriptを有効にしてください。
+h2 サポートしているブラウザー (モダンブラウザー)
+p
+  |
+    下記ブラウザーの最新版を使用してください。
+    メンテナンス期間切れのバージョンはサポート対象外です。
+ul
+  - supported_browsers.each do |browser|
+    li
+      => link_to browser[:name], browser[:url], target: '_blank'
+      | (バージョン
+      = browser[:version]
+      | 以上)
+      - if browser[:note]&.size&.positive?
+        small.text-muted<
+          = browser[:note]
+h2 サポートしていないブラウザー (レガシーブラウザー)
+p
+  |
+    下記ブラウザは、機能が不足している、または、
+    対応状況が不確かなため、サポートしていません。
+    今後も対応する予定はありません。
+    Blink(Chromium)、WebKit、Geckoを使用するブラウザーの場合、
+    正常に表示できる場合がありますが、サポート対象外です。
+ul
+  - unsupported_browsers.each do |browser|
+    li
+      = browser
+h2 Microsoft Edgeのバージョンについて
+p
+  |
+    Microsoft EdgeにはChromiumベースの新バージョンとEdgeHTMLベースの
+    旧バージョンがあります。
+    サポート対象は新バージョンのみです。
+    旧バージョンの場合は、別のモダンブラウザーを使用するか、
+    下記リンク先から新バージョンをインストールしてください。
+p
+  = link_to '新しい Microsoft Edge をダウンロード | Microsoft', \
+    'https://www.microsoft.com/ja-jp/edge'
