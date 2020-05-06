@@ -6,7 +6,7 @@ module Web
       class Index
         include Web::Action
 
-        def call(params)
+        def call(_params)
         end
 
         def configurate!; end

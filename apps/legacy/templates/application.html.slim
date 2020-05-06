@@ -8,8 +8,8 @@ html lang="ja"
     = favicon
     = stylesheet 'application'
   body
-    = render partial: 'partial/navbar'
-    .container-fluid.mt-2
+    = render partial: 'partial/header'
+    main.container-fluid.mt-2
       = render partial: 'partial/alert'
       = yield
     = render partial: 'partial/footer'

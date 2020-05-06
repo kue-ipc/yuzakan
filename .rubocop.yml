@@ -83,3 +83,6 @@ Bundler/OrderedGems:
 
 Style/SymbolArray:
   MinSize: 8
+
+Style/EmptyMethod:
+  EnforcedStyle: expanded

@@ -6,10 +6,11 @@ module Web
       class Legacy
         include Web::Action
 
-        def call(params)
+        def call(_params)
         end
 
         def configurate!; end
+
         def authenticate!; end
       end
     end
