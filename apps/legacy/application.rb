@@ -69,6 +69,7 @@ module Legacy
         include Hanami::Helpers
         include Legacy::Assets::Helpers
         include Legacy::Helpers::Alerter
+        include Legacy::Helpers::Error
       end
     end
 

@@ -20,9 +20,9 @@ module Legacy
                                      for: name
                         div class: col_right do
                           password_field name, change_password_field_opt(name)
-                          if flash[:param_errors]&.key?(name.to_s)
+                          if param_errors.key?(name.to_s)
                             div class: 'invalid-feedback' do
-                              h(flash[:param_errors][name.to_s].join)
+                              h(param_errors[name.to_s].join)
                             end
                           end
                         end
@@ -62,23 +62,9 @@ module Legacy
             ]
           end
 
-          private def change_password_input(name:, label:)
-            html.div class: 'form-group row' do
-              label label, class: 'col-form-label col-sm-4', for: name
-              div class: 'col-sm-8' do
-                password_field name, change_password_field_opt(name)
-                if flash[:param_errors]&.key?(name.to_s)
-                  div class: 'invalid-feedback' do
-                    h(flash[:param_errors][name.to_s].join)
-                  end
-                end
-              end
-            end
-          end
-
           private def change_password_field_opt(name)
             password_class = ['form-control']
-            if flash[:param_errors]&.key?(name.to_s)
+            if param_errors.key?(name.to_s)
               password_class << 'is-invalid'
             end
 

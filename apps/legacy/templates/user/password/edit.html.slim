@@ -43,6 +43,7 @@ ul
               = h(char)
       - else
           | すべてのASCII印字可能文字(半角の英数字と記号)、および、空白(スペース)のみ使用。
+    br
     small.text-muted タブや改行等の制御文字、仮名や漢字等のASCII以外の文字は使用不可。
   - if current_config.password_min_types > 2
     - if current_config.password_min_types == 4

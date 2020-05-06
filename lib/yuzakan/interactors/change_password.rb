@@ -82,20 +82,20 @@ class ChangePassword
     if params[:password] && !params[:password].empty?
       if params[:password].size < @config.password_min_size
         error({password:
-          '%d文字以上でなければなりません。' % @config.password_min_size})
+          ['%d文字以上でなければなりません。' % @config.password_min_size]})
         ok = false
       end
 
       if params[:password].size > @config.password_max_size
         error({password:
-          '%d文字以下でなければなりません。' % @config.password_max_size})
+          ['%d文字以下でなければなりません。' % @config.password_max_size]})
         ok = false
       end
 
       if params[:password] !~ /\A[\u0020-\u007e]*\z/ ||
           !((@config.password_unusable_chars&.chars || []) &
             params[:password].chars).empty?
-        error({password: '使用できない文字が含まれています。'})
+        error({password: ['使用できない文字が含まれています。']})
         ok = false
       end
 
@@ -108,8 +108,8 @@ class ChangePassword
         ].select { |reg| reg.match(params[:password]) }.size
         if types < @config.password_min_types
           error({password:
-            '文字種は%d種類以上でなければなりません。' %
-            @config.password_min_types})
+            ['文字種は%d種類以上でなければなりません。' %
+            @config.password_min_types]})
           ok = false
         end
       end
@@ -125,7 +125,7 @@ class ChangePassword
 
       result = Zxcvbn.test(params[:password], dict)
       if result.score < @config.password_min_score
-        error({password: 'パスワードが弱すぎます。'})
+        error({password: ['パスワードが弱すぎます。']})
         ok = false
       end
     end
@@ -141,7 +141,7 @@ class ChangePassword
         password: params[:password_current],
       )
       if result.failure?
-        error(password_current: 'パスワードが違います。')
+        error(password_current: ['パスワードが違います。'])
         ok = false
       end
     end
