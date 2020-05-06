@@ -1,21 +1,15 @@
 - alert_class = "alert alert-dismissible fade show"
-
+- flash[:param_errors] ||= {}
 .alerts
   - level_colors.each do |level, color|
     - if flash[level]
       div class="#{alert_class} alert-#{color}" role="alert"
-        button.close type="button" data-dismiss="alert" aria-label="閉じる"
-          span aria-hidden="true"
-            i.fas.fa-times
         = h(flash[level])
 
   - flash[:errors]&.each do |msg|
-    div class="#{alert_class} alert-#{level_colors[:error]}" role="alert"
-      button.close type="button" data-dismiss="alert" aria-label="閉じる"
-        span aria-hidden="true"
-          i.fas.fa-times
-      = h(msg)
-
-  - if flash[:param_errors]&.size&.positive?
-    script#param-errors type="application/json"
-      = hj(flash[:param_errors].to_json)
+    - case msg
+    - when String
+      div class="#{alert_class} alert-#{level_colors[:error]}" role="alert"
+        = h(msg)
+    - when Hash
+      - flash[:param_errors].merge!(msg)

@@ -12,14 +12,19 @@ html lang="ja"
       .container-fluid
         h1.text-center.display-5
           = current_config&.title
+          span.badge.badge-secondary レガシー版
         p.lead.text-center.smaller
-          | アカウント管理システム 【レガシー版】
+          | アカウント管理システム
         hr.my-2
         p
-          | レガシー版のため、パスワード変更のみ利用可能です。
+          | このログイン画面はレガシー版です。
+          | パスワード変更のみ利用可能です。
           | 最新のモダンブラウザーを使用している場合は、
           = link_to '通常版', Web.routes.root_path
           | をご使用ください。
+          | レガシー版の詳細は
+          = link_to 'レガシー版について', Web.routes.about_legacy_path
+          | を確認してください。
     .container-fluid
       = render partial: 'partial/alert'
       = render partial: 'session/form'

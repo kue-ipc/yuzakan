@@ -56,7 +56,6 @@ module Legacy
       controller.prepare do
         include Configuration
         include Authentication
-        include Error
         before :configurate!
         before :check_remote_ip!
         before :check_session!

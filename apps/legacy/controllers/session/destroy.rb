@@ -6,7 +6,10 @@ module Legacy
       class Destroy
         include Legacy::Action
 
-        def call(params)
+        def call(_params)
+          session[:user_id] = nil
+          flash[:success] = 'ログアウトしました。'
+          redirect_to routes.root_path
         end
       end
     end

@@ -6,7 +6,7 @@ module Web
       class Legacy
         include Web::Action
 
-        def call(_params)
+        def call(params)
         end
 
         def configurate!; end

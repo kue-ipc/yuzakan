@@ -10,7 +10,8 @@ module Legacy
           redirect_to routes.path(:dashboard) if authenticated?
         end
 
-        def authenticate!; end
+        def authenticate!
+        end
       end
     end
   end

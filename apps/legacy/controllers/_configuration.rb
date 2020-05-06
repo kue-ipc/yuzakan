@@ -25,7 +25,9 @@ module Legacy
         session[:user_id] = nil
         flash[:warn] = 'セッションがタイムアウトしました。' \
                        'ログインし直してください。'
+        session[:access_time] = Time.now
         redirect_to routes.root_path
+        return
       end
 
       session[:access_time] = Time.now

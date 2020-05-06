@@ -15,10 +15,10 @@ ENV['COFFEESCRIPT_SOURCE_PATH'] ||= File.expand_path(
   __dir__)
 
 Hanami.configure do
-  mount Legacy::Application, at: '/legacy'
   middleware.use Yuzakan::Utils::IEBadAccept
 
   mount Admin::Application, at: '/admin'
+  mount Legacy::Application, at: '/legacy'
   mount Web::Application, at: '/'
 
   model do
@@ -66,7 +66,8 @@ Hanami.configure do
                     ]
 
     mailer do
-      delivery :smtp, address: ENV.fetch('SMTP_HOST'), port: ENV.fetch('SMTP_PORT')
+      delivery :smtp, address: ENV.fetch('SMTP_HOST'),
+                      port: ENV.fetch('SMTP_PORT')
     end
   end
 end

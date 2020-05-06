@@ -1,0 +1,7 @@
+.menu.px-4
+  .row
+    h3 利用者用メニュー
+  .row
+    .col-md-4.m-3
+      - menu_items.each do |item|
+        = menu_link(item)

@@ -4,6 +4,7 @@
       enctype: 'multipart/form-data' do
     - div class: 'form-group' do
       - field_class = ['form-control']
+      - if flash[:errors]
       - field_class << 'is-invalid' if flash[:param_errors]&.key?('username')
       - text_field :username, class: field_class, \
                    placeholder: 'ユーザー名', required: true
