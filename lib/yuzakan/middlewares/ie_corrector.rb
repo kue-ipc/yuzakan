@@ -15,8 +15,9 @@ module Yuzakan
       end
 
       def call(env)
-        ie_comp = env['HTTP_USER_AGENT'].include?('MSIE 7.0')
-        env['HTTP_ACCEPT'] = 'text/html, ' + env['HTTP_ACCEPT'] if ie_comp
+        return @app.call(env) unless env['HTTP_USER_AGENT'].include?('Trident')
+
+        env['HTTP_ACCEPT'] = 'text/html, ' + env['HTTP_ACCEPT']
         res = @app.call(env)
         res[1]['X-UA-Compatible'] = 'IE=edge'
         res
