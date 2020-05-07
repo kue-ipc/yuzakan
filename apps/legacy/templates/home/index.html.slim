@@ -11,13 +11,13 @@ html lang="ja"
     .jumbotron.jumbotron-fluid.mb-3
       .container-fluid
         h1.text-center.display-5
-          = current_config&.title
+          => current_config&.title
           span.badge.badge-secondary レガシー版
         p.lead.text-center.smaller
-          | アカウント管理システム
+          | アカウント管理システム - Yuzakan -
         hr.my-2
         p
-          | このログイン画面はレガシー版です。
+          | ここはレガシー版です。
           | パスワード変更のみ利用可能です。
           | 最新のモダンブラウザーを使用している場合は、
           = link_to '通常版', Web.routes.root_path

@@ -3,6 +3,10 @@ header
     = link_to current_config&.title, routes.root_path, class: 'navbar-brand'
     span.badge.badge-secondary レガシー版
     ul.navbar-nav.mr-auto
+      li.nav-item
+        = link_to 'ホーム', routes.dashboard_path, class: 'nav-link'
+      li.nav-item
+        = link_to 'パスワード変更', routes.edit_user_password_path, class: 'nav-link'
     - if current_user
       span.navbar-text.px-2
         = h(current_user.display_name + ' (' + current_user.name + ')')
