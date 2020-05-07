@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../spec_helper'
+require_relative '../../../../spec_helper'
 
 describe Legacy::Controllers::User::Password::Edit do
   let(:action) { Legacy::Controllers::User::Password::Edit.new }
@@ -8,6 +8,6 @@ describe Legacy::Controllers::User::Password::Edit do
 
   it 'is successful' do
     response = action.call(params)
-    response[0].must_equal 200
+    _(response[0]).must_equal 200
   end
 end
