@@ -8,8 +8,8 @@
 # なお、IEでJSON接続はないため、考慮しなくてもよい。
 
 module Yuzakan
-  module Utils
-    class IEBadAccept
+  module Middlewares
+    class IeCorrector
       def initialize(app)
         @app = app
       end
