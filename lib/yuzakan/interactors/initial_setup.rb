@@ -31,10 +31,10 @@ class InitialSetup
     setup_local_provider(admin_user[:username], admin_user[:password])
     setup_role_and_admin(admin_user[:username])
 
-    @config_repostiory.create(
+    @config_repostiory.current_update({
       title: config[:title],
       maintenace: false,
-    )
+    })
   end
 
   private def valid?(params)
@@ -53,7 +53,7 @@ class InitialSetup
   end
 
   private def setup_local_provider(username, password)
-    ProviderRepository.new.create(
+    ProviderRepository.new.create({
       name: 'local',
       display_name: 'ローカル',
       immutable: true,
@@ -64,35 +64,32 @@ class InitialSetup
       authenticatable: true,
       password_changeable: true,
       lockable: true,
-    )
+    })
     local_provider = ProviderRepository.new.by_name_with_params('local')
     local_provider_adapter = local_provider.one.adapter
-    local_provider_adapter.create(
-      username,
-      display_name: 'ローカル管理者',
-    )
+    local_provider_adapter.create(username, {display_name: 'ローカル管理者'})
     local_provider_adapter.change_password(username, password)
   end
 
   private def setup_role_and_admin(username)
     role_repo = RoleRepository.new
-    role_repo.create(
+    role_repo.create({
       name: 'default',
       display_name: 'デフォルト',
       immutable: true,
       admin: false,
-    )
+    })
 
-    admin_role = role_repo.create(
+    admin_role = role_repo.create({
       name: 'admin',
       display_name: '管理者',
       immutable: true,
       admin: true,
-    )
+    })
 
-    UserRepository.new.create(
+    UserRepository.new.create({
       name: username,
       role_id: admin_role.id,
-    )
+    })
   end
 end

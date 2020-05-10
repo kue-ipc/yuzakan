@@ -48,6 +48,8 @@ Metrics/PerceivedComplexity:
 
 Layout/EndOfLine:
   EnforcedStyle: lf
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
 Layout/MultilineMethodCallBraceLayout:
@@ -55,24 +57,29 @@ Layout/MultilineMethodCallBraceLayout:
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
 
+Style/AccessModifierDeclarations:
+  EnforcedStyle: inline
 Style/AsciiComments:
   Enabled: false
+Style/ClassVars:
+  Exclude:
+    - lib/yuzakan/interactors/*
 Style/Documentation:
   Enabled: false
-Style/SpecialGlobalVars:
-  EnforcedStyle: use_perl_names
+Style/EmptyMethod:
+  EnforcedStyle: expanded
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: consistent_comma
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: consistent_comma
-Style/AccessModifierDeclarations:
-  EnforcedStyle: inline
 Style/RescueStandardError:
   EnforcedStyle: implicit
+Style/SpecialGlobalVars:
+  EnforcedStyle: use_perl_names
 Style/SymbolArray:
   MinSize: 8
-Style/EmptyMethod:
-  EnforcedStyle: expanded
+
+# applications
 
 Bundler/OrderedGems:
   Enabled: false

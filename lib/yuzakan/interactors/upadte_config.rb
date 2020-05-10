@@ -3,11 +3,8 @@
 require 'hanami/interactor'
 require 'hanami/validations/form'
 
-require 'ipaddress'
-
 class UpdateConfig
   include Hanami::Interactor
-  include Yuzakan::Utils::IPList
 
   class Validations
     include Hanami::Validations::Form
@@ -16,7 +13,7 @@ class UpdateConfig
     validations do
       optional(:title) { str? & max_size?(255) }
 
-      optional(:session_timeout) { int? & gteq?(0) & lteq?(24 * 60 * 60)}
+      optional(:session_timeout) { int? & gteq?(0) & lteq?(24 * 60 * 60) }
 
       optional(:password_min_size) { int? & gteq?(1) & lteq?(255) }
       optional(:password_max_size) { int? & gteq?(1) & lteq?(255) }
@@ -34,7 +31,7 @@ class UpdateConfig
   end
 
   def call(params)
-    @config_repository.update(@config_repository.current.id, params)
+    @config_repository.current_update(params)
   end
 
   private def valid?(params)
