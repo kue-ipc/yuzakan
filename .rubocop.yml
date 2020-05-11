@@ -64,6 +64,7 @@ Style/AsciiComments:
 Style/ClassVars:
   Exclude:
     - lib/yuzakan/interactors/*
+    - lib/yuzakan/repositories/*
 Style/Documentation:
   Enabled: false
 Style/EmptyMethod:
