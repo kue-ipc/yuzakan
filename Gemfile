@@ -7,6 +7,8 @@ gem 'hanami',       '~> 1.3'
 gem 'hanami-model', '~> 1.3'
 gem 'hanami-events', git: 'https://github.com/hanami/events.git'
 
+gem 'rack', '>= 2.2.2'
+
 # Database
 # gem 'sqlite3'
 gem 'mysql2'
@@ -23,7 +25,8 @@ gem 'uglifier'
 gem 'bcrypt'
 gem 'zxcvbn-ruby'
 
-gem 'ipaddress'
+# default gem
+gem 'ipaddr'
 
 # LDAP
 gem 'net-ldap'
