@@ -18,51 +18,45 @@ class Authenticate
 
   expose :user
 
-  def initialize(owner: nil,
-                 client: nil,
+  def initialize(ip:,
                  user_repository: UserRepository.new,
                  provider_repository: ProviderRepository.new,
-                 job_repository: JobRepository.new)
-    @owner = owner
-    @client = client
+                 activity_repository: ActivityRepository.new)
+    @ip = ip
     @user_repository = user_repository
     @provider_repository = provider_repository
-    @job_repository = job_repository
+    @activity_repository = activity_repository
   end
 
-  def call(username:, password:, **_)
-    # パラメーターはユーザー名のみを記録する。
-    # ユーザーは未定のままにする。
-    job = @job_repository.job_create(owner: @owner,
-                                     client: @client,
-                                     user: nil,
-                                     action: 'authenticate',
-                                     params: username)
+  def call(params)
+    activity_params = {
+      type: 'user',
+      target: params[:username],
+      action: 'auth',
+    }
+
     user_data = nil
 
-    @job_repository.job_begin(job.id)
-    # 最初に認証されたところを正とする。
     @provider_repository.operational_all_with_params(:auth).each do |provider|
-      user_data = provider.adapter.auth(username, password)
+      user_data = provider.adapter.auth(params[:username], params[:password])
+      # 最初に認証されたところを正とする。
       break if user_data
     rescue => e
-      @job_repository.job_errored(job.id)
+      @activity_repository.create(activity_params.merge!({result: 'error'}))
       error!("認証時にエラーが発生しました。: #{e.message}")
     end
 
     unless user_data
-      @job_repository.job_failed(job.id)
+      @activity_repository.create(activity_params.merge!({result: 'failure'}))
       error!('ユーザー名またはパスワードが違います。')
     end
 
-    unless user_data[:name] == username
-      @job_repository.job_errored(job.id)
-      error!('認証には成功しましたが、ユーザー名が一致しません。')
-    end
-
-    @job_repository.job_succeeded(job.id)
-
     @user = create_or_upadte_user(user_data)
+    @activity_repository.create(activity_params.merge!({
+      user: @user,
+      target: @user,
+      result: 'success',
+    }))
   end
 
   private def valid?(params)
@@ -71,6 +65,7 @@ class Authenticate
       error(validation.messages)
       return false
     end
+
     true
   end
 

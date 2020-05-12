@@ -24,35 +24,36 @@ class ChangePassword
   expose :count
 
   def initialize(user:,
-                 client: nil,
+                 ip: nil,
                  config: ConfigRepostitory.new.current,
                  provider_repository: ProviderRepository.new,
-                 job_repository: JobRepository.new)
+                 activity_repository: ActivityRepository.new)
     @user = user
-    @client = client
+    @ip = ip
     @config = config
     @provider_repository = provider_repository
-    @job_repository = job_repository
+    @activity_repository = activity_repository
   end
 
-  def call(password:, **_)
-    job = @job_repository.job_create(owner: @user,
-                                     client: @client,
-                                     user: @user,
-                                     action: 'change_password',
-                                     params: nil)
+  def call(params)
+    activity_params = {
+      user: @user,
+      type: 'user',
+      target: @user.name,
+      action: 'change_password',
+    }
+
     @count = 0
 
-    @job_repository.job_begin(job.id)
     @provider_repository.operational_all_with_params(:change_password)
       .each do |provider|
       @count += 1 if provider.adapter.change_password(@user.name, password)
     rescue => e
-      @job_repository.job_errored(job.id)
+      @activity_repository.create(activity_params.merge!({result: 'error'}))
       if @count.positive?
         error <<~'ERROR_MESSAGE'
           一部のシステムのパスワードは変更されましたが、
-          エラーにより処理が中断されました。
+          別のシステムの変更時のエラーにより処理が中断されました。
           変更されていないシステムが存在する可能性があるため、
           再度パスワードを変更してください。
           現在のパスワードはすでに変更されている場合があります。
@@ -62,13 +63,11 @@ class ChangePassword
     end
 
     if @count.negative?
-      @job_repository.job_failed(job.id)
-      error! <<~'ERROR_MESSAGE'
-        どのシステムでもパスワードは変更されませんでした。
-      ERROR_MESSAGE
+      @activity_repository.create(activity_params.merge!({result: 'failure'}))
+      error!('どのシステムでもパスワードは変更されませんでした。')
     end
 
-    @job_repository.job_succeeded(job.id)
+    @activity_repository.create(activity_params.merge!({result: 'success'}))
   end
 
   private def valid?(params)

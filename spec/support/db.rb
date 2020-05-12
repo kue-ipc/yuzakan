@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 def db_clear
-  JobRepository.new.clear
   UserRepository.new.clear
   RoleRepository.new.clear
   LocalUserRepository.new.clear
