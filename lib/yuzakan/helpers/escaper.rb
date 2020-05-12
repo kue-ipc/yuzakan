@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
-module Web
+module Yuzakan
   module Helpers
     # @see https://github.com/hanami/utils
-    # /lib/hanami/utils/escape.rb
+    #   /lib/hanami/utils/escape.rb
     # @see https://github.com/hanami/helpers
-    # /lib/hanami/helpers/escape_helper.rb
+    #   /lib/hanami/helpers/escape_helper.rb
     # @see https://github.com/rails/rails
-    # /activesupport/lib/active_support/core_ext/string/output_safety.rb
+    #   /activesupport/lib/active_support/core_ext/string/output_safety.rb
     module RefineEscape
       include Hanami::Utils::Escape
 
-      JSON_CHARS = {
+      JSON_CHARS ||= {
         '&' => '\u0026',
         '>' => '\u003e',
         '<' => '\u003c',

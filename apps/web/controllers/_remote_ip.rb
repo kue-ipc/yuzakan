@@ -3,7 +3,6 @@
 module Web
   module RemoteIp
     include Configuration
-    include Yuzakan::Utils::IPList
 
     private def check_remote_ip!
       halt 403 unless allow_remote_ip?
