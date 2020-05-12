@@ -257,10 +257,8 @@ module Admin
       controller.prepare do
         include Configuration
         include Authentication
-        include RemoteIp
         before :configurate!
         before :authenticate!
-        before :check_remote_ip!
         expose :current_config
         expose :current_user
         expose :remote_ip
