@@ -25,6 +25,12 @@ h2 全体設定
       - number_field :password_max_size, class: 'form-control', min: 1, max: 255
       - div class: 'input-group-append'
         - span '文字', class: 'input-group-text'
+    - small class: 'form-text text-muted' do
+      - div 'パスワードハッシュによっては文字数に制限があります。' \
+            '制限を超えた文字数は単純に無視されます。'
+      - ul
+        - {'CRYPT-DES' => 8, 'LM' => 14, 'BCRYPT' => 72}.each do |name, size|
+          - li "#{name}: #{size} 文字" 
 
   - div class: 'form-group' do
     - label 'パスワードの文字種の最小数', for: :password_min_types

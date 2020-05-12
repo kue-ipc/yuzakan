@@ -22,7 +22,7 @@ module Admin
       #
       load_paths << [
         'controllers',
-        'views'
+        'views',
       ]
 
       # Handle exceptions with HTTP statuses (true) or don't catch them (false).
@@ -148,7 +148,7 @@ module Admin
         #
         sources << [
           'assets',
-          'vendor/assets'
+          'vendor/assets',
         ]
       end
 
@@ -271,6 +271,7 @@ module Admin
       view.prepare do
         include Hanami::Helpers
         include Admin::Assets::Helpers
+        include Yuzakan::Helpers
       end
     end
 

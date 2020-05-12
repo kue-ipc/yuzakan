@@ -11,16 +11,16 @@ Hanami::Model.migration do
       column :session_timeout, Integer, null: false, default: 3600
 
       column :password_min_size, Integer, unll: false, default: 8
-      column :password_max_size, Integer, null: false, default: 255
+      # BCrypt's limit size is 72, over chars are ignored.
+      column :password_max_size, Integer, null: false, default: 64
       column :password_min_types, Integer, null: false, default: 1
       column :password_min_score, Integer, null: false, default: 3
-      column :password_unusable_chars, String
-      column :password_extra_dict, String, size: 4095
+      column :password_unusable_chars, String, null: false, default: ''
+      column :password_extra_dict, String, size: 4096, null: false, default: ''
 
-      column :remote_ip_header, String
-      column :trusted_reverse_proxies, String, size: 4095
-
-      column :admin_networks, String, size: 4095
+      # at least 30 neworks
+      column :admin_networks, String, size: 1024, null: false, default: ''
+      column :user_networks, String, size: 1024, null: false, default: ''
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

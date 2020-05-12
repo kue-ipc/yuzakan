@@ -12,21 +12,19 @@ module Admin
           result = InitialSetup.new.call(params[:setup])
 
           if result.failure?
-            flash[:errors] = []
-            result.errors.each do |error|
-              if error.is_a?(Hash) && error[:params]
-                flash[:param_errors] = error
-              else
-                flash[:errors] << error
-              end
-            end
+            flash[:errors] = result.errors
             redirect_to routes.path(:setup)
           end
+
+          flash[:success] = '初期セットアップが完了しました。' \
+            '管理者でログインしてください。'
         end
 
-        def configurate!; end
+        def configurate!
+        end
 
-        def authenticate!; end
+        def authenticate!
+        end
       end
     end
   end

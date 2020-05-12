@@ -4,8 +4,10 @@ module Admin
   module Authentication
     private def authenticate!
       unless authenticated?
+        # セッションを初期化しておく
+        session[:user_id] = nil
         if format == :html
-          redirect_to routes.new_session_path
+          redirect_to routes.root_path
         else
           halt 401
         end
@@ -13,9 +15,6 @@ module Admin
     end
 
     private def authenticated?
-      check_session
-      # TODO: 将来は管理者以外も権限があれば使用可能にする。
-      # 現在のところ管理者のみログイン可能にする。
       !current_user.nil? && current_user.role&.admin
     end
 
@@ -23,19 +22,6 @@ module Admin
       return nil unless session[:user_id]
 
       @current_user ||= UserRepository.new.find_with_role(session[:user_id])
-    end
-
-    private def check_session
-      if session[:access_time].nil?
-        session[:user_id] = nil
-      elsif session[:access_time] + current_config&.session_timeout.to_i <
-            Time.now
-        if session[:user_id]
-          session[:user_id] = nil
-          flash[:warn] = 'セッションがタイムアウトしました。ログインし直してください。'
-        end
-      end
-      session[:access_time] = Time.now
     end
   end
 end

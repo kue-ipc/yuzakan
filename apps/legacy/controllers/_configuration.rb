@@ -2,8 +2,6 @@
 
 module Legacy
   module Configuration
-    include Yuzakan::Utils::IPList
-
     private def configurate!
       redirect_to Web.routes.maintenance_path if !configurated? || maintenance?
     end
