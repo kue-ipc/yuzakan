@@ -20,8 +20,8 @@ def db_initialize
     }
   )
   # 一般ユーザー
-  local_provider = ProviderRepository.new.by_name_with_params('local')
-  adapter = local_provider.one.adapter
+  local_provider = ProviderRepository.new.find_by_name_with_params('local')
+  adapter = local_provider.adapter
   adapter.create(
     'user',
     display_name: '一般ユーザー',

@@ -6,7 +6,7 @@ describe Web::Controllers::Home::Index do
   let(:action) { Web::Controllers::Home::Index.new }
   let(:params) { {'REMOTE_ADDR' => '::1', 'rack.session' => session} }
   let(:session) { {user_id: user_id, access_time: Time.now} }
-  let(:user_id) { Authenticate.new.call(auth).user&.id }
+  let(:user_id) { Authenticate.new(client: '::1').call(auth).user&.id }
   let(:auth) { {username: 'user', password: 'word'} }
 
   it 'redirect to dashboard' do

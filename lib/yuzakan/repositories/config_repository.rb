@@ -8,14 +8,14 @@ class ConfigRepository < Hanami::Repository
   end
 
   def current
-    @@curent ||= first
+    @current ||= first
   end
 
   def current_create(params)
-    @@curent = create(params)
+    @current = create(params)
   end
 
   def current_update(params)
-    @@curent = update(current.id, params)
+    @current = update(current.id, params)
   end
 end

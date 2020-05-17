@@ -10,7 +10,7 @@ describe Legacy::Controllers::User::Password::Update do
     user: {password: user_passwod},
   } }
   let(:session) { {user_id: user_id, access_time: Time.now} }
-  let(:user_id) { Authenticate.new.call(auth).user&.id }
+  let(:user_id) { Authenticate.new(client: '::1').call(auth).user&.id }
   let(:auth) { {username: 'user', password: 'word'} }
   let(:response) { action.call(params) }
   let(:flash) { action.exposures[:flash] }

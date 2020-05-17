@@ -31,7 +31,7 @@ class InitialSetup
     setup_local_provider(admin_user[:username], admin_user[:password])
     setup_role_and_admin(admin_user[:username])
 
-    @config_repostiory.current_update({
+    @config_repostiory.current_create({
       title: config[:title],
       maintenace: false,
     })
@@ -65,8 +65,8 @@ class InitialSetup
       password_changeable: true,
       lockable: true,
     })
-    local_provider = ProviderRepository.new.by_name_with_params('local')
-    local_provider_adapter = local_provider.one.adapter
+    local_provider = ProviderRepository.new.find_by_name_with_params('local')
+    local_provider_adapter = local_provider.adapter
     local_provider_adapter.create(username, {display_name: 'ローカル管理者'})
     local_provider_adapter.change_password(username, password)
   end

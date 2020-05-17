@@ -7,7 +7,7 @@ module Admin
         include Admin::Action
 
         def call(params)
-          result = Authenticate.new(client: remote_ip.to_s)
+          result = Authenticate.new(client: remote_ip)
             .call(params[:session])
 
           if result.failure?

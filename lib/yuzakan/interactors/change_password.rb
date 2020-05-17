@@ -131,14 +131,9 @@ class ChangePassword
 
     # 現在のパスワード確認
     if params[:password_current] && !params[:password_current].empty?
-      result = Authenticate.new(
-        owner: @user,
-        client: @client,
-        provider_repository: @provider_repository
-      ).call(
-        username: @user.name,
-        password: params[:password_current],
-      )
+      result = Authenticate.new(client: @client,
+                                provider_repository: @provider_repository)
+        .call(username: @user.name, password: params[:password_current])
       if result.failure?
         error(password_current: ['パスワードが違います。'])
         ok = false
