@@ -11,18 +11,18 @@ class Authenticate
     messages_path 'config/messages.yml'
 
     validations do
-      required(:username) { filled? }
-      required(:password) { filled? }
+      required(:username) { filled? & str? & size?(1..255)}
+      required(:password) { filled? & str? & max_size?(255)}
     end
   end
 
   expose :user
 
-  def initialize(ip:,
+  def initialize(client:,
                  user_repository: UserRepository.new,
                  provider_repository: ProviderRepository.new,
                  activity_repository: ActivityRepository.new)
-    @ip = ip
+    @client = client
     @user_repository = user_repository
     @provider_repository = provider_repository
     @activity_repository = activity_repository
@@ -30,6 +30,7 @@ class Authenticate
 
   def call(params)
     activity_params = {
+      client: @client,
       type: 'user',
       target: params[:username],
       action: 'auth',
@@ -54,7 +55,6 @@ class Authenticate
     @user = create_or_upadte_user(user_data)
     @activity_repository.create(activity_params.merge!({
       user: @user,
-      target: @user,
       result: 'success',
     }))
   end
