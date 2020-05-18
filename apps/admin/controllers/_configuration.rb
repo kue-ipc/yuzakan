@@ -13,7 +13,7 @@ module Admin
     end
 
     private def remote_ip
-      @remote_ip = request.ip
+      @remote_ip ||= request.ip
     end
 
     private def configurated?

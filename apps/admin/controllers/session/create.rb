@@ -35,13 +35,13 @@ module Admin
           unless role&.admin
             session[:user_id] = nil
             if format == :html
-              flash[:failure] = '権限がありません。'
+              flash[:failure] = '管理者権限がありません。'
               redirect_to routes.new_session_path
             elsif format == :json
               @data = {
                 result: 'failure',
                 messages: {
-                  failure: '権限がありません。',
+                  failure: '管理者権限がありません。',
                 },
               }
             end
