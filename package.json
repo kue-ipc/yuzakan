@@ -6,14 +6,14 @@
     "@fortawesome/free-solid-svg-icons": "^5.10.2",
     "@hyperapp/events": "^0.0.4",
     "@hyperapp/html": "^1.1.1",
-    "bootstrap": "^4.3.1",
+    "bootstrap": "^4.5.0",
     "bootstrap.native": "^2.0.26",
     "hyperapp": "^2.0.1",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
     "coffeescript": "^2.4.1",
-    "rollup": "^2.7.6",
+    "rollup": "^2.11.2",
     "rollup-plugin-coffee-script": "^2.0.0",
     "rollup-plugin-commonjs": "^10.0.2",
     "rollup-plugin-node-resolve": "^5.2.0"
