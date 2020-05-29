@@ -9,7 +9,7 @@ Hanami::Model.migration do
       column :type, String, null: false
       column :target, String
       column :action, String, null: false
-      column :params, String, size: 65535
+      column :params, String, size: 4096
       column :result, String
 
       column :created_at, DateTime, null: false
