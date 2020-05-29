@@ -27,10 +27,7 @@ module Legacy
 
         stylesheet_compressor :sass
 
-        sources << [
-          'assets',
-          'vendor/assets',
-        ]
+        sources << ['assets']
       end
 
       security.x_frame_options 'DENY'

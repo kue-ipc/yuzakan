@@ -5,7 +5,11 @@
 /tmp
 /node_modules
 /apps/*/vendor/assets*
+/vendor/assets*
+/vendor/*
 
 /rollup.config.js
 /yarn-error.log
 /log/*.log
+
+!.gitkeep

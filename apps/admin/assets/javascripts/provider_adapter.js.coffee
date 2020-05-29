@@ -1,6 +1,6 @@
 # Hyperapp v2 対応済み
 
-import {h, app} from './hyperapp.js'
+import {h, app} from '../hyperapp.js'
 
 import {fieldName, fieldId} from './form_helper.js'
 

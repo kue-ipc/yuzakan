@@ -6,8 +6,7 @@ import coffeeScript from 'rollup-plugin-coffee-script'
 
 srcDir = 'src'
 distDirs = [
-  'apps/web/vendor/assets/javascripts'
-  'apps/admin/vendor/assets/javascripts'
+  'vendor/assets/javascripts'
 ]
 targets = [
   {name: 'hyperapp', ext: 'coffee'}
