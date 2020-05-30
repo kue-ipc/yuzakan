@@ -11,7 +11,7 @@ get '/dashboard', to: 'dashboard#index', as: :dashboard
 get '/maintenance', to: 'maintenance#index', as: :maintenance
 get '/uninitialized', to: 'uninitialized#index', as: :uninitialized
 
-resource 'session', only: [:new, :destroy, :create]
+resource 'session', only: [:destroy, :create]
 
 resource 'user', only: [] do
   resource 'password', only: [:edit, :update]

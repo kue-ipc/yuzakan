@@ -12,7 +12,7 @@ get '/setup', to: 'setup#index', as: :setup
 post '/setup', to: 'setup#create'
 get '/setup/done', to: 'setup#done', as: :setup_done
 
-resource 'session', only: [:new, :destroy, :create]
+resource 'session', only: [:destroy, :create]
 
 resource 'config', only: [:edit, :update]
 resources 'providers'
