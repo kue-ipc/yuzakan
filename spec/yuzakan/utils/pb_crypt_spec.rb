@@ -4,7 +4,9 @@ require_relative '../../spec_helper'
 
 describe Yuzakan::Utils::PbCrypt do
   let(:pb_crypt) { Yuzakan::Utils::PbCrypt.new(password) }
-  let(:password) { '046c9b92e9cf4a52c132551896577bd675b472438ab7ef95f47b6ecb322a19f2' }
+  let(:password) do
+    '046c9b92e9cf4a52c132551896577bd675b472438ab7ef95f47b6ecb322a19f2'
+  end
 
   it 'encryt and decrypt text' do
     text = 'Ab01#'

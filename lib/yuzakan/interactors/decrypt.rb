@@ -13,9 +13,11 @@ class Decrypt
     messages_path 'config/messages.yml'
 
     validations do
-      required(:data) { str? }
+      required(:encrypted) { str? }
     end
   end
+
+  expose :data
 
   def initialize(password: ENV.fetch('DB_SECRET'),
                  encoding: Encoding::UTF_8)
@@ -24,7 +26,7 @@ class Decrypt
   end
 
   def call(params)
-    @pb_crypt.decrypt_text(params[:data], encoding: @encoding)
+    @data = @pb_crypt.decrypt_text(params[:encrypted], encoding: @encoding)
   end
 
   private def valid?(params)
