@@ -9,7 +9,6 @@ module Legacy
       root __dir__
 
       load_paths << [
-        'helpers',
         'controllers',
         'views',
       ]
@@ -54,8 +53,6 @@ module Legacy
         include Configuration
         include Authentication
         before :configurate!
-        before :check_remote_ip!
-        before :check_session!
         before :authenticate!
         expose :current_config
         expose :current_user
@@ -65,8 +62,7 @@ module Legacy
       view.prepare do
         include Hanami::Helpers
         include Legacy::Assets::Helpers
-        include Legacy::Helpers::Alerter
-        include Legacy::Helpers::Error
+        include Yuzakan::Helpers
       end
     end
 

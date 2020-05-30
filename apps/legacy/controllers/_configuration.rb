@@ -3,19 +3,38 @@
 module Legacy
   module Configuration
     private def configurate!
-      redirect_to Web.routes.maintenance_path if !configurated? || maintenance?
-    end
-
-    private def configurated?
-      !current_config.nil?
+      redirect_to Web.routes.path(:uninitialized) unless configurated?
+      redirect_to Web.routes.path(:maintenance) if maintenance?
+      check_ip!
+      check_session!
     end
 
     private def current_config
       @current_config ||= ConfigRepository.new.current
     end
 
+    private def remote_ip
+      @remote_ip ||= request.ip
+    end
+
+    private def configurated?
+      !current_config.nil?
+    end
+
     private def maintenance?
       current_config&.maintenance
+    end
+
+    private def check_ip!
+      halt 403 unless check_ip?
+    end
+
+    private def check_ip?
+      user_networks = current_config.user_networks
+      return true if user_networks.empty?
+
+      result = CheckIp.new(allowed_networks: user_networks).call(ip: remote_ip)
+      result.success
     end
 
     private def check_session!
@@ -39,20 +58,6 @@ module Legacy
       return false if timeout.zero?
 
       Time.now - time > timeout
-    end
-
-    private def check_remote_ip!
-      halt 403 unless allow_remote_ip?
-    end
-
-    private def allow_remote_ip?
-      true
-    end
-
-    private def remote_ip
-      @remote_ip ||=
-        CheckRemoteIp.new(config: current_config).call(request: request)
-          .remote_ip
     end
   end
 end

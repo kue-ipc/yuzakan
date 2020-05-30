@@ -1,8 +1,6 @@
-# frozen_string_literal: true
-
 module Web
   module Controllers
-    module Maintenance
+    module Uninitialized
       class Index
         include Web::Action
 
@@ -10,7 +8,7 @@ module Web
         end
 
         def configurate!
-          redirect_to routes.path(:root) unless maintenance?
+          redirect_to routes.path(:root) unless configurated?
         end
 
         def authenticate!

@@ -20,6 +20,10 @@ module Admin
       !current_config.nil?
     end
 
+    private def maintenance?
+      current_config&.maintenance
+    end
+
     private def check_ip!
       halt 403 unless check_ip?
     end
