@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 2.6
 
 # 0.80
 Style/HashEachMethods:
@@ -61,10 +61,6 @@ Style/AccessModifierDeclarations:
   EnforcedStyle: inline
 Style/AsciiComments:
   Enabled: false
-Style/ClassVars:
-  Exclude:
-    - lib/yuzakan/interactors/*
-    - lib/yuzakan/repositories/*
 Style/Documentation:
   Enabled: false
 Style/EmptyMethod:

@@ -22,6 +22,7 @@ module Web
       templates 'templates'
 
       assets do
+        require_relative '../../lib/yuzakan/utils/uglifier_es_compressor'
         javascript_compressor Yuzakan::Utils::UglifierEsCompressor.new
 
         stylesheet_compressor :sass

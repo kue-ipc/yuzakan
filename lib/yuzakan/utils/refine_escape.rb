@@ -13,13 +13,15 @@ module Yuzakan
     module RefineEscape
       include Hanami::Utils::Escape
 
-      JSON_CHARS = {
-        '&' => '\u0026',
-        '>' => '\u003e',
-        '<' => '\u003c',
-        "\u2028" => '\u2028',
-        "\u2029" => '\u2029',
-      }.freeze
+      def self.json_chars
+        @json_chars ||= {
+          '&' => '\u0026',
+          '>' => '\u003e',
+          '<' => '\u003c',
+          "\u2028" => '\u2028',
+          "\u2029" => '\u2029',
+        }
+      end
 
       refine Hanami::Utils::Escape.singleton_class do
         # Escape JSON contents
@@ -35,7 +37,7 @@ module Yuzakan
           result = SafeString.new
 
           input.each_char do |chr|
-            result << JSON_CHARS.fetch(chr, chr)
+            result << RefineEscape.json_chars.fetch(chr, chr)
           end
 
           result
