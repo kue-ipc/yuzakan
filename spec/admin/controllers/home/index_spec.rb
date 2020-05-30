@@ -9,6 +9,12 @@ describe Admin::Controllers::Home::Index do
   let(:user_id) { Authenticate.new(client: '::1').call(auth).user&.id }
   let(:auth) { {username: 'admin', password: 'pass'} }
 
+  it 'redirect dashboard' do
+    response = action.call(params)
+    _(response[0]).must_equal 302
+    _(response[1]['Loaction']).must_equal '/admin/dashboard'
+  end
+
   describe 'before initialized' do
     before do
       db_clear
