@@ -6,7 +6,7 @@ module Admin
       class Destroy
         include Admin::Action
 
-        def call(params)
+        def call(_params)
           session[:user_id] = nil
           session[:access_time] = nil
           flash[:success] = 'ログアウトしました。'

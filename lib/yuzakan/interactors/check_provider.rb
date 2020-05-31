@@ -27,9 +27,7 @@ class CheckProvider
       error('該当のプロバイダーがありません。')
       return
     end
-    unless @provider.adapter.check
-      error('チェックに失敗しました。')
-    end
+    error('チェックに失敗しました。') unless @provider.adapter.check
   end
 
   private def valid?(params)

@@ -59,7 +59,8 @@ module Admin
           end
         end
 
-        def authenticate!; end
+        def authenticate!
+        end
       end
     end
   end

@@ -64,9 +64,7 @@ module Legacy
 
           private def change_password_field_opt(name)
             password_class = ['form-control']
-            if param_errors.key?(name.to_s)
-              password_class << 'is-invalid'
-            end
+            password_class << 'is-invalid' if param_errors.key?(name.to_s)
 
             opt = {
               class: password_class,
@@ -80,7 +78,7 @@ module Legacy
               if change_password_config[:unusable_chars]&.size&.positive?
                 codes = change_password_config[:unusable_chars]
                   .each_codepoint
-                  .map { |code| "\\u#{sprintf('%04x', code)}" }
+                  .map { |code| "\\u#{format('%04x', code)}" }
                   .join
                 opt.merge!(pattern: "[^#{codes}]*",
                            title: '使用不可文字を含めることはできません。')

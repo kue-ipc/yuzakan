@@ -11,8 +11,8 @@ class Authenticate
     messages_path 'config/messages.yml'
 
     validations do
-      required(:username) { filled? & str? & size?(1..255)}
-      required(:password) { filled? & str? & max_size?(255)}
+      required(:username) { filled? & str? & size?(1..255) }
+      required(:password) { filled? & str? & max_size?(255) }
     end
   end
 

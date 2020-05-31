@@ -23,7 +23,7 @@ module Yuzakan
             type: :string,
             required: true,
             placeholder: '',
-          }
+          },
         ]
       end
 

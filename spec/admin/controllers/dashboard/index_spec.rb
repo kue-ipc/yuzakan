@@ -15,7 +15,7 @@ describe Admin::Controllers::Dashboard::Index do
   end
 
   describe 'user login' do
-    let(:auth) { { username: 'user', password: 'word' }}
+    let(:auth) { {username: 'user', password: 'word'} }
 
     it 'redirect login' do
       response = action.call(params)

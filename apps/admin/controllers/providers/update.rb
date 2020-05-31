@@ -14,7 +14,7 @@ module Admin
           provider = repo.find(params[:id])
           unless provider
             flash[:errors] = [
-              'そのようなIDはありません。'
+              'そのようなIDはありません。',
             ]
             redirect_to routes.providers_path
           end
@@ -27,8 +27,7 @@ module Admin
             writable: params[:provider][:writable],
             authenticatable: params[:provider][:authenticatable],
             password_changeable: params[:provider][:password_changeable],
-            lockable: params[:provider][:lockable],
-          )
+            lockable: params[:provider][:lockable])
 
           string_param_repo = ProviderStringParamRepository.new
           secret_param_repo = ProviderSecretParamRepository.new
@@ -37,6 +36,7 @@ module Admin
 
           params[:provider][:params].each do |name, value|
             next if value.nil? || value.empty?
+
             data = {
               provider_id: provider.id,
               name: name.to_s,

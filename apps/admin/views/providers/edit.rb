@@ -9,7 +9,7 @@ module Admin
         def form
           Form.new(:provider,
                    routes.provider_path(id: provider.id),
-                   { provider: provider },
+                   {provider: provider},
                    method: :patch)
         end
 

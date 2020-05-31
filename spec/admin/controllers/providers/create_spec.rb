@@ -20,12 +20,11 @@ describe Admin::Controllers::Providers::Create do
 
     it 'redirect setup' do
       response = action.call(params.merge(
-        provider: {
-          name: 'test',
-          display_name: 'テスト',
-          adapter_name: 'dummy',
-        },
-      ))
+                               provider: {
+                                 name: 'test',
+                                 display_name: 'テスト',
+                                 adapter_name: 'dummy',
+                               }))
       _(response[0]).must_equal 302
       _(response[1]['Location']).must_equal '/admin/setup'
     end

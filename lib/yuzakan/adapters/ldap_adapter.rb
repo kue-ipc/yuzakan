@@ -179,8 +179,7 @@ module Yuzakan
         ldap = generate_ldap
         base = ldap.search(
           base: @params[:base_dn],
-          scope: Net::LDAP::SearchScope_BaseObject,
-        )&.first
+          scope: Net::LDAP::SearchScope_BaseObject)&.first
         if base
           true
         else
@@ -210,11 +209,7 @@ module Yuzakan
         ldap = generate_ldap
         opts = search_user_opts(username).merge(password: password)
         user = ldap.bind_as(opts)
-        if user
-          normalize_user(user&.first)
-        else
-          nil
-        end
+        normalize_user(user&.first) if user
       end
 
       def change_password(username, password)
@@ -260,8 +255,7 @@ module Yuzakan
 
         ldap.modify(
           dn: user.dn,
-          operations: operations
-        )
+          operations: operations)
         true
       end
 

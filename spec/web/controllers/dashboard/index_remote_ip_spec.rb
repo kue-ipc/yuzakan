@@ -16,59 +16,63 @@ describe Web::Controllers::Dashboard::Index do
   end
 
   describe 'check remote ip' do
-    before { UpdateConfig.new.call(
-      remote_ip_header: 'X-Forwarded-For',
-      trusted_reverse_proxies: '::1 127.0.0.1') }
+    before do
+      UpdateConfig.new.call(
+        remote_ip_header: 'X-Forwarded-For',
+        trusted_reverse_proxies: '::1 127.0.0.1')
+    end
     after { db_reset }
 
     it 'remote_ip is not ::1' do
       response = action.call(params.merge(
-        'HTTP_X_FORWARDED_FOR' => '192.168.1.1'))
+                               'HTTP_X_FORWARDED_FOR' => '192.168.1.1'))
       _(response[0]).must_equal 200
       _(action.send(:remote_ip).to_s).must_equal '192.168.1.1'
     end
 
     it 'remote_ip is not 127.0.0.1' do
       response = action.call(params.merge(
-        'REMOTE_ADDR' => '127.0.0.1',
-        'HTTP_X_FORWARDED_FOR' => '192.168.1.1'))
+                               'REMOTE_ADDR' => '127.0.0.1',
+                               'HTTP_X_FORWARDED_FOR' => '192.168.1.1'))
       _(response[0]).must_equal 200
       _(action.send(:remote_ip).to_s).must_equal '192.168.1.1'
     end
 
     it 'remote_ip is first' do
       response = action.call(params.merge(
-        'HTTP_X_FORWARDED_FOR' =>
-          '192.168.10.10, 192.168.20.20, 192.168.30.30'))
+                               'HTTP_X_FORWARDED_FOR' =>
+                                 '192.168.10.10, 192.168.20.20, 192.168.30.30'))
       _(response[0]).must_equal 200
       _(action.send(:remote_ip).to_s).must_equal '192.168.10.10'
     end
 
     it 'fake remote_ip' do
       response = action.call(params.merge(
-        'REMOTE_ADDR' => '172.16.1.1',
-        'HTTP_X_FORWARDED_FOR' => '192.168.1.1'))
+                               'REMOTE_ADDR' => '172.16.1.1',
+                               'HTTP_X_FORWARDED_FOR' => '192.168.1.1'))
       _(response[0]).must_equal 200
       _(action.send(:remote_ip).to_s).must_equal '172.16.1.1'
     end
 
     it 'other remote_ip' do
       response = action.call(params.merge(
-        'REMOTE_ADDR' => '172.16.1.1'))
+                               'REMOTE_ADDR' => '172.16.1.1'))
       _(response[0]).must_equal 200
       _(action.send(:remote_ip).to_s).must_equal '172.16.1.1'
     end
   end
 
   describe 'check x-real-ip' do
-    before { UpdateConfig.new.call(
-      remote_ip_header: 'X-Real-Ip',
-      trusted_reverse_proxies: '::1 127.0.0.1') }
+    before do
+      UpdateConfig.new.call(
+        remote_ip_header: 'X-Real-Ip',
+        trusted_reverse_proxies: '::1 127.0.0.1')
+    end
     after { db_reset }
 
     it 'remote_ip is not ::1' do
       response = action.call(params.merge(
-        'HTTP_X_REAL_IP' => '192.168.1.1'))
+                               'HTTP_X_REAL_IP' => '192.168.1.1'))
       _(response[0]).must_equal 200
       _(action.send(:remote_ip).to_s).must_equal '192.168.1.1'
     end

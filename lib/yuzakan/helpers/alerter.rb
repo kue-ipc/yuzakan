@@ -39,7 +39,7 @@ module Yuzakan
         return [[], {}] if errors.nil?
 
         array_errors = []
-        hash_errors = Hash.new {[]}
+        hash_errors = Hash.new { [] }
 
         errors.each do |error|
           case error

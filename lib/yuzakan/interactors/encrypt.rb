@@ -26,9 +26,7 @@ class Encrypt
 
   def call(params)
     @encrypted = @pb_crypt.encrypt_text(params[:data])
-    if @encrypted.size > @max
-      error!('暗号化できるサイズを超えました。')
-    end
+    error!('暗号化できるサイズを超えました。') if @encrypted.size > @max
   end
 
   private def valid?(params)

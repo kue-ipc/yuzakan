@@ -6,7 +6,7 @@ module Web
       class Destroy
         include Web::Action
 
-        def call(params)
+        def call(_params)
           session[:user_id] = nil
           session[:access_time] = nil
           flash[:success] = 'ログアウトしました。'

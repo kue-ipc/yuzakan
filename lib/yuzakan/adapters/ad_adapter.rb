@@ -102,8 +102,7 @@ module Yuzakan
         super(params.merge(
           protocol: 'ldaps',
           port: 636,
-          user_name_attr: 'cn',
-        ))
+          user_name_attr: 'cn'))
         if @params[:user_filter] && !@params[:user_filter].empty?
           @params[:user_filter] = '(objectclass=user)'
         end
@@ -126,8 +125,7 @@ module Yuzakan
 
         result = ldap.modify(
           dn: user.dn,
-          operations: operations
-        )
+          operations: operations)
         true
       end
 

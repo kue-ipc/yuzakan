@@ -46,7 +46,8 @@ module Web
           end
         end
 
-        def authenticate!; end
+        def authenticate!
+        end
       end
     end
   end

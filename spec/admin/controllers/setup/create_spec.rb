@@ -20,17 +20,16 @@ describe Admin::Controllers::Setup::Create do
 
     it 'is successful' do
       response = action.call(params.merge(
-        setup: {
-          config: {
-            title: 'テスト',
-          },
-          admin_user: {
-            username: 'admin',
-            password: 'pass',
-            password_confirmation: 'pass',
-          },
-        }
-      ))
+                               setup: {
+                                 config: {
+                                   title: 'テスト',
+                                 },
+                                 admin_user: {
+                                   username: 'admin',
+                                   password: 'pass',
+                                   password_confirmation: 'pass',
+                                 },
+                               }))
       _(response[0]).must_equal 200
     end
   end
@@ -38,17 +37,16 @@ describe Admin::Controllers::Setup::Create do
   describe 'after initialized' do
     it 'redirect setup done' do
       response = action.call(params.merge(
-        setup: {
-          config: {
-            title: 'テスト',
-          },
-          admin_user: {
-            username: 'admin',
-            password: 'pass',
-            password_confirmation: 'pass',
-          },
-        }
-      ))
+                               setup: {
+                                 config: {
+                                   title: 'テスト',
+                                 },
+                                 admin_user: {
+                                   username: 'admin',
+                                   password: 'pass',
+                                   password_confirmation: 'pass',
+                                 },
+                               }))
       _(response[0]).must_equal 302
       _(response[1]['Location']).must_equal '/admin/setup/done'
     end

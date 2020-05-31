@@ -77,6 +77,8 @@ Style/SpecialGlobalVars:
   EnforcedStyle: use_perl_names
 Style/SymbolArray:
   MinSize: 8
+Style/WordArray:
+  MinSize: 8
 
 # applications
 

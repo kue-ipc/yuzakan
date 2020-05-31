@@ -25,15 +25,11 @@ class UserRepository < Hanami::Repository
         if user.display_name != display_name
           update(user.id, display_name: display_name)
         end
-        if user.email != result[:email]
-          update(user.id, email: result[:email])
-        end
+        update(user.id, email: result[:email]) if user.email != result[:email]
         find(user.id)
       else
         create(name: name, display_name: display_name, email: result[:email])
       end
-    else
-      nil
     end
   end
 end

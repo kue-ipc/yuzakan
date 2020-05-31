@@ -10,7 +10,7 @@ module Web
 
       load_paths << [
         'controllers',
-        'views'
+        'views',
       ]
 
       routes 'config/routes'
@@ -36,7 +36,7 @@ module Web
       security.x_frame_options 'DENY'
       security.x_content_type_options 'nosniff'
       security.x_xss_protection '1; mode=block'
-      security.content_security_policy %{
+      security.content_security_policy %(
         form-action 'self';
         frame-ancestors 'self';
         base-uri 'self';
@@ -51,7 +51,7 @@ module Web
         child-src 'self';
         frame-src 'self';
         media-src 'self'
-      }
+      )
 
       controller.prepare do
         include Configuration

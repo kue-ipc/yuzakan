@@ -11,7 +11,7 @@ module Admin
           adapter = ADAPTERS.by_name(adapter_name)
 
           repo = ProviderRepository.new
-          provider = repo.create(
+          provider = repo.create({
             name: params[:provider][:name],
             display_name: params[:provider][:display_name],
             order: repo.last_order.order + 1,
@@ -20,8 +20,8 @@ module Admin
             writable: params[:provider][:writable],
             authenticatable: params[:provider][:authenticatable],
             password_changeable: params[:provider][:password_changeable],
-            lockable: params[:provider][:lockable]
-          )
+            lockable: params[:provider][:lockable],
+          })
 
           string_param_repo = ProviderStringParamRepository.new
           secret_param_repo = ProviderSecretParamRepository.new

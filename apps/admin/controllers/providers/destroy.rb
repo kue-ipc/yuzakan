@@ -10,9 +10,7 @@ module Admin
           id = params[:id]
           repo = ProviderRepository.new
           provider = repo.find(id)
-          unless provider.immutable
-            repo.delete(id)
-          end
+          repo.delete(id) unless provider.immutable
           redirect_to routes.providers_path
         end
       end

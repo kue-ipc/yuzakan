@@ -16,16 +16,14 @@ def db_initialize
       username: 'admin',
       password: 'pass',
       password_confirmation: 'pass',
-    }
-  )
+    })
   # 一般ユーザー
   local_provider = ProviderRepository.new.find_by_name_with_params('local')
   adapter = local_provider.adapter
   adapter.create(
     'user',
     display_name: '一般ユーザー',
-    email: 'user@yuzakan.test',
-  )
+    email: 'user@yuzakan.test')
   adapter.change_password('user', 'word')
 end
 

@@ -25,8 +25,7 @@ module Yuzakan
           name: username,
           display_name: attrs[:display_name] || username,
           email: attrs[:email],
-          hashed_password: '!'
-        )
+          hashed_password: '!')
       end
 
       def read(username)
@@ -71,8 +70,7 @@ module Yuzakan
 
         updated_user = @repository.update(
           user.id,
-          hashed_password: BCrypt::Password.create(password)
-        )
+          hashed_password: BCrypt::Password.create(password))
         normalize_user(updated_user)
       end
 
@@ -82,8 +80,7 @@ module Yuzakan
 
         @repository.update(
           user.id,
-          hashed_password: '!' + user.hashed_password
-        )
+          hashed_password: '!' + user.hashed_password)
       end
 
       def unlock(username)
@@ -92,8 +89,7 @@ module Yuzakan
 
         @repository.update(
           user.id,
-          hashed_password: user.hashed_password[1..-1]
-        )
+          hashed_password: user.hashed_password[1..-1])
       end
 
       def locked?(username)

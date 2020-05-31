@@ -6,12 +6,15 @@ module Admin
       class Index
         include Admin::Action
 
-        def call(params)
+        def call(_params)
           redirect_to routes.path(:setup_done) if configurated?
         end
 
-        def configurate!; end
-        def authenticate!; end
+        def configurate!
+        end
+
+        def authenticate!
+        end
       end
     end
   end

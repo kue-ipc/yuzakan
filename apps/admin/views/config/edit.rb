@@ -10,9 +10,8 @@ module Admin
           Form.new(
             :config,
             routes.path(:config),
-            { config: current_config },
-            method: :patch,
-          )
+            {config: current_config},
+            method: :patch)
         end
 
         def password_scores

@@ -8,7 +8,7 @@ require 'shell'
 
 Rake::TestTask.new do |t|
   t.pattern = 'spec/**/*_spec.rb'
-  t.libs    << 'spec'
+  t.libs << 'spec'
   t.warning = false
 end
 

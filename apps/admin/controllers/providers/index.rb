@@ -7,7 +7,7 @@ module Admin
         include Admin::Action
         expose :providers
 
-        def call(params)
+        def call(_params)
           @providers = ProviderRepository.new.all
         end
       end

@@ -46,7 +46,7 @@ module Yuzakan
             type: :string,
             required: true,
             placeholder: 'google.example.jp',
-          }
+          },
         ]
       end
 

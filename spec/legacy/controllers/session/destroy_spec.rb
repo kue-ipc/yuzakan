@@ -25,7 +25,7 @@ describe Legacy::Controllers::Session::Destroy do
       response = action.call(params)
       _(response[0]).must_equal 302
       _(response[1]['Location']).must_equal '/legacy'
-      end
+    end
   end
 
   describe 'do not access' do
