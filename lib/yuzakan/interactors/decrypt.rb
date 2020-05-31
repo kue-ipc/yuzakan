@@ -27,6 +27,9 @@ class Decrypt
 
   def call(params)
     @data = @pb_crypt.decrypt_text(params[:encrypted], encoding: @encoding)
+  rescue OpenSSL::Cipher::CipherError
+    @data = nil
+    error!('復号化に失敗しました。')
   end
 
   private def valid?(params)

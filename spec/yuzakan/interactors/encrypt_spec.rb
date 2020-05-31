@@ -11,6 +11,10 @@ describe Encrypt do
     result = interactor.call({data: text})
     _(result.successful?).must_equal true
     _(result.encrypted).must_match(/\A[\x20-\x7E]*\z/)
+
+    pb_crypt = Yuzakan::Utils::PbCrypt.new(ENV.fetch('DB_SECRET'))
+    plain_text = pb_crypt.decrypt_text(result.encrypted)
+    _(plain_text).must_equal text
   end
 
   it 'encryt empty text' do
@@ -34,7 +38,7 @@ describe Encrypt do
       if result.encrypted.size <= 255
         _(result.successful?).must_equal true
       else
-        _(result.successful?).must_equal false
+        _(result.failure?).must_equal true
       end
       _(result.encrypted).must_match(/\A[\x20-\x7E]*\z/)
     end
