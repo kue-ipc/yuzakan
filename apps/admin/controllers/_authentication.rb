@@ -14,17 +14,17 @@ module Admin
     end
 
     private def authenticated?
-      !current_user.nil? && current_user.role&.admin
+      !current_user.nil?
     end
 
     private def current_user
       return nil unless session[:user_id]
 
-      @current_user ||= UserRepository.new.find_with_role(session[:user_id])
+      @current_user ||= UserRepository.new.find(session[:user_id])
     end
 
     private def administrate!
-      unless current_user&.role&.admin
+      unless current_user&.admin
         # 管理者では無い場合は、セッションを削除する。
         session[:user_id] = nil
         if format == :html

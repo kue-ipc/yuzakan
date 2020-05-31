@@ -2,7 +2,6 @@
 
 def db_clear
   UserRepository.new.clear
-  RoleRepository.new.clear
   LocalUserRepository.new.clear
   ProviderRepository.new.clear
   ConfigRepository.new.clear

@@ -16,11 +16,14 @@ Hanami::Model.migration do
       column :password_min_types, Integer, null: false, default: 1
       column :password_min_score, Integer, null: false, default: 3
       column :password_unusable_chars, String, null: false, default: ''
-      column :password_extra_dict, String, size: 4096, null: false, default: ''
+      column :password_extra_dict, String, size: 4096, null: false,
+                                           default: ''
 
-      # at least 30 neworks
-      column :admin_networks, String, size: 1024, null: false, default: ''
-      column :user_networks, String, size: 1024, null: false, default: ''
+      # at most 30 neworks
+      column :admin_networks, String, size: 1024, null: false,
+                                      default: ''
+      column :user_networks, String, size: 1024, null: false,
+                                     default: ''
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

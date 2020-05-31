@@ -2,11 +2,8 @@
 
 class UserRepository < Hanami::Repository
   associations do
-    belongs_to :role
-  end
-
-  def find_with_role(id)
-    aggregate(:role).where(id: id).map_to(User).one
+    has_many :members
+    has_many :groups, through: :members
   end
 
   def by_name(name)

@@ -30,9 +30,7 @@ module Admin
             return
           end
 
-          role = RoleRepository.new.find(result.user.role_id)
-
-          unless role&.admin
+          unless result.user.admin
             session[:user_id] = nil
             if format == :html
               flash[:failure] = '管理者権限がありません。'

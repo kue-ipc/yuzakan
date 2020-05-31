@@ -29,7 +29,7 @@ class InitialSetup
     config = params[:config]
     admin_user = params[:admin_user]
     setup_local_provider(admin_user[:username], admin_user[:password])
-    setup_role_and_admin(admin_user[:username])
+    setup_admin(admin_user[:username])
 
     @config_repostiory.current_create({
       title: config[:title],
@@ -71,25 +71,10 @@ class InitialSetup
     local_provider_adapter.change_password(username, password)
   end
 
-  private def setup_role_and_admin(username)
-    role_repo = RoleRepository.new
-    role_repo.create({
-      name: 'default',
-      display_name: 'デフォルト',
-      immutable: true,
-      admin: false,
-    })
-
-    admin_role = role_repo.create({
-      name: 'admin',
-      display_name: '管理者',
-      immutable: true,
-      admin: true,
-    })
-
+  private def setup_admin(username)
     UserRepository.new.create({
       name: username,
-      role_id: admin_role.id,
+      admin: true,
     })
   end
 end
