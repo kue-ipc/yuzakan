@@ -48,13 +48,16 @@ module Yuzakan
       end
 
       def self.params
-        @params ||= []
+        @params || raise(NotImplementedError)
+      end
+
+      def self.params=(params)
+        @params = params
+        @param_types =
+          params.map { |param| [param[:name].intern, param[:type]] }.to_h
       end
 
       def self.param_type(name)
-        @param_types ||= params
-          .map { |param| [param[:name].intern, param[:type]] }
-          .to_h
         @param_types[name]
       end
 

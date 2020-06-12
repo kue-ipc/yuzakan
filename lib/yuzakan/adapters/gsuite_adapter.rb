@@ -28,37 +28,28 @@ module Yuzakan
         true
       end
 
-      def self.params
-        @params ||= [
-          {
-            name: 'domain',
-            label: 'G Suiteのドメイン名',
-            description:
-              'G Suiteでのドメイン名を指定します。',
-            type: :string,
-            required: true,
-            placeholder: 'google.example.jp',
-          }, {
-            name: 'json_key',
-            label: 'JSONキー',
-            description:
-              'G Suiteでのドメイン名を指定します。',
-            type: :string,
-            required: true,
-            placeholder: 'google.example.jp',
-          },
-        ]
-      end
-
-      def self.param_type(name)
-        @param_types ||= params
-          .map { |param| [param[:name].intern, param[:type]] }
-          .to_h
-        @param_types[name]
-      end
+      self.params = [
+        {
+          name: 'domain',
+          label: 'G Suiteのドメイン名',
+          description:
+            'G Suiteでのドメイン名を指定します。',
+          type: :string,
+          required: true,
+          placeholder: 'google.example.jp',
+        }, {
+          name: 'json_key',
+          label: 'JSONキー',
+          description:
+            'G Suiteでのドメイン名を指定します。',
+          type: :string,
+          required: true,
+          placeholder: 'google.example.jp',
+        },
+      ]
 
       def initialize(params)
-        @params = params
+        super
       end
 
       def check

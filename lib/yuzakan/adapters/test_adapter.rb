@@ -13,29 +13,20 @@ module Yuzakan
         Hanami.env != 'production'
       end
 
-      def self.params
-        @params ||= [
-          {
-            name: 'string_param',
-            label: '文字列',
-            description:
-              '文字列のパラメーターです。',
-            type: :string,
-            required: true,
-            placeholder: '',
-          },
-        ]
-      end
-
-      def self.param_type(name)
-        @param_types ||= params
-          .map { |param| [param[:name].intern, param[:type]] }
-          .to_h
-        @param_types[name]
-      end
+      self.params = [
+        {
+          name: 'string_param',
+          label: '文字列',
+          description:
+            '文字列のパラメーターです。',
+          type: :string,
+          required: true,
+          placeholder: '',
+        },
+      ]
 
       def initialize(params)
-        @params = params
+        super
       end
 
       def check

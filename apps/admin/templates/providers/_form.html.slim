@@ -21,9 +21,10 @@
     - label 'プロバイダー名', for: :display_name
     - text_field :display_name, class: 'form-control'
   - div do
-    - h3 '可能な操作'
+    - label '可能な操作'
+    - br
     - abilities.each do |ability|
-      - div class: 'form-check' do
+      - div class: 'form-check form-check-inline' do
         - check_box ability[:name], class: 'form-check-input'
         - label ability[:label], class: 'form-check-label', for: ability[:name]
 

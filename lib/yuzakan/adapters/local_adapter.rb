@@ -11,6 +11,8 @@ module Yuzakan
         'ローカル'
       end
 
+      self.params = []
+
       def initialize(params)
         super
         @repository = LocalUserRepository.new
