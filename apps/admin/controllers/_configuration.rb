@@ -33,7 +33,7 @@ module Admin
       return true if admin_networks.empty?
 
       result = CheckIp.new(allowed_networks: admin_networks).call(ip: remote_ip)
-      result.success
+      result.successful?
     end
 
     private def check_session!

@@ -18,11 +18,11 @@ class UpdateConfig
       optional(:password_min_size) { int? & gteq?(1) & lteq?(255) }
       optional(:password_max_size) { int? & gteq?(1) & lteq?(255) }
       optional(:password_min_score) { int? & gteq?(0) & lteq?(4) }
+      optional(:password_unusable_chars) { str? & max_size?(255) }
+      optional(:password_extra_dict) { str? & max_size?(4096) }
 
-      optional(:remote_ip_header)
-      optional(:trusted_reverse_proxies)
-
-      optional(:admin_networks)
+      optional(:admin_networks) { str? & max_size?(1024) }
+      optional(:user_networks) { str? & max_size?(1024) }
     end
   end
 

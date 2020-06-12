@@ -48,10 +48,10 @@ describe Web::Controllers::Dashboard::Index do
 
     it 'fake remote_ip' do
       response = action.call(params.merge(
-                               'REMOTE_ADDR' => '172.16.1.1',
+                               'REMOTE_ADDR' => '203.0.113.1',
                                'HTTP_X_FORWARDED_FOR' => '192.168.1.1'))
       _(response[0]).must_equal 200
-      _(action.send(:remote_ip).to_s).must_equal '172.16.1.1'
+      _(action.send(:remote_ip).to_s).must_equal '203.0.113.1'
     end
 
     it 'other remote_ip' do

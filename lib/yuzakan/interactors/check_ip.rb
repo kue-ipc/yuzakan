@@ -16,7 +16,12 @@ class CheckIp
   end
 
   def initialize(allowed_networks:)
-    @allowed_networks = allowed_networks
+    @allowed_networks =
+      if allowed_networks.is_a?(String)
+        allowed_networks.split(/[\s,;]+/)
+      else
+        allowed_networks
+      end
   end
 
   def call(params)

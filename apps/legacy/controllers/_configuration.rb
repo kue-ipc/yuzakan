@@ -34,7 +34,7 @@ module Legacy
       return true if user_networks.empty?
 
       result = CheckIp.new(allowed_networks: user_networks).call(ip: remote_ip)
-      result.success
+      result.successful?
     end
 
     private def check_session!
