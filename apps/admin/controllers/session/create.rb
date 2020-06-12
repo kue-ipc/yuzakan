@@ -5,24 +5,22 @@ module Admin
     module Session
       class Create
         include Admin::Action
+        expose :data
 
         def call(params)
           result = Authenticate.new(client: remote_ip)
             .call(params[:session])
 
           if result.failure?
-            errors, param_errors = devide_errors(result.errors)
             if format == :html
-              flash[:errors] = errors
-              flash[:param_errors] = param_errors
+              flash[:errors] = result.errors
               flash[:failure] = 'ログインに失敗しました。'
               redirect_to routes.path(:root)
             elsif format == :json
               @data = {
                 result: 'failure',
                 messages: {
-                  errors: errors,
-                  param_errors: param_errors,
+                  errors: result.errors,
                   failure: 'ログインに失敗しました。',
                 },
               }
