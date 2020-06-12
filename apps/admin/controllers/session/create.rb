@@ -16,7 +16,7 @@ module Admin
               flash[:errors] = errors
               flash[:param_errors] = param_errors
               flash[:failure] = 'ログインに失敗しました。'
-              redirect_to routes.new_session_path
+              redirect_to routes.path(:root)
             elsif format == :json
               @data = {
                 result: 'failure',
@@ -34,7 +34,7 @@ module Admin
             session[:user_id] = nil
             if format == :html
               flash[:failure] = '管理者権限がありません。'
-              redirect_to routes.new_session_path
+              redirect_to routes.path(:root)
             elsif format == :json
               @data = {
                 result: 'failure',

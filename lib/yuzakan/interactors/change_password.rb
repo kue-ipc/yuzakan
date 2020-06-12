@@ -24,18 +24,18 @@ class ChangePassword
   expose :count
 
   def initialize(user:,
-                 ip: nil,
+                 client:,
                  config: ConfigRepostitory.new.current,
                  provider_repository: ProviderRepository.new,
                  activity_repository: ActivityRepository.new)
     @user = user
-    @ip = ip
+    @client = client
     @config = config
     @provider_repository = provider_repository
     @activity_repository = activity_repository
   end
 
-  def call(_params)
+  def call(params)
     activity_params = {
       user: @user,
       type: 'user',
@@ -47,7 +47,7 @@ class ChangePassword
 
     @provider_repository.operational_all_with_params(:change_password)
       .each do |provider|
-      @count += 1 if provider.adapter.change_password(@user.name, password)
+      @count += 1 if provider.adapter.change_password(@user.name, params[:password])
     rescue => e
       @activity_repository.create(activity_params.merge!({result: 'error'}))
       if @count.positive?

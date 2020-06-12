@@ -9,39 +9,40 @@ describe Web::Controllers::Maintenance::Index do
   let(:user_id) { Authenticate.new(client: '::1').call(auth).user&.id }
   let(:auth) { {username: 'user', password: 'word'} }
 
-  it 'is successful' do
+  it 'redirect root' do
     response = action.call(params)
-    _(response[0]).must_equal 200
+    _(response[0]).must_equal 302
+    _(response[1]['Location']).must_equal '/'
   end
 
-  describe 'can access' do
-    describe 'before login' do
-      let(:session) { {} }
+  describe 'before login' do
+    let(:session) { {} }
 
-      it 'is successful' do
-        response = action.call(params)
-        _(response[0]).must_equal 200
-      end
+    it 'redirect root' do
+      response = action.call(params)
+      _(response[0]).must_equal 302
+      _(response[1]['Location']).must_equal '/'
     end
+  end
 
-    describe 'before initialized' do
-      before { db_clear }
-      after { db_reset }
+  describe 'before initialized' do
+    before { db_clear }
+    after { db_reset }
 
-      it 'is successful' do
-        response = action.call(params)
-        _(response[0]).must_equal 200
-      end
+    it 'redirect uninitialized' do
+      response = action.call(params)
+      _(response[0]).must_equal 302
+      _(response[1]['Location']).must_equal '/uninitialized'
     end
+  end
 
-    describe 'in maintenace' do
-      before { UpdateConfig.new.call(maintenance: true) }
-      after { db_reset }
+  describe 'in maintenace' do
+    before { UpdateConfig.new.call(maintenance: true) }
+    after { db_reset }
 
-      it 'is successful' do
-        response = action.call(params)
-        _(response[0]).must_equal 200
-      end
+    it 'is successful' do
+      response = action.call(params)
+      _(response[0]).must_equal 200
     end
   end
 end

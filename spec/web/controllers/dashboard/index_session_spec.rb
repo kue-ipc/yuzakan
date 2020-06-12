@@ -31,7 +31,7 @@ describe Web::Controllers::Dashboard::Index do
       response = action.call(params)
       flash = action.exposures[:flash]
       _(response[0]).must_equal 302
-      _(response[1]['Location']).must_equal '/session/new'
+      _(response[1]['Location']).must_equal '/'
       _(flash[:warn]).must_equal 'セッションがタイムアウトしました。' \
           'ログインし直してください。'
     end
@@ -44,7 +44,7 @@ describe Web::Controllers::Dashboard::Index do
       response = action.call(params)
       flash = action.exposures[:flash]
       _(response[0]).must_equal 302
-      _(response[1]['Location']).must_equal '/session/new'
+      _(response[1]['Location']).must_equal '/'
       _(flash[:warn]).must_be_nil
     end
   end
@@ -56,8 +56,8 @@ describe Web::Controllers::Dashboard::Index do
       response = action.call(params)
       flash = action.exposures[:flash]
       _(response[0]).must_equal 302
-      _(response[1]['Location']).must_equal '/session/new'
-      _(flash[:warn]).must_be_nil
+      _(response[1]['Location']).must_equal '/'
+      _(flash[:warn]).must_equal 'セッションがタイムアウトしました。ログインし直してください。'
     end
   end
 
@@ -68,7 +68,7 @@ describe Web::Controllers::Dashboard::Index do
       response = action.call(params)
       flash = action.exposures[:flash]
       _(response[0]).must_equal 302
-      _(response[1]['Location']).must_equal '/session/new'
+      _(response[1]['Location']).must_equal '/'
       _(flash[:warn]).must_be_nil
     end
   end
@@ -93,7 +93,7 @@ describe Web::Controllers::Dashboard::Index do
         response = action.call(params)
         flash = action.exposures[:flash]
         _(response[0]).must_equal 302
-        _(response[1]['Location']).must_equal '/session/new'
+        _(response[1]['Location']).must_equal '/'
         _(flash[:warn]).must_equal 'セッションがタイムアウトしました。' \
             'ログインし直してください。'
       end

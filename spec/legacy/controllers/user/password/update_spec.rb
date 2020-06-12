@@ -16,7 +16,7 @@ describe Legacy::Controllers::User::Password::Update do
   let(:auth) { {username: 'user', password: 'word'} }
   let(:response) { action.call(params) }
   let(:flash) { action.exposures[:flash] }
-  let(:new_password) { '1\'a;qo,23.ejkup4' }
+  let(:new_password) { 'aX3od@d-2do%1o=q' }
   let(:user_passwod) do
     {
       password_current: 'word',
@@ -35,7 +35,7 @@ describe Legacy::Controllers::User::Password::Update do
       {
         password_current: 'pass',
         password: new_password,
-        password_confirm: new_password,
+        password_confirmation: new_password,
       }
     end
 
@@ -50,7 +50,7 @@ describe Legacy::Controllers::User::Password::Update do
       {
         password_current: 'word',
         password: 'a',
-        password_confirm: 'a',
+        password_confirmation: 'a',
       }
     end
 
@@ -74,9 +74,9 @@ describe Legacy::Controllers::User::Password::Update do
       before { db_clear }
       after { db_reset }
 
-      it 'redirect maintenance' do
+      it 'redirect uninitialized' do
         _(response[0]).must_equal 302
-        _(response[1]['Location']).must_equal '/maintenance'
+        _(response[1]['Location']).must_equal '/uninitialized'
       end
     end
 

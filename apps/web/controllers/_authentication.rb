@@ -5,7 +5,7 @@ module Web
     private def authenticate!
       unless authenticated?
         if format == :html
-          redirect_to routes.new_session_path
+          redirect_to routes.path(:root)
         else
           halt 401
         end

@@ -10,6 +10,7 @@ module Web
         end
 
         def configurate!
+          redirect_to routes.path(:uninitialized) unless configurated?
           redirect_to routes.path(:root) unless maintenance?
         end
 

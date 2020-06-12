@@ -26,7 +26,7 @@ describe Admin::Controllers::Session::Destroy do
     it 'redirect login' do
       response = action.call(params)
       _(response[0]).must_equal 302
-      _(response[1]['Location']).must_equal '/admin/session/new'
+      _(response[1]['Location']).must_equal '/admin'
     end
   end
 end

@@ -31,7 +31,7 @@ describe Web::Controllers::Dashboard::Index do
       it 'redirect login' do
         response = action.call(params)
         _(response[0]).must_equal 302
-        _(response[1]['Location']).must_equal '/session/new'
+        _(response[1]['Location']).must_equal '/'
       end
     end
 
@@ -39,10 +39,10 @@ describe Web::Controllers::Dashboard::Index do
       before { db_clear }
       after { db_reset }
 
-      it 'redirect maintenance' do
+      it 'redirect uninitialized' do
         response = action.call(params)
         _(response[0]).must_equal 302
-        _(response[1]['Location']).must_equal '/maintenance'
+        _(response[1]['Location']).must_equal '/uninitialized'
       end
     end
 

@@ -17,7 +17,7 @@ module Web
               flash[:errors] = errors
               flash[:param_errors] = param_errors
               flash[:failure] = 'ログインに失敗しました。'
-              redirect_to routes.path(:new_session)
+              redirect_to routes.path(:root)
             elsif format == :json
               @data = {
                 result: 'failure',
