@@ -8,7 +8,7 @@ module Web
         end
 
         def configurate!
-          redirect_to routes.path(:root) unless configurated?
+          redirect_to routes.path(:root) if configurated?
         end
 
         def authenticate!
