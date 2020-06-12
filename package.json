@@ -7,7 +7,7 @@
     "@hyperapp/events": "^0.0.4",
     "@hyperapp/html": "^1.1.1",
     "bootstrap": "^4.5.0",
-    "bootstrap.native": "^2.0.26",
+    "bootstrap.native": "^3.0.5",
     "hyperapp": "^2.0.1",
     "zxcvbn": "^4.4.2"
   },
