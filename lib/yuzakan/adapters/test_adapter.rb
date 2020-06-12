@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
+require 'yaml'
+
 require_relative 'abstract_adapter'
 
 module Yuzakan
   module Adapters
     class TestAdapter < AbstractAdapter
       def self.label
-        'テスト用アダプター'
+        'テスト'
       end
 
       def self.selectable?
@@ -15,11 +17,20 @@ module Yuzakan
 
       self.params = [
         {
-          name: 'string_param',
+          name: 'str1',
           label: '文字列',
           description:
             '文字列のパラメーターです。',
           type: :string,
+          required: true,
+          placeholder: '',
+        },
+        {
+          name: 'int1',
+          label: '数値',
+          description:
+            '数値のパラメーターです。',
+          type: :integer,
           required: true,
           placeholder: '',
         },
