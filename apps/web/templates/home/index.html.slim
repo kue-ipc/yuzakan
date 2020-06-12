@@ -16,8 +16,10 @@ html lang="ja"
         p.lead.text-center.smaller
           | アカウント管理システム
         hr.my-2
-        p パスワード変更のみ利用可能です。
+        p
+          | パスワード変更のみ利用可能です。
     .container-fluid
       = render partial: 'partial/check_browser'
       = render partial: 'partial/alert'
       = render partial: 'session/form'
+      = render partial: 'partial/footer'
