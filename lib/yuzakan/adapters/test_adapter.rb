@@ -22,16 +22,35 @@ module Yuzakan
           description:
             '文字列のパラメーターです。',
           type: :string,
-          required: true,
+          required: false,
           placeholder: '',
         },
+        {
+          name: 'str_enc',
+          label: '暗号文字列',
+          description:
+            '文字列のパラメーターです。',
+          type: :string,
+          required: false,
+          placeholder: 'テスト',
+          encrypted: true,
+        },
+        # {
+        #   name: 'txt1',
+        #   label: '長い文字列',
+        #   description:
+        #     '文字列のパラメーターです。',
+        #   type: :text,
+        #   required: false,
+        #   placeholder: '',
+        # },
         {
           name: 'int1',
           label: '数値',
           description:
             '数値のパラメーターです。',
           type: :integer,
-          required: true,
+          required: false,
           placeholder: '',
         },
       ]

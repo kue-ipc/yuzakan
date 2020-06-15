@@ -34,5 +34,5 @@
              id: 'provider-adapter-select', class: 'form-control', \
              options: { prompt: '選択してください。' }
   - div id: 'provider-adapter', 'data-adapter-select': 'provider-adapter-select',
-        'data-provider-params': "#{ha(provider&.params(secret: false)&.to_json)}"
+        'data-provider-params': "#{ha(provider&.params&.to_json)}"
   - submit submit_label, class: 'btn btn-primary'

@@ -21,10 +21,7 @@ class UpdateProvider
       optional(:password_changeable) { bool? }
       optional(:lockable) { bool? }
 
-      # optional(:params) { array? { each { sechema {
-      #   required(:name) { str? }
-      #   required(:value)
-      # } } } }
+      optional(:params)
     end
   end
 
@@ -63,13 +60,11 @@ class UpdateProvider
 
     adapter_class.params.each do |adapter_param|
       name = adapter_param[:name]
-      provider_param = provider_params[name]
-
-      # @param_repos[adapter_param[:type]].create_or_update(
-      #   provider: @provider,
-      #   name: 
-      #   value: provider_param[]
-      #   encrypted: )
+      @param_repos[adapter_param[:type]].create_or_update(
+        provider_id: @provider.id,
+        name: name,
+        value: provider_params[name.intern],
+        encrypted: adapter_param[:encrypted])
     end
   end
 
