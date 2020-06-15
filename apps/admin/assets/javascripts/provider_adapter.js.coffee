@@ -38,12 +38,14 @@ InputString = (props) ->
     type: 'text'
     class: 'form-control'
     value: providerParams[props.name] ? ''
+
   for key in ['value', 'required', 'placeholder', 'maxlength', 'minlength', 'pattern', 'size']
     inputOpts[key] = props[key] if props[key]?
 
   h 'div', class: 'form-group', [
     h 'label', for: id, label
     h 'input', inputOpts
+    h 'small', class: 'form-text text-muted', props['description']
   ]
 
 InputSecret = (props) ->
@@ -64,6 +66,7 @@ InputSecret = (props) ->
   h 'div', class: 'form-group', [
     h 'label', for: id, label
     h 'input', inputOpts
+    h 'small', class: 'form-text text-muted', props['description']
   ]
 
 InputInteger = (props) ->
@@ -83,6 +86,7 @@ InputInteger = (props) ->
   h 'div', class: 'form-group', [
     h 'label', for: id, label
     h 'input', inputOpts
+    h 'small', class: 'form-text text-muted', props['description']
   ]
 
 InputBoolean = (props) ->
@@ -109,6 +113,7 @@ InputBoolean = (props) ->
     h 'input', hiddenInputOpts
     h 'input', inputOpts
     h 'label', class: 'form-check-label', for: id, label
+    h 'small', class: 'form-text text-muted', props['description']
   ]
 
 InputList = (props) ->
@@ -129,6 +134,7 @@ InputList = (props) ->
           h 'option', value: option.value, selected: true, option.name
         else
           h 'option', value: option.value, option.name
+    h 'small', class: 'form-text text-muted', props['description']
   ]
 
 
@@ -160,15 +166,11 @@ changeSelectRunner = (dispatch, {action, node}) ->
   updateAsyncFunc = (value) ->
     params = await getParamsByAdapter(value)
     dispatch(action, params)
-  func = (event) ->
-    updateAsyncFunc(event.target.value)
-    (->
-      params = await getParamsByAdapter()
-      dispatch(action, params)
-    )()
+
   updateAsyncFunc(node.value)
-  node.addEventListener 'change', func
-  () -> node.removeListener 'change', func
+
+  node.addEventListener 'change', (event) ->
+    updateAsyncFunc(event.target.value)
 
 changeSelect = (action, {node}) ->
   [
