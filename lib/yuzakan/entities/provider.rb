@@ -10,18 +10,15 @@ class Provider < Hanami::Entity
   end
 
   def params
-    data = {}
-    ProviderRepository.params.each do |param_name|
-      params = __send__(param_name)
-      if params.nil?
-        data = nil
-        break
-      end
+    {}.tap do |data|
+      ProviderRepository.params.each do |param_name|
+        params = __send__(param_name)
+        next if params.nil?
 
-      params.each do |param|
-        data[param.name.intern] = param.value
+        params.each do |param|
+          data[param.name.intern] = param.value
+        end
       end
     end
-    data
   end
 end

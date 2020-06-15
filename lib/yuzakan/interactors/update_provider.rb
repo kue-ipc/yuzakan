@@ -58,13 +58,21 @@ class UpdateProvider
       file: ProviderFileParamRepository.new,
     }
 
+
+    provider_params = adapter_class.encrypt(provider_params)
+
     adapter_class.params.each do |adapter_param|
       name = adapter_param[:name]
+      value = provider_params[name.intern]
+
+      if adapter_param[:type] == :file
+        pp value
+      end
+
       @param_repos[adapter_param[:type]].create_or_update(
         provider_id: @provider.id,
         name: name,
-        value: provider_params[name.intern],
-        encrypted: adapter_param[:encrypted])
+        value: value)
     end
   end
 

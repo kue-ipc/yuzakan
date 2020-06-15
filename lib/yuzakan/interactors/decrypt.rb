@@ -20,13 +20,20 @@ class Decrypt
   expose :data
 
   def initialize(password: ENV.fetch('DB_SECRET'),
-                 encoding: Encoding::UTF_8)
+                 encoding: Encoding::UTF_8,
+                 text: true)
     @pb_crypt = Yuzakan::Utils::PbCrypt.new(password)
     @encoding = encoding
+    @text = text
   end
 
   def call(params)
-    @data = @pb_crypt.decrypt_text(params[:encrypted], encoding: @encoding)
+    @data =
+      if @text
+        @pb_crypt.decrypt_text(params[:encrypted], encoding: @encoding)
+      else
+        @pb_crypt.decrypt(params[:encrypted])
+      end
   rescue OpenSSL::Cipher::CipherError
     @data = nil
     error!('復号化に失敗しました。')

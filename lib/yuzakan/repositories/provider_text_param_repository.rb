@@ -14,11 +14,6 @@ class ProviderTextParamRepository < Hanami::Repository
 
   def create_or_update(data)
     entry = find_by_provider_and_name(data)
-    if data[:encrypted]
-      result = Encrypt.new(max: 0).call(data: data[:value])
-      data = data.merge(value: result.encrypted)
-    end
-
     if entry
       update(entry.id, data)
     else

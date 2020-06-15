@@ -53,16 +53,54 @@ module Yuzakan
 
       def self.params=(params)
         @params = params
-        @param_types =
-          params.map { |param| [param[:name].intern, param[:type]] }.to_h
+        @name_param_map =
+          params.map { |param| [param[:name].intern, param] }.to_h
       end
 
-      def self.param_type(name)
-        @param_types[name]
+      def self.decrypt(data)
+        decrypted_data = @params
+          .select { |param| param[:encrypted] }
+          .map do |param|
+            name = param[:name]
+            encrypt_opts =
+              case param[:type]
+              when :string, :text
+                {}
+              when :file
+                {text: false}
+              end
+            decrypt = Decrypt.new(**encrypt_opts)
+            result = decrypt.call(encrypted: data[name])
+            [name, result.data]
+          end.to_h
+
+        data.merge(decrypted_data)
+      end
+
+      def self.encrypt(data)
+        encrypted_data = @params
+          .select { |param| param[:encrypted] }
+          .map do |param|
+            name = param[:name].intern
+            encrypt_opts =
+              case param[:type]
+              when :string
+                {max: 4096}
+              when :text
+                {max: 0}
+              when :file
+                {max: 0, text: false}
+              end
+            encrypt = Encrypt.new(**encrypt_opts)
+            result = encrypt.call(data: data[name])
+            [name, result.encrypted]
+          end.to_h
+
+        data.merge(encrypted_data)
       end
 
       def initialize(params)
-        @params = params
+        @params = self.class.decrypt(params)
       end
 
       def check

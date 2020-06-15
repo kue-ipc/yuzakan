@@ -2,12 +2,17 @@
 
 class ProviderRepository < Hanami::Repository
   def self.params
-    list = %i[
-      provider_string_params
-      provider_integer_params
+    @params ||= %i[
       provider_boolean_params
-    ]
-    list.freeze
+      provider_string_params
+      provider_text_params
+      provider_integer_params
+      provider_float_params
+      provider_datetime_params
+      provider_date_params
+      provider_time_params
+      provider_file_params
+    ].freeze
   end
 
   associations do
