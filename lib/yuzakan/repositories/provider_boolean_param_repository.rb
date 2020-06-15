@@ -5,9 +5,14 @@ class ProviderBooleanParamRepository < Hanami::Repository
     belongs_to :provider
   end
 
-  def by_provider_and_name(provider_id:, name:)
+  def find_by_provider_and_name(provider:, name:)
     provider_boolean_params
-      .where(provider_id: provider_id)
+      .where(provider_id: provider.id)
       .where(name: name)
+      .one
   end
+
+  def create_or_update(provider)
+  end
+
 end

@@ -9,9 +9,9 @@ class Provider < Hanami::Entity
     adapter_class.new(params)
   end
 
-  def params(secret: true)
+  def params
     data = {}
-    ProviderRepository.params(secret: secret).each do |param_name|
+    ProviderRepository.params.each do |param_name|
       params = __send__(param_name)
       if params.nil?
         data = nil

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ProviderRepository < Hanami::Repository
-  def self.params(secret: true)
+  def self.params
     list = %i[
       provider_string_params
       provider_integer_params
@@ -28,6 +28,14 @@ class ProviderRepository < Hanami::Repository
       .where(name: name)
       .map_to(Provider)
       .one
+  end
+
+  def find_by_name(name)
+    providers.where(name: name).one
+  end
+
+  def find_by_display_name(display_name)
+    providers.where(display_name: display_name).one
   end
 
   def last_order
