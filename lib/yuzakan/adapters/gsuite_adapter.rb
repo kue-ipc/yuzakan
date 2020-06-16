@@ -75,18 +75,31 @@ module Yuzakan
       end
 
       def check
-        response = service.list_users(
-          domain: @params[:domain],
-          query: "email=#{@params[:account]}")
+        query = "email=#{@params[:account]}"
+        response = service.list_users(domain: @params[:domain], query: query)
         response.users.size == 1
       end
 
-      def create(_username, _attrs)
-        raise NotImplementedError
+      def create(username, attrs)
+        user = Google::Apis::AdminDirectoryV1::User.new(
+          primary_email: "#{username}@#{@params[:domain]}",
+          name: Google::Apis::AdminDirectoryV1::UserName.new(
+            given_name: attrs[:given_name],
+            family_name: attrs[:family_name],
+          ),
+          password: generate_password(attrs[:password]),
+          hash_function: 'crypt')
+        
+        user.org_unit_path = ('/' + attrs[:ou]).gsub(%r{//+}, '/') if attrs[:ou]
+        
+        response = service.inseart_user(user)
+        response
       end
 
-      def read(_username)
-        raise NotImplementedError
+      def read(username)
+        query = "email=#{username}@#{@params[:domain]}"
+        response = service.list_users(domain: @params[:domain], query: query)
+        response.users.first
       end
 
       def udpate(_username, _attrs)
@@ -142,6 +155,14 @@ module Yuzakan
         [
           Google::Apis::AdminDirectoryV1::AUTH_ADMIN_DIRECTORY_USER,
         ]
+      end
+
+      # 現在のところ CRYPT-MD5のみ実装
+      # slappasswd -h '{CRYPT}' -c '$1$%.8s'
+      # $1$vuIZLw8r$d9mkddv58FuCPxOh6nO8f0
+      private def generate_password(password)
+        salt = SecureRandom.base64(12).gsub('+', '.')
+        password.crypt(format('$1$%.8s', salt))
       end
     end
   end
