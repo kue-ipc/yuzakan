@@ -7,19 +7,27 @@ import {fieldName, fieldId} from './form_helper.js'
 mainNode = document.getElementById('provider-adapter')
 adapterSelectNode = document.getElementById(
   mainNode.getAttribute('data-adapter-select'))
-providerParamsData = mainNode.getAttribute('data-provider-params')
+providerIdData = mainNode.getAttribute('data-provider-id')
+
+providerId = 
+  if providerIdData ? providerIdData.length > 0
+    providerIdData
+  else
+    undefined
 
 parentNames = ['provider', 'params']
 
-if providerParamsData ? providerParamsData.length > 0
-  providerParams = JSON.parse(providerParamsData)
-  providerParamsSetted = true
-else
-  providerParams = {}
-  providerParamsSetted = false
-
-getParamsByAdapter = (adapterName) ->
+getAdapterParams = (adapterName) ->
   result = await fetch "/admin/adapters/#{adapterName}/params",
+    method: 'GET'
+    mode: 'same-origin'
+    credentials: 'same-origin'
+    headers:
+      accept: 'application/json'
+  result.json()
+
+getProviderParams = (providerId) ->
+  result = await fetch "/admin/providers/#{providerId}/params",
     method: 'GET'
     mode: 'same-origin'
     credentials: 'same-origin'
@@ -35,9 +43,9 @@ InputString = (props) ->
   inputOpts =
     id: id
     name: name
-    type: 'text'
+    type: props.type ? 'text'
     class: 'form-control'
-    value: providerParams[props.name] ? ''
+    value: props.value
 
   for key in ['value', 'required', 'placeholder', 'maxlength', 'minlength', 'pattern', 'size']
     inputOpts[key] = props[key] if props[key]?
@@ -58,6 +66,7 @@ InputSecret = (props) ->
     name: name
     type: 'password'
     class: 'form-control'
+
   for key in ['value', 'required', 'placeholder', 'maxlength', 'minlength', 'pattern', 'size']
     inputOpts[key] = props[key] if props[key]?
   if providerParamsSetted
@@ -79,7 +88,8 @@ InputInteger = (props) ->
     name: name
     type: 'number'
     class: 'form-control'
-    value: providerParams[props.name] ? ''
+    value: props.value
+
   for key in ['value', 'required', 'placeholder', 'max', 'min', 'step']
     inputOpts[key] = props[key] if props[key]?
 
@@ -106,7 +116,7 @@ InputBoolean = (props) ->
     class: 'form-check-input'
     value: '1'
 
-  if props.value ? providerParams[props.name]
+  if props.value
     inputOpts['checked'] = true
 
   h 'div', class: 'form-check', [
@@ -138,58 +148,74 @@ InputList = (props) ->
   ]
 
 
-Params = (props) ->
+Params = ({adapterParams, providerParams}) ->
   h 'div', {},
-    if props.params
-      props.params.map (param) ->
+    if adapterParams.length > 0
+      adapterParams.map (param) ->
+        value = providerParams[param.name]
         if param.list?
-          h InputList, {param...}
+          h InputList, {param..., value}
         else
           switch param.type
             when 'string'
-              h InputString, {param...}
+              h InputString, {param..., value}
             when 'secret'
-              h InputSecret, {param...}
+              h InputSecret, {param..., value}
             when 'integer'
-              h InputInteger, {param...}
+              h InputInteger, {param..., value}
             when 'boolean'
-              h InputBoolean, {param...}
+              h InputBoolean, {param..., value}
             else
               'none'
     else
-      "パラメーター一覧が表示されるまでお待ち下さい。"
+      "設定できるパラメーターはありません。"
 
-state =
-  params: []
+updateAdapterParams = (state, value) -> {
+  state...
+  adapterParams: value
+}
 
-changeSelectRunner = (dispatch, {action, node}) ->
+updateProviderParams = (state, value) -> {
+  state...
+  providerParams: value
+}
+
+changeSelectRunner = (dispatch, {node}) ->
   updateAsyncFunc = (value) ->
-    params = await getParamsByAdapter(value)
-    dispatch(action, params)
+    params = await getAdapterParams(value)
+    dispatch(updateAdapterParams, params)
 
   updateAsyncFunc(node.value)
 
   node.addEventListener 'change', (event) ->
     updateAsyncFunc(event.target.value)
 
-changeSelect = (action, {node}) ->
-  [
-    changeSelectRunner
-    {action, node}
-  ]
+providerRunner = (dispatch, {providerId}) ->
+  return unless providerId?
+  params = await getProviderParams(providerId)
+  dispatch(updateProviderParams, params)
 
-updateParams = (state, value) ->
-  params: value
+initState =
+  adapterParams: []
+  providerParams: {}
 
 view = (state) ->
   h 'div', {}, [
     h 'p', {}, 'パラメーター'
-    h Params,
-      params: state.params
+    h Params, state
   ]
 
 app
-  init: state
+  init: [
+    initState
+    [
+      providerRunner
+      providerId: providerId
+    ]
+    [
+      changeSelectRunner
+      node: adapterSelectNode
+    ]
+  ]
   view: view
   node: mainNode
-  subscriptions: (state) -> changeSelect(updateParams, node: adapterSelectNode)
