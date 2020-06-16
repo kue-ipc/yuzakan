@@ -138,7 +138,7 @@ InputList = (props) ->
   id = fieldId(props.name, parentNames)
   describeId = "#{id}-help"
 
-  selected = props.value ? providerParams[props.name] ? props.default
+  selected = props.value ? props.default
 
   h 'div', class: 'form-group', [
     h 'label', for: id, label

@@ -38,6 +38,9 @@
 
 module Yuzakan
   module Adapters
+    class Error < RuntimeError
+    end
+
     class AbstractAdapter
       def self.label
         raise NotImplementedError
@@ -65,19 +68,20 @@ module Yuzakan
         decrypted_data = @params
           .select { |param| param[:encrypted] }
           .map do |param|
-            name = param[:name]
-            encrypt_opts =
+            name = param[:name].intern
+            decrypt_opts =
               case param[:type]
               when :string, :text
                 {}
               when :file
                 {text: false}
               end
-            decrypt = Decrypt.new(**encrypt_opts)
+            decrypt = Decrypt.new(**decrypt_opts)
             result = decrypt.call(encrypted: data[name])
+            raise Yuzakan::Adapters::Error, result.errors if result.failure?
+
             [name, result.data]
           end.to_h
-
         data.merge(decrypted_data)
       end
 
@@ -97,6 +101,8 @@ module Yuzakan
               end
             encrypt = Encrypt.new(**encrypt_opts)
             result = encrypt.call(data: data[name])
+            raise Yuzakan::Adapters::Error, result.errors if result.failure?
+
             [name, result.encrypted]
           end.to_h
 

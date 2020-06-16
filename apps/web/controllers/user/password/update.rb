@@ -19,8 +19,7 @@ module Web
               if result.successful?
                 flash[:success] = 'パスワードを変更しました。'
               else
-                flash[:errors], flash[:param_errors] =
-                  devide_errors(result.errors)
+                flash[:errors] = result.errors
                 flash[:failure] = 'パスワードを変更することができませんでした。'
                 redirect_to routes.path(:edit_user_password)
               end
@@ -33,12 +32,10 @@ module Web
                   },
                 }
               else
-                errors, param_errors = devide_errors(result.errors)
                 @data = {
                   result: 'failure',
                   messages: {
-                    errors: errors,
-                    param_errors: param_errors,
+                    errors: result.errors,
                     failure: 'パスワードを変更することができませんでした。',
                   },
                 }

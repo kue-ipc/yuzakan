@@ -62,7 +62,7 @@ module Yuzakan
       end
 
       def check
-        raise NotImplementedError
+        true
       end
 
       def create(_username, _attrs)

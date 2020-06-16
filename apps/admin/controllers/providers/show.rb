@@ -9,12 +9,8 @@ module Admin
         expose :provider
 
         def call(params)
-          result = CheckProvider.new.call(provider_id: params[:id])
-          if result.successful?
-            @provider = result.provider
-          else
-            flash[:errors] = result.errors
-          end
+          provider_repository = ProviderRepository.new
+          @provider = provider_repository.find_with_params(params[:id].to_i)
         end
       end
     end

@@ -81,8 +81,10 @@ module Yuzakan
         }, {
           name: 'bind_password',
           label: '接続ユーザーのパスワード',
-          type: :secret,
+          type: :string,
+          input: 'password',
           required: true,
+          encrypted: true,
         }, {
           name: 'user_name_attr',
           label: 'ユーザー名の属性',
@@ -174,7 +176,12 @@ module Yuzakan
       ]
 
       def check
+        puts '-----------------'
         ldap = generate_ldap
+        puts @params
+        puts ldap.search(
+          base: @params[:base_dn],
+          scope: Net::LDAP::SearchScope_BaseObject)
         base = ldap.search(
           base: @params[:base_dn],
           scope: Net::LDAP::SearchScope_BaseObject)&.first

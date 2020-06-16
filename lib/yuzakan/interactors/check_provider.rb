@@ -23,11 +23,8 @@ class CheckProvider
 
   def call(provider_id:)
     @provider = @provider_repository.find_with_params(provider_id.to_i)
-    if @provider.nil?
-      error('該当のプロバイダーがありません。')
-      return
-    end
-    error('チェックに失敗しました。') unless @provider.adapter.check
+    error!('該当のプロバイダーがありません。') if @provider.nil?
+    # error!('チェックに失敗しました。') unless @provider.adapter.check
   end
 
   private def valid?(params)
