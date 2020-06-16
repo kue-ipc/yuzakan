@@ -1,0 +1,17 @@
+h2 プロバイダーパラメーター情報
+
+= provider.display_name
+
+table.table
+  thead
+    tr
+      th scope="col" 名前
+      th scope="col" 値
+
+  thbody
+    - provider_params.each do |name, value|
+      tr
+        td scope="row"
+          = name
+        td scope="row"
+          = value

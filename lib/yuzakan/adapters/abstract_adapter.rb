@@ -57,6 +57,10 @@ module Yuzakan
           params.map { |param| [param[:name].intern, param] }.to_h
       end
 
+      def self.param_by_name(name)
+        @name_param_map&.fetch(name)
+      end
+
       def self.decrypt(data)
         decrypted_data = @params
           .select { |param| param[:encrypted] }
