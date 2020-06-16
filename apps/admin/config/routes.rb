@@ -15,7 +15,11 @@ get '/setup/done', to: 'setup#done', as: :setup_done
 resource 'session', only: [:destroy, :create]
 
 resource 'config', only: [:edit, :update]
-resources 'providers'
+
+resources 'providers' do
+  resources 'params', only: [:index]
+end
+
 resources 'adapters', only: [:show] do
   resources 'params', only: [:index]
 end
