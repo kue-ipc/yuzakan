@@ -35,74 +35,46 @@ getProviderParams = (providerId) ->
       accept: 'application/json'
   result.json()
 
-InputString = (props) ->
+InputControl = (props) ->
   label = props.label
   name = fieldName(props.name, parentNames)
   id = fieldId(props.name, parentNames)
+  describeId = "#{id}-help"
 
   inputOpts =
     id: id
     name: name
-    type: props.type ? 'text'
+    type: props.input
     class: 'form-control'
-    value: props.value
+    value: props.value ? (if props.encrypted? then props.default else '')
+    'aria-edscribedby': describeId
 
-  for key in ['value', 'required', 'placeholder', 'maxlength', 'minlength', 'pattern', 'size']
-    inputOpts[key] = props[key] if props[key]?
-
-  h 'div', class: 'form-group', [
-    h 'label', for: id, label
-    h 'input', inputOpts
-    h 'small', class: 'form-text text-muted', props['description']
+  for key in [
+    'required', 'placeholder', 'maxlength', 'minlength', 'pattern', 'size'
+     'max', 'min', 'step'
   ]
-
-InputSecret = (props) ->
-  label = props.label
-  name = fieldName(props.name, parentNames)
-  id = fieldId(props.name, parentNames)
-
-  inputOpts =
-    id: id
-    name: name
-    type: 'password'
-    class: 'form-control'
-
-  for key in ['value', 'required', 'placeholder', 'maxlength', 'minlength', 'pattern', 'size']
     inputOpts[key] = props[key] if props[key]?
-  if providerParamsSetted
+
+  if providerId?
     inputOpts['required'] = false
 
   h 'div', class: 'form-group', [
     h 'label', for: id, label
     h 'input', inputOpts
-    h 'small', class: 'form-text text-muted', props['description']
+    if props.encrypted?
+      h 'small', class: 'form-text text-muted',
+        '''
+        この項目は暗号化されて保存され、現在の値は表示されません。
+        変更しない場合は、空欄のままにしてください。
+        '''
+    h 'small', id: describeId, class: 'form-text text-muted', props.description
   ]
 
-InputInteger = (props) ->
+InputCheckbox = (props) ->
   label = props.label
   name = fieldName(props.name, parentNames)
   id = fieldId(props.name, parentNames)
-
-  inputOpts =
-    id: id
-    name: name
-    type: 'number'
-    class: 'form-control'
-    value: props.value
-
-  for key in ['value', 'required', 'placeholder', 'max', 'min', 'step']
-    inputOpts[key] = props[key] if props[key]?
-
-  h 'div', class: 'form-group', [
-    h 'label', for: id, label
-    h 'input', inputOpts
-    h 'small', class: 'form-text text-muted', props['description']
-  ]
-
-InputBoolean = (props) ->
-  label = props.label
-  name = fieldName(props.name, parentNames)
-  id = fieldId(props.name, parentNames)
+  describeId = "#{id}-help"
 
   hiddenInputOpts =
     name: name
@@ -115,6 +87,7 @@ InputBoolean = (props) ->
     type: 'checkbox'
     class: 'form-check-input'
     value: '1'
+    'aria-edscribedby': describeId
 
   if props.value
     inputOpts['checked'] = true
@@ -123,13 +96,47 @@ InputBoolean = (props) ->
     h 'input', hiddenInputOpts
     h 'input', inputOpts
     h 'label', class: 'form-check-label', for: id, label
-    h 'small', class: 'form-text text-muted', props['description']
+    h 'small', id: describeId, class: 'form-text text-muted', props.description
+  ]
+
+InputTextarea = (props) ->
+  label = props.label
+  name = fieldName(props.name, parentNames)
+  id = fieldId(props.name, parentNames)
+  describeId = "#{id}-help"
+
+  inputOpts =
+    id: id
+    name: name
+    class: 'form-control'
+    value: props.value ? (if props.encrypted? then props.default else '')
+    'aria-edscribedby': describeId
+
+  for key in [
+    'required', 'placeholder', 'maxlength', 'minlength', 'cols', 'rows'
+  ]
+    inputOpts[key] = props[key] if props[key]?
+
+  if providerId?
+    inputOpts['required'] = false
+
+  h 'div', class: 'form-group', [
+    h 'label', for: id, label
+    h 'textarea', inputOpts
+    if props.encrypted?
+      h 'small', class: 'form-text text-muted',
+        '''
+        この項目は暗号化されて保存され、現在の値は表示されません。
+        変更しない場合は、空欄のままにしてください。
+        '''
+    h 'small', id: describeId, class: 'form-text text-muted', props.description
   ]
 
 InputList = (props) ->
   label = props.label
   name = fieldName(props.name, parentNames)
   id = fieldId(props.name, parentNames)
+  describeId = "#{id}-help"
 
   selected = props.value ? providerParams[props.name] ? props.default
 
@@ -139,12 +146,14 @@ InputList = (props) ->
       id: id
       class: 'form-control',
       name: name,
+      'aria-edscribedby': describeId,
       props.list.map (option) ->
         if selected == option.value
           h 'option', value: option.value, selected: true, option.name
         else
           h 'option', value: option.value, option.name
-    h 'small', class: 'form-text text-muted', props['description']
+      h 'small', id: describeId, class: 'form-text text-muted',
+        props.description
   ]
 
 
@@ -154,19 +163,30 @@ Params = ({adapterParams, providerParams}) ->
       adapterParams.map (param) ->
         value = providerParams[param.name]
         if param.list?
-          h InputList, {param..., value}
-        else
-          switch param.type
-            when 'string'
-              h InputString, {param..., value}
-            when 'secret'
-              h InputSecret, {param..., value}
-            when 'integer'
-              h InputInteger, {param..., value}
-            when 'boolean'
-              h InputBoolean, {param..., value}
-            else
-              'none'
+          return h InputList, {param..., value}
+
+        input = param.input ? switch param.type
+          when 'boolean' then 'checkbox'
+          when 'string' then 'text'
+          when 'text' then 'textarea'
+          when 'integer' then 'number'
+          when 'float' then 'number'
+          when 'date' then 'date'
+          when 'time' then 'time'
+          when 'datetime' then 'datetime-local'
+          when 'file' then 'file'
+
+        switch input
+          when 'text', 'password', 'email', 'searh', 'tel', 'url', \
+               'number', 'range', 'color', \
+               'date', 'time', 'datetime-local', 'month', 'week'
+            h InputControl, {param..., input, value}
+          when 'checkbox'
+            h InputCheckbox, {param..., input, value}
+          when 'textarea'
+            h InputTextarea, {param..., input, value}
+          else
+            '未実装の形式です。'
     else
       "設定できるパラメーターはありません。"
 

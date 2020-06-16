@@ -35,15 +35,17 @@ module Yuzakan
           placeholder: 'テスト',
           encrypted: true,
         },
-        # {
-        #   name: 'txt1',
-        #   label: '長い文字列',
-        #   description:
-        #     '文字列のパラメーターです。',
-        #   type: :text,
-        #   required: false,
-        #   placeholder: '',
-        # },
+        {
+          name: 'txt1',
+          label: '長い文字列',
+          description:
+            '文字列のパラメーターです。',
+          type: :text,
+          required: false,
+          placeholder: '',
+          cols: 10,
+          rows: 10,
+        },
         {
           name: 'int1',
           label: '数値',
