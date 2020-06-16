@@ -19,7 +19,7 @@ class Encrypt
 
   expose :encrypted
 
-  def initialize(password: ENV.fetch('DB_SECRET'), max: 256, text: true)
+  def initialize(password: ENV.fetch('DB_SECRET'), max: 0, text: true)
     @pb_crypt = Yuzakan::Utils::PbCrypt.new(password)
     @max = max
     @text = text
@@ -32,7 +32,10 @@ class Encrypt
       else
         @pb_crypt.encrypt(params[:data])
       end
-    error!('暗号化できるサイズを超えました。') if @encrypted.size > @max
+
+    if @max.positive? && @encrypted.size > @max
+      error!('暗号化できるサイズを超えました。')
+    end
   end
 
   private def valid?(params)
