@@ -25,6 +25,11 @@ module Admin
               url: routes.path(:providers),
               description: '連携するシステムはプロバイダーとして登録します。連携システムの追加や変更が可能です。',
             },
+            {
+              name: 'ユーザー属性情報',
+              url: routes.path(:attr_types),
+              description: '各プロバイダーからのユーザー属性の紐付けを行います。',
+            },
           ]
         end
       end

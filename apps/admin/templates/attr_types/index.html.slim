@@ -1,0 +1,13 @@
+
+table.table
+  thead
+    tr
+      th colspan="4" 属性情報
+    tr
+      th 名前/表示名
+      th 型
+      th 操作
+      - providers.each do |provider|
+        th = provider.display_name
+  tbody
+    = form_attr_type(nil, providers)
