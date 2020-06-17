@@ -6,17 +6,30 @@ module Admin
 
         def form_attr_type(attr_type, providers)
           if attr_type
+            mappings = providers.map do |provider|
+              ifnone = -> { ProviderAttrMapping.new(provider_id: provider.id) }
+              attr_type.provider_attr_mappings.find(ifnone) do |mapping|
+                mapping.provider_id == provider.id
+              end
+            end
             form = Form.new(
               :attr_type,
               routes.path(:attr_type, id: attr_type.id),
-              {attr_type: attr_type},
+              {attr_type: AttrType.new(
+                name: attr_type.name,
+                display_name: attr_type.display_name,
+                type: attr_type.type,
+                provider_attr_mappings: mappings
+              )},
               method: :patch)
-            mapping_map = attr_type.provider_attr_mappings.map do |mapping|
-              [mapping.provider_id, mapping]
-            end.to_h
           else
-            form = Form.new(:attr_type, routes.path(:attr_types))
-            mapping_map = {}
+            mappings = providers.map do |provider|
+              ProviderAttrMapping.new(provider_id: provider.id)
+            end
+            form = Form.new(:attr_type, routes.path(:attr_types),
+              {attr_type: AttrType.new(
+                provider_attr_mappings: mappings
+              )})
           end
 
           html.tr do
@@ -56,21 +69,30 @@ module Admin
                   end
                 end
 
-                fields_for :provider_attr_mappings do
-                  providers.each do |provider|
-                    td do
-                      fields_for provider.name, mapping_map[provider.id] do |ff|
-                        pp mapping_map[provider.id]
-                        hidden_field :provider_id
-                        text_field :name, class: 'form-control mb-1'
-                        select :conversion, {
-                          '変換なし' => '',
-                          'POSIX時間' => 'posix_time',
-                          'POSIX日付' => 'posix_date',
-                        }, class: 'form-control mb-1'
-                      end
-                    end
+                fields_for_collection :provider_attr_mappings do
+                  td do
+                    hidden_field :provider_id
+                    text_field :name, class: 'form-control mb-1'
+                    select :conversion, {
+                      '変換なし' => '',
+                      'POSIX時間' => 'posix_time',
+                      'POSIX日付' => 'posix_date',
+                    }, class: 'form-control mb-1'
                   end
+                  # providers.each do |provider|
+                  #   td do
+                  #     fields_for provider.name, mapping_map[provider.id] do |ff|
+                  #       pp mapping_map[provider.id]
+                  #       hidden_field :provider_id
+                  #       text_field :name, class: 'form-control mb-1'
+                  #       select :conversion, {
+                  #         '変換なし' => '',
+                  #         'POSIX時間' => 'posix_time',
+                  #         'POSIX日付' => 'posix_date',
+                  #       }, class: 'form-control mb-1'
+                  #     end
+                  #   end
+                  # end
                 end
               end
             end
