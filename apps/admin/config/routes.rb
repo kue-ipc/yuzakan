@@ -25,3 +25,5 @@ resources 'adapters', only: [:show] do
 end
 
 resources 'attr_types', only: [:index, :create, :update, :destroy]
+
+resources 'users', only: [:index, :show]

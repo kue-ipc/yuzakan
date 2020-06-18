@@ -16,6 +16,7 @@ class ProviderRepository < Hanami::Repository
   end
 
   associations do
+    has_many :provider_attr_mappings
     ProviderRepository.params.each do |param|
       has_many param
     end

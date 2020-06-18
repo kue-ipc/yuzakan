@@ -264,6 +264,12 @@ module Yuzakan
         true
       end
 
+      def list
+        generate_ldap.search(search_user_opts('*')).map do |user|
+          user[@params[:user_name_attr]]&.first
+        end
+      end
+
       private def generate_ldap
         opts = {
           host: @params[:host],

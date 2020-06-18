@@ -102,6 +102,10 @@ module Yuzakan
         user.hashed_password.start_with?('!')
       end
 
+      def list
+        @repository.all.map(&:name)
+      end
+
       private def normalize_user(user)
         return unless user
 

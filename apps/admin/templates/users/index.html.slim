@@ -1,0 +1,21 @@
+
+table.table
+  thead
+    tr
+      th アカウント名
+      th 名前
+      th メールアドレス
+      - providers.each do |provider|
+        th = provider.display_name 
+  tbody
+    - users.each do |user|
+      tr
+        td = user.name
+        td = user.display_name
+        td = user.email
+        - providers.each do |provider|
+          td
+            - if provider_users[provider.id].include?(user.name)
+              | ○
+            - else
+              | N/A

@@ -30,6 +30,11 @@ module Admin
               url: routes.path(:attr_types),
               description: '各プロバイダーからのユーザー属性の紐付けを行います。',
             },
+            {
+              name: 'ユーザー一覧',
+              url: routes.path(:users),
+              description: 'ユーザーの一覧です。',
+            },
           ]
         end
       end
