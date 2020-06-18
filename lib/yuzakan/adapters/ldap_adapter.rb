@@ -335,7 +335,7 @@ module Yuzakan
       end
 
       private def normalize_user(user, mappings = nil)
-        return unless user
+        return if user.nil?
 
         data = {
           name: user[@params[:user_name_attr]]&.first,

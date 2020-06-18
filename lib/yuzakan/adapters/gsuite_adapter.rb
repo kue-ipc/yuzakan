@@ -100,7 +100,7 @@ module Yuzakan
         query = "email=#{username}@#{@params[:domain]}"
         response = service.list_users(domain: @params[:domain], query: query)
         user = response.users&.first
-        normalize_user(user, mapping)
+        normalize_user(user, mappings)
       end
 
       def udpate(_username, _attrs, mappings = nil)
@@ -166,30 +166,43 @@ module Yuzakan
         password.crypt(format('$1$%.8s', salt))
       end
 
-      private def normalize_user(gsuite_user, mapping = nil)
-        return nil if gsuite_user
+      private def normalize_user(user, mappings = nil)
+        return if user.nil?
 
-        email = gsuite_user.primary_email
+        email = user.primary_email
         name, _domain = email.split('@', 2)
-        user = {
+        data = {
           name: name,
-          display_name: gsuite_user.name.full_name,
+          display_name: user.name.full_name,
           email: email,
         }
-        user
+
+        if mappings
+          mappings.each do |mapping|
+            name_list = mapping.name.split('.').map(&:intern)
+            value = name_list.inject(user) do |result, name|
+              result.__send__(name)
+            end
+            next if value.nil?
+
+            data[mapping.attr_type.name.intern] = mapping.convert(value)
+          end
+        end
+
+        data
       end
 
-      private def gsuite_user(username, attrs, mapping)
-        user = Google::Apis::AdminDirectoryV1::User.new(
-          primary_email: "#{username}@#{@params[:domain]}",
-          name: Google::Apis::AdminDirectoryV1::UserName.new(
-            given_name: attrs[:given_name],
-            family_name: attrs[:family_name]),
-          password: generate_password(attrs[:password]),
-          hash_function: 'crypt')
+      # private def gsuite_user(username, attrs, mapping)
+      #   user = Google::Apis::AdminDirectoryV1::User.new(
+      #     primary_email: "#{username}@#{@params[:domain]}",
+      #     name: Google::Apis::AdminDirectoryV1::UserName.new(
+      #       given_name: attrs[:given_name],
+      #       family_name: attrs[:family_name]),
+      #     password: generate_password(attrs[:password]),
+      #     hash_function: 'crypt')
         
-        user.org_unit_path = ('/' + attrs[:ou]).gsub(%r{//+}, '/') if attrs[:ou]
-      end
+      #   user.org_unit_path = ('/' + attrs[:ou]).gsub(%r{//+}, '/') if attrs[:ou]
+      # end
     end
   end
 end
