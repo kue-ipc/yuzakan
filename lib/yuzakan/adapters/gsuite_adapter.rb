@@ -100,7 +100,7 @@ module Yuzakan
         query = "email=#{username}@#{@params[:domain]}"
         response = service.list_users(domain: @params[:domain], query: query)
         user = response.users&.first
-        normalize_user(user) if user
+        normalize_user(user, mapping)
       end
 
       def udpate(_username, _attrs, mappings = nil)
@@ -166,15 +166,29 @@ module Yuzakan
         password.crypt(format('$1$%.8s', salt))
       end
 
-      private def normalize_user(gsuite_user)
+      private def normalize_user(gsuite_user, mapping = nil)
+        return nil if gsuite_user
+
         email = gsuite_user.primary_email
-        name, domain = email.split('@', 2)
+        name, _domain = email.split('@', 2)
         user = {
           name: name,
           display_name: gsuite_user.name.full_name,
           email: email,
         }
         user
+      end
+
+      private def gsuite_user(username, attrs, mapping)
+        user = Google::Apis::AdminDirectoryV1::User.new(
+          primary_email: "#{username}@#{@params[:domain]}",
+          name: Google::Apis::AdminDirectoryV1::UserName.new(
+            given_name: attrs[:given_name],
+            family_name: attrs[:family_name]),
+          password: generate_password(attrs[:password]),
+          hash_function: 'crypt')
+        
+        user.org_unit_path = ('/' + attrs[:ou]).gsub(%r{//+}, '/') if attrs[:ou]
       end
     end
   end
