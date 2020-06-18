@@ -192,17 +192,17 @@ module Yuzakan
         end
       end
 
-      # def create(username, attrs)
+      # def create(username, attrs, mappings = nil)
       #   raise NotImplementedError
       # end
 
-      def read(username)
+      def read(username, mappings = nil)
         ldap = generate_ldap
         user = ldap.search(search_user_opts(username))&.first
-        normalize_user(user)
+        normalize_user(user, mappings)
       end
 
-      # def udpate(username, attrs)
+      # def udpate(username, attrs, mappings = nil)
       #   raise NotImplementedError
       # end
 
@@ -334,7 +334,7 @@ module Yuzakan
         opts
       end
 
-      private def normalize_user(user)
+      private def normalize_user(user, mappings = nil)
         return unless user
 
         data = {
@@ -344,15 +344,16 @@ module Yuzakan
                         user[@params[:user_name_attr]]&.first,
           email: user[:email]&.first || user[:mail]&.first,
         }
-        user.each do |key, value|
-          # skip: userPassword, samba((Previous)?ClearText|LM|NT)Password
-          next if key.to_s =~ /password$/i
-          next if key == :name
-          next if key == :display_name
-          next if key == :email
 
-          data[key] = value
+        if mappings
+          mappings.each do |mapping|
+            value = user[mapping.name.downcase.intern]&.first
+            next if value.nil?
+
+            data[mapping.attr_type.name.intern] = mapping.convert(value)
+          end
         end
+
         data
       end
 

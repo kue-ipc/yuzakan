@@ -80,7 +80,7 @@ module Yuzakan
         response.users.size == 1
       end
 
-      def create(username, attrs)
+      def create(username, attrs, mappings = nil)
         user = Google::Apis::AdminDirectoryV1::User.new(
           primary_email: "#{username}@#{@params[:domain]}",
           name: Google::Apis::AdminDirectoryV1::UserName.new(
@@ -96,14 +96,14 @@ module Yuzakan
         response
       end
 
-      def read(username)
+      def read(username, mappings = nil)
         query = "email=#{username}@#{@params[:domain]}"
         response = service.list_users(domain: @params[:domain], query: query)
         user = response.users&.first
         normalize_user(user) if user
       end
 
-      def udpate(_username, _attrs)
+      def udpate(_username, _attrs, mappings = nil)
         raise NotImplementedError
       end
 

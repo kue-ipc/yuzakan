@@ -42,13 +42,13 @@ module Admin
 
                 td class: 'table-primary'  do
                   select :type, {
+                    '真偽値' => 'boolean',
                     '文字列' => 'string',
                     '整数値' => 'integer',
                     '小数点数値' => 'float',
                     '日付' => 'date',
                     '時間' => 'time',
                     '日時' => 'datetime',
-                    '真偽値' => 'boolean',
                   }, class: 'form-control'
                 end
 

@@ -1,0 +1,35 @@
+
+h3 基本情報
+
+dl.row
+  dt.col-sm-4.col-md-3.col-lg-2
+    | ユーザー名
+  dd.col-sm-8.col-md-9.col-lg-10
+    = user.name
+  dt.col-sm-4.col-md-3.col-lg-2
+    | 表示名
+  dd.col-sm-8.col-md-9.col-lg-10
+    = user.display_name
+  dt.col-sm-4.col-md-3.col-lg-2
+    | メールアドレス
+  dd.col-sm-8.col-md-9.col-lg-10
+    = user.email
+
+
+h3 属性情報
+
+table.table
+  thead
+    tr
+      th 属性名
+      th 値
+      - providers.each do |provider|
+        th = provider.display_name
+  tbody
+    - attr_types.each do |attr_type|
+      - attr_name = attr_type.name.intern
+      tr
+        td = attr_type.display_name
+        td = user_attrs[attr_name]
+        - provider_datas.each do |data|
+          td = data[attr_name]

@@ -65,15 +65,15 @@ module Yuzakan
         true
       end
 
-      def create(_username, _attrs)
+      def create(_username, _attrs, mappings = nil)
         raise NotImplementedError
       end
 
-      def read(_username)
+      def read(_username, mappings = nil)
         raise NotImplementedError
       end
 
-      def udpate(_username, _attrs)
+      def udpate(_username, _attrs, mappings = nil)
         raise NotImplementedError
       end
 

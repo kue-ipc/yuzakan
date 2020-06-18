@@ -22,7 +22,7 @@ module Yuzakan
         true
       end
 
-      def create(username, attrs)
+      def create(username, attrs, _mappings = nil)
         @repository.create(
           name: username,
           display_name: attrs[:display_name] || username,
@@ -30,12 +30,12 @@ module Yuzakan
           hashed_password: '!')
       end
 
-      def read(username)
+      def read(username, _mappings = nil)
         user = @repository.by_name(username)
         normalize_user(user)
       end
 
-      def udpate(username, attrs)
+      def udpate(username, attrs, _mappings = nil)
         user = @repository.by_name(username)
         return unless user
 
