@@ -99,7 +99,8 @@ module Yuzakan
       def read(username)
         query = "email=#{username}@#{@params[:domain]}"
         response = service.list_users(domain: @params[:domain], query: query)
-        response.users.first
+        user = response.users&.first
+        normalize_user(user) if user
       end
 
       def udpate(_username, _attrs)
@@ -163,6 +164,17 @@ module Yuzakan
       private def generate_password(password)
         salt = SecureRandom.base64(12).gsub('+', '.')
         password.crypt(format('$1$%.8s', salt))
+      end
+
+      private def normalize_user(gsuite_user)
+        email = gsuite_user.primary_email
+        name, domain = email.split('@', 2)
+        user = {
+          name: name,
+          display_name: gsuite_user.name.full_name,
+          email: email,
+        }
+        user
       end
     end
   end

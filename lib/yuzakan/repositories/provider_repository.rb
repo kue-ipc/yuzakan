@@ -59,6 +59,7 @@ class ProviderRepository < Hanami::Repository
       lock: :lockable,
       unlcok: :lockable,
       locked?: :lockable,
+      list: :readable,
     }
     ability = operation_ability[operation]
     raise "不明な操作です。#{operation}" unless ability

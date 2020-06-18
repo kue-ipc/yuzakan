@@ -7,7 +7,7 @@ class UserRepository < Hanami::Repository
   end
 
   def by_name(name)
-    users.where(name: name).one
+    users.where(name: name)
   end
 
   def auth(name, password)
@@ -31,5 +31,30 @@ class UserRepository < Hanami::Repository
         create(name: name, display_name: display_name, email: result[:email])
       end
     end
+  end
+
+  def sync(name)
+    providers = ProviderRepository.new.operational_all_with_params(:read)
+    result = nil
+    providers.each do |provider|
+      result = provider.adapter.read(name)
+      break if result
+    end
+
+    return unless result
+
+    display_name = result[:display_name] || result[:name]
+    email = result[:email]
+    user = by_name(name).one
+
+    unless user
+      return create(name: name, display_name: display_name, email: email)
+    end
+
+    if user.display_name != display_name || user.email != email
+      return update(user.id, {display_name: display_name, email: email})
+    end
+
+    user
   end
 end

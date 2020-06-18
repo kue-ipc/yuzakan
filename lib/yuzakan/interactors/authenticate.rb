@@ -73,7 +73,7 @@ class Authenticate
     name = user_data[:name]
     display_name = user_data[:display_name] || user_data[:name]
     email = user_data[:email]
-    user = @user_repository.by_name(name)
+    user = @user_repository.by_name(name).one
     if user.nil?
       @user_repository.create(name: name,
                               display_name: display_name,

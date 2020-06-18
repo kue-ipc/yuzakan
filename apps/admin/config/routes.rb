@@ -26,4 +26,8 @@ end
 
 resources 'attr_types', only: [:index, :create, :update, :destroy]
 
-resources 'users', only: [:index, :show]
+resources 'users', only: [:index, :show] do
+  collection do
+    get 'sync'
+  end
+end

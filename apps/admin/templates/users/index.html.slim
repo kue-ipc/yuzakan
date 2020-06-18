@@ -2,15 +2,16 @@
 table.table
   thead
     tr
-      th アカウント名
-      th 名前
+      th ユーザー名
+      th 表示名
       th メールアドレス
       - providers.each do |provider|
         th = provider.display_name 
   tbody
     - users.each do |user|
       tr
-        td = user.name
+        td
+          = link_to user.name, routes.path(:user, user.id)
         td = user.display_name
         td = user.email
         - providers.each do |provider|
