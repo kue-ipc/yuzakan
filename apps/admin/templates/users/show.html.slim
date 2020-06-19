@@ -32,4 +32,4 @@ table.table
         td = attr_type.display_name
         td = user_attrs[attr_name]
         - provider_datas.each do |data|
-          td = data[attr_name]
+          td = data&.[](attr_name)
