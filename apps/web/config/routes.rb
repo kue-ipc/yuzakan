@@ -19,3 +19,10 @@ end
 
 get '/about', to: 'about#index', as: :about
 get '/about/legacy', to: 'about#legacy', as: :about_legacy
+
+resource 'gsuite', only: [:show, :create, :destroy] do
+  member do
+    get 'reset'
+    get 'unlock'
+  end
+end

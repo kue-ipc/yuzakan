@@ -70,4 +70,12 @@ class ProviderRepository < Hanami::Repository
       .order { order.asc }
       .map_to(Provider)
   end
+
+  def first_gsuite
+    providers
+      .where(adapter_name: 'gsuite')
+      .where(self_management: true)
+      .order { order.asc }
+      .first
+  end
 end
