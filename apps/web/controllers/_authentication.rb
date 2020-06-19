@@ -3,12 +3,12 @@
 module Web
   module Authentication
     private def authenticate!
-      unless authenticated?
-        if format == :html
-          redirect_to routes.path(:root)
-        else
-          halt 401
-        end
+      return if authenticated?
+
+      if format == :html
+        redirect_to routes.path(:root)
+      else
+        halt 401
       end
     end
 

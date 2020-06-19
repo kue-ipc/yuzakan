@@ -24,15 +24,15 @@ module Admin
     end
 
     private def administrate!
-      unless current_user&.admin
-        # 管理者では無い場合は、セッションを削除する。
-        session[:user_id] = nil
-        if format == :html
-          flash[:error] = '管理者権限がありません。'
-          redirect_to routes.root_path
-        else
-          halt 401
-        end
+      return if current_user&.admin
+
+      # 管理者では無い場合は、セッションを削除する。
+      session[:user_id] = nil
+      if format == :html
+        flash[:error] = '管理者権限がありません。'
+        redirect_to routes.root_path
+      else
+        halt 401
       end
     end
   end
