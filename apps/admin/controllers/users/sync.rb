@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 require 'set'
 
@@ -9,7 +10,7 @@ module Admin
 
         expose :counts
 
-        def call(params)
+        def call(_params)
           user_repository = UserRepository.new
           @counts = {}
           user_names = Set.new(user_repository.all.map(&:name))

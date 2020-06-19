@@ -47,7 +47,9 @@ class ChangePassword
 
     @provider_repository.operational_all_with_params(:change_password)
       .each do |provider|
-      @count += 1 if provider.adapter.change_password(@user.name, params[:password])
+      if provider.adapter.change_password(@user.name, params[:password])
+        @count += 1
+      end
     rescue => e
       @activity_repository.create(activity_params.merge!({result: 'error'}))
       if @count.positive?

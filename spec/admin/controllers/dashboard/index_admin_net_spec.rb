@@ -15,13 +15,13 @@ describe Admin::Controllers::Dashboard::Index do
 
     it 'is successful in network' do
       response = action.call(params.merge(
-                              'REMOTE_ADDR' => '192.168.1.1'))
+                               'REMOTE_ADDR' => '192.168.1.1'))
       _(response[0]).must_equal 200
     end
 
     it 'is failure out network' do
       response = action.call(params.merge(
-                              'REMOTE_ADDR' => '192.168.2.1'))
+                               'REMOTE_ADDR' => '192.168.2.1'))
       _(response[0]).must_equal 403
     end
 
@@ -35,49 +35,49 @@ describe Admin::Controllers::Dashboard::Index do
 
       it 'reverse is successful in network' do
         response = action.call(params.merge(
-                                'REMOTE_ADDR' => '::1',
-                                'HTTP_X_FORWARDED_FOR' => '192.168.1.1'))
+                                 'REMOTE_ADDR' => '::1',
+                                 'HTTP_X_FORWARDED_FOR' => '192.168.1.1'))
         _(response[0]).must_equal 200
       end
 
       it 'reverse is failure out network' do
         response = action.call(params.merge(
-                                'REMOTE_ADDR' => '::1',
-                                'HTTP_X_FORWARDED_FOR' => '192.168.2.1'))
+                                 'REMOTE_ADDR' => '::1',
+                                 'HTTP_X_FORWARDED_FOR' => '192.168.2.1'))
         _(response[0]).must_equal 403
       end
 
       it 'not reverse is successful in network' do
         response = action.call(params.merge(
-                                'REMOTE_ADDR' => '192.168.1.1'))
+                                 'REMOTE_ADDR' => '192.168.1.1'))
         _(response[0]).must_equal 200
       end
 
       it 'not reverse is failure out network' do
         response = action.call(params.merge(
-                                'REMOTE_ADDR' => '192.168.2.1'))
+                                 'REMOTE_ADDR' => '192.168.2.1'))
         _(response[0]).must_equal 403
       end
 
       it 'not reverse and fake is failure fake in network' do
         response = action.call(params.merge(
-                                'REMOTE_ADDR' => '203.0.113.1',
-                                'HTTP_X_FORWARDED_FOR' => '192.168.2.1'))
+                                 'REMOTE_ADDR' => '203.0.113.1',
+                                 'HTTP_X_FORWARDED_FOR' => '192.168.2.1'))
         _(response[0]).must_equal 403
       end
 
       it 'not reverse and fake is failure fake out network' do
         response = action.call(params.merge(
-                                'REMOTE_ADDR' => '203.0.113.1',
-                                'HTTP_X_FORWARDED_FOR' => '192.168.1.1'))
+                                 'REMOTE_ADDR' => '203.0.113.1',
+                                 'HTTP_X_FORWARDED_FOR' => '192.168.1.1'))
         _(response[0]).must_equal 403
       end
 
       it 'remote_ip is first in network' do
         response = action.call(params.merge(
-                                'REMOTE_ADDR' => '::1',
-                                'HTTP_X_FORWARDED_FOR' =>
-                                  '192.168.1.1, 192.168.2.2, 192.168.3.3'))
+                                 'REMOTE_ADDR' => '::1',
+                                 'HTTP_X_FORWARDED_FOR' =>
+                                   '192.168.1.1, 192.168.2.2, 192.168.3.3'))
         _(response[0]).must_equal 200
       end
     end
@@ -114,37 +114,37 @@ describe Admin::Controllers::Dashboard::Index do
 
       it 'is successful in network' do
         response = action.call(params.merge(
-                                'REMOTE_ADDR' => '192.168.1.1'))
+                                 'REMOTE_ADDR' => '192.168.1.1'))
         _(response[0]).must_equal 200
       end
 
       it 'is successful in just' do
         response = action.call(params.merge(
-                                'REMOTE_ADDR' => '192.168.2.10'))
+                                 'REMOTE_ADDR' => '192.168.2.10'))
         _(response[0]).must_equal 200
       end
 
       it 'is successful in ipv6 network' do
         response = action.call(params.merge(
-                                'REMOTE_ADDR' => 'fd00:1234::5678:9abc'))
+                                 'REMOTE_ADDR' => 'fd00:1234::5678:9abc'))
         _(response[0]).must_equal 200
       end
 
       it 'is failure not match' do
         response = action.call(params.merge(
-                                'REMOTE_ADDR' => '192.168.2.1'))
+                                 'REMOTE_ADDR' => '192.168.2.1'))
         _(response[0]).must_equal 403
       end
 
       it 'is failure out network' do
         response = action.call(params.merge(
-                                'REMOTE_ADDR' => '10.1.1.1'))
+                                 'REMOTE_ADDR' => '10.1.1.1'))
         _(response[0]).must_equal 403
       end
 
       it 'is failure out ipv6 network' do
         response = action.call(params.merge(
-                                'REMOTE_ADDR' => 'fd00:5678::1122:3344'))
+                                 'REMOTE_ADDR' => 'fd00:5678::1122:3344'))
         _(response[0]).must_equal 403
       end
     end

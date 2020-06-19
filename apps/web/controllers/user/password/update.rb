@@ -24,22 +24,22 @@ module Web
                 redirect_to routes.path(:edit_user_password)
               end
             when :json
-              if result.successful?
-                @data = {
-                  result: 'success',
-                  messages: {
-                    success: 'パスワードを変更しました。',
-                  },
-                }
-              else
-                @data = {
-                  result: 'failure',
-                  messages: {
-                    errors: result.errors,
-                    failure: 'パスワードを変更することができませんでした。',
-                  },
-                }
-              end
+              @data = if result.successful?
+                        {
+                          result: 'success',
+                          messages: {
+                            success: 'パスワードを変更しました。',
+                          },
+                        }
+                      else
+                        {
+                          result: 'failure',
+                          messages: {
+                            errors: result.errors,
+                            failure: 'パスワードを変更することができませんでした。',
+                          },
+                        }
+                      end
             end
           end
         end

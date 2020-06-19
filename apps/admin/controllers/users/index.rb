@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module Controllers
     module Users
@@ -8,7 +10,7 @@ module Admin
         expose :providers
         expose :provider_users
 
-        def call(params)
+        def call(_params)
           @users = UserRepository.new.all.map
           @providers = ProviderRepository.new.operational_all_with_params(:list)
           @provider_users = @providers.each.map do |provider|

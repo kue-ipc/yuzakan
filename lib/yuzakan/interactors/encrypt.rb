@@ -1,4 +1,4 @@
-# frozen_string_letral: true
+# frozen_string_literal: true
 
 require 'hanami/interactor'
 require 'hanami/validations'
@@ -33,9 +33,7 @@ class Encrypt
         @pb_crypt.encrypt(params[:data])
       end
 
-    if @max.positive? && @encrypted.size > @max
-      error!('暗号化できるサイズを超えました。')
-    end
+    error!('暗号化できるサイズを超えました。') if @max.positive? && @encrypted.size > @max
   end
 
   private def valid?(params)

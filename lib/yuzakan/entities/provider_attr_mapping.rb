@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ProviderAttrMapping < Hanami::Entity
   def convert(value)
     case attr_type.type

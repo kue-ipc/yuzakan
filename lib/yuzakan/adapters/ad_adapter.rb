@@ -96,7 +96,6 @@ module Yuzakan
         },
       ]
 
-    
       def initialize(params)
         super(params.merge(
           protocol: 'ldaps',

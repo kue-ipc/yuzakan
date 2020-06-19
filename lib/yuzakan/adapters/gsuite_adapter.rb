@@ -80,18 +80,17 @@ module Yuzakan
         response.users.size == 1
       end
 
-      def create(username, attrs, mappings = nil)
+      def create(username, attrs, _mappings = nil)
         user = Google::Apis::AdminDirectoryV1::User.new(
           primary_email: "#{username}@#{@params[:domain]}",
           name: Google::Apis::AdminDirectoryV1::UserName.new(
             given_name: attrs[:given_name],
-            family_name: attrs[:family_name],
-          ),
+            family_name: attrs[:family_name]),
           password: generate_password(attrs[:password]),
           hash_function: 'crypt')
-        
+
         user.org_unit_path = ('/' + attrs[:ou]).gsub(%r{//+}, '/') if attrs[:ou]
-        
+
         response = service.inseart_user(user)
         response
       end
@@ -200,7 +199,7 @@ module Yuzakan
       #       family_name: attrs[:family_name]),
       #     password: generate_password(attrs[:password]),
       #     hash_function: 'crypt')
-        
+
       #   user.org_unit_path = ('/' + attrs[:ou]).gsub(%r{//+}, '/') if attrs[:ou]
       # end
     end

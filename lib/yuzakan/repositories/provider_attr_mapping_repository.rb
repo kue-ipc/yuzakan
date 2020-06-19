@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ProviderAttrMappingRepository < Hanami::Repository
   associations do
     belongs_to :attr_type

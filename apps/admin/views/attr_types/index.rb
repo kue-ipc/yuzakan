@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module Views
     module AttrTypes
@@ -19,17 +21,15 @@ module Admin
                 name: attr_type.name,
                 display_name: attr_type.display_name,
                 type: attr_type.type,
-                provider_attr_mappings: mappings
-              )},
+                provider_attr_mappings: mappings)},
               method: :patch)
           else
             mappings = providers.map do |provider|
               ProviderAttrMapping.new(provider_id: provider.id)
             end
             form = Form.new(:attr_type, routes.path(:attr_types),
-              {attr_type: AttrType.new(
-                provider_attr_mappings: mappings
-              )})
+                            {attr_type: AttrType.new(
+                              provider_attr_mappings: mappings)})
           end
 
           html.tr do
@@ -40,7 +40,7 @@ module Admin
                   text_field :display_name, class: 'form-control'
                 end
 
-                td class: 'table-primary'  do
+                td class: 'table-primary' do
                   select :type, {
                     '真偽値' => 'boolean',
                     '文字列' => 'string',
@@ -59,8 +59,8 @@ module Admin
                     end
                     div do
                       button class: 'btn btn-danger', type: 'button',
-                            'data-toggle': 'modal',
-                            'data-target': "\#attr-type-delete#{attr_type.id}" do
+                             'data-toggle': 'modal',
+                             'data-target': "\#attr-type-delete#{attr_type.id}" do
                         '削除'
                       end
                     end
@@ -96,9 +96,7 @@ module Admin
                 end
               end
             end
-            if attr_type
-              div(delete_modal(attr_type))
-            end
+            div(delete_modal(attr_type)) if attr_type
           end
         end
 
@@ -123,7 +121,7 @@ module Admin
                 end
                 div class: 'modal-footer' do
                   button class: 'btn btn-secondary', type: 'button',
-                    'data-dismiss': 'modal' do
+                         'data-dismiss': 'modal' do
                     '閉じる'
                   end
                   div do

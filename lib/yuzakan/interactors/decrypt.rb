@@ -1,4 +1,4 @@
-# frozen_string_letral: true
+# frozen_string_literal: true
 
 require 'hanami/interactor'
 require 'hanami/validations'

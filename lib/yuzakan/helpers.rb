@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'helpers/alerter'
 require_relative 'helpers/error'
 require_relative 'helpers/escaper'

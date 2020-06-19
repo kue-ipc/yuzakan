@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module Controllers
     module Users
@@ -18,8 +20,8 @@ module Admin
           @providers = ProviderRepository.new.operational_all_with_params(:read)
           @provider_datas = @providers.each.map do |provider|
             provider.adapter.read(@user.name,
-              provider_attr_mapping_repository
-                .by_provider_with_attr_type(provider.id))
+                                  provider_attr_mapping_repository
+                                    .by_provider_with_attr_type(provider.id))
           end
           @user_attrs = @provider_datas.compact.inject({}) do |result, data|
             data.merge(result)

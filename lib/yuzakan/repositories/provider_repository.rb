@@ -49,7 +49,7 @@ class ProviderRepository < Hanami::Repository
   end
 
   def operational_all_with_params(operation)
-    operation_ability = 
+    operation_ability =
       case operation
       when :create, :update, :delete
         {writable: true}
