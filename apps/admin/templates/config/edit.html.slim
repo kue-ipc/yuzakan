@@ -55,23 +55,17 @@ h2 全体設定
       - '複雑度を計算する際に、外部辞書として使用されます。'
 
   - div class: 'form-group' do
-    - label 'リモートIPアドレスのHTTPヘッダ', for: :remote_ip_header
-    - text_field :remote_ip_header, class: 'form-control'
-    - small class: 'form-text text-muted' do
-      - 'リバースプロキシで付与されるもともとのクライアントIPアドレスが含まれているヘッダ、X-Fowarded-ForやX-Real-Ip等を指定します。リバースプロキシを経由しない環境では設定してはいけません。'
-
-  - div class: 'form-group' do
-    - label '信頼できるリバースプロキシ', for: :trusted_reverse_proxies
-    - text_area :trusted_reverse_proxies, class: 'form-control', rows: 3
-    - small class: 'form-text text-muted' do
-      - '信頼できるリバースプロキシのIPアドレスを入力します。'
-
-  - div class: 'form-group' do
     - label '管理者ネットワーク', for: :admin_networks
     - text_area :admin_networks, class: 'form-control', rows: 3
     - small class: 'form-text text-muted' do
-      - '管理者機能にアクセス可能なネットワークを指定します。改行または空白で区切ってください。空の場合はすべてのIPアドレスからの接続を許可します。'
+      - '管理者機能にアクセス可能なネットワークを指定します。カンマまたは改行または空白で区切ってください。空の場合はすべてのIPアドレスからの接続を許可します。'
     - small class: 'form-text text-muted' do
       - "現在接続しているクライアントのIPアドレスは #{remote_ip} です。"
+
+  - div class: 'form-group' do
+    - label 'ユーザーネットワーク', for: :user_networks
+    - text_area :user_networks, class: 'form-control', rows: 3
+    - small class: 'form-text text-muted' do
+      - 'ユーザー機能にアクセス可能なネットワークを指定します。カンマまたは改行または空白で区切ってください。空の場合はすべてのIPアドレスからの接続を許可します。'
 
   - submit '変更', class: 'btn btn-primary'

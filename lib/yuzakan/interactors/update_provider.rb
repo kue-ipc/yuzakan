@@ -21,6 +21,9 @@ class UpdateProvider
       optional(:password_changeable) { bool? }
       optional(:lockable) { bool? }
 
+      optional(:individual_password) { bool? }
+      optional(:self_management) { bool? }
+
       optional(:params)
     end
   end

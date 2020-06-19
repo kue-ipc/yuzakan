@@ -49,23 +49,24 @@ class ProviderRepository < Hanami::Repository
   end
 
   def operational_all_with_params(operation)
-    operation_ability = {
-      create: :writable,
-      read: :readable,
-      update: :writable,
-      delete: :writable,
-      auth: :authenticatable,
-      change_password: :password_changeable,
-      lock: :lockable,
-      unlcok: :lockable,
-      locked?: :lockable,
-      list: :readable,
-    }
-    ability = operation_ability[operation]
-    raise "不明な操作です。#{operation}" unless ability
+    operation_ability = 
+      case operation
+      when :create, :update, :delete
+        {writable: true}
+      when :read, :list
+        {readable: true}
+      when :auth
+        {authenticatable: true}
+      when :change_password
+        {password_changeable: true, individual_password: false}
+      when :lock, :unlock, :locked?
+        {lockable: true}
+      else
+        raise "不明な操作です。#{operation}"
+      end
 
     aggregate(*ProviderRepository.params)
-      .where(ability => true)
+      .where(operation_ability)
       .order { order.asc }
       .map_to(Provider)
   end
