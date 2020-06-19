@@ -31,19 +31,6 @@ describe Encrypt do
     _(result.encrypted).must_match(/\A[\x20-\x7E]*\z/)
   end
 
-  it 'encryt 1..256 size text' do
-    (1..256).each do |n|
-      text = 'A' * n
-      result = interactor.call({data: text})
-      if result.encrypted.size <= 255
-        _(result.successful?).must_equal true
-      else
-        _(result.failure?).must_equal true
-      end
-      _(result.encrypted).must_match(/\A[\x20-\x7E]*\z/)
-    end
-  end
-
   it 'encryt text other password' do
     text = 'Ab01#'
     result = interactor.call({data: text})
@@ -52,7 +39,23 @@ describe Encrypt do
     _(result_other.encrypted).wont_equal result.encrypted
   end
 
-  describe 'max' do
+  describe 'max 256' do
+    let(:params) { {max: 256} }
+    it 'encryt 1..256 size text' do
+      (1..256).each do |n|
+        text = 'A' * n
+        result = interactor.call({data: text})
+        if result.encrypted.size <= 255
+          _(result.successful?).must_equal true
+        else
+          _(result.successful?).must_equal false
+        end
+        _(result.encrypted).must_match(/\A[\x20-\x7E]*\z/)
+      end
+    end
+  end
+
+  describe 'max 4096 * 8' do
     let(:params) { {max: 4096 * 8} }
     it 'encryt 4096 size text' do
       text = 'A' * 4096

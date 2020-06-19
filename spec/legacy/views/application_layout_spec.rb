@@ -9,6 +9,6 @@ describe Legacy::Views::ApplicationLayout do
 
   # テストできないのでは？
   # it 'contains application name' do
-  #   rendered.must_include('Legacy')
+  #   _(rendered).must_include('Legacy')
   # end
 end
