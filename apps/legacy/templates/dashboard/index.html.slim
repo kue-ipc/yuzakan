@@ -1,7 +1,6 @@
-.menu.px-4
-  .row
+.row
+  .col
     h3 利用者用メニュー
-  .row
-    - menu_items.each do |item|
-      div class=(col_card)
-        = menu_link(item)
+.menu.row
+  - menu_items.each do |item|
+    = menu_link(item)

@@ -6,7 +6,11 @@ module Web
       class Show
         include Web::Action
 
-        def call(params)
+        expose :gsuite_user
+
+        def call(_params)
+          gsuite_repository = ProviderRepository.new.first_gsuite_with_params
+          @gsuite_user = gsuite_repository.adapter.read(current_user.name)
         end
       end
     end

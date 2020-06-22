@@ -1,0 +1,38 @@
+h1 G Suite アカウント 管理
+
+h3 現在の状態
+
+- if gsuite_user
+  - if gsuite_user[:locked]
+    p G Suite アカウントはロックされています。
+  - else
+    p
+      | G Suite アカウントを利用可能です。
+      | Googleの各サービスを利用したい場合は、
+      => link_to 'https://gsuite.google.com/dashboard', target: '_blank' do
+        - text 'G Suite ダッシュボード '
+      | にアクセスしてください。
+- else
+  p G Suite にアカウントは登録されていません。
+
+hr
+
+h3 操作メニュー
+
+.menu.row
+  - menu_items.each do |item|
+    = menu_link(item)
+
+
+#create-user.modal.fade tabindex="-1" role="dialog"
+  .modal-dialog
+    .modal-content
+      .modal-header
+        h5.modal-title Modal title
+        button type="button" class="close" data-dismiss="modal" aria-label="Close"
+          span aria-hidden="true" &times;
+      .modal-body
+        p Modal body text goes here.
+      .modal-footer
+        button type="button" class="btn btn-secondary" data-dismiss="modal" Close
+        button type="button" class="btn btn-primary" Save changes

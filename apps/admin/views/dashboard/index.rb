@@ -6,13 +6,6 @@ module Admin
       class Index
         include Admin::View
 
-        def menu_link(name:, url:, description:)
-          link_to url, class: 'card' do
-            div name, class: 'card-header text-center'
-            div description, class: 'card-body'
-          end
-        end
-
         def menu_items
           [
             {

@@ -6,14 +6,6 @@ module Legacy
       class Index
         include Legacy::View
 
-        def menu_link(name:, url:, description:, color: 'dark')
-          bg_color = "bg-#{color}"
-          link_to url, class: ['card', 'text-white', bg_color] do
-            div name, class: 'card-header text-center'
-            div description, class: 'card-body'
-          end
-        end
-
         def menu_items
           [
             {

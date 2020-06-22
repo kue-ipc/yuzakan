@@ -1,7 +1,5 @@
-.menu.px-4
-  .row
-    h3 利用者用メニュー
-  .row
-    - menu_items.each do |item|
-      div class=(col_card + ['my-1'])
-        = menu_link(item)
+h3 利用者用メニュー
+
+.menu.row
+  - menu_items.each do |item|
+    = menu_link(item)
