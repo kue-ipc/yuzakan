@@ -8,25 +8,6 @@ p 現在のパスワードと新しいパスワードを入力してください
     - fields_for :password do
       - div id: 'change-password', \
             'data-change-password': ha(JSON.generate(change_password_data)) do
-        - div do
-          - { \
-              password_current: '現在のパスワード', \
-              password: '新しいパスワード', \
-              password_confirmation: 'パスワードの確認' \
-            }.each do |key, value|
-            - div class: 'form-group row' do
-              - label value, \
-                      class: ['col-form-label', change_password_cols[:left]], \
-                      for: key
-              - div class: [change_password_cols[:right]] do
-                - password_field key, change_password_field_opt(key)
-                - if flash[:param_errors]&.key?(key.to_s)
-                  - div class: 'invalid-feedback' do
-                    - h(flash[:param_errors][key.to_s].join)
-          - div class: 'row' do
-            - div class: change_password_cols[:left]
-            - div class: change_password_cols[:right] do
-              - submit '変更', class: 'login-submit btn btn-primary btn-block'
 hr
 
 h4 パスワードの要件
