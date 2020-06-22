@@ -18,7 +18,7 @@ module Legacy
           if result.failure?
             flash[:errors] = result.errors
             flash[:failure] = 'ログインに失敗しました。'
-            redirect_to routes.root_path
+            redirect_to routes.path(:root)
           end
 
           # セッション情報を保存

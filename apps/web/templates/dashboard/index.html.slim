@@ -3,10 +3,5 @@
     h3 利用者用メニュー
   .row
     - menu_items.each do |item|
-      .col-md-4.m-3
+      div class=(col_card + ['my-1'])
         = menu_link(item)
-
-    / .col-md-4.m-3
-    /   h3
-    /     = link_to 'パスワード変更', routes.edit_user_password_path, class: 'btn bt-lg btn-primary'
-    /   p パスワード変更ができます。

@@ -9,7 +9,7 @@ module Legacy
         def call(_params)
           session[:user_id] = nil
           flash[:success] = 'ログアウトしました。'
-          redirect_to routes.root_path
+          redirect_to routes.path(:root)
         end
       end
     end

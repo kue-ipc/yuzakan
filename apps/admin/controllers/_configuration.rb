@@ -42,7 +42,7 @@ module Admin
         flash[:warn] = 'セッションがタイムアウトしました。' \
                        'ログインし直してください。'
         session[:access_time] = Time.now
-        redirect_to routes.root_path
+        redirect_to routes.path(:root)
         return
       end
 

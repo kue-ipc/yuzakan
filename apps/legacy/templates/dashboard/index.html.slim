@@ -2,6 +2,6 @@
   .row
     h3 利用者用メニュー
   .row
-    .col-md-4.m-3
-      - menu_items.each do |item|
+    - menu_items.each do |item|
+      div class=(col_card)
         = menu_link(item)

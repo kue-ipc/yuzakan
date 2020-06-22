@@ -6,8 +6,9 @@ module Legacy
       class Index
         include Legacy::View
 
-        def menu_link(name:, url:, description:)
-          link_to url, class: 'card' do
+        def menu_link(name:, url:, description:, color: 'dark')
+          bg_color = "bg-#{color}"
+          link_to url, class: ['card', 'text-white', bg_color] do
             div name, class: 'card-header text-center'
             div description, class: 'card-body'
           end
@@ -19,6 +20,7 @@ module Legacy
               name: 'パスワード変更',
               url: routes.edit_user_password_path,
               description: 'パスワードを変更します。',
+              color: 'primary',
             },
           ]
         end

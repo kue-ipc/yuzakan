@@ -13,7 +13,7 @@ get '/uninitialized', to: 'uninitialized#index', as: :uninitialized
 
 resource 'session', only: [:destroy, :create]
 
-resource 'user', only: [] do
+resource 'user', only: [:show] do
   resource 'password', only: [:edit, :update]
 end
 

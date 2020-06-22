@@ -3,19 +3,19 @@
     .alert.alert-warning role="alert"
       | JavaScriptが無効です。
       | JavaScriptを有効にする、または、
-      =<> link_to 'レガシー版', Legacy.routes.root_path
+      =<> link_to 'レガシー版', Legacy.routes.path(:root)
       | を使用してください。
   /[if IE]
     .alert.alert-warning role="alert"
       | お使いのInternet Explorerは未サポートです。
       | 別のモダンブラウザーを使用する、または、
-      =<> link_to 'レガシー版', Legacy.routes.root_path
+      =<> link_to 'レガシー版', Legacy.routes.path(:root)
       | を使用してください。
   #legacy-browser.d-none
     .alert.alert-warning role="alert"
       | お使いのレガシーブラウザーは未サポートです。
       | 別のモダンブラウザーを使用する、または、
-      =<> link_to 'レガシー版', Legacy.routes.root_path
+      =<> link_to 'レガシー版', Legacy.routes.path(:root)
       | を使用してください。
   = javascript 'legacy_browser', nomodule: true, async: true
   = javascript 'modern_browser', type: 'module', async: true

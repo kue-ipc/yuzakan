@@ -10,7 +10,7 @@ module Web
           session[:user_id] = nil
           session[:access_time] = nil
           flash[:success] = 'ログアウトしました。'
-          redirect_to routes.root_path
+          redirect_to routes.path(:root)
         end
       end
     end

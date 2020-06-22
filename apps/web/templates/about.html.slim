@@ -9,10 +9,10 @@ html lang="ja"
     = stylesheet 'application'
   body
     nav.navbar.navbar-expand-md.navbar-dark.bg-dark
-      = link_to current_config&.title, routes.root_path, class: 'navbar-brand'
+      = link_to current_config&.title, routes.path(:root), class: 'navbar-brand'
     .container-fluid.mt-2
       = yield
     footer
       hr
         p.text-center
-          = link_to 'トップに戻る', routes.root_path
+          = link_to 'トップに戻る', routes.path(:root)

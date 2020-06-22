@@ -5,7 +5,7 @@ module Admin
     private def authenticate!
       unless authenticated?
         if format == :html
-          redirect_to routes.root_path
+          redirect_to routes.path(:root)
         else
           halt 401
         end
@@ -30,7 +30,7 @@ module Admin
       session[:user_id] = nil
       if format == :html
         flash[:error] = '管理者権限がありません。'
-        redirect_to routes.root_path
+        redirect_to routes.path(:root)
       else
         halt 401
       end

@@ -30,7 +30,7 @@ $green:   sepia(#28a745)
 $teal:    sepia(#20c997)
 $cyan:    sepia(#17a2b8)
 
-$primary:       darken($blue, 15%)
+$primary:       darken($blue, 25%)
 $secondary:     $gray-600
 $success:       $green
 $info:          $cyan
@@ -62,5 +62,12 @@ a.card
 
   &:hover
     text-decoration: none
-    background-color: $secondary
+    background-color: $light !important
+    color: $black !important
+
+a.link-user
+  color: $gray-500
+
+  &:hover
+    text-decoration: none
     color: $white

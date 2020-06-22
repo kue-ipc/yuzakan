@@ -3,7 +3,7 @@
 module Legacy
   module Authentication
     private def authenticate!
-      redirect_to routes.root_path unless authenticated?
+      redirect_to routes.path(:root) unless authenticated?
     end
 
     private def authenticated?

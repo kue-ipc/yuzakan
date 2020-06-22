@@ -5,6 +5,8 @@
 @import "../../../../node_modules/bootstrap/scss/variables"
 
 $jumbotron-padding: 0.5rem
+$jumbotron-color: $navbar-dark-active-color
+$jumbotron-bg: $dark
 
 @import "../../../../node_modules/bootstrap/scss/bootstrap"
 
@@ -19,5 +21,12 @@ a.card
 
   &:hover
     text-decoration: none
-    background-color: $secondary
+    background-color: $light !important
+    color: $black !important
+
+a.link-user
+  color: $gray-500
+
+  &:hover
+    text-decoration: none
     color: $white
