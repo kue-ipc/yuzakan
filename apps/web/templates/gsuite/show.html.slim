@@ -23,16 +23,29 @@ h3 操作メニュー
   - menu_items.each do |item|
     = menu_link(item)
 
-
-#create-user.modal.fade tabindex="-1" role="dialog"
-  .modal-dialog
-    .modal-content
-      .modal-header
-        h5.modal-title Modal title
-        button type="button" class="close" data-dismiss="modal" aria-label="Close"
-          span aria-hidden="true" &times;
-      .modal-body
-        p Modal body text goes here.
-      .modal-footer
-        button type="button" class="btn btn-secondary" data-dismiss="modal" Close
-        button type="button" class="btn btn-primary" Save changes
+/ = javascript 'gsuite_create_user', type: 'module', defer: true
+#gsuite-create-user.modal.fade(tabindex="-1" role="dialog" 
+    aria-labelledby="gsuite-create-user-label" aria-hidden="true")
+  .modal-dialog.modal-dialog-centered.modal-dialog-scrollable.modal-lg
+    = form_for :gsuite, routes.path(:gsuite) do
+      - div class: 'modal-content' do
+        - div class: 'modal-header' do
+          - h5 id: 'gsuite-create-user-label', class: 'modal-title' do
+            - 'Google アカウント 作成'
+          - button type: 'button', class: 'close', 'data-dismiss': 'modal', \
+                  'aria-label': '閉じる' do
+            - span raw('&times;'), 'aria-hidden': "true"
+        - div class: 'modal-body' do
+          - p 'Google アカウントの作成を行います。アカウントの作成前に、下記を確認し、内容について同意する必要があります。'
+          - ul do
+            - gsuite_create_user_rules.each do |rule|
+              - li rule
+          - hr
+          - div class: 'form-check'
+            - check_box :agreement
+            - label class: 'form-check-label', for: :agreement do
+              - '私は、上記の内容について同意します。'
+        - div class: 'modal-footer'
+          - submit 'アカウントを作成する', class: 'btn btn-primary'
+          - button class: 'btn btn-secondary', type: 'button', 'data-dismiss': "modal" do
+            - '閉じる'
