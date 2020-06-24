@@ -83,9 +83,9 @@ module Web
                     if rules
                       hr
                       if agreement
-                        p '処理を実行する前に、下記すべてを必ず確認し、その内容について同意してください。'
+                        p '処理を実行する前に、下記全てを確認し、その内容について同意してください。'
                       else
-                        p '処理を実行する前に、下記すべてを必ず確認してください。'
+                        p '処理を実行する前に、下記全てを確認してください。'
                       end
                       ul do
                         rules.each do |rule|
@@ -97,9 +97,10 @@ module Web
                       hr
                       div class: 'form-check' do
                         check_box :agreement,
-                                  class: 'form-check-input agreement'
+                                  class: 'form-check-input agreement',
+                                  name: 'agreement'
                         label class: 'form-check-label', for: :agreement do
-                          text '私は、上記すべてについて同意します。'
+                          text '私は、上記全てについて同意します。'
                         end
                       end
                     end
@@ -160,7 +161,7 @@ module Web
               'アカウント作成にあたり、Google社へアカウント作成に必要な情報(氏名、メールアドレス、身分、グループ等)を送信します。',
               '個人向けGoogleアカウントとは異なり、大学の情報管理者はアカウントのすべてを監視・管理できる権限を持っています。大学の情報管理者は、大学の情報利用に関する各規程で定められた権限の範囲内で監視・管理を実施します。',
               '初回ログイン時にGoogle社の規約に同意し、遵守しなければなりません。',
-              'アカウントを用いた各サービスの利用は、大学の情報利用に関する各規定に準じ、これを遵守しなければなりません。違反があった場合は、アカウントの停止等の処理を実施する場合があります。',
+              'アカウントを用いた各サービスの利用は、大学の情報利用に関する各規定に準じ、これを遵守しなければなりません。違反があった場合は、アカウントの停止等の処置を実施する場合があります。',
               'プライベートのアカウントではなく、大学の正式なアカウントであることの自覚を持って利用しなければなりません。',
             ]
           }
@@ -171,23 +172,23 @@ module Web
             gsuite_create: {
               title: 'Google アカウント 作成',
               content: 'ログインしているユーザーの Google アカウント を作成します。',
-              submit_button: { label: 'アカウントを作成する', color: 'primary', },
+              submit_button: {label: 'アカウントを作成する', color: 'primary'},
               agreement: true,
             },
             gsuite_destroy: {
               title: 'Google アカウント 削除',
               content: 'ログインしているユーザーの Google アカウント を削除します。',
-              submit_button: { label: 'アカウントを削除する', color: 'danger', },
+              submit_button: {label: 'アカウントを削除する', color: 'danger'},
             },
             gsuite_password_create: {
               title: 'Google アカウント パスワードリセット',
               content: 'ログインしているユーザーの Google アカウント のパスワードをリセットします。',
-              submit_button: { label: 'パスワードをリセットする', color: 'warning', },
+              submit_button: {label: 'パスワードをリセットする', color: 'warning'},
             },
             gsuite_lock_destroy: {
               title: 'Google アカウント ロック解除',
               content: 'ログインしているユーザーの Google アカウント のロックを解除します。',
-              submit_button: { label: 'ロックを解除する', color: 'primary', },
+              submit_button: {label: 'ロックを解除する', color: 'primary'},
             },
           }
         end
