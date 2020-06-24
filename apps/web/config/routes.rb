@@ -21,8 +21,6 @@ get '/about', to: 'about#index', as: :about
 get '/about/legacy', to: 'about#legacy', as: :about_legacy
 
 resource 'gsuite', only: [:show, :create, :destroy] do
-  member do
-    get 'reset'
-    get 'unlock'
-  end
+  resource 'password', only: [:create]
+  resource 'lock', only: [:destroy]
 end

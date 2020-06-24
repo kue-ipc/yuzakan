@@ -24,28 +24,32 @@ h3 操作メニュー
     = menu_link(item)
 
 / = javascript 'gsuite_create_user', type: 'module', defer: true
-#gsuite-create-user.modal.fade(tabindex="-1" role="dialog" 
-    aria-labelledby="gsuite-create-user-label" aria-hidden="true")
-  .modal-dialog.modal-dialog-centered.modal-dialog-scrollable.modal-lg
-    = form_for :gsuite, routes.path(:gsuite) do
-      - div class: 'modal-content' do
-        - div class: 'modal-header' do
-          - h5 id: 'gsuite-create-user-label', class: 'modal-title' do
-            - 'Google アカウント 作成'
-          - button type: 'button', class: 'close', 'data-dismiss': 'modal', \
-                  'aria-label': '閉じる' do
-            - span raw('&times;'), 'aria-hidden': "true"
-        - div class: 'modal-body' do
-          - p 'Google アカウントの作成を行います。アカウントの作成前に、下記を確認し、内容について同意する必要があります。'
-          - ul do
-            - gsuite_create_user_rules.each do |rule|
-              - li rule
-          - hr
-          - div class: 'form-check'
-            - check_box :agreement
-            - label class: 'form-check-label', for: :agreement do
-              - '私は、上記の内容について同意します。'
-        - div class: 'modal-footer'
-          - submit 'アカウントを作成する', class: 'btn btn-primary'
-          - button class: 'btn btn-secondary', type: 'button', 'data-dismiss': "modal" do
-            - '閉じる'
+= javascript 'submit_before_agreement', type: 'module', defer: true
+
+= modal 'gsuite-create-user', gsuite_create_user_form, \
+        title: 'Google アカウント 作成', \
+        content: 'ログインしているユーザーの Google アカウント を作成します。', \
+        rules: gsuite_create_user_rules, \
+        submit_button: { label: 'アカウントを作成する', color: 'primary', }, \
+        agreement: true
+
+= modal 'gsuite-destroy-user', gsuite_destroy_user_form, \
+        title: 'Google アカウント 削除', \
+        content: 'ログインしているユーザーの Google アカウント を削除します。', \
+        rules: gsuite_destroy_user_rules, \
+        submit_button: { label: 'アカウントを削除する', color: 'danger', }, \
+        agreement: false
+
+= modal 'gsuite-reset-user', gsuite_reset_user_form, \
+        title: 'Google アカウント パスワードリセット', \
+        content: 'ログインしているユーザーの Google アカウント のパスワードをリセットします。', \
+        rules: gsuite_reset_user_rules, \
+        submit_button: { label: 'パスワードをリセットする', color: 'warning', }, \
+        agreement: false
+
+= modal 'gsuite-unlock-user', gsuite_unlock_user_form, \
+        title: 'Google アカウント ロック解除', \
+        content: 'ログインしているユーザーの Google アカウント のロックを解除します。', \
+        rules: gsuite_unlock_user_rules, \
+        submit_button: { label: 'ロックを解除する', color: 'primary', }, \
+        agreement: false
