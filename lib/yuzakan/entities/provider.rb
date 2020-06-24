@@ -1,6 +1,20 @@
 # frozen_string_literal: true
 
 class Provider < Hanami::Entity
+  # attr_reader :params, :adapter
+
+  # def initialize(attributes = nil)
+  #   if attributes
+
+
+
+  #   if attributes&.has_key? :adapter_class
+  #     @
+  #   end
+
+  #   super attributes
+  # end
+
   def adapter_class
     ADAPTERS.by_name(adapter_name)
   end

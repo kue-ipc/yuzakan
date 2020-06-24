@@ -1,6 +1,18 @@
 # frozen_string_literal: true
 
 class ProviderRepository < Hanami::Repository
+  PARAMS ||= %i[
+    provider_boolean_params
+    provider_string_params
+    provider_text_params
+    provider_integer_params
+    provider_float_params
+    provider_datetime_params
+    provider_date_params
+    provider_time_params
+    provider_file_params
+  ].freeze
+
   def self.params
     @params ||= %i[
       provider_boolean_params
