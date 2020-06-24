@@ -20,36 +20,10 @@ hr
 h3 操作メニュー
 
 .menu.row
-  - menu_items.each do |item|
-    = menu_link(item)
+  - available_operations.each do |operation|
+    = menu_link(**menu_operations[operation], url: '#' + operation.to_s)
 
-/ = javascript 'gsuite_create_user', type: 'module', defer: true
 = javascript 'submit_before_agreement', type: 'module', defer: true
-
-= modal 'gsuite-create-user', gsuite_create_user_form, \
-        title: 'Google アカウント 作成', \
-        content: 'ログインしているユーザーの Google アカウント を作成します。', \
-        rules: gsuite_create_user_rules, \
-        submit_button: { label: 'アカウントを作成する', color: 'primary', }, \
-        agreement: true
-
-= modal 'gsuite-destroy-user', gsuite_destroy_user_form, \
-        title: 'Google アカウント 削除', \
-        content: 'ログインしているユーザーの Google アカウント を削除します。', \
-        rules: gsuite_destroy_user_rules, \
-        submit_button: { label: 'アカウントを削除する', color: 'danger', }, \
-        agreement: false
-
-= modal 'gsuite-reset-user', gsuite_reset_user_form, \
-        title: 'Google アカウント パスワードリセット', \
-        content: 'ログインしているユーザーの Google アカウント のパスワードをリセットします。', \
-        rules: gsuite_reset_user_rules, \
-        submit_button: { label: 'パスワードをリセットする', color: 'warning', }, \
-        agreement: false
-
-= modal 'gsuite-unlock-user', gsuite_unlock_user_form, \
-        title: 'Google アカウント ロック解除', \
-        content: 'ログインしているユーザーの Google アカウント のロックを解除します。', \
-        rules: gsuite_unlock_user_rules, \
-        submit_button: { label: 'ロックを解除する', color: 'primary', }, \
-        agreement: false
+- available_operations.each do |operation|
+  = modal operation, modal_forms[operation], rules: modal_rules[operation], \
+          **modal_options[operation]
