@@ -90,28 +90,52 @@ module Yuzakan
       end
 
       def read(username, mappings = nil)
-        query = "email=#{username}@#{@params[:domain]}"
-        response = service.list_users(domain: @params[:domain], query: query)
-        user = response.users&.first
+        email = "#{username}@#{@params[:domain]}"
+        user = service.get_user(email)
         normalize_user(user, mappings)
+      rescue Google::Apis::ClientError => e
+        Hanami.logger.debug 'GsuiteAdapter#read: ' + e.message
+        nil
       end
 
       def udpate(_username, _attrs, mappings = nil)
         raise NotImplementedError
       end
 
-      def delete(_username)
-        raise NotImplementedError
+      def delete(username)
+        email = "#{username}@#{@params[:domain]}"
+        user = service.get_user(email)
+        if user.nil?
+          raise 'ユーザーが存在しません。'
+        end
+
+        if user.is_admin?
+          raise 'このシステムで、管理者を削除することはできません。'
+        end
+
+        pp email
+        # service.delete_user(email)
       end
 
       def auth(_username, _password)
         raise NotImplementedError
       end
 
-      def change_password(username, password)
-        
+      def change_password(username, password, mappings = nil)
+        email = "#{username}@#{@params[:domain]}"
+        user = service.get_user(email)
+        if user.nil?
+          raise 'ユーザーが存在しません。'
+        end
 
-        raise NotImplementedError
+        if user.is_admin?
+          raise 'このシステムで、管理者のパスワードを変更することはできません。'
+        end
+
+        user = Google::Apis::AdminDirectoryV1::User.new
+        set_password(user, password)
+        user = service.patch_user(email, user)
+        normalize_user(user, mappings)
       end
 
       def lock(_username)
