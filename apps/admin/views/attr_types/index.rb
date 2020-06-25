@@ -77,22 +77,9 @@ module Admin
                       '変換なし' => '',
                       'POSIX時間' => 'posix_time',
                       'POSIX日付' => 'posix_date',
+                      'PATH(パス)' => 'path'
                     }, class: 'form-control mb-1'
                   end
-                  # providers.each do |provider|
-                  #   td do
-                  #     fields_for provider.name, mapping_map[provider.id] do |ff|
-                  #       pp mapping_map[provider.id]
-                  #       hidden_field :provider_id
-                  #       text_field :name, class: 'form-control mb-1'
-                  #       select :conversion, {
-                  #         '変換なし' => '',
-                  #         'POSIX時間' => 'posix_time',
-                  #         'POSIX日付' => 'posix_date',
-                  #       }, class: 'form-control mb-1'
-                  #     end
-                  #   end
-                  # end
                 end
               end
             end

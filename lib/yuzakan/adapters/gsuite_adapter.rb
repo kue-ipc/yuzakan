@@ -18,6 +18,7 @@
 # list -> usernames [readable]
 
 require 'stringio'
+require 'securerandom'
 
 require 'googleauth'
 require 'google/apis/admin_directory_v1'
@@ -80,18 +81,11 @@ module Yuzakan
         response.users.size == 1
       end
 
-      def create(username, attrs, _mappings = nil)
-        user = Google::Apis::AdminDirectoryV1::User.new(
-          primary_email: "#{username}@#{@params[:domain]}",
-          name: Google::Apis::AdminDirectoryV1::UserName.new(
-            given_name: attrs[:given_name],
-            family_name: attrs[:family_name]),
-          password: generate_password(attrs[:password]),
-          hash_function: 'crypt')
-
-        user.org_unit_path = ('/' + attrs[:ou]).gsub(%r{//+}, '/') if attrs[:ou]
-
-        response = service.inseart_user(user)
+      def create(username, attrs, mappings, password)
+        user = specialize_user(attrs.merge(name: username), mappings)
+        # set a dummy password
+        set_password(user, password)
+        response = service.insert_user(user)
         response
       end
 
@@ -114,7 +108,9 @@ module Yuzakan
         raise NotImplementedError
       end
 
-      def change_password(_username, _password)
+      def change_password(username, password)
+        
+
         raise NotImplementedError
       end
 
@@ -168,19 +164,17 @@ module Yuzakan
       private def normalize_user(user, mappings = nil)
         return if user.nil?
 
-        email = user.primary_email
-        name, _domain = email.split('@', 2)
         data = {
-          name: name,
+          name: user.primary_email.split('@').first,
           display_name: user.name.full_name,
-          email: email,
+          email: user.primary_email,
         }
 
         if mappings
           mappings.each do |mapping|
-            name_list = mapping.name.split('.').map(&:intern)
+            name_list = mapping.name.split('.')
             value = name_list.inject(user) do |result, name|
-              result.__send__(name)
+              result.__send__(name_json_to_ruby(name))
             end
             next if value.nil?
 
@@ -191,17 +185,45 @@ module Yuzakan
         data
       end
 
-      # private def gsuite_user(username, attrs, mapping)
-      #   user = Google::Apis::AdminDirectoryV1::User.new(
-      #     primary_email: "#{username}@#{@params[:domain]}",
-      #     name: Google::Apis::AdminDirectoryV1::UserName.new(
-      #       given_name: attrs[:given_name],
-      #       family_name: attrs[:family_name]),
-      #     password: generate_password(attrs[:password]),
-      #     hash_function: 'crypt')
+      private def specialize_user(attrs, mappings)
+        mapped_attrs = {
+          'primaryEmail' => "#{attrs[:name]}@#{@params[:domain]}",
+        }
+        mappings.each do |mapping|
+          mapped_attrs[mapping.name] =
+            mapping.reverse_convert(attrs[mapping.attr_type.name.intern])
+        end
 
-      #   user.org_unit_path = ('/' + attrs[:ou]).gsub(%r{//+}, '/') if attrs[:ou]
-      # end
+        user = Google::Apis::AdminDirectoryV1::User.new(
+          primary_email: mapped_attrs['primaryEmail'],
+          name: Google::Apis::AdminDirectoryV1::UserName.new(
+            given_name: mapped_attrs['name.givenName'],
+            family_name: mapped_attrs['name.familyName']))
+
+        if mapped_attrs['orgUnitPath']
+          user.org_unit_path = mapped_attrs['orgUnitPath']
+        end
+
+        user
+      end
+
+      # パスワードを設定する。
+      # CRYPT MD5形式を使用する。
+      # 次回ログイン時パスワード変更を有効にする。
+      # TODO: 次回ログイン時は選べるようにしておく。
+      private def set_password(user, password)
+        user.password = generate_password(password)
+        user.hash_function = 'crypt'
+        user.change_password_at_next_login = true
+      end
+
+      private def name_json_to_ruby(json_name)
+        json_name.gsub(/[A-Z]/) { |s| '_' + s.downcase }
+      end
+
+      private def name_ruby_to_json(ruby_name)
+        ruby_name.gsub(/_([a-z])/) { |s| s[0].upcaes }
+      end
     end
   end
 end
