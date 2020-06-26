@@ -20,7 +20,7 @@ module Web
             @user = gsuite_repository.adapter.change_password(
               current_user.name,
               @password)
-            end
+          end
         end
       end
     end

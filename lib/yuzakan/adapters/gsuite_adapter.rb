@@ -142,8 +142,22 @@ module Yuzakan
         raise NotImplementedError
       end
 
-      def unlock(_username)
-        raise NotImplementedError
+      def unlock(username, password = nil)
+        email = "#{username}@#{@params[:domain]}"
+        user = service.get_user(email)
+        if user.nil?
+          raise 'ユーザーが存在しません。'
+        end
+
+        if user.is_admin?
+          raise 'このシステムで、管理者をアンロックすることはできません。'
+        end
+
+        user = Google::Apis::AdminDirectoryV1::User.new(
+          suspended: false)
+        set_password(user, password)
+        user = service.patch_user(email, user)
+        normalize_user(user)
       end
 
       def locked?(_username)
@@ -193,6 +207,14 @@ module Yuzakan
           display_name: user.name.full_name,
           email: user.primary_email,
         }
+        if user.suspended?
+          case user.suspension_reason
+          when 'ADMIN'
+            data[:locked] = true
+          when 'ABUSE', 'UNDER13'
+            data[:unusable] = true
+          end
+        end
 
         if mappings
           mappings.each do |mapping|

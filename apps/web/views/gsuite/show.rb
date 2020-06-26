@@ -7,15 +7,16 @@ module Web
         include Web::View
 
         def available_operations
-          return [:gsuite_create, :gsuite_destroy, :gsuite_password_create, :gsuite_lock_destroy]
           @available_operations ||= [].tap do |operations|
             if gsuite_user
-              if gsuite_user[:locked]
-                operations << :gsuite_lock_destroy
-              else
-                operations << :gsuite_password_create
+              unless gsuite_user[:unusable]
+                if gsuite_user[:locked]
+                  operations << :gsuite_lock_destroy
+                else
+                  operations << :gsuite_password_create
+                end
+                # operations << :gsuite_destroy
               end
-              operations << :gsuite_destroy
             else
               operations << :gsuite_create
             end
@@ -127,9 +128,9 @@ module Web
                                      method: :delete),
             gsuite_password_create: Form.new(:gsuite_password_create,
                                              routes.path(:gsuite_password)),
-            gsuite_unlock_user: Form.new(:gsuite_unlock_user,
-                                         routes.path(:gsuite_lock), {},
-                                         method: :delete),
+            gsuite_lock_destroy: Form.new(:gsuite_lock_destroy,
+                                          routes.path(:gsuite_lock), {},
+                                          method: :delete),
           }
         end
 
@@ -144,12 +145,9 @@ module Web
               'プライベートのアカウントではなく、大学の正式なアカウントであることの自覚を持って利用しなければなりません。',
             ],
             gsuite_destroy: [
-              '作成されるGoogleアカウントは大学メールアドレスになります。',
-              'アカウント作成にあたり、Google社へアカウント作成に必要な情報(氏名、メールアドレス、身分、グループ等)を送信します。',
-              '個人向けGoogleアカウントとは異なり、大学の情報管理者はアカウントのすべてを監視・管理できる権限を持っています。大学の情報管理者は、大学の情報利用に関する各規程で定められた権限の範囲内で監視・管理を実施します。',
-              '初回ログイン時にGoogle社の規約に同意し、遵守しなければなりません。',
-              'アカウントを用いた各サービスの利用は、大学の情報利用に関する各規定に準じ、これを遵守しなければなりません。違反があった場合は、アカウントの停止等の処理を実施する場合があります。',
-              'プライベートのアカウントではなく、大学の正式なアカウントであることの自覚を持って利用しなければなりません。',
+              'アカウントを削除すすると、Google アカウント を用いた各サービスが利用できなくなります。',
+              '削除から20日後までは復元が可能です。20日をすぎると、アカウントが所有者である全てのデータが削除されます。',
+              '一部のデータは削除実施後即座に削除される場合があります。これらのデータについては、アカウントを復元しても復元できません。',
             ],
             gsuite_password_create: [
               'パスワードリセットを行うと、Google アカウントを使用したアプリケーションで再ログインが必要になる場合があります。',
@@ -157,12 +155,10 @@ module Web
               '1日あたりのパスワードリセットを行える回数には限りがあります。',
             ],
             gsuite_lock_destroy: [
-              '作成されるGoogleアカウントは大学メールアドレスになります。',
-              'アカウント作成にあたり、Google社へアカウント作成に必要な情報(氏名、メールアドレス、身分、グループ等)を送信します。',
-              '個人向けGoogleアカウントとは異なり、大学の情報管理者はアカウントのすべてを監視・管理できる権限を持っています。大学の情報管理者は、大学の情報利用に関する各規程で定められた権限の範囲内で監視・管理を実施します。',
-              '初回ログイン時にGoogle社の規約に同意し、遵守しなければなりません。',
-              'アカウントを用いた各サービスの利用は、大学の情報利用に関する各規定に準じ、これを遵守しなければなりません。違反があった場合は、アカウントの停止等の処置を実施する場合があります。',
-              'プライベートのアカウントではなく、大学の正式なアカウントであることの自覚を持って利用しなければなりません。',
+              'ロック解除とともにパスワードを変更を行います。旧パスワードは使用できません。',
+              'パスワードリセットを行うと、Google アカウントを使用したアプリケーションで再ログインが必要になる場合があります。',
+              '2段階認証を設定している場合は、2段階認証も解除されます。',
+              '1日あたりのパスワードリセットを行える回数には限りがあります。',
             ]
           }
         end
@@ -171,24 +167,24 @@ module Web
           @modal_opitons ||= {
             gsuite_create: {
               title: 'Google アカウント 作成',
-              content: 'ログインしているユーザーの Google アカウント を作成します。',
+              content: 'あなたの Google アカウント を作成します。',
               submit_button: {label: 'アカウントを作成する', color: 'primary'},
               agreement: true,
             },
             gsuite_destroy: {
               title: 'Google アカウント 削除',
-              content: 'ログインしているユーザーの Google アカウント を削除します。',
+              content: 'あなたの Google アカウント を削除します。',
               submit_button: {label: 'アカウントを削除する', color: 'danger'},
             },
             gsuite_password_create: {
               title: 'Google アカウント パスワードリセット',
-              content: 'ログインしているユーザーの Google アカウント のパスワードをリセットします。',
+              content: 'あなたの Google アカウント のパスワードをリセットします。',
               submit_button: {label: 'パスワードをリセットする', color: 'warning'},
             },
             gsuite_lock_destroy: {
               title: 'Google アカウント ロック解除',
-              content: 'ログインしているユーザーの Google アカウント のロックを解除します。',
-              submit_button: {label: 'ロックを解除する', color: 'primary'},
+              content: 'あなたの Google アカウント のロックを解除します。',
+              submit_button: {label: 'ロックを解除する', color: 'warning'},
             },
           }
         end

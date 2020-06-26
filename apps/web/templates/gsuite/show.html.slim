@@ -1,19 +1,31 @@
-h1 G Suite アカウント 管理
+h1 G Suite
 
 h3 現在の状態
 
 - if gsuite_user
-  - if gsuite_user[:locked]
-    p G Suite アカウントはロックされています。
-  - else
+  p
+    | Google アカウント名:
+    =< gsuite_user[:email]
+
+  - if gsuite_user[:unusable]
+    p あなたの Google アカウント は利用が強制的に停止されています。
     p
-      | G Suite アカウントを利用可能です。
-      | Googleの各サービスを利用したい場合は、
-      => link_to 'https://gsuite.google.com/dashboard', target: '_blank' do
-        - text 'G Suite ダッシュボード '
-      | にアクセスしてください。
+      | このシステムでアカウントを復活させることはできません。
+      | システム管理者にお問い合わせください。
+  - elsif gsuite_user[:locked]
+    p あなたの Google アカウント はロックされており、現在利用できません。
+    p 利用したい場合は、「ロック解除」を行ってください。
+  - else
+    p あなたの Google アカウント は利用可能です。
+    p
+      | 登録されたアカウントの確認、パスワード変更、2段階認証の設定を行う場合は、
+      =<> link_to 'https://myaccount.google.com/', target: '_blank' do
+        - text 'Google アカウント'
+      | へアクセスしてください。
+    p パスワードを忘れてしまった場合は、「パスワードリセット」を行ってください。
 - else
-  p G Suite にアカウントは登録されていません。
+  p あなたの Google アカウント は作成されていません。
+  p 利用したい場合は、「アカウント作成」を行ってください。
 
 hr
 
