@@ -20,10 +20,10 @@ class UserAttrs
   def call(params)
     @datas = @readable_providers.each.map do |provider|
       [provider.name,
-        provider.adapter.read(
-          params[:username],
-          @provider_attr_mapping_repository
-            .by_provider_with_attr_type(provider.id))]
+       provider.adapter.read(
+         params[:username],
+         @provider_attr_mapping_repository
+           .by_provider_with_attr_type(provider.id)),]
     end.to_h
     @attrs = @datas.values.compact.inject({}) do |result, data|
       data.merge(result)

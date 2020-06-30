@@ -10,11 +10,11 @@ module Web
           @available_operations ||= [].tap do |operations|
             if gsuite_user
               unless gsuite_user[:unusable]
-                if gsuite_user[:locked]
-                  operations << :gsuite_lock_destroy
-                else
-                  operations << :gsuite_password_create
-                end
+                operations << if gsuite_user[:locked]
+                                :gsuite_lock_destroy
+                              else
+                                :gsuite_password_create
+                              end
                 # operations << :gsuite_destroy
               end
             else
@@ -53,13 +53,13 @@ module Web
         end
 
         def modal(id, form, title: nil, content: nil, rules: nil,
-                            submit_button: { label: '送信', color: 'primary', },
-                            agreement: false)
+                  submit_button: {label: '送信', color: 'primary'},
+                  agreement: false)
           label_id = "#{id}-label"
 
           modal_classes = ['modal', 'fade']
           dialog_classes = ['modal-dialog', 'modal-dialog-centered',
-                            'modal-dialog-scrollable', 'modal-lg']
+                            'modal-dialog-scrollable', 'modal-lg',]
           form_classes = []
           form_classes << 'submit-before-agreement' if agreement
 
@@ -159,7 +159,7 @@ module Web
               'パスワードリセットを行うと、Google アカウントを使用したアプリケーションで再ログインが必要になる場合があります。',
               '2段階認証を設定している場合は、2段階認証も解除されます。',
               '1日あたりのパスワードリセットを行える回数には限りがあります。',
-            ]
+            ],
           }
         end
 

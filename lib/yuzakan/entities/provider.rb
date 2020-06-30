@@ -6,8 +6,6 @@ class Provider < Hanami::Entity
   # def initialize(attributes = nil)
   #   if attributes
 
-
-
   #   if attributes&.has_key? :adapter_class
   #     @
   #   end

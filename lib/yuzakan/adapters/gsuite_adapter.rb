@@ -105,13 +105,9 @@ module Yuzakan
       def delete(username)
         email = "#{username}@#{@params[:domain]}"
         user = service.get_user(email)
-        if user.nil?
-          raise 'ユーザーが存在しません。'
-        end
+        raise 'ユーザーが存在しません。' if user.nil?
 
-        if user.is_admin?
-          raise 'このシステムで、管理者を削除することはできません。'
-        end
+        raise 'このシステムで、管理者を削除することはできません。' if user.is_admin?
 
         pp email
         # service.delete_user(email)
@@ -124,13 +120,9 @@ module Yuzakan
       def change_password(username, password, mappings = nil)
         email = "#{username}@#{@params[:domain]}"
         user = service.get_user(email)
-        if user.nil?
-          raise 'ユーザーが存在しません。'
-        end
+        raise 'ユーザーが存在しません。' if user.nil?
 
-        if user.is_admin?
-          raise 'このシステムで、管理者のパスワードを変更することはできません。'
-        end
+        raise 'このシステムで、管理者のパスワードを変更することはできません。' if user.is_admin?
 
         user = Google::Apis::AdminDirectoryV1::User.new
         set_password(user, password)
@@ -145,13 +137,9 @@ module Yuzakan
       def unlock(username, password = nil)
         email = "#{username}@#{@params[:domain]}"
         user = service.get_user(email)
-        if user.nil?
-          raise 'ユーザーが存在しません。'
-        end
+        raise 'ユーザーが存在しません。' if user.nil?
 
-        if user.is_admin?
-          raise 'このシステムで、管理者をアンロックすることはできません。'
-        end
+        raise 'このシステムで、管理者をアンロックすることはできません。' if user.is_admin?
 
         user = Google::Apis::AdminDirectoryV1::User.new(
           suspended: false)

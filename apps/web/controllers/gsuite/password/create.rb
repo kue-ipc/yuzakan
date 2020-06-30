@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Web
   module Controllers
     module Gsuite
@@ -15,7 +17,7 @@ module Web
               flash[:failure] = 'アカウントが作成されていません。'
               redirect_to routes.path(:gsuite)
             end
-  
+
             @password = SecureRandom.alphanumeric(16)
             @user = gsuite_repository.adapter.change_password(
               current_user.name,

@@ -28,7 +28,7 @@ class ProviderAttrMapping < Hanami::Entity
       when 'posix_date'
         Date.new(1970, 1, 1) + value.to_i
       when 'path'
-        value.sub(/^\/+/, '')
+        value.sub(%r{^/+}, '')
       else
         value
       end

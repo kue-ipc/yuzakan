@@ -77,7 +77,7 @@ module Admin
                       '変換なし' => '',
                       'POSIX時間' => 'posix_time',
                       'POSIX日付' => 'posix_date',
-                      'PATH(パス)' => 'path'
+                      'PATH(パス)' => 'path',
                     }, class: 'form-control mb-1'
                   end
                 end
