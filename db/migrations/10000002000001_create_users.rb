@@ -7,7 +7,7 @@ Hanami::Model.migration do
 
       column :name, String, null: false
       column :display_name, String, null: true
-      column :email, String, null: true, index: true
+      column :email, String, null: true
 
       # administrator authority
       column :admin, TrueClass, null: false, default: false
@@ -16,6 +16,7 @@ Hanami::Model.migration do
       column :updated_at, DateTime, null: false
 
       index :name, unique: true
+      index :email
     end
   end
 end

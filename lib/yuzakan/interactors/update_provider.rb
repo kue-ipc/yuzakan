@@ -54,11 +54,6 @@ class UpdateProvider
       string: ProviderStringParamRepository.new,
       text: ProviderTextParamRepository.new,
       integer: ProviderIntegerParamRepository.new,
-      float: ProviderFloatParamRepository.new,
-      datetime: ProviderDatetimeParamRepository.new,
-      date: ProviderDateParamRepository.new,
-      time: ProviderTimeParamRepository.new,
-      file: ProviderFileParamRepository.new,
     }
 
     provider_params = adapter_class.encrypt(provider_params)
@@ -66,8 +61,6 @@ class UpdateProvider
     adapter_class.params.each do |adapter_param|
       name = adapter_param[:name]
       value = provider_params[name.intern]
-
-      pp value if adapter_param[:type] == :file
 
       value = nil if adapter_param[:encrypted] && value && value.empty?
 

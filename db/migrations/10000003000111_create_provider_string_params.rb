@@ -12,6 +12,10 @@ Hanami::Model.migration do
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
+
+      index :provider_id
+      index :name
+      index [:provider_id, :name], name: :provider_name_index, unique: true
     end
   end
 end

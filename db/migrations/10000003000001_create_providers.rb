@@ -5,11 +5,11 @@ Hanami::Model.migration do
     create_table :providers do
       primary_key :id
 
-      column :name, String, null: false, unique: true, index: true
-      column :display_name, String, null: false, unique: true
+      column :name, String, null: false
+      column :display_name, String, null: false
 
       column :adapter_name, String, null: false
-      column :order, Integer, null: false, unique: true
+      column :order, Integer, null: false
       column :immutable, TrueClass, null: false, default: false # 不変フラグ
 
       column :readable, TrueClass, null: false, default: false
@@ -25,6 +25,10 @@ Hanami::Model.migration do
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
+
+      index :name, unique: true
+      index :order, unique: true
+      index :adapter_name
     end
   end
 end

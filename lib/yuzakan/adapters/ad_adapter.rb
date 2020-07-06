@@ -5,11 +5,6 @@ require 'net/ldap'
 require 'smbhash'
 require 'base64'
 
-# パスワード変更について
-# userPassword は {CRYPT}$1$%.8s をデフォルトする。
-# sambaLMPassword はデフォルト無効とし、設定済みは削除する。
-# sambaNTPassword はデフォルト有効とし、設定する。
-
 require_relative 'ldap_adapter'
 
 module Yuzakan
@@ -55,8 +50,10 @@ module Yuzakan
         }, {
           name: 'bind_password',
           label: '接続ユーザーのパスワード',
-          type: :secret,
+          type: :string,
+          input: 'password',
           required: true,
+          encrypted: true,
         }, {
           name: 'user_base',
           label: 'ユーザー検索のベース',
