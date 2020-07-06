@@ -10,7 +10,7 @@ class UserAttrs
   expose :datas
 
   def initialize(
-    provider_attr_mapping_repository: ProviderAttrMappingRepository.new,
+    provider_attr_mapping_repository: AttrMappingRepository.new,
     readable_providers: ProviderRepository.new.operational_all_with_params(:read)
   )
     @provider_attr_mapping_repository = provider_attr_mapping_repository
@@ -22,8 +22,7 @@ class UserAttrs
       [provider.name,
        provider.adapter.read(
          params[:username],
-         @provider_attr_mapping_repository
-           .by_provider_with_attr_type(provider.id)),]
+         @provider_attr_mapping_repository.by_provider_with_attr(provider.id))]
     end.to_h
     @attrs = @datas.values.compact.inject({}) do |result, data|
       data.merge(result)

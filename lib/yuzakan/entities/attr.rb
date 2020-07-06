@@ -1,4 +1,4 @@
 # frozen_string_literal: true
 
-class AttrType < Hanami::Entity
+class Attr < Hanami::Entity
 end

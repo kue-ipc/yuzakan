@@ -2,6 +2,6 @@
 
 require_relative '../../spec_helper'
 
-describe ProviderAttrMappingRepository do
+describe AttrRepository do
   # place your tests here
 end

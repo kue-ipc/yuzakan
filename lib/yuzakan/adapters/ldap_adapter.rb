@@ -350,7 +350,7 @@ module Yuzakan
             value = user[mapping.name.downcase.intern]&.first
             next if value.nil?
 
-            data[mapping.attr_type.name.intern] = mapping.convert(value)
+            data[mapping.attr.name.intern] = mapping.convert(value)
           end
         end
 

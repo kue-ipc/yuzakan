@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class ProviderAttrMapping < Hanami::Entity
+class AttrMapping < Hanami::Entity
   def convert(value)
     if conversion.nil?
-      case attr_type.type
+      case attr.type
       when 'boolean'
         nil | value
       when 'string'

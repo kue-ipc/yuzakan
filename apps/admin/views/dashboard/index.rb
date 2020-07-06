@@ -20,7 +20,7 @@ module Admin
             },
             {
               name: 'ユーザー属性情報',
-              url: routes.path(:attr_types),
+              url: routes.path(:attrs),
               description: '各プロバイダーからのユーザー属性の紐付けを行います。',
             },
             {

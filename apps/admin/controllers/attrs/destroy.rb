@@ -2,14 +2,14 @@
 
 module Admin
   module Controllers
-    module AttrTypes
+    module Attrs
       class Destroy
         include Admin::Action
 
         def call(params)
-          AttrTypeRepository.new.delete(params[:id])
+          AttrRepository.new.delete(params[:id])
           flash[:success] = '属性を削除しました。'
-          redirect_to routes.path(:attr_types)
+          redirect_to routes.path(:attrs)
         end
       end
     end

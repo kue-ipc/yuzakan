@@ -17,8 +17,11 @@ Hanami::Model.migration do
 
       column :authenticatable, TrueClass, null: false, default: false
       column :password_changeable, TrueClass, null: false, default: false
+      column :individual_password, TrueClass, null: false, default: false
 
       column :lockable, TrueClass, null: false, default: false
+
+      column :self_management, TrueClass, null: false, default: false
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

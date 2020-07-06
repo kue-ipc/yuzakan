@@ -38,8 +38,8 @@ module Web
           @user = gsuite_repository.adapter.create(
             current_user.name,
             user_attrs,
-            ProviderAttrMappingRepository.new
-              .by_provider_with_attr_type(gsuite_repository.id),
+            AttrMappingRepository.new
+              .by_provider_with_attr(gsuite_repository.id),
             @password)
         end
       end

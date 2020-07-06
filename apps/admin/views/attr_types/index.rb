@@ -2,34 +2,34 @@
 
 module Admin
   module Views
-    module AttrTypes
+    module Attrs
       class Index
         include Admin::View
 
-        def form_attr_type(attr_type, providers)
-          if attr_type
+        def form_attr(attr, providers)
+          if attr
             mappings = providers.map do |provider|
-              ifnone = -> { ProviderAttrMapping.new(provider_id: provider.id) }
-              attr_type.provider_attr_mappings.find(ifnone) do |mapping|
+              ifnone = -> { AttrMapping.new(provider_id: provider.id) }
+              attr.attr_mappings.find(ifnone) do |mapping|
                 mapping.provider_id == provider.id
               end
             end
             form = Form.new(
-              :attr_type,
-              routes.path(:attr_type, id: attr_type.id),
-              {attr_type: AttrType.new(
-                name: attr_type.name,
-                display_name: attr_type.display_name,
-                type: attr_type.type,
-                provider_attr_mappings: mappings)},
+              :attr,
+              routes.path(:attr, id: attr.id),
+              {attr: Attr.new(
+                name: attr.name,
+                display_name: attr.display_name,
+                type: attr.type,
+                attr_mappings: mappings)},
               method: :patch)
           else
             mappings = providers.map do |provider|
-              ProviderAttrMapping.new(provider_id: provider.id)
+              AttrMapping.new(provider_id: provider.id)
             end
-            form = Form.new(:attr_type, routes.path(:attr_types),
-                            {attr_type: AttrType.new(
-                              provider_attr_mappings: mappings)})
+            form = Form.new(:attr, routes.path(:attrs),
+                            {attr: Attr.new(
+                              attr_mappings: mappings)})
           end
 
           html.tr do
@@ -53,14 +53,14 @@ module Admin
                 end
 
                 td do
-                  if attr_type
+                  if attr
                     div class: 'mb-1' do
                       submit '更新', class: 'btn btn-warning'
                     end
                     div do
                       button class: 'btn btn-danger', type: 'button',
                              'data-toggle': 'modal',
-                             'data-target': "\#attr-type-delete#{attr_type.id}" do
+                             'data-target': "\#attr-type-delete#{attr.id}" do
                         '削除'
                       end
                     end
@@ -69,7 +69,7 @@ module Admin
                   end
                 end
 
-                fields_for_collection :provider_attr_mappings do
+                fields_for_collection :attr_mappings do
                   td do
                     hidden_field :provider_id
                     text_field :name, class: 'form-control mb-1'
@@ -83,12 +83,12 @@ module Admin
                 end
               end
             end
-            div(delete_modal(attr_type)) if attr_type
+            div(delete_modal(attr)) if attr
           end
         end
 
-        private def delete_modal(attr_type)
-          id = "attr-type-delete#{attr_type.id}"
+        private def delete_modal(attr)
+          id = "attr-type-delete#{attr.id}"
           html.div id: id, class: 'modal fade',
                    tabindex: '-1', role: 'dialog',
                    'aria-labelledby': "#{id}-label", 'aria-hidden': true do
@@ -104,7 +104,7 @@ module Admin
                   end
                 end
                 div class: 'modal-body' do
-                  "属性「#{attr_type.name}」を削除してもよろしいですか？"
+                  "属性「#{attr.name}」を削除してもよろしいですか？"
                 end
                 div class: 'modal-footer' do
                   button class: 'btn btn-secondary', type: 'button',
@@ -112,7 +112,7 @@ module Admin
                     '閉じる'
                   end
                   div do
-                    form_for attr_type, routes.path(:attr_type, attr_type.id), method: :delete do
+                    form_for attr, routes.path(:attr, attr.id), method: :delete do
                       submit '削除', class: 'btn btn-danger'
                     end
                   end

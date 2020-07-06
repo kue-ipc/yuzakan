@@ -30,8 +30,8 @@ table.table
       th 属性名
       th 値
   tbody
-    - attr_types.each do |attr_type|
-      - attr_name = attr_type.name.intern
+    - attrs.each do |attr|
+      - attr_name = attr.name.intern
       tr
-        td = attr_type.display_name
+        td = attr.display_name
         td = user_attrs[attr_name]

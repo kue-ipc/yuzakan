@@ -212,7 +212,7 @@ module Yuzakan
             end
             next if value.nil?
 
-            data[mapping.attr_type.name.intern] = mapping.convert(value)
+            data[mapping.attr.name.intern] = mapping.convert(value)
           end
         end
 
@@ -225,7 +225,7 @@ module Yuzakan
         }
         mappings.each do |mapping|
           mapped_attrs[mapping.name] =
-            mapping.reverse_convert(attrs[mapping.attr_type.name.intern])
+            mapping.reverse_convert(attrs[mapping.attr.name.intern])
         end
 
         user = Google::Apis::AdminDirectoryV1::User.new(

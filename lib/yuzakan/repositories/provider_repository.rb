@@ -6,11 +6,6 @@ class ProviderRepository < Hanami::Repository
     provider_string_params
     provider_text_params
     provider_integer_params
-    provider_float_params
-    provider_datetime_params
-    provider_date_params
-    provider_time_params
-    provider_file_params
   ].freeze
 
   def self.params
@@ -19,16 +14,11 @@ class ProviderRepository < Hanami::Repository
       provider_string_params
       provider_text_params
       provider_integer_params
-      provider_float_params
-      provider_datetime_params
-      provider_date_params
-      provider_time_params
-      provider_file_params
     ].freeze
   end
 
   associations do
-    has_many :provider_attr_mappings
+    has_many :attr_mappings
     ProviderRepository.params.each do |param|
       has_many param
     end

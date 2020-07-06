@@ -2,6 +2,6 @@
 
 require_relative '../../spec_helper'
 
-describe ProviderFloatParam do
+describe Attr do
   # place your tests here
 end

@@ -2,10 +2,10 @@
 
 require_relative '../../../spec_helper'
 
-describe Admin::Views::AttrTypes::Index do
+describe Admin::Views::Attrs::Index do
   let(:exposures) { Hash[format: :html] }
-  let(:template)  { Hanami::View::Template.new('apps/admin/templates/attr_types/index.html.slim') }
-  let(:view)      { Admin::Views::AttrTypes::Index.new(template, exposures) }
+  let(:template)  { Hanami::View::Template.new('apps/admin/templates/attrs/index.html.slim') }
+  let(:view)      { Admin::Views::Attrs::Index.new(template, exposures) }
   let(:rendered)  { view.render }
 
   it 'exposes #format' do

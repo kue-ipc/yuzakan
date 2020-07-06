@@ -2,8 +2,8 @@
 
 require_relative '../../../spec_helper'
 
-describe Admin::Controllers::AttrTypes::Create do
-  let(:action) { Admin::Controllers::AttrTypes::Create.new }
+describe Admin::Controllers::Attrs::Create do
+  let(:action) { Admin::Controllers::Attrs::Create.new }
   let(:params) { {'REMOTE_ADDR' => '::1', 'rack.session' => session} }
   let(:session) { {user_id: user_id, access_time: Time.now} }
   let(:user_id) { Authenticate.new(client: '::1').call(auth).user&.id }

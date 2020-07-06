@@ -2,7 +2,7 @@
 
 module Admin
   module Views
-    module AttrTypes
+    module Attrs
       class Destroy
         include Admin::View
       end

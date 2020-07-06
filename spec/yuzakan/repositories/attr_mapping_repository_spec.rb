@@ -2,6 +2,6 @@
 
 require_relative '../../spec_helper'
 
-describe ProviderDatetimeParam do
+describe AttrMappingRepository do
   # place your tests here
 end

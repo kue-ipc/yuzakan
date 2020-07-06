@@ -8,6 +8,6 @@ table.table
       - providers.each do |provider|
         th = provider.display_name
   tbody
-    = form_attr_type(nil, providers)
-    - attr_types.each do |attr_type|
-      = form_attr_type(attr_type, providers)
+    = form_attr(nil, providers)
+    - attrs.each do |attr|
+      = form_attr(attr, providers)

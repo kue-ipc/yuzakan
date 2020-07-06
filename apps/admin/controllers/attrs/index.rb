@@ -2,15 +2,15 @@
 
 module Admin
   module Controllers
-    module AttrTypes
+    module Attrs
       class Index
         include Admin::Action
 
-        expose :attr_types
+        expose :attrs
         expose :providers
 
         def call(_params)
-          @attr_types = AttrTypeRepository.new.all_with_mappings
+          @attrs = AttrRepository.new.all_with_mappings
           @providers = ProviderRepository.new.all
         end
       end

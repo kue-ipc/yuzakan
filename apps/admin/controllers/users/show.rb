@@ -10,7 +10,7 @@ module Admin
         expose :user_attrs
         expose :providers
         expose :provider_datas
-        expose :attr_types
+        expose :attrs
 
         def call(params)
           @user = UserRepository.new.find(params[:id])
@@ -21,7 +21,7 @@ module Admin
           @user_attrs = result.attrs
           @provider_datas = result.datas.values
 
-          @attr_types = AttrTypeRepository.new.all
+          @attrs = AttrRepository.new.all
         end
       end
     end
