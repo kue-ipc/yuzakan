@@ -83,9 +83,16 @@ module Yuzakan
 
       def create(username, attrs, mappings, password)
         user = specialize_user(attrs.merge(name: username), mappings)
-        # set a dummy password
+        # set a password
         set_password(user, password)
         response = service.insert_user(user)
+        if ['/教員', '/職員'].include?(user.org_unit_path)
+          member = Google::Apis::AdminDirectoryV1::Member.new(
+            email: user.primary_email)
+          service.insert_member(
+            'classroom_teachers@' + @params[:domain],
+            member)
+        end
         response
       end
 
@@ -176,6 +183,7 @@ module Yuzakan
       private def scope
         [
           Google::Apis::AdminDirectoryV1::AUTH_ADMIN_DIRECTORY_USER,
+          Google::Apis::AdminDirectoryV1::AUTH_ADMIN_DIRECTORY_GROUP,
         ]
       end
 
