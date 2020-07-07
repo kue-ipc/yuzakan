@@ -208,7 +208,7 @@ module Yuzakan
           mappings.each do |mapping|
             name_list = mapping.name.split('.')
             value = name_list.inject(user) do |result, name|
-              result.__send__(name_json_to_ruby(name))
+              result&.__send__(name_json_to_ruby(name))
             end
             next if value.nil?
 

@@ -35,15 +35,19 @@ module Admin
           html.tr do
             div do
               form_for form do
+                td do
+                  text attr&.order
+                end
+
                 td class: 'table-primary' do
-                  text_field :name, class: 'form-control mb-1'
-                  text_field :display_name, class: 'form-control'
+                  text_field :name, class: 'form-control mb-1', required: true
+                  text_field :display_name, class: 'form-control', required: true
                 end
 
                 td class: 'table-primary' do
                   select :type, {
-                    '真偽値' => 'boolean',
                     '文字列' => 'string',
+                    '真偽値' => 'boolean',
                     '整数値' => 'integer',
                     '小数点数値' => 'float',
                     '日付' => 'date',
