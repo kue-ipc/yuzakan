@@ -12,22 +12,18 @@ module Web
 
           def call(_params)
             gsuite_repository = ProviderRepository.new.first_gsuite_with_params
-            gsuite_user = gsuite_repository.adapter.read(current_user.name)
-
-            if gsuite_user.nil?
-              flash[:failure] = 'アカウントが作成されていません。'
-              redirect_to routes.path(:gsuite)
-            end
-
-            unless gsuite_user[:locked]
-              flash[:failure] = 'アカウントはロックされていません。'
-              redirect_to routes.path(:gsuite)
-            end
 
             @password = SecureRandom.alphanumeric(16)
             @user = gsuite_repository.adapter.unlock(
               current_user.name,
               @password)
+
+            unless @user
+              flash[:failure] = 'ロック解除に失敗しました。'
+              redirect_to routes.path(:gsuite)
+            end
+
+            flash[:success] = 'Google アカウントのロックを解除し、パスワードをリセットしました。'
           end
         end
       end

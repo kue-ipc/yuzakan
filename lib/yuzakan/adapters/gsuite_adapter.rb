@@ -212,6 +212,10 @@ module Yuzakan
           end
         end
 
+        if user.is_admin?
+          data[:unmanagable] = true
+        end
+
         if mappings
           mappings.each do |mapping|
             name_list = mapping.name.split('.')

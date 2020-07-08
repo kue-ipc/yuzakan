@@ -32,11 +32,15 @@ hr
 
 h3 操作メニュー
 
-.menu.row
-  - available_operations.each do |operation|
-    = menu_link(**menu_operations[operation], url: '#' + operation.to_s)
+- if gsuite_user[:unmanagable]
+  p
+    | Google アカウントがG Suiteの管理者等に設定されているため、このシステムで操作することはできません。
+- else
+  .menu.row
+    - available_operations.each do |operation|
+      = menu_link(**menu_operations[operation], url: '#' + operation.to_s)
 
-= javascript 'submit_before_agreement', type: 'module', defer: true
-- available_operations.each do |operation|
-  = modal operation, modal_forms[operation], rules: modal_rules[operation], \
-          **modal_options[operation]
+  = javascript 'submit_before_agreement', type: 'module', defer: true
+  - available_operations.each do |operation|
+    = modal operation, modal_forms[operation], rules: modal_rules[operation], \
+            **modal_options[operation]
