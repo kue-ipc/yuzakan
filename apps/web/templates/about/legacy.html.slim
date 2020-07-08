@@ -1,5 +1,6 @@
-h1 レガシー版について
-h2 レガシー版とは
+h2 レガシー版について
+
+h3 レガシー版とは
 p
   |
     このシステムは最新のWeb技術を数多く使用しており、
@@ -11,7 +12,7 @@ p
     レガシー版ではアイコン等が表示されず、機能も制限されます。
     通常版で利用したい場合は、最新のモダンブラウザーを使用し、
     JavaScriptを有効にしてください。
-h2 サポートしているブラウザー (モダンブラウザー)
+h3 サポートしているブラウザー (モダンブラウザー)
 p
   |
     下記ブラウザーの最新版を使用してください。
@@ -26,7 +27,7 @@ ul
       - if browser[:note]&.size&.positive?
         small.text-muted<
           = browser[:note]
-h2 サポートしていないブラウザー (レガシーブラウザー)
+h3 サポートしていないブラウザー (レガシーブラウザー)
 p
   |
     下記ブラウザは、機能が不足している、または、
@@ -38,7 +39,7 @@ ul
   - unsupported_browsers.each do |browser|
     li
       = browser
-h2 Microsoft Edgeのバージョンについて
+h3 Microsoft Edgeのバージョンについて
 p
   |
     Microsoft EdgeにはChromiumベースの新バージョンとEdgeHTMLベースの

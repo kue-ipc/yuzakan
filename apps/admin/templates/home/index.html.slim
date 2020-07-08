@@ -13,14 +13,14 @@ html lang="ja"
     .jumbotron.jumbotron-fluid.mb-2
       .container-fluid
         h1.text-center.display-5
-          = current_config.title
+          => current_config.title
           span.badge.badge-secondary 管理者版
         p.lead.text-center.smaller
           | アカウント管理システム
         hr.my-2
         p
           | ここは管理者版です。
-          | 管理者のみ利用できます。
+          | 管理者のみログインできます。一般利用者はログインできません。
     .container-fluid
       = render partial: 'partial/check_browser'
       = render partial: 'partial/alert'

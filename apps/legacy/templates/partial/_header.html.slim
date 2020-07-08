@@ -1,12 +1,14 @@
 header
   nav.navbar.navbar-expand-md.navbar-dark.bg-dark
     = link_to current_config&.title, routes.path(:root), class: 'navbar-brand'
+    - if current_user
+      ul.navbar-nav.mr-auto
+        li.nav-item
+          = link_to 'ホーム', routes.dashboard_path, class: 'nav-link'
+        li.nav-item
+          = link_to 'パスワード変更', routes.edit_user_password_path, class: 'nav-link'
+
     span.badge.badge-secondary レガシー版
-    ul.navbar-nav.mr-auto
-      li.nav-item
-        = link_to 'ホーム', routes.dashboard_path, class: 'nav-link'
-      li.nav-item
-        = link_to 'パスワード変更', routes.edit_user_password_path, class: 'nav-link'
     - if current_user
       span.navbar-text.px-2
         = h(current_user.display_name + ' (' + current_user.name + ')')
