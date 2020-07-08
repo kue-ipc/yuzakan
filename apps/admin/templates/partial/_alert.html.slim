@@ -3,17 +3,17 @@
   - level_colors.each do |level, color|
     - if flash[level]
       div class="#{alert_class} alert-#{color}" role="alert"
+        = h(flash[level])
         button.close type="button" data-dismiss="alert" aria-label="閉じる"
           span aria-hidden="true"
             i.fas.fa-times
-        = h(flash[level])
 
   - msg_errors.each do |msg|
     div class="#{alert_class} alert-#{level_colors[:error]}" role="alert"
+      = h(msg)
       button.close type="button" data-dismiss="alert" aria-label="閉じる"
         span aria-hidden="true"
           i.fas.fa-times
-      = h(msg)
 
   script#param-errors type="application/json"
     = hj(param_errors.to_json)

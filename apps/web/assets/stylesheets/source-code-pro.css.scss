@@ -1,0 +1,19 @@
+// Source Code Pro web fonts
+// regular italic bold italic+bold only
+$source-code-pro-fonts: (
+  "Regular": ("weight": 400, "style": normal),
+  "It":      ("weight": 400, "style": italic),
+  "Bold":    ("weight": 700, "style": normal),
+  "BoldIt":  ("weight": 700, "style": italic));
+  
+@each $name, $attr in $source-code-pro-fonts {
+  @font-face {
+    font-family: "Source Code Pro";
+    font-stretch: normal;
+    @each $key, $value in $attr {
+      font-#{$key}: $value;
+    }
+    src: url("./SourceCodePro-#{$name}.woff2") format("woff2"),
+         url("./SourceCodePro-#{$name}.woff") format("woff");
+  }
+}

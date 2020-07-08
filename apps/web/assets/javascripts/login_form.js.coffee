@@ -16,7 +16,7 @@ loginSet = (formNode, {successLink = '/'}) ->
     successLink: successLink
     reloadTime: 0
 
-  formNode.onsubmit = (e) ->
+  formNode.addEventListener 'submit', (e) ->
     (->
       try
         {result, messages} = await webPost.submitPromise()
@@ -53,6 +53,7 @@ loginSet = (formNode, {successLink = '/'}) ->
       disableSubmit()
 
   for input in inputTextNodes
+    input.disabled = false
     input.addEventListener 'keyup', checkValid
 
 export default loginForm = ({loginNode, successLink}) ->

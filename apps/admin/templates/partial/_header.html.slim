@@ -1,5 +1,5 @@
 header
-  nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
+  nav.navbar.navbar-expand-lg.navbar-dark.bg-dark-red
     = link_to current_config&.title, routes.path(:root), class: 'navbar-brand'
     button.navbar-toggler type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
       span.navbar-toggler-icon
@@ -30,7 +30,7 @@ header
         = form_for :session, routes.session_path, method: :delete, \
                    class: 'form-inline my-2 my-md-0' do
           - submit 'ログアウト', \
-                   class: 'btn btn-outline-secondary btn-sm my-2 my-sm-0'
+                   class: 'btn btn-outline-light btn-sm my-2 my-sm-0'
       - else
         span.navbar-text
           = '未ログイン'

@@ -38,11 +38,6 @@
   resolved "https://registry.yarnpkg.com/@hyperapp/events/-/events-0.0.4.tgz#dfeae0f0a0ad1b414034da5f7057611aa30cbfca"
   integrity sha512-3X8D/ZsuLDu5GjVMhyGv4Hy16FsY1uPNln90J19MaTd22yvUyIqjhDj4J+1OK2cteFPAZPjfmf6lplJA+K+J3A==
 
-"@hyperapp/html@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@hyperapp/html/-/html-1.1.1.tgz#8040666e8f935eed95f2034f443cc8768866d992"
-  integrity sha512-jRlz/ED0y/pAseqAwKlJxdy78Lf7AEeykOGeYxnGE1TY0tF4SgVW53Sh72QJoGWZmrgtcHN6wKPZAmEenDCsgQ==
-
 "@types/estree@*":
   version "0.0.45"
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.45.tgz#e9387572998e5ecdac221950dab3e8c3b16af884"
@@ -202,6 +197,11 @@ shorter-js@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/shorter-js/-/shorter-js-0.1.0.tgz#a9bb528cf240710b899b3d4b38662744eac2b67a"
   integrity sha512-JI9+jaV5+9+Zq61ccs1aQ8WWvDx9jQLXgfRt8WQh5nhVw+BGlqORSHJQKOraQ0qQ4NfbYvuwlRPgxW5VXd8n3w==
+
+source-code-pro@^2.30.2:
+  version "2.30.2"
+  resolved "https://registry.yarnpkg.com/source-code-pro/-/source-code-pro-2.30.2.tgz#1577e4bc93d2399d271d00f8426a8cd1b7f86da2"
+  integrity sha512-KctdxE5xBzf9wjYjTO9JWEQ1F2tdAR+yloz1rUmP5n0p6wEXB33B0myGTz49K6I3/EQpnJ9zot10r9ThQ+GARg==
 
 sourcemap-codec@^1.4.4:
   version "1.4.8"

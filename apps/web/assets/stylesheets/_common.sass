@@ -20,6 +20,14 @@ a.card
     background-color: $gray-700 !important
     color: $white !important
 
+@each $color, $value in $theme-colors
+  a.card.border-#{$color}
+    color: $black
+
+    &:hover
+      text-decoration: none
+      background-color: darken($value, 15%) !important
+      color: $white !important
 
 a.link-user
   color: $gray-500
