@@ -1,46 +1,9 @@
 @charset "utf-8"
 
 @import "../../../web/assets/stylesheets/font"
+@import "colors"
 
 @import "../../../../node_modules/bootstrap/scss/functions"
-
-// sepia colors
-// https://www.w3.org/TR/filter-effects-1/#sepiaEquivalent
-
-@function sepia($color)
-  @return rgb(0.393 * red($color) + 0.769 * blue($color) + 0.189 * green($color), 0.349 * red($color) + 0.686 * blue($color) + 0.168 * green($color), 0.272 * red($color) + 0.534 * blue($color) + 0.131 * green($color))
-
-$white:    sepia(#fff)
-$gray-100: sepia(#f8f9fa)
-$gray-200: sepia(#e9ecef)
-$gray-300: sepia(#dee2e6)
-$gray-400: sepia(#ced4da)
-$gray-500: sepia(#adb5bd)
-$gray-600: sepia(#6c757d)
-$gray-700: sepia(#495057)
-$gray-800: sepia(#343a40)
-$gray-900: sepia(#212529)
-$black:    sepia(#000)
-
-$blue:    sepia(#007bff)
-$indigo:  sepia(#6610f2)
-$purple:  sepia(#6f42c1)
-$pink:    sepia(#e83e8c)
-$red:     sepia(#dc3545)
-$orange:  sepia(#fd7e14)
-$yellow:  sepia(#ffc107)
-$green:   sepia(#28a745)
-$teal:    sepia(#20c997)
-$cyan:    sepia(#17a2b8)
-
-$primary:       darken($blue, 25%)
-$secondary:     $gray-600
-$success:       $green
-$info:          $cyan
-$warning:       $yellow
-$danger:        $red
-$light:         $gray-100
-$dark:          $gray-800
 
 $component-active-bg: $gray-800
 $input-border-color: $gray-500

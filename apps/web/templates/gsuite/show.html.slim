@@ -1,4 +1,4 @@
-h2 G Suite
+h2 = gsuite_provider.display_name
 
 h3 現在の状態
 
@@ -21,6 +21,7 @@ h3 現在の状態
       | 登録されたアカウントの確認、パスワード変更、2段階認証の設定を行う場合は、
       =<> link_to 'https://myaccount.google.com/', target: '_blank' do
         - text 'Google アカウント'
+        - i class: 'fas fa-external-link-alt'
       | へアクセスしてください。
     p パスワードを忘れてしまった場合は、「パスワードリセット」を行ってください。
 - else

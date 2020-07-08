@@ -1,0 +1,45 @@
+// legacy sepia colors
+
+@import "../../../web/assets/stylesheets/colors"
+
+// sepia colors
+// https://www.w3.org/TR/filter-effects-1/#sepiaEquivalent
+
+@function sepia($color)
+  @return rgb(0.393 * red($color) + 0.769 * blue($color) + 0.189 * green($color), 0.349 * red($color) + 0.686 * blue($color) + 0.168 * green($color), 0.272 * red($color) + 0.534 * blue($color) + 0.131 * green($color))
+
+@function sepia-dark($color)
+  @return sepia(darken($color, 15%))
+
+$white:    sepia($white)
+$gray-100: sepia($gray-100)
+$gray-200: sepia($gray-200)
+$gray-300: sepia($gray-300)
+$gray-400: sepia($gray-400)
+$gray-500: sepia($gray-500)
+$gray-600: sepia($gray-600)
+$gray-700: sepia($gray-700)
+$gray-800: sepia($gray-800)
+$gray-900: sepia($gray-900)
+$black:    sepia($black)
+
+$blue:    sepia-dark($blue)
+$indigo:  sepia-dark($indigo)
+$purple:  sepia-dark($purple)
+$pink:    sepia-dark($pink)
+$red:     sepia-dark($red)
+$orange:  sepia-dark($orange)
+$yellow:  sepia-dark($yellow)
+$green:   sepia-dark($green)
+$teal:    sepia-dark($teal)
+$cyan:    sepia-dark($cyan)
+
+// $primary:       darken($blue, 25%)
+// $secondary:     $gray-600
+// $success:       $green
+// $info:          $cyan
+// $warning:       $yellow
+// $danger:        $red
+// $light:         $gray-100
+// $dark:          $gray-800
+
