@@ -6,6 +6,11 @@ require 'rake/testtask'
 require 'rake/clean'
 require 'shell'
 
+CLEAN << 'vendor/assets'
+
+CLOBBER << 'node_modules'
+CLOBBER << 'rollup.config.js'
+
 Rake::TestTask.new do |t|
   t.pattern = 'spec/**/*_spec.rb'
   t.libs << 'spec'
@@ -17,7 +22,7 @@ task spec: :test
 
 namespace :vendor do
   rule %r{^node_modules/.bin/.*$} do
-    sh 'yarn install'
+    sh 'npm install'
   end
 
   rule '.js' => ['.coffee', 'node_modules/.bin/coffee'] do |t|
