@@ -164,7 +164,6 @@ module Yuzakan
         next_page_token = nil
         # 最大でも20回で10,000ユーザーしか取得できない
         20.times do
-          pp next_page_token
           response = service.list_users(domain: @params[:domain],
                                         max_results: 500,
                                         page_token: next_page_token)
