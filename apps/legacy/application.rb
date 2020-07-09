@@ -76,6 +76,9 @@ module Legacy
     end
 
     configure :production do
+      # for debug
+      handle_exceptions false
+
       scheme 'https'
       host   ENV['HOST']
       port   443
