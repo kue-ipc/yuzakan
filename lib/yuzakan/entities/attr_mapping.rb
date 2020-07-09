@@ -29,6 +29,10 @@ class AttrMapping < Hanami::Entity
         Date.new(1970, 1, 1) + value.to_i
       when 'path'
         value.sub(%r{^/+}, '')
+      when 'e2j'
+        translate_e2j(value)
+      when 'j2e'
+        translate_j2e(value)
       else
         value
       end
@@ -45,8 +49,32 @@ class AttrMapping < Hanami::Entity
       (Date.new(1970, 1, 1) - value.to_date).to_i
     when 'path'
       '/' + value
+    when 'e2j'
+      translate_j2e(value)
+    when 'j2e'
+      translate_e2j(value)
     else
       value
     end
+  end
+
+  E2J_LIST = [
+    ['student', '学生'],
+    ['faculty', '教員'],
+    ['staff', '職員'],
+    ['member', '構成員'],
+    ['guest', 'ゲスト'],
+    ['organization', '組織'],
+  ]
+  E2J_DICT = E2J_LIST.to_h
+  J2E_DICT = E2J_LIST.map(&:reverse).to_h
+
+
+  def translate_e2j(value)
+    E2J_DICT[value] || value
+  end
+
+  def translate_j2e(value)
+    J2E_DICT[value] || value
   end
 end

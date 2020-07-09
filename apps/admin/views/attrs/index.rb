@@ -82,6 +82,8 @@ module Admin
                       'POSIX時間' => 'posix_time',
                       'POSIX日付' => 'posix_date',
                       'PATH(パス)' => 'path',
+                      '英日' => 'e2j',
+                      '日英' => 'j2e',
                     }, class: 'form-control mb-1'
                   end
                 end
