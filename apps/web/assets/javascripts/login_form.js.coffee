@@ -17,11 +17,12 @@ loginSet = (formNode, {successLink = '/'}) ->
     reloadTime: 0
 
   formNode.addEventListener 'submit', (e) ->
+    e.preventDefault()
     (->
       try
         {result, messages} = await webPost.submitPromise()
         if result == 'success'
-          location.reload()
+          location.href = successLink
         else
           for input in inputTextNodes
             input.value = ''
@@ -30,7 +31,6 @@ loginSet = (formNode, {successLink = '/'}) ->
         console.log(error)
         # do nothing
     )()
-    false
 
   submitButtonSelector = 'button[type="submit"]'
   submitButtonNodes = formNode.querySelectorAll(submitButtonSelector)
