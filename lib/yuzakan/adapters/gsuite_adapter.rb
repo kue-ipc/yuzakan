@@ -160,12 +160,23 @@ module Yuzakan
       end
 
       def list
-        response = service.list_users(domain: @params[:domain])
-        response.users
-          .map(&:primary_email)
-          .map { |email| email.split('@', 2) }
-          .select { |_name, domain| domain == @params[:domain] }
-          .map(&:first)
+        users = []
+        next_page_token = nil
+        # 最大でも20回で10,000ユーザーしか取得できない
+        20.times do
+          pp next_page_token
+          response = service.list_users(domain: @params[:domain],
+                                        max_results: 500,
+                                        page_token: next_page_token)
+          users.concat(response.users
+            .map(&:primary_email)
+            .map { |email| email.split('@', 2) }
+            .select { |_name, domain| domain == @params[:domain] }
+            .map(&:first))
+          next_page_token = response.next_page_token
+          break unless next_page_token
+        end
+        users
       end
 
       private def service
