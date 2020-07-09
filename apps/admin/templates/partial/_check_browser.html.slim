@@ -11,5 +11,5 @@
     .alert.alert-warning role="alert"
       | お使いのレガシーブラウザーは未サポートです。
       | 別のモダンブラウザーを使用してください。
-  = javascript '../legacy_browser', nomodule: true, async: true
-  = javascript '../modern_browser', type: 'module', async: true
+  = javascript 'legacy_browser', nomodule: true, async: true
+  = javascript 'modern_browser', type: 'module', async: true
