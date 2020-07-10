@@ -301,8 +301,9 @@ startSubmit = (state) => {
 
 stopSubmit = (state, messages) =>
   for error in messages['errors']
-    for name, message of error
-        state = passwordInputs[camelize(name)].setInvalid(state, message)
+    if typeof error == 'object'
+      for name, message of error
+          state = passwordInputs[camelize(name)].setInvalid(state, message)
   {
     state...
     submitting: false
