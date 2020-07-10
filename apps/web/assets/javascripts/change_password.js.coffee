@@ -224,7 +224,7 @@ init =
 checkPassword = (state) =>
   newState = {
     state...
-    currentPassword: {state.currentpassword...}
+    passwordCurrent: {state.passwordCurrent...}
     password: {state.password...}
     passwordConfirmation: {state.passwordConfirmation...}
   }
@@ -300,8 +300,9 @@ startSubmit = (state) => {
 }
 
 stopSubmit = (state, messages) =>
-  for name, message of messages['param_errors']
-      state = passwordInputs[camelize(name)].setInvalid(state, message)
+  for error in messages['errors']
+    for name, message of error
+        state = passwordInputs[camelize(name)].setInvalid(state, message)
   {
     state...
     submitting: false

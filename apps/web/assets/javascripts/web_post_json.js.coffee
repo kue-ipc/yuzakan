@@ -97,7 +97,7 @@ export default class WebPostJson
           successLink: null
           messages: [
             data.messages.failure
-            data.messages.errors...
+            (data.messages.errors ? [])...
             @messages.failure
           ]
         return data
@@ -197,5 +197,5 @@ StatusIcon = ({status}) ->
 
 MessageList = ({messages}) ->
   messages = [messages] unless messages instanceof Array
-  h 'div', {}, messages.filter((x) -> x).map (msg) ->
+  h 'div', {}, messages.filter((x) -> typeof x == 'string').map (msg) ->
     h 'div', {}, msg
