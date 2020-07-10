@@ -7,8 +7,12 @@ header
           = link_to 'ホーム', routes.dashboard_path, class: 'nav-link'
         li.nav-item
           = link_to 'パスワード変更', routes.edit_user_password_path, class: 'nav-link'
+    - else
+      ul.navbar-nav.mr-auto
+        li.nav-item
+          = link_to 'トップ', routes.path(:root), class: 'nav-link'
 
-    span.badge.badge-secondary レガシー版
+    span.badge.badge-secondary.mx-2 レガシー版
     - if current_user
       span.navbar-text.px-2
         = h(current_user.display_name + ' (' + current_user.name + ')')

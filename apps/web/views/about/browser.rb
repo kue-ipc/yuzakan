@@ -1,9 +1,7 @@
-# frozen_string_literal: true
-
 module Web
   module Views
     module About
-      class Legacy
+      class Browser
         include Web::View
         layout :about
 

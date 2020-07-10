@@ -1,0 +1,17 @@
+doctype html
+html lang="ja"
+  head
+    meta charset="utf-8"
+    meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    title
+      = current_config&.title
+    = favicon
+    = stylesheet 'application'
+  body
+    = render partial: 'partial/header'
+    main.container-fluid.mt-2
+      = yield
+    footer
+      hr
+        p.text-center
+          = link_to 'レガシー版のトップに戻る', routes.path(:root)

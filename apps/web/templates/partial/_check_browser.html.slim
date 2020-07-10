@@ -8,13 +8,15 @@
   /[if IE]
     .alert.alert-warning role="alert"
       | お使いのInternet Explorerは未サポートです。
-      | 別のモダンブラウザーを使用する、または、
+      = link_to 'モダンブラウザー', routes.path(:about_browser)
+      | を使用してください。
       =<> link_to 'レガシー版', Legacy.routes.path(:root)
       | を使用してください。
   #legacy-browser.d-none
     .alert.alert-warning role="alert"
       | お使いのレガシーブラウザーは未サポートです。
-      | 別のモダンブラウザーを使用する、または、
+      = link_to 'モダンブラウザー', routes.path(:about_browser)
+      | を使用する、または、
       =<> link_to 'レガシー版', Legacy.routes.path(:root)
       | を使用してください。
   = javascript 'legacy_browser', nomodule: true, async: true

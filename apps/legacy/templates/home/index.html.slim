@@ -23,7 +23,7 @@ html lang="ja"
           = link_to '通常版', Web.routes.path(:root)
           | をご使用ください。
           | レガシー版の詳細は
-          = link_to 'レガシー版について', Web.routes.about_legacy_path
+          = link_to 'レガシー版について', Legacy.routes.path(:about)
           | を確認してください。
     .container-fluid
       = render partial: 'partial/alert'

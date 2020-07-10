@@ -1,10 +1,8 @@
-# frozen_string_literal: true
-
-module Web
+module Legacy
   module Controllers
     module About
-      class Legacy
-        include Web::Action
+      class Index
+        include Legacy::Action
 
         def call(params)
         end

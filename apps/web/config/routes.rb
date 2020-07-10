@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-# Configure your routes here
-# See: http://hanamirb.org/guides/routing/overview/
-#
-# Example:
-# get '/hello', to: ->(env) { [200, {}, ['Hello from Hanami!']] }
 root to: 'home#index'
 get '/dashboard', to: 'dashboard#index', as: :dashboard
 
@@ -18,7 +13,7 @@ resource 'user', only: [:show] do
 end
 
 get '/about', to: 'about#index', as: :about
-get '/about/legacy', to: 'about#legacy', as: :about_legacy
+get '/about/browser', to: 'about#browser', as: :about_browser
 
 resource 'gsuite', only: [:show, :create, :destroy] do
   resource 'password', only: [:create]

@@ -15,7 +15,8 @@ module Legacy
 
       routes 'config/routes'
 
-      sessions :cookie, secret: ENV['WEB_SESSIONS_SECRET']
+      sessions :cookie, secret: ENV['WEB_SESSIONS_SECRET'],
+                        key: 'rack.session.legacy'
 
       layout :application
 
