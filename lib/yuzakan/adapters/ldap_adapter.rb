@@ -239,29 +239,34 @@ module Yuzakan
             ]
           end
 
-        operations <<
-          if user[:sambantpassword]&.first
-            [
-              :replace,
-              :sambantpassword,
-              [generate_ntpassword(password)],
-            ]
-          else
-            [
-              :add,
-              :sambantpassword,
-              generate_ntpassword(password),
-            ]
-          end
+        if @params[:samba_password]
+          operations <<
+            if user[:sambantpassword]&.first
+              [
+                :replace,
+                :sambantpassword,
+                [generate_ntpassword(password)],
+              ]
+            else
+              [
+                :add,
+                :sambantpassword,
+                generate_ntpassword(password),
+              ]
+            end
 
-        if user[:sambalmpassword]&.first
-          operations << [:delete, :sambalmpassword, nil]
+          if user[:sambalmpassword]&.first
+            operations << [:delete, :sambalmpassword, nil]
+          end
         end
 
-        ldap.modify(
+        result = ldap.modify(
           dn: user.dn,
           operations: operations)
-        true
+        unless result
+          raise ldap.get_operation_result.error_message
+        end
+        result
       end
 
       def list
