@@ -29,7 +29,7 @@ html lang="ja"
         .alert.alert-success role="alert"
           = h(msg)
 
-      h1 初期セットアップ
+      h2 初期セットアップ
       == form_for :setup, routes.path(:setup) do
         - fields_for :config do
           - div class: 'form-group' do
