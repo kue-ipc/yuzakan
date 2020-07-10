@@ -93,7 +93,7 @@ module Yuzakan
             'classroom_teachers@' + @params[:domain],
             member)
         end
-        response
+        normalize_user(response, mappings)
       end
 
       def read(username, mappings = nil)

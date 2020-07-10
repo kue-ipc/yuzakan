@@ -23,7 +23,7 @@ module Web
               redirect_to routes.path(:gsuite)
             end
 
-            flash[:success] = 'Google アカウントのパスワードをリセットしました。'
+            flash[:success] = 'Google アカウント のパスワードをリセットしました。'
           end
         end
       end

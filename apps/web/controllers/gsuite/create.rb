@@ -41,6 +41,13 @@ module Web
             AttrMappingRepository.new
               .by_provider_with_attr(gsuite_repository.id),
             @password)
+
+          unless @user
+            flash[:failure] = 'Google アカウント の作成に失敗しました。'
+            redirect_to routes.path(:gsuite)
+          end
+
+          flash[:success] = 'Google アカウント を作成しました。'
         end
       end
     end

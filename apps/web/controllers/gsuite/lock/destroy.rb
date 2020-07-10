@@ -23,7 +23,7 @@ module Web
               redirect_to routes.path(:gsuite)
             end
 
-            flash[:success] = 'Google アカウントのロックを解除し、パスワードをリセットしました。'
+            flash[:success] = 'Google アカウント のロックを解除し、パスワードをリセットしました。'
           end
         end
       end
