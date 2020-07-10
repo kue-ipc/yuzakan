@@ -38,6 +38,7 @@ class ChangePassword
   def call(params)
     activity_params = {
       user: @user,
+      client: @client,
       type: 'user',
       target: @user.name,
       action: 'change_password',
