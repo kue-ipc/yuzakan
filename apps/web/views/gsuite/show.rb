@@ -39,7 +39,7 @@ module Web
             },
             gsuite_password_create: {
               name: 'パスワードリセット',
-              description: 'Google アカウントのパスワードをリセットします。同時に二段階認証設定もリセットします。',
+              description: 'Google アカウントのパスワードをリセットします。',
               color: 'warning',
               type: :modal,
             },

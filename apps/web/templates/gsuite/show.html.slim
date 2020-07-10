@@ -4,7 +4,7 @@ h3 現在の状態
 
 - if gsuite_user
   p
-    | Google アカウント名:
+    | Google アカウント:
     =< gsuite_user[:email]
 
   - if gsuite_user[:unusable]
@@ -31,10 +31,12 @@ h3 現在の状態
 hr
 
 h3 操作メニュー
-
-- if gsuite_user[:unmanagable]
+- if gsuite_user&.[](:unmanagable)
   p
-    | Google アカウントがG Suiteの管理者等に設定されているため、このシステムで操作することはできません。
+    | あなたの Google アカウント は G Suite の管理者に設定されているため、このシステムで操作することはできません。
+- if gsuite_user.nil? && !creatable
+  p
+    | 学生、教員、職員以外は Google アカウントを作成できません。
 - else
   .menu.row
     - available_operations.each do |operation|
