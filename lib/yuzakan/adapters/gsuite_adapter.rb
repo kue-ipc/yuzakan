@@ -178,6 +178,33 @@ module Yuzakan
         users
       end
 
+      def user_verification_codes(username)
+        user = read(username)
+        unless user[:mfa]
+          # 2段階認証が有効でないユーザー
+          return
+        end
+
+        codes = []
+        result = service.list_verification_codes(email)
+        result.items&.each do |item|
+          next if item.verification_code.empty?
+
+          codes << item.verification_code
+        end
+
+        if codes.empty?
+          service.generate_verification_code(email)
+          result = service.list_verification_codes(email)
+          result.items&.each do |item|
+            next if item.verification_code.empty?
+
+            codes << item.verification_code
+          end
+        end
+        codes
+      end
+
       private def service
         @service ||= Google::Apis::AdminDirectoryV1::DirectoryService.new
           .tap { |sv| sv.authorization = authorizer }
@@ -194,6 +221,7 @@ module Yuzakan
         [
           Google::Apis::AdminDirectoryV1::AUTH_ADMIN_DIRECTORY_USER,
           Google::Apis::AdminDirectoryV1::AUTH_ADMIN_DIRECTORY_GROUP,
+          Google::Apis::AdminDirectoryV1::AUTH_ADMIN_DIRECTORY_USER_SECURITY,
         ]
       end
 
@@ -216,15 +244,17 @@ module Yuzakan
         if user.suspended?
           case user.suspension_reason
           when 'ADMIN'
-            data[:locked] = true
+            data[:state] = :locked
           when 'ABUSE', 'UNDER13'
-            data[:unusable] = true
+            data[:state] = :disabled
           end
         end
 
-        if user.is_admin?
-          data[:unmanagable] = true
-        end
+        data[:admin] = user.is_admin?
+
+        data[:state] = :available
+
+        data[:mfa] = user.is_enrolled_in2_sv?
 
         if mappings
           mappings.each do |mapping|
