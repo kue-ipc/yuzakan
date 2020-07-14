@@ -72,7 +72,7 @@ module Yuzakan
 
       def initialize(params)
         super
-        @json_key_io = StringIO.new(@params[:json_key])
+        @json_key_io = StringIO.new(@params[:json_key]) if @params[:json_key]
       end
 
       def check

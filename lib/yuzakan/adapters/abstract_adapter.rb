@@ -2,10 +2,24 @@
 
 # adapter
 #
+# initialize(params)
+# check -> true or false
+#
+# 
+#
+# attrs:
+#   name: = username
+#   display_name: display name
+#   email: mail address
+#   locked: true or false/nil
+#   unusable: true or false/nil
+#   unmanagable: true or false/nil
+#   admin: true or false/nil
+#
 # CRUD
-# create(username, attrs) -> user or nil [writable]
-# read(username) -> user or nil [readable]
-# update(username, attrs) -> user or nil [writeable]
+# create(username, attrs, mappings = nil) -> user or nil [writable]
+# read(username, mappings = nil) -> user or nil [readable]
+# update(username, attrs, mappings = nil) -> user or nil [writeable]
 # delete(username) -> user or nil [writable]
 #
 # auth(username, password) -> user or nil [authenticatable]
@@ -16,7 +30,21 @@
 # locked?(username) -> true or false [lockable]
 #
 # list -> usernames [readable]
-
+#
+# group_create(groupname, attrs) -> group or nil [writable]
+# group_read(groupname) -> group or nil [readable]
+# group_update(groupname, attrs) -> group or nil [writeable]
+# group_delete(groupname) -> group or nil [writable]
+# group_list
+#
+# member_list(groupname)
+# member_insert(groupname, username)
+# member_delete(groupname, username)
+#
+# 
+#
+# list -> usernames [readable]
+#
 # params is Hash Array
 # - name: 識別名
 # - label: 表示名
@@ -65,48 +93,39 @@ module Yuzakan
       end
 
       def self.decrypt(data)
-        decrypted_data = @params
-          .select { |param| param[:encrypted] }
-          .map do |param|
-            name = param[:name].intern
-            decrypt_opts =
-              case param[:type]
-              when :string, :text
-                {}
-              when :file
-                {text: false}
-              end
-            decrypt = Decrypt.new(**decrypt_opts)
-            result = decrypt.call(encrypted: data[name])
+        data.map do |key, value|
+          param = @name_param_map[key]
+          if param[:encrypted]
+            result = Decrypt.new.call(encrypted: value)
             raise Yuzakan::Adapters::Error, result.errors if result.failure?
 
-            [name, result.data]
-          end.to_h
-        data.merge(decrypted_data)
+            [key, result.data]
+          else
+            [key, value]
+          end
+        end.to_h
       end
 
       def self.encrypt(data)
-        encrypted_data = @params
-          .select { |param| param[:encrypted] }
-          .map do |param|
-            name = param[:name].intern
+        data.map do |key, value|
+          param = @name_param_map[key]
+          if param[:encrypted]
             encrypt_opts =
               case param[:type]
               when :string
                 {max: 4096}
               when :text
                 {max: 0}
-              when :file
-                {max: 0, text: false}
               end
             encrypt = Encrypt.new(**encrypt_opts)
-            result = encrypt.call(data: data[name])
+            result = encrypt.call(data: value)
             raise Yuzakan::Adapters::Error, result.errors if result.failure?
 
-            [name, result.encrypted]
-          end.to_h
-
-        data.merge(encrypted_data)
+            [key, result.encrypted]
+          else
+            [key, value]
+          end
+        end.to_h
       end
 
       def initialize(params)
