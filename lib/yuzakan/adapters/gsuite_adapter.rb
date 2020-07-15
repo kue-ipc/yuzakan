@@ -185,24 +185,9 @@ module Yuzakan
           return
         end
 
-        codes = []
-        result = service.list_verification_codes(email)
-        result.items&.each do |item|
-          next if item.verification_code.empty?
-
-          codes << item.verification_code
-        end
-
-        if codes.empty?
-          service.generate_verification_code(email)
-          result = service.list_verification_codes(email)
-          result.items&.each do |item|
-            next if item.verification_code.empty?
-
-            codes << item.verification_code
-          end
-        end
-        codes
+        service.generate_verification_code(user[:email])
+        result = service.list_verification_codes(user[:email])
+        result.items&.map(&:verification_code)
       end
 
       private def service
