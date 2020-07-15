@@ -1,36 +1,46 @@
-h2 ゆざかん (Yuzakan)
+h2 システム情報
 
-h3 ゆざかんとは？
+- if current_config&.contact_name&.size&.positive?
+  h3 管理者の連絡先
+  .row.my-1
+    div class=col_name
+      | 管理者:
+    div class=col_value
+      = current_config&.contact_name
+  - if current_config&.contact_email&.size&.positive?
+    .row.my-1
+      div class=col_name
+        | メールアドレス:
+      div class=col_value
+        = link_to current_config&.contact_email, "mailto:#{current_config&.contact_email}"
+  - if current_config&.contact_phone&.size&.positive?
+    .row.my-1
+      div class=col_name
+        | 電話番号:
+      div class=col_value
+        = current_config&.contact_phone
+  hr
+
+h3 ゆざかん (Yuzakan)
+
 p
-  | 日本国内の大学向けに作成されたアカウント(ユーザー)管理システムです。
+  | このシステムは
+  strong<> ゆざかん(Yuzakan)
+  | を使用しています。
+  | ゆざかんは日本国内の大学向けに作成されたアカウント管理システムです。
 
-h3 ライセンス
+h4 バージョン
+
+p 
+  | Yuzakan
+  =< Yuzakan::VERSION
+
+h4 ライセンス
 pre.border.rounded.bg-light.p-2
   code
-    |
-      MIT License
+    = IO.read(Hanami.root / 'LICENSE')
 
-      Copyright (c) 2019-2020 Kyoto University of Education
-
-      Permission is hereby granted, free of charge, to any person obtaining a copy
-      of this software and associated documentation files (the "Software"), to deal
-      in the Software without restriction, including without limitation the rights
-      to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-      copies of the Software, and to permit persons to whom the Software is
-      furnished to do so, subject to the following conditions:
-
-      The above copyright notice and this permission notice shall be included in all
-      copies or substantial portions of the Software.
-
-      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-      IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-      FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-      AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-      LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-      OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-      SOFTWARE.
-
-h3 アプリケーションの構成
+h4 アプリケーションの構成
 p
   | このWebアプリケーションは
   =<> link_to 'Ruby', 'https://www.ruby-lang.org/'
@@ -38,11 +48,13 @@ p
   =<> link_to 'Hanami', 'https://hanamirb.org/'
   | で作成されました。
 
-h3 ソースコードの入手方法
+h4 ソースコードの入手方法
 p
   | 管理者にお問い合わせください。
 
+
 /
+  hr
   h3 テスト
   p.text-serif serifの文: abcde 01234 いろはにほ 亜院押魁粥
   p sans-serifの文(通常): abcde 01234 いろはにほ 亜院押魁粥
