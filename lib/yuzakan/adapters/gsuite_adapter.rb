@@ -239,7 +239,14 @@ module Yuzakan
 
         data[:state] = :available
 
-        data[:mfa] = user.is_enrolled_in2_sv?
+        data[:mfa] =
+          if user.is_enforced_in2_sv?
+            :enforced
+          elsif user.is_enrolled_in2_sv?
+            :enabled
+          else
+            nil
+          end
 
         if mappings
           mappings.each do |mapping|
