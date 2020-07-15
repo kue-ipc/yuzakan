@@ -95,7 +95,7 @@ module Yuzakan
       def self.decrypt(data)
         data.map do |key, value|
           param = @name_param_map[key]
-          if param[:encrypted]
+          if param&.[](:encrypted)
             result = Decrypt.new.call(encrypted: value)
             raise Yuzakan::Adapters::Error, result.errors if result.failure?
 
@@ -109,7 +109,7 @@ module Yuzakan
       def self.encrypt(data)
         data.map do |key, value|
           param = @name_param_map[key]
-          if param[:encrypted]
+          if param&.[](:encrypted)
             encrypt_opts =
               case param[:type]
               when :string
