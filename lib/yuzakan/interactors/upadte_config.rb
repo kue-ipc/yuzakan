@@ -23,6 +23,10 @@ class UpdateConfig
 
       optional(:admin_networks) { str? & max_size?(1024) }
       optional(:user_networks) { str? & max_size?(1024) }
+
+      optional(:contact_name) { str? & max_size?(1024) }
+      optional(:contact_email) { str? & max_size?(1024) }
+      optional(:contact_phone) { str? & max_size?(1024) }
     end
   end
 

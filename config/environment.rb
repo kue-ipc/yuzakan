@@ -47,6 +47,10 @@ Hanami.configure do
 
     # See http://hanamirb.org/guides/mailers/delivery
     delivery :test
+
+    prepare do
+      include Mailers::DefaultSender
+    end
   end
 
   environment :development do
