@@ -9,14 +9,16 @@ module Web
         def available_operations
           @available_operations ||= [].tap do |operations|
             if gsuite_user
-              unless gsuite_user[:unusable]
-                operations << if gsuite_user[:locked]
-                                :gsuite_lock_destroy
-                              else
-                                :gsuite_password_create
-                              end
+              case gsuite_user[:state]
+              when :available
+                operations << :gsuite_password_create
+                operations << :gsuite_code_create if gsuite_user[:mfa]
+                # operations << :gsuite_destroy
+              when :locked
+                operations << :gsuite_lock_destroy
                 # operations << :gsuite_destroy
               end
+              # :disabled and else is nothing
             else
               operations << :gsuite_create
             end
@@ -49,6 +51,12 @@ module Web
               color: 'warning',
               type: :modal,
             },
+            gsuite_code_create: {
+              name: 'バックアップコード生成',
+              description: 'Google アカウントの2段階認証プロセスのためのバックアップコードを生成します。',
+              color: 'warning',
+              type: :modal,
+            },
           }
         end
 
@@ -59,7 +67,7 @@ module Web
 
           modal_classes = ['modal', 'fade']
           dialog_classes = ['modal-dialog', 'modal-dialog-centered',
-                            'modal-dialog-scrollable', 'modal-lg',]
+                            'modal-dialog-scrollable', 'modal-lg']
           form_classes = []
           form_classes << 'submit-before-agreement' if agreement
 
@@ -131,7 +139,9 @@ module Web
             gsuite_lock_destroy: Form.new(:gsuite_lock_destroy,
                                           routes.path(:gsuite_lock), {},
                                           method: :delete),
-          }
+            gsuite_code_create: Form.new(:gsuite_code_create,
+                                         routes.path(:gsuite_code)),
+            }
         end
 
         def modal_rules
@@ -143,22 +153,31 @@ module Web
               '初回ログイン時にGoogle社の規約に同意し、遵守しなければなりません。',
               'アカウントを用いた各サービスの利用は、大学の情報利用に関する各規定に準じ、これを遵守しなければなりません。違反があった場合は、アカウントの停止等の処理を実施する場合があります。',
               'プライベートのアカウントではなく、大学の正式なアカウントであることの自覚を持って利用しなければなりません。',
+              'アカウント名と初期パスワードは、処理実行後の画面に表示されます。',
             ],
             gsuite_destroy: [
-              'アカウントを削除すすると、Google アカウント を用いた各サービスが利用できなくなります。',
+              'アカウントを削除すると、Google アカウントを使用する各サービスが利用できなくなります。',
               '削除から20日後までは復元が可能です。20日をすぎると、アカウントが所有者である全てのデータが削除されます。',
-              '一部のデータは削除実施後即座に削除される場合があります。これらのデータについては、アカウントを復元しても復元できません。',
+              '一部のデータは削除実施後即座に削除される場合があります。これらのデータについては、アカウントを復元しても元に戻りません。',
             ],
             gsuite_password_create: [
               'パスワードリセットを行うと、Google アカウントを使用したアプリケーションで再ログインが必要になる場合があります。',
-              '2段階認証は解除されません。2段階認証を設定している場合は、リセット後の再ログインで2要素目が求められる場合があります。',
+              '2段階認証は解除やリセットされません。2段階認証を設定している場合は、リセット後の再ログインで2要素目が求められる場合があります。',
               '1日あたりのパスワードリセットを行える回数には限りがあります。',
+              '新しい初期パスワードは、処理実行後の画面に表示されます。',
             ],
             gsuite_lock_destroy: [
               'ロック解除とともにパスワードを変更を行います。旧パスワードは使用できません。',
               'パスワードリセットを行うと、Google アカウントを使用したアプリケーションで再ログインが必要になる場合があります。',
-              '2段階認証は解除されません。2段階認証を設定している場合は、ロック解除後の再ログインで2要素目が求められる場合があります。',
+              '2段階認証は解除やリセットされません。2段階認証を設定している場合は、ロック解除後の再ログインで2要素目が求められる場合があります。',
               '1日あたりのパスワードリセットを行える回数には限りがあります。',
+              '新しい初期パスワードは、処理実行後の画面に表示されます。',
+            ],
+            gsuite_code_create: [
+              'バックアップコード生成を行うと、以前取得したバックアップコードは使用できなくなります。',
+              'パスワードはリセットされません。パスワードも忘れた場合は、コード生成後にパスワードリセットを行ってください。',
+              '1日あたりのバックアップコード生成を行える回数には限りがあります。',
+              '生成したバックアップコードは、処理実行後の画面に表示されます。',
             ],
           }
         end
@@ -185,6 +204,11 @@ module Web
               title: 'Google アカウント ロック解除',
               content: 'あなたの Google アカウント のロックを解除します。',
               submit_button: {label: 'ロックを解除する', color: 'warning'},
+            },
+            gsuite_code_create: {
+              title: 'Google アカウント バックアップコード生成',
+              content: 'あなたの Google アカウント の2段階認証プロセスのための、バックアップコードを生成します。',
+              submit_button: {label: 'バックアップコードを生成する', color: 'warning'},
             },
           }
         end
