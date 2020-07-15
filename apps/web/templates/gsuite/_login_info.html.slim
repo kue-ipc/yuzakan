@@ -1,22 +1,22 @@
 h3 G Suite ログイン情報
 
 .row.my-3
-  .col-sm-6.col-md-4.col-lg-3.col-xl-2
+  div class=col_name
     | アカウント名:
-  .col-sm-6.col-md-8.col-lg-6.col-xl-4
+  div class=col_value
     code.login-info
       = user[:email]
 .row.my-3
-  .col-sm-6.col-md-4.col-lg-3.col-xl-2
+  div class=col_name
     | 初回パスワード:
-  .col-sm-6.col-md-8.col-lg-6.col-xl-4
+  div class=col_value
     code.login-info
       = password
 
 .row.my-3
-  .col-sm-6.col-md-4.col-lg-3.col-xl-2
+  div class=col_name
     | ログインサイト:
-  .col-sm-6.col-md-8.col-lg-6.col-xl-4
+  div class=col_value
     = link_to 'https://myaccount.google.com/', target: '_blank' do
       - text 'Google アカウント'
       - i class: 'fas fa-external-link-alt'
