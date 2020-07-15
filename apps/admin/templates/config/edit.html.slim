@@ -68,4 +68,16 @@ h2 全体設定
     - small class: 'form-text text-muted' do
       - 'ユーザー機能にアクセス可能なネットワークを指定します。カンマまたは改行または空白で区切ってください。空の場合はすべてのIPアドレスからの接続を許可します。'
 
+  - div class: 'form-group' do
+    - label '連絡先名前', for: :contact_name
+    - text_field :contact_name, class: 'form-control'
+
+  - div class: 'form-group' do
+    - label '連絡先メールアドレス', for: :contact_email
+    - text_field :contact_email, class: 'form-control'
+
+  - div class: 'form-group' do
+    - label '連絡先電話番号', for: :contact_phone
+    - text_field :contact_phone, class: 'form-control'
+
   - submit '変更', class: 'btn btn-primary'
