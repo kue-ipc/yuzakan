@@ -7,7 +7,10 @@ module Web
         class Edit
           include Web::Action
 
+          expose :excluded_providers
+
           def call(params)
+            @excluded_providers = ProviderRepository.new.individual_password.to_a
           end
         end
       end

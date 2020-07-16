@@ -11,13 +11,13 @@ module Web
             {
               name: 'パスワード変更',
               url: routes.path(:edit_user_password),
-              description: 'パスワード変更ができます。',
+              description: 'アカウントのパスワードを変更します。',
               color: 'primary',
             },
             {
               name: 'G Suite',
               url: routes.path(:gsuite),
-              description: 'G Suite の Google アカウントの管理ができます。',
+              description: 'Googleアカウントを管理します。',
               color: 'secondary',
             },
           ]

@@ -46,6 +46,10 @@ class ProviderRepository < Hanami::Repository
     providers.where(display_name: display_name).one
   end
 
+  def individual_password
+    providers.where(individual_password: true)
+  end
+
   def last_order
     providers.order { order.desc }.first
   end
