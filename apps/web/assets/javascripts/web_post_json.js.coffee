@@ -73,17 +73,36 @@ export default class WebPostJson
           'Accept': 'application/json'
         body: formData
 
-      data = await response.json()
+      data =
+        if response.ok
+          await response.json()
+        else
+          console.warn(await response.text())
+          {
+            result: 'error'
+            messages:
+              failure: 'サーバー側でエラーが発生、または、接続を拒否されました。'
+              errors: ["サーバーメッセージ: #{response.statusText}"]
+          }
+
+      resultTitle =
+        switch data.result
+          when 'success' then '成功'
+          when 'failure' then '失敗'
+          when 'error' then 'エラー'
+          else ''
+
+
 
       if data.result == 'success'
         @modalMessage
           status: 'success'
-          title: "#{@title}成功"
+          title: "#{@title}#{resultTitle}"
           closable: false
           successLink: @successLink
           messages: [
             data.messages.success
-            @messages.success
+            @messages[data.result]
           ]
         setTimeout =>
           location.href = @successLink
@@ -91,28 +110,35 @@ export default class WebPostJson
         return data
       else
         @modalMessage
-          status: 'failure'
-          title: "#{@title}失敗"
+          status: data.result
+          title: "#{@title}#{resultTitle}"
           closable: true
           successLink: null
           messages: [
             data.messages.failure
             (data.messages.errors ? [])...
-            @messages.failure
+            @messages[data.result]
           ]
         return data
+
     catch error
+      console.error error
+      data =
+        result: 'error'
+        messages:
+          failure: 'サーバー接続時にエラーが発生しました。しばらく待ってから、再度試してください。'
+
       @modalMessage
         status: 'error'
         title: '接続エラー'
         closable: true
         successLink: null
         messages: [
-          'サーバー接続時にエラーが発生しました。しばらく待ってから、再度試してください。'
-          "エラー内容: #{error}"
-          @messages.error
+          data.messages.failure
+          (data.messages.errors ? [])...
+          @messages[data.result]
         ]
-      throw error
+      return data
 
 messageRunner = (dispatch, {action, node}) ->
   func = (e) ->
