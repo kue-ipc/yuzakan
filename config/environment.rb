@@ -61,6 +61,10 @@ Hanami.configure do
       password_confirmation
       bind_password
     ]
+
+    mailer do
+      delivery :logger
+    end
   end
 
   environment :production do

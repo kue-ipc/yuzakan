@@ -10,7 +10,7 @@ module Mailers
     end
 
     private def subject
-      "#{config.title}:【パスワード変更】"
+      "#{config.title}【パスワード変更】"
     end
   end
 end
