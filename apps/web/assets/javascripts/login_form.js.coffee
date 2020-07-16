@@ -22,7 +22,7 @@ loginSet = (formNode, {successLink = '/'}) ->
       try
         {result, messages} = await webPost.submitPromise()
         if result == 'success'
-          location.href = successLink
+          # do nothing
         else
           for input in inputTextNodes
             input.value = ''
