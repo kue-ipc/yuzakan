@@ -1,0 +1,14 @@
+「<%= config.title %>」で、
+<%- case by_user -%>
+<%- when :self -%>
+あなたはアカウントをロック解除しました。
+<%- when :admin -%>
+管理者があなたのアカウントをロック解除しました。
+<%- when :system -%>
+システムがあなたのアカウントをロック解除しました。
+<%- else -%>
+<%- end -%>
+
+<%= partial :content %>
+
+<%= partial :footer %>

@@ -50,6 +50,7 @@ Hanami.configure do
 
     prepare do
       include Mailers::DefaultSender
+      include Mailers::Partial
     end
   end
 

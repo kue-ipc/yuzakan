@@ -10,7 +10,16 @@ module Mailers
     end
 
     private def subject
-      "#{config.title}【パスワード変更】"
+      "#{config.title}【#{action}】"
+    end
+
+    def verb
+      'アカウントのパスワードを変更しました。'
+
+    end
+
+    def action
+      'パスワード変更'
     end
   end
 end

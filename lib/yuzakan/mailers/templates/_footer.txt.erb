@@ -1,0 +1,18 @@
+----------------------------------------------------------------------------
+このメールは、あなたの知らないところで第三者が処理を実施していないかを
+確認するために、送付しています。
+上記について身に覚えがない場合は、システム管理者までご連絡ください。
+<%- if config.contact_name&.size&.positive? -%>
+
+システム管理者の連絡先
+  <%= config.contact_name %>
+  <%- if config.contact_email&.size&.positive? -%>
+  メールアドレス: <%= config&.contact_email %>
+  <%- end -%>
+  <%- if config.contact_phone&.size&.positive? -%>
+  電話番号: <%= config.contact_phone %>
+  <%- end -%>
+
+<%- end -%>
+----------------------------------------------------------------------------
+<%= config.title %>
