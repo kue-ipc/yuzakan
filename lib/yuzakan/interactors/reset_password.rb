@@ -18,16 +18,18 @@ class ResetPassword
   expose :username
   expose :password
   expose :user_datas
+  expose :count
 
-  def initialize(user:,
-                 client:,
-                 config: ConfigRepostitory.new.current,
-                 providers:
-                  ProviderRepository.new
-                    .operational_all_with_params(:change_password),
-                 activity_repository: ActivityRepository.new,
-                 generate_password: GeneratePassword.new,
-                 mailer: Mailers::ResetPassword)
+  def initialize(
+    user:,
+    client:,
+    config: ConfigRepostitory.new.current,
+    providers: ProviderRepository.new
+      .operational_all_with_params(:change_password),
+    activity_repository: ActivityRepository.new,
+    generate_password: GeneratePassword.new,
+    mailer: Mailers::ResetPassword
+  )
     @user = user
     @client = client
     @config = config
@@ -48,13 +50,13 @@ class ResetPassword
       action: 'reset_password: ' + @providers.map(&:name).join(','),
     }
 
-    @count = 0
-
     result = @generate_password.call
 
     error!('パスワード生成に失敗しました。') if result.failure?
 
     @password = result.password
+
+    @count = 0
     @user_datas = {}
 
     by_user =
@@ -65,12 +67,11 @@ class ResetPassword
       end
 
     @providers.each do |provider|
-      user_data = provider.adapter.change_password(
-        username,
-        @password)
-
-      @user_datas[provider.name] = user_data
-      @count += 1
+      user_data = provider.adapter.change_password(username, @password)
+      if user_data
+        @user_datas[provider.name] = user_data
+        @count += 1
+      end
     rescue => e
       @activity_repository.create(activity_params.merge!({result: 'error'}))
       @mailer&.deliver(user: @user, config: @config, by_user: by_user,

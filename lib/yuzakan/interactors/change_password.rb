@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# 自分自身のパスワードのみ変更可能
 # パスワードの制限値はconifgで管理
 # 強度チェックはzxcvbnを使用
 
@@ -21,40 +22,53 @@ class ChangePassword
     end
   end
 
+  expose :user_datas
   expose :count
 
-  def initialize(user:,
-                 client:,
-                 config: ConfigRepostitory.new.current,
-                 provider_repository: ProviderRepository.new,
-                 activity_repository: ActivityRepository.new)
+  def initialize(
+    user:,
+    client:,
+    config: ConfigRepostitory.new.current,
+    providers: ProviderRepository.new
+      .operational_all_with_params(:change_password),
+    activity_repository: ActivityRepository.new,
+    mailer: Mailers::ChangePassword
+  )
     @user = user
     @client = client
     @config = config
-    @provider_repository = provider_repository
+    @providers = providers
     @activity_repository = activity_repository
+    @mailer = mailer
   end
 
   def call(params)
+    username = @user.name
+
     activity_params = {
       user: @user,
       client: @client,
       type: 'user',
-      target: @user.name,
-      action: 'change_password',
+      target: username,
+      action: 'change_password: ' + @providers.map(&:name).join(','),
     }
 
     @count = 0
+    @user_datas
 
-    @provider_repository.operational_all_with_params(:change_password)
-      .each do |provider|
-      if provider.adapter.change_password(@user.name, params[:password])
+    by_user = :self
+
+    @providers.each do |provider|
+      user_data = provider.adapter.change_password(@user.name,
+                                                   params[:password])
+      if user_data
+        @user_datas[provider.name] = user_data
         @count += 1
       end
     rescue => e
       @activity_repository.create(activity_params.merge!({result: 'error'}))
-      Mailers::ChangePassword.deliver(user: @user, config: @config,
-                                      result: :error)
+      @mailer&.deliver(user: @user, config: @config, by_user: by_user,
+                       result: :error)
       if @count.positive?
         error <<~'ERROR_MESSAGE'
           一部のシステムのパスワードは変更されましたが、
@@ -69,14 +83,14 @@ class ChangePassword
 
     if @count.zero?
       @activity_repository.create(activity_params.merge!({result: 'failure'}))
-      Mailers::ChangePassword.deliver(user: @user, config: @config,
-                                      result: :failure)
+      @mailer&.deliver(user: @user, config: @config, by_user: by_user,
+                       result: :failure)
       error!('どのシステムでもパスワードは変更されませんでした。')
     end
 
     @activity_repository.create(activity_params.merge!({result: 'success'}))
-    Mailers::ChangePassword.deliver(user: @user, config: @config,
-                                    result: :success)
+    @mailer&.deliver.(user: @user, config: @config, by_user: by_user,
+                      result: :success)
   end
 
   private def valid?(params)
