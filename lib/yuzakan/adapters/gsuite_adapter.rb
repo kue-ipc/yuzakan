@@ -244,8 +244,6 @@ module Yuzakan
             :enforced
           elsif user.is_enrolled_in2_sv?
             :enabled
-          else
-            nil
           end
 
         if mappings

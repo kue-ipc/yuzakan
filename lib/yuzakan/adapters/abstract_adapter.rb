@@ -5,7 +5,7 @@
 # initialize(params)
 # check -> true or false
 #
-# 
+#
 #
 # attrs:
 #   name: = username
@@ -41,7 +41,7 @@
 # member_insert(groupname, username)
 # member_delete(groupname, username)
 #
-# 
+#
 #
 # list -> usernames [readable]
 #

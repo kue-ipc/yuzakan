@@ -263,9 +263,8 @@ module Yuzakan
         result = ldap.modify(
           dn: user.dn,
           operations: operations)
-        unless result
-          raise ldap.get_operation_result.error_message
-        end
+        raise ldap.get_operation_result.error_message unless result
+
         result
       end
 

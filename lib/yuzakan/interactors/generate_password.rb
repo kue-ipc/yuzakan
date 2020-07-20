@@ -14,7 +14,7 @@ class GeneratePassword
   end
 
   def call(_params = {})
-    @password = 
+    @password =
       if @chars == :alphanumeric
         SecureRandom.alphanumeric(@size)
       else

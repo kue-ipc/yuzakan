@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mailers
   module DefaultSender
     def self.included(mailer)

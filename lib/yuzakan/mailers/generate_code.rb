@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mailers
   class GenerateCode
     include Hanami::Mailer

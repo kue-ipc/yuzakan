@@ -18,7 +18,7 @@ module Web
           unless @gsuite_user
             result = UserAttrs.new.call(username: current_user.name)
             if result.successful? &&
-                ['学生', '教員', '職員'].include?(result.attrs[:affiliation])
+               ['学生', '教員', '職員'].include?(result.attrs[:affiliation])
               @creatable = true
             end
           end

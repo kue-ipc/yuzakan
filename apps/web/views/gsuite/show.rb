@@ -67,7 +67,7 @@ module Web
 
           modal_classes = ['modal', 'fade']
           dialog_classes = ['modal-dialog', 'modal-dialog-centered',
-                            'modal-dialog-scrollable', 'modal-lg']
+                            'modal-dialog-scrollable', 'modal-lg',]
           form_classes = []
           form_classes << 'submit-before-agreement' if agreement
 
@@ -141,7 +141,7 @@ module Web
                                           method: :delete),
             gsuite_code_create: Form.new(:gsuite_code_create,
                                          routes.path(:gsuite_code)),
-            }
+          }
         end
 
         def modal_rules

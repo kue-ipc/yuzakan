@@ -65,10 +65,9 @@ class AttrMapping < Hanami::Entity
     ['member', '構成員'],
     ['guest', 'ゲスト'],
     ['organization', '組織'],
-  ]
+  ].freeze
   E2J_DICT = E2J_LIST.to_h
   J2E_DICT = E2J_LIST.map(&:reverse).to_h
-
 
   def translate_e2j(value)
     E2J_DICT[value] || value

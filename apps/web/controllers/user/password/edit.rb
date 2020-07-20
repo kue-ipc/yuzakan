@@ -9,7 +9,7 @@ module Web
 
           expose :excluded_providers
 
-          def call(params)
+          def call(_params)
             @excluded_providers = ProviderRepository.new.individual_password.to_a
           end
         end

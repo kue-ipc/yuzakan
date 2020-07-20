@@ -8,12 +8,12 @@ module Admin
 
         def call(params)
           attr = AttrRepository.new.update(params[:id],
-                                                    params[:attr])
+                                           params[:attr])
           pam_repo = AttrMappingRepository.new
 
           params[:attr][:attr_mappings].each do |mapping|
             pam = pam_repo.find_by_provider_attr(mapping[:provider_id],
-                                                      attr.id)
+                                                 attr.id)
 
             if mapping[:name].nil? || mapping[:name].empty?
               pam_repo.delete(pam.id) if pam

@@ -22,7 +22,7 @@ class UserAttrs
       [provider.name,
        provider.adapter.read(
          params[:username],
-         @provider_attr_mapping_repository.by_provider_with_attr(provider.id))]
+         @provider_attr_mapping_repository.by_provider_with_attr(provider.id)),]
     end.to_h
     @attrs = @datas.values.compact.inject({}) do |result, data|
       data.merge(result)
