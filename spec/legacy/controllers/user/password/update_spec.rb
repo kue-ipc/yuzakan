@@ -25,9 +25,13 @@ describe Legacy::Controllers::User::Password::Update do
     }
   end
 
-  it 'is successful' do
-    _(response[0]).must_equal 200
-    _(flash[:success]).must_equal 'パスワードを変更しました。'
+  describe 'change passworcd' do
+    after { db_reset }
+
+    it 'is successful' do
+      _(response[0]).must_equal 200
+      _(flash[:success]).must_equal 'パスワードを変更しました。'
+    end
   end
 
   describe 'wrong password_current' do
