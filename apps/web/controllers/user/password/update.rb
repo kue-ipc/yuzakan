@@ -14,11 +14,6 @@ module Web
                                                   client: remote_ip)
             result = @change_password.call(params[:user][:password])
 
-            if result.successful?
-              Mailers::ChangePassword.deliver(user: current_user,
-                                              config: current_config)
-            end
-
             case format
             when :html
               if result.successful?
