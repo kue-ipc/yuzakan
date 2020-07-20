@@ -1,10 +1,10 @@
 「<%= config.title %>」で、
-<%- case defined? by_user && by_user -%>
+<%- case defined?(by_user) && by_user -%>
 <%- when :self -%>
-あなたは
+あなたは<%- -%>
 <%- when :admin -%>
-管理者があなたの
+管理者があなたの<%- -%>
 <%- when :system -%>
-システムがあなたの
+システムがあなたの<%- -%>
 <%- end -%>
 <%= verb %>

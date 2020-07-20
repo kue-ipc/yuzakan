@@ -8,6 +8,12 @@ module Yuzakan
       def self.label
         'ダミー'
       end
+
+      def self.selectable?
+        Hanami.env == 'test'
+      end
+
+      self.params = []
     end
   end
 end

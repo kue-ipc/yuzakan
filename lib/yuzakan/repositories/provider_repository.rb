@@ -42,6 +42,10 @@ class ProviderRepository < Hanami::Repository
     providers.where(name: name).one
   end
 
+  def by_name(name)
+    providers.where(name: name)
+  end
+
   def find_by_display_name(display_name)
     providers.where(display_name: display_name).one
   end
