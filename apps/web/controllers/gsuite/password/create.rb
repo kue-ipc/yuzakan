@@ -10,20 +10,26 @@ module Web
           expose :user
           expose :password
 
-          def call(_params)
-            gsuite_repository = ProviderRepository.new.first_gsuite_with_params
-
-            @password = SecureRandom.alphanumeric(16)
-            @user = gsuite_repository.adapter.change_password(
-              current_user.name,
-              @password)
-
-            unless @user
-              flash[:failure] = 'パスワードリセットに失敗しました。'
+          def call(params)
+            provider = ProviderRepository.new.first_gsuite_with_params
+  
+            pp params.to_h
+            result = ResetPassword.new(user: current_user,
+                                       client: remote_ip,
+                                       config: current_config,
+                                       providers: [provider])
+              .call(params.get(:gsuite, :password))
+  
+            if result.failure?
+              flash[:errors] = result.errors
+              flash[:failure] = 'Google アカウントのパスワードリセットに失敗しました。'
               redirect_to routes.path(:gsuite)
             end
-
-            flash[:success] = 'Google アカウント のパスワードをリセットしました。'
+  
+            @user = result.user_datas[provider.name]
+            @password = result.password
+  
+            flash[:success] = 'Google アカウントのパスワードをリセットしました。'
           end
         end
       end

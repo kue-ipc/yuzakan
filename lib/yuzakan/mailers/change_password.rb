@@ -15,7 +15,6 @@ module Mailers
 
     def verb
       'アカウントのパスワードを変更しました。'
-
     end
 
     def action

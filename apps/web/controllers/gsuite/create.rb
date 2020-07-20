@@ -19,33 +19,20 @@ module Web
             redirect_to routes.path(:gsuite)
           end
 
-          gsuite_repository = ProviderRepository.new.first_gsuite_with_params
-          gsuite_user = gsuite_repository.adapter.read(current_user.name)
-          if gsuite_user
-            flash[:failure] = '既に作成済みです。'
-            redirect_to routes.path(:gsuite)
-          end
+          provider = ProviderRepository.new.first_gsuite_with_params
 
-          user_attrs = UserAttrs.new.call(username: current_user.name).attrs
-          if user_attrs.nil?
-            flash[:failure] = 'ユーザーの情報がありません。'
-            redirect_to routes.path(:gsuite)
-          end
+          result = CreateUser.new(user: current_user, client: remote_ip,
+                                  config: current_config,
+                                  providers: [provider]).call
 
-          user_attrs = current_user.to_h.merge(user_attrs)
-
-          @password = SecureRandom.alphanumeric(16)
-          @user = gsuite_repository.adapter.create(
-            current_user.name,
-            user_attrs,
-            AttrMappingRepository.new
-              .by_provider_with_attr(gsuite_repository.id),
-            @password)
-
-          unless @user
+          if result.failure?
+            flash[:errors] = result.errors
             flash[:failure] = 'Google アカウント の作成に失敗しました。'
             redirect_to routes.path(:gsuite)
           end
+
+          @user = result.user_datas[provider.name]
+          @password = result.password
 
           flash[:success] = 'Google アカウント を作成しました。'
         end

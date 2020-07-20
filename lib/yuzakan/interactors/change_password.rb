@@ -53,6 +53,8 @@ class ChangePassword
       end
     rescue => e
       @activity_repository.create(activity_params.merge!({result: 'error'}))
+      Mailers::ChangePassword.deliver(user: @user, config: @config,
+                                      result: :error)
       if @count.positive?
         error <<~'ERROR_MESSAGE'
           一部のシステムのパスワードは変更されましたが、
@@ -65,12 +67,16 @@ class ChangePassword
       error!("パスワード変更時にエラーが発生しました。: #{e.message}")
     end
 
-    if @count.negative?
+    if @count.zero?
       @activity_repository.create(activity_params.merge!({result: 'failure'}))
+      Mailers::ChangePassword.deliver(user: @user, config: @config,
+                                      result: :failure)
       error!('どのシステムでもパスワードは変更されませんでした。')
     end
 
     @activity_repository.create(activity_params.merge!({result: 'success'}))
+    Mailers::ChangePassword.deliver(user: @user, config: @config,
+                                    result: :success)
   end
 
   private def valid?(params)

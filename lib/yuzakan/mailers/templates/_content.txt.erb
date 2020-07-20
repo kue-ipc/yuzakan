@@ -1,16 +1,22 @@
-<% if defined? by_user -%>
-  <%- case by_user -%>
-  <%- when :admin -%>
+<%- case defined? by_user && by_user -%>
+<%- when :admin -%>
 実施者: 管理者
-  <%- when :system -%>
+<%- when :system -%>
 実施者: システム
-  <%- end -%>
 <%- end -%>
-<% if defined? systems -%>
+実施日時: <%= Time.now %>
+<%- if defined? systems -%>
 システム: <%= systems.map(&:display_name).join('、') %>
 <%- else -%>
 システム: <%= config.title %>
 <%- end -%>
 ユーザー: <%= user.name %>
-実施日時: <%= Time.now %>
 処理内容: <%= action %>
+<%- case defined? result && result -%>
+<%- when :success -%>
+処理結果: 成功
+<%- when :failure -%>
+処理結果: 失敗
+<%- when :error -%>
+処理結果: エラー
+<%- end -%>
