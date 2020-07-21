@@ -31,7 +31,7 @@ class ChangePassword
     config: ConfigRepostitory.new.current,
     provider_repository: ProviderRepository.new,
     activity_repository: ActivityRepository.new,
-    mailer: Mailers::ChangePassword
+    mailer: Mailers::UserNotify
   )
     @user = user
     @client = client
