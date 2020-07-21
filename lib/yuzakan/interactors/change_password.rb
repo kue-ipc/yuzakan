@@ -53,22 +53,26 @@ class ChangePassword
       action: 'change_password: ' + @providers.map(&:name).join(','),
     }
 
-    @count = 0
-    @user_datas
+    mailer_params = {
+      user: @user,
+      config: @config,
+      by_user: :self,
+      action:'パスワード変更',
+      description: 'アカウントのパスワードを変更しました。'
+    }
 
-    by_user = :self
+    @count = 0
+    @user_datas = {}
+    result = :success
 
     @providers.each do |provider|
-      user_data = provider.adapter.change_password(@user.name,
-                                                   params[:password])
+      user_data =
+        provider.adapter.change_password(@user.name, params[:password])
       if user_data
         @user_datas[provider.name] = user_data
         @count += 1
       end
     rescue => e
-      @activity_repository.create(activity_params.merge!({result: 'error'}))
-      @mailer&.deliver(user: @user, config: @config, by_user: by_user,
-                       result: :error)
       if @count.positive?
         error <<~'ERROR_MESSAGE'
           一部のシステムのパスワードは変更されましたが、
@@ -78,19 +82,17 @@ class ChangePassword
           現在のパスワードはすでに変更されている場合があります。
         ERROR_MESSAGE
       end
-      error!("パスワード変更時にエラーが発生しました。: #{e.message}")
+      error("パスワード変更時にエラーが発生しました。: #{e.message}")
+      result = :error
     end
 
     if @count.zero?
-      @activity_repository.create(activity_params.merge!({result: 'failure'}))
-      @mailer&.deliver(user: @user, config: @config, by_user: by_user,
-                       result: :failure)
-      error!('どのシステムでもパスワードは変更されませんでした。')
+      error('どのシステムでもパスワードは変更されませんでした。')
+      result = :failure
     end
 
-    @activity_repository.create(activity_params.merge!({result: 'success'}))
-    @mailer&.deliver.(user: @user, config: @config, by_user: by_user,
-                      result: :success)
+    @activity_repository.create(**activity_params, result: result)
+    @mailer&.deliver(**mailer_params, result: result)
   end
 
   private def valid?(params)
