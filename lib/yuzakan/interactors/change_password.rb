@@ -22,8 +22,8 @@ class ChangePassword
     end
   end
 
+  expose :username
   expose :user_datas
-  expose :count
 
   def initialize(
     user:,
@@ -42,13 +42,14 @@ class ChangePassword
   end
 
   def call(params)
-    username = @user.name
+    @username = @user.name
+    @password = params[:password]
 
     activity_params = {
       user: @user,
       client: @client,
       type: 'user',
-      target: username,
+      target: @username,
       action: 'change_password',
     }
 
@@ -56,24 +57,19 @@ class ChangePassword
       user: @user,
       config: @config,
       by_user: :self,
-      action:'パスワード変更',
+      action: 'パスワード変更',
       description: 'アカウントのパスワードを変更しました。',
     }
 
-    @count = 0
     @user_datas = {}
     result = :success
 
     @provider_repository.operational_all_with_params(:change_password)
       .each do |provider|
-      user_data =
-        provider.adapter.change_password(@user.name, params[:password])
-      if user_data
-        @user_datas[provider.name] = user_data
-        @count += 1
-      end
+      user_data = provider.adapter.change_password(@username, @password)
+      @user_datas[provider.name] = user_data if user_data
     rescue => e
-      if @count.positive?
+      unless @user_datas.empty?
         error <<~'ERROR_MESSAGE'
           一部のシステムのパスワードは変更されましたが、
           別のシステムの変更時にエラーが発生し、処理が中断されました。
@@ -86,7 +82,7 @@ class ChangePassword
       result = :error
     end
 
-    if @count.zero?
+    if @user_datas.empty?
       error('どのシステムでもパスワードは変更されませんでした。')
       result = :failure
     end

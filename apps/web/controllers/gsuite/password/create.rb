@@ -13,7 +13,6 @@ module Web
           def call(params)
             provider = ProviderRepository.new.first_gsuite_with_params
 
-            pp params.to_h
             result = ResetPassword.new(user: current_user,
                                        client: remote_ip,
                                        config: current_config,

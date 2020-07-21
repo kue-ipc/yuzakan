@@ -70,7 +70,7 @@ class ProviderRepository < Hanami::Repository
       when :change_password
         {password_changeable: true, individual_password: false}
       when :lock, :unlock, :locked?
-        {lockable: true}
+        {lockable: true, individual_password: false}
       else
         raise "不明な操作です。#{operation}"
       end

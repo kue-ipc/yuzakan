@@ -10,16 +10,22 @@ module Web
           expose :codes
 
           def call(_params)
-            gsuite_repository = ProviderRepository.new.first_gsuite_with_params
+            provider = ProviderRepository.new.first_gsuite_with_params
 
-            @codes = gsuite_repository.adapter
-              .user_verification_codes(current_user.name)
+            result = GenerateVerificationCode.new(
+              user: current_user,
+              client: remote_ip,
+              config: current_config,
+              providers: [provider]
+            ).call(params.get(:gsuite, :code))
 
-            unless @codes
+            if result.failure?
+              flash[:errors] = result.errors
               flash[:failure] = 'バックアップコードの生成に失敗しました。'
               redirect_to routes.path(:gsuite)
             end
 
+            @codes = result.user_datas[provider.name]
             flash[:success] = 'バックアップコードを生成しました。'
           end
         end

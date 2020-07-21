@@ -11,19 +11,25 @@ module Web
           expose :password
 
           def call(_params)
-            gsuite_repository = ProviderRepository.new.first_gsuite_with_params
+            provider = ProviderRepository.new.first_gsuite_with_params
 
-            @password = SecureRandom.alphanumeric(16)
-            @user = gsuite_repository.adapter.unlock(
-              current_user.name,
-              @password)
+            result = UnlockUser.new(
+              user: current_user,
+              client: remote_ip,
+              config: current_config,
+              providers: [provider]
+            ).call(password_reset: true)
 
-            unless @user
-              flash[:failure] = 'ロック解除に失敗しました。'
+            if result.failure?
+              flash[:errors] = result.errors
+              flash[:failure] = 'Google アカウントのロック解除に失敗しました。'
               redirect_to routes.path(:gsuite)
             end
-
-            flash[:success] = 'Google アカウント のロックを解除し、パスワードをリセットしました。'
+  
+            @user = result.user_datas[provider.name]
+            @password = result.password
+  
+            flash[:success] = 'Google アカウントのロックを解除し、パスワードをリセットしました。'
           end
         end
       end
