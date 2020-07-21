@@ -46,7 +46,7 @@ class GenerateVerificationCode
     }
 
     by_user =
-      if username == @user.name
+      if @username == @user.name
         :self
       else
         :admin
@@ -63,7 +63,7 @@ class GenerateVerificationCode
     activity_params[:action] += ':' + @providers.map(&:name).join(',')
     mailer_params[:providers] = @providers
 
-    @codes = {}
+    @user_datas = {}
     result = :success
 
     @providers.each do |provider|
