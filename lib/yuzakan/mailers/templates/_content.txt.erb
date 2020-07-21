@@ -5,8 +5,8 @@
 実施者: システム
 <%- end -%>
 実施日時: <%= Time.now %>
-<%- if defined?(systems) -%>
-システム: <%= systems.map(&:display_name).join('、') %>
+<%- if defined?(providers) -%>
+システム: <%= providers.map(&:display_name).join('、') %>
 <%- else -%>
 システム: <%= config.title %>
 <%- end -%>

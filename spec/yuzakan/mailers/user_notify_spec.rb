@@ -48,7 +48,7 @@ describe Mailers::UserNotify do
   it 'delivers email dumy system' do
     mail = Mailers::UserNotify.deliver(
       **params,
-      systems: [ProviderRepository.new.by_name('dummy').one])
+      providers: [ProviderRepository.new.by_name('dummy').one])
     _(mail.to).must_equal ['user@yuzakan.test']
     _(mail.body.parts.first.decoded).must_include 'システム: ダミー'
     _(mail.body.parts.first.decoded).wont_include 'システム: テストシステム'

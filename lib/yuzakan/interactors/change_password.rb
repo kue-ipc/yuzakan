@@ -29,15 +29,14 @@ class ChangePassword
     user:,
     client:,
     config: ConfigRepostitory.new.current,
-    providers: ProviderRepository.new
-      .operational_all_with_params(:change_password),
+    provider_repository: ProviderRepository.new,
     activity_repository: ActivityRepository.new,
     mailer: Mailers::ChangePassword
   )
     @user = user
     @client = client
     @config = config
-    @providers = providers
+    @provider_repository = provider_repository
     @activity_repository = activity_repository
     @mailer = mailer
   end
@@ -50,7 +49,7 @@ class ChangePassword
       client: @client,
       type: 'user',
       target: username,
-      action: 'change_password: ' + @providers.map(&:name).join(','),
+      action: 'change_password',
     }
 
     mailer_params = {
@@ -58,14 +57,15 @@ class ChangePassword
       config: @config,
       by_user: :self,
       action:'パスワード変更',
-      description: 'アカウントのパスワードを変更しました。'
+      description: 'アカウントのパスワードを変更しました。',
     }
 
     @count = 0
     @user_datas = {}
     result = :success
 
-    @providers.each do |provider|
+    @provider_repository.operational_all_with_params(:change_password)
+      .each do |provider|
       user_data =
         provider.adapter.change_password(@user.name, params[:password])
       if user_data
@@ -91,7 +91,7 @@ class ChangePassword
       result = :failure
     end
 
-    @activity_repository.create(**activity_params, result: result)
+    @activity_repository.create(**activity_params, result: result.to_s)
     @mailer&.deliver(**mailer_params, result: result)
   end
 
