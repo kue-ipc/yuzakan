@@ -12,10 +12,10 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^13.0.0",
-    "@rollup/plugin-node-resolve": "^8.1.0",
+    "@rollup/plugin-commonjs": "^14.0.0",
+    "@rollup/plugin-node-resolve": "^8.4.0",
     "coffeescript": "^2.4.1",
-    "rollup": "^2.18.1",
+    "rollup": "^2.22.1",
     "rollup-plugin-coffee-script": "^2.0.0"
   }
 }
