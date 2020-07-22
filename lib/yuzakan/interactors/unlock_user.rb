@@ -27,6 +27,7 @@ class UnlockUser
     providers: nil,
     provider_repository: ProviderRepository.new,
     activity_repository: ActivityRepository.new,
+    generate_password: GeneratePassword.new,
     mailer: Mailers::UserNotify
   )
     @user = user
@@ -35,13 +36,14 @@ class UnlockUser
     @providers = providers
     @provider_repository = provider_repository
     @activity_repository = activity_repository
+    @generate_password = generate_password
     @mailer = mailer
   end
 
   def call(params)
-    @username = params&.get(:username) || @user.name
+    @username = params&.[](:username) || @user.name
 
-    if params&.get(:password_reset)
+    if params&.[](:password_reset)
       gp_result = @generate_password.call
       error!('パスワード生成に失敗しました。') if gp_result.failure?
       @password = gp_result.password
@@ -58,7 +60,7 @@ class UnlockUser
     }
 
     by_user =
-      if username == @user.name
+      if @username == @user.name
         :self
       else
         :admin
@@ -129,7 +131,7 @@ class UnlockUser
       ok = false
     end
 
-    if params&.get(:username) && params&.get(:username) != @user.name
+    if params&.key?(:username) && params[:username] != @user.name
       error(username: '自分自身以外のアカウントのロックを解除することはできません。')
       ok = false
     end

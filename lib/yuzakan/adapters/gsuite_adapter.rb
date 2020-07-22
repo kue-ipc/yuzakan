@@ -225,6 +225,7 @@ module Yuzakan
           name: user.primary_email.split('@').first,
           display_name: user.name.full_name,
           email: user.primary_email,
+          state: :available,
         }
         if user.suspended?
           case user.suspension_reason
@@ -236,8 +237,6 @@ module Yuzakan
         end
 
         data[:admin] = user.is_admin?
-
-        data[:state] = :available
 
         data[:mfa] =
           if user.is_enforced_in2_sv?

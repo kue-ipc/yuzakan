@@ -41,9 +41,8 @@ class CreateUser
   end
 
   def call(params)
-    @username = params&.get(:username) || @user.name
-    attrs = params&.get(:attrs) ||
-            UserAttrs.new.call(username: @username).attrs
+    @username = params&.[](:username) || @user.name
+    attrs = params&.[](:attrs) || UserAttrs.new.call(username: @username).attrs
 
     gp_result = @generate_password.call
     error!('パスワード生成に失敗しました。') if gp_result.failure?
@@ -58,7 +57,7 @@ class CreateUser
     }
 
     by_user =
-      if username == @user.name
+      if @username == @user.name
         :self
       else
         :admin
@@ -125,12 +124,12 @@ class CreateUser
       ok = false
     end
 
-    if params&.get(:username) && params&.get(:username) != @user.name
+    if params&.key?(:username) && params[:username] != @user.name
       error(username: '自分自身以外のアカウントの作成することはできません。')
       ok = false
     end
 
-    if params&.get(:attrs)
+    if params&.key?(:attrs)
       error(attrs: '属性を指定することはできません。')
       ok = false
     end

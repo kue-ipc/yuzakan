@@ -10,7 +10,7 @@ module Web
           expose :user
           expose :password
 
-          def call(_params)
+          def call(params)
             provider = ProviderRepository.new.first_gsuite_with_params
 
             result = UnlockUser.new(
@@ -18,7 +18,7 @@ module Web
               client: remote_ip,
               config: current_config,
               providers: [provider]
-            ).call(password_reset: true)
+            ).call(params.get(:gsuite_lock_destroy))
 
             if result.failure?
               flash[:errors] = result.errors

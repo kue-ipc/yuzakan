@@ -35,7 +35,7 @@ class GenerateVerificationCode
   end
 
   def call(params)
-    @username = params&.get(:username) || @user.name
+    @username = params&.[](:username) || @user.name
 
     activity_params = {
       user: @user,
@@ -98,7 +98,7 @@ class GenerateVerificationCode
       ok = false
     end
 
-    if params&.get(:username) && params&.get(:username) != @user.name
+    if params&.key?(:username) && params[:username] != @user.name
       error(username: '自分自身以外のバックアップコードを生成することはできません。')
       ok = false
     end

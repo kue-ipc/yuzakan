@@ -47,7 +47,7 @@ module Web
             },
             gsuite_lock_destroy: {
               name: 'ロック解除',
-              description: 'Google アカウントのロックを解除します。同時にパスワードもリセットされます。',
+              description: 'Google アカウントのロックを解除します。同時にパスワードをリセットすることができます。',
               color: 'warning',
               type: :modal,
             },
@@ -62,7 +62,7 @@ module Web
 
         def modal(id, form, title: nil, content: nil, rules: nil,
                   submit_button: {label: '送信', color: 'primary'},
-                  agreement: false)
+                  agreement: false, inputs: nil)
           label_id = "#{id}-label"
 
           modal_classes = ['modal', 'fade']
@@ -110,6 +110,19 @@ module Web
                                   name: 'agreement'
                         label class: 'form-check-label', for: :agreement do
                           text '私は、上記全てについて同意します。'
+                        end
+                      end
+                    end
+                    if inputs && !inputs.empty?
+                      hr
+                      inputs.each do |input_data|
+                        div class: 'form-check' do
+                          check_box input_data[:name],
+                                    class: 'form-check-input',
+                                    checked: input_data[:default] && 'checked'
+                          label class: 'form-check-label', for: input_data[:name] do
+                            text input_data[:text]
+                          end
                         end
                       end
                     end
@@ -167,11 +180,9 @@ module Web
               '新しい初期パスワードは、処理実行後の画面に表示されます。',
             ],
             gsuite_lock_destroy: [
-              'ロック解除とともにパスワードを変更を行います。旧パスワードは使用できません。',
-              'パスワードリセットを行うと、Google アカウントを使用したアプリケーションで再ログインが必要になる場合があります。',
-              '2段階認証は解除やリセットされません。2段階認証を設定している場合は、ロック解除後の再ログインで2要素目が求められる場合があります。',
-              '1日あたりのパスワードリセットを行える回数には限りがあります。',
-              '新しい初期パスワードは、処理実行後の画面に表示されます。',
+              'ロック解除とともにパスワードリセットを行うことができます。新しい初期パスワードは、処理実行後の画面に表示されます。',
+              '2段階認証は解除やリセットされません。2段階認証を設定している場合は、ロック解除後のログインで2要素目が求められる場合があります。',
+              'パスワードリセットを行いたくない場合は、下記のチェックボックスを外してください。',
             ],
             gsuite_code_create: [
               'バックアップコード生成を行うと、以前取得したバックアップコードは使用できなくなります。',
@@ -204,6 +215,13 @@ module Web
               title: 'Google アカウント ロック解除',
               content: 'あなたの Google アカウント のロックを解除します。',
               submit_button: {label: 'ロックを解除する', color: 'warning'},
+              inputs: [
+                {
+                  name: :password_reset,
+                  text: 'ロック解除とともにパスワードをリセットします。',
+                  default: true,
+                },
+              ]
             },
             gsuite_code_create: {
               title: 'Google アカウント バックアップコード生成',

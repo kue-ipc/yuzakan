@@ -40,7 +40,7 @@ class ResetPassword
   end
 
   def call(params)
-    @username = params&.get(:username) || @user.name
+    @username = params&.[](:username) || @user.name
 
     gp_result = @generate_password.call
     error!('パスワード生成に失敗しました。') if gp_result.failure?
@@ -119,7 +119,7 @@ class ResetPassword
       ok = false
     end
 
-    if params&.get(:username) && params&.get(:username) != @user.name
+    if params&.key?(:username) && params[:username] != @user.name
       error(username: '自分自身以外のアカウントのパスワードをリセットすることはできません。')
       ok = false
     end
