@@ -1,21 +1,21 @@
 {
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.13.1",
-    "@fortawesome/fontawesome-svg-core": "^1.2.29",
-    "@fortawesome/free-regular-svg-icons": "^5.13.1",
-    "@fortawesome/free-solid-svg-icons": "^5.13.1",
+    "@fortawesome/fontawesome-free": "^5.14.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.30",
+    "@fortawesome/free-regular-svg-icons": "^5.14.0",
+    "@fortawesome/free-solid-svg-icons": "^5.14.0",
     "@hyperapp/events": "^0.0.4",
     "bootstrap": "^4.5.0",
     "bootstrap.native": "^3.0.9",
-    "hyperapp": "^2.0.1",
+    "hyperapp": "^2.0.8",
     "source-code-pro": "^2.30.2",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^14.0.0",
     "@rollup/plugin-node-resolve": "^8.4.0",
-    "coffeescript": "^2.4.1",
-    "rollup": "^2.22.1",
+    "coffeescript": "^2.5.1",
+    "rollup": "^2.22.2",
     "rollup-plugin-coffee-script": "^2.0.0"
   }
 }
