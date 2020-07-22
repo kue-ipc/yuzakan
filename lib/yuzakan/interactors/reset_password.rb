@@ -55,7 +55,7 @@ class ResetPassword
     }
 
     by_user =
-      if username == @user.name
+      if @username == @user.name
         :self
       else
         :admin
