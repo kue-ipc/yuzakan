@@ -4,5 +4,5 @@ require_relative 'yuzakan/adapters'
 require_relative 'yuzakan/helpers'
 
 module Yuzakan
-  VERSION = '0.2.1'
+  VERSION = '0.2.2'
 end
