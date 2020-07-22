@@ -25,11 +25,15 @@ module Web
               flash[:failure] = 'Google アカウントのロック解除に失敗しました。'
               redirect_to routes.path(:gsuite)
             end
-  
+
             @user = result.user_datas[provider.name]
             @password = result.password
-  
-            flash[:success] = 'Google アカウントのロックを解除し、パスワードをリセットしました。'
+
+            if @password
+              flash[:success] = 'Google アカウントのロックを解除し、パスワードをリセットしました。'
+            else
+              flash[:success] = 'Google アカウントのロックを解除しました。'
+            end
           end
         end
       end
