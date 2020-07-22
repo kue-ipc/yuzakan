@@ -17,7 +17,7 @@ module Web
               client: remote_ip,
               config: current_config,
               providers: [provider]
-            ).call(params.get(:gsuite, :code))
+            ).call(params.get(:gsuite_code_create))
 
             if result.failure?
               flash[:errors] = result.errors

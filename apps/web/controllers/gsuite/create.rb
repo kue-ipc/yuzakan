@@ -14,7 +14,7 @@ module Web
         expose :password
 
         def call(params)
-          if params.get(:agreement) != '1'
+          unless params.get(:agreement)
             flash[:failure] = '同意がありません。'
             redirect_to routes.path(:gsuite)
           end
@@ -23,7 +23,8 @@ module Web
 
           result = CreateUser.new(user: current_user, client: remote_ip,
                                   config: current_config,
-                                  providers: [provider]).call
+                                  providers: [provider])
+            .call(params.get(:gsuite_create))
 
           if result.failure?
             flash[:errors] = result.errors

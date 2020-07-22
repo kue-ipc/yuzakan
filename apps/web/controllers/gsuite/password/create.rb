@@ -17,7 +17,7 @@ module Web
                                        client: remote_ip,
                                        config: current_config,
                                        providers: [provider])
-              .call(params.get(:gsuite, :password))
+              .call(params.get(:gsuite_password_create))
 
             if result.failure?
               flash[:errors] = result.errors

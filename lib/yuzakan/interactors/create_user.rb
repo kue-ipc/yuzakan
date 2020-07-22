@@ -28,7 +28,7 @@ class CreateUser
     activity_repository: ActivityRepository.new,
     attr_mapping_repository: AttrMappingRepository.new,
     generate_password: GeneratePassword.new,
-    mailer: Mailers::CreateUser
+    mailer: Mailers::UserNotify
   )
     @user = user
     @client = client
@@ -52,7 +52,7 @@ class CreateUser
       user: @user,
       client: @client,
       type: 'user',
-      target: username,
+      target: @username,
       action: 'create_user',
     }
 
@@ -79,7 +79,7 @@ class CreateUser
 
     @providers.each do |provider|
       # すでに作成済みの場合は何もしない
-      next if provider.read(@username)
+      next if provider.adapter.read(@username)
 
       user_data = provider.adapter.create(
         @username,
