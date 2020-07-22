@@ -150,7 +150,7 @@ module Yuzakan
 
         user = Google::Apis::AdminDirectoryV1::User.new(
           suspended: false)
-        set_password(user, password)
+        set_password(user, password) if password
         user = service.patch_user(email, user)
         normalize_user(user)
       end

@@ -1,1 +1,27 @@
-= render partial: 'gsuite/login_info'
+- if password
+  = render partial: 'gsuite/login_info'
+- else
+  h3 G Suite ログイン情報
+
+  .row.my-3
+    div class=col_name
+      | アカウント名:
+    div class=col_value
+      code.login-info
+        = user[:email]
+
+  .row.my-3
+    div class=col_name
+      | ログインサイト:
+    div class=col_value
+      = link_to 'https://myaccount.google.com/', target: '_blank' do
+        - text 'Google アカウント'
+        - i class: 'fas fa-external-link-alt'
+
+  p 上記ログインサイトにアクセス(新しいタブで開きます)し、「ログイン」ボタンからログインを実施してください。
+
+  p 
+    strong パスワードはリセットされていません。
+    | パスワードを忘れてしまった場合は、G Suiteの画面で「パスワードリセット」を行ってください。
+
+  = link_to 'G Suiteの画面に戻る', routes.path(:gsuite)

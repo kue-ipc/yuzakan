@@ -43,7 +43,7 @@ class UnlockUser
   def call(params)
     @username = params&.[](:username) || @user.name
 
-    if params&.[](:password_reset)
+    if params&.[](:password_reset) == '1'
       gp_result = @generate_password.call
       error!('パスワード生成に失敗しました。') if gp_result.failure?
       @password = gp_result.password

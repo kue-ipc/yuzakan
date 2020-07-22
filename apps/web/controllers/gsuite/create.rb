@@ -14,7 +14,7 @@ module Web
         expose :password
 
         def call(params)
-          unless params.get(:agreement)
+          if params.get(:agreement) != '1'
             flash[:failure] = '同意がありません。'
             redirect_to routes.path(:gsuite)
           end
