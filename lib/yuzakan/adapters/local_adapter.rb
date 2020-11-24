@@ -47,7 +47,7 @@ module Yuzakan
         normalize_user(updated_user)
       end
 
-      def delete(_username)
+      def delete(username)
         user = @repository.by_name(username)
         return unless user
 
