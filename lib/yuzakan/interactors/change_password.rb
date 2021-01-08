@@ -88,7 +88,7 @@ class ChangePassword
     end
 
     @activity_repository.create(**activity_params, result: result.to_s)
-    @mailer&.deliver(**mailer_params, result: result)
+    @mailer&.deliver(**mailer_params, result: result) if @user.email
   end
 
   private def valid?(params)
