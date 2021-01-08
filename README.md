@@ -47,7 +47,7 @@
 
 プログラミング言語
 
-* Ruby >= 2.7 < 3.0
+* Ruby >= 2.6 < 3.0
 * Node.js >= 12
 
 データベース
@@ -58,10 +58,12 @@
 
 サポートする予定のOS/ディストリビューション
 
-* Ubuntu 20.04 LTS
-* CentOS 8
-* CentOS Stream 8
-* Rocky Linux
+* [x] CentOS 8
+* [ ] CentOS Stream 8
+* [ ] Rocky Linux
+* [ ] Ubuntu 20.04 LTS
+* [ ] CentOS 7
+* [ ] Ubuntu 18.04 LTS
 
 ## セットアップ
 
