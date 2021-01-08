@@ -4,7 +4,6 @@ require 'rake'
 require 'hanami/rake_tasks'
 require 'rake/testtask'
 require 'rake/clean'
-require 'shell'
 
 CLEAN << 'vendor/assets'
 
