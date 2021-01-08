@@ -26,8 +26,7 @@ export default targets.map (target) ->
     format: 'esm'
   plugins: [
     nodeResolve(
-      customResolveOptions:
-        moduleDirectory: 'node_modules'
+      moduleDirectories: ['node_modules']
     ),
     commonjs(
       include: /node_modules/
