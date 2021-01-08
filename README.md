@@ -74,7 +74,7 @@ $ bundle insntall --deployment
 ### 開発・テスト環境
 
 ```
-$ bundle insntall --deployment 
+$ bundle insntall
 ```
 
 テスト実施:
