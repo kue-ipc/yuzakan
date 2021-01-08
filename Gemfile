@@ -22,7 +22,7 @@ gem 'coffee-script'
 gem 'uglifier'
 
 gem 'bcrypt'
-gem 'zxcvbn-ruby'
+gem 'zxcvbn-js', require: 'zxcvbn'
 
 # default gem
 gem 'ipaddr'

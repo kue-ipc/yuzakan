@@ -229,7 +229,8 @@ GEM
       rack
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    zxcvbn-ruby (1.2.0)
+    zxcvbn-js (4.4.3)
+      execjs
 
 PLATFORMS
   ruby
@@ -256,7 +257,7 @@ DEPENDENCIES
   slim
   smbhash
   uglifier
-  zxcvbn-ruby
+  zxcvbn-js
 
 BUNDLED WITH
    1.17.2
