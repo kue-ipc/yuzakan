@@ -24,6 +24,10 @@ gem 'uglifier'
 gem 'bcrypt'
 gem 'zxcvbn-js', require: 'zxcvbn'
 
+# key-value storage
+gem 'redis-rack'
+# gem 'dalli'
+
 # default gem
 gem 'ipaddr'
 

@@ -7,6 +7,7 @@ module Web
         include Web::Action
 
         def call(_params)
+          Hanami.logger.debug session.inspect
           redirect_to routes.path(:dashboard) if authenticated?
         end
 

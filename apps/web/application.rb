@@ -15,7 +15,27 @@ module Web
 
       routes 'config/routes'
 
-      sessions :cookie, secret: ENV['WEB_SESSIONS_SECRET']
+      sassions_name = 'yuzakan:session:web'
+      sessions_opts = {
+        expire_after: 24 * 60 * 60,
+        key: sassions_name.gsub(':', '.'),
+      }
+
+      # -- redis --
+      sessions :redis,
+               redis_server: "redis://127.0.0.1:6379/0/#{sassions_name}",
+               **sessions_opts
+
+      # -- memcached --
+      # require 'rack/session/dalli'
+      # sessions :dalli,
+      #          namespace: sassions_name,
+      #          **sessions_opts
+
+      # -- cookie --
+      # sessions :cookie,
+      #          secret: ENV.fetch('WEB_SESSIONS_SECRET'),
+      #          **sessions_opts
 
       layout :application
 

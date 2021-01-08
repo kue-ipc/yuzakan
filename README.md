@@ -56,6 +56,11 @@
 * MariaDB
 * PostgreSQL
 
+セッション管理key-valueデータベース
+
+* redis (デフォルト)
+* memcaced (dalliを有効にする)
+
 サポートする予定のOS/ディストリビューション
 
 * [x] CentOS 8
