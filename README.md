@@ -12,15 +12,15 @@
     * [ ] 利用者
         * [x] ログイン
         * [x] パスワード変更
-        * [ ] G Suite 利用登録
+        * [x] G Suite 利用登録
         * [ ] Office 365 利用登録
         * [ ] メール転送設定
-        * [ ] 情報確認(自分のみ)
+        * [x] 情報確認(自分のみ)
         * [ ] ユーザー検索
     * [ ] 管理者
-        * [ ] ログイン
-        * [ ] 全体設定
-        * [ ] プロバイダー管理
+        * [x] ログイン
+        * [x] 全体設定
+        * [x] プロバイダー管理
         * [ ] 強制パスワード変更
         * [ ] G Suite 連携
             * [ ] ユーザー管理
@@ -33,26 +33,22 @@
             * [ ] ユーザー削除
         * [ ] ユーザー検索
 * 接続(アダプター)
-    * [ ] ローカル
-    * [ ] LDAP
-    * [ ] AD
+    * [x] ローカル
+    * [x] LDAP
+        * [ ] Posix NIS
+        * [ ] Samba
+        * [x] AD
     * [ ] SSH
     * [ ] Ansible
-    * [ ] G Suite
+    * [x] G Suite
     * [ ] Office 365
-
----
-
-ここから下はまだちゃんと書いていない。
 
 ## 動作環境
 
 プログラミング言語
 
-* Ruby 2.5.x以上 (2.6.x以上推奨)
-* Node.js 8.x以上 (12.x以上推奨) ※
-
-※ assetsをコンパイル済みであれば不要
+* Ruby >= 2.7 < 3.0
+* Node.js >= 12
 
 データベース
 
@@ -62,40 +58,46 @@
 
 サポートする予定のOS/ディストリビューション
 
-* Ubuntu 18.04LTS
+* Ubuntu 20.04 LTS
 * CentOS 8
+* CentOS Stream 8
+* Rocky Linux
 
-## Setup
+## セットアップ
 
-
-```
-$ bundle insntall
-```
-
-How to run tests:
+### 本番環境
 
 ```
-% bundle exec rake
+$ bundle insntall --deployment
 ```
 
-How to run the development console:
+### 開発・テスト環境
 
 ```
-% bundle exec hanami console
+$ bundle insntall --deployment 
 ```
 
-How to run the development server:
+テスト実施:
 
 ```
-% bundle exec hanami server
+$ bundle exec rake
 ```
 
-How to prepare (create and migrate) DB for `development` and `test` environments:
+開発コンソール起動:
 
 ```
-% bundle exec hanami db prepare
-
-% HANAMI_ENV=test bundle exec hanami db prepare
+$ bundle exec hanami console
 ```
 
-Explore Hanami [guides](http://hanamirb.org/guides/), [API docs](http://docs.hanamirb.org/1.3.1/), or jump in [chat](http://chat.hanamirb.org) for help. Enjoy! 🌸
+開発サーバー起動:
+
+```
+$ bundle exec hanami server
+```
+
+`development`と`test`環境におけるDBの準備:
+
+```
+$ bundle exec hanami db prepare
+$ HANAMI_ENV=test bundle exec hanami db prepare
+```
