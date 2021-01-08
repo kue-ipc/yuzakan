@@ -5,7 +5,6 @@ source 'https://rubygems.org'
 gem 'rake'
 gem 'hanami',       '~> 1.3'
 gem 'hanami-model', '~> 1.3'
-gem 'hanami-events', git: 'https://github.com/hanami/events.git'
 
 gem 'rack', '>= 2.2.2'
 
