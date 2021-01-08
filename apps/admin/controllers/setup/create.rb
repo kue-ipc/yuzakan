@@ -1,10 +1,15 @@
 # frozen_string_literal: true
 
+require 'hanami/action/cache'
+
 module Admin
   module Controllers
     module Setup
       class Create
         include Admin::Action
+        include Hanami::Action::Cache
+
+        cache_control :no_store
 
         def call(params)
           redirect_to routes.path(:setup_done) if configurated?

@@ -1,10 +1,15 @@
 # frozen_string_literal: true
 
+require 'hanami/action/cache'
+
 module Admin
   module Controllers
     module Session
       class Destroy
         include Admin::Action
+        include Hanami::Action::Cache
+
+        cache_control :no_store
 
         def call(_params)
           session[:user_id] = nil

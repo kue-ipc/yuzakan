@@ -1,10 +1,15 @@
 # frozen_string_literal: true
 
+require 'hanami/action/cache'
+
 module Web
   module Controllers
     module User
       class Show
         include Web::Action
+        include Hanami::Action::Cache
+
+        cache_control :no_store
 
         expose :user
         expose :user_attrs

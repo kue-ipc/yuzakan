@@ -1,11 +1,16 @@
 # frozen_string_literal: true
 
+require 'hanami/action/cache'
+
 module Web
   module Controllers
     module Gsuite
       module Code
         class Create
           include Web::Action
+          include Hanami::Action::Cache
+
+          cache_control :no_store
 
           expose :codes
 

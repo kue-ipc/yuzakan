@@ -1,10 +1,15 @@
 # frozen_string_literal: true
 
+require 'hanami/action/cache'
+
 module Admin
   module Controllers
     module Config
       class Update
         include Admin::Action
+        include Hanami::Action::Cache
+
+        cache_control :no_store
 
         def call(params)
           result = UpdateConfig.new.call(params[:config])
