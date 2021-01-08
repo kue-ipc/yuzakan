@@ -24,7 +24,6 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.1.7)
-    dalli (2.7.11)
     debug_inspector (1.0.0)
     declarative (0.0.20)
     declarative-option (0.1.0)
@@ -246,7 +245,6 @@ DEPENDENCIES
   bcrypt
   capybara
   coffee-script
-  dalli
   dotenv (~> 2.4)
   google-api-client
   hanami (~> 1.3)
