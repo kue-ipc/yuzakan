@@ -2,7 +2,7 @@
 # 受け取ったJSONをメッセージとして表示する。
 # その際、modalを使用する。
 
-import {h, app} from './hyperapp.js'
+import {h, text, app} from './hyperapp.js'
 import bsn from './bootstrap-native.js'
 import {FaIcon} from './fa_icon.js'
 
@@ -159,12 +159,12 @@ messageAction = (state, params) -> {
 
 ModalView = ({status, title, messages, closable, successLink}) ->
   h 'div', class: 'modal-dialog modal-dialog-centered', role: 'document',
-    h 'div', class: 'modal-content',
-      h 'div', class: 'modal-header',
-        h 'h5', class: 'modal-title',
-          h StatusIcon, status: status
-          ' '
-          title
+    h 'div', class: 'modal-content', [
+      h 'div', class: 'modal-header', [
+        h 'h5', class: 'modal-title', [
+          StatusIcon status: status
+          text " #{title}"
+        ]
         if closable
           h 'button',
             class: 'close'
@@ -172,23 +172,26 @@ ModalView = ({status, title, messages, closable, successLink}) ->
             'data-dismiss': 'modal'
             'aria-label': "閉じる"
             h 'span', 'aria-hidden': "true",
-              h FaIcon, prefix: 'fas', name: 'fa-times'
+              FaIcon prefix: 'fas', name: 'fa-times'
+      ]
       h 'div', class: 'modal-body',
-        h MessageList, messages: messages
+        MessageList messages: messages
       if closable || successLink?
-        h 'div', class: 'modal-footer',
+        h 'div', class: 'modal-footer', [
           if successLink?
             h 'a',
               class: 'btn btn-primary'
               role: 'button'
               href: successLink
-              'すぐに移動'
+              text 'すぐに移動'
           if closable
             h 'button',
               class: 'btn btn-secondary'
               type: 'button'
               'data-dismiss': 'modal'
-              '閉じる'
+              text '閉じる'
+        ]
+    ]
 
 StatusIcon = ({status}) ->
   [textClass, props] =
@@ -219,9 +222,10 @@ StatusIcon = ({status}) ->
           {prefix: 'fas', name: 'fa-question'}
         ]
   h 'span', class: textClass,
-    h FaIcon, props
+    FaIcon props
 
 MessageList = ({messages}) ->
   messages = [messages] unless messages instanceof Array
   h 'div', {}, messages.filter((x) -> typeof x == 'string').map (msg) ->
-    h 'div', {}, msg
+    h 'div', {},
+      text msg
