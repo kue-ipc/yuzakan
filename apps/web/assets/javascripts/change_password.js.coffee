@@ -1,6 +1,6 @@
 import './modern_browser.js'
 
-import {h, app} from './hyperapp.js'
+import {h, text, app} from './hyperapp.js'
 import {preventDefault, targetValue} from './hyperapp-events.js'
 import {FaIcon} from './fa_icon.js'
 import zxcvbn from './zxcvbn.js'
@@ -61,7 +61,7 @@ StrengthIndicator = ({score, strength}) =>
 
   strength = 100 if strength >= 100
 
-  h 'div', class: 'row mb-3',
+  h 'div', class: 'row mb-3', [
     h 'div', class: changePasswordData.cols.left
     h 'div', class: changePasswordData.cols.right,
       h 'div', class: 'progress', style: {height: '2em'},
@@ -72,7 +72,8 @@ StrengthIndicator = ({score, strength}) =>
           'aria-valuenow': strength
           'aria-valuemin': '0'
           'aria-valuemax': '100'
-          scoreLabel.label
+          text scoreLabel.label
+  ]
 
 class PasswordInputGenerator
   constructor: ({@name, @label, error = null} ) ->
@@ -93,7 +94,7 @@ class PasswordInputGenerator
         message: error
     state
 
-  showPassword: (state, visible) => {
+  showPassword: (state, {visible}) => {
     state...
     [@camelName]: {
       state[@camelName]...
@@ -130,7 +131,7 @@ class PasswordInputGenerator
     }
   }
 
-  setValue: (state, value) =>
+  setValue: (state, {value}) =>
     checkPassword({
       state...
       [@camelName]: {
@@ -150,12 +151,12 @@ class PasswordInputGenerator
       else
         ''
 
-    h 'div', class: 'form-group row',
+    h 'div', class: 'form-group row', [
       h 'label',
         class: "col-form-label #{changePasswordData.cols.left}"
         for: @idName
-        @label
-      h 'div', class: "input-group #{changePasswordData.cols.right}",
+        text @label
+      h 'div', class: "input-group #{changePasswordData.cols.right}", [
         h 'input',
           id: @idName
           name: @fieldName
@@ -164,20 +165,24 @@ class PasswordInputGenerator
           disabled: disabled
           placeholder: 'パスワードを入力'
           'aria-describedby': "#{@idName}-visible-button"
-          onInput: [@setValue, targetValue]
+          oninput: (_, e) => [@setValue, {value: targetValue(e)}]
         h 'div', class: 'input-group-append',
           h 'div',
             id: "#{@idName}-visible-button"
             class:
               "input-group-text #{if visible then 'text-primary' else ''}"
-            onMouseDown: [@showPassword, true]
-            onMouseUp: [@showPassword, false]
-            onMouseLeave: [@showPassword, false]
-            h FaIcon,
+            onmousedown: [@showPassword, {visible: true}]
+            onmouseup: [@showPassword, {visible: false}]
+            onmouseleave: [@showPassword, {visible: false}]
+            FaIcon
               prefix: 'fas'
               name: if visible then 'fa-eye' else 'fa-eye-slash'
-        h 'div', class: 'valid-feedback', message
-        h 'div', class: 'invalid-feedback', message
+        h 'div', class: 'valid-feedback',
+          text message
+        h 'div', class: 'invalid-feedback',
+          text message
+      ]
+    ]
 
 passwordCurrent = new PasswordInputGenerator
   name: 'password_current'
@@ -205,12 +210,12 @@ SubmitButton = ({submitting, valid}) =>
     class: 'btn btn-primary btn-block'
     type:'submit'
     disabled: submitting || !valid
-    onClick: preventDefault (state) =>
+    onclick: preventDefault (state) =>
       [
         startSubmit(state)
         [submitRunner]
       ]
-    '変更'
+    text '変更'
 
 init =
   [passwordCurrent.camelName]: passwordCurrent.init()
@@ -331,28 +336,30 @@ submitRunner = (dispatch) ->
   )()
 
 view = (state) ->
-  h 'div', {},
-    h passwordCurrent.view, {
+  h 'div', {}, [
+    passwordCurrent.view {
       disabled: state.submitting
       state.passwordCurrent...
     }
-    h password.view, {
+    password.view {
       disabled: state.submitting
       state.password...
     }
-    h StrengthIndicator, {
+    StrengthIndicator {
       score: state.score
       strength: state.strength
     }
-    h passwordConfirmation.view, {
+    passwordConfirmation.view {
       disabled: state.submitting
       state.passwordConfirmation...
     }
-    h 'div', class: 'row',
+    h 'div', class: 'row', [
       h 'div', class: "#{changePasswordData.cols.left}"
       h 'div', class: "#{changePasswordData.cols.right}",
-        h SubmitButton,
+        SubmitButton
           valid: state.valid
           submitting: state.submitting
+    ]
+  ]
 
 app {init, view, node: changePasswordNode}
