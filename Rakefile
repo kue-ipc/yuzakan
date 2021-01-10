@@ -37,20 +37,16 @@ namespace :vendor do
   end
 
   task build_font: ['vendor/assets/fonts'] do
+    fonts_dir = 'vendor/assets/fonts'
+    bootstrap_icons_dir = 'node_modules/bootstrap-icons/font'
+    cp Dir.glob("#{bootstrap_icons_dir}/fonts/*.{woff,woff2}"), fonts_dir
+
     source_code_pro_dir = 'node_modules/source-code-pro'
-    font_list = [
-      'WOFF2/TTF/SourceCodePro-Regular.ttf.woff2',
-      'WOFF2/TTF/SourceCodePro-It.ttf.woff2',
-      'WOFF2/TTF/SourceCodePro-Bold.ttf.woff2',
-      'WOFF2/TTF/SourceCodePro-BoldIt.ttf.woff2',
-      'WOFF/OTF/SourceCodePro-Regular.otf.woff',
-      'WOFF/OTF/SourceCodePro-It.otf.woff',
-      'WOFF/OTF/SourceCodePro-Bold.otf.woff',
-      'WOFF/OTF/SourceCodePro-BoldIt.otf.woff',
-    ]
-    font_list.each do |font|
-      name = File.basename(font).sub(/\.(ttf|otf)\./, '.')
-      cp "#{source_code_pro_dir}/#{font}", "vendor/assets/fonts/#{name}"
+    Dir.glob("#{source_code_pro_dir}/WOFF2/TTF/*.ttf.woff2").each do |path|
+      cp path, "#{fonts_dir}/#{File.basename(path, '.ttf.woff2')}.woff2"
+    end
+    Dir.glob("#{source_code_pro_dir}/WOFF/OTF/*.otf.woff").each do |path|
+      cp path, "#{fonts_dir}/#{File.basename(path, '.otf.woff')}.woff"
     end
   end
 

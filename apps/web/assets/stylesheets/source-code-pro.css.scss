@@ -1,10 +1,20 @@
 // Source Code Pro web fonts
 // regular italic bold italic+bold only
 $source-code-pro-fonts: (
-  "Regular": ("weight": 400, "style": normal),
-  "It":      ("weight": 400, "style": italic),
-  "Bold":    ("weight": 700, "style": normal),
-  "BoldIt":  ("weight": 700, "style": italic));
+  "ExtraLight":   ("weight": 200, "style": normal),
+  "ExtraLightIt": ("weight": 200, "style": italic),
+  "Light":        ("weight": 300, "style": normal),
+  "LightIt":      ("weight": 300, "style": italic),
+  "Regular":      ("weight": 400, "style": normal),
+  "It":           ("weight": 400, "style": italic),
+  "Medium":       ("weight": 500, "style": normal),
+  "MediumIt":     ("weight": 500, "style": italic),
+  "Semibold":     ("weight": 600, "style": normal),
+  "SemiboldIt":   ("weight": 600, "style": italic),
+  "Bold":         ("weight": 700, "style": normal),
+  "BoldIt":       ("weight": 700, "style": italic),
+  "Black":        ("weight": 900, "style": normal),
+  "BlackIt":      ("weight": 900, "style": italic));
   
 @each $name, $attr in $source-code-pro-fonts {
   @font-face {
