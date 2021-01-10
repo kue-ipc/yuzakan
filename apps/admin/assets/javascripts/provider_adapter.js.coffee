@@ -1,7 +1,6 @@
-# Hyperapp v2 対応済み
+# プロバイダーのアダプター選択時にフォームを表示する
 
-import {h, app} from '../hyperapp.js'
-
+import {h, text, app} from '../hyperapp.js'
 import {fieldName, fieldId} from './form_helper.js'
 
 mainNode = document.getElementById('provider-adapter')
@@ -59,15 +58,17 @@ InputControl = (props) ->
     inputOpts['required'] = false
 
   h 'div', class: 'form-group', [
-    h 'label', for: id, label
+    h 'label', for: id,
+      text label
     h 'input', inputOpts
-    if props.encrypted?
-      h 'small', class: 'form-text text-muted',
-        '''
-        この項目は暗号化されて保存され、現在の値は表示されません。
-        変更しない場合は、空欄のままにしてください。
-        '''
-    h 'small', id: describeId, class: 'form-text text-muted', props.description
+    if props.encrypted? then h 'small', class: 'form-text text-muted',
+      text '''
+      この項目は暗号化されて保存され、現在の値は表示されません。
+      変更しない場合は、空欄のままにしてください。
+      '''
+    if props.description? then h 'small',
+      id: describeId, class: 'form-text text-muted',
+      text props.description
   ]
 
 InputCheckbox = (props) ->
@@ -95,8 +96,11 @@ InputCheckbox = (props) ->
   h 'div', class: 'form-check', [
     h 'input', hiddenInputOpts
     h 'input', inputOpts
-    h 'label', class: 'form-check-label', for: id, label
-    h 'small', id: describeId, class: 'form-text text-muted', props.description
+    h 'label', class: 'form-check-label', for: id,
+      text label
+    if props.description? then h 'small',
+      id: describeId, class: 'form-text text-muted',
+      text props.description
   ]
 
 InputTextarea = (props) ->
@@ -121,15 +125,18 @@ InputTextarea = (props) ->
     inputOpts['required'] = false
 
   h 'div', class: 'form-group', [
-    h 'label', for: id, label
+    h 'label', for: id,
+      text label
     h 'textarea', inputOpts
-    if props.encrypted?
-      h 'small', class: 'form-text text-muted',
-        '''
-        この項目は暗号化されて保存され、現在の値は表示されません。
-        変更しない場合は、空欄のままにしてください。
-        '''
-    h 'small', id: describeId, class: 'form-text text-muted', props.description
+    if props.encrypted? then h 'small', class: 'form-text text-muted',
+      text '''
+      この項目は暗号化されて保存され、現在の値は表示されません。
+      変更しない場合は、空欄のままにしてください。
+      '''
+    if props.description? then h 'small',
+      id: describeId,
+      class: 'form-text text-muted',
+      text props.description
   ]
 
 InputList = (props) ->
@@ -141,7 +148,8 @@ InputList = (props) ->
   selected = props.value ? props.default
 
   h 'div', class: 'form-group', [
-    h 'label', for: id, label
+    h 'label', for: id,
+      text label
     h 'select',
       id: id
       class: 'form-control',
@@ -149,11 +157,14 @@ InputList = (props) ->
       'aria-edscribedby': describeId,
       props.list.map (option) ->
         if selected == option.value
-          h 'option', value: option.value, selected: true, option.name
+          h 'option', value: option.value, selected: true,
+            text option.name
         else
-          h 'option', value: option.value, option.name
-      h 'small', id: describeId, class: 'form-text text-muted',
-        props.description
+          h 'option', value: option.value,
+            text option.name
+      if props.description? then h 'small',
+        id: describeId, class: 'form-text text-muted',
+        text props.description
   ]
 
 
@@ -163,7 +174,7 @@ Params = ({adapterParams, providerParams}) ->
       adapterParams.map (param) ->
         value = providerParams[param.name]
         if param.list?
-          return h InputList, {param..., value}
+          return InputList {param..., value}
 
         input = param.input ? switch param.type
           when 'boolean' then 'checkbox'
@@ -180,15 +191,15 @@ Params = ({adapterParams, providerParams}) ->
           when 'text', 'password', 'email', 'searh', 'tel', 'url', \
                'number', 'range', 'color', \
                'date', 'time', 'datetime-local', 'month', 'week'
-            h InputControl, {param..., input, value}
+            InputControl {param..., input, value}
           when 'checkbox'
-            h InputCheckbox, {param..., input, value}
+            InputCheckbox {param..., input, value}
           when 'textarea'
-            h InputTextarea, {param..., input, value}
+            InputTextarea {param..., input, value}
           else
-            '未実装の形式です。'
+            text '未実装の形式です。'
     else
-      "設定できるパラメーターはありません。"
+      text "設定できるパラメーターはありません。"
 
 updateAdapterParams = (state, value) -> {
   state...
@@ -221,8 +232,9 @@ initState =
 
 view = (state) ->
   h 'div', {}, [
-    h 'p', {}, 'パラメーター'
-    h Params, state
+    h 'p', {},
+      text 'パラメーター'
+    Params state
   ]
 
 app
