@@ -76,7 +76,7 @@ view = (state) =>
       h 'p', {},
         text '未実装'
     else
-      CreateUserContent, agreement: state.agreement
+      CreateUserContent agreement: state.agreement
 
 
 app({init, view, node})
