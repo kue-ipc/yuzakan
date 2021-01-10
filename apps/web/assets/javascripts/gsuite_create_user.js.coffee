@@ -1,4 +1,4 @@
-import {h, app} from './hyperapp.js'
+import {h, text, app} from './hyperapp.js'
 import WebPostJson from './web_post_json.js'
 
 agreementCheck = (state, agreement) => {
@@ -8,7 +8,7 @@ agreementCheck = (state, agreement) => {
 
 AgreementCheck = ({agreement}) =>
   id = 'gsuite-create-user-agreement'
-  h 'div', class: 'form-check',
+  h 'div', class: 'form-check', [
     h 'input', type: 'hidden', name: 'agreement', value: '0'
     h 'input',
       id: id
@@ -19,7 +19,8 @@ AgreementCheck = ({agreement}) =>
       checked: agreement
       onchange: [agreementCheck, (e) => e.target.checked]
     h 'label', class: 'form-check-label', for: id,
-      '上記について確認し、内容に同意します。'
+      text '上記について確認し、内容に同意します。'
+  ]
 
 gsuiteCreateUserRules = [
   '''
@@ -39,14 +40,16 @@ gsuiteCreateUserRules = [
   '''
 ]
 
-
-
 CreateUserContent = ({agreement}) =>
-  h 'div', {},
-    h 'p', {}, 'Google アカウントの作成を行います。下記を確認し、内容について同意する必要があります。'
+  h 'div', {}, [
+    h 'p', {},
+    text 'Google アカウントの作成を行います。下記を確認し、内容について同意する必要があります。'
     h 'ul', {},
-      gsuiteCreateUserRules.map (rule) => h 'li', {}, rule
-    h AgreementCheck, {agreement}
+      gsuiteCreateUserRules.map (rule) =>
+        h 'li', {},
+          text rule
+    AgreementCheck {agreement}
+  ]
 
 node = document.getElementById('gsuite-create-user-child')
 
@@ -58,7 +61,7 @@ init = {
 }
 
 view = (state) =>
-  h ModalDialog,
+  ModalDialog
     modalSize: 'lg'
     labelId: 'gsuite-create-user'
     title: 'Google アカウント 作成' + (if state.created then ' 完了' else '')
@@ -70,9 +73,10 @@ view = (state) =>
       disabled: true
     }
     if state.created
-      h 'p', {}, '未実装'
+      h 'p', {},
+        text '未実装'
     else
-      h CreateUserContent, agreement: state.agreement
+      CreateUserContent, agreement: state.agreement
 
 
 app({init, view, node})
