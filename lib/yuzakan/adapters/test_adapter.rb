@@ -55,10 +55,6 @@ module Yuzakan
         },
       ]
 
-      def initialize(params)
-        super
-      end
-
       def check
         true
       end

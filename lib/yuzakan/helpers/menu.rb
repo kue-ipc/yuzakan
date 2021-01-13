@@ -10,12 +10,13 @@ module Yuzakan
             ['card', "border-#{color}"]
           end
         html.div class: col_card + ['my-1'] do
-          if type == :link
+          case type
+          when :link
             link_to url, class: card_class do
               div name, class: 'card-header text-center'
               div description, class: 'card-body'
             end
-          elsif type == :modal
+          when :modal
             link_to url, class: card_class, 'data-toggle': 'modal',
                          'data-target': url do
               div name, class: 'card-header text-center'

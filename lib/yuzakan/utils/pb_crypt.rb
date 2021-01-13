@@ -34,7 +34,7 @@ module Yuzakan
       end
 
       def encrypt_text(text)
-        return String.new if text.empty?
+        return '' if text.empty?
 
         Base64.strict_encode64(encrypt(text))
       end
@@ -47,7 +47,7 @@ module Yuzakan
       end
 
       def encrypt(data)
-        return String.new if data.empty?
+        return '' if data.empty?
 
         salt = generate_salt
 
@@ -65,7 +65,7 @@ module Yuzakan
       end
 
       def decrypt(salt_encrypted_data)
-        return String.new if salt_encrypted_data.empty?
+        return '' if salt_encrypted_data.empty?
 
         dec = OpenSSL::Cipher.new(@algorithm)
         dec.decrypt

@@ -16,11 +16,12 @@ module Admin
             .call(params[:session])
 
           if result.failure?
-            if format == :html
+            case format
+            when :html
               flash[:errors] = result.errors
               flash[:failure] = 'ログインに失敗しました。'
               redirect_to routes.path(:root)
-            elsif format == :json
+            when :json
               @data = {
                 result: 'failure',
                 messages: {
@@ -34,10 +35,11 @@ module Admin
 
           unless result.user.admin
             session[:user_id] = nil
-            if format == :html
+            case format
+            when :html
               flash[:failure] = '管理者権限がありません。'
               redirect_to routes.path(:root)
-            elsif format == :json
+            when :json
               @data = {
                 result: 'failure',
                 messages: {
@@ -50,10 +52,11 @@ module Admin
 
           session[:user_id] = result.user.id
           session[:access_time] = Time.now
-          if format == :html
+          case format
+          when :html
             flash[:success] = 'ログインしました。'
             redirect_to routes.path(:dashboard)
-          elsif format == :json
+          when :json
             @data = {
               result: 'success',
               messages: {success: 'ログインしました。'},

@@ -68,7 +68,7 @@ class ResetPassword
     }
 
     if @providers
-      activity_params[:action] += ':' + @providers.map(&:name).join(',')
+      activity_params[:action] += ":#{@providers.map(&:name).join(',')}"
       mailer_params[:providers] = @providers
     end
 

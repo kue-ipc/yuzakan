@@ -88,7 +88,7 @@ module Yuzakan
           member = Google::Apis::AdminDirectoryV1::Member.new(
             email: user.primary_email)
           service.insert_member(
-            'classroom_teachers@' + @params[:domain],
+            "classroom_teachers@#{@params[:domain]}",
             member)
         end
         normalize_user(response, mappings)
@@ -99,7 +99,7 @@ module Yuzakan
         user = service.get_user(email)
         normalize_user(user, mappings)
       rescue Google::Apis::ClientError => e
-        Hanami.logger.debug 'GsuiteAdapter#read: ' + e.message
+        Hanami.logger.debug "GsuiteAdapter#read: #{e.message}"
         nil
       end
 
@@ -291,7 +291,7 @@ module Yuzakan
       end
 
       private def name_json_to_ruby(json_name)
-        json_name.gsub(/[A-Z]/) { |s| '_' + s.downcase }
+        json_name.gsub(/[A-Z]/) { |s| "_#{s.downcase}" }
       end
 
       private def name_ruby_to_json(ruby_name)

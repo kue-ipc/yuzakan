@@ -2,7 +2,9 @@ require_relative '../../../spec_helper'
 
 describe Web::Views::Maintenance::Index do
   let(:exposures) { Hash[format: :html] }
-  let(:template)  { Hanami::View::Template.new('apps/web/templates/maintenance/index.html.slim') }
+  let(:template)  do
+    Hanami::View::Template.new('apps/web/templates/maintenance/index.html.slim')
+  end
   let(:view)      { Web::Views::Maintenance::Index.new(template, exposures) }
   let(:rendered)  { view.render }
 

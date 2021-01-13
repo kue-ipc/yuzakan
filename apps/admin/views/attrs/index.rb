@@ -39,7 +39,8 @@ module Admin
 
                 td class: 'table-primary' do
                   text_field :name, class: 'form-control mb-1', required: true
-                  text_field :display_name, class: 'form-control', required: true
+                  text_field :display_name, class: 'form-control',
+                                            required: true
                 end
 
                 td class: 'table-primary' do
@@ -116,7 +117,8 @@ module Admin
                     '閉じる'
                   end
                   div do
-                    form_for attr, routes.path(:attr, attr.id), method: :delete do
+                    form_for attr, routes.path(:attr, attr.id),
+                             method: :delete do
                       submit '削除', class: 'btn btn-danger'
                     end
                   end

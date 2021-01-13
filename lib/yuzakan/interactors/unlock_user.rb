@@ -77,10 +77,10 @@ class UnlockUser
       mailer_params[:action] += '＋パスワードリセット'
       mailer_params[:description] =
         'アカウントのロックを解除し、パスワードをリセットしました。'
-      end
+    end
 
     if @providers
-      activity_params[:action] += ':' + @providers.map(&:name).join(',')
+      activity_params[:action] += ":#{@providers.map(&:name).join(',')}"
       mailer_params[:providers] = @providers
     end
 

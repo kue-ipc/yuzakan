@@ -364,7 +364,7 @@ module Yuzakan
       # $1$vuIZLw8r$d9mkddv58FuCPxOh6nO8f0
       private def generate_password(password)
         salt = SecureRandom.base64(12).gsub('+', '.')
-        '{CRYPT}' + password.crypt(format('$1$%.8s', salt))
+        "{CRYPT}#{password.crypt(format('$1$%.8s', salt))}"
       end
 
       private def generate_ntpassword(password)
@@ -378,7 +378,7 @@ module Yuzakan
 
       private def lock_password(str)
         if (m = /\A({[A-Z]+})(.*)\z/.match(str))
-          m[1] + '!' + m[2]
+          "#{m[1]}!#{m[2]}"
         else
           # 不正なパスワード
           '{!}!'

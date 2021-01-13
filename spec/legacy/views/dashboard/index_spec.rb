@@ -2,7 +2,9 @@ require_relative '../../../spec_helper'
 
 describe Legacy::Views::Dashboard::Index do
   let(:exposures) { Hash[format: :html] }
-  let(:template)  { Hanami::View::Template.new('apps/legacy/templates/dashboard/index.html.slim') }
+  let(:template)  do
+    Hanami::View::Template.new('apps/legacy/templates/dashboard/index.html.slim')
+  end
   let(:view)      { Legacy::Views::Dashboard::Index.new(template, exposures) }
   let(:rendered)  { view.render }
 

@@ -9,7 +9,7 @@ module Admin
           include Hanami::Action::Cache
 
           cache_control :no_store
-  
+
           expose :adapter
 
           def call(params)

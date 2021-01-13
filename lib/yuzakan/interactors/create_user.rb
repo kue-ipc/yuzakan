@@ -21,8 +21,8 @@ class CreateUser
   def initialize(
     user:,
     client:,
-    config: ConfigRepostitory.new.current,
     providers:,
+    config: ConfigRepostitory.new.current,
     activity_repository: ActivityRepository.new,
     attr_mapping_repository: AttrMappingRepository.new,
     generate_password: GeneratePassword.new,
@@ -69,7 +69,7 @@ class CreateUser
       description: 'アカウントを作成しました。',
     }
 
-    activity_params[:action] += ':' + @providers.map(&:name).join(',')
+    activity_params[:action] += ":#{@providers.map(&:name).join(',')}"
     mailer_params[:providers] = @providers
 
     @user_datas = {}

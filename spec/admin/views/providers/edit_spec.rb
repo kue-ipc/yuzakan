@@ -2,7 +2,9 @@ require_relative '../../../spec_helper'
 
 describe Admin::Views::Providers::Edit do
   let(:exposures) { Hash[format: :html] }
-  let(:template)  { Hanami::View::Template.new('apps/admin/templates/providers/edit.html.slim') }
+  let(:template)  do
+    Hanami::View::Template.new('apps/admin/templates/providers/edit.html.slim')
+  end
   let(:view)      { Admin::Views::Providers::Edit.new(template, exposures) }
   let(:rendered)  { view.render }
 

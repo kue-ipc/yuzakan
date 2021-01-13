@@ -2,9 +2,9 @@ hanami_env = ENV.fetch('HANAMI_ENV') { 'development' }
 app_root = Dir.pwd
 
 if !ENV.include?('PORT') && hanami_env == 'production'
-  bind 'unix://' + File.expand_path('tmp/sockets/puma.sock', app_root)
+  bind "unix://#{File.expand_path('tmp/sockets/puma.sock', app_root)}"
 else
-  port ENV.fetch('PORT') { 2300 }
+  port ENV.fetch('PORT', 2300)
 end
 
 environment hanami_env

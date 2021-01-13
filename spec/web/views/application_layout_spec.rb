@@ -1,7 +1,9 @@
 require 'spec_helper'
 
 describe Web::Views::ApplicationLayout do
-  let(:layout)   { Web::Views::ApplicationLayout.new({format: :html}, 'contents') }
+  let(:layout) do
+    Web::Views::ApplicationLayout.new({format: :html}, 'contents')
+  end
   let(:rendered) { layout.render }
 
   # it 'contains application name' do

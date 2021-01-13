@@ -20,8 +20,7 @@ module Web
               user: current_user,
               client: remote_ip,
               config: current_config,
-              providers: [provider]
-            ).call(params.get(:gsuite_lock_destroy))
+              providers: [provider]).call(params.get(:gsuite_lock_destroy))
 
             if result.failure?
               flash[:errors] = result.errors
@@ -32,11 +31,11 @@ module Web
             @user = result.user_datas[provider.name]
             @password = result.password
 
-            if @password
-              flash[:success] = 'Google アカウントのロックを解除し、パスワードをリセットしました。'
-            else
-              flash[:success] = 'Google アカウントのロックを解除しました。'
-            end
+            flash[:success] = if @password
+                                'Google アカウントのロックを解除し、パスワードをリセットしました。'
+                              else
+                                'Google アカウントのロックを解除しました。'
+                              end
           end
         end
       end

@@ -46,7 +46,7 @@ class AttrMapping < Hanami::Entity
     when 'posix_date'
       (Date.new(1970, 1, 1) - value.to_date).to_i
     when 'path'
-      '/' + value
+      "/#{value}"
     when 'e2j'
       translate_j2e(value)
     when 'j2e'

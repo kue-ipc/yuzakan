@@ -118,7 +118,8 @@ module Web
                           check_box input_data[:name],
                                     class: 'form-check-input',
                                     checked: input_data[:default] && 'checked'
-                          label class: 'form-check-label', for: input_data[:name] do
+                          label class: 'form-check-label',
+                                for: input_data[:name] do
                             text input_data[:text]
                           end
                         end
@@ -219,7 +220,7 @@ module Web
                   text: 'ロック解除とともにパスワードをリセットします。',
                   default: true,
                 },
-              ]
+              ],
             },
             gsuite_code_create: {
               title: 'Google アカウント バックアップコード生成',

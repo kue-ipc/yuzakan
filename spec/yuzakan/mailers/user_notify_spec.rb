@@ -3,12 +3,14 @@ require_relative '../../spec_helper'
 describe Mailers::UserNotify do
   let(:config) { ConfigRepository.new.current }
   let(:user) { UserRepository.new.by_name('user').first }
-  let(:params) { {
-    user: user,
-    config: config,
-    action: 'テスト処理',
-    description: 'テスト処理をしました。',
-  } }
+  let(:params) do
+    {
+      user: user,
+      config: config,
+      action: 'テスト処理',
+      description: 'テスト処理をしました。',
+    }
+  end
 
   it 'delivers email' do
     mail = Mailers::UserNotify.deliver(**params)

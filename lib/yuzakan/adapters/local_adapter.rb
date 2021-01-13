@@ -80,7 +80,7 @@ module Yuzakan
 
         @repository.update(
           user.id,
-          hashed_password: '!' + user.hashed_password)
+          hashed_password: "!#{user.hashed_password}")
       end
 
       def unlock(username)
@@ -89,7 +89,7 @@ module Yuzakan
 
         @repository.update(
           user.id,
-          hashed_password: user.hashed_password[1..-1])
+          hashed_password: user.hashed_password[1..])
       end
 
       def locked?(username)

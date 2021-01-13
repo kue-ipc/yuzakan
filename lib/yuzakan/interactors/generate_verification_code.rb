@@ -19,8 +19,8 @@ class GenerateVerificationCode
   def initialize(
     user:,
     client:,
-    config: ConfigRepostitory.new.current,
     providers:,
+    config: ConfigRepostitory.new.current,
     activity_repository: ActivityRepository.new,
     mailer: Mailers::UserNotify
   )
@@ -58,7 +58,7 @@ class GenerateVerificationCode
       description: 'バックアップコードを生成しました。',
     }
 
-    activity_params[:action] += ':' + @providers.map(&:name).join(',')
+    activity_params[:action] += ":#{@providers.map(&:name).join(',')}"
     mailer_params[:providers] = @providers
 
     @user_datas = {}
