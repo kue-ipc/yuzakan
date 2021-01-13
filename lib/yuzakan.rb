@@ -2,5 +2,11 @@ require_relative 'yuzakan/adapters'
 require_relative 'yuzakan/helpers'
 
 module Yuzakan
-  VERSION = '0.2.2'.freeze
+  def self.name
+    'ゆざかん'
+  end
+
+  def self.version
+    'v0.3.0'
+  end
 end
