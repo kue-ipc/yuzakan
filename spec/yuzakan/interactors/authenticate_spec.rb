@@ -1,7 +1,7 @@
 require_relative '../../spec_helper'
 
 describe Authenticate do
-  let(:interactor) { Authenticate.new(client: '::1') }
+  let(:interactor) { Authenticate.new(client: '::1', app: 'test') }
   let(:params) do
     Hash[
     username: 'admin',

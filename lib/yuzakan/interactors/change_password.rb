@@ -151,6 +151,7 @@ class ChangePassword
     # 現在のパスワード確認
     if params[:password_current] && !params[:password_current].empty?
       result = Authenticate.new(client: @client,
+                                app: 'change_password',
                                 provider_repository: @provider_repository)
         .call(username: @user.name, password: params[:password_current])
       if result.failure?

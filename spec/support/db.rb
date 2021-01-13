@@ -26,7 +26,8 @@ def db_initialize
     display_name: '一般ユーザー',
     email: 'user@yuzakan.test')
   adapter.change_password('user', 'word')
-  Authenticate.new(client: '::1').call({username: 'user', password: 'word'})
+  Authenticate.new(client: '::1', app: 'test')
+    .call({username: 'user', password: 'word'})
 
   # ダミープロバイダー
   UpdateProvider.new(provider_repository: provider_repository).call(

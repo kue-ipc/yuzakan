@@ -4,7 +4,7 @@ describe Admin::Controllers::Setup::Create do
   let(:action) { Admin::Controllers::Setup::Create.new }
   let(:params) { {'REMOTE_ADDR' => '::1', 'rack.session' => session} }
   let(:session) { {user_id: user_id, access_time: Time.now} }
-  let(:user_id) { Authenticate.new(client: '::1').call(auth).user&.id }
+  let(:user_id) { Authenticate.new(client: '::1', app: 'test').call(auth).user&.id }
   let(:auth) { {username: 'admin', password: 'pass'} }
 
   describe 'before initialized' do
