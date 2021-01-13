@@ -14,7 +14,7 @@ module Admin
         expose :data
 
         def call(params)
-          result = Authenticate.new(client: remote_ip)
+          result = Authenticate.new(client: remote_ip, app: 'admin')
             .call(params[:session])
 
           if result.failure?

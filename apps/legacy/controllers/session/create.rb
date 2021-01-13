@@ -12,7 +12,7 @@ module Legacy
             redirect_to routes.path(:dashboard)
           end
 
-          result = Authenticate.new(client: remote_ip)
+          result = Authenticate.new(client: remote_ip, app: 'legacy')
             .call(params[:session])
 
           if result.failure?

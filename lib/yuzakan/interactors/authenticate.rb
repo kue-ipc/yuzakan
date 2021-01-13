@@ -18,17 +18,26 @@ class Authenticate
 
   expose :user
 
-  def initialize(client:,
+  def initialize(client:, app:,
                  user_repository: UserRepository.new,
                  provider_repository: ProviderRepository.new,
                  activity_repository: ActivityRepository.new)
     @client = client
+    @app = app
     @user_repository = user_repository
     @provider_repository = provider_repository
     @activity_repository = activity_repository
   end
 
   def call(params)
+    activity_params = {
+      client: @client,
+      type: 'user',
+      target: params[:username],
+      action: 'auth',
+      params: {app: @app}.to_json,
+    }
+
     failure_count = 0
 
     @activity_repository.user_auths(params[:username], ago: 60 * 60)
@@ -42,17 +51,11 @@ class Authenticate
     end
 
     if failure_count >= 5
+      @activity_repository.create(activity_params.merge!({result: 'reject'}))
       error!('時間あたりのログイン試行が規定の回数を超えたため、' \
         '現在ログインが禁止されています。' \
         'しばらく待ってから再度ログインを試してください。')
     end
-
-    activity_params = {
-      client: @client,
-      type: 'user',
-      target: params[:username],
-      action: 'auth',
-    }
 
     user_data = nil
 
