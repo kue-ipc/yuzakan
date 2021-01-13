@@ -29,6 +29,24 @@ class Authenticate
   end
 
   def call(params)
+    failure_count = 0
+
+    @activity_repository.user_auths(params[:username], ago: 60 * 60)
+      .each do |activity|
+      case activity.result
+      when 'success'
+        break
+      when 'failure'
+        failure_count += 1
+      end
+    end
+
+    if failure_count >= 5
+      error!('時間あたりのログイン試行が規定の回数を超えたため、' \
+        '現在ログインが禁止されています。' \
+        'しばらく待ってから再度ログインを試してください。')
+    end
+
     activity_params = {
       client: @client,
       type: 'user',
@@ -54,7 +72,7 @@ class Authenticate
 
     @user = create_or_upadte_user(user_data)
     @activity_repository.create(activity_params.merge!({
-      user: @user,
+      user_id: @user.id,
       result: 'success',
     }))
   end
