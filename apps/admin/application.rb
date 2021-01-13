@@ -3,7 +3,7 @@ require 'hanami/assets'
 
 module Admin
   class Application < Hanami::Application
-    configure do
+    configure do # rubocop:disable Metrics/BlockLength
       root __dir__
 
       load_paths << [
