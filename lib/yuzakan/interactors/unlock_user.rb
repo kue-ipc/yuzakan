@@ -52,7 +52,7 @@ class UnlockUser
     end
 
     activity_params = {
-      user: @user,
+      user_id: @user.id,
       client: @client,
       type: 'user',
       target: @username,
