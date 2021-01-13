@@ -8,7 +8,7 @@ adapterSelectNode = document.getElementById(
   mainNode.getAttribute('data-adapter-select'))
 providerIdData = mainNode.getAttribute('data-provider-id')
 
-providerId = 
+providerId =
   if providerIdData ? providerIdData.length > 0
     providerIdData
   else
