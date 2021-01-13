@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ProviderRepository < Hanami::Repository
   PARAMS = %i[
     provider_boolean_params

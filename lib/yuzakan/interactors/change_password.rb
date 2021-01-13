@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # 自分自身のパスワードのみ変更可能
 # パスワードの制限値はconifgで管理
 # 強度チェックはzxcvbnを使用

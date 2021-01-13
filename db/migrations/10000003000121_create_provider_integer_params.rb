@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Hanami::Model.migration do
   change do
     create_table :provider_integer_params do

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Web
   module Controllers
     module Uninitialized

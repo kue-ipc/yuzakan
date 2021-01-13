@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class AttrMapping < Hanami::Entity
   def convert(value)
     if conversion.nil?

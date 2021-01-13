@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 hanami_env = ENV.fetch('HANAMI_ENV') { 'development' }
 app_root = Dir.pwd
 

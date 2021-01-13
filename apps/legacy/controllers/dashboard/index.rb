@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Legacy
   module Controllers
     module Dashboard

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ProviderStringParamRepository < Hanami::Repository
   associations do
     belongs_to :provider

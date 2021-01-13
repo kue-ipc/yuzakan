@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # PbCrypt: Password-Based Cryptography
 
 # 現在のところ、暗号方式は PKCS#5 v2.0 で固定とする。

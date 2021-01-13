@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Hanami::Model.migration do
   change do
     create_table :members do

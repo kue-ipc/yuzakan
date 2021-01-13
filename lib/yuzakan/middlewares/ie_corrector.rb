@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # IE11が次の条件のときにおかしなHTTP_ACCEPTを送る問題の解決
 # * ローカル イントラネット (localhostを除く)
 # * HTTPS接続

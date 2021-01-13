@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 def db_clear
   UserRepository.new.clear
   LocalUserRepository.new.clear

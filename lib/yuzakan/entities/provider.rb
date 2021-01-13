@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class Provider < Hanami::Entity
   attr_reader :params, :adapter, :adapter_class
 

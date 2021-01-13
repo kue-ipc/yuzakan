@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class AttrMappingRepository < Hanami::Repository
   associations do
     belongs_to :attr

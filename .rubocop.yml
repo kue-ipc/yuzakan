@@ -117,6 +117,8 @@ Style/SymbolArray:
   MinSize: 8
 Style/WordArray:
   MinSize: 8
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: never
 
 # applications
 

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 root to: 'home#index'
 get '/dashboard', to: 'dashboard#index', as: :dashboard
 
