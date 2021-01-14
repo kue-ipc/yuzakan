@@ -14,8 +14,25 @@ Rake::TestTask.new do |t|
   t.warning = false
 end
 
-task default: :test
+# task default: :test
 task spec: :test
+
+task build: [:build_errors, 'vendor:build']
+
+rule 'public/errors' do
+  mkdir_p 'public/errors'
+end
+
+task build_errors: 'public/errors' do
+  %w[
+    400 401     403 404 405 418
+    500     502 503 504
+  ].each do |code|
+    src = "apps/web/templates/#{code}.html.slim"
+    dst = "public/errors/#{code}.html"
+    sh "bundle exec slimrb #{src} > #{dst}"
+  end
+end
 
 namespace :vendor do
   rule %r{^node_modules/.bin/.*$} do

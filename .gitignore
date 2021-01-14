@@ -2,6 +2,7 @@
 /db/*.sqlite
 /db/*.sqlite-journal
 /public/assets*
+/public/errors*
 /tmp/*
 /node_modules
 /apps/*/vendor/assets*
