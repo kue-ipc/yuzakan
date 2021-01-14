@@ -14,5 +14,4 @@ if hanami_env == 'production'
   stdout_redirect(File.expand_path('log/puma.log', app_root),
                   File.expand_path('log/puma-error.log', app_root),
                   true)
-  daemonize true
 end
