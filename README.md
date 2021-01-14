@@ -45,30 +45,36 @@
 
 ## 動作環境
 
-プログラミング言語
+### プログラミング言語
 
 * Ruby >= 2.6 < 3.0
 * Node.js >= 12
 
-データベース
+Node.jsは必須です。
 
-* SQLite (本番環境では非推奨)
-* MariaDB
-* PostgreSQL
+### データベース
 
-セッション管理key-valueデータベース
+* [ ] SQLite (本番環境では非推奨)
+* [x] MariaDB
+* [ ] PostgreSQL
+
+現在はMariaDBのみテストしていますが、他DBもサポート予定です。
+
+### セッション管理key-valueデータベース
 
 * redis (デフォルト)
 * memcaced (dalliを有効にする)
 
-サポートする予定のOS/ディストリビューション
+### サポートするOS/ディストリビューション
 
 * [x] CentOS 8
 * [ ] CentOS Stream 8
 * [ ] Rocky Linux
-* [ ] Ubuntu 20.04 LTS
+* [x] Ubuntu 20.04 LTS
 * [ ] CentOS 7
 * [ ] Ubuntu 18.04 LTS
+
+現在はCentOS 8とUbuntu 20.04 LTSでのみテストしています。
 
 ## セットアップ
 
@@ -76,12 +82,17 @@
 
 ```
 $ bundle insntall --deployment
+$ npm install
+$ bundle exec rake build
+$ bundle exec hanami assets precompile
 ```
 
 ### 開発・テスト環境
 
 ```
 $ bundle insntall
+$ npm install
+$ bundle exec rake build
 ```
 
 テスト実施:
