@@ -55,4 +55,5 @@ end
 
 group :production do
   gem 'puma', '~> 5.1'
+  gem 'sd_notify'
 end
