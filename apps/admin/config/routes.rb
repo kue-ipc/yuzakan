@@ -28,4 +28,5 @@ resources 'users', only: [:index, :show] do
   collection do
     get 'sync'
   end
+  resource 'password', only: [:create]
 end
