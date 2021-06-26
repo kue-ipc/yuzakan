@@ -1,7 +1,6 @@
 import './modern_browser.js'
 
 import {h, text, app} from './hyperapp.js'
-import {preventDefault, targetValue} from './hyperapp-events.js'
 import {FaIcon} from './fa_icon.js'
 import zxcvbn from './zxcvbn.js'
 
@@ -165,7 +164,7 @@ class PasswordInputGenerator
           disabled: disabled
           placeholder: 'パスワードを入力'
           'aria-describedby': "#{@idName}-visible-button"
-          oninput: (_, e) => [@setValue, {value: targetValue(e)}]
+          oninput: (_, event) => [@setValue, {value: event.target.value}]
         h 'div', class: 'input-group-append',
           h 'div',
             id: "#{@idName}-visible-button"
@@ -210,7 +209,8 @@ SubmitButton = ({submitting, valid}) =>
     class: 'btn btn-primary btn-block'
     type:'submit'
     disabled: submitting || !valid
-    onclick: preventDefault (state) =>
+    onclick: (state, event) =>
+      event.preventDefault()
       [
         startSubmit(state)
         [submitRunner]

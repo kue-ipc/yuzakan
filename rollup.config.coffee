@@ -10,7 +10,6 @@ distDirs = [
 ]
 targets = [
   {name: 'hyperapp', ext: 'coffee'}
-  {name: 'hyperapp-events', ext: 'coffee'}
   {name: 'bootstrap-native', ext: 'coffee'}
   {name: 'zxcvbn', ext: 'coffee'}
   {name: 'fontawesome', ext: 'coffee'}
