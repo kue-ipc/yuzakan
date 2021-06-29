@@ -1,5 +1,6 @@
 require_relative 'yuzakan/adapters'
 require_relative 'yuzakan/helpers'
+require_relative 'yuzakan/suppression'
 
 module Yuzakan
   def self.name
