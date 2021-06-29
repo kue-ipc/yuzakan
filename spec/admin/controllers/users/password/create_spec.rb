@@ -1,4 +1,4 @@
-require_relative '../../../spec_helper'
+require_relative '../../../../spec_helper'
 
 describe Admin::Controllers::Users::Password::Create do
   let(:action) { Admin::Controllers::Users::Password::Create.new }
