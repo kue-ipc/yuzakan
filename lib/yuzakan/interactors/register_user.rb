@@ -9,8 +9,8 @@ class RegisterUser
 
     validations do
       required(:name) { filled? & str? & size?(1..255) }
-      optional(:display) { filled? & str & max_size?(255)}
-      optional(:email) { filled? & str & max_size?(255)}
+      optional(:display) { filled? & str? & max_size?(255)}
+      optional(:email) { filled? & str? & max_size?(255)}
     end
   end
 

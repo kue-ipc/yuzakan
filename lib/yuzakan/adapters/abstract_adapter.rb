@@ -39,10 +39,6 @@
 # member_insert(groupname, username)
 # member_delete(groupname, username)
 #
-#
-#
-# list -> usernames [readable]
-#
 # params is Hash Array
 # - name: 識別名
 # - label: 表示名
