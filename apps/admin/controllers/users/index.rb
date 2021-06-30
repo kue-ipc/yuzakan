@@ -14,8 +14,9 @@ module Admin
         expose :provider_users
 
         def call(_params)
-          @users = UserRepository.new.all.map
-          @providers = ProviderRepository.new.operational_all_with_params(:list)
+          @users = UserRepository.new.all
+          @providers = ProviderRepository.new
+            .operational_all_with_params(:list).to_a
           @provider_users = @providers.each.map do |provider|
             [provider.id, provider.adapter.list]
           end.to_h
