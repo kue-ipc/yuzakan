@@ -6,15 +6,18 @@ module Admin
       class Index
         include Admin::Action
         include Hanami::Action::Cache
+        include Pagy::Backend
 
         cache_control :no_store
+
+        expose :pagy_data
 
         expose :users
         expose :providers
         expose :provider_users
 
         def call(_params)
-          @users = UserRepository.new.all
+          @pagy_data, @users = pagy(UserRepository.new)
           @providers = ProviderRepository.new
             .operational_all_with_params(:list).to_a
           @provider_users = @providers.each.map do |provider|

@@ -1,3 +1,7 @@
+h3 ユーザー一覧
+
+= pagy_nav(pagy_data)
+= pagy_info(pagy_data)
 
 table.table
   thead
@@ -21,3 +25,6 @@ table.table
             - else
               span.text-muted
                 | N/A
+
+= pagy_nav(pagy_data)
+= pagy_info(pagy_data)

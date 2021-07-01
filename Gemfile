@@ -29,11 +29,14 @@ gem 'redis-rack'
 # default gem
 gem 'ipaddr'
 
+# Pager
+gem 'pagy'
+
 # LDAP
 gem 'net-ldap'
 gem 'smbhash'
 
-# G Suite
+# Google Workspace
 gem 'google-apis-admin_directory_v1'
 
 group :development do

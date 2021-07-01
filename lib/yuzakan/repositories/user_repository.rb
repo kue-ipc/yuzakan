@@ -9,6 +9,14 @@ class UserRepository < Hanami::Repository
     users.where(name: name)
   end
 
+  def offset(offset)
+    users.offset(offset)
+  end
+
+  def count(_)
+    users.count
+  end
+
   def auth(name, password)
     providers = ProviderRepository.new.operational_all_with_params(:auth)
     result = nil
