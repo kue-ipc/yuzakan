@@ -34,7 +34,7 @@ gem 'net-ldap'
 gem 'smbhash'
 
 # G Suite
-gem 'google-api-client'
+gem 'google-apis-admin_directory_v1'
 
 group :development do
   # Code reloading
