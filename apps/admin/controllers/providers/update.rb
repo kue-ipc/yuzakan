@@ -16,7 +16,7 @@ module Admin
 
           if result.failure?
             flash[:errors] = result.errors
-            redirect_to routes.path(:edit_provider, provider: provider)
+            redirect_to routes.path(:edit_provider, provider.id)
           end
 
           redirect_to routes.path(:providers)
