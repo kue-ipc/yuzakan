@@ -12,7 +12,7 @@
 /rollup.config.js
 /yarn-error.log
 /yarn.lock
-/log/*.log
+/log/*.log*
 
 /.bundle
 
