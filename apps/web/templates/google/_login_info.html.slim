@@ -1,0 +1,38 @@
+h3 Google Workspace ログイン情報
+
+.row.my-3
+  div class=col_name
+    | アカウント名:
+  div class=col_value
+    code.login-info
+      = user[:email]
+
+.row.my-3
+  div class=col_name
+    | 初回パスワード:
+  div class=col_value
+    code.login-info
+      = password
+
+.row.my-3
+  div class=col_name
+    | ログインサイト:
+  div class=col_value
+    = link_to 'https://accounts.google.com/', target: '_blank' do
+      - text 'Google アカウント'
+      - i class: 'fas fa-external-link-alt'
+
+p
+  | 上記の初回パスワードは
+  strong 現在の画面にのみ
+  | 表示され、どこにも保存されていません。
+  | このページを閉じた場合、確認する方法がなくなります。
+  | 初回ログインが完了するまでは、このページを閉じたり、他のページへ移動しないでください。
+
+p 上記ログインサイトにアクセス(新しいタブで開きます)し、「ログイン」ボタンから初回ログインを実施してください。すでに個人または他組織のGoogle アカウントでログインしている場合は、右上のアバターアイコン(デフォルトは名前一文字)をクリックし、「別のアカウントを追加」を押して、ログイン画面を表示してください。
+
+p 初回ログイン実行後、パスワード変更が求められます。メッセージに従って、パスワードを変更してください。48時間以内に初回ログインを実施しなかった場合、アカウントがロックされる場合があります。
+
+p 2段階認証が求められる場合があります。2段階認証がすでに設定されており、通過できなくなった場合は、Google Workspaceの画面で「バックアップコード生成」でバックアップコードを取得してください。
+
+= link_to 'Google Workspaceの画面に戻る', routes.path(:google)

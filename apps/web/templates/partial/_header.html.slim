@@ -11,7 +11,7 @@ header
           li.nav-item
             = link_to 'パスワード変更', routes.path(:edit_user_password), class: 'nav-link'
           li.nav-item
-            = link_to 'G Suite', routes.path(:gsuite), class: 'nav-link'
+            = link_to 'Google Workspace', routes.path(:google), class: 'nav-link'
 
       - if current_user
         = link_to routes.path(:user), class: 'mx-2 link-user' do

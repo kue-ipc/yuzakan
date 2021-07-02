@@ -13,8 +13,8 @@ module Web
               color: 'primary',
             },
             {
-              name: 'G Suite',
-              url: routes.path(:gsuite),
+              name: 'Google Workspace',
+              url: routes.path(:google),
               description: 'Googleアカウントを管理します。',
               color: 'secondary',
             },

@@ -12,7 +12,7 @@
     * [ ] 利用者
         * [x] ログイン
         * [x] パスワード変更
-        * [x] G Suite 利用登録
+        * [x] Google Workspace 利用登録
         * [ ] Office 365 利用登録
         * [ ] メール転送設定
         * [x] 情報確認(自分のみ)
@@ -22,7 +22,7 @@
         * [x] 全体設定
         * [x] プロバイダー管理
         * [ ] 強制パスワード変更
-        * [ ] G Suite 連携
+        * [ ] Google Workspace 連携
             * [ ] ユーザー管理
             * [ ] 所属管理
         * [ ] Office 365 連携
@@ -40,7 +40,7 @@
         * [x] AD
     * [ ] SSH
     * [ ] Ansible
-    * [x] G Suite
+    * [x] Google Workspace
     * [ ] Office 365
 
 ## 動作環境

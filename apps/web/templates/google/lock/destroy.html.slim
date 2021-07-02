@@ -1,0 +1,27 @@
+- if password
+  = render partial: 'google/login_info'
+- else
+  h3 Google Workspace ログイン情報
+
+  .row.my-3
+    div class=col_name
+      | アカウント名:
+    div class=col_value
+      code.login-info
+        = user[:email]
+
+  .row.my-3
+    div class=col_name
+      | ログインサイト:
+    div class=col_value
+      = link_to 'https://accounts.google.com/', target: '_blank' do
+        - text 'Google アカウント'
+        - i class: 'fas fa-external-link-alt'
+
+  p 上記ログインサイトにアクセス(新しいタブで開きます)し、「ログイン」ボタンからログインを実施してください。
+
+  p 
+    strong パスワードはリセットされていません。
+    | パスワードを忘れてしまった場合は、Google Workspaceの画面で「パスワードリセット」を行ってください。
+
+  = link_to 'Google Workspaceの画面に戻る', routes.path(:google)

@@ -79,17 +79,17 @@ class ProviderRepository < Hanami::Repository
       .map_to(Provider)
   end
 
-  def first_gsuite
+  def first_google
     providers
-      .where(adapter_name: 'gsuite')
+      .where(adapter_name: 'google')
       .where(self_management: true)
       .order { order.asc }
       .first
   end
 
-  def first_gsuite_with_params
+  def first_google_with_params
     aggregate(*ProviderRepository.params)
-      .where(adapter_name: 'gsuite')
+      .where(adapter_name: 'google')
       .where(self_management: true)
       .order { order.asc }
       .map_to(Provider)

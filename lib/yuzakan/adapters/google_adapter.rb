@@ -99,7 +99,7 @@ module Yuzakan
         user = service.get_user(email)
         normalize_user(user, mappings)
       rescue Google::Apis::ClientError => e
-        Hanami.logger.debug "GsuiteAdapter#read: #{e.message}"
+        Hanami.logger.debug "GoogleAdapter#read: #{e.message}"
         nil
       end
 

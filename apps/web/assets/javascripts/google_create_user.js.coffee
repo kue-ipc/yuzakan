@@ -1,0 +1,82 @@
+import {h, text, app} from './hyperapp.js'
+import WebPostJson from './web_post_json.js'
+
+agreementCheck = (state, agreement) => {
+  state...
+  agreement
+}
+
+AgreementCheck = ({agreement}) =>
+  id = 'google-create-user-agreement'
+  h 'div', class: 'form-check', [
+    h 'input', type: 'hidden', name: 'agreement', value: '0'
+    h 'input',
+      id: id
+      type: 'checkbox'
+      name: 'agreement'
+      value: 1
+      class: 'form-check-input'
+      checked: agreement
+      onchange: [agreementCheck, (e) => e.target.checked]
+    h 'label', class: 'form-check-label', for: id,
+      text '上記について確認し、内容に同意します。'
+  ]
+
+googleCreateUserRules = [
+  '''
+  アカウント作成にあたり、Google社へアカウント作成に必要な情報(氏名、メールアドレス、身分、グループ等)を送信します。
+  ''',
+  '''
+  個人向けGoogleアカウントとは異なり、大学の情報管理者はアカウントのすべてを監視・管理できる権限を持っています。大学の情報管理者は、大学の情報利用に関する各規程で定められた権限の範囲内で監視・管理を実施します。
+  '''
+  '''
+  初回ログイン時にGoogle社の規約に同意し、遵守しなければなりません。
+  '''
+  '''
+  アカウントを用いた各サービスの利用は、大学の情報利用に関する各規定に準じ、これを遵守しなければなりません。違反があった場合は、アカウントの停止等の処理を実施します。
+  '''
+  '''
+  プライベートのアカウントではなく、大学の正式なアカウントであることの自覚を持って利用しなければなりません。
+  '''
+]
+
+CreateUserContent = ({agreement}) =>
+  h 'div', {}, [
+    h 'p', {},
+    text 'Google アカウントの作成を行います。下記を確認し、内容について同意する必要があります。'
+    h 'ul', {},
+      googleCreateUserRules.map (rule) =>
+        h 'li', {},
+          text rule
+    AgreementCheck {agreement}
+  ]
+
+node = document.getElementById('google-create-user-child')
+
+init = {
+  agreement: false
+  newPassword: undefined
+  created: false
+  closable: true
+}
+
+view = (state) =>
+  ModalDialog
+    modalSize: 'lg'
+    labelId: 'google-create-user'
+    title: 'Google アカウント 作成' + (if state.created then ' 完了' else '')
+    closable: state.closable
+    button: {
+      label: 'アカウントを作成する'
+      color: 'primary'
+      onClick: (state) => state
+      disabled: true
+    }
+    if state.created
+      h 'p', {},
+        text '未実装'
+    else
+      CreateUserContent agreement: state.agreement
+
+
+app({init, view, node})
