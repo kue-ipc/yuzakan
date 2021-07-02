@@ -25,6 +25,7 @@ gem 'zxcvbn-js', require: 'zxcvbn'
 # key-value storage
 gem 'redis-rack'
 # gem 'dalli'
+gem 'readthis'
 
 # default gem
 gem 'ipaddr'
