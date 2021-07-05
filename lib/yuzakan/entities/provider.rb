@@ -1,6 +1,8 @@
 class Provider < Hanami::Entity
   attr_reader :params, :adapter, :adapter_class
 
+  USERNAME_RE = /\A[\w.-]+\z/.freeze
+
   class NoAdapterError < StandardError
     def initialize(msg = 'No adapter, but need an adapter.')
       super
@@ -43,24 +45,31 @@ class Provider < Hanami::Entity
     cache.delete_matched(cache_key('*'))
   end
 
+  def sanitize_name
+    raise ArgumentError, 'username is not uesr' unless username =~ /\A\w+\z/
+    username.downcase(:ascii)
+  end
+
   def check
     raise NoAdapterError unless adapter
 
     adapter.check
   end
 
-  def create(username, attrs, mappings = nil)
+  def create(username, attrs)
     raise NoAdapterError unless adapter
 
-    adapter.create(username, attrs, mappings)
+    adapter.create(username, attrs, attr_mappings)
   end
 
-  def read(username, mappings = nil)
+  def read(username)
     raise NoAdapterError unless adapter
 
-    key = cache_key('read', )
+    key = cache_key('read', username)
     Provider.cache.fetch(key) do
-      adapter.list.tap { |value| Provider.cache.write(key, value) }
+      adapter.read(username, attr_mappings).tap do |value|
+        Provider.cache.write(key, value)
+      end
     end
   end
 
