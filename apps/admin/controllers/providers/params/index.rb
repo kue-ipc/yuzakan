@@ -15,7 +15,7 @@ module Admin
 
           def call(params)
             @provider = ProviderRepository.new
-              .find_with_params(params[:provider_id])
+              .find_with_adapter(params[:provider_id])
 
             adapter_class = @provider.adapter_class
             @provider_params = @provider.params.reject do |key, _value|

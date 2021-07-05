@@ -22,7 +22,7 @@ module Web
             redirect_to routes.path(:google)
           end
 
-          provider = ProviderRepository.new.first_google_with_params
+          provider = ProviderRepository.new.first_google_with_adapter
 
           result = CreateUser.new(user: current_user, client: remote_ip,
                                   config: current_config,

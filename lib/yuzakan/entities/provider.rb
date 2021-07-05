@@ -1,6 +1,12 @@
 class Provider < Hanami::Entity
   attr_reader :params, :adapter, :adapter_class
 
+  class NoAdapterError < StandardError
+    def initialize(msg = 'No adapter, but need an adapter.')
+      super
+    end
+  end
+
   def self.cache
     @cache ||= Readthis::Cache.new(
       expires_in: 60 * 60,
@@ -33,14 +39,79 @@ class Provider < Hanami::Entity
     ['yuzakan', 'provider', name, action, param].join(':')
   end
 
+  def cache_clear
+    cache.delete_matched(cache_key('*'))
+  end
+
+  def check
+    raise NoAdapterError unless adapter
+
+    adapter.check
+  end
+
+  def create(username, attrs, mappings = nil)
+    raise NoAdapterError unless adapter
+
+    adapter.create(username, attrs, mappings)
+  end
+
+  def read(username, mappings = nil)
+    raise NoAdapterError unless adapter
+
+    key = cache_key('read', )
+    Provider.cache.fetch(key) do
+      adapter.list.tap { |value| Provider.cache.write(key, value) }
+    end
+  end
+
+  def udpate(_username, _attrs, mappings = nil)
+    raise NoAdapterError unless adapter
+
+    raise NotImplementedError
+  end
+
+  def delete(_username)
+    raise NoAdapterError unless adapter
+
+    raise NotImplementedError
+  end
+
+  def auth(_username, _password)
+    raise NoAdapterError unless adapter
+
+    raise NotImplementedError
+  end
+
+  def change_password(_username, _password)
+    raise NoAdapterError unless adapter
+
+    raise NotImplementedError
+  end
+
+  def lock(_username)
+    raise NoAdapterError unless adapter
+
+    raise NotImplementedError
+  end
+
+  def unlock(_username)
+    raise NoAdapterError unless adapter
+
+    raise NotImplementedError
+  end
+
+  def locked?(_username)
+    raise NoAdapterError unless adapter
+
+    raise NotImplementedError
+  end
+
   def list
-    raise 'No adapter' unless adapter
+    raise NoAdapterError unless adapter
 
     key = cache_key('list')
-    Provider.cache.read(key)&.tap { |value| return value }
-
-    value = adapter.list
-    Provider.cache.write(key, value)
-    value
+    Provider.cache.fetch(key) do
+      adapter.list.tap { |value| Provider.cache.write(key, value) }
+    end
   end
 end

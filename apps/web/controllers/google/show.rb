@@ -14,7 +14,7 @@ module Web
         expose :creatable
 
         def call(_params)
-          @google_provider = ProviderRepository.new.first_google_with_params
+          @google_provider = ProviderRepository.new.first_google_with_adapter
           @google_user = @google_provider.adapter.read(current_user.name)
 
           @creatable = false

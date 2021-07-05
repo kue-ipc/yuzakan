@@ -15,7 +15,7 @@ module Web
           expose :password
 
           def call(params)
-            provider = ProviderRepository.new.first_google_with_params
+            provider = ProviderRepository.new.first_google_with_adapter
 
             result = ResetPassword.new(user: current_user,
                                        client: remote_ip,

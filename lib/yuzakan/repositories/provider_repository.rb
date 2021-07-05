@@ -22,15 +22,15 @@ class ProviderRepository < Hanami::Repository
     end
   end
 
-  def find_with_params(id)
-    aggregate(*ProviderRepository.params)
+  def find_with_adapter(id)
+    aggregate(:attr_mappings, *ProviderRepository.params)
       .where(id: id)
       .map_to(Provider)
       .one
   end
 
-  def find_by_name_with_params(name)
-    aggregate(*ProviderRepository.params)
+  def find_by_name_with_adapter(name)
+    aggregate(:attr_mappings, *ProviderRepository.params)
       .where(name: name)
       .map_to(Provider)
       .one
@@ -73,7 +73,7 @@ class ProviderRepository < Hanami::Repository
         raise "不明な操作です。#{operation}"
       end
 
-    aggregate(*ProviderRepository.params)
+    aggregate(:attr_mappings, *ProviderRepository.params)
       .where(operation_ability)
       .order { order.asc }
       .map_to(Provider)
@@ -87,8 +87,8 @@ class ProviderRepository < Hanami::Repository
       .first
   end
 
-  def first_google_with_params
-    aggregate(*ProviderRepository.params)
+  def first_google_with_adapter
+    aggregate(:attr_mappings, *ProviderRepository.params)
       .where(adapter_name: 'google')
       .where(self_management: true)
       .order { order.asc }

@@ -13,7 +13,7 @@ module Web
           expose :codes
 
           def call(_params)
-            provider = ProviderRepository.new.first_google_with_params
+            provider = ProviderRepository.new.first_google_with_adapter
 
             result = GenerateVerificationCode.new(
               user: current_user,

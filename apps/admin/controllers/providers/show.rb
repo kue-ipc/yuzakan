@@ -13,7 +13,7 @@ module Admin
 
         def call(params)
           provider_repository = ProviderRepository.new
-          @provider = provider_repository.find_with_params(params[:id].to_i)
+          @provider = provider_repository.find_with_adapter(params[:id].to_i)
         end
       end
     end
