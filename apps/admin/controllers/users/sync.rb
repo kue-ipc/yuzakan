@@ -23,7 +23,7 @@ module Admin
 
           providers = ProviderRepository.new.operational_all_with_params(:list)
           providers.each do |provider|
-            provider.adapter.list.each do |name|
+            provider.list.each do |name|
               next if user_names.include?(name)
 
               user_names << name

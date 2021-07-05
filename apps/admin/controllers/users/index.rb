@@ -21,7 +21,7 @@ module Admin
           @providers = ProviderRepository.new
             .operational_all_with_params(:list).to_a
           @provider_users = @providers.each.map do |provider|
-            [provider.id, provider.adapter.list]
+            [provider.id, provider.list]
           end.to_h
         end
       end
