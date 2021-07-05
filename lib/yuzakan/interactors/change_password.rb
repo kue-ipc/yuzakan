@@ -62,7 +62,7 @@ class ChangePassword
     @user_datas = {}
     result = :success
 
-    @provider_repository.operational_all_with_params(:change_password)
+    @provider_repository.operational_all_with_adapter(:change_password)
       .each do |provider|
       user_data = provider.adapter.change_password(@username, @password)
       @user_datas[provider.name] = user_data if user_data

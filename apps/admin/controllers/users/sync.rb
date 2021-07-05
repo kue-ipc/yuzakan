@@ -21,7 +21,7 @@ module Admin
             user_repository.sync(name)
           end
 
-          providers = ProviderRepository.new.operational_all_with_params(:list)
+          providers = ProviderRepository.new.operational_all_with_adapter(:list)
           providers.each do |provider|
             provider.list.each do |name|
               next if user_names.include?(name)

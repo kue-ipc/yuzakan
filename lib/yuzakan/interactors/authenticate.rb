@@ -57,7 +57,7 @@ class Authenticate
 
     user_data = nil
 
-    @provider_repository.operational_all_with_params(:auth).each do |provider|
+    @provider_repository.operational_all_with_adapter(:auth).each do |provider|
       user_data = provider.adapter.auth(params[:username], params[:password])
       # 最初に認証されたところを正とする。
       break if user_data

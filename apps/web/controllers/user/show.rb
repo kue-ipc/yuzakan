@@ -18,7 +18,7 @@ module Web
 
           @user = current_user
 
-          providers = ProviderRepository.new.operational_all_with_params(:read)
+          providers = ProviderRepository.new.operational_all_with_adapter(:read)
           provider_datas = providers.each.map do |provider|
             provider.adapter.read(@user.name,
                                   provider_attr_mapping_repository

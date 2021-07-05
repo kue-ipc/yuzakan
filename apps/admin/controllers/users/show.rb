@@ -26,7 +26,7 @@ module Admin
 
           halt 404 unless @user
 
-          @providers = ProviderRepository.new.operational_all_with_params(:read)
+          @providers = ProviderRepository.new.operational_all_with_adapter(:read)
           result = UserAttrs.new(readable_providers: @providers)
             .call(username: @user.name)
           @user_attrs = result.attrs

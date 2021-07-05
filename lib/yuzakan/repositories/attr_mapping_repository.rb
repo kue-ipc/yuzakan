@@ -1,5 +1,6 @@
 class AttrMappingRepository < Hanami::Repository
   associations do
+    belongs_to :provider
     belongs_to :attr
   end
 

@@ -9,7 +9,7 @@ class UserAttrs
 
   def initialize(
     provider_attr_mapping_repository: AttrMappingRepository.new,
-    readable_providers: ProviderRepository.new.operational_all_with_params(:read)
+    readable_providers: ProviderRepository.new.operational_all_with_adapter(:read)
   )
     @provider_attr_mapping_repository = provider_attr_mapping_repository
     @readable_providers = readable_providers
