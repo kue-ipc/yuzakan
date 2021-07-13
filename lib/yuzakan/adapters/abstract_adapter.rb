@@ -13,6 +13,10 @@
 #   unusable: true or false/nil
 #   unmanagable: true or false/nil
 #   admin: true or false/nil
+#   state:
+#     - available
+#     - locked
+#     - disabled
 #
 # CRUD
 # create(username, attrs, mappings = nil) -> user or nil [writable]
