@@ -1,7 +1,7 @@
 class Provider < Hanami::Entity
   attr_reader :params, :adapter, :adapter_class
 
-  USERNAME_RE = /\A[\w.-]+\z/.freeze
+  NAME_RE = /\A[\w.-]+\z/.freeze
 
   class NoAdapterError < StandardError
     def initialize(msg = 'No adapter, but need an adapter.')
@@ -45,9 +45,10 @@ class Provider < Hanami::Entity
     cache.delete_matched(cache_key('*'))
   end
 
-  def sanitize_name
-    raise ArgumentError, 'username is not uesr' unless username =~ /\A\w+\z/
-    username.downcase(:ascii)
+  def sanitize_name(name)
+    raise ArgumentError, 'invalid name' unless name =~ Provider::NAME_RE
+
+    name.downcase(:ascii)
   end
 
   def check
@@ -56,16 +57,23 @@ class Provider < Hanami::Entity
     adapter.check
   end
 
-  def create(username, attrs)
+  def create(username, attrs, password)
     raise NoAdapterError unless adapter
 
-    adapter.create(username, attrs, attr_mappings)
+    username = sanitize_name(username)
+    key = cache_key('user', username)
+
+    adapter.create(username, attrs, attr_mappings, password).tap do |value|
+      Provider.cache.write(key, value)
+    end
   end
 
   def read(username)
     raise NoAdapterError unless adapter
 
-    key = cache_key('read', username)
+    username = sanitize_name(username)
+    key = cache_key('user', username)
+
     Provider.cache.fetch(key) do
       adapter.read(username, attr_mappings).tap do |value|
         Provider.cache.write(key, value)
@@ -73,28 +81,47 @@ class Provider < Hanami::Entity
     end
   end
 
-  def udpate(_username, _attrs, mappings = nil)
+  def udpate(username, attrs)
     raise NoAdapterError unless adapter
 
-    raise NotImplementedError
+    username = sanitize_name(username)
+    key = cache_key('user', username)
+
+    adapter.update(username, attrs, attr_mappings).tap do |value|
+      Provider.cache.write(key, value)
+    end
   end
 
-  def delete(_username)
+  def delete(username)
     raise NoAdapterError unless adapter
 
-    raise NotImplementedError
+    username = sanitize_name(username)
+    key = cache_key('user', username)
+
+    adapter.delete(username)
+    cache.delete(key)
   end
 
-  def auth(_username, _password)
+  def auth(username, password)
     raise NoAdapterError unless adapter
 
-    raise NotImplementedError
+    username = sanitize_name(username)
+    key = cache_key('user', username)
+
+    adapter.auth(username, password).tap do |value|
+      Provider.cache.write(key, value) if value
+    end
   end
 
-  def change_password(_username, _password)
+  def change_password(username, password)
     raise NoAdapterError unless adapter
 
-    raise NotImplementedError
+    username = sanitize_name(username)
+    key = cache_key('user', username)
+
+    adapter.change_password(username, password).tap do |value|
+      Provider.cache.write(key, value) if value
+    end
   end
 
   def lock(_username)
@@ -109,10 +136,24 @@ class Provider < Hanami::Entity
     raise NotImplementedError
   end
 
-  def locked?(_username)
-    raise NoAdapterError unless adapter
+  def admin?(username)
+    read(username)[:admin]
+  end
 
-    raise NotImplementedError
+  def state(username)
+    read(username)[:state]
+  end
+
+  def enabled?(username)
+    state(username) == :enabled
+  end
+
+  def locked?(username)
+    state(username) == :locked
+  end
+
+  def disabled?(username)
+    state(username) == :enabled
   end
 
   def list
