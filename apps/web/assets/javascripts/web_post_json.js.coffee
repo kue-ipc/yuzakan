@@ -3,7 +3,7 @@
 # その際、modalを使用する。
 
 import {h, text, app} from './hyperapp.js'
-import * as bsn from './bootstrap.js'
+import bsn from './bootstrap-native.js'
 import {FaIcon} from './fa_icon.js'
 
 export default class WebPostJson

@@ -1,4 +1,4 @@
-import '../bootstrap.js'
+import '../bootstrap-native.js'
 import '../fontawesome.js'
 
 # fontawesom本体を読み込まない場合は次が必要だった
