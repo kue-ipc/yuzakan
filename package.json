@@ -6,16 +6,16 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "bootstrap": "^4.6.0",
     "bootstrap-icons": "^1.5.0",
-    "bootstrap.native": "^3.0.15",
+    "bootstrap.native": "^4.0.3",
     "hyperapp": "^2.0.18",
     "source-code-pro": "^2.38.0",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^17.1.0",
-    "@rollup/plugin-node-resolve": "^11.2.1",
+    "@rollup/plugin-commonjs": "^19.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.0",
     "coffeescript": "^2.5.1",
-    "rollup": "^2.52.3",
+    "rollup": "^2.53.1",
     "rollup-plugin-coffee-script": "^2.0.0"
   }
 }
