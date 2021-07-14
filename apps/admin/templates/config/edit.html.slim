@@ -1,25 +1,25 @@
 h2 全体設定
 
 = form_for form do
-  - div class: 'mb-3' do
+  - div class: 'form-group' do
     - label 'サイト名', for: :title
     - text_field :title, class: 'form-control'
 
-  - div class: 'mb-3' do
+  - div class: 'form-group' do
     - label 'セッションタイムアウト', for: :session_timeout
     - div class: 'input-group' do
       - number_field :session_timeout, class: 'form-control', min: 0
       - div class: 'input-group-append'
         - span '秒', class: 'input-group-text'
 
-  - div class: 'mb-3' do
+  - div class: 'form-group' do
     - label 'パスワード最小サイズ', for: :password_min_size
     - div class: 'input-group' do
       - number_field :password_min_size, class: 'form-control', min: 1, max: 255
       - div class: 'input-group-append'
         - span '文字', class: 'input-group-text'
 
-  - div class: 'mb-3' do
+  - div class: 'form-group' do
     - label 'パスワード最大サイズ', for: :password_max_size
     - div class: 'input-group' do
       - number_field :password_max_size, class: 'form-control', min: 1, max: 255
@@ -32,29 +32,29 @@ h2 全体設定
         - {'CRYPT-DES' => 8, 'LM' => 14, 'BCRYPT' => 72}.each do |name, size|
           - li "#{name}: #{size} 文字" 
 
-  - div class: 'mb-3' do
+  - div class: 'form-group' do
     - label 'パスワードの文字種の最小数', for: :password_min_types
     - div class: 'input-group' do
       - number_field :password_min_types, class: 'form-control', min: 1, max: 4
       - div class: 'input-group-append'
         - span '種類', class: 'input-group-text'
 
-  - div class: 'mb-3' do
+  - div class: 'form-group' do
     - label 'パスワードの複雑度スコア最小値', for: :password_min_score
     - select :password_min_score, password_scores, \
              class: 'form-control', size: password_scores.size
 
-  - div class: 'mb-3' do
+  - div class: 'form-group' do
     - label 'パスワードの使用不可文字', for: :password_unusable_chars
     - text_field :password_unusable_chars, class: 'form-control', max: 128
 
-  - div class: 'mb-3' do
+  - div class: 'form-group' do
     - label 'パスワードの外部辞書', for: :password_extra_dict
     - text_area :password_extra_dict, class: 'form-control', rows: 3
     - small class: 'form-text text-muted' do
       - '複雑度を計算する際に、外部辞書として使用されます。'
 
-  - div class: 'mb-3' do
+  - div class: 'form-group' do
     - label '管理者ネットワーク', for: :admin_networks
     - text_area :admin_networks, class: 'form-control', rows: 3
     - small class: 'form-text text-muted' do
@@ -62,21 +62,21 @@ h2 全体設定
     - small class: 'form-text text-muted' do
       - "現在接続しているクライアントのIPアドレスは #{remote_ip} です。"
 
-  - div class: 'mb-3' do
+  - div class: 'form-group' do
     - label 'ユーザーネットワーク', for: :user_networks
     - text_area :user_networks, class: 'form-control', rows: 3
     - small class: 'form-text text-muted' do
       - 'ユーザー機能にアクセス可能なネットワークを指定します。カンマまたは改行または空白で区切ってください。空の場合はすべてのIPアドレスからの接続を許可します。'
 
-  - div class: 'mb-3' do
+  - div class: 'form-group' do
     - label '連絡先名前', for: :contact_name
     - text_field :contact_name, class: 'form-control'
 
-  - div class: 'mb-3' do
+  - div class: 'form-group' do
     - label '連絡先メールアドレス', for: :contact_email
     - text_field :contact_email, class: 'form-control'
 
-  - div class: 'mb-3' do
+  - div class: 'form-group' do
     - label '連絡先電話番号', for: :contact_phone
     - text_field :contact_phone, class: 'form-control'
 

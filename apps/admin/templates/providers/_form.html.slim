@@ -14,10 +14,10 @@
 = javascript 'provider_adapter', type: 'module', defer: true
 
 = form_for form do
-  - div class: 'mb-3' do
+  - div class: 'form-group' do
     - label '識別名', for: :name
     - text_field :name, class: 'form-control'
-  - div class: 'mb-3' do
+  - div class: 'form-group' do
     - label 'プロバイダー名', for: :display_name
     - text_field :display_name, class: 'form-control'
   - div do
@@ -35,7 +35,7 @@
     - check_box :self_management, class: 'form-check-input'
     - label '自己管理を可能にする', class: 'form-check-label', for: :self_management
     - small 'ユーザー自身が登録やパスワードリセット等ができるようになります。', class: 'text-muted'
-  - div class: 'mb-3' do
+  - div class: 'form-group' do
     - label 'アダプター', for: :adapter_name
     - select :adapter_name, select_adapters, \
              id: 'provider-adapter-select', class: 'form-control', \

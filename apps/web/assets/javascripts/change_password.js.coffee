@@ -150,7 +150,7 @@ class PasswordInputGenerator
       else
         ''
 
-    h 'div', class: 'mb-3 row', [
+    h 'div', class: 'form-group row', [
       h 'label',
         class: "col-form-label #{changePasswordData.cols.left}"
         for: @idName
@@ -205,18 +205,17 @@ passwordInputs = {
 }
 
 SubmitButton = ({submitting, valid}) =>
-  h 'div', class: 'd-grid gap-2',
-    h 'button',
-      class: 'btn btn-primary'
-      type:'submit'
-      disabled: submitting || !valid
-      onclick: (state, event) =>
-        event.preventDefault()
-        [
-          startSubmit(state)
-          [submitRunner]
-        ]
-      text '変更'
+  h 'button',
+    class: 'btn btn-primary btn-block'
+    type:'submit'
+    disabled: submitting || !valid
+    onclick: (state, event) =>
+      event.preventDefault()
+      [
+        startSubmit(state)
+        [submitRunner]
+      ]
+    text '変更'
 
 init =
   [passwordCurrent.camelName]: passwordCurrent.init()

@@ -12,7 +12,7 @@ header
         li.nav-item
           = link_to 'トップ', routes.path(:root), class: 'nav-link'
 
-    span.badge.bg-secondary.mx-2 レガシー版
+    span.badge.badge-secondary.mx-2 レガシー版
     - if current_user
       span.navbar-text.px-2
         = h(current_user.display_name + ' (' + current_user.name + ')')

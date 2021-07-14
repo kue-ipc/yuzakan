@@ -10,11 +10,11 @@ html lang="ja"
     = stylesheet 'application'
     = javascript 'application', defer: true, type: 'module'
   body
-    .p-2.mb-3.bg-dark.text-white
-      .container-fluid.py-2
-        h1.text-center.display-6
+    .jumbotron.jumbotron-fluid.mb-2
+      .container-fluid
+        h1.text-center.display-5
           => current_config.title
-          span.badge.bg-secondary 管理者版
+          span.badge.badge-secondary 管理者版
         p.lead.text-center.smaller
           | アカウント管理システム
         hr.my-2
