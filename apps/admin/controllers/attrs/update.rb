@@ -12,21 +12,26 @@ module Admin
         def call(params)
           attr = AttrRepository.new.update(params[:id],
                                            params[:attr])
-          pam_repo = AttrMappingRepository.new
+          attr_mapping_repo = AttrMappingRepository.new
 
-          params[:attr][:attr_mappings].each do |mapping|
-            pam = pam_repo.find_by_provider_attr(mapping[:provider_id],
-                                                 attr.id)
+          params[:attr][:attr_mappings].each do |mapping_params|
+            attr_mapping = attr_mapping_repo
+              .find_by_provider_attr(mapping_params[:provider_id], attr.id)
 
-            if mapping[:name].nil? || mapping[:name].empty?
-              pam_repo.delete(pam.id) if pam
+            if mapping_params[:name].nil? || mapping_params[:name].empty?
+              attr_mapping_repo.delete(attr_mapping.id) if attr_mapping
               next
             end
 
-            if pam
-              pam_repo.update(pam.id, mapping)
+            if mapping_params[:conversion].nil? ||
+               mapping_params[:conversion].empty?
+              mapping_params[:conversion] = nil
+            end
+
+            if attr_mapping
+              attr_mapping_repo.update(attr_mapping.id, mapping_params)
             else
-              pam_repo.create(attr_id: attr.id, **mapping)
+              attr_mapping_repo.create(attr_id: attr.id, **mapping_params)
             end
           end
           flash[:success] = '属性を更新しました。'
