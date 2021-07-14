@@ -28,7 +28,9 @@ module Admin
           end
 
           data['providers'] = []
+          provider_ids = {}
           providers.each do |provider|
+            provider_ids[provider.id] = provider
             provider_data = {}
             %w[
               name
@@ -55,6 +57,31 @@ module Admin
             end
             data['providers'] << provider_data
           end
+
+          data['attrs'] = []
+          attrs.each do |attr|
+            attr_data = {}
+            %w[
+              name
+              display_name
+              type
+              order
+              hidden
+            ].each do |key|
+              attr_data[key] = attr.__send__(key)
+            end
+
+            attr_data['attr_mappings'] = attr.attr_mappings.map do |attr_mapping|
+              {
+                'provider_name' => provider_ids[attr_mapping.provider_id].name,
+                'name' => attr_mapping.name,
+                'conversion' => attr_mapping.conversion,
+              }
+            end
+
+            data['attrs'] << attr_data
+          end
+
 
           raw YAML.dump(data)
         end

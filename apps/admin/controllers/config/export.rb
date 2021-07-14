@@ -8,11 +8,13 @@ module Admin
         cache_control :no_store
 
         expose :providers
+        expose :attrs
 
         def call(_params)
           self.format = :yml
 
           @providers = ProviderRepository.new.all_with_adapter
+          @attrs = AttrRepository.new.all_with_mappings
         end
       end
     end
