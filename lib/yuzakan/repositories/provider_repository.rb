@@ -26,7 +26,6 @@ class ProviderRepository < Hanami::Repository
   def all_with_adapter
     aggregate(*ProviderRepository.params, attr_mappings: :attr)
       .map_to(Provider)
-      .to_a
   end
 
   def find_with_adapter(id)
