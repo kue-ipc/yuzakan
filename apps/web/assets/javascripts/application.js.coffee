@@ -1,2 +1,2 @@
-import './bootstrap-native.js'
+import './bootstrap.js'
 import './fontawesome.js'
