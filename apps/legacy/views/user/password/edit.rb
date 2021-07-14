@@ -13,7 +13,7 @@ module Legacy
                 div id: 'change-password' do
                   div do
                     change_password_list.each do |name:, label:|
-                      div class: 'form-group row' do
+                      div class: 'mb-3 row' do
                         label label, class: "col-form-label #{col_left}",
                                      for: name
                         div class: col_right do
@@ -29,8 +29,10 @@ module Legacy
                     div class: 'row' do
                       div class: col_left
                       div class: col_right do
-                        submit '変更',
-                               class: 'login-submit btn btn-primary btn-block'
+                        div class: 'd-grid gap-2' do
+                          submit '変更',
+                                class: 'login-submit btn btn-primary'
+                        end
                       end
                     end
                   end
