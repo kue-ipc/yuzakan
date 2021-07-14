@@ -12,7 +12,12 @@ get '/setup/done', to: 'setup#done', as: :setup_done
 
 resource 'session', only: [:destroy, :create]
 
-resource 'config', only: [:edit, :update]
+resource 'config', only: [:edit, :update] do
+  member do
+    get 'import'
+    get 'export'
+  end
+end
 
 resources 'providers' do
   resources 'params', only: [:index]

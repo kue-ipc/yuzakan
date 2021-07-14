@@ -23,6 +23,12 @@ class ProviderRepository < Hanami::Repository
     has_many :attrs, throught: :attr_mappings
   end
 
+  def all_with_adapter
+    aggregate(*ProviderRepository.params, attr_mappings: :attr)
+      .map_to(Provider)
+      .to_a
+  end
+
   def find_with_adapter(id)
     aggregate(*ProviderRepository.params, attr_mappings: :attr)
       .where(id: id)
