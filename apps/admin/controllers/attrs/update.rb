@@ -29,7 +29,7 @@ module Admin
             end
 
             if attr_mapping
-              attr_mapping_repo.update(attr_mapping.id, mapping_params)
+              attr_mapping_repo.update(attr_mapping.id, **mapping_params)
             else
               attr_mapping_repo.create(attr_id: attr.id, **mapping_params)
             end
