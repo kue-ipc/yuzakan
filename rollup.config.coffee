@@ -11,6 +11,7 @@ distDirs = [
 targets = [
   {name: 'hyperapp', ext: 'coffee'}
   {name: 'bootstrap-native', ext: 'coffee'}
+  {name: 'bs-custom-file-input', ext: 'coffee'}
   {name: 'zxcvbn', ext: 'coffee'}
   {name: 'fontawesome', ext: 'coffee'}
   {name: 'fontawesome-svg-core', ext: 'coffee'}

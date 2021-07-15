@@ -4,3 +4,21 @@
 .menu.row
   - menu_items.each do |item|
     = menu_link(item)
+hr
+  h4 設定のインポート・エクスポート
+  p
+    | エクスポートされる設定にはサーバーのパスワード等が含まれていますが、暗号化されていません。
+    | 一時的な利用以外は推奨しません。
+    strong 長期保存する場合は、別途暗号化を行ってください。
+
+  .mb-3
+    = link_to '設定のエクスポート', routes.path(:export_config),
+      class: 'btn btn-primary',
+      download: "yuzakan_#{Time.now.strftime('%Y%m%d-%H%M%S')}.yml"
+
+  = form_for :config, routes.path(:import_config), enctype: 'multipart/form-data' do
+    - div class: 'custom-file mb-3'
+      - file_field :file, class: 'custom-file-input', lang: 'ja', accept: 'text/yaml'
+      - label class: 'custom-file-label', for: 'config-file' do
+        - 'ファイル選択'
+    - submit '設定のインポート', class: 'btn btn-danger'

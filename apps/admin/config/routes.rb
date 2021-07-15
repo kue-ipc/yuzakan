@@ -14,7 +14,7 @@ resource 'session', only: [:destroy, :create]
 
 resource 'config', only: [:edit, :update] do
   member do
-    get 'import'
+    post 'import'
     get 'export'
   end
 end

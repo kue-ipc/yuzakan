@@ -31,6 +31,8 @@ module Admin
           provider_ids = {}
           providers.each do |provider|
             provider_ids[provider.id] = provider
+            next if provider.immutable
+
             provider_data = {}
             %w[
               name
