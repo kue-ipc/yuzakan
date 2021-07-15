@@ -52,7 +52,7 @@ module Admin
                   end
                 end
               end
-              flash[:successes] = ['インポートに成功しました。']
+              flash[:success] = ['インポートに成功しました。']
             rescue => e
               Hanami.logger.error e.full_message
               flash[:errors] << e.message
@@ -60,14 +60,6 @@ module Admin
             ensure
               file.close!
             end
-            # result = UpdateConfig.new.call(params[:config])
-
-            # if result.successful?
-            #   flash[:successes] = ['設定を変更しました。']
-            # else
-            #   flash[:errors] = result.errors
-            #   flash[:errors] << '変更に失敗しました。'
-            # end
           end
 
           redirect_to routes.path(:dashboard)

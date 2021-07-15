@@ -25,7 +25,7 @@ html lang="ja"
       - flash[:messages]&.each do |msg|
         .alert.alert-primary role="alert"
           = h(msg)
-      - flash[:successes]&.each do |msg|
+      - flash[:success]&.each do |msg|
         .alert.alert-success role="alert"
           = h(msg)
 

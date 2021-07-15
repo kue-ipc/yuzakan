@@ -24,10 +24,12 @@ class UpdateAttr
 
   def initialize(attr: nil,
                  attr_repository: AttrRepository.new,
-                 attr_mapping_repository: AttrMappingRepository.new)
+                 attr_mapping_repository: AttrMappingRepository.new,
+                 provider_repository: ProviderRepository.new)
     @attr = attr
     @attr_repository = attr_repository
     @attr_mapping_repository = attr_mapping_repository
+    @provider_repository = provider_repository
   end
 
   def call(params)
@@ -45,11 +47,15 @@ class UpdateAttr
       end
 
     params_attr_mappings.each do |attr_mapping_params|
+      attr_mapping_params[:provider_id] ||=
+        @provider_repository.find_by_name(attr_mapping_params[:provider_name])&.id
+      next if attr_mapping_params[:provider_id].nil?
+
       attr_mapping = @attr_mapping_repository.find_by_provider_attr(
         attr_mapping_params[:provider_id], @attr.id)
 
       if attr_mapping_params[:name].nil? || attr_mapping_params[:name].empty?
-        @attr_mapping_repository.delete(attr_mapping.id) if attr_mapping
+        @attr_repository.remove_mapping(@attr, attr_mapping.id) if attr_mapping
         next
       end
 
@@ -59,40 +65,10 @@ class UpdateAttr
       end
 
       if attr_mapping
-        @attr_mapping_repository.update(attr_mapping.id, mapping_params)
+        @attr_mapping_repository.update(attr_mapping.id, attr_mapping_params)
       else
-        @attr_mapping_repository.create(attr_id: attr.id, **mapping_params)
+        @attr_repository.add_mapping(@attr, attr_mapping_params)
       end
-
-      @attr_mapping_repository.create(attr_id: attr.id, **attr_mapping_params)
-    end
-
-
-
-
-    adapter_class = @provider.adapter_class
-
-    @param_repos = {
-      boolean: ProviderBooleanParamRepository.new,
-      string: ProviderStringParamRepository.new,
-      text: ProviderTextParamRepository.new,
-      integer: ProviderIntegerParamRepository.new,
-    }
-
-    provider_params = adapter_class.encrypt(provider_params)
-
-    adapter_class.params.each do |adapter_param|
-      name = adapter_param[:name]
-      value = provider_params[name.intern]
-
-      value = nil if adapter_param[:encrypted] && value && value.empty?
-
-      next if value.nil?
-
-      @param_repos[adapter_param[:type]].create_or_update(
-        provider_id: @provider.id,
-        name: name,
-        value: value)
     end
   end
 
@@ -105,37 +81,28 @@ class UpdateAttr
 
     result = true
 
-    if @provider
+    if @attr
       # update
-      if params[:name] != @provider.name
-        error({name: ['識別名は変更できません。']})
+      if params[:name] != @attr.name &&
+          @attr_repository.by_name(params[:name]).exist?
+        error({name: ['その名前は既に存在します。']})
         result = false
       end
 
-      if params[:adapter_name] != @provider.adapter_name
-        error({adapter_name: ['アダプターは変更できません。']})
-        result = false
-      end
-
-      if params[:display_name] != @provider.display_name &&
-         @provider_repository.find_by_display_name(params[:display_name])
-        error({display_name: ['そのプロバイダー名は既に存在します。']})
-        result = false
-      end
+      if params[:display_name] != @attr.display_name &&
+        @attr_repository.by_display_name(params[:display_name]).exist?
+       error({display_name: ['その表示名は既に存在します。']})
+       result = false
+     end
     else
       # create
-      if @provider_repository.find_by_name(params[:name])
-        error({name: ['その識別名は既に存在します。']})
+      if @attr_repository.by_name(params[:name]).exist?
+        error({name: ['その名前は既に存在します。']})
         result = false
       end
 
-      unless ADAPTERS.by_name(params[:adapter_name])
-        error({adapter_name: ['指定のアダプターはありません。']})
-        result = false
-      end
-
-      if @provider_repository.find_by_display_name(params[:display_name])
-        error({display_name: ['そのプロバイダー名は既に存在します。']})
+      if @attr_repository.by_display_name(params[:display_name]).exist?
+        error({display_name: ['その表示名は既に存在します。']})
         result = false
       end
     end
