@@ -15,6 +15,11 @@ dl.row
   dd.col-sm-8.col-md-9.col-lg-10
     = user.email
 
+h3 操作
+
+= form_for :session, routes.path(:user_password, user.name),
+  class: 'form-inlien' do
+  - submit 'パスワードリセット', class: 'btn btn-danger'
 
 h3 属性情報
 
