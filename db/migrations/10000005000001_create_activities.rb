@@ -16,6 +16,11 @@ Hanami::Model.migration do
       column :updated_at, DateTime, null: false
 
       index :user_id
+      index :client
+      index :type
+      index :target
+      index :action
+      index :result
     end
   end
 end

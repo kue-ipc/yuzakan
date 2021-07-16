@@ -7,7 +7,6 @@ gem 'hanami-model', '~> 1.3'
 gem 'rack', '>= 2.2.2'
 
 # Database
-# gem 'sqlite3'
 gem 'mysql2'
 # gem 'pg'
 
@@ -55,6 +54,7 @@ end
 group :test do
   gem 'minitest'
   gem 'capybara'
+  gem 'sqlite3'
 end
 
 group :production do

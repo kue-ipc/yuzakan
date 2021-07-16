@@ -12,7 +12,7 @@ Hanami::Model.migration do
 
       index :user_id
       index :group_id
-      index [:user_id, :group_id], name: :user_group_index, unique: true
+      index [:user_id, :group_id], unique: true
     end
   end
 end

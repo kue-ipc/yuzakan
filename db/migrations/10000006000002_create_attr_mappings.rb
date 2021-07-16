@@ -14,7 +14,7 @@ Hanami::Model.migration do
 
       index :provider_id
       index :attr_id
-      index [:provider_id, :attr_id], name: :provider_attr_index, unique: true
+      index [:provider_id, :attr_id], unique: true
     end
   end
 end
