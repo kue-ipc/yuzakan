@@ -1,0 +1,35 @@
+h3 アカウント ログイン情報
+
+.row.my-3
+  div class=col_name
+    | アカウント名:
+  div class=col_value
+    code.login-info
+      = user.name
+
+.row.my-3
+  div class=col_name
+    | 初回パスワード:
+  div class=col_value
+    code.login-info
+      = password
+
+.row.my-3
+  div class=col_name
+    | アカウント管理サイト:
+  div class=col_value
+    = link_to url, target: '_blank' do
+      - text site
+
+p
+  | 上記の初回パスワードは
+  strong 現在の画面にのみ
+  | 表示され、どこにも保存されていません。
+  | このページを閉じた場合、確認する方法がなくなります。
+  | 初回ログインが完了するまでは、このページを閉じたり、他のページへ移動しないでください。
+
+p 最初にパスワード変更を実施してください。
+
+p 上記アカウント管理サイトにアクセスし、「ログイン」ボタンから初回ログインを実施してください。ログイン後、「パスワード変更」からパスワード変更してください。
+
+= link_to 'ユーザーの画面に戻る', routes.path(:user, user.name)
