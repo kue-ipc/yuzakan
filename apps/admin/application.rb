@@ -3,6 +3,12 @@ require 'hanami/assets'
 
 module Admin
   class Application < Hanami::Application
+    sassions_name = 'yuzakan:session:admin'
+    sessions_opts = {
+      expire_after: 24 * 60 * 60,
+      key: sassions_name.gsub(':', '.'),
+    }
+
     configure do # rubocop:disable Metrics/BlockLength
       root __dir__
 
@@ -12,28 +18,6 @@ module Admin
       ]
 
       routes 'config/routes'
-
-      sassions_name = 'yuzakan:session:admin'
-      sessions_opts = {
-        expire_after: 24 * 60 * 60,
-        key: sassions_name.gsub(':', '.'),
-      }
-
-      # -- redis --
-      sessions :redis,
-               redis_server: "redis://127.0.0.1:6379/0/#{sassions_name}",
-               **sessions_opts
-
-      # -- memcached --
-      # require 'rack/session/dalli'
-      # sessions :dalli,
-      #          namespace: sassions_name,
-      #          **sessions_opts
-
-      # -- cookie --
-      # sessions :cookie,
-      #          secret: ENV.fetch('ADMIN_SESSIONS_SECRET'),
-      #          **sessions_opts
 
       layout :application
 
@@ -87,10 +71,32 @@ module Admin
 
     configure :development do
       handle_exceptions false
+
+      # -- redis --
+      redis_url = ENV.fetch('REDIS_URL', 'redis://127.0.0.1:6379/0')
+      sessions :redis,
+               redis_server: "#{redis_url}/#{sassions_name}",
+               **sessions_opts
+
+      # -- memcached --
+      # require 'rack/session/dalli'
+      # sessions :dalli,
+      #          namespace: sassions_name,
+      #          **sessions_opts
+
+      # -- cookie --
+      # sessions :cookie,
+      #          secret: ENV.fetch('ADMIN_SESSIONS_SECRET'),
+      #          **sessions_opts
     end
 
     configure :test do
       handle_exceptions false
+
+      # -- cookie --
+      sessions :cookie,
+               secret: ENV.fetch('ADMIN_SESSIONS_SECRET'),
+               **sessions_opts
     end
 
     configure :production do
@@ -103,6 +109,23 @@ module Admin
         fingerprint true
         subresource_integrity :sha256
       end
+
+      # -- redis --
+      redis_url = ENV.fetch('REDIS_URL', 'redis://127.0.0.1:6379/0')
+      sessions :redis,
+               redis_server: "#{redis_url}/#{sassions_name}",
+               **sessions_opts
+
+      # -- memcached --
+      # require 'rack/session/dalli'
+      # sessions :dalli,
+      #          namespace: sassions_name,
+      #          **sessions_opts
+
+      # -- cookie --
+      # sessions :cookie,
+      #          secret: ENV.fetch('ADMIN_SESSIONS_SECRET'),
+      #          **sessions_opts
     end
   end
 end

@@ -1,3 +1,5 @@
+require 'yuzakan/utils/cache_store'
+
 class Provider < Hanami::Entity
   attr_reader :params, :adapter, :adapter_class
 
@@ -7,12 +9,6 @@ class Provider < Hanami::Entity
     def initialize(msg = 'No adapter, but need an adapter.')
       super
     end
-  end
-
-  def self.cache
-    @cache ||= Readthis::Cache.new(
-      expires_in: 60 * 60,
-      redis: {url: 'redis://127.0.0.1:6379/0'})
   end
 
   def initialize(attributes = nil)
@@ -37,13 +33,37 @@ class Provider < Hanami::Entity
     super
   end
 
-  def cache_key(action, param = nil)
-    ['yuzakan', 'provider', name, action, param].join(':')
+  def cache_expires_in
+    if Hanami.env == 'test'
+      0
+    else
+      60 * 60
+    end
   end
 
-  def cache_clear
-    cache.delete_matched(cache_key('*'))
+  def cache_store
+    @cache ||= Yuzakan::Utils::CacheStore.create_store(
+      expires_in: expires_in,
+      namespace: ['yuzakan', 'provider', name].join(':'),
+      redis: {url: ENV.fetch('REDIS_URL', 'redis://127.0.0.1:6379/0')})
   end
+
+  def user_key(name)
+    ['user', name].join(':')
+  end
+
+  def group_key(name)
+    ['group', name].join(':')
+  end
+
+  def user_list_key
+    ['list', 'user'].join(':')
+  end
+
+  def group_list_key
+    ['list', 'group']
+  end
+
 
   def sanitize_name(name)
     raise ArgumentError, 'invalid name' unless name =~ Provider::NAME_RE
@@ -61,10 +81,9 @@ class Provider < Hanami::Entity
     raise NoAdapterError unless adapter
 
     username = sanitize_name(username)
-    key = cache_key('user', username)
 
     adapter.create(username, attrs, attr_mappings, password).tap do |value|
-      Provider.cache.write(key, value)
+      cache_store[user_key(username)] = value
     end
   end
 
@@ -72,11 +91,10 @@ class Provider < Hanami::Entity
     raise NoAdapterError unless adapter
 
     username = sanitize_name(username)
-    key = cache_key('user', username)
 
-    Provider.cache.fetch(key) do
+    cache.fetch(user_key(username)) do
       adapter.read(username, attr_mappings).tap do |value|
-        Provider.cache.write(key, value)
+        cache[user_key(username)] = value
       end
     end
   end
@@ -85,10 +103,9 @@ class Provider < Hanami::Entity
     raise NoAdapterError unless adapter
 
     username = sanitize_name(username)
-    key = cache_key('user', username)
 
     adapter.update(username, attrs, attr_mappings).tap do |value|
-      Provider.cache.write(key, value)
+      cache[user_key(username)] = value
     end
   end
 
@@ -96,10 +113,9 @@ class Provider < Hanami::Entity
     raise NoAdapterError unless adapter
 
     username = sanitize_name(username)
-    key = cache_key('user', username)
 
     adapter.delete(username)
-    cache.delete(key)
+    cache.delete(user_key(username))
   end
 
   def auth(username, password)
@@ -109,7 +125,7 @@ class Provider < Hanami::Entity
     key = cache_key('user', username)
 
     adapter.auth(username, password).tap do |value|
-      Provider.cache.write(key, value) if value
+      cache[user_key(username)] = value if value
     end
   end
 
@@ -120,7 +136,7 @@ class Provider < Hanami::Entity
     key = cache_key('user', username)
 
     adapter.change_password(username, password).tap do |value|
-      Provider.cache.write(key, value) if value
+      cache[user_key(username)] = value if value
     end
   end
 
@@ -159,9 +175,8 @@ class Provider < Hanami::Entity
   def list
     raise NoAdapterError unless adapter
 
-    key = cache_key('list')
-    Provider.cache.fetch(key) do
-      adapter.list.tap { |value| Provider.cache.write(key, value) }
+    cache.fetch(user_list_key) do
+      adapter.list.tap { |value| cache[user_list_key] = value }
     end
   end
 end
