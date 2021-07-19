@@ -11,8 +11,15 @@ module Admin
           expose :user
 
           def call(params)
-            @user = UserRepository.new.find(params[:id])
+            user_id = params[:user_id]
+            if user_id =~ /\A\d+\z/
+              @user = UserRepository.new.find(user_id)
+            else
+              @user = UserRepository.new.by_name(user_id).one
+              @user ||= UserRepository.new.sync(user_id)
+            end
 
+            pp @user
           end
         end
       end

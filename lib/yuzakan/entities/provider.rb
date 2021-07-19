@@ -1,7 +1,7 @@
-require 'yuzakan/utils/cache_store'
+require_relative '../utils/cache_store'
 
 class Provider < Hanami::Entity
-  attr_reader :params, :adapter, :adapter_class
+  attr_reader :params, :adapter, :adapter_class, :cache_store
 
   NAME_RE = /\A[\w.-]+\z/.freeze
 
@@ -16,6 +16,17 @@ class Provider < Hanami::Entity
       super
       return
     end
+
+    expires_in =
+      if Hanami.env == 'test'
+        0
+      else
+        60 * 60
+      end
+    namespace = ['yuzakan', 'provider', attributes[:name]].join(':')
+    redis_url = ENV.fetch('REDIS_URL', 'redis://127.0.0.1:6379/0')
+    @cache_store ||= Yuzakan::Utils::CacheStore.create_store(
+      expires_in: expires_in, namespace: namespace, redis_url: redis_url)
 
     @params = {}.tap do |data|
       ProviderRepository.params.each do |param_name|
@@ -33,27 +44,12 @@ class Provider < Hanami::Entity
     super
   end
 
-  def cache_expires_in
-    if Hanami.env == 'test'
-      0
-    else
-      60 * 60
-    end
+  def user_key(username)
+    ['user', username].join(':')
   end
 
-  def cache_store
-    @cache ||= Yuzakan::Utils::CacheStore.create_store(
-      expires_in: expires_in,
-      namespace: ['yuzakan', 'provider', name].join(':'),
-      redis: {url: ENV.fetch('REDIS_URL', 'redis://127.0.0.1:6379/0')})
-  end
-
-  def user_key(name)
-    ['user', name].join(':')
-  end
-
-  def group_key(name)
-    ['group', name].join(':')
+  def group_key(groupname)
+    ['group', groupname].join(':')
   end
 
   def user_list_key
@@ -92,9 +88,9 @@ class Provider < Hanami::Entity
 
     username = sanitize_name(username)
 
-    cache.fetch(user_key(username)) do
+    cache_store.fetch(user_key(username)) do
       adapter.read(username, attr_mappings).tap do |value|
-        cache[user_key(username)] = value
+        cache_store[user_key(username)] = value
       end
     end
   end
@@ -105,7 +101,7 @@ class Provider < Hanami::Entity
     username = sanitize_name(username)
 
     adapter.update(username, attrs, attr_mappings).tap do |value|
-      cache[user_key(username)] = value
+      cache_store[user_key(username)] = value
     end
   end
 
@@ -115,7 +111,7 @@ class Provider < Hanami::Entity
     username = sanitize_name(username)
 
     adapter.delete(username)
-    cache.delete(user_key(username))
+    cache_store.delete(user_key(username))
   end
 
   def auth(username, password)
@@ -125,7 +121,7 @@ class Provider < Hanami::Entity
     key = cache_key('user', username)
 
     adapter.auth(username, password).tap do |value|
-      cache[user_key(username)] = value if value
+      cache_store[user_key(username)] = value if value
     end
   end
 
@@ -136,7 +132,7 @@ class Provider < Hanami::Entity
     key = cache_key('user', username)
 
     adapter.change_password(username, password).tap do |value|
-      cache[user_key(username)] = value if value
+      cache_store[user_key(username)] = value if value
     end
   end
 
@@ -175,8 +171,8 @@ class Provider < Hanami::Entity
   def list
     raise NoAdapterError unless adapter
 
-    cache.fetch(user_list_key) do
-      adapter.list.tap { |value| cache[user_list_key] = value }
+    cache_store.fetch(user_list_key) do
+      adapter.list.tap { |value| cache_store[user_list_key] = value }
     end
   end
 end

@@ -15,11 +15,15 @@ dl.row
   dd.col-sm-8.col-md-9.col-lg-10
     = user.email
 
-h3 操作
+h3 操作メニュー
 
-= form_for :session, routes.path(:user_password, user.name),
-  class: 'form-inlien' do
-  - submit 'パスワードリセット', class: 'btn btn-danger'
+= menu_link(url: '#' + 'user_password', name: 'パスワードリセット',
+  description: 'パスワードのリセットを行います。',
+  color: 'danger',
+  type: :modal)
+= user_password_modal
+
+
 
 h3 属性情報
 

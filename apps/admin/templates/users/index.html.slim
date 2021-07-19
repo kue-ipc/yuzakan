@@ -15,7 +15,7 @@ table.table
     - users.each do |user|
       tr
         td
-          = link_to user.name, routes.path(:user, user.id)
+          = link_to user.name, routes.path(:user, user.name)
         td = user.display_name
         td = user.email
         - providers.each do |provider|
