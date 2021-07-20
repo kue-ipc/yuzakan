@@ -9,6 +9,7 @@ module Admin
           cache_control :no_store
 
           expose :user
+          expose :password
 
           def call(params)
             user_id = params[:user_id]
