@@ -21,22 +21,23 @@ module Admin
 
             pp @user
 
-            provider = ProviderRepository.new
-              .operational_all_with_adapter(:change_password)
+            # provider = ProviderRepository.new
+            #   .operational_all_with_adapter(:change_password)
 
-            result = ResetPassword.new(user: @user,
-                                       client: remote_ip,
-                                       config: current_config,
-                                       providers: providers)
-              .call(params.get(:user_password))
+            # result = ResetPassword.new(user: @user,
+            #                            client: remote_ip,
+            #                            config: current_config,
+            #                            providers: providers)
+            #   .call(params.get(:user_password))
 
-            if result.failure?
-              flash[:errors] = result.errors
-              flash[:failure] = 'アカウントのパスワードリセットに失敗しました。'
-              redirect_to routes.path(:google)
-            end
+            # if result.failure?
+            #   flash[:errors] = result.errors
+            #   flash[:failure] = 'アカウントのパスワードリセットに失敗しました。'
+            #   redirect_to routes.path(:google)
+            # end
 
-            @password = result.password
+            # @password = result.password
+            @password = 'dummy'
 
             flash[:success] = 'アカウントのパスワードをリセットしました。'
           end
