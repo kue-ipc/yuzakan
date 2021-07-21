@@ -23,8 +23,13 @@ class ProviderRepository < Hanami::Repository
     has_many :attrs, throught: :attr_mappings
   end
 
+  def all
+    providers.order(:order).to_a
+  end
+
   def all_with_adapter
     aggregate(*ProviderRepository.params, attr_mappings: :attr)
+      .order(:order)
       .map_to(Provider)
   end
 
