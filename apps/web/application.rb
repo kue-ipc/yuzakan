@@ -49,7 +49,6 @@ module Web
         style-src 'self' 'unsafe-inline' https:;
         font-src 'self';
         object-src 'none';
-        plugin-types application/pdf;
         child-src 'self';
         frame-src 'self';
         media-src 'self'
