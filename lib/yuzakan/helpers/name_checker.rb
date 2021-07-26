@@ -16,7 +16,7 @@ module Yuzakan
 
       private def check_type(str)
         case str
-        when ID_RE
+        when Integer, ID_RE
           :id
         when NAME_RE
           :name
