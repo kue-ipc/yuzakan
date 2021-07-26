@@ -28,7 +28,7 @@ module Web
             data.merge(result)
           end
 
-          @attrs = AttrRepository.new.all
+          @attrs = AttrRepository.new.all_no_hidden
         end
       end
     end

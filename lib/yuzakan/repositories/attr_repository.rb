@@ -11,6 +11,10 @@ class AttrRepository < Hanami::Repository
     attrs.where(display_name: display_name)
   end
 
+  def all_no_hidden
+    attrs.where(hidden: false).order(:order).to_a
+  end
+
   def all
     attrs.order(:order).to_a
   end

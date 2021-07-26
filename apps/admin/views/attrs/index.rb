@@ -19,6 +19,7 @@ module Admin
                 name: attr.name,
                 display_name: attr.display_name,
                 type: attr.type,
+                hidden: attr.hidden,
                 attr_mappings: mappings)},
               method: :patch)
           else
@@ -46,13 +47,20 @@ module Admin
                 td class: 'table-primary' do
                   select :type, {
                     '文字列' => 'string',
-                    '真偽値' => 'boolean',
-                    '整数値' => 'integer',
-                    '小数点数値' => 'float',
+                    '真偽' => 'boolean',
+                    '整数' => 'integer',
+                    '小数点数' => 'float',
+                    '日付と時間' => 'datetime',
                     '日付' => 'date',
                     '時間' => 'time',
-                    '日時' => 'datetime',
                   }, class: 'form-control'
+                  div class: 'custom-control custom-checkbox' do
+                    check_box :hidden, class: 'custom-control-input', id: "attr-#{attr&.id}-hidden"
+                    label class: 'custom-control-label',
+                      for: "attr-#{attr&.id}-hidden" do
+                      text '隠し'
+                    end
+                  end
                 end
 
                 td do
