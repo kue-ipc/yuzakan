@@ -146,6 +146,11 @@ module Yuzakan
 
         raise 'このシステムで、管理者をアンロックすることはできません。' if user.is_admin?
 
+        # ロックされていないユーザーはそのまま無視して、nilを返す。
+        return unless user.suspended?
+
+        raise 'このシステムでは、無効状態を解除できません。' if user.suspension_reason != 'ADMIN'
+
         user = Google::Apis::AdminDirectoryV1::User.new(
           suspended: false)
         set_password(user, password) if password
@@ -226,12 +231,17 @@ module Yuzakan
           state: :available,
         }
         if user.suspended?
-          case user.suspension_reason
-          when 'ADMIN'
-            data[:state] = :locked
-          when 'ABUSE', 'UNDER13'
-            data[:state] = :disabled
-          end
+          # ADMIN: 管理者が停止
+          # ABUSE: 不正行為により停止(利用も削除も不可)
+          # UNDER13: 13歳未満のため
+          # WEB_LOGIN_REQUIRED: ログイン前新規アカウント(使用され無い)
+          # null: その他の自動停止中
+          data[:state] =
+            if user.suspension_reason == 'ADMIN'
+              :locked
+            else
+              :disabled
+            end
         end
 
         data[:admin] = user.is_admin?

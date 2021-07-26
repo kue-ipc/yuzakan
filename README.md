@@ -119,3 +119,22 @@ $ bundle exec hanami server
 $ bundle exec hanami db prepare
 $ HANAMI_ENV=test bundle exec hanami db prepare
 ```
+
+## 制限事項
+
+### ユーザー名
+
+最低限GoogleとMicrosoftの制限を満たすようにしてください。
+
+* https://support.google.com/a/answer/9193374
+* https://support.microsoft.com/kb/2439357
+
+上記を踏まえて、次のように制限しています。
+
+* 英小文字`[a-z]`、数字`[0-9]`、アンダーライン`_`、ハイフン`-`、ピリオド`.`のみ使用できる。
+* 大文字小文字無視する。(全て小文字として扱う。)
+* 最初の文字は数字、ハイフン、ピリオドは使用不可。(英小文字とアンダーラインのみ使用可能。)
+* 最後の文字はピリオドのみ使用不可。(英小文字、数字、アンダーライン、ハイフンは使用可能。)
+* ピリオドは連続してはならない。
+
+

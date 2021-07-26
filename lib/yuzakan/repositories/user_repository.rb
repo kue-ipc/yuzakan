@@ -9,6 +9,10 @@ class UserRepository < Hanami::Repository
     users.where(name: name)
   end
 
+  def find_by_name_or_sync(name)
+    by_name(name).one || sync(name)
+  end
+
   def offset(offset)
     users.offset(offset)
   end

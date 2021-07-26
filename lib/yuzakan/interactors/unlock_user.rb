@@ -106,7 +106,7 @@ class UnlockUser
     end
 
     if @user_datas.empty?
-      error('どのシステムでもロックは解除は実行されませんでした。')
+      error('どのシステムでもロック解除は実行されませんでした。')
       result = :failure
     end
 

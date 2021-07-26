@@ -13,6 +13,7 @@ class ResetPassword
     end
   end
 
+  expose :target
   expose :username
   expose :password
   expose :user_datas
@@ -52,15 +53,15 @@ class ResetPassword
       action: 'reset_password',
     }
 
-    by_user =
+    mail_user, by_user =
       if @username == @user.name
-        :self
+        [@user, :self]
       else
-        :admin
+        [UserRepository.new.by_name(@username).one, :admin]
       end
 
     mailer_params = {
-      user: @user,
+      user: mail_user,
       config: @config,
       by_user: by_user,
       action: 'パスワードリセット',
