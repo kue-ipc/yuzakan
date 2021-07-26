@@ -62,19 +62,18 @@ Node.jsは必須です。
 
 ### セッション管理key-valueデータベース
 
-* redis (デフォルト)
-* memcaced (dalliを有効にする)
+* [x] redis (デフォルト)
+* [ ] memcaced (未テスト、キャッシュ機能は未実装)
 
 ### サポートするOS/ディストリビューション
 
-* [x] CentOS 8
-* [ ] CentOS Stream 8
-* [ ] Rocky Linux
+* [x] Rocky Linux 8
 * [x] Ubuntu 20.04 LTS
-* [ ] CentOS 7
-* [ ] Ubuntu 18.04 LTS
+* [ ] CentOS 8
+* [ ] CentOS Stream 8
+* [ ] Ubuntu 22.04 LTS (予定)
 
-現在はCentOS 8とUbuntu 20.04 LTSでのみテストしています。
+現在はRocky Linux 8とUbuntu 20.04 LTSでのみテストしています。
 
 ## セットアップ
 
