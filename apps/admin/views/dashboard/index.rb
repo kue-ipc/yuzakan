@@ -36,24 +36,3 @@ module Admin
     end
   end
 end
-
-__END__
-.col-auto
-.card
-  .card-header
-    | 全体設定
-  .card-body
-    h5.card-title.text-white
-    p.card-text
-      | サイト名やパスワードの条件等の設定はこちらから変更できます。
-    = link_to '全体設定の変更', routes.path(:edit_config), class: 'btn btn-primary'
-.col-auto
-.card
-  .card-header
-    | プロバイダー
-  .card-body
-    h5.card-title.text-white
-    p.card-text
-      | 連携するシステムはプロバイダーとして登録します。連携システムの追加や変更が可能です。
-    = link_to 'プロバイダーの設定', routes.path(:providers), class: 'btn btn-primary'
-
