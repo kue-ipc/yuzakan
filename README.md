@@ -60,6 +60,8 @@ Node.jsは必須です。
 
 現在はMariaDBのみテストしていますが、他DBもサポート予定です。
 
+MariaDBはutf8mb4にしてください。DATABES_URLでは"?encoding=utf8mb4"を付ける必要があります。
+
 ### セッション管理key-valueデータベース
 
 * [x] redis (デフォルト)
