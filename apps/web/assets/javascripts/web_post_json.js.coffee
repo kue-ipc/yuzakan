@@ -3,7 +3,7 @@
 # その際、modalを使用する。
 
 import {h, text, app} from './hyperapp.js'
-import bsn from './bootstrap.js'
+import {Modal} from './bootstrap.js'
 import {FaIcon} from './fa_icon.js'
 
 export default class WebPostJson
@@ -26,7 +26,7 @@ export default class WebPostJson
     @modalNode.appendChild(@modalChildNode)
     document.body.appendChild(@modalNode)
 
-    @modal = new bsn.Modal(@modalNode)
+    @modal = new Modal(@modalNode)
 
     app
       init: {
