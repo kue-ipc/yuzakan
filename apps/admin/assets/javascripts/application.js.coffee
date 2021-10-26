@@ -1,4 +1,4 @@
-import '../bootstrap-native.js'
+import '../bootstrap.js'
 import bsCustomFileInput from '../bs-custom-file-input.js'
 
 import '../fontawesome.js'
