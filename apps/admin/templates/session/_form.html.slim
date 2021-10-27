@@ -3,7 +3,7 @@
   h3.login-title.text-center.mb-2 ログイン
   = form_for :session, routes.session_path, class: 'login-form', \
                                             enctype: 'multipart/form-data' do
-    - div class: 'form-group' do
+    - div class: 'mb-3' do
       - field_class = ['form-control']
       - field_class << 'is-invalid' if flash[:param_errors]&.key?('username')
       - text_field :username, class: field_class, \
@@ -11,7 +11,7 @@
       - if flash[:param_errors]&.key?('username')
         - div class: 'invalid-feedback' do
           - h(flash[:param_errors]['username'].join)
-    - div class: 'form-group' do
+    - div class: 'mb-3' do
       - field_class = ['form-control']
       - field_class << 'is-invalid' if flash[:param_errors]&.key?('password')
       - password_field :password, class: field_class, \

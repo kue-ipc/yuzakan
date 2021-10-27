@@ -150,7 +150,7 @@ class PasswordInputGenerator
       else
         ''
 
-    h 'div', class: 'form-group row', [
+    h 'div', class: 'mb-3 row', [
       h 'label',
         class: "col-form-label #{changePasswordData.cols.left}"
         for: @idName

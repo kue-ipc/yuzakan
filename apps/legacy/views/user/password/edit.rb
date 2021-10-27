@@ -13,7 +13,7 @@ module Legacy
                 div id: 'change-password' do
                   div do
                     change_password_list.each do |name:, label:|
-                      div class: 'form-group row' do
+                      div class: 'mb-3 row' do
                         label label, class: "col-form-label #{col_left}",
                                      for: name
                         div class: col_right do

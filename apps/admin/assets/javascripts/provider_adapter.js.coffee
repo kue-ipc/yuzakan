@@ -57,7 +57,7 @@ InputControl = (props) ->
   if providerId?
     inputOpts['required'] = false
 
-  h 'div', class: 'form-group', [
+  h 'div', class: 'mb-3', [
     h 'label', class: 'form-label', for: id,
       text label
     h 'input', inputOpts
@@ -124,7 +124,7 @@ InputTextarea = (props) ->
   if providerId?
     inputOpts['required'] = false
 
-  h 'div', class: 'form-group', [
+  h 'div', class: 'mb-3', [
     h 'label', class: 'form-label', for: id,
       text label
     h 'textarea', inputOpts
@@ -147,7 +147,7 @@ InputList = (props) ->
 
   selected = props.value ? props.default
 
-  h 'div', class: 'form-group', [
+  h 'div', class: 'mb-3', [
     h 'label', class: 'form-label', for: id,
       text label
     h 'select',
