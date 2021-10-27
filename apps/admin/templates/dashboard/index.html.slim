@@ -22,10 +22,6 @@ hr
       download: "yuzakan_#{Time.now.strftime('%Y%m%d-%H%M%S')}.yml"
 
   = form_for :config, routes.path(:import_config), enctype: 'multipart/form-data', class: 'form-inline' do
-    - div class: 'form-group' do
-      - div class: 'custom-file' do
-        - file_field :file, class: 'custom-file-input', lang: 'ja', accept: 'text/yaml'
-        - label class: 'custom-file-label', for: 'config-file' do
-          - 'ファイル選択'
-    - div class: 'form-group ml-2' do
+    - div class: 'input-group' do
+      - file_field :file, class: 'form-control'
       - submit '設定のインポート', class: 'btn btn-danger'
