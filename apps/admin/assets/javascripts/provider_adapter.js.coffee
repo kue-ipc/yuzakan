@@ -58,16 +58,16 @@ InputControl = (props) ->
     inputOpts['required'] = false
 
   h 'div', class: 'form-group', [
-    h 'label', for: id,
+    h 'label', class: 'form-label', for: id,
       text label
     h 'input', inputOpts
-    if props.encrypted? then h 'small', class: 'form-text text-muted',
+    if props.encrypted? then h 'small', class: 'form-text',
       text '''
       この項目は暗号化されて保存され、現在の値は表示されません。
       変更しない場合は、空欄のままにしてください。
       '''
     if props.description? then h 'small',
-      id: describeId, class: 'form-text text-muted',
+      id: describeId, class: 'form-text',
       text props.description
   ]
 
@@ -99,7 +99,7 @@ InputCheckbox = (props) ->
     h 'label', class: 'form-check-label', for: id,
       text label
     if props.description? then h 'small',
-      id: describeId, class: 'form-text text-muted',
+      id: describeId, class: 'form-text',
       text props.description
   ]
 
@@ -125,17 +125,17 @@ InputTextarea = (props) ->
     inputOpts['required'] = false
 
   h 'div', class: 'form-group', [
-    h 'label', for: id,
+    h 'label', class: 'form-label', for: id,
       text label
     h 'textarea', inputOpts
-    if props.encrypted? then h 'small', class: 'form-text text-muted',
+    if props.encrypted? then h 'small', class: 'form-text',
       text '''
       この項目は暗号化されて保存され、現在の値は表示されません。
       変更しない場合は、空欄のままにしてください。
       '''
     if props.description? then h 'small',
       id: describeId,
-      class: 'form-text text-muted',
+      class: 'form-text',
       text props.description
   ]
 
@@ -148,7 +148,7 @@ InputList = (props) ->
   selected = props.value ? props.default
 
   h 'div', class: 'form-group', [
-    h 'label', for: id,
+    h 'label', class: 'form-label', for: id,
       text label
     h 'select',
       id: id
@@ -163,7 +163,7 @@ InputList = (props) ->
           h 'option', value: option.value,
             text option.name
       if props.description? then h 'small',
-        id: describeId, class: 'form-text text-muted',
+        id: describeId, class: 'form-text',
         text props.description
   ]
 

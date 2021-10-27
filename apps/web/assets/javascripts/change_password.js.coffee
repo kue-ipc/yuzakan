@@ -165,17 +165,16 @@ class PasswordInputGenerator
           placeholder: 'パスワードを入力'
           'aria-describedby': "#{@idName}-visible-button"
           oninput: (_, event) => [@setValue, {value: event.target.value}]
-        h 'div', class: 'input-group-append',
-          h 'div',
-            id: "#{@idName}-visible-button"
-            class:
-              "input-group-text #{if visible then 'text-primary' else ''}"
-            onmousedown: [@showPassword, {visible: true}]
-            onmouseup: [@showPassword, {visible: false}]
-            onmouseleave: [@showPassword, {visible: false}]
-            FaIcon
-              prefix: 'fas'
-              name: if visible then 'fa-eye' else 'fa-eye-slash'
+        h 'div',
+          id: "#{@idName}-visible-button"
+          class:
+            "input-group-text #{if visible then 'text-primary' else ''}"
+          onmousedown: [@showPassword, {visible: true}]
+          onmouseup: [@showPassword, {visible: false}]
+          onmouseleave: [@showPassword, {visible: false}]
+          FaIcon
+            prefix: 'fas'
+            name: if visible then 'fa-eye' else 'fa-eye-slash'
         h 'div', class: 'valid-feedback',
           text message
         h 'div', class: 'invalid-feedback',

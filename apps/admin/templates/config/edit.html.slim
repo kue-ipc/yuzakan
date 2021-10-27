@@ -2,30 +2,27 @@ h2 全体設定
 
 = form_for form do
   - div class: 'form-group' do
-    - label 'サイト名', for: :title
+    - label 'サイト名', class: 'form-label', for: :title
     - text_field :title, class: 'form-control'
 
   - div class: 'form-group' do
-    - label 'セッションタイムアウト', for: :session_timeout
+    - label 'セッションタイムアウト', class: 'form-label', for: :session_timeout
     - div class: 'input-group' do
       - number_field :session_timeout, class: 'form-control', min: 0
-      - div class: 'input-group-append'
-        - span '秒', class: 'input-group-text'
+      - span '秒', class: 'input-group-text'
 
   - div class: 'form-group' do
-    - label 'パスワード最小サイズ', for: :password_min_size
+    - label 'パスワード最小サイズ', class: 'form-label', for: :password_min_size
     - div class: 'input-group' do
       - number_field :password_min_size, class: 'form-control', min: 1, max: 255
-      - div class: 'input-group-append'
-        - span '文字', class: 'input-group-text'
+      - span '文字', class: 'input-group-text'
 
   - div class: 'form-group' do
-    - label 'パスワード最大サイズ', for: :password_max_size
+    - label 'パスワード最大サイズ', class: 'form-label', for: :password_max_size
     - div class: 'input-group' do
       - number_field :password_max_size, class: 'form-control', min: 1, max: 255
-      - div class: 'input-group-append'
-        - span '文字', class: 'input-group-text'
-    - small class: 'form-text text-muted' do
+      - span '文字', class: 'input-group-text'
+    - small class: 'form-text' do
       - div 'パスワードハッシュによっては文字数に制限があります。' \
             '制限を超えた文字数は単純に無視されます。'
       - ul
@@ -33,51 +30,50 @@ h2 全体設定
           - li "#{name}: #{size} 文字" 
 
   - div class: 'form-group' do
-    - label 'パスワードの文字種の最小数', for: :password_min_types
+    - label 'パスワードの文字種の最小数', class: 'form-label', for: :password_min_types
     - div class: 'input-group' do
       - number_field :password_min_types, class: 'form-control', min: 1, max: 4
-      - div class: 'input-group-append'
-        - span '種類', class: 'input-group-text'
+      - span '種類', class: 'input-group-text'
 
   - div class: 'form-group' do
-    - label 'パスワードの複雑度スコア最小値', for: :password_min_score
+    - label 'パスワードの複雑度スコア最小値', class: 'form-label', for: :password_min_score
     - select :password_min_score, password_scores, \
              class: 'form-control', size: password_scores.size
 
   - div class: 'form-group' do
-    - label 'パスワードの使用不可文字', for: :password_unusable_chars
+    - label 'パスワードの使用不可文字', class: 'form-label', for: :password_unusable_chars
     - text_field :password_unusable_chars, class: 'form-control', max: 128
 
   - div class: 'form-group' do
-    - label 'パスワードの外部辞書', for: :password_extra_dict
+    - label 'パスワードの外部辞書', class: 'form-label', for: :password_extra_dict
     - text_area :password_extra_dict, class: 'form-control', rows: 3
-    - small class: 'form-text text-muted' do
+    - small class: 'form-text' do
       - '複雑度を計算する際に、外部辞書として使用されます。'
 
   - div class: 'form-group' do
-    - label '管理者ネットワーク', for: :admin_networks
+    - label '管理者ネットワーク', class: 'form-label', for: :admin_networks
     - text_area :admin_networks, class: 'form-control', rows: 3
-    - small class: 'form-text text-muted' do
+    - small class: 'form-text' do
       - '管理者機能にアクセス可能なネットワークを指定します。カンマまたは改行または空白で区切ってください。空の場合はすべてのIPアドレスからの接続を許可します。'
-    - small class: 'form-text text-muted' do
+    - small class: 'form-text' do
       - "現在接続しているクライアントのIPアドレスは #{remote_ip} です。"
 
   - div class: 'form-group' do
-    - label 'ユーザーネットワーク', for: :user_networks
+    - label 'ユーザーネットワーク', class: 'form-label', for: :user_networks
     - text_area :user_networks, class: 'form-control', rows: 3
-    - small class: 'form-text text-muted' do
+    - small class: 'form-text' do
       - 'ユーザー機能にアクセス可能なネットワークを指定します。カンマまたは改行または空白で区切ってください。空の場合はすべてのIPアドレスからの接続を許可します。'
 
   - div class: 'form-group' do
-    - label '連絡先名前', for: :contact_name
+    - label '連絡先名前', class: 'form-label', for: :contact_name
     - text_field :contact_name, class: 'form-control'
 
   - div class: 'form-group' do
-    - label '連絡先メールアドレス', for: :contact_email
+    - label '連絡先メールアドレス', class: 'form-label', for: :contact_email
     - text_field :contact_email, class: 'form-control'
 
   - div class: 'form-group' do
-    - label '連絡先電話番号', for: :contact_phone
+    - label '連絡先電話番号', class: 'form-label', for: :contact_phone
     - text_field :contact_phone, class: 'form-control'
 
   - submit '変更', class: 'btn btn-primary'
