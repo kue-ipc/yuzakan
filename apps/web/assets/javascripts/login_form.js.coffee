@@ -19,17 +19,13 @@ loginSet = (formNode, {successLink = '/'}) ->
   formNode.addEventListener 'submit', (e) ->
     e.preventDefault()
     (->
-      try
-        {result, messages} = await webPost.submitPromise()
-        if result == 'success'
-          # do nothing
-        else
-          for input in inputTextNodes
-            input.value = ''
-            disableSubmit()
-      catch error
-        console.log(error)
+      {result, messages} = await webPost.submitPromise()
+      if result == 'success'
         # do nothing
+      else
+        for input in inputTextNodes
+          input.value = ''
+          disableSubmit()
     )()
 
   submitButtonSelector = 'button[type="submit"]'

@@ -17,16 +17,23 @@ export default class WebPostJson
     @reloadTime = 0
   }) ->
     @modalNode = document.createElement('div')
-    @modalNode.className = 'modal'
+    @modalNode.classList.add('modal')
     @modalNode.setAttribute('tabindex', -1)
-    @modalNode.setAttribute('role', 'dialog')
     @modalNode.setAttribute('aria-hidden', 'true')
 
-    @modalChildNode = document.createElement('div')
-    @modalNode.appendChild(@modalChildNode)
+    modalDialogNode = document.createElement('div')
+    modalDialogNode.classList.add('modal-dialog', 'modal-dialog-centered')
+
+    @modalContentNode = document.createElement('div')
+    @modalContentNode.classList.add('modal-content')
+
+    modalDialogNode.appendChild(@modalContentNode)
+    @modalNode.appendChild(modalDialogNode)
     document.body.appendChild(@modalNode)
 
     @modal = new Modal(@modalNode)
+    globalThis.modalNode = @modalNode
+    globalThis.modal = @modal
 
     app
       init: {
@@ -37,7 +44,7 @@ export default class WebPostJson
         successLink: null
       }
       view: ModalView
-      node: @modalChildNode
+      node: @modalContentNode
       subscriptions: (state) => [
         messageSub messageAction, node: @modalNode
       ]
@@ -158,40 +165,37 @@ messageAction = (state, params) -> {
 }
 
 ModalView = ({status, title, messages, closable, successLink}) ->
-  h 'div', class: 'modal-dialog modal-dialog-centered', role: 'document',
-    h 'div', class: 'modal-content', [
-      h 'div', class: 'modal-header', [
-        h 'h5', class: 'modal-title', [
-          StatusIcon status: status
-          text " #{title}"
-        ]
+  h 'div', class: 'modal-content', [
+    h 'div', class: 'modal-header', [
+      h 'h5', class: 'modal-title', [
+        StatusIcon status: status
+        text " #{title}"
+      ]
+      if closable
+        h 'button',
+          class: 'btn-close'
+          type: 'button'
+          'data-bs-dismiss': 'modal'
+          'aria-label': "閉じる"
+    ]
+    h 'div', class: 'modal-body',
+      MessageList messages: messages
+    if closable || successLink?
+      h 'div', class: 'modal-footer', [
+        if successLink?
+          h 'a',
+            class: 'btn btn-primary'
+            role: 'button'
+            href: successLink
+            text 'すぐに移動'
         if closable
           h 'button',
-            class: 'close'
+            class: 'btn btn-secondary'
             type: 'button'
-            'data-dismiss': 'modal'
-            'aria-label': "閉じる"
-            h 'span', 'aria-hidden': "true",
-              FaIcon prefix: 'fas', name: 'fa-times'
+            'data-bs-dismiss': 'modal'
+            text '閉じる'
       ]
-      h 'div', class: 'modal-body',
-        MessageList messages: messages
-      if closable || successLink?
-        h 'div', class: 'modal-footer', [
-          if successLink?
-            h 'a',
-              class: 'btn btn-primary'
-              role: 'button'
-              href: successLink
-              text 'すぐに移動'
-          if closable
-            h 'button',
-              class: 'btn btn-secondary'
-              type: 'button'
-              'data-dismiss': 'modal'
-              text '閉じる'
-        ]
-    ]
+  ]
 
 StatusIcon = ({status}) ->
   [textClass, props] =
