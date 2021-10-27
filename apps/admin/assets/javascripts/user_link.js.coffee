@@ -8,7 +8,7 @@ view = (state) ->
   link_class = ['btn', 'btn-primary']
   if !state.username? || state.username.length == 0
     link_class.push('disabled')
-  h 'div', class: ['form-row'], [
+  h 'div', class: ['mb-3', 'row'], [
     h 'div', class: ['col'],
       h 'input',
         class: ['form-control']

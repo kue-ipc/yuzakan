@@ -28,7 +28,7 @@ header
         span.navbar-text.px-2
           = h(current_user.label_name)
         = form_for :session, routes.session_path, method: :delete, \
-                   class: 'form-inline my-2 my-md-0' do
+                   class: 'my-2 my-md-0' do
           - submit 'ログアウト', \
                    class: 'btn btn-outline-light btn-sm my-2 my-sm-0'
       - else

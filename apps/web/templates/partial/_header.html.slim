@@ -17,7 +17,7 @@ header
         = link_to routes.path(:user), class: 'mx-2 link-user' do
           - text "#{current_user.display_name} (#{current_user.name})"
         = form_for :session, routes.session_path, method: :delete, \
-            class: 'form-inline my-2 my-md-0' do
+            class: 'my-2 my-md-0' do
           - submit 'ログアウト', \
               class: 'btn btn-sm btn-outline-light my-2 my-sm-0'
       - else
