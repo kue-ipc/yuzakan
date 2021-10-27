@@ -54,10 +54,11 @@ module Admin
                     '日付' => 'date',
                     '時間' => 'time',
                   }, class: 'form-control'
-                  div class: 'custom-control custom-checkbox' do
-                    check_box :hidden, class: 'custom-control-input', id: "attr-#{attr&.id}-hidden"
-                    label class: 'custom-control-label',
-                      for: "attr-#{attr&.id}-hidden" do
+                  div class: 'form-check' do
+                    check_box :hidden, class: 'form-check-input',
+                                       id: "attr-#{attr&.id}-hidden"
+                    label class: 'form-check-label',
+                          for: "attr-#{attr&.id}-hidden" do
                       text '隠し'
                     end
                   end
