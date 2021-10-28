@@ -1,19 +1,10 @@
-- alert_class = "alert alert-dismissible fade show"
 .alerts.d-print-none
-  - level_colors.each do |level, color|
+  - levels.each_key do |level|
     - if flash[level]
-      div class="#{alert_class} alert-#{color}" role="alert"
-        = h(flash[level])
-        button.close type="button" data-dismiss="alert" aria-label="閉じる"
-          span aria-hidden="true"
-            i.fas.fa-times
+      = alert(level, flash[level])
 
   - msg_errors.each do |msg|
-    div class="#{alert_class} alert-#{level_colors[:error]}" role="alert"
-      = h(msg)
-      button.close type="button" data-dismiss="alert" aria-label="閉じる"
-        span aria-hidden="true"
-          i.fas.fa-times
+    = alert(:error, msg)
 
   script#param-errors type="application/json"
     = hj(param_errors.to_json)

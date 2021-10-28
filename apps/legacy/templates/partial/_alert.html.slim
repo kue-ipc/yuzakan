@@ -1,10 +1,10 @@
 - alert_class = "alert alert-dismissible fade show"
 .alerts
-  - level_colors.each do |level, color|
+  - levels.each do |level, color|
     - if flash[level]
       div class="#{alert_class} alert-#{color}" role="alert"
         = h(flash[level])
 
   - msg_errors&.each do |msg|
-    div class="#{alert_class} alert-#{level_colors[:error]}" role="alert"
+    div class="#{alert_class} alert-#{levels[:error]}" role="alert"
       = h(msg)
