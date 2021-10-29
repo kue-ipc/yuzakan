@@ -35,10 +35,8 @@ module Yuzakan
               div class: 'modal-content' do
                 div class: 'modal-header' do
                   h5 title, id: label_id, class: 'modal-title'
-                  button type: 'button', class: 'close',
-                        'data-dismiss': 'modal', 'aria-label': '閉じる' do
-                    span raw('&times;'), 'aria-hidden': 'true'
-                  end
+                  button type: 'button', class: 'btn-close',
+                        'data-bs-dismiss': 'modal', 'aria-label': '閉じる'
                 end
                 div class: 'modal-body' do
                   if block_given?
@@ -52,7 +50,7 @@ module Yuzakan
                          class: submit_classes,
                          disabled: submit_button[:disabled]
                   button '閉じる', class: 'btn btn-secondary', type: 'button',
-                                   'data-dismiss': 'modal'
+                                   'data-bs-dismiss': 'modal'
                 end
               end
             end

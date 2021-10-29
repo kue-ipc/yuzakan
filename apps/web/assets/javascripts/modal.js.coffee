@@ -9,11 +9,9 @@ export ModalHeader = ({labelId, title, closable}) =>
       text title
     if closable then h 'button',
       type: 'button',
-      class: 'close',
-      'data-dismiss': 'modal',
-      'aria-label': '閉じる',
-      h 'span', 'aria-hidden': 'true',
-        FaIcon prefix: 'fas', name: 'fa-times'
+      class: 'btn-close',
+      'data-bs-dismiss': 'modal',
+      'aria-label': '閉じる'
   ]
 
 export ModalBody = (_, children) =>
@@ -30,7 +28,7 @@ export ModalFooter = ({closable, button}) =>
     if closable then h 'button',
       class: 'btn btn-secondary'
       type: 'button'
-      'data-dismiss': 'modal'
+      'data-bs-dismiss': 'modal'
       text '閉じる'
 
 export ModalDialog = ({modalSize, labelId, title, closable, button}, children) =>

@@ -38,19 +38,11 @@ export alertAdd = (message, level = 'error') ->
     text = document.createTextNode(message)
 
     button = document.createElement('button')
-    button.className = 'close'
+    button.className = 'btn-close'
     button.setAttribute('type', 'button')
-    button.setAttribute('data-dismiss', 'alert')
+    button.setAttribute('data-bs-dismiss', 'alert')
     button.setAttribute('aria-label', '閉じる')
 
-    span = document.createElement('span')
-    span.setAttribute('aria-hidden', 'true')
-
-    i = document.createElement('i')
-    i.className = 'fas fa-times'
-
-    span.appendChild(i)
-    button.appendChild(span)
     div.appendChild(button)
     div.appendChild(text)
     alerts.appendChild(div)

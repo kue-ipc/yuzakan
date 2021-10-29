@@ -17,8 +17,8 @@ module Yuzakan
               div description, class: 'card-body'
             end
           when :modal
-            link_to url, class: card_class, 'data-toggle': 'modal',
-                         'data-target': url do
+            link_to url, class: card_class, 'data-bs-toggle': 'modal',
+                         'data-bs-target': url do
               div name, class: 'card-header text-center'
               div description, class: 'card-body'
             end

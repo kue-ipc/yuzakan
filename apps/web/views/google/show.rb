@@ -80,10 +80,8 @@ module Web
                     h5 id: 'google-create-user-label', class: 'modal-title' do
                       text title
                     end
-                    button type: 'button', class: 'close',
-                           'data-dismiss': 'modal', 'aria-label': '閉じる' do
-                      span raw('&times;'), 'aria-hidden': 'true'
-                    end
+                    button type: 'button', class: 'btn-close',
+                           'data-bs-dismiss': 'modal', 'aria-label': '閉じる'
                   end
                   div class: 'modal-body' do
                     p content if content
@@ -131,7 +129,7 @@ module Web
                            class: "btn btn-#{submit_button[:color]} submit",
                            disabled: agreement
                     button class: 'btn btn-secondary', type: 'button',
-                           'data-dismiss': 'modal' do
+                           'data-bs-dismiss': 'modal' do
                       text '閉じる'
                     end
                   end

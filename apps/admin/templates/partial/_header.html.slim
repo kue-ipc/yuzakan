@@ -1,7 +1,7 @@
 header
   nav.navbar.navbar-expand-lg.navbar-dark.bg-dark-red
     = link_to current_config&.title, routes.path(:root), class: 'navbar-brand'
-    button.navbar-toggler type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+    button.navbar-toggler type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
       span.navbar-toggler-icon
     #navbarSupportedContent.collapse.navbar-collapse
       ul.navbar-nav.mr-auto
@@ -14,7 +14,7 @@ header
           = link_to 'Dorpdown', '#', \
             class: 'nav-link dropdown-toggle', \
               id: 'navbarDropdown', role: 'button', \
-              'data-toggle': 'dropdown', \
+              'data-bs-toggle': 'dropdown', \
               'aria-haspopup': true, \
               'aria-expanded': false
           .dropdown-menu aria-labelledby="navbarDropdown"
