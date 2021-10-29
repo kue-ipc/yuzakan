@@ -12,9 +12,6 @@ ENV['COFFEESCRIPT_SOURCE_PATH'] ||= File.expand_path(
   __dir__)
 
 Hanami.configure do
-  require_relative '../lib/yuzakan/middlewares/ie_corrector'
-  middleware.use Yuzakan::Middlewares::IeCorrector
-
   mount Admin::Application, at: '/admin'
   mount Web::Application, at: '/'
 

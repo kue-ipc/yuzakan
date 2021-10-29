@@ -2,12 +2,8 @@ h2 サポートしているブラウザーについて
 
 p
   |
-    このシステムでは、ユーザビリティー向上のために最新のWeb技術を使用しているため、
+    このシステムは最新のWeb技術を使用しているため、
     最新のモダンブラウザー以外はサポートしていません。
-    サポートしていないレガシーブラウザーでアクセスする場合は、
-  =<> link_to 'レガシー版', Legacy.routes.path(:root)
-  |
-    を使用してください。
  
 h3 サポートしているブラウザー (モダンブラウザー)
 p
@@ -24,6 +20,7 @@ ul
       - if browser[:note]&.size&.positive?
         small.text-muted<
           = browser[:note]
+
 h3 サポートしていないブラウザー (レガシーブラウザー)
 p
   |
@@ -36,21 +33,3 @@ ul
   - unsupported_browsers.each do |browser|
     li
       = browser
-h3 Microsoft Edgeのバージョンについて
-p
-  |
-    Microsoft EdgeにはChromiumベースの新バージョンとEdgeHTMLベースの
-    旧バージョンがあります。
-    サポート対象は新バージョンのみです。
-    旧バージョンの場合は、別のモダンブラウザーを使用するか、
-    下記リンク先から新バージョンをインストールしてください。
-p
-  = link_to '新しい Microsoft Edge をダウンロード | Microsoft', \
-    'https://www.microsoft.com/ja-jp/edge'
-p
-  |
-    Windows 10では、Windows Updateにより新パージョンのEdgeへ自動的に
-    更新されますが、端末の設定やバージョンによって適用タイミングが
-    異なります。
-    更新が行われない場合は、上記サイトからダウンロードして、
-    手動で更新してください。

@@ -1,23 +1,15 @@
 .check-browser
   noscript
-    .alert.alert-warning role="alert"
+    .alert.alert-danger role="alert"
       | JavaScriptが無効です。
-      | JavaScriptを有効にする、または、
-      =<> link_to 'レガシー版', Legacy.routes.path(:root)
-      | を使用してください。
-  /[if IE]
-    .alert.alert-warning role="alert"
-      | お使いのInternet Explorerは未サポートです。
-      = link_to 'モダンブラウザー', routes.path(:about_browser)
-      | を使用してください。
-      =<> link_to 'レガシー版', Legacy.routes.path(:root)
-      | を使用してください。
+      | JavaScriptを有効にしてください。
   #legacy-browser.d-none
-    .alert.alert-warning role="alert"
-      | お使いのレガシーブラウザーは未サポートです。
-      = link_to 'モダンブラウザー', routes.path(:about_browser)
-      | を使用する、または、
-      =<> link_to 'レガシー版', Legacy.routes.path(:root)
-      | を使用してください。
-  = javascript 'legacy_browser', nomodule: true, async: true
+    .alert.alert-danger role="alert"
+      | お使いのブラウザーは未サポートです。
+      | 最新のモダンブラウザーをを使用してください。
+      | (
+      = link_to 'サポートしているブラウザーについて',
+                routes.path(:about_browser)
+      | )
+  = javascript 'legacy_browser', nomodule: 'nomodule'
   = javascript 'modern_browser', type: 'module', async: true
