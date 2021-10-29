@@ -19,5 +19,6 @@
       - if flash[:param_errors]&.key?('password')
         - div class: 'invalid-feedback' do
           - h(flash[:param_errors]['password'].join)
-    - submit 'ログイン', class: 'login-submit btn btn-primary btn-block', \
-                         disabled: true
+    - div class: 'd-grid gap-auto' do
+      - submit 'ログイン', class: 'login-submit btn btn-primary', \
+                          disabled: true

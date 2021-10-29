@@ -155,31 +155,32 @@ class PasswordInputGenerator
         class: "col-form-label #{changePasswordData.cols.left}"
         for: @idName
         text @label
-      h 'div', class: "input-group #{changePasswordData.cols.right}", [
-        h 'input',
-          id: @idName
-          name: @fieldName
-          class: "form-control #{validState}"
-          type: if visible then 'text' else 'password'
-          disabled: disabled
-          placeholder: 'パスワードを入力'
-          'aria-describedby': "#{@idName}-visible-button"
-          oninput: (_, event) => [@setValue, {value: event.target.value}]
-        h 'div',
-          id: "#{@idName}-visible-button"
-          class:
-            "input-group-text #{if visible then 'text-primary' else ''}"
-          onmousedown: [@showPassword, {visible: true}]
-          onmouseup: [@showPassword, {visible: false}]
-          onmouseleave: [@showPassword, {visible: false}]
-          FaIcon
-            prefix: 'fas'
-            name: if visible then 'fa-eye' else 'fa-eye-slash'
-        h 'div', class: 'valid-feedback',
-          text message
-        h 'div', class: 'invalid-feedback',
-          text message
-      ]
+      h 'div', class: "#{changePasswordData.cols.right}",
+        h 'div', class: "input-group", [
+          h 'input',
+            id: @idName
+            name: @fieldName
+            class: "form-control #{validState}"
+            type: if visible then 'text' else 'password'
+            disabled: disabled
+            placeholder: 'パスワードを入力'
+            'aria-describedby': "#{@idName}-visible-button"
+            oninput: (_, event) => [@setValue, {value: event.target.value}]
+          h 'div',
+            id: "#{@idName}-visible-button"
+            class:
+              "input-group-text #{if visible then 'text-primary' else ''}"
+            onmousedown: [@showPassword, {visible: true}]
+            onmouseup: [@showPassword, {visible: false}]
+            onmouseleave: [@showPassword, {visible: false}]
+            FaIcon
+              prefix: 'fas'
+              name: if visible then 'fa-eye' else 'fa-eye-slash'
+          h 'div', class: 'valid-feedback',
+            text message
+          h 'div', class: 'invalid-feedback',
+            text message
+        ]
     ]
 
 passwordCurrent = new PasswordInputGenerator
@@ -204,17 +205,18 @@ passwordInputs = {
 }
 
 SubmitButton = ({submitting, valid}) =>
-  h 'button',
-    class: 'btn btn-primary btn-block'
-    type:'submit'
-    disabled: submitting || !valid
-    onclick: (state, event) =>
-      event.preventDefault()
-      [
-        startSubmit(state)
-        [submitRunner]
-      ]
-    text '変更'
+  h 'div', class: 'd-grid gap-auto',
+    h 'button',
+      class: 'btn btn-primary btn-block'
+      type:'submit'
+      disabled: submitting || !valid
+      onclick: (state, event) =>
+        event.preventDefault()
+        [
+          startSubmit(state)
+          [submitRunner]
+        ]
+      text '変更'
 
 init =
   [passwordCurrent.camelName]: passwordCurrent.init()
