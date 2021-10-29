@@ -1,25 +1,26 @@
 header
-  nav.navbar.navbar-expand-md.navbar-dark.bg-dark
-    = link_to current_config&.title, routes.path(:root), class: 'navbar-brand'
-    button.navbar-toggler type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
-      span.navbar-toggler-icon
-    #navbarSupportedContent.collapse.navbar-collapse
-      - if current_user
-        ul.navbar-nav.me-auto
-          li.nav-item
-            = link_to 'ホーム', routes.path(:dashboard), class: 'nav-link'
-          li.nav-item
-            = link_to 'パスワード変更', routes.path(:edit_user_password), class: 'nav-link'
-          li.nav-item
-            = link_to 'Google Workspace', routes.path(:google), class: 'nav-link'
+  nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
+    .container-fluid
+      = link_to current_config&.title, routes.path(:root), class: 'navbar-brand'
+      button.navbar-toggler type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+        span.navbar-toggler-icon
+      #navbarSupportedContent.collapse.navbar-collapse
+        - if current_user
+          ul.navbar-nav.me-auto
+            li.nav-item
+              = link_to 'ホーム', routes.path(:dashboard), class: 'nav-link'
+            li.nav-item
+              = link_to 'パスワード変更', routes.path(:edit_user_password), class: 'nav-link'
+            li.nav-item
+              = link_to 'Google Workspace', routes.path(:google), class: 'nav-link'
 
-      - if current_user
-        = link_to routes.path(:user), class: 'mx-2 link-user' do
-          - text "#{current_user.display_name} (#{current_user.name})"
-        = form_for :session, routes.session_path, method: :delete, \
-            class: 'my-2 my-md-0' do
-          - submit 'ログアウト', \
-              class: 'btn btn-sm btn-outline-light my-2 my-sm-0'
-      - else
-        span.navbar-text
-          = '未ログイン'
+        - if current_user
+          = link_to routes.path(:user), class: 'mx-2 link-user' do
+            - text "#{current_user.display_name} (#{current_user.name})"
+          = form_for :session, routes.session_path, method: :delete, \
+              class: 'my-2 my-md-0' do
+            - submit 'ログアウト', \
+                class: 'btn btn-sm btn-outline-light my-2 my-sm-0'
+        - else
+          span.navbar-text
+            = '未ログイン'

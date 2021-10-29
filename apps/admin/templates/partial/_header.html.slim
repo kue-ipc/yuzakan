@@ -1,36 +1,23 @@
 header
   nav.navbar.navbar-expand-lg.navbar-dark.bg-dark-red
-    = link_to current_config&.title, routes.path(:root), class: 'navbar-brand'
-    button.navbar-toggler type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
-      span.navbar-toggler-icon
-    #navbarSupportedContent.collapse.navbar-collapse
-      ul.navbar-nav.me-auto
-        li.nav-item.active
-          = link_to routes.path(:root), class: 'nav-link' do
-            - text 'ホーム'
-        li.nav-item
-          = link_to '全体設定', '#', class: 'nav-link'
-        li.nav-item.dropdown
-          = link_to 'Dorpdown', '#', \
-            class: 'nav-link dropdown-toggle', \
-              id: 'navbarDropdown', role: 'button', \
-              'data-bs-toggle': 'dropdown', \
-              'aria-haspopup': true, \
-              'aria-expanded': false
-          .dropdown-menu aria-labelledby="navbarDropdown"
-            = link_to 'Action', '#', class: 'dropdown-item'
-            .dropdown-divider
-            = link_to 'Something else here', '#', class: 'dropdown-item'
-            = link_to 'Something else here', '#', class: 'dropdown-item'
-        li.nav-item
-          = link_to  'Disabled', '#', class: 'nav-link disabled', tabindex: -1, 'aria-disabled': true
-      - if current_user
-        span.navbar-text.px-2
-          = h(current_user.label_name)
-        = form_for :session, routes.session_path, method: :delete, \
-                   class: 'my-2 my-md-0' do
-          - submit 'ログアウト', \
-                   class: 'btn btn-outline-light btn-sm my-2 my-sm-0'
-      - else
-        span.navbar-text
-          = '未ログイン'
+    .container-fluid
+      = link_to current_config&.title, routes.path(:root), class: 'navbar-brand'
+      button.navbar-toggler type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+        span.navbar-toggler-icon
+      #navbarSupportedContent.collapse.navbar-collapse
+        ul.navbar-nav.me-auto
+          li.nav-item.active
+            = link_to routes.path(:root), class: 'nav-link' do
+              - text 'ホーム'
+          li.nav-item
+            = link_to '全体設定', '#', class: 'nav-link'
+        - if current_user
+          span.navbar-text.px-2
+            = h(current_user.label_name)
+          = form_for :session, routes.session_path, method: :delete, \
+                    class: 'my-2 my-md-0' do
+            - submit 'ログアウト', \
+                    class: 'btn btn-outline-light btn-sm my-2 my-sm-0'
+        - else
+          span.navbar-text
+            = '未ログイン'
