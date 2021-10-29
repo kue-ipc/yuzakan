@@ -10,17 +10,18 @@ html lang="ja"
     = stylesheet 'application'
     = javascript 'application', defer: true, type: 'module'
   body
-    .jumbotron.jumbotron-fluid.mb-2
-      .container-fluid
-        h1.text-center.display-5
-          => current_config.title
-          span.badge.bg-secondary 管理者版
-        p.lead.text-center.smaller
-          | アカウント管理システム
-        hr.my-2
-        p
-          | ここは管理者版です。
-          | 管理者のみログインできます。一般利用者はログインできません。
+    .container-fluid
+      .p-3.my-2.bg-dark-red.text-white.rounded-3
+        .container-fluid.py-1
+          h1.text-center.display-5
+            => current_config.title
+          p.lead.text-center.smaller
+            | アカウント管理システム
+            span.badge.bg-dark< 管理者版
+          hr.my-2
+          p
+            | ここは管理者版です。
+            | 管理者のみログインできます。一般利用者はログインできません。
     .container-fluid
       = render partial: 'partial/check_browser'
       = render partial: 'partial/alert'
