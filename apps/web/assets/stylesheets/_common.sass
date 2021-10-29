@@ -5,6 +5,7 @@
   max-width: 40rem
 
 a.card.text-white
+  text-decoration: none
   color: inherit
 
   &:hover
@@ -13,6 +14,7 @@ a.card.text-white
     color: $black !important
 
 a.card
+  text-decoration: none
   color: inherit
 
   &:hover
@@ -22,6 +24,7 @@ a.card
 
 @each $color, $value in $theme-colors
   a.card.border-#{$color}
+    text-decoration: none
     color: $black
 
     &:hover
@@ -30,6 +33,7 @@ a.card
       color: $white !important
 
 a.link-user
+  text-decoration: none
   color: $gray-500
 
   &:hover
