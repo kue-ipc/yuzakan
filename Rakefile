@@ -65,6 +65,17 @@ namespace :vendor do
     end
   end
 
+  rule 'vendor/assets/images' do
+    mkdir_p 'vendor/assets/images'
+  end
+
+  task build_image: ['vendor/assets/images'] do
+    images_dir = 'vendor/assets/images'
+    
+    bootstrap_icons_dir = 'node_modules/bootstrap-icons'
+    cp "#{bootstrap_icons_dir}/bootstrap-icons.svg", images_dir
+  end
+
   desc 'ベンダービルド'
-  task build: [:build_js, :build_font]
+  task build: [:build_js, :build_font, :build_image]
 end

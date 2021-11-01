@@ -3,6 +3,7 @@ require_relative 'helpers/error'
 require_relative 'helpers/escaper'
 require_relative 'helpers/grid'
 require_relative 'helpers/menu'
+require_relative 'helpers/icon'
 
 module Yuzakan
   module Helpers
@@ -11,5 +12,6 @@ module Yuzakan
     include Yuzakan::Helpers::Escaper
     include Yuzakan::Helpers::Grid
     include Yuzakan::Helpers::Menu
+    include Yuzakan::Helpers::Icon
   end
 end

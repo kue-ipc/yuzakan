@@ -1,6 +1,9 @@
+require_relative 'icon'
+
 module Yuzakan
   module Helpers
     module Alerter
+      include Icon
       # Bootstrapでの色
       LEVELS = {
         success: {
@@ -42,20 +45,18 @@ module Yuzakan
       end
 
       private def alert(level, msg)
-        color = levels[level][:color]
-        icon = levels[level][:icon]
         alert_class = %w[
           alert
           alert-dismissible fade show
           d-flex align-items-center
-        ] + ["alert-#{color}"]
+        ] + ["alert-#{levels[level][:color]}"]
         html.div class: alert_class, role: 'alert' do
-          i class: "bi bi-#{icon}"
-          div class: 'ms-1' do
+          text icon(levels[level][:icon], size: 24, class: 'flex-shrink-0 me-2')
+          div do
             span h(msg)
-            button class: 'btn-close', type: 'button',
-                  'data-bs-dismiss': 'alert', 'aria-label': '閉じる'
           end
+          button class: 'btn-close', type: 'button',
+          'data-bs-dismiss': 'alert', 'aria-label': '閉じる'
         end
       end
     end
