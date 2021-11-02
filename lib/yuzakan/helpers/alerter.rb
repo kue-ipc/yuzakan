@@ -1,9 +1,9 @@
-require_relative 'icon'
+require_relative 'bootstrap'
 
 module Yuzakan
   module Helpers
     module Alerter
-      include Icon
+      include Bootstrap
       # Bootstrapでの色
       LEVELS = {
         success: {
@@ -51,7 +51,7 @@ module Yuzakan
           d-flex align-items-center
         ] + ["alert-#{levels[level][:color]}"]
         html.div class: alert_class, role: 'alert' do
-          text icon(levels[level][:icon], size: 24, class: 'flex-shrink-0 me-2')
+          text bs_icon(levels[level][:icon], size: 24, class: 'flex-shrink-0 me-2')
           div do
             span h(msg)
           end
