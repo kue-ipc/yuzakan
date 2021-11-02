@@ -1,5 +1,4 @@
 import {h, text} from './hyperapp.js'
-import {FaIcon} from './fa_icon.js'
 
 export ModalHeader = ({labelId, title, closable}) =>
   titleProps = {class: 'modal-title'}

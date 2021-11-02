@@ -4,7 +4,7 @@
 
 import {h, text, app} from './hyperapp.js'
 import {Modal} from './bootstrap.js'
-import {FaIcon} from './fa_icon.js'
+import {BsIcon} from './bs_icon.js'
 
 export default class WebPostJson
   MESSAGE_EVENT = 'webpostjson.message'
@@ -198,35 +198,35 @@ ModalView = ({status, title, messages, closable, successLink}) ->
   ]
 
 StatusIcon = ({status}) ->
+  if status == 'running'
+    return h 'div', class: 'spinner-boder', role: 'status',
+      h 'span', class: 'visually-hidden',
+        text '読込中...'
+
   [textClass, props] =
     switch status
-      when 'running'
-        [
-          'text-primary'
-          {prefix: 'fas', name: 'fa-spinner', options: ['fa-spin']}
-        ]
       when 'success'
         [
           'text-success'
-          {prefix: 'fas', name: 'fa-check'}
+          {name: 'check-circle-fill'}
         ]
       when 'failure'
         [
           'text-danger'
-          {prefix: 'fas', name: 'fa-times'}
+          {name: 'x-octagon-fill'}
         ]
       when 'error'
         [
           'text-warning'
-          {prefix: 'fas', name: 'fa-exclamation-triangle'}
+          {name: 'exclamation-triangle-fill'}
         ]
       else
         [
           'text-secondary'
-          {prefix: 'fas', name: 'fa-question'}
+          {name: 'question-diamond-fill'}
         ]
   h 'span', class: textClass,
-    FaIcon props
+    BsIcon props
 
 MessageList = ({messages}) ->
   messages = [messages] unless messages instanceof Array

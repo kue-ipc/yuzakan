@@ -11,7 +11,7 @@ module Yuzakan
           icon: 'check-circle-fill',
         },
         failure: {
-          color: 'warning',
+          color: 'danger',
           icon: 'x-octagon-fill',
         },
         fatal: {

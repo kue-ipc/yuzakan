@@ -1,7 +1,7 @@
 import './modern_browser.js'
 
 import {h, text, app} from './hyperapp.js'
-import {FaIcon} from './fa_icon.js'
+import {BsIcon} from './bs_icon.js'
 import zxcvbn from './zxcvbn.js'
 
 import {listToField, listToKebab, camelize} from './string_utils.js'
@@ -173,9 +173,8 @@ class PasswordInputGenerator
             onmousedown: [@showPassword, {visible: true}]
             onmouseup: [@showPassword, {visible: false}]
             onmouseleave: [@showPassword, {visible: false}]
-            FaIcon
-              prefix: 'fas'
-              name: if visible then 'fa-eye' else 'fa-eye-slash'
+            BsIcon
+              name: if visible then 'eye' else 'eye-slash'
           h 'div', class: 'valid-feedback',
             text message
           h 'div', class: 'invalid-feedback',
