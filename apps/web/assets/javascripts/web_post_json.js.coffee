@@ -197,36 +197,25 @@ ModalView = ({status, title, messages, closable, successLink}) ->
       ]
   ]
 
+STATUS_LEVELS = new Map([
+  ['success', {color: 'success', icon: 'check-circle-fill'}]
+  ['failure', {color: 'danger', icon: 'x-circle-fill'}]
+  ['fatal', {color: 'danger', icon: 'exclamation-triangle-fill'}]
+  ['error', {color: 'danger', icon: 'exclamation-triangle-fill'}]
+  ['warn', {color: 'warning', icon: 'exclamation-triangle-fill'}]
+  ['info', {color: 'info', icon: 'info-circle-fill'}]
+  ['debug', {color: 'secondary', icon: 'info-circle-fill'}]
+  ['unknown', {color: 'primary', icon: 'question-diamond-fill'}]
+])
+
 StatusIcon = ({status}) ->
   if status == 'running'
     return h 'div', class: 'spinner-boder', role: 'status',
       h 'span', class: 'visually-hidden',
         text '読込中...'
-
-  [textClass, props] =
-    switch status
-      when 'success'
-        [
-          'text-success'
-          {name: 'check-circle-fill'}
-        ]
-      when 'failure'
-        [
-          'text-danger'
-          {name: 'x-octagon-fill'}
-        ]
-      when 'error'
-        [
-          'text-warning'
-          {name: 'exclamation-triangle-fill'}
-        ]
-      else
-        [
-          'text-secondary'
-          {name: 'question-diamond-fill'}
-        ]
-  h 'span', class: textClass,
-    BsIcon props
+  {color, icon} = STATUS_LEVELS.get(status)
+  h 'span', class: ["text-#{color}", 'align-text-bottom'],
+    BsIcon {name: icon, size: 24}
 
 MessageList = ({messages}) ->
   messages = [messages] unless messages instanceof Array

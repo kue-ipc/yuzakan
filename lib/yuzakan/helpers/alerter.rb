@@ -12,7 +12,7 @@ module Yuzakan
         },
         failure: {
           color: 'danger',
-          icon: 'x-octagon-fill',
+          icon: 'x-circle-fill',
         },
         fatal: {
           color: 'danger',
