@@ -14,4 +14,4 @@ export BsIcon = ({name, size = 16, alt, props...}) ->
   Object.assign(svg_props, role: 'img', 'aria-label': alt) if alt?
 
   h 'svg', svg_props,
-    h 'use', 'xlink:href': "/assets/bootstrap-icons.svg\##{name}"
+    h 'use', href: "/assets/bootstrap-icons.svg\##{name}"
