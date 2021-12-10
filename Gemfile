@@ -4,6 +4,10 @@ gem 'rake'
 gem 'hanami',       '~> 1.3'
 gem 'hanami-model', '~> 1.3'
 
+# FIXME: don't update dry-configurable
+# maybe 0.13.0 have a bug
+gem 'dry-configurable', '~> 0.12.1'
+
 gem 'rack', '>= 2.2.2'
 
 # Database
