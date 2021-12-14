@@ -8,6 +8,6 @@ module Yuzakan
   end
 
   def self.version
-    'v0.4.1'
+    'v0.5.0'
   end
 end
