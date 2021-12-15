@@ -43,6 +43,9 @@ gem 'smbhash'
 # Google Workspace
 gem 'google-apis-admin_directory_v1'
 
+# octicons
+gem 'octicons'
+
 group :development do
   # Code reloading
   # See: http://hanamirb.org/guides/projects/code-reloading
