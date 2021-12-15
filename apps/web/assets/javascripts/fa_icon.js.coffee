@@ -1,9 +1,9 @@
 # fontawesome hyperapp icon
 
-import {h} from './hyperapp.js'
-import {fas} from './fontawesome-free-solid-svg-icons.js'
-import {far} from './fontawesome-free-regular-svg-icons.js'
-import {camelize} from './string_utils.js'
+import {h} from './hyperapp.js?v=2.0.19'
+import {fas} from './fontawesome-free-solid-svg-icons.js?v=5.15.4'
+import {far} from './fontawesome-free-regular-svg-icons.js?v=5.15.4'
+import {camelize} from './string_utils.js?v=0.0.1'
 
 export FaIcon = ({prefix, name, options = []}) ->
   name = camelize(name)

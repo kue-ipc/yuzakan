@@ -2,9 +2,9 @@
 # 受け取ったJSONをメッセージとして表示する。
 # その際、modalを使用する。
 
-import {h, text, app} from './hyperapp.js'
-import {Modal} from './bootstrap.js'
-import {BsIcon} from './bs_icon.js'
+import {h, text, app} from './hyperapp.js?v=2.0.19'
+import {Modal} from './bootstrap.js?v=5.1.3'
+import {BsIcon} from './bs_icon.js?v=0.0.1'
 
 export default class WebPostJson
   MESSAGE_EVENT = 'webpostjson.message'

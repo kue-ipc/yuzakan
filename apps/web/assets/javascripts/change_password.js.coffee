@@ -1,11 +1,11 @@
-import './modern_browser.js'
+import './modern_browser.js?v=0.0.1'
 
-import {h, text, app} from './hyperapp.js'
-import {BsIcon} from './bs_icon.js'
-import zxcvbn from './zxcvbn.js'
+import {h, text, app} from './hyperapp.js?v=2.0.19'
+import {BsIcon} from './bs_icon.js?v=0.0.1'
+import zxcvbn from './zxcvbn.js?v=4.4.2'
 
-import {listToField, listToKebab, camelize} from './string_utils.js'
-import WebPostJson from './web_post_json.js'
+import {listToField, listToKebab, camelize} from './string_utils.js?v=0.0.1'
+import WebPostJson from './web_post_json.js?v=0.0.1'
 
 changePasswordNode = document.getElementById('change-password')
 changePasswordData = JSON.parse(changePasswordNode.getAttribute(
