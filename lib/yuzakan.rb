@@ -3,11 +3,9 @@ require_relative 'yuzakan/helpers'
 require_relative 'yuzakan/suppression'
 
 module Yuzakan
-  def self.name
-    'ゆざかん'
-  end
+  VERSION = 'v0.5.1'
 
   def self.version
-    'v0.5.1'
+    Yuzakan::VERSION
   end
 end
