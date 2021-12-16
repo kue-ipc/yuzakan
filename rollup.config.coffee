@@ -12,10 +12,6 @@ targets = [
   {name: 'hyperapp', ext: 'coffee'}
   {name: 'bootstrap', ext: 'coffee'}
   {name: 'zxcvbn', ext: 'coffee'}
-  {name: 'fontawesome', ext: 'coffee'}
-  {name: 'fontawesome-svg-core', ext: 'coffee'}
-  {name: 'fontawesome-free-regular-svg-icons', ext: 'coffee'}
-  {name: 'fontawesome-free-solid-svg-icons', ext: 'coffee'}
 ]
 
 export default targets.map (target) ->
