@@ -16,8 +16,4 @@
 
 /.bundle
 
-/.env.development
-/.env.test
-/.env.production
-
 !.gitkeep
