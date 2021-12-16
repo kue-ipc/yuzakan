@@ -1,6 +1,12 @@
+require 'octicons'
+
 module Yuzakan
   module Helpers
-    module BootstrapIcons
+    module IconHelper
+      private def oi_icon(name, size: 16, alt: nil, **opts)
+        raw Octicons::Octicon.new(name, height: size, width: size).to_svg
+      end
+
       private def bs_icon(name, size: 16, alt: nil, **opts)
         svg_opts = {
           class: ['bi'],
