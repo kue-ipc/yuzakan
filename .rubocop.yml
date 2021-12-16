@@ -61,6 +61,8 @@ Style/ExponentialNotation:
 
 Layout/LineLength:
   Max: 80
+  Exclude:
+    - spec/**/*_spec.rb
 
 # double size metrics
 Metrics/AbcSize:
