@@ -4,7 +4,23 @@ module Yuzakan
   module Helpers
     module IconHelper
       private def oi_icon(name, size: 16, alt: nil, **opts)
-        raw Octicons::Octicon.new(name, height: size, width: size).to_svg
+        icon = Octicons::Octicon.new(name, height: size, width: size)
+        svg_opts = icon.options.merge(fill: 'currentColor')
+
+        case opts[:class]
+        when Array
+          svg_opts[:class] += ' ' + opts[:class].join(' ')
+        when String
+          svg_opts[:class] += ' ' + opts[:class]
+        end
+
+        if alt
+          svg_opts.merge!(role: 'img', 'aria-label': alt)
+        end
+
+        html.svg **svg_opts do
+          raw icon.path
+        end
       end
 
       private def bs_icon(name, size: 16, alt: nil, **opts)
