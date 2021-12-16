@@ -1,6 +1,6 @@
 module Yuzakan
   module Helpers
-    module Grid
+    module GridHelper
       private def col_card
         %w[
           col-sm-6

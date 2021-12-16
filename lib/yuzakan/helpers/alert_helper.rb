@@ -1,9 +1,6 @@
-require_relative 'bootstrap'
-
 module Yuzakan
   module Helpers
-    module Alerter
-      include Bootstrap
+    module AlertHelper
       # Bootstrapでの色
       LEVELS = {
         success: {
@@ -41,7 +38,7 @@ module Yuzakan
       }.freeze
 
       private def levels
-        Yuzakan::Helpers::Alerter::LEVELS
+        Yuzakan::Helpers::AlertHelper::LEVELS
       end
 
       private def alert(level, msg)

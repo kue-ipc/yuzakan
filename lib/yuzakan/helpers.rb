@@ -1,17 +1,21 @@
-require_relative 'helpers/alerter'
-require_relative 'helpers/error'
-require_relative 'helpers/escaper'
-require_relative 'helpers/grid'
-require_relative 'helpers/menu'
+require_relative 'helpers/alert_helper'
+require_relative 'helpers/error_helper'
+require_relative 'helpers/escape_helper'
+require_relative 'helpers/grid_helper'
 require_relative 'helpers/icon_helper'
+require_relative 'helpers/menu_helper'
 
 module Yuzakan
   module Helpers
-    include Yuzakan::Helpers::Alerter
-    include Yuzakan::Helpers::Error
-    include Yuzakan::Helpers::Escaper
-    include Yuzakan::Helpers::Grid
-    include Yuzakan::Helpers::Menu
-    include Yuzakan::Helpers::IconHelper
+    def self.included(base)
+      base.class_eval do
+      include Yuzakan::Helpers::AlertHelper
+      include Yuzakan::Helpers::ErrorHelper
+      include Yuzakan::Helpers::EscapeHelper
+      include Yuzakan::Helpers::GridHelper
+      include Yuzakan::Helpers::IconHelper
+      include Yuzakan::Helpers::MenuHelper
+      end
+    end
   end
 end

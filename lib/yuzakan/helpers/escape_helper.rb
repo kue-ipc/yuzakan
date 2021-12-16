@@ -2,7 +2,7 @@ require_relative '../utils/refine_escape'
 
 module Yuzakan
   module Helpers
-    module Escaper
+    module EscapeHelper
       using Utils::RefineEscape
 
       private def escape_json(input)

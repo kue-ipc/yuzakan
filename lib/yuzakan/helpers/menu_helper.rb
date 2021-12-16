@@ -1,6 +1,6 @@
 module Yuzakan
   module Helpers
-    module Menu
+    module MenuHelper
       private def menu_link(name:, url:, description:, color: 'dark',
                             filled: false, type: :link)
         card_class =

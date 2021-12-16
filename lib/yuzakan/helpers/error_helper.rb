@@ -1,6 +1,6 @@
 module Yuzakan
   module Helpers
-    module Error
+    module ErrorHelper
       private def msg_errors
         return @msg_errors if @msg_errors
 
