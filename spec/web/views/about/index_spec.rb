@@ -5,7 +5,7 @@ describe Web::Views::About::Index do
   let(:template)  do
     Hanami::View::Template.new('apps/web/templates/about/index.html.slim')
   end
-  let(:view)      { Web::Views::About::Index.new(template, exposures) }
+  let(:view)      { Web::Views::About::Index.new(template, **exposures) }
   let(:rendered)  { view.render }
 
   it 'exposes #format' do

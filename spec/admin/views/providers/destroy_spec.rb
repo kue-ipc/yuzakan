@@ -5,7 +5,7 @@ describe Admin::Views::Providers::Destroy do
   let(:template)  do
     Hanami::View::Template.new('apps/admin/templates/providers/destroy.html.slim')
   end
-  let(:view)      { Admin::Views::Providers::Destroy.new(template, exposures) }
+  let(:view)      { Admin::Views::Providers::Destroy.new(template, **exposures) }
   let(:rendered)  { view.render }
 
   it 'exposes #format' do

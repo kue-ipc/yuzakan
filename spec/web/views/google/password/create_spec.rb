@@ -6,7 +6,7 @@ describe Web::Views::Google::Password::Create do
     Hanami::View::Template.new('apps/web/templates/google/password/create.html.slim')
   end
   let(:view) do
-    Web::Views::Google::Password::Create.new(template, exposures)
+    Web::Views::Google::Password::Create.new(template, **exposures)
   end
   let(:rendered) { view.render }
 

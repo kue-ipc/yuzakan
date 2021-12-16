@@ -5,7 +5,7 @@ describe Admin::Views::Providers::Edit do
   let(:template)  do
     Hanami::View::Template.new('apps/admin/templates/providers/edit.html.slim')
   end
-  let(:view)      { Admin::Views::Providers::Edit.new(template, exposures) }
+  let(:view)      { Admin::Views::Providers::Edit.new(template, **exposures) }
   let(:rendered)  { view.render }
 
   it 'exposes #format' do

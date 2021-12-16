@@ -5,7 +5,7 @@ describe Admin::Views::Providers::Update do
   let(:template)  do
     Hanami::View::Template.new('apps/admin/templates/providers/update.html.slim')
   end
-  let(:view)      { Admin::Views::Providers::Update.new(template, exposures) }
+  let(:view)      { Admin::Views::Providers::Update.new(template, **exposures) }
   let(:rendered)  { view.render }
 
   it 'exposes #format' do

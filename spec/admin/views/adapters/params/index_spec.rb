@@ -6,7 +6,7 @@ describe Admin::Views::Adapters::Params::Index do
     Hanami::View::Template.new('apps/admin/templates/adapters/params/index.html.slim')
   end
   let(:view) do
-    Admin::Views::Adapters::Params::Index.new(template, exposures)
+    Admin::Views::Adapters::Params::Index.new(template, **exposures)
   end
   let(:rendered) { view.render }
 

@@ -5,7 +5,7 @@ describe Web::Views::Uninitialized::Index do
   let(:template)  do
     Hanami::View::Template.new('apps/web/templates/uninitialized/index.html.slim')
   end
-  let(:view)      { Web::Views::Uninitialized::Index.new(template, exposures) }
+  let(:view)      { Web::Views::Uninitialized::Index.new(template, **exposures) }
   let(:rendered)  { view.render }
 
   it 'exposes #format' do

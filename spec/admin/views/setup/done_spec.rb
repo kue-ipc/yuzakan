@@ -5,7 +5,7 @@ describe Admin::Views::Setup::Done do
   let(:template)  do
     Hanami::View::Template.new('apps/admin/templates/setup/done.html.slim')
   end
-  let(:view)      { Admin::Views::Setup::Done.new(template, exposures) }
+  let(:view)      { Admin::Views::Setup::Done.new(template, **exposures) }
   let(:rendered)  { view.render }
 
   it 'exposes #format' do

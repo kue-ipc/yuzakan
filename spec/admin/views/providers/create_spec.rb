@@ -5,7 +5,7 @@ describe Admin::Views::Providers::Create do
   let(:template)  do
     Hanami::View::Template.new('apps/admin/templates/providers/create.html.slim')
   end
-  let(:view)      { Admin::Views::Providers::Create.new(template, exposures) }
+  let(:view)      { Admin::Views::Providers::Create.new(template, **exposures) }
   let(:rendered)  { view.render }
 
   it 'exposes #format' do

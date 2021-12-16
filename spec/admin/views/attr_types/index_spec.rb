@@ -5,7 +5,7 @@ describe Admin::Views::Attrs::Index do
   let(:template)  do
     Hanami::View::Template.new('apps/admin/templates/attrs/index.html.slim')
   end
-  let(:view)      { Admin::Views::Attrs::Index.new(template, exposures) }
+  let(:view)      { Admin::Views::Attrs::Index.new(template, **exposures) }
   let(:rendered)  { view.render }
 
   it 'exposes #format' do

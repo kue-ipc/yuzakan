@@ -5,7 +5,7 @@ describe Web::Views::Session::Destroy do
   let(:template)  do
     Hanami::View::Template.new('apps/web/templates/session/destroy.html.slim')
   end
-  let(:view)      { Web::Views::Session::Destroy.new(template, exposures) }
+  let(:view)      { Web::Views::Session::Destroy.new(template, **exposures) }
   let(:rendered)  { view.render }
 
   it 'exposes #format' do

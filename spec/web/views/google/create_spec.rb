@@ -5,7 +5,7 @@ describe Web::Views::Google::Create do
   let(:template)  do
     Hanami::View::Template.new('apps/web/templates/google/create.html.slim')
   end
-  let(:view)      { Web::Views::Google::Create.new(template, exposures) }
+  let(:view)      { Web::Views::Google::Create.new(template, **exposures) }
   let(:rendered)  { view.render }
 
   it 'exposes #format' do

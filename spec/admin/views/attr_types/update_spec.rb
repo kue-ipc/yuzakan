@@ -5,7 +5,7 @@ describe Admin::Views::Attrs::Update do
   let(:template)  do
     Hanami::View::Template.new('apps/admin/templates/attrs/update.html.slim')
   end
-  let(:view)      { Admin::Views::Attrs::Update.new(template, exposures) }
+  let(:view)      { Admin::Views::Attrs::Update.new(template, **exposures) }
   let(:rendered)  { view.render }
 
   it 'exposes #format' do

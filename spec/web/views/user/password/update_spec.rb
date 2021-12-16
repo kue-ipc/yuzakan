@@ -6,7 +6,7 @@ describe Web::Views::User::Password::Update do
     Hanami::View::Template.new('apps/web/templates/user/password/update.html.slim')
   end
   let(:view) do
-    Web::Views::User::Password::Update.new(template, exposures)
+    Web::Views::User::Password::Update.new(template, **exposures)
   end
   let(:rendered) { view.render }
 

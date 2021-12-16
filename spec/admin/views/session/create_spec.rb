@@ -5,7 +5,7 @@ describe Admin::Views::Session::Create do
   let(:template)  do
     Hanami::View::Template.new('apps/admin/templates/session/create.html.slim')
   end
-  let(:view)      { Admin::Views::Session::Create.new(template, exposures) }
+  let(:view)      { Admin::Views::Session::Create.new(template, **exposures) }
   let(:rendered)  { view.render }
 
   it 'exposes #format' do
