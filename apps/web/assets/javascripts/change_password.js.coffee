@@ -1,9 +1,9 @@
 import './modern_browser.js?v=0.0.1'
 
 import {h, text, app} from './hyperapp.js?v=2.0.19'
-import {BsIcon} from './bs_icon.js?v=0.0.1'
 import zxcvbn from './zxcvbn.js?v=4.4.2'
 
+import octicon from './octicon.js?v=0.0.1'
 import {listToField, listToKebab, camelize} from './string_utils.js?v=0.0.1'
 import WebPostJson from './web_post_json.js?v=0.0.1'
 
@@ -173,8 +173,7 @@ class PasswordInputGenerator
             onmousedown: [@showPassword, {visible: true}]
             onmouseup: [@showPassword, {visible: false}]
             onmouseleave: [@showPassword, {visible: false}]
-            BsIcon
-              name: if visible then 'eye' else 'eye-slash'
+            octicon name: if visible then 'eye' else 'eye-closed'
           h 'div', class: 'valid-feedback',
             text message
           h 'div', class: 'invalid-feedback',

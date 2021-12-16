@@ -1,7 +1,7 @@
 module Yuzakan
   module Helpers
     module AlertHelper
-      # Bootstrapでの色
+      # Bootstrapでの色とアイコン
       LEVELS = {
         success: {
           color: 'success',
@@ -13,27 +13,27 @@ module Yuzakan
         },
         fatal: {
           color: 'danger',
-          icon: 'exclamation-triangle-fill',
+          icon: 'alert',
         },
         error: {
           color: 'danger',
-          icon: 'exclamation-triangle-fill',
+          icon: 'alert',
         },
         warn: {
           color: 'warning',
-          icon: 'exclamation-triangle-fill',
+          icon: 'alert',
         },
         info: {
           color: 'info',
-          icon: 'info-circle-fill',
+          icon: 'info',
         },
         debug: {
           color: 'secondary',
-          icon: 'info-circle-fill',
+          icon: 'info',
         },
         unknown: {
           color: 'primary',
-          icon: 'question-diamond-fill',
+          icon: 'question',
         },
       }.freeze
 
@@ -48,7 +48,7 @@ module Yuzakan
           d-flex align-items-center
         ] + ["alert-#{levels[level][:color]}"]
         html.div class: alert_class, role: 'alert' do
-          text bs_icon(levels[level][:icon], size: 24, class: 'flex-shrink-0 me-2')
+          text octicon(levels[level][:icon], size: 24, class: 'flex-shrink-0 me-2')
           div do
             span h(msg)
           end
