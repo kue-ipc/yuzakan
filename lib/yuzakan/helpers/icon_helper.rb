@@ -3,7 +3,7 @@ require 'octicons'
 module Yuzakan
   module Helpers
     module IconHelper
-      private def oi_icon(name, size: 16, alt: nil, **opts)
+      private def octicon(name, size: 16, alt: nil, **opts)
         icon = Octicons::Octicon.new(name, height: size, width: size)
         svg_opts = icon.options.merge(fill: 'currentColor')
 
