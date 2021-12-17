@@ -9,9 +9,7 @@ describe Admin::Views::Setup::Index do
       current_config: nil,
     }
   end
-  let(:template) do
-    Hanami::View::Template.new('apps/admin/templates/setup/index.html.slim')
-  end
+  let(:template) { Hanami::View::Template.new('apps/admin/templates/setup/index.html.slim') }
   let(:view)      { Admin::Views::Setup::Index.new(template, **exposures) }
   let(:rendered)  { view.render }
 

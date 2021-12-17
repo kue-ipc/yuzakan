@@ -2,9 +2,7 @@ require_relative '../../../spec_helper'
 
 describe Admin::Views::Attrs::Create do
   let(:exposures) { {format: :html} }
-  let(:template)  do
-    Hanami::View::Template.new('apps/admin/templates/attrs/create.html.slim')
-  end
+  let(:template)  { Hanami::View::Template.new('apps/admin/templates/attrs/create.html.slim') }
   let(:view)      { Admin::Views::Attrs::Create.new(template, **exposures) }
   let(:rendered)  { view.render }
 

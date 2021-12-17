@@ -2,9 +2,7 @@ require_relative '../../../spec_helper'
 
 describe Admin::Views::Attrs::Index do
   let(:exposures) { {format: :html} }
-  let(:template)  do
-    Hanami::View::Template.new('apps/admin/templates/attrs/index.html.slim')
-  end
+  let(:template)  { Hanami::View::Template.new('apps/admin/templates/attrs/index.html.slim') }
   let(:view)      { Admin::Views::Attrs::Index.new(template, **exposures) }
   let(:rendered)  { view.render }
 

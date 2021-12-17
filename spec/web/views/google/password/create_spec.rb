@@ -2,9 +2,7 @@ require_relative '../../../../spec_helper'
 
 describe Web::Views::Google::Password::Create do
   let(:exposures) { {format: :html} }
-  let(:template)  do
-    Hanami::View::Template.new('apps/web/templates/google/password/create.html.slim')
-  end
+  let(:template)  { Hanami::View::Template.new('apps/web/templates/google/password/create.html.slim') }
   let(:view) do
     Web::Views::Google::Password::Create.new(template, **exposures)
   end

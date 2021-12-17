@@ -2,9 +2,7 @@ require_relative '../../../spec_helper'
 
 describe Admin::Views::Setup::Done do
   let(:exposures) { {format: :html} }
-  let(:template)  do
-    Hanami::View::Template.new('apps/admin/templates/setup/done.html.slim')
-  end
+  let(:template)  { Hanami::View::Template.new('apps/admin/templates/setup/done.html.slim') }
   let(:view)      { Admin::Views::Setup::Done.new(template, **exposures) }
   let(:rendered)  { view.render }
 
