@@ -2,7 +2,7 @@ require_relative '../../../../spec_helper'
 
 describe Web::Controllers::Google::Lock::Destroy do
   let(:action) { Web::Controllers::Google::Lock::Destroy.new }
-  let(:params) { Hash[] }
+  let(:params) { {} }
 
   # it 'is successful' do
   #   response = action.call(params)

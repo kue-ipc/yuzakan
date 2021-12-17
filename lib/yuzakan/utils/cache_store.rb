@@ -49,7 +49,7 @@ module Yuzakan
           value
         end
 
-        def delete(key)
+        def delete(_key)
           nil
         end
 

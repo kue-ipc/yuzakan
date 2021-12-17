@@ -1,7 +1,7 @@
 require_relative '../../../spec_helper'
 
 describe Web::Views::Uninitialized::Index do
-  let(:exposures) { Hash[format: :html] }
+  let(:exposures) { {format: :html} }
   let(:template)  do
     Hanami::View::Template.new('apps/web/templates/uninitialized/index.html.slim')
   end

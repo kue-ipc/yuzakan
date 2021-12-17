@@ -1,7 +1,7 @@
 require_relative '../../../spec_helper'
 
 describe Web::Views::Google::Destroy do
-  let(:exposures) { Hash[format: :html] }
+  let(:exposures) { {format: :html} }
   let(:template)  do
     Hanami::View::Template.new('apps/web/templates/google/destroy.html.slim')
   end

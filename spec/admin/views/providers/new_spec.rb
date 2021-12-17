@@ -1,7 +1,7 @@
 require_relative '../../../spec_helper'
 
 describe Admin::Views::Providers::New do
-  let(:exposures) { Hash[format: :html] }
+  let(:exposures) { {format: :html} }
   let(:template)  do
     Hanami::View::Template.new('apps/admin/templates/providers/new.html.slim')
   end

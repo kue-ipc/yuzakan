@@ -2,7 +2,7 @@ require_relative '../../../spec_helper'
 
 describe Web::Controllers::About::Browser do
   let(:action) { Web::Controllers::About::Browser.new }
-  let(:params) { Hash[] }
+  let(:params) { {} }
 
   it 'is successful' do
     response = action.call(params)

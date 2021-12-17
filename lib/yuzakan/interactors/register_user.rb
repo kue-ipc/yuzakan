@@ -1,4 +1,4 @@
-# TODO 未テスト、作りかけ
+# TODO: 未テスト、作りかけ
 
 class RegisterUser
   include Hanami::Interactor
@@ -9,8 +9,8 @@ class RegisterUser
 
     validations do
       required(:name) { filled? & str? & size?(1..255) }
-      optional(:display) { filled? & str? & max_size?(255)}
-      optional(:email) { filled? & str? & max_size?(255)}
+      optional(:display) { filled? & str? & max_size?(255) }
+      optional(:email) { filled? & str? & max_size?(255) }
     end
   end
 

@@ -2,7 +2,7 @@ require_relative '../../../spec_helper'
 
 describe Web::Controllers::User::Show do
   let(:action) { Web::Controllers::User::Show.new }
-  let(:params) { Hash[] }
+  let(:params) { {} }
 
   # it 'is successful' do
   #   response = action.call(params)

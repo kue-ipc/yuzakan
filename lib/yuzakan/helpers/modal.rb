@@ -13,7 +13,7 @@ module Yuzakan
         modal_classes = ['modal', 'fade']
 
         dialog_classes = ['modal-dialog', 'modal-dialog-centered',
-                          'modal-dialog-scrollable']
+                          'modal-dialog-scrollable',]
         dialog_classes << 'modal-dialog-centered' if modal_dialog[:centered]
         case modal_dialog[:size]
         when :small
@@ -26,7 +26,7 @@ module Yuzakan
 
         form_classes = []
 
-        submit_classes = ['btn', "btn-#{submit_button[:color]}", "submit"]
+        submit_classes = ['btn', "btn-#{submit_button[:color]}", 'submit']
 
         html.div id: id, class: modal_classes, role: 'dialog', tabindex: '-1',
                  'aria-labelledby': label_id, 'aria-hidden': 'true' do
@@ -36,7 +36,7 @@ module Yuzakan
                 div class: 'modal-header' do
                   h5 title, id: label_id, class: 'modal-title'
                   button type: 'button', class: 'btn-close',
-                        'data-bs-dismiss': 'modal', 'aria-label': '閉じる'
+                         'data-bs-dismiss': 'modal', 'aria-label': '閉じる'
                 end
                 div class: 'modal-body' do
                   if block_given?
@@ -50,7 +50,7 @@ module Yuzakan
                          class: submit_classes,
                          disabled: submit_button[:disabled]
                   button '閉じる', class: 'btn btn-secondary', type: 'button',
-                                   'data-bs-dismiss': 'modal'
+                                'data-bs-dismiss': 'modal'
                 end
               end
             end

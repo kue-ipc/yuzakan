@@ -3,16 +3,14 @@ require_relative '../../spec_helper'
 describe InitialSetup do
   let(:interactor) { InitialSetup.new }
   let(:params) do
-    Hash[
-    config: {
+    {config: {
       title: 'テスト',
     },
-    admin_user: {
-      username: 'admin',
-      password: 'pass',
-      password_confirmation: 'pass',
-    },
-  ]
+     admin_user: {
+       username: 'admin',
+       password: 'pass',
+       password_confirmation: 'pass',
+     },}
   end
 
   describe 'before initialized' do

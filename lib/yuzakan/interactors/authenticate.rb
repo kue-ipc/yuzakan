@@ -51,8 +51,8 @@ class Authenticate
     if failure_count >= 5
       @activity_repository.create(activity_params.merge!({result: 'reject'}))
       error!('時間あたりのログイン試行が規定の回数を超えたため、' \
-        '現在ログインが禁止されています。' \
-        'しばらく待ってから再度ログインを試してください。')
+             '現在ログインが禁止されています。' \
+             'しばらく待ってから再度ログインを試してください。')
     end
 
     user_data = nil

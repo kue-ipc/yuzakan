@@ -9,7 +9,8 @@ module Admin
       key: sassions_name.gsub(':', '.'),
     }
 
-    configure do # rubocop:disable Metrics/BlockLength
+    # rubocop:disable Metrics/BlockLength
+    configure do
       root __dir__
 
       load_paths << [

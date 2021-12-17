@@ -84,16 +84,16 @@ class UpdateAttr
     if @attr
       # update
       if params[:name] != @attr.name &&
-          @attr_repository.by_name(params[:name]).exist?
+         @attr_repository.by_name(params[:name]).exist?
         error({name: ['その名前は既に存在します。']})
         result = false
       end
 
       if params[:display_name] != @attr.display_name &&
-        @attr_repository.by_display_name(params[:display_name]).exist?
-       error({display_name: ['その表示名は既に存在します。']})
-       result = false
-     end
+         @attr_repository.by_display_name(params[:display_name]).exist?
+        error({display_name: ['その表示名は既に存在します。']})
+        result = false
+      end
     else
       # create
       if @attr_repository.by_name(params[:name]).exist?

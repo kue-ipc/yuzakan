@@ -50,7 +50,7 @@ describe Admin::Controllers::Dashboard::Index do
     end
 
     describe 'session timeout' do
-      let(:session) { {user_id: user_id, access_time: Time.now - 24 * 60 * 60} }
+      let(:session) { {user_id: user_id, access_time: Time.now - (24 * 60 * 60)} }
 
       it 'redirect login' do
         response = action.call(params)
@@ -58,7 +58,7 @@ describe Admin::Controllers::Dashboard::Index do
         _(response[0]).must_equal 302
         _(response[1]['Location']).must_equal '/admin'
         _(flash[:warn]).must_equal 'セッションがタイムアウトしました。' \
-            'ログインし直してください。'
+                                   'ログインし直してください。'
       end
     end
 
@@ -84,7 +84,7 @@ describe Admin::Controllers::Dashboard::Index do
           _(response[0]).must_equal 302
           _(response[1]['Location']).must_equal '/admin'
           _(flash[:warn]).must_equal 'セッションがタイムアウトしました。' \
-              'ログインし直してください。'
+                                     'ログインし直してください。'
         end
       end
     end

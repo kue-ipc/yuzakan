@@ -16,7 +16,8 @@ module Admin
           else
             begin
               yaml = file.read
-              data = YAML.safe_load(yaml, [Symbol, Time, Date], symbolize_names: true)
+              data = YAML.safe_load(yaml, [Symbol, Time, Date],
+                                    symbolize_names: true)
 
               config_repository = ConfigRepository.new
               config_repository.transaction do

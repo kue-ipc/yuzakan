@@ -25,8 +25,8 @@ end
 
 task build_errors: 'public/errors' do
   %w[
-    400 401     403 404 405 418
-    500     502 503 504
+    400 401 403 404 405 418
+    500 502 503 504
   ].each do |code|
     src = "apps/web/templates/#{code}.html.slim"
     dst = "public/errors/#{code}.html"
@@ -71,7 +71,6 @@ namespace :vendor do
 
   task build_image: ['vendor/assets/images'] do
     images_dir = 'vendor/assets/images'
-    
     bootstrap_icons_dir = 'node_modules/bootstrap-icons'
     cp "#{bootstrap_icons_dir}/bootstrap-icons.svg", images_dir
   end

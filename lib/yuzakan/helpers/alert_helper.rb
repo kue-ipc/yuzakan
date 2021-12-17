@@ -48,12 +48,13 @@ module Yuzakan
           d-flex align-items-center
         ] + ["alert-#{levels[level][:color]}"]
         html.div class: alert_class, role: 'alert' do
-          text octicon(levels[level][:icon], size: 24, class: 'flex-shrink-0 me-2')
+          text octicon(levels[level][:icon], size: 24,
+                                             class: 'flex-shrink-0 me-2')
           div do
             span h(msg)
           end
           button class: 'btn-close', type: 'button',
-          'data-bs-dismiss': 'alert', 'aria-label': '閉じる'
+                 'data-bs-dismiss': 'alert', 'aria-label': '閉じる'
         end
       end
     end

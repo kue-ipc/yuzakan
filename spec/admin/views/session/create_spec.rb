@@ -1,7 +1,7 @@
 require_relative '../../../spec_helper'
 
 describe Admin::Views::Session::Create do
-  let(:exposures) { Hash[format: :html] }
+  let(:exposures) { {format: :html} }
   let(:template)  do
     Hanami::View::Template.new('apps/admin/templates/session/create.html.slim')
   end

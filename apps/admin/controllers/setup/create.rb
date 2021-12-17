@@ -20,7 +20,7 @@ module Admin
           end
 
           flash[:success] = '初期セットアップが完了しました。' \
-            '管理者でログインしてください。'
+                            '管理者でログインしてください。'
         end
 
         def configurate!

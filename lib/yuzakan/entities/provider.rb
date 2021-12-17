@@ -60,7 +60,6 @@ class Provider < Hanami::Entity
     ['list', 'group']
   end
 
-
   def sanitize_name(name)
     raise ArgumentError, 'invalid name' unless name =~ Provider::NAME_RE
 

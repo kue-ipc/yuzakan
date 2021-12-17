@@ -1,4 +1,4 @@
-# TODO 未テスト、作りかけ
+# TODO: 未テスト、作りかけ
 
 class ReadUser
   include Hanami::Interactor
@@ -49,8 +49,8 @@ class ReadUser
     end
 
     register_user = RegisterUser.new(user: @user, client: @client,
-      user_repository: @user_repository,
-      activity_repository: @activity_repository)
+                                     user_repository: @user_repository,
+                                     activity_repository: @activity_repository)
     create_or_upadte_user(user_data)
     register_user.call(user_data)
     @activity_repository.create(**activity_params, result: 'success')

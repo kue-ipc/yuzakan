@@ -14,11 +14,9 @@ module Yuzakan
           svg_opts[:class] += ' ' + opts[:class]
         end
 
-        if alt
-          svg_opts.merge!(role: 'img', 'aria-label': alt)
-        end
+        svg_opts.merge!(role: 'img', 'aria-label': alt) if alt
 
-        html.svg **svg_opts do
+        html.svg(**svg_opts) do
           raw icon.path
         end
       end
@@ -38,13 +36,11 @@ module Yuzakan
           svg_opts[:class].concat(opts[:class].split)
         end
 
-        if alt
-          svg_opts.merge!(role: 'img', 'aria-label': alt)
-        end
+        svg_opts.merge!(role: 'img', 'aria-label': alt) if alt
 
-        html.svg **svg_opts do
+        html.svg(**svg_opts) do
           html.empty_tag :use,
-            'xlink:href': "/assets/bootstrap-icons.svg\##{name}"
+                         'xlink:href': "/assets/bootstrap-icons.svg\##{name}"
         end
       end
     end

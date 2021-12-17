@@ -84,7 +84,6 @@ module Admin
             data['attrs'] << attr_data
           end
 
-
           raw YAML.dump(data)
         end
       end
