@@ -10,17 +10,35 @@ header
         - if current_user
           ul.navbar-nav.me-auto
             li.nav-item
-              = link_to 'ホーム', routes.path(:dashboard), class: 'nav-link'
+              = link_to routes.path(:dashboard), class: 'nav-link' do
+                - text octicon('home')
+                - span class: 'd-none d-lg-inline' do
+                  - text 'ホーム'
             li.nav-item
-              = link_to 'パスワード変更', routes.path(:edit_user_password), class: 'nav-link'
+              = link_to routes.path(:edit_user_password), class: 'nav-link' do 
+                - text octicon('key')
+                - span class: 'd-none d-lg-inline' do
+                  - text 'パスワード'
             li.nav-item
-              = link_to 'Google Workspace', routes.path(:google), class: 'nav-link'
-          = link_to current_user.label_name, routes.path(:user), class: 'mx-2 link-user'
-          = form_for :session, routes.session_path, method: :delete, class: 'my-2 my-md-0' do
-            - submit 'ログアウト', class: 'btn btn-sm btn-outline-light my-2 my-sm-0'
+              = link_to routes.path(:google), class: 'nav-link' do
+                - text bs_icon('google')
+                - span class: 'd-none d-lg-inline' do
+                 - text 'Google Workspace'
+          = link_to routes.path(:user), class: 'me-2 link-user' do
+            - text octicon('person')
+            - span class: 'd-none d-lg-inline' do
+              - text current_user.label_name
+          = form_for :session, routes.session_path, method: :delete do
+            - submit class: 'btn btn-sm btn-outline-light my-2' do
+              - text octicon('sign-out')
+              - span class: 'd-none d-md-inline' do
+                - text 'ログアウト'
         - else
           ul.navbar-nav.me-auto
             li.nav-item
-              = link_to 'ホーム', routes.path(:dashboard), class: 'nav-link'
+              = link_to routes.path(:dashboard), class: 'nav-link' do
+                - text octicon('home')
+                - span class: 'd-none d-lg-inline' do
+                  - text 'ホーム'
           span.navbar-text
             = '未ログイン'

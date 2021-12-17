@@ -1,53 +1,43 @@
 h2 システム情報
 
-- if current_config&.contact_name&.size&.positive?
-  h3 管理者の連絡先
-  .row.my-1
-    div class=col_name
-      | 管理者:
-    div class=col_value
+dl.row.mb-2
+  - if current_config&.title
+    dt class=col_name サイト名
+    dd class=col_value
+      = current_config&.title
+  - if current_config&.contact_name&.size&.positive?
+    dt class=col_name 管理者
+    dd class=col_value
       = current_config&.contact_name
   - if current_config&.contact_email&.size&.positive?
-    .row.my-1
-      div class=col_name
-        | メールアドレス:
-      div class=col_value
-        = link_to current_config&.contact_email, "mailto:#{current_config&.contact_email}"
+    dt class=col_name メールアドレス
+    dd class=col_value
+      = link_to current_config&.contact_email, "mailto:#{current_config&.contact_email}"
   - if current_config&.contact_phone&.size&.positive?
-    .row.my-1
-      div class=col_name
-        | 電話番号:
-      div class=col_value
-        = current_config&.contact_phone
-  hr
+    dt class=col_name 電話番号
+    dd class=col_value
+      = current_config&.contact_phone
 
-h3 ゆざかん (Yuzakan)
+- if current_config&.contact_name&.size&.positive?
+  p
+    | システムに関するお問い合わせは上記管理者までにお願いします。
 
-p
-  | このシステムは
-  strong<> ゆざかん(Yuzakan)
-  | を使用しています。
-  | ゆざかんは日本国内の大学向けに作成されたアカウント管理システムです。
+hr
 
-h4 バージョン
+h3 アプリケーション情報
+
+dl.row
+  dt class=col_name アプリケーション名
+  dd class=col_value
+    = Yuzakan::NAME
+  dt class=col_name バージョン
+  dd class=col_value
+    = Yuzakan::VERSION
 
 p 
-  | Yuzakan
-  =< Yuzakan.version
+  | このシステムは日本国内の大学向けに作成されたアカウント管理システムです。
 
 h4 ライセンス
 pre.border.rounded.bg-light.p-2
   code
     = IO.read(Hanami.root / 'LICENSE')
-
-h4 アプリケーションの構成
-p
-  | このWebアプリケーションは
-  =<> link_to 'Ruby', 'https://www.ruby-lang.org/'
-  | のフレームワーク
-  =<> link_to 'Hanami', 'https://hanamirb.org/'
-  | で作成されました。
-
-h4 ソースコードの入手方法
-p
-  | 管理者にお問い合わせください。

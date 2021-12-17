@@ -11,13 +11,23 @@ header
           ul.navbar-nav.me-auto
             li.nav-item.active
               = link_to routes.path(:root), class: 'nav-link' do
-                - text 'ホーム'
+                - text octicon('home')
+                - span class: 'd-none d-lg-inline' do
+                  - text 'ホーム'
             li.nav-item
-              = link_to '全体設定', '#', class: 'nav-link'
-          span.navbar-text.px-2
-            = h(current_user.label_name)
-          = form_for :session, routes.session_path, method: :delete, class: 'my-2 my-md-0' do
-            - submit 'ログアウト', class: 'btn btn-outline-light btn-sm my-2 my-sm-0'
+              = link_to routes.path(:edit_config), class: 'nav-link' do
+                - text octicon('gear')
+                - span class: 'd-none d-lg-inline' do
+                  - text '全体設定' 
+          span.navbar-text.me-2
+            => octicon('person')
+            span.d-none.d-lg-inline
+              = h(current_user.label_name)
+          = form_for :session, routes.session_path, method: :delete do
+            - submit class: 'btn btn-sm btn-outline-light my-2' do
+              - text octicon('sign-out')
+              - span class: 'd-none d-md-inline' do
+                - text 'ログアウト'
         - else
           ul.navbar-nav.me-auto
             li.nav-item.active

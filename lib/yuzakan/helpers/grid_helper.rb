@@ -22,8 +22,8 @@ module Yuzakan
         %w[
           col-sm-6
           col-md-8
-          col-lg-6
-          col-xl-4
+          col-lg-9
+          col-xl-10
         ]
       end
     end
