@@ -1,5 +1,10 @@
 class AttrMapping < Hanami::Entity
-  def convert(value)
+  def attr_name
+    attr.name.intern
+  end
+
+  # Adapter data -> Ruby data
+  def convert_value(value)
     if conversion.nil?
       case attr.type
       when 'boolean'
@@ -36,8 +41,10 @@ class AttrMapping < Hanami::Entity
       end
     end
   end
+  alias :convert :convert_value
 
-  def reverse_convert(value)
+  # Ruby data -> Adapter data
+  def map_value(value)
     return value if conversion.nil?
 
     case conversion
@@ -55,6 +62,7 @@ class AttrMapping < Hanami::Entity
       value
     end
   end
+  alias :reverse_convert :map_value 
 
   E2J_LIST = [
     ['student', '学生'],

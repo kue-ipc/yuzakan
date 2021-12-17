@@ -5,6 +5,16 @@ class Provider < Hanami::Entity
 
   NAME_RE = /\A[\w.-]+\z/.freeze
 
+  BASE_ATTRS = %i[
+    name
+    display_name
+    email
+    locked
+    disabled
+    unmanageable
+  ]
+
+
   class NoAdapterError < StandardError
     def initialize(msg = 'No adapter, but need an adapter.')
       super
@@ -57,7 +67,35 @@ class Provider < Hanami::Entity
   end
 
   def group_list_key
-    ['list', 'group']
+    ['list', 'group'].join(':')
+  end
+
+  # Ruby attrs -> Adapter aatrs
+  def map_attrs(attrs)
+    mapped_attrs = attrs.slice(*Provider::BASE_ATTRS)
+    attr_mppings.each do |mapping|
+      value = attrs[mapping.attr_name]
+      next if value.nil?
+
+      mapped_attrs[mapping.name] = mapping.convert_value(value)
+    end
+  end
+
+  # Adapter attrs -> Ruby attrs
+  def convert_attrs(raw_attrs)
+    return nil if raw_attrs.nil?
+
+    attrs = raw_attrs.slice(*Provider::BASE_ATTRS)
+    attr_mppings.each do |mapping|
+      value = raw_attrs[mapping.name]
+      next if value.nil?
+
+      attrs[mapping.attr_name] = mapping.map_value(value)
+    end
+  end
+
+  def need_adapter
+    raise NoAdapterError unless @adapter
   end
 
   def sanitize_name(name)
@@ -67,111 +105,110 @@ class Provider < Hanami::Entity
   end
 
   def check
-    raise NoAdapterError unless adapter
+    need_adapter
 
-    adapter.check
+    @adapter.check
   end
 
   def create(username, attrs, password)
-    raise NoAdapterError unless adapter
+    need_adapter
 
     username = sanitize_name(username)
+    mapped_attrs = map_attrs(attrs)
 
-    adapter.create(username, attrs, attr_mappings, password).tap do |value|
-      cache_store[user_key(username)] = value
-    end
+    raw_attrs = @adapter.create(username, password, **mapped_attrs)
+    cache_store[user_key(username)] = convert_attrs(raw_attrs) if raw_attrs
   end
 
   def read(username)
-    raise NoAdapterError unless adapter
+    need_adapter
 
     username = sanitize_name(username)
 
     cache_store.fetch(user_key(username)) do
-      adapter.read(username, attr_mappings).tap do |value|
-        cache_store[user_key(username)] = value
-      end
+      raw_attrs = @adapter.read(username)
+      cache_store[user_key(username)] = convert_attrs(raw_attrs) if raw_attrs
     end
   end
 
   def udpate(username, attrs)
-    raise NoAdapterError unless adapter
+    need_adapter
 
     username = sanitize_name(username)
+    mapped_attrs = map_attrs(attrs)
 
-    adapter.update(username, attrs, attr_mappings).tap do |value|
-      cache_store[user_key(username)] = value
-    end
+    raw_attrs = @adapter.update(username, **mapped_attrs)
+    cache_store[user_key(username)] = convert_attrs(raw_attrs) if raw_attrs
   end
 
   def delete(username)
-    raise NoAdapterError unless adapter
+    need_adapter
 
     username = sanitize_name(username)
 
-    adapter.delete(username)
-    cache_store.delete(user_key(username))
+    raw_attrs = @adapter.delete(username)
+    cache_store.delete(user_key(username)) || convert_attrs(raw_attrs)
   end
 
   def auth(username, password)
-    raise NoAdapterError unless adapter
+    need_adapter
 
     username = sanitize_name(username)
-    key = cache_key('user', username)
 
-    adapter.auth(username, password).tap do |value|
-      cache_store[user_key(username)] = value if value
-    end
+    raw_attrs = @adapter.auth(username, password)
+    cache_store[user_key(username)] = convert_attrs(raw_attrs) if raw_attrs
   end
 
   def change_password(username, password)
-    raise NoAdapterError unless adapter
+    need_adapter
 
     username = sanitize_name(username)
-    key = cache_key('user', username)
 
-    adapter.change_password(username, password).tap do |value|
-      cache_store[user_key(username)] = value if value
-    end
+    raw_attrs = @adapter.change_password(username, password)
+    cache_store[user_key(username)] = convert_attrs(raw_attrs) if raw_attrs
   end
 
-  def lock(_username)
-    raise NoAdapterError unless adapter
+  def lock(username)
+    need_adapter
 
-    raise NotImplementedError
+    username = sanitize_name(username)
+
+    raw_attrs = @adapter.lock(username)
+    cache_store[user_key(username)] = convert_attrs(raw_attrs) if raw_attrs
   end
 
-  def unlock(_username)
-    raise NoAdapterError unless adapter
+  def unlock(username, password = nil)
+    need_adapter
 
-    raise NotImplementedError
+    raw_attrs = @adapter.unlock(username, password)
+    cache_store[user_key(username)] = convert_attrs(raw_attrs) if raw_attrs
   end
 
   def admin?(username)
     read(username)[:admin]
   end
 
-  def state(username)
-    read(username)[:state]
-  end
-
   def enabled?(username)
-    state(username) == :enabled
+    !read(username)[:disabled]
   end
 
   def locked?(username)
-    state(username) == :locked
+    !!read(username)[:locked]
   end
 
   def disabled?(username)
-    state(username) == :enabled
+    !!read(username)[:disabled]
+  end
+
+  def unmanageable?(username)
+    !!read(username)[:unmanageable]
   end
 
   def list
-    raise NoAdapterError unless adapter
+    need_adapter
 
     cache_store.fetch(user_list_key) do
-      adapter.list.tap { |value| cache_store[user_list_key] = value }
+      cache_store[user_list_key] = @adapter.list
     end
   end
 end

@@ -3,39 +3,32 @@
 # initialize(params)
 # check -> true or false
 #
-#
-#
 # attrs:
 #   name: = username
 #   display_name: display name
 #   email: mail address
 #   locked: true or false/nil
-#   unusable: true or false/nil
-#   unmanagable: true or false/nil
-#   admin: true or false/nil
-#   state:
-#     - available
-#     - locked
-#     - disabled
+#   disabled: true or false/nil
+#   unmanageable: true or false/nil
 #
 # CRUD
-# create(username, attrs, mappings = nil) -> user or nil [writable]
-# read(username, mappings = nil) -> user or nil [readable]
-# update(username, attrs, mappings = nil) -> user or nil [writeable]
+# create(username, password = nil, **attrs) -> user or nil [writable]
+# read(username) -> user or nil [readable]
+# update(username, **attrs) -> user or nil [writeable]
 # delete(username) -> user or nil [writable]
 #
 # auth(username, password) -> user or nil [authenticatable]
 # change_password(username, password) -> user ro nil [password_changeable]
 #
-# lock(username) -> locked?(username) [lockable]
-# unlock(username) -> locked?(username) [lockable]
+# lock(username) -> user or nil [lockable]
+# unlock(username, password = nil) -> user or nil [lockable]
 # locked?(username) -> true or false [lockable]
 #
 # list -> usernames [readable]
 #
-# group_create(groupname, attrs) -> group or nil [writable]
+# group_create(groupname, **attrs) -> group or nil [writable]
 # group_read(groupname) -> group or nil [readable]
-# group_update(groupname, attrs) -> group or nil [writeable]
+# group_update(groupname, **attrs) -> group or nil [writeable]
 # group_delete(groupname) -> group or nil [writable]
 # group_list
 #
@@ -134,15 +127,15 @@ module Yuzakan
         raise NotImplementedError
       end
 
-      def create(_username, _attrs, mappings = nil)
+      def create(_username, _password = nil, **_attrs)
         raise NotImplementedError
       end
 
-      def read(_username, mappings = nil)
+      def read(_username)
         raise NotImplementedError
       end
 
-      def udpate(_username, _attrs, mappings = nil)
+      def udpate(_username, **_attrs)
         raise NotImplementedError
       end
 
@@ -162,7 +155,7 @@ module Yuzakan
         raise NotImplementedError
       end
 
-      def unlock(_username)
+      def unlock(_username, _password = nil)
         raise NotImplementedError
       end
 

@@ -1,7 +1,7 @@
 # Google Workspace Adapter
 #
 # CRUD
-# create(username, attrs) -> user or nil [writable]
+# create(username, **attrs) -> user or nil [writable]
 # read(username) -> user or nil [readable]
 # update(username, attrs) -> user or nil [writeable]
 # delete(username) -> user or nil [writable]
