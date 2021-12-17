@@ -1,23 +1,26 @@
 header
-  nav.navbar.navbar-expand-lg.navbar-dark.bg-dark-bar
+  nav.navbar.navbar-expand-sm.navbar-dark.bg-dark-bar
     .container-fluid
-      = link_to current_config&.title, routes.path(:root), class: 'navbar-brand'
-      button.navbar-toggler type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+      = link_to current_config&.title || Yuzakan::NAME, routes.path(:root), class: 'navbar-brand'
+      button.navbar-toggler[type="button" data-bs-toggle="collapse" data-bs-target="#navbar-content"
+                            aria-controls="navbar-content" aria-expanded="false"
+                            aria-label="ナビゲーション切替"]
         span.navbar-toggler-icon
-      #navbarSupportedContent.collapse.navbar-collapse
-        ul.navbar-nav.me-auto
-          li.nav-item.active
-            = link_to routes.path(:root), class: 'nav-link' do
-              - text 'ホーム'
-          li.nav-item
-            = link_to '全体設定', '#', class: 'nav-link'
+      #navbar-content.collapse.navbar-collapse
         - if current_user
+          ul.navbar-nav.me-auto
+            li.nav-item.active
+              = link_to routes.path(:root), class: 'nav-link' do
+                - text 'ホーム'
+            li.nav-item
+              = link_to '全体設定', '#', class: 'nav-link'
           span.navbar-text.px-2
             = h(current_user.label_name)
-          = form_for :session, routes.session_path, method: :delete, \
-                    class: 'my-2 my-md-0' do
-            - submit 'ログアウト', \
-                    class: 'btn btn-outline-light btn-sm my-2 my-sm-0'
+          = form_for :session, routes.session_path, method: :delete, class: 'my-2 my-md-0' do
+            - submit 'ログアウト', class: 'btn btn-outline-light btn-sm my-2 my-sm-0'
         - else
+          ul.navbar-nav.me-auto
+            li.nav-item.active
+              = link_to 'ホーム', routes.path(:root), class: 'nav-link'
           span.navbar-text
             = '未ログイン'

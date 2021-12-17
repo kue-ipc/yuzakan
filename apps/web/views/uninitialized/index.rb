@@ -3,7 +3,6 @@ module Web
     module Uninitialized
       class Index
         include Web::View
-        layout false
       end
     end
   end

@@ -3,7 +3,6 @@ module Web
     module About
       class Browser
         include Web::View
-        layout :about
 
         # モダンブラザーはscriptタグのmoduleが使用でき、
         # ECMAScript2019以上対応とする。

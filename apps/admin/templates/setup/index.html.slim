@@ -1,49 +1,18 @@
-doctype html
-html lang="ja"
-  head
-    meta charset="utf-8"
-    meta name="viewport" content="width=device-width, initial-scale=1"
-    title
-      | 未初期化
-    = favicon
-    = stylesheet 'application'
-    = javascript 'application', defer: true, type: 'module'
-  body
-    nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
-      span.navbar-brand
-        | yuzakan 初期セットアップ
-    .container-fluid.mt-2
-      - flash[:errors]&.each do |msg|
-        .alert.alert-danger role="alert"
-          = h(msg)
-      - flash[:warns]&.each do |msg|
-        .alert.alert-warning role="alert"
-          = h(msg)
-      - flash[:notes]&.each do |msg|
-        .alert.alert-info role="alert"
-          = h(msg)
-      - flash[:messages]&.each do |msg|
-        .alert.alert-primary role="alert"
-          = h(msg)
-      - flash[:success]&.each do |msg|
-        .alert.alert-success role="alert"
-          = h(msg)
-
-      h2 初期セットアップ
-      == form_for :setup, routes.path(:setup) do
-        - fields_for :config do
-          - div class: 'mb-3' do
-            - label 'サイト題名', class: 'form-label', for: :username
-            - text_field :title, class: 'form-control'
-        - fields_for :admin_user do
-          - p 'ローカル管理者のユーザー名とパスワードを入力してください。'
-          - div class: 'mb-3' do
-            - label 'ユーザー名', class: 'form-label', for: :username
-            - text_field :username, class: 'form-control'
-          - div class: 'mb-3'  do
-            - label 'パスワード', class: 'form-label', for: :password
-            - password_field :password, class: 'form-control'
-          - div class: 'mb-3'  do
-            - label 'パスワード(確認)', class: 'form-label', for: :confirm_password
-            - password_field :password_confirmation, class: 'form-control'
-        - submit 'セットアップ', class: 'btn btn-primary'
+h2 初期セットアップ
+= form_for :setup, routes.path(:setup) do
+  - fields_for :config do
+    - div class: 'mb-3' do
+      - label 'サイト題名', class: 'form-label', for: :username
+      - text_field :title, class: 'form-control'
+  - fields_for :admin_user do
+    - p 'ローカル管理者のユーザー名とパスワードを入力してください。'
+    - div class: 'mb-3' do
+      - label 'ユーザー名', class: 'form-label', for: :username
+      - text_field :username, class: 'form-control'
+    - div class: 'mb-3'  do
+      - label 'パスワード', class: 'form-label', for: :password
+      - password_field :password, class: 'form-control'
+    - div class: 'mb-3'  do
+      - label 'パスワード(確認)', class: 'form-label', for: :confirm_password
+      - password_field :password_confirmation, class: 'form-control'
+  - submit 'セットアップ', class: 'btn btn-primary'
