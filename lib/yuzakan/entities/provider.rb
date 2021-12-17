@@ -73,12 +73,13 @@ class Provider < Hanami::Entity
   # Ruby attrs -> Adapter aatrs
   def map_attrs(attrs)
     mapped_attrs = attrs.slice(*Provider::BASE_ATTRS)
-    attr_mppings.each do |mapping|
+    attr_mappings.each do |mapping|
       value = attrs[mapping.attr_name]
       next if value.nil?
 
       mapped_attrs[mapping.name] = mapping.convert_value(value)
     end
+    mapped_attrs
   end
 
   # Adapter attrs -> Ruby attrs
@@ -86,12 +87,13 @@ class Provider < Hanami::Entity
     return nil if raw_attrs.nil?
 
     attrs = raw_attrs.slice(*Provider::BASE_ATTRS)
-    attr_mppings.each do |mapping|
-      value = raw_attrs[mapping.name]
+    attr_mappings.each do |mapping|
+      value = raw_attrs[mapping.name] || raw_attrs[mapping.name.downcase]
       next if value.nil?
 
       attrs[mapping.attr_name] = mapping.map_value(value)
     end
+    attrs
   end
 
   def need_adapter
