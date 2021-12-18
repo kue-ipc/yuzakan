@@ -174,12 +174,7 @@ module Yuzakan
       ]
 
       def check
-        puts '-----------------'
         ldap = generate_ldap
-        puts @params
-        puts ldap.search(
-          base: @params[:base_dn],
-          scope: Net::LDAP::SearchScope_BaseObject)
         base = ldap.search(
           base: @params[:base_dn],
           scope: Net::LDAP::SearchScope_BaseObject)&.first
