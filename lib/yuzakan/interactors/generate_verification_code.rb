@@ -68,6 +68,7 @@ class GenerateVerificationCode
       user_data = provider.generate_verification_code(@username)
       @user_datas[provider.name] = user_data if user_data
     rescue => e
+      Hanami.logger.error e
       error("バックアップコード生成時にエラーが発生しました。: #{e.message}")
       result = :error
     end

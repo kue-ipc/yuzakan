@@ -62,6 +62,7 @@ class Authenticate
       # 最初に認証されたところを正とする。
       break if user_data
     rescue => e
+      Hanami.logger.error e
       @activity_repository.create(activity_params.merge!({result: 'error'}))
       error!("認証時にエラーが発生しました。: #{e.message}")
     end

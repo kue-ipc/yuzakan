@@ -121,6 +121,8 @@ Style/WordArray:
   MinSize: 8
 Style/FrozenStringLiteralComment:
   EnforcedStyle: never
+Style/OneLineConditional:
+  AlwaysCorrectToMultiline: true
 
 # applications
 

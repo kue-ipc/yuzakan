@@ -2,6 +2,7 @@ require_relative '../utils/cache_store'
 
 class Provider < Hanami::Entity
   attr_reader :params
+
   # attr_reader :adapter, :cache_store, :adapter_class
 
   NAME_RE = /\A[\w.-]+\z/.freeze
@@ -15,7 +16,6 @@ class Provider < Hanami::Entity
     unmanageable
   ]
 
-
   class NoAdapterError < StandardError
     def initialize(msg = 'No adapter, but need an adapter.')
       super
@@ -28,7 +28,13 @@ class Provider < Hanami::Entity
       return
     end
 
-    expires_in = if Hanami.env == 'test' then 0 else 60 * 60 end
+    expires_in =
+      case Hanami.env
+      when 'test', 'development'
+        0
+      else
+        60 * 60
+      end
     namespace = ['yuzakan', 'provider', attributes[:name]].join(':')
     redis_url = ENV.fetch('REDIS_URL', 'redis://127.0.0.1:6379/0')
     @cache_store ||= Yuzakan::Utils::CacheStore.create_store(

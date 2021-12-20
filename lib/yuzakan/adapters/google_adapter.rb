@@ -17,6 +17,7 @@
 
 require 'stringio'
 require 'securerandom'
+require 'json'
 
 require 'googleauth'
 require 'google/apis/admin_directory_v1'
@@ -79,31 +80,28 @@ module Yuzakan
         response.users.size == 1
       end
 
-      def create(username, attrs, mappings, password)
-        user = specialize_user(attrs.merge(name: username), mappings)
+      def create(username, password = nil, **attrs)
+        user = specialize_user(attrs.merge(name: username))
         # set a password
         set_password(user, password)
         response = service.insert_user(user)
         if ['/教員', '/職員'].include?(user.org_unit_path)
-          member = Google::Apis::AdminDirectoryV1::Member.new(
-            email: user.primary_email)
-          service.insert_member(
-            "classroom_teachers@#{@params[:domain]}",
-            member)
+          member = Google::Apis::AdminDirectoryV1::Member.new(email: user.primary_email)
+          service.insert_member("classroom_teachers@#{@params[:domain]}", member)
         end
-        normalize_user(response, mappings)
+        normalize_user(response)
       end
 
-      def read(username, mappings = nil)
+      def read(username)
         email = "#{username}@#{@params[:domain]}"
         user = service.get_user(email)
-        normalize_user(user, mappings)
+        normalize_user(user)
       rescue Google::Apis::ClientError => e
-        Hanami.logger.debug "GoogleAdapter#read: #{e.message}"
+        Hanami.logger.error e
         nil
       end
 
-      def udpate(_username, _attrs, mappings = nil)
+      def udpate(_username, **_attrs)
         raise NotImplementedError
       end
 
@@ -114,7 +112,7 @@ module Yuzakan
 
         raise 'このシステムで、管理者を削除することはできません。' if user.is_admin?
 
-        pp email
+        # pp email
         # service.delete_user(email)
       end
 
@@ -122,7 +120,7 @@ module Yuzakan
         raise NotImplementedError
       end
 
-      def change_password(username, password, mappings = nil)
+      def change_password(username, password)
         email = "#{username}@#{@params[:domain]}"
         user = service.get_user(email)
         raise 'ユーザーが存在しません。' if user.nil?
@@ -132,7 +130,7 @@ module Yuzakan
         user = Google::Apis::AdminDirectoryV1::User.new
         set_password(user, password)
         user = service.patch_user(email, user)
-        normalize_user(user, mappings)
+        normalize_user(user)
       end
 
       def lock(_username)
@@ -221,30 +219,29 @@ module Yuzakan
         password.crypt(format('$1$%.8s', salt))
       end
 
-      private def normalize_user(user, mappings = nil)
+      private def normalize_user(user)
         return if user.nil?
 
         data = {
           name: user.primary_email.split('@').first,
           display_name: user.name.full_name,
           email: user.primary_email,
-          state: :available,
         }
+
         if user.suspended?
           # ADMIN: 管理者が停止
           # ABUSE: 不正行為により停止(利用も削除も不可)
           # UNDER13: 13歳未満のため
           # WEB_LOGIN_REQUIRED: ログイン前新規アカウント(使用され無い)
           # null: その他の自動停止中
-          data[:state] =
-            if user.suspension_reason == 'ADMIN'
-              :locked
-            else
-              :disabled
-            end
+          if user.suspension_reason == 'ADMIN'
+            data[:locked] = true
+          else
+            data[:disabled] = true
+          end
         end
 
-        data[:admin] = user.is_admin?
+        data[:unmanageable] = true if user.is_admin?
 
         data[:mfa] =
           if user.is_enforced_in2_sv?
@@ -253,39 +250,27 @@ module Yuzakan
             :enabled
           end
 
-        if mappings
-          mappings.each do |mapping|
-            name_list = mapping.name.split('.')
-            value = name_list.inject(user) do |result, name|
-              result&.__send__(name_json_to_ruby(name))
+        JSON.parse(user.to_json).each do |key, value|
+          if key == 'name'
+            value.each do |name_key, name_value|
+              data["name.#{name_key}"] = name_value
             end
-            next if value.nil?
-
-            data[mapping.attr.name.intern] = mapping.convert(value)
+          else
+            data[key] = value
           end
         end
 
         data
       end
 
-      private def specialize_user(attrs, mappings)
-        mapped_attrs = {
-          'primaryEmail' => "#{attrs[:name]}@#{@params[:domain]}",
-        }
-        mappings.each do |mapping|
-          mapped_attrs[mapping.name] =
-            mapping.reverse_convert(attrs[mapping.attr.name.intern])
-        end
-
+      private def specialize_user(attrs)
+        name = Google::Apis::AdminDirectoryV1::UserName.new(
+          given_name: attrs['name.givenName'],
+          family_name: attrs['name.familyName'])
         user = Google::Apis::AdminDirectoryV1::User.new(
-          primary_email: mapped_attrs['primaryEmail'],
-          name: Google::Apis::AdminDirectoryV1::UserName.new(
-            given_name: mapped_attrs['name.givenName'],
-            family_name: mapped_attrs['name.familyName']))
-
-        if mapped_attrs['orgUnitPath']
-          user.org_unit_path = mapped_attrs['orgUnitPath']
-        end
+          primary_email: "#{attrs[:name]}@#{@params[:domain]}",
+          name: name)
+        user.org_unit_path = attrs['orgUnitPath'] if attrs['orgUnitPath']
 
         user
       end

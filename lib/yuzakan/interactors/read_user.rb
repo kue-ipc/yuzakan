@@ -39,6 +39,7 @@ class ReadUser
       # 最初に読み込みされたところを正とする。
       break if user_data
     rescue => e
+      Hanami.logger.error e
       @activity_repository.create(**activity_params, result: 'error')
       error!("ユーザー情報の読み込み時にエラーが発生しました。: #{e.message}")
     end

@@ -55,7 +55,7 @@ module Admin
               end
               flash[:success] = ['インポートに成功しました。']
             rescue => e
-              Hanami.logger.error e.full_message
+              Hanami.logger.error e
               flash[:errors] << e.message
               flash[:errors] << 'インポートに失敗しました。'
             ensure

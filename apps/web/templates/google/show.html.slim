@@ -13,6 +13,12 @@ h3 Google アカウント の状態
     div class=col_name
       | 状態:
     div class=col_value
+      - if google_user[:disabled]
+        | 無効
+      - elsif google_user[:locked]
+        | ロック中
+      - else
+        | 利用可能
       - case google_user[:state]
         - when :available 
           | 利用可能

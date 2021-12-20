@@ -66,6 +66,7 @@ class ChangePassword
       user_data = provider.change_password(@username, @password)
       @user_datas[provider.name] = user_data if user_data
     rescue => e
+      Hanami.logger.error e
       unless @user_datas.empty?
         error <<~'ERROR_MESSAGE'
           一部のシステムのパスワードは変更されましたが、
@@ -76,7 +77,6 @@ class ChangePassword
         ERROR_MESSAGE
       end
       error("パスワード変更時にエラーが発生しました。: #{e.message}")
-      Hanami.logger.error(e)
       result = :error
     end
 

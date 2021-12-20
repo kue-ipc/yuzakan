@@ -82,6 +82,7 @@ class ResetPassword
       user_data = provider.change_password(@username, @password)
       @user_datas[provider.name] = user_data if user_data
     rescue => e
+      Hanami.logger.error e
       unless @user_datas.empty?
         error <<~'ERROR_MESSAGE'
           一部のシステムについてはパスワードがリセットされましたが、

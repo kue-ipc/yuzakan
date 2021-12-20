@@ -82,6 +82,7 @@ class CreateUser
       user_data = provider.create(@username, @password, **attrs)
       @user_datas[provider.name] = user_data if user_data
     rescue => e
+      Hanami.logger.error e
       unless @user_datas.empty?
         error <<~'ERROR_MESSAGE'
           一部のシステムについてはアカウントが作成されましたが、
@@ -91,7 +92,6 @@ class CreateUser
         ERROR_MESSAGE
       end
       error("アカウント作成時にエラーが発生しました。: #{e.message}")
-      logger.error(e)
       result = :error
     end
 

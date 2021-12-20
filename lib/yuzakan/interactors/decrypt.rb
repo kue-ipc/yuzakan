@@ -32,7 +32,8 @@ class Decrypt
       else
         @pb_crypt.decrypt(params[:encrypted])
       end
-  rescue OpenSSL::Cipher::CipherError
+  rescue OpenSSL::Cipher::CipherError => e
+    Hanami.logger.error e
     @data = nil
     error!('復号化に失敗しました。')
   end
