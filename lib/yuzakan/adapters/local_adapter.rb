@@ -20,20 +20,26 @@ module Yuzakan
         true
       end
 
-      def create(username, attrs, _mappings = nil)
-        @repository.create(
+      def create(username, password = nil, **attrs)
+        hashed_password = if password
+                            BCrypt::Password.create(password)
+                          else
+                            '!'
+                          end
+        user = @repository.create(
           name: username,
           display_name: attrs[:display_name] || username,
           email: attrs[:email],
-          hashed_password: '!')
+          hashed_password: hashed_password)
+        normalize_user(user)
       end
 
-      def read(username, _mappings = nil)
+      def read(username)
         user = @repository.by_name(username)
         normalize_user(user)
       end
 
-      def udpate(username, attrs, _mappings = nil)
+      def udpate(username, **attrs)
         user = @repository.by_name(username)
         return unless user
 
