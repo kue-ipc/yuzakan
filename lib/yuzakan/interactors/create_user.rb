@@ -77,13 +77,9 @@ class CreateUser
 
     @providers.each do |provider|
       # すでに作成済みの場合は何もしない
-      next if provider.adapter.read(@username)
+      next if provider.read(@username)
 
-      user_data = provider.adapter.create(
-        @username,
-        attrs,
-        @attr_mapping_repository.by_provider_with_attr(provider.id),
-        @password)
+      user_data = provider.create(@username, @password, **attrs)
       @user_datas[provider.name] = user_data if user_data
     rescue => e
       unless @user_datas.empty?
@@ -95,6 +91,7 @@ class CreateUser
         ERROR_MESSAGE
       end
       error("アカウント作成時にエラーが発生しました。: #{e.message}")
+      logger.error(e)
       result = :error
     end
 

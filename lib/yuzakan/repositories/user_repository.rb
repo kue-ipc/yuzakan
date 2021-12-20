@@ -25,7 +25,7 @@ class UserRepository < Hanami::Repository
     providers = ProviderRepository.new.operational_all_with_adapter(:auth)
     result = nil
     providers.each do |provider|
-      result = provider.adapter.auth(name, password)
+      result = provider.auth(name, password)
       break if result
     end
 
@@ -48,7 +48,7 @@ class UserRepository < Hanami::Repository
     providers = ProviderRepository.new.operational_all_with_adapter(:read)
     result = nil
     providers.each do |provider|
-      result = provider.adapter.read(name)
+      result = provider.read(name)
       break if result
     end
 

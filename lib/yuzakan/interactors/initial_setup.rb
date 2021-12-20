@@ -64,9 +64,7 @@ class InitialSetup
       lockable: true,
     })
     local_provider = ProviderRepository.new.find_by_name_with_adapter('local')
-    local_provider_adapter = local_provider.adapter
-    local_provider_adapter.create(username, {display_name: 'ローカル管理者'})
-    local_provider_adapter.change_password(username, password)
+    local_provider.create(username, password, {display_name: 'ローカル管理者'})
   end
 
   private def setup_admin(username)

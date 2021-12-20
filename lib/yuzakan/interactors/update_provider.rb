@@ -45,8 +45,6 @@ class UpdateProvider
         @provider_repository.create(params.merge(order: order))
       end
 
-    adapter_class = @provider.adapter_class
-
     @param_repos = {
       boolean: ProviderBooleanParamRepository.new,
       string: ProviderStringParamRepository.new,
@@ -54,9 +52,9 @@ class UpdateProvider
       integer: ProviderIntegerParamRepository.new,
     }
 
-    provider_params = adapter_class.encrypt(provider_params)
+    provider_params = @provider.params_encrypt(provider_params)
 
-    adapter_class.params.each do |adapter_param|
+    @provider.adapter_params.each do |adapter_param|
       name = adapter_param[:name]
       value = provider_params[name.intern]
 

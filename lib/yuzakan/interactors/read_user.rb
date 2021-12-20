@@ -35,7 +35,7 @@ class ReadUser
     user_data = nil
 
     @provider_repository.operational_all_with_adapter(:read).each do |provider|
-      user_data = provider.adapter.read(params[:username])
+      user_data = provider.read(params[:username])
       # 最初に読み込みされたところを正とする。
       break if user_data
     rescue => e

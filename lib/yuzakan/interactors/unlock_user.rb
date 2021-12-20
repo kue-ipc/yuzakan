@@ -90,7 +90,7 @@ class UnlockUser
     (@providers ||
       @provider_repository.operational_all_with_adapter(:unlock)
     ).each do |provider|
-      user_data = provider.adapter.unlock(@username, @password)
+      user_data = provider.unlock(@username, @password)
       @user_datas[provider.name] = user_data if user_data
     rescue => e
       unless @user_datas.empty?

@@ -4,9 +4,9 @@
   p
     = provider.display_name
   p
-    = provider.adapter_class.label
+    = provider.adapter_label
   p
-    - if provider.adapter.check
+    - if provider.check
       | OK
     - else
       | NG

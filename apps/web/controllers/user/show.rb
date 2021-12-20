@@ -20,9 +20,7 @@ module Web
 
           providers = ProviderRepository.new.operational_all_with_adapter(:read)
           provider_datas = providers.each.map do |provider|
-            provider.adapter.read(@user.name,
-                                  provider_attr_mapping_repository
-                                    .by_provider_with_attr(provider.id))
+            provider.read(@user.name)
           end
           @user_attrs = provider_datas.compact.inject({}) do |result, data|
             data.merge(result)

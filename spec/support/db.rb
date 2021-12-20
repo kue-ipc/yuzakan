@@ -20,12 +20,9 @@ def db_initialize
 
   # 一般ユーザー
   local_provider = provider_repository.find_by_name_with_adapter('local')
-  adapter = local_provider.adapter
-  adapter.create(
-    'user',
+  local_provider.create('user', 'word',
     display_name: '一般ユーザー',
     email: 'user@yuzakan.test')
-  adapter.change_password('user', 'word')
   Authenticate.new(client: '::1', app: 'test')
     .call({username: 'user', password: 'word'})
 

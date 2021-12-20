@@ -52,8 +52,8 @@ module Admin
             end
 
             provider_data['params'] = {}
-            params = provider.adapter.class.decrypt(provider.params)
-            provider.adapter.class.params.each do |param|
+            params = provider.decrypted_params
+            provider.adapter_params.each do |param|
               name = param[:name]
               provider_data['params'][name] = params[name.intern]
             end

@@ -14,14 +14,8 @@ module Admin
           expose :provider_params
 
           def call(params)
-            @provider = ProviderRepository.new
-              .find_with_adapter(params[:provider_id])
-
-            adapter_class = @provider.adapter_class
-            @provider_params = @provider.params.reject do |key, _value|
-              adapter_param = adapter_class.param_by_name(key)
-              adapter_param.nil? || adapter_param[:encrypted]
-            end
+            @provider = ProviderRepository.new.find_with_adapter(params[:provider_id])
+            @provider_params = @provider.safe_params
           end
         end
       end
