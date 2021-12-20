@@ -174,7 +174,6 @@ module Yuzakan
       ]
 
       def check
-        ldap = generate_ldap
         base = ldap.search(
           base: @params[:base_dn],
           scope: Net::LDAP::SearchScope_BaseObject)&.first
@@ -190,7 +189,6 @@ module Yuzakan
       # end
 
       def read(username)
-        ldap = generate_ldap
         user = ldap.search(search_user_opts(username))&.first
         normalize_user(user)
       end
@@ -204,67 +202,85 @@ module Yuzakan
       # end
 
       def auth(username, password)
-        ldap = generate_ldap
         opts = search_user_opts(username).merge(password: password)
-        user = ldap.bind_as(opts)
+        # bind_as is re bind, so DON'T USE `ldap`
+        user = generate_ldap.bind_as(opts)
         normalize_user(user&.first) if user
       end
 
       def change_password(username, password)
-        ldap = generate_ldap
         user = ldap.search(search_user_opts(username))&.first
         return nil unless user
 
-        operations = []
+        pp user.attribute_names
 
-        operations <<
-          if user[:userpassword]&.first
-            [
-              :replace,
-              :userpassword,
-              [generate_password(password)],
-            ]
-          else
-            [
-              :add,
-              :userpassword,
-              generate_password(password),
-            ]
-          end
+        operations = change_password_operations(password, user.attribute_names)
 
-        if @params[:samba_password]
-          operations <<
-            if user[:sambantpassword]&.first
-              [
-                :replace,
-                :sambantpassword,
-                [generate_ntpassword(password)],
-              ]
-            else
-              [
-                :add,
-                :sambantpassword,
-                generate_ntpassword(password),
-              ]
-            end
+        # operations <<
+        #   if user[:userpassword]&.first
+        #     generate_operation_replace(:userpassword, generate_password(password))
+        #   else
+        #     generate_add_replace(:userpassword, generate_password(password))
+        #   end
 
-          if user[:sambalmpassword]&.first
-            operations << [:delete, :sambalmpassword, nil]
-          end
-        end
+        # if @params[:samba_password]
+        #   operations <<
+        #     if user[:sambantpassword]&.first
+        #       generate_operation_replace(:sambantpassword, generate_ntpassword(password))
+        #     else
+        #       generate_operation_add(:sambantpassword, generate_ntpassword(password))
+        #     end
 
-        result = ldap.modify(
-          dn: user.dn,
-          operations: operations)
+        #   if user[:sambalmpassword]&.first
+        #     operations << generate_operation_delete(:sambalmpassword)
+        #   end
+        # end
+
+        result = ldap.modify(dn: user.dn, operations: operations)
         raise ldap.get_operation_result.error_message unless result
 
-        result
+        read(username)
       end
 
       def list
         generate_ldap.search(search_user_opts('*')).map do |user|
           user[@params[:user_name_attr]]&.first
         end
+      end
+
+      private def change_password_operations(password, existing_attrs = [])
+        operations = []
+
+        operations << generate_operation_replace(:userpassword, generate_password(password))
+
+        if @params[:samba_password]
+          operations << generate_operation_replace(:sambantpassword, generate_ntpassword(password))
+          operations << generate_operation_delete(:sambalmpassword) if existing_attrs.include?(:sambalmpassword)
+        end
+
+        operations
+      end
+
+      private def generate_operation(operator, name, value = nil)
+        raise "invalid operator: #{operator}" unless [:add, :replace, :delete].include?(operator)
+
+        [operator, name, value]
+      end
+
+      private def generate_operation_add(name, value)
+        generate_operation(:add, name, value)
+      end
+
+      private def generate_operation_replace(name, value)
+        generate_operation(:replace, name, value)
+      end
+
+      private def generate_operation_delete(name)
+        generate_operation(:delete, name, nil)
+      end
+
+      private def ldap
+        @ladp ||= generate_ldap
       end
 
       private def generate_ldap

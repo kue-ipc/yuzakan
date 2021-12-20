@@ -101,29 +101,14 @@ module Yuzakan
         end
       end
 
-      # TODO: 要確認
       # 初期作成のユーザーは'add'じゃないとエラーになるかもしれない。
       # パスワードが削除されている状況はあり得るのだろうか？
-      def change_password(username, password)
-        ldap = generate_ldap
-        user = ldap.search(search_user_opts(username))&.first
-        return false unless user
-
-        operations = []
-        operations << [
-          :replace,
-          :unicodePwd,
-          [generate_password(password)],
-        ]
-
-        result = ldap.modify(
-          dn: user.dn,
-          operations: operations)
-        true
+      private def change_password_operations(password, existing_attrs = [])
+        [generate_operation_replace(:unicodePwd, generate_unicode_password(password))]
       end
 
       # ダブルコーテーションで囲ってUTF-16LEに変更する。
-      private def generate_password(password)
+      private def generate_unicode_password(password)
         "\"#{password}\"".encode(Encoding::UTF_16LE).bytes.pack('c*')
       end
     end
