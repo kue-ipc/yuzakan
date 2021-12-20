@@ -212,29 +212,7 @@ module Yuzakan
         user = ldap.search(search_user_opts(username))&.first
         return nil unless user
 
-        pp user.attribute_names
-
         operations = change_password_operations(password, user.attribute_names)
-
-        # operations <<
-        #   if user[:userpassword]&.first
-        #     generate_operation_replace(:userpassword, generate_password(password))
-        #   else
-        #     generate_add_replace(:userpassword, generate_password(password))
-        #   end
-
-        # if @params[:samba_password]
-        #   operations <<
-        #     if user[:sambantpassword]&.first
-        #       generate_operation_replace(:sambantpassword, generate_ntpassword(password))
-        #     else
-        #       generate_operation_add(:sambantpassword, generate_ntpassword(password))
-        #     end
-
-        #   if user[:sambalmpassword]&.first
-        #     operations << generate_operation_delete(:sambalmpassword)
-        #   end
-        # end
 
         result = ldap.modify(dn: user.dn, operations: operations)
         raise ldap.get_operation_result.error_message unless result
@@ -254,7 +232,7 @@ module Yuzakan
         operations << generate_operation_replace(:userpassword, generate_password(password))
 
         if @params[:samba_password]
-          operations << generate_operation_replace(:sambantpassword, generate_ntpassword(password))
+          operations << generate_operation_replace(:sambantpassword, generate_nt_password(password))
           operations << generate_operation_delete(:sambalmpassword) if existing_attrs.include?(:sambalmpassword)
         end
 
@@ -380,12 +358,12 @@ module Yuzakan
         "{CRYPT}#{password.crypt(format('$1$%.8s', salt))}"
       end
 
-      private def generate_ntpassword(password)
+      private def generate_nt_password(password)
         Smbhash.ntlm_hash(password)
       end
 
-      # TODO: 14文字までしか対できない
-      private def generate_lmpassword(password)
+      # 14文字までしか対応できない
+      private def generate_lm_password(password)
         Smbhash.lm_hash(password)
       end
 
