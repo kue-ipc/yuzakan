@@ -179,7 +179,7 @@ module Yuzakan
         users
       end
 
-      def generate_verification_code(username)
+      def generate_code(username)
         user = read(username)
         unless user[:mfa]
           # 2段階認証が有効でないユーザー

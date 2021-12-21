@@ -65,7 +65,7 @@ class GenerateVerificationCode
     result = :success
 
     @providers.each do |provider|
-      user_data = provider.generate_verification_code(@username)
+      user_data = provider.generate_code(@username)
       @user_datas[provider.name] = user_data if user_data
     rescue => e
       Hanami.logger.error e

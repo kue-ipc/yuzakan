@@ -72,14 +72,14 @@ class ProviderRepository < Hanami::Repository
       case operation
       when :create, :update, :delete
         {writable: true}
-      when :read, :list
+      when :read, :list, :seacrh
         {readable: true}
       when :auth
         {authenticatable: true}
-      when :change_password
+      when :change_password, :generate_code
         {password_changeable: true, individual_password: false}
-      when :lock, :unlock, :locked?
-        {lockable: true, individual_password: false}
+      when :lock, :unlock
+        {lockable: true}
       else
         raise "不明な操作です。#{operation}"
       end

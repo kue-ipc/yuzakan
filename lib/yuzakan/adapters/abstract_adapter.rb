@@ -4,33 +4,47 @@
 # check -> true or false
 #
 # attrs:
-#   name: = username
-#   display_name: display name
-#   email: mail address
-#   locked: true or false/nil
-#   disabled: true or false/nil
-#   unmanageable: true or false/nil
+#   name: String = username
+#   display_name: String = display name
+#   email: String = mail address
+#   locked: ?bool
+#   disabled: ?bool
+#   unmanageable: ?bool
+#   mfa: ?bool
+#   "key" => value
+#   ...
 #
 # CRUD
-# create(username, password = nil, **attrs) -> user or nil [writable]
-# read(username) -> user or nil [readable]
-# update(username, **attrs) -> user or nil [writeable]
-# delete(username) -> user or nil [writable]
+# create(username, password = nil, **attrs): () -> attrs [writable]
+# read(username) -> attrs or nil [readable]
+# update(username, **attrs) -> attrs [writeable]
+# delete(username) -> nil [writable]
 #
-# auth(username, password) -> user or nil [authenticatable]
-# change_password(username, password) -> user ro nil [password_changeable]
+# auth(username, password) -> bool [authenticatable]
 #
-# lock(username) -> user or nil [lockable]
-# unlock(username, password = nil) -> user or nil [lockable]
-# locked?(username) -> true or false [lockable]
+# change_password(username, password) -> nil [password_changeable]
+# generate_code(username) -> codes [password_changeable]
+#
+# lock(username) -> nil [lockable]
+# unlock(username, password = nil) -> nil [lockable]
 #
 # list -> usernames [readable]
 #
-# group_create(groupname, **attrs) -> group or nil [writable]
+# search(query) -> usernames [readable]
+#
+# group_attrs:
+#   name: String = username
+#   display_name: String = display name
+#   disabled: ?bool
+#   unmanageable: ?bool
+#   "key" => value
+#   ...
+#
+# group_create(groupname, **group_attrs) -> group_attrs or nil [writable]
 # group_read(groupname) -> group or nil [readable]
-# group_update(groupname, **attrs) -> group or nil [writeable]
+# group_update(groupname, **group_attrs) -> group_attrs or nil [writeable]
 # group_delete(groupname) -> group or nil [writable]
-# group_list
+# group_list -> groupnames
 #
 # member_list(groupname)
 # member_insert(groupname, username)

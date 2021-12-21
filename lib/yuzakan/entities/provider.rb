@@ -207,9 +207,9 @@ class Provider < Hanami::Entity
     @cache_store[user_key(username)] = convert_attrs(raw_attrs) if raw_attrs
   end
 
-  def generate_verification_code(username)
+  def generate_code(username)
     need_adapter
-    @adapter.generate_verification_code(username)
+    @adapter.generate_code(username)
   end
 
   def admin?(username)
