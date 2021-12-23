@@ -2,129 +2,17 @@ require 'securerandom'
 require 'net/ldap'
 require 'smbhash'
 
-# パスワード変更について
-# userPassword は {CRYPT}$1$%.8s をデフォルトする。
-# sambaLMPassword はデフォルト無効とし、設定済みは削除する。
-# sambaNTPassword はデフォルト有効とし、設定する。
+# inetOrgPerson and memberOf
 
-require_relative 'abstract_adapter'
+require_relative 'ldap_adapter'
 
 module Yuzakan
   module Adapters
-    class LdapAdapter < AbstractAdapter
-      def self.label
-        'LDAP'
-      end
+    class PersonLdapAdapter < LdapAdapter
+      LABEL = 'Person LDAP'
 
-      def self.selectable?
-        true
-      end
-
-      self.params = [
+      PARAMS = LdapAdapter::PARAMS + [
         {
-          name: 'host',
-          label: 'サーバーのホスト名/IPアドレス',
-          description:
-            'LDAPサーバーのホスト名またはIPアドレスを指定します。',
-          type: :string,
-          required: true,
-          placeholder: 'ldap.example.jp',
-        }, {
-          name: 'port',
-          label: 'ポート',
-          description:
-            'LDAPサーバーにアクセスするポート番号をして指定します。' \
-            '指定しない場合は既定値(LDAPは389、LDAPSは636)を使用します。',
-          type: :integer,
-          required: false,
-          placeholder: '636',
-        }, {
-          name: 'protocol',
-          label: 'プロトコル',
-          description:
-            'LDAPサーバーにアクセスするプロトコルを指定します。' \
-            'LDAPSを使用することを強く推奨します。',
-          type: :string,
-          required: true,
-          list: [
-            {
-              name: 'LDAP(平文)',
-              value: 'ldap',
-            }, {
-              name: 'LDAPS(暗号化)',
-              value: 'ldaps',
-            },
-          ],
-          default: 'ldaps',
-        }, {
-          name: 'certificate_check',
-          label: '証明書チェックを行う。',
-          description:
-            'サーバー証明書のチェックを行います。LDAPサーバーには正式証明書が必要になります。。',
-          type: :boolean,
-          default: true,
-        }, {
-          name: 'base_dn',
-          label: 'ベースDN',
-          description: '全てベースです。',
-          type: :string,
-          required: false,
-          placeholder: 'dc=example,dc=jp',
-        }, {
-          name: 'bind_username',
-          label: '接続ユーザー名',
-          type: :string,
-          required: true,
-          placeholder: 'cn=Admin,dc=example,dc=jp',
-        }, {
-          name: 'bind_password',
-          label: '接続ユーザーのパスワード',
-          type: :string,
-          input: 'password',
-          required: true,
-          encrypted: true,
-        }, {
-          name: 'user_name_attr',
-          label: 'ユーザー名の属性',
-          type: :string,
-          required: true,
-          placeholder: 'cn',
-        }, {
-          name: 'user_base',
-          label: 'ユーザー検索のベース',
-          description: 'ユーザー検索を行うときのツリーベースです。指定しない場合はLDAPサーバーのベースから検索します。',
-          type: :string,
-          required: false,
-          placeholder: 'ou=Users,dc=example,dc=jp',
-        }, {
-          name: 'user_scope',
-          label: 'ユーザー検索のスコープ',
-          description: 'ユーザー検索を行うときのスコープです。デフォルトは sub です。',
-          type: :string,
-          required: true,
-          list: [
-            {
-              name: 'ベースのみ検索(base)',
-              value: 'base',
-            }, {
-              name: 'ベース直下のみ検索(one)',
-              value: 'one',
-            }, {
-              name: 'ベース配下全て検索(sub)',
-              value: 'sub',
-            },
-          ],
-          default: 'sub',
-        }, {
-          name: 'user_filter',
-          label: 'ユーザー検索のフィルター',
-          description:
-            'ユーザー検索を行うときのフィルターです。' \
-            'LDAPの形式で指定します。' \
-            '何も指定しない場合は(objectclass=*)になります。',
-          type: :string,
-          required: false,
-        }, {
           name: 'password_scheme',
           label: 'パスワードのスキーム',
           description:
@@ -172,6 +60,10 @@ module Yuzakan
           default: false,
         },
       ]
+
+      def self.selectable?
+        true
+      end
 
       def check
         base = ldap.search(

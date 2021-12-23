@@ -76,7 +76,7 @@ module Yuzakan
 
     class AbstractAdapter
       def self.label
-        raise NotImplementedError
+        self::LABEL || raise(NotImplementedError)
       end
 
       def self.selectable?
@@ -84,22 +84,20 @@ module Yuzakan
       end
 
       def self.params
-        @params || raise(NotImplementedError)
+        self::PARAMS || []
       end
 
-      def self.params=(params)
-        @params = params
-        @name_param_map =
-          params.map { |param| [param[:name].intern, param] }.to_h
+      def self.name_param_map
+        @name_param_map ||= params.map { |param| [param[:name].intern, param] }.to_h
       end
 
       def self.param_by_name(name)
-        @name_param_map&.fetch(name)
+        name_param_map&.fetch(name)
       end
 
       def self.decrypt(data)
         data.map do |key, value|
-          param = @name_param_map[key]
+          param = name_param_map[key]
           if param&.[](:encrypted)
             result = Decrypt.new.call(encrypted: value)
             raise Yuzakan::Adapters::Error, result.errors if result.failure?
@@ -113,7 +111,7 @@ module Yuzakan
 
       def self.encrypt(data)
         data.map do |key, value|
-          param = @name_param_map[key]
+          param = name_param_map[key]
           if param&.[](:encrypted)
             encrypt_opts =
               case param[:type]

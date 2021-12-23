@@ -25,15 +25,9 @@ require 'google/apis/admin_directory_v1'
 module Yuzakan
   module Adapters
     class GoogleAdapter < AbstractAdapter
-      def self.label
-        'Google Workspace'
-      end
+      LABEL = 'Google Workspace'
 
-      def self.selectable?
-        true
-      end
-
-      self.params = [
+      PARAMS = [
         {
           name: 'domain',
           label: 'Google Workspaceのドメイン名',
@@ -68,6 +62,10 @@ module Yuzakan
           encrypted: true,
         },
       ]
+
+      def self.selectable?
+        true
+      end
 
       def initialize(params)
         super

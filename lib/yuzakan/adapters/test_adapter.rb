@@ -13,7 +13,7 @@ module Yuzakan
         Hanami.env != 'production'
       end
 
-      self.params = [
+      PARAMS = [
         {
           name: 'str1',
           label: '文字列',

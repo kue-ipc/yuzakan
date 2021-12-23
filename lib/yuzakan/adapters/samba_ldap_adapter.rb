@@ -20,7 +20,7 @@ module Yuzakan
         true
       end
 
-      self.params = LdapAdapter.params + [
+      PARAMS = LdapAdapter.params + [
         {
           name: 'samba_password',
           label: 'Sambaパスワード設定',

@@ -8,15 +8,9 @@ require_relative 'ldap_adapter'
 module Yuzakan
   module Adapters
     class AdAdapter < LdapAdapter
-      def self.label
-        'Active Directory'
-      end
+      LABEL = 'Active Directory'
 
-      def self.selectable?
-        true
-      end
-
-      self.params = [
+      PARAMS = [
         {
           name: 'host',
           label: 'ドメインコントローラーのホスト名/IPアドレス',
@@ -90,6 +84,18 @@ module Yuzakan
           placeholder: '(objectclass=user)',
         },
       ]
+
+      def self.label
+        LABEL
+      end
+
+      def self.selectable?
+        true
+      end
+
+      def self.params
+        PARAMS
+      end
 
       def initialize(params)
         super(params.merge(

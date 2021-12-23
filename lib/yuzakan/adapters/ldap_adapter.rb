@@ -12,15 +12,9 @@ require_relative 'abstract_adapter'
 module Yuzakan
   module Adapters
     class LdapAdapter < AbstractAdapter
-      def self.label
-        'LDAP'
-      end
+      LABEL = 'LDAP'
 
-      def self.selectable?
-        true
-      end
-
-      self.params = [
+      PARAMS = [
         {
           name: 'host',
           label: 'サーバーのホスト名/IPアドレス',
@@ -60,7 +54,7 @@ module Yuzakan
           name: 'certificate_check',
           label: '証明書チェックを行う。',
           description:
-            'サーバー証明書のチェックを行います。LDAPサーバーには正式証明書が必要になります。。',
+            'サーバー証明書のチェックを行います。LDAPサーバーには正式証明書が必要になります。',
           type: :boolean,
           default: true,
         }, {
@@ -172,6 +166,10 @@ module Yuzakan
           default: false,
         },
       ]
+
+      def self.selectable?
+        true
+      end
 
       def check
         base = ldap.search(
