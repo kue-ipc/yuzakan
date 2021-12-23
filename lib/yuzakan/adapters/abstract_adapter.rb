@@ -74,6 +74,60 @@ module Yuzakan
     class Error < RuntimeError
     end
 
+    class ParamType
+      class ListItem
+        attr_reader :name, :label, :value
+
+        def initialize(name:, value:, label: nil)
+          @name = name
+          @label = label || name.to_s
+          @value = value
+        end
+
+        def to_json(...)
+          @json ||= {name: name, label: label, value: value}.to_json(...)
+        end
+      end
+
+      attr_reader :name, :label, :description,
+                  :type, :default, :list, :encrypted,
+                  :required, :placeholder
+
+      def initialize(name:, type:, label: nil, description: nil, default: nil, list: nil, encrypted: false,
+                     required: nil, placeholder: nil)
+        @name = name
+        @label = label || name.to_s
+        @description = description
+
+        @type = type
+        @default = default
+        @list = list
+        @encrypted = encrypted
+
+        @required = if required.nil?
+                      default.nil?
+                    else
+                      required
+                    end
+
+        @placeholder = placeholder || default
+      end
+
+      def to_json(...)
+        @json ||= {
+          name: name,
+          label: label,
+          type: type,
+          default: default,
+          placeholder: placeholder,
+          required: required,
+          list: list,
+          encrypted: encrypted,
+          description: description,
+        }.to_json(...)
+      end
+    end
+
     class AbstractAdapter
       def self.label
         self::LABEL || raise(NotImplementedError)
@@ -81,6 +135,12 @@ module Yuzakan
 
       def self.selectable?
         false
+      end
+
+      def self.param_types
+        @param_types ||= self::PARAM_TYPES.map do |data|
+          ParamType.new(**data, list: data[:list]&.map { |item| ParamType::ListItem.new(**item) })
+        end
       end
 
       def self.params

@@ -14,76 +14,70 @@ module Yuzakan
     class LdapAdapter < AbstractAdapter
       LABEL = 'LDAP'
 
-      PARAMS = [
+      PARAM_TYPES = [
         {
-          name: 'host',
+          name: :host,
           label: 'サーバーのホスト名/IPアドレス',
-          description:
-            'LDAPサーバーのホスト名またはIPアドレスを指定します。',
+          description: 'LDAPサーバーのホスト名またはIPアドレスを指定します。',
           type: :string,
-          required: true,
           placeholder: 'ldap.example.jp',
         }, {
-          name: 'port',
+          name: :port,
           label: 'ポート',
           description:
-            'LDAPサーバーにアクセスするポート番号をして指定します。' \
-            '指定しない場合は既定値(LDAPは389、LDAPSは636)を使用します。',
+      'LDAPサーバーにアクセスするポート番号をして指定します。' \
+      '指定しない場合は既定値(LDAPは389、LDAPSは636)を使用します。',
           type: :integer,
           required: false,
-          placeholder: '636',
+          placeholder: '389 or 636',
         }, {
           name: 'protocol',
           label: 'プロトコル',
           description:
-            'LDAPサーバーにアクセスするプロトコルを指定します。' \
-            'LDAPSを使用することを強く推奨します。',
+      'LDAPサーバーにアクセスするプロトコルを指定します。' \
+      'LDAPSを使用することを強く推奨します。',
           type: :string,
-          required: true,
-          list: [
-            {
-              name: 'LDAP(平文)',
-              value: 'ldap',
-            }, {
-              name: 'LDAPS(暗号化)',
-              value: 'ldaps',
-            },
-          ],
           default: 'ldaps',
+          list: [
+            {name: :ldap, label: 'LDAP(平文)', value: 'ldap'},
+            {name: :ldaps, label: 'LDAPS(TLS)', value: 'ldaps'},
+            {name: :ldap_starttls, label: 'LDAP(STARTTLS)', value: 'ldap_starttls'},
+          ],
         }, {
           name: 'certificate_check',
           label: '証明書チェックを行う。',
           description:
-            'サーバー証明書のチェックを行います。LDAPサーバーには正式証明書が必要になります。',
+      'サーバー証明書のチェックを行います。LDAPサーバーには正式証明書が必要になります。',
           type: :boolean,
           default: true,
         }, {
+
           name: 'base_dn',
           label: 'ベースDN',
           description: '全てベースです。',
           type: :string,
-          required: false,
           placeholder: 'dc=example,dc=jp',
         }, {
+
           name: 'bind_username',
           label: '接続ユーザー名',
           type: :string,
-          required: true,
           placeholder: 'cn=Admin,dc=example,dc=jp',
         }, {
+
           name: 'bind_password',
           label: '接続ユーザーのパスワード',
           type: :string,
           input: 'password',
-          required: true,
           encrypted: true,
         }, {
+
           name: 'user_name_attr',
           label: 'ユーザー名の属性',
           type: :string,
-          required: true,
           placeholder: 'cn',
         }, {
+
           name: 'user_base',
           label: 'ユーザー検索のベース',
           description: 'ユーザー検索を行うときのツリーベースです。指定しない場合はLDAPサーバーのベースから検索します。',
@@ -91,77 +85,65 @@ module Yuzakan
           required: false,
           placeholder: 'ou=Users,dc=example,dc=jp',
         }, {
+
           name: 'user_scope',
           label: 'ユーザー検索のスコープ',
           description: 'ユーザー検索を行うときのスコープです。デフォルトは sub です。',
           type: :string,
-          required: true,
-          list: [
-            {
-              name: 'ベースのみ検索(base)',
-              value: 'base',
-            }, {
-              name: 'ベース直下のみ検索(one)',
-              value: 'one',
-            }, {
-              name: 'ベース配下全て検索(sub)',
-              value: 'sub',
-            },
-          ],
           default: 'sub',
+          list: [
+            {name: :base, label: 'ベースのみ検索(base)', value: 'base'},
+            {name: :one, label: 'ベース直下のみ検索(one)', value: 'one'},
+            {name: :sub, label: 'ベース配下全て検索(sub)', value: 'sub'},
+          ],
         }, {
           name: 'user_filter',
           label: 'ユーザー検索のフィルター',
           description:
-            'ユーザー検索を行うときのフィルターです。' \
-            'LDAPの形式で指定します。' \
-            '何も指定しない場合は(objectclass=*)になります。',
+      'ユーザー検索を行うときのフィルターです。' \
+      'LDAPの形式で指定します。' \
+      '何も指定しない場合は(objectclass=*)になります。',
           type: :string,
           required: false,
         }, {
+
           name: 'password_scheme',
           label: 'パスワードのスキーム',
           description:
-            'パスワード設定時に使うスキームです。{CRYPT}はソルトフォーマットも選択してください。',
+      'パスワード設定時に使うスキームです。{CRYPT}はソルトフォーマットも選択してください。',
           type: :string,
           required: true,
-          list: [
-            {
-              name: '{SHA} SHA-1 (非推奨)',
-              value: '{SHA}',
-            }, {
-              name: '{SSHA} ソルト付SHA-1',
-              value: '{SSHA}',
-            }, {
-              name: '{MD5} MD5 (非推奨)',
-              value: '{MD5}',
-            }, {
-              name: '{SMD5} ソルト付MD5',
-              value: '{SMD5}',
-            }, {
-              name: '{CRYPT} CRYPT (ソルトフォーマットも記入してください)',
-              value: '{CRYPT}',
-            }, {
-              name: '平文 (非推奨)',
-              value: '{CLEARTEXT}',
-            },
-          ],
           default: '{CRYPT}',
+          list: [
+            {name: :cleartext, label: '{CLEARTEXT} 平文', value: '{CLEARTEXT}'},
+            {name: :crypt, label: '{CRYPT} CRYPT', value: '{CRYPT}'},
+            {name: :md5, label: '{MD5} MD5 (非推奨)', value: '{MD5}'},
+            {name: :sha, label: '{SHA} SHA-1 (非推奨)', value: '{SHA}'},
+            {name: :sha256, label: '{SHA256} SHA-256 (非推奨)', value: '{SHA256}'},
+            {name: :sha512, label: '{SHA512} SHA-512 (非推奨)', value: '{SHA512}'},
+            {name: :smd5, label: '{SMD5} ソルト付MD5 (非推奨)', value: '{SMD5}'},
+            {name: :ssha, label: '{SSHA} ソルト付SHA-1 (非推奨)', value: '{SSHA}'},
+            {name: :ssha256, label: '{SSHA256} ソルト付-SHA256', value: '{SSHA256}'},
+            {name: :ssha512, label: '{SSHA512} ソルト付SHA-512', value: '{SSHA512}'},
+            {name: :pbkdf2_sha1, label: '{PBKDF2-SHA1} PBKDF2 SHA-1 (非推奨)', value: '{PBKDF2-SHA1}'},
+            {name: :pbkdf2_sha256, label: '{PBKDF2-SHA256} PBKDF2 SHA256', value: '{PBKDF2-SHA256}'},
+            {name: :pbkdf2_sha512, label: '{PBKDF2-SHA512} PBKDF2 SHA256', value: '{PBKDF2-SHA512}'},
+          ],
         }, {
           name: 'crypt_salt_format',
           label: 'CRYPTのソルトフォーマット',
           description:
-            'パスワードのスキームに{CRYPT}を使用している場合は、' \
-            '記載のフォーマットでソルト値が作成されます。' \
-            '作成できる形式はサーバーのcryptの実装によります。' \
-            '何も指定しない場合はCRYPT-MD5("$1$%.8s")を使用します。',
+      'パスワードのスキームに{CRYPT}を使用している場合は、' \
+      '記載のフォーマットでソルト値が作成されます。' \
+      '作成できる形式はサーバーのcryptの実装によります。' \
+      '何も指定しない場合はCRYPT-MD5("$1$%.8s")を使用します。',
           type: :string,
           required: false,
         }, {
           name: 'samba_password',
           label: 'Sambaパスワード設定',
           description:
-            'パスワード設定時にSambaパスワードも設定します。ただし、LMパスワードは設定しません。',
+      'パスワード設定時にSambaパスワードも設定します。ただし、LMパスワードは設定しません。',
           type: :boolean,
           default: false,
         },
