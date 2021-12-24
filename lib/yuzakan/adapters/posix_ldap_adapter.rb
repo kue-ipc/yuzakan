@@ -14,95 +14,9 @@ module Yuzakan
     class PosixLdapAdapter < LdapAdapter
       LABEL = 'Posix LDAP'
 
-      PARAMS = LdapAdapter::PARAMS + [
+      PARAM_TYPES = PARAMS = LdapAdapter::PARAM_TYPES + [
         {
-          name: 'user_name_attr',
-          label: 'ユーザー名の属性',
-          type: :string,
-          required: true,
-          placeholder: 'uid',
-        }, {
-          name: 'user_base',
-          label: 'ユーザー検索のベース',
-          description: 'ユーザー検索を行うときのツリーベースです。指定しない場合はLDAPサーバーのベースから検索します。',
-          type: :string,
-          required: false,
-          placeholder: 'ou=Users,dc=example,dc=jp',
-        }, {
-          name: 'user_scope',
-          label: 'ユーザー検索のスコープ',
-          description: 'ユーザー検索を行うときのスコープです。デフォルトは sub です。',
-          type: :string,
-          required: true,
-          list: [
-            {
-              name: 'ベースのみ検索(base)',
-              value: 'base',
-            }, {
-              name: 'ベース直下のみ検索(one)',
-              value: 'one',
-            }, {
-              name: 'ベース配下全て検索(sub)',
-              value: 'sub',
-            },
-          ],
-          default: 'sub',
-        }, {
-          name: 'user_filter',
-          label: 'ユーザー検索のフィルター',
-          description:
-            'ユーザー検索を行うときのフィルターです。' \
-            'LDAPの形式で指定します。' \
-            '何も指定しない場合は(objectclass=*)になります。',
-          type: :string,
-          required: false,
-        }, {
-          name: 'password_scheme',
-          label: 'パスワードのスキーム',
-          description:
-            'パスワード設定時に使うスキームです。{CRYPT}はソルトフォーマットも選択してください。',
-          type: :string,
-          required: true,
-          list: [
-            {
-              name: '{SHA} SHA-1 (非推奨)',
-              value: '{SHA}',
-            }, {
-              name: '{SSHA} ソルト付SHA-1',
-              value: '{SSHA}',
-            }, {
-              name: '{MD5} MD5 (非推奨)',
-              value: '{MD5}',
-            }, {
-              name: '{SMD5} ソルト付MD5',
-              value: '{SMD5}',
-            }, {
-              name: '{CRYPT} CRYPT (ソルトフォーマットも記入してください)',
-              value: '{CRYPT}',
-            }, {
-              name: '平文 (非推奨)',
-              value: '{CLEARTEXT}',
-            },
-          ],
-          default: '{CRYPT}',
-        }, {
-          name: 'crypt_salt_format',
-          label: 'CRYPTのソルトフォーマット',
-          description:
-            'パスワードのスキームに{CRYPT}を使用している場合は、' \
-            '記載のフォーマットでソルト値が作成されます。' \
-            '作成できる形式はサーバーのcryptの実装によります。' \
-            '何も指定しない場合はCRYPT-MD5("$1$%.8s")を使用します。',
-          type: :string,
-          required: false,
-        }, {
-          name: 'samba_password',
-          label: 'Sambaパスワード設定',
-          description:
-            'パスワード設定時にSambaパスワードも設定します。ただし、LMパスワードは設定しません。',
-          type: :boolean,
-          default: false,
-        },
+        }
       ]
 
       def self.selectable?

@@ -7,14 +7,14 @@ require 'smbhash'
 # sambaLMPassword はデフォルト無効とし、設定済みは削除する。
 # sambaNTPassword はデフォルト有効とし、設定する。
 
-require_relative 'ldap_adapter'
+require_relative 'base_ldap_adapter'
 
 module Yuzakan
   module Adapters
-    class SambaLdapAdapter < LdapAdapter
+    class SambaLdapAdapter < BaseLdapAdapter
       LABEL = 'Samba LDAP'
 
-      PARAMS = PARAM_TYPES = (LdapAdapter::PARAM_TYPES + [
+      PARAMS = PARAM_TYPES = (BaseLdapAdapter::PARAM_TYPES + [
         {
           name: :samba_domain_sid,
           label: 'Samba ドメインSID',
@@ -30,7 +30,7 @@ module Yuzakan
           default: true,
         },
         {
-          name: 'samba_lm_password',
+          name: :samba_lm_password,
           label: 'Samba Lanman パスワード設定',
           description:
       'パスワード設定時にSamba LM パスワード(sambaLMPassword)も設定します。LM パスワードは14文字までしか有効ではないため、使用を推奨しません。',
@@ -38,52 +38,70 @@ module Yuzakan
           default: false,
         },
       ]).reject do |data|
-        %i[user_name_attr password_scheme crypt_salt_format].include?(data[:name])
+        %i[user_name_attr user_filter].include?(data[:name])
       end
 
-      def self.selectable?
-        true
+      NO_PASSWORD = 'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
+
+      def initialize(params)
+        super
+        @params[:user_name_attr] = 'uid'
+        @params[:user_filter] = '(objectClass=sambaSamAccount)'
+      end
+
+      def create(username, password = nil, **attrs)
+        opts = search_user_opts(username, filter: nil)
+        result = ldap.search(opts)
+
+        user_attrs = read(username)
+
+        user_attrs[:classobject].include?('sambaSamAccount')
+
+        
+        user_attrs.merge(attrs)
+
+
       end
 
       def auth(username, password)
-        opts = search_user_opts(username).merge(password: password)
+        user = read(username)
+        return false unless user
+
+        return false if user['sambaacctflags']&.include?('D')
+
+        return false if user['sambaacctflags']&.include?('L')
+
+        return false unless user['sambantpassword'] && user['sambantpassword'].size == 32
+
+        generate_nt_password(password) == user['sambantpassword']
+
+        opts = search_user_opts(username)
+        
+        .merge(password: password)
         # bind_as is re bind, so DON'T USE `ldap`
         user = generate_ldap.bind_as(opts)
         normalize_user(user&.first) if user
       end
 
-      private def change_password_operations(password, existing_attrs = [])
-        operations = []
-
-        operations << generate_operation_replace(:sambantpassword, generate_nt_password(password))
-        operations << generate_operation_delete(:sambalmpassword) if existing_attrs.include?(:sambalmpassword)
-
-        operations
-      end
-
-      private def normalize_user(user)
-        return if user.nil?
-
-        data = {
-          name: user[:uid]&.first,
-          display_name: user[:'displayname;lang-ja']&.first ||
-                        user[:displayname]&.first ||
-                        user[@params[:user_name_attr]]&.first,
-          email: user[:email]&.first || user[:mail]&.first,
-        }
-
-        user.each do |name, values|
-          case name
-          when :userpassword, :sambantpassword, :sambalmpassword
-            next
-          when :objectclass
-            data[name.to_s] = values
+      private def change_password_operations(password)
+        nt_password =
+          if @params[:samba_nt_password]
+            generate_nt_password(password)
           else
-            data[name.to_s] = values.first
+            NO_PASSWORD
           end
-        end
 
-        data
+        lm_password =
+          if @params[:samba_lm_password]
+            generate_lm_password(password)
+          else
+            NO_PASSWORD
+          end
+
+        [
+          generate_operation_replace(:sambantpassword, nt_password),
+          generate_operation_replace(:sambalmpassword, lm_password),
+        ]
       end
 
       private def generate_account_flags(no_password: false, disabled: false, home_required: false, auto_lock: false,

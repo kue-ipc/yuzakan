@@ -13,8 +13,8 @@ require_relative 'abstract_adapter'
 
 module Yuzakan
   module Adapters
-    class LdapAdapter < AbstractAdapter
-      LABEL = 'LDAP'
+    class BaseLdapAdapter < AbstractAdapter
+      KIND = :abstract
 
       PARAMS = PARAM_TYPES = [
         {
@@ -34,22 +34,21 @@ module Yuzakan
           placeholder: '389 or 636',
         }, {
           name: :protocol,
-          label: 'プロトコル',
+          label: 'プロトコル/暗合形式',
           description:
-      'LDAPサーバーにアクセスするプロトコルを指定します。' \
-      'LDAPSを使用することを強く推奨します。',
+      'LDAPサーバーにアクセスするプロトコルを指定します。',
           type: :string,
           default: 'ldaps',
           list: [
             {name: :ldap, label: 'LDAP(平文)', value: 'ldap', deprecated: true},
-            {name: :ldap_starttls, label: 'LDAP(STARTTLS)', value: 'ldap_starttls'},
-            {name: :ldaps, label: 'LDAPS(TLS)', value: 'ldaps'},
+            {name: :ldap_starttls, label: 'LDAP+STARTTLS(暗合)', value: 'ldap_starttls'},
+            {name: :ldaps, label: 'LDAPS(暗合)', value: 'ldaps'},
           ],
+          input: 'radio',
         }, {
           name: :certificate_check,
           label: '証明書チェックを行う。',
-          description:
-      'サーバー証明書のチェックを行います。LDAPサーバーには正式証明書が必要になります。',
+          description: 'サーバー証明書のチェックを行います。LDAPサーバーには正式証明書が必要になります。',
           type: :boolean,
           default: true,
         }, {
@@ -84,7 +83,7 @@ module Yuzakan
         }, {
           name: :user_scope,
           label: 'ユーザー検索のスコープ',
-          description: 'ユーザー検索を行うときのスコープです。デフォルトは sub です。',
+          description: 'ユーザー検索を行うときのスコープです。通常は sub を使用します。',
           type: :string,
           default: 'sub',
           list: [
@@ -96,58 +95,13 @@ module Yuzakan
           name: :user_filter,
           label: 'ユーザー検索のフィルター',
           description:
-      'ユーザー検索を行うときのフィルターです。' \
-      'LDAPの形式で指定します。' \
-      '何も指定しない場合は(objectclass=*)になります。',
+        'ユーザー検索を行うときのフィルターです。' \
+        'LDAPの形式で指定します。' \
+        '何も指定しない場合は(objectclass=*)になります。',
           type: :string,
           required: false,
-        }, {
-
-          name: :password_scheme,
-          label: 'パスワードのスキーム',
-          description:
-      'パスワード設定時に使うスキームです。' \
-      '{CRYPT}はソルトフォーマットも選択してください。' \
-      '対応するスキームはLDAPサーバーの実装によります。',
-          type: :string,
-          required: true,
-          default: '{CRYPT}',
-          list: [
-            {name: :cleartext, label: '{CLEARTEXT} 平文', value: '{CLEARTEXT}', deprecated: true},
-            {name: :crypt, label: '{CRYPT} CRYPT', value: '{CRYPT}'},
-            {name: :md5, label: '{MD5} MD5', value: '{MD5}', deprecated: true},
-            {name: :sha, label: '{SHA} SHA-1', value: '{SHA}', deprecated: true},
-            {name: :sha256, label: '{SHA256} SHA-256', value: '{SHA256}', deprecated: true},
-            {name: :sha512, label: '{SHA512} SHA-512', value: '{SHA512}', deprecated: true},
-            {name: :smd5, label: '{SMD5} ソルト付MD5', value: '{SMD5}', deprecated: true},
-            {name: :ssha, label: '{SSHA} ソルト付SHA-1', value: '{SSHA}', deprecated: true},
-            {name: :ssha256, label: '{SSHA256} ソルト付-SHA256', value: '{SSHA256}'},
-            {name: :ssha512, label: '{SSHA512} ソルト付SHA-512', value: '{SSHA512}'},
-            {name: :pbkdf2_sha1, label: '{PBKDF2-SHA1} PBKDF2 SHA-1', value: '{PBKDF2-SHA1}', deprecated: true},
-            {name: :pbkdf2_sha256, label: '{PBKDF2-SHA256} PBKDF2 SHA256', value: '{PBKDF2-SHA256}'},
-            {name: :pbkdf2_sha512, label: '{PBKDF2-SHA512} PBKDF2 SHA256', value: '{PBKDF2-SHA512}'},
-          ],
-        }, {
-          name: :crypt_salt_format,
-          label: 'CRYPTのソルトフォーマット',
-          description:
-      'パスワードのスキームに{CRYPT}を使用している場合は、' \
-      '記載のフォーマットでソルト値が作成されます。' \
-      '対応する形式はサーバーのcryptの実装によります。',
-          type: :string,
-          default: '$6$%.16s',
-          list: [
-            {name: :des, label: 'DES', value: '%.2s', deprecated: true},
-            {name: :md5, label: 'MD5', value: '$1$%.8s', deprecated: true},
-            {name: :sha256, label: 'SHA256', value: '$5$%.16s'},
-            {name: :sha512, label: 'SHA512', value: '$6$%.16s'},
-          ],
-        }
+        },
       ]
-
-      def self.selectable?
-        true
-      end
 
       def check
         base = ldap.search(
@@ -161,12 +115,16 @@ module Yuzakan
       end
 
       # def create(username, password = nil, **attrs)
+      #   entry = specialize_user(usarename: username, **attrs)
+      #   dn = "#{@params[:user_base]}'
+      #   ldap.add(entry)
       #   raise NotImplementedError
       # end
 
       def read(username)
-        user = ldap.search(search_user_opts(username))&.first
-        normalize_user(user)
+        opts = search_user_opts(username)
+        result = ldap.search(opts)
+        normalize_user(result&.first) if result
       end
 
       # def udpate(username, **attrs)
@@ -180,20 +138,20 @@ module Yuzakan
       def auth(username, password)
         opts = search_user_opts(username).merge(password: password)
         # bind_as is re bind, so DON'T USE `ldap`
-        user = generate_ldap.bind_as(opts)
-        normalize_user(user&.first) if user
+        result = generate_ldap.bind_as(opts)
+        normalize_user(result&.first) if result
       end
 
       def change_password(username, password)
-        user = ldap.search(search_user_opts(username))&.first
+        user = read(username)
         return nil unless user
 
         operations = change_password_operations(password)
 
-        result = ldap.modify(dn: user.dn, operations: operations)
-        raise ldap.get_operation_result.error_message unless result
+        modify_result = ldap.modify(dn: user['dn'], operations: operations)
+        raise ldap.get_operation_result.error_message unless modify_result
 
-        read(username)
+        user
       end
 
       def list
@@ -202,13 +160,8 @@ module Yuzakan
         end
       end
 
-      private def change_password_operations(password)
-        operations = []
-
-        operations << generate_operation_replace(:userpassword, generate_password(password))
-
-
-        operations
+      private def change_password_operations(_password)
+        raise NotImplementedError
       end
 
       private def generate_operation(operator, name, value = nil)
@@ -246,38 +199,33 @@ module Yuzakan
         }
 
         port = @params[:port] if @params[:port] && !@params[:port].zero?
+        opts[:encryption] = {}
         case @params[:protocol]
         when 'ldap'
           opts[:port] = port || 389
+        when 'ldap_starttls'
+          opts[:port] = port || 389
+          opts[:encryption][:method] = :start_tls
         when 'ldaps'
           opts[:port] = port || 636
-          opts[:encryption] =
-            if @params[:certificate_check]
-              :simple_tls
-            else
-              {
-                method: :simple_tls,
-                tls_options: {
-                  verify_mode: OpenSSL::SSL::VERIFY_NONE,
-                },
-              }
-            end
+          opts[:encryption][:method] = :simple_tls
         else
           raise "invalid protcol: #{@params[:protocol]}"
         end
 
+        opts[:encryption][:tls_options] = {verify_mode: OpenSSL::SSL::VERIFY_NONE} unless @params[:certificate_check]
+
         Net::LDAP.new(opts)
       end
 
-      private def search_user_opts(name)
+      private def search_user_opts(name, base: @params[:user_base] || @params[:base_dn],
+                                   scope: @params[:user_scope], filter: @params[:user_filter])
         opts = {}
-        if @params[:user_base] && !@params[:user_base].empty?
-          opts[:base] = @params[:user_base] if @params[:user_base]
-        else
-          opts[:base] = @params[:base_dn]
-        end
+
+        opts[:base] = base
+
         opts[:scope] =
-          case @params[:user_scope]
+          case scope
           when 'base' then Net::LDAP::SearchScope_BaseObject
           when 'one' then Net::LDAP::SearchScope_SingleLevel
           when 'sub' then Net::LDAP::SearchScope_WholeSubtree
@@ -285,10 +233,10 @@ module Yuzakan
           end
 
         common_filter =
-          if @params[:user_filter] && !@params[:user_filter].empty?
+          if filter
             Net::LDAP::Filter.construct(@params[:user_filter])
           else
-            Net::LDAP::Filter.pres('objectclass')
+            Net::LDAP::Filter.pres('objectClass')
           end
 
         opts[:filter] = common_filter &

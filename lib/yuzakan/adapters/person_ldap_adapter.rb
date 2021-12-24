@@ -11,55 +11,49 @@ module Yuzakan
     class PersonLdapAdapter < LdapAdapter
       LABEL = 'Person LDAP'
 
-      PARAMS = LdapAdapter::PARAMS + [
+      PARAMS = PARAM_TYPES = LdapAdapter::PARAM_TYPES(+[
         {
-          name: 'password_scheme',
+          name: :password_scheme,
           label: 'パスワードのスキーム',
           description:
-            'パスワード設定時に使うスキームです。{CRYPT}はソルトフォーマットも選択してください。',
+        'パスワード設定時に使うスキームです。' \
+        '{CRYPT}はソルトフォーマットも選択してください。' \
+        '対応するスキームはLDAPサーバーの実装によります。',
           type: :string,
           required: true,
-          list: [
-            {
-              name: '{SHA} SHA-1 (非推奨)',
-              value: '{SHA}',
-            }, {
-              name: '{SSHA} ソルト付SHA-1',
-              value: '{SSHA}',
-            }, {
-              name: '{MD5} MD5 (非推奨)',
-              value: '{MD5}',
-            }, {
-              name: '{SMD5} ソルト付MD5',
-              value: '{SMD5}',
-            }, {
-              name: '{CRYPT} CRYPT (ソルトフォーマットも記入してください)',
-              value: '{CRYPT}',
-            }, {
-              name: '平文 (非推奨)',
-              value: '{CLEARTEXT}',
-            },
-          ],
           default: '{CRYPT}',
+          list: [
+            {name: :cleartext, label: '{CLEARTEXT} 平文', value: '{CLEARTEXT}', deprecated: true},
+            {name: :crypt, label: '{CRYPT} CRYPT', value: '{CRYPT}'},
+            {name: :md5, label: '{MD5} MD5', value: '{MD5}', deprecated: true},
+            {name: :sha, label: '{SHA} SHA-1', value: '{SHA}', deprecated: true},
+            {name: :sha256, label: '{SHA256} SHA-256', value: '{SHA256}', deprecated: true},
+            {name: :sha512, label: '{SHA512} SHA-512', value: '{SHA512}', deprecated: true},
+            {name: :smd5, label: '{SMD5} ソルト付MD5', value: '{SMD5}', deprecated: true},
+            {name: :ssha, label: '{SSHA} ソルト付SHA-1', value: '{SSHA}', deprecated: true},
+            {name: :ssha256, label: '{SSHA256} ソルト付-SHA256', value: '{SSHA256}'},
+            {name: :ssha512, label: '{SSHA512} ソルト付SHA-512', value: '{SSHA512}'},
+            {name: :pbkdf2_sha1, label: '{PBKDF2-SHA1} PBKDF2 SHA-1', value: '{PBKDF2-SHA1}', deprecated: true},
+            {name: :pbkdf2_sha256, label: '{PBKDF2-SHA256} PBKDF2 SHA256', value: '{PBKDF2-SHA256}'},
+            {name: :pbkdf2_sha512, label: '{PBKDF2-SHA512} PBKDF2 SHA256', value: '{PBKDF2-SHA512}'},
+          ],
         }, {
-          name: 'crypt_salt_format',
+          name: :crypt_salt_format,
           label: 'CRYPTのソルトフォーマット',
           description:
-            'パスワードのスキームに{CRYPT}を使用している場合は、' \
-            '記載のフォーマットでソルト値が作成されます。' \
-            '作成できる形式はサーバーのcryptの実装によります。' \
-            '何も指定しない場合はCRYPT-MD5("$1$%.8s")を使用します。',
+        'パスワードのスキームに{CRYPT}を使用している場合は、' \
+        '記載のフォーマットでソルト値が作成されます。' \
+        '対応する形式はサーバーのcryptの実装によります。',
           type: :string,
-          required: false,
-        }, {
-          name: 'samba_password',
-          label: 'Sambaパスワード設定',
-          description:
-            'パスワード設定時にSambaパスワードも設定します。ただし、LMパスワードは設定しません。',
-          type: :boolean,
-          default: false,
+          default: '$6$%.16s',
+          list: [
+            {name: :des, label: 'DES', value: '%.2s', deprecated: true},
+            {name: :md5, label: 'MD5', value: '$1$%.8s', deprecated: true},
+            {name: :sha256, label: 'SHA256', value: '$5$%.16s'},
+            {name: :sha512, label: 'SHA512', value: '$6$%.16s'},
+          ],
         },
-      ]
+      ])
 
       def self.selectable?
         true
@@ -100,25 +94,13 @@ module Yuzakan
         normalize_user(user&.first) if user
       end
 
-      def change_password(username, password)
-        user = ldap.search(search_user_opts(username))&.first
-        return nil unless user
-
-        operations = change_password_operations(password, user.attribute_names)
-
-        result = ldap.modify(dn: user.dn, operations: operations)
-        raise ldap.get_operation_result.error_message unless result
-
-        read(username)
-      end
-
       def list
         generate_ldap.search(search_user_opts('*')).map do |user|
           user[@params[:user_name_attr]]&.first
         end
       end
 
-      private def change_password_operations(password, existing_attrs = [])
+      private def change_password_operations(password)
         operations = []
 
         operations << generate_operation_replace(:userpassword, generate_password(password))

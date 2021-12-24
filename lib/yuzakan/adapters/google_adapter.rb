@@ -27,9 +27,9 @@ module Yuzakan
     class GoogleAdapter < AbstractAdapter
       LABEL = 'Google Workspace'
 
-      PARAMS = [
+      PARAMS = PARAM_TYPES = [
         {
-          name: 'domain',
+          name: :domain,
           label: 'Google Workspaceのドメイン名',
           description:
             'Google Workspaceでのドメイン名を指定します。',
@@ -37,7 +37,7 @@ module Yuzakan
           required: true,
           placeholder: 'google.example.jp',
         }, {
-          name: 'account',
+          name: :account,
           label: 'Google Workspaceの管理用アカウント',
           description:
             'Google Workspaceでユーザーに対する管理権限のあるアカウントを指定します。' \
@@ -46,7 +46,7 @@ module Yuzakan
           required: true,
           placeholder: 'admin@google.example.jp',
         }, {
-          name: 'json_key',
+          name: :json_key,
           label: 'JSONキー',
           description:
             'Google Workspaceで作成したサービスアカウントのキーを貼り付けます。' \

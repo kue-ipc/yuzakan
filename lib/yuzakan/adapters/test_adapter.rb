@@ -5,17 +5,19 @@ require_relative 'abstract_adapter'
 module Yuzakan
   module Adapters
     class TestAdapter < AbstractAdapter
-      def self.label
-        'テスト'
-      end
 
-      def self.selectable?
-        Hanami.env != 'production'
-      end
+      KIND =
+        if Hanami.env != 'production'
+          :normal
+        else
+          :hidden
+        end
 
-      PARAMS = [
+      LABEL = 'テスト'
+
+      PARAM_TYPES = PARAMS = [
         {
-          name: 'str1',
+          name: :str1,
           label: '文字列',
           description:
             '文字列のパラメーターです。',
@@ -24,7 +26,7 @@ module Yuzakan
           placeholder: '',
         },
         {
-          name: 'str_enc',
+          name: :str_enc,
           label: '暗号文字列',
           description:
             '文字列のパラメーターです。',
@@ -34,7 +36,7 @@ module Yuzakan
           encrypted: true,
         },
         {
-          name: 'txt1',
+          name: :txt1,
           label: '長い文字列',
           description:
             '文字列のパラメーターです。',
@@ -45,7 +47,7 @@ module Yuzakan
           rows: 10,
         },
         {
-          name: 'int1',
+          name: :int1,
           label: '数値',
           description:
             '数値のパラメーターです。',

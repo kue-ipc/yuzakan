@@ -3,11 +3,14 @@ require_relative 'abstract_adapter'
 module Yuzakan
   module Adapters
     class DummyAdapter < AbstractAdapter
-      LABEL = 'Dummy'
+      KIND =
+        if Hanami.env == 'test'
+          :normal
+        else
+          :hidden
+        end
 
-      def self.selectable?
-        Hanami.env == 'test'
-      end
+      LABEL = 'Dummy'
     end
   end
 end

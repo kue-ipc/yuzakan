@@ -47,7 +47,11 @@ class Provider < Hanami::Entity
         end
       end
     end
-    @adapter = ADAPTERS.by_name(attributes[:adapter_name])&.new(@params)
+    adapter_class = ADAPTERS.by_name(attributes[:adapter_name])
+    raise NoAdapterError unless adapter_class
+
+    @adapter = adapter_class.new(adapter_class.decrypt(@params))
+
     super
   end
 
