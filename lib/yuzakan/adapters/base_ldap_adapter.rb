@@ -5,7 +5,7 @@ require 'base64'
 require 'digest'
 
 # パスワード変更について
-# userPassword は {CRYPT}$1$%.8s をデフォルトする。
+# userPassword は {crypt}$1$%.8s をデフォルトする。
 # sambaLMPassword はデフォルト無効とし、設定済みは削除する。
 # sambaNTPassword はデフォルト有効とし、設定する。
 
@@ -143,7 +143,7 @@ module Yuzakan
       end
 
       def create(username, password = nil, **attrs)
-        raise Yuzakan::Adapters::Error, "can not create the existed user: #{username}" if read(username)
+        return nil if read(username)
 
         user_data = attrs.filter { |key, _| key.is_a?(String) }.transform_keys { |key| attribute_name(key) }
         user_data[attribute_name(@params[:user_name_attr])] = attrs[:username]
@@ -311,10 +311,10 @@ module Yuzakan
         case @params[:password_scheme]
         when '{CLEARTEXT}'
           password
-        when '{CRYPT}'
+        when '{crypt}'
           # 16 [./0-9A-Za-z] chars
           salt = SecureRandom.base64(12).tr('+', '.')
-          "{CRYPT}#{password.crypt(format(@params[:crypt_salt_format], salt))}"
+          "{crypt}#{generate_crypt_password(password)}"
         when '{MD5}'
           "{MD5}#{Base64.strict_encode64(Digest::MD5.digest(password))}"
         when '{SHA}'
@@ -339,6 +339,11 @@ module Yuzakan
           # TODO: PBKDF2
           raise NotImplementedError
         end
+      end
+
+      private def generate_crypt_password(password, format: @params[:crypt_salt_format])
+        salt = SecureRandom.base64(12).tr('+', '.')
+        password.crypt(format % salt)
       end
 
       private def lock_password(str)
