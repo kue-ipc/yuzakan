@@ -1,6 +1,5 @@
 require 'securerandom'
 require 'net/ldap'
-require 'smbhash'
 
 require 'base64'
 require 'digest'
@@ -34,7 +33,7 @@ module Yuzakan
           required: false,
           placeholder: '389 or 636',
         }, {
-          name: 'protocol',
+          name: :protocol,
           label: 'プロトコル',
           description:
       'LDAPサーバーにアクセスするプロトコルを指定します。' \
@@ -47,43 +46,43 @@ module Yuzakan
             {name: :ldaps, label: 'LDAPS(TLS)', value: 'ldaps'},
           ],
         }, {
-          name: 'certificate_check',
+          name: :certificate_check,
           label: '証明書チェックを行う。',
           description:
       'サーバー証明書のチェックを行います。LDAPサーバーには正式証明書が必要になります。',
           type: :boolean,
           default: true,
         }, {
-          name: 'base_dn',
+          name: :base_dn,
           label: 'ベースDN',
           description: '全てベースです。',
           type: :string,
           placeholder: 'dc=example,dc=jp',
         }, {
-          name: 'bind_username',
+          name: :bind_username,
           label: '接続ユーザー名',
           type: :string,
           placeholder: 'cn=Admin,dc=example,dc=jp',
         }, {
-          name: 'bind_password',
+          name: :bind_password,
           label: '接続ユーザーのパスワード',
           type: :string,
           encrypted: true,
           input: 'password',
         }, {
-          name: 'user_name_attr',
+          name: :user_name_attr,
           label: 'ユーザー名の属性',
           type: :string,
           placeholder: 'cn',
         }, {
-          name: 'user_base',
+          name: :user_base,
           label: 'ユーザー検索のベース',
           description: 'ユーザー検索を行うときのツリーベースです。指定しない場合はLDAPサーバーのベースから検索します。',
           type: :string,
           required: false,
           placeholder: 'ou=Users,dc=example,dc=jp',
         }, {
-          name: 'user_scope',
+          name: :user_scope,
           label: 'ユーザー検索のスコープ',
           description: 'ユーザー検索を行うときのスコープです。デフォルトは sub です。',
           type: :string,
@@ -94,7 +93,7 @@ module Yuzakan
             {name: :sub, label: 'ベース配下全て検索(sub)', value: 'sub'},
           ],
         }, {
-          name: 'user_filter',
+          name: :user_filter,
           label: 'ユーザー検索のフィルター',
           description:
       'ユーザー検索を行うときのフィルターです。' \
@@ -104,7 +103,7 @@ module Yuzakan
           required: false,
         }, {
 
-          name: 'password_scheme',
+          name: :password_scheme,
           label: 'パスワードのスキーム',
           description:
       'パスワード設定時に使うスキームです。' \
@@ -129,7 +128,7 @@ module Yuzakan
             {name: :pbkdf2_sha512, label: '{PBKDF2-SHA512} PBKDF2 SHA256', value: '{PBKDF2-SHA512}'},
           ],
         }, {
-          name: 'crypt_salt_format',
+          name: :crypt_salt_format,
           label: 'CRYPTのソルトフォーマット',
           description:
       'パスワードのスキームに{CRYPT}を使用している場合は、' \
@@ -143,14 +142,7 @@ module Yuzakan
             {name: :sha256, label: 'SHA256', value: '$5$%.16s'},
             {name: :sha512, label: 'SHA512', value: '$6$%.16s'},
           ],
-        }, {
-          name: 'samba_password',
-          label: 'Sambaパスワード設定',
-          description:
-      'パスワード設定時にSambaパスワードも設定します。ただし、LMパスワードは設定しません。',
-          type: :boolean,
-          default: false,
-        },
+        }
       ]
 
       def self.selectable?
@@ -369,17 +361,8 @@ module Yuzakan
         end
       end
 
-      private def generate_nt_password(password)
-        Smbhash.ntlm_hash(password)
-      end
-
-      # 14文字までしか対応できない
-      private def generate_lm_password(password)
-        Smbhash.lm_hash(password)
-      end
-
       private def lock_password(str)
-        if (m = /\A({[A-Z]+})(.*)\z/.match(str))
+        if (m = /\A({[\w-]+})(.*)\z/.match(str))
           "#{m[1]}!#{m[2]}"
         else
           # 不正なパスワード
@@ -388,7 +371,7 @@ module Yuzakan
       end
 
       private def unlock_password(str)
-        if (m = /\A({[A-Z]+})!(.*)\z/.match(str))
+        if (m = /\A({[\w-]+})!(.*)\z/.match(str))
           m[1] + m[2]
         else
           str
