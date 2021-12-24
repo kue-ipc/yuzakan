@@ -69,19 +69,43 @@ module Yuzakan
           encrypted: true,
           input: 'password',
         }, {
+          name: :user_dn_attr,
+          label: 'ユーザーDNの属性',
+          type: :string,
+          placeholder: 'cn',
+        }, {
+          name: :user_ou_dn,
+          label: 'ユーザーのOU',
+          description: 'ユーザー作成するときのOUです。指定しない場合はLDAPサーバーのベースから検索します。',
+          type: :string,
+          required: false,
+          placeholder: 'ou=Users',
+        }, {
           name: :user_name_attr,
           label: 'ユーザー名の属性',
           type: :string,
           placeholder: 'cn',
         }, {
-          name: :user_base,
-          label: 'ユーザー検索のベース',
-          description: 'ユーザー検索を行うときのツリーベースです。指定しない場合はLDAPサーバーのベースから検索します。',
+          name: :user_display_name_attr,
+          label: 'ユーザー表示名の属性',
+          type: :string,
+          default: 'displayName;lang-ja',
+          placeholder: 'displayName;lang-ja',
+        }, {
+          name: :user_email_attr,
+          label: 'ユーザーメールの属性',
+          type: :string,
+          default: 'mail',
+          placeholder: 'mail',
+        }, {
+          name: :user_search_base_dn,
+          label: 'ユーザー検索のベースDN',
+          description: 'ユーザー検索を行うときのベースです。指定しない場合はLDAPサーバーのベースから検索します。',
           type: :string,
           required: false,
-          placeholder: 'ou=Users,dc=example,dc=jp',
+          placeholder: 'ou=Users',
         }, {
-          name: :user_scope,
+          name: :user_search_scope,
           label: 'ユーザー検索のスコープ',
           description: 'ユーザー検索を行うときのスコープです。通常は sub を使用します。',
           type: :string,
@@ -103,6 +127,10 @@ module Yuzakan
         },
       ]
 
+      MULTI_ATTRS = %w[
+        objectClass
+      ]
+
       def check
         base = ldap.search(
           base: @params[:base_dn],
@@ -114,22 +142,32 @@ module Yuzakan
         end
       end
 
-      # def create(username, password = nil, **attrs)
-      #   entry = specialize_user(usarename: username, **attrs)
-      #   dn = "#{@params[:user_base]}'
-      #   ldap.add(entry)
-      #   raise NotImplementedError
-      # end
+      def create(username, password = nil, **attrs)
+        raise Yuzakan::Adapters::Error, "can not create the existed user: #{username}" if read(username)
+
+        user_data = attrs.filter { |key, _| key.is_a?(String) }.transform_keys { |key| attribute_name(key) }
+        user_data[attribute_name(@params[:user_name_attr])] = attrs[:username]
+        user_data[attribute_name(@params[:user_display_name_attr])] = attrs[:display_name] if attrs[:display_name]
+        user_data[attribute_name(@params[:user_email_attr])] = attrs[:email] if attrs[:email]
+
+        dn = "#{@params[:user_dn_attr]}=#{ldap_attrs[@params[:user_dn_attr].intern]},#{@params[:user_base]}"
+
+        raise ldap.get_operation_result.error_message unless ldap.add(dn: dn, attributes: user_data)
+
+        change_password(username, password) if password
+
+        read(username)
+      end
 
       def read(username)
         opts = search_user_opts(username)
         result = ldap.search(opts)
-        normalize_user(result&.first) if result
+        normalize_user_attrs(result.first) if result
       end
 
-      # def udpate(username, **attrs)
-      #   raise NotImplementedError
-      # end
+      def udpate(username, **attrs)
+        raise NotImplementedError
+      end
 
       # def delete(username)
       #   raise NotImplementedError
@@ -139,19 +177,19 @@ module Yuzakan
         opts = search_user_opts(username).merge(password: password)
         # bind_as is re bind, so DON'T USE `ldap`
         result = generate_ldap.bind_as(opts)
-        normalize_user(result&.first) if result
+        normalize_user_attrs(result&.first) if result
       end
 
       def change_password(username, password)
-        user = read(username)
-        return nil unless user
+        user_attrs = read(username)
+        return nil unless user_attrs
 
         operations = change_password_operations(password)
 
-        modify_result = ldap.modify(dn: user['dn'], operations: operations)
+        modify_result = ldap.modify(dn: user_attrs['dn'], operations: operations)
         raise ldap.get_operation_result.error_message unless modify_result
 
-        user
+        user_attrs
       end
 
       def list
@@ -245,29 +283,27 @@ module Yuzakan
         opts
       end
 
-      private def normalize_user(user)
-        return if user.nil?
-
-        data = {
-          name: user[@params[:user_name_attr]]&.first,
-          display_name: user[:'displayname;lang-ja']&.first ||
-                        user[:displayname]&.first ||
-                        user[@params[:user_name_attr]]&.first,
-          email: user[:email]&.first || user[:mail]&.first,
+      private def normalize_user_attrs(entry)
+        attrs = {
+          name: entry.first(@params[:user_name_attr]),
+          display_name: entry.first(@params[:user_display_name_attr]),
+          email: entry.first(@params[:user_email_attr]),
         }
 
-        user.each do |name, values|
-          case name
-          when :userpassword, :sambantpassword, :sambalmpassword
-            next
-          when :objectclass
-            data[name.to_s] = values
-          else
-            data[name.to_s] = values.first
-          end
+        entry.each do |name, value|
+          attrs[name.to_s] =
+            if self.class.multi_attrs.include?(name)
+              value
+            else
+              value.first
+            end
         end
 
-        data
+        attrs
+      end
+
+      private def attribute_name(name)
+        Net::LDAP::Entry.attribute_name(name)
       end
 
       # https://trac.tools.ietf.org/id/draft-stroeder-hashed-userpassword-values-00.html

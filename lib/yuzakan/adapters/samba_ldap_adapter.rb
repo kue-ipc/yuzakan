@@ -43,6 +43,18 @@ module Yuzakan
 
       NO_PASSWORD = 'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
 
+      MULTI_ATTRS = %w[
+        objectClass
+      ]
+
+      def self.multi_attrs
+        @multi_attrs ||= self::MULTI_ATTRS.map { |attr| attr.downcase.intern }
+      end
+
+      def self.hide_attrs
+        @multi_attrs ||= self::MULTI_ATTRS.map { |attr| attr.downcase.intern }
+      end
+
       def initialize(params)
         super
         @params[:user_name_attr] = 'uid'
