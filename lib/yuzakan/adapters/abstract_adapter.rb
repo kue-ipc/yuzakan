@@ -76,54 +76,75 @@ module Yuzakan
 
     class ParamType
       class ListItem
-        attr_reader :name, :label, :value
+        attr_reader :name, :label, :value, :deprecated
 
-        def initialize(name:, value:, label: nil)
+        def initialize(name:, value:, label: nil, deprecated: false)
           @name = name
           @label = label || name.to_s
           @value = value
+          @deprecated = deprecated
         end
 
         def to_json(...)
-          @json ||= {name: name, label: label, value: value}.to_json(...)
+          {name: name, label: label, value: value, deprecated: deprecated}.to_json(...)
         end
       end
 
+      TYPE_INPUTS = {
+        boolean: 'checkbox',
+        string: 'text',
+        text: 'textarea',
+        integer: 'number',
+      }
+
       attr_reader :name, :label, :description,
                   :type, :default, :list, :encrypted,
-                  :required, :placeholder
+                  :input, :required, :placeholder
 
       def initialize(name:, type:, label: nil, description: nil, default: nil, list: nil, encrypted: false,
-                     required: nil, placeholder: nil)
+                     input: nil, required: nil, placeholder: nil)
         @name = name
         @label = label || name.to_s
         @description = description
 
         @type = type
         @default = default
-        @list = list
+
+        @list = list&.map do |item|
+          if item.is_a?(ParamType::ListItem)
+            item
+          else
+            ParamType::ListItem.new(**item)
+          end
+        end
         @encrypted = encrypted
 
-        @required = if required.nil?
-                      default.nil?
-                    else
-                      required
-                    end
+        @input = input || TYPE_INPUTS.fetch(type)
+
+        @required =
+          if required.nil?
+            default.nil?
+          else
+            required
+          end
 
         @placeholder = placeholder || default
       end
 
       def to_json(...)
-        @json ||= {
+        {
           name: name,
           label: label,
+          description: description,
+
           type: type,
           default: default,
-          placeholder: placeholder,
-          required: required,
           list: list,
           encrypted: encrypted,
-          description: description,
+
+          input: input,
+          placeholder: placeholder,
+          required: required,
         }.to_json(...)
       end
     end
@@ -139,7 +160,7 @@ module Yuzakan
 
       def self.param_types
         @param_types ||= self::PARAM_TYPES.map do |data|
-          ParamType.new(**data, list: data[:list]&.map { |item| ParamType::ListItem.new(**item) })
+          ParamType.new(**data)
         end
       end
 

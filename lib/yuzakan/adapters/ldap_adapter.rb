@@ -2,6 +2,9 @@ require 'securerandom'
 require 'net/ldap'
 require 'smbhash'
 
+require 'base64'
+require 'digest'
+
 # パスワード変更について
 # userPassword は {CRYPT}$1$%.8s をデフォルトする。
 # sambaLMPassword はデフォルト無効とし、設定済みは削除する。
@@ -14,7 +17,7 @@ module Yuzakan
     class LdapAdapter < AbstractAdapter
       LABEL = 'LDAP'
 
-      PARAM_TYPES = [
+      PARAMS = PARAM_TYPES = [
         {
           name: :host,
           label: 'サーバーのホスト名/IPアドレス',
@@ -39,9 +42,9 @@ module Yuzakan
           type: :string,
           default: 'ldaps',
           list: [
-            {name: :ldap, label: 'LDAP(平文)', value: 'ldap'},
-            {name: :ldaps, label: 'LDAPS(TLS)', value: 'ldaps'},
+            {name: :ldap, label: 'LDAP(平文)', value: 'ldap', deprecated: true},
             {name: :ldap_starttls, label: 'LDAP(STARTTLS)', value: 'ldap_starttls'},
+            {name: :ldaps, label: 'LDAPS(TLS)', value: 'ldaps'},
           ],
         }, {
           name: 'certificate_check',
@@ -51,33 +54,28 @@ module Yuzakan
           type: :boolean,
           default: true,
         }, {
-
           name: 'base_dn',
           label: 'ベースDN',
           description: '全てベースです。',
           type: :string,
           placeholder: 'dc=example,dc=jp',
         }, {
-
           name: 'bind_username',
           label: '接続ユーザー名',
           type: :string,
           placeholder: 'cn=Admin,dc=example,dc=jp',
         }, {
-
           name: 'bind_password',
           label: '接続ユーザーのパスワード',
           type: :string,
-          input: 'password',
           encrypted: true,
+          input: 'password',
         }, {
-
           name: 'user_name_attr',
           label: 'ユーザー名の属性',
           type: :string,
           placeholder: 'cn',
         }, {
-
           name: 'user_base',
           label: 'ユーザー検索のベース',
           description: 'ユーザー検索を行うときのツリーベースです。指定しない場合はLDAPサーバーのベースから検索します。',
@@ -85,7 +83,6 @@ module Yuzakan
           required: false,
           placeholder: 'ou=Users,dc=example,dc=jp',
         }, {
-
           name: 'user_scope',
           label: 'ユーザー検索のスコープ',
           description: 'ユーザー検索を行うときのスコープです。デフォルトは sub です。',
@@ -110,22 +107,24 @@ module Yuzakan
           name: 'password_scheme',
           label: 'パスワードのスキーム',
           description:
-      'パスワード設定時に使うスキームです。{CRYPT}はソルトフォーマットも選択してください。',
+      'パスワード設定時に使うスキームです。' \
+      '{CRYPT}はソルトフォーマットも選択してください。' \
+      '対応するスキームはLDAPサーバーの実装によります。',
           type: :string,
           required: true,
           default: '{CRYPT}',
           list: [
-            {name: :cleartext, label: '{CLEARTEXT} 平文', value: '{CLEARTEXT}'},
+            {name: :cleartext, label: '{CLEARTEXT} 平文', value: '{CLEARTEXT}', deprecated: true},
             {name: :crypt, label: '{CRYPT} CRYPT', value: '{CRYPT}'},
-            {name: :md5, label: '{MD5} MD5 (非推奨)', value: '{MD5}'},
-            {name: :sha, label: '{SHA} SHA-1 (非推奨)', value: '{SHA}'},
-            {name: :sha256, label: '{SHA256} SHA-256 (非推奨)', value: '{SHA256}'},
-            {name: :sha512, label: '{SHA512} SHA-512 (非推奨)', value: '{SHA512}'},
-            {name: :smd5, label: '{SMD5} ソルト付MD5 (非推奨)', value: '{SMD5}'},
-            {name: :ssha, label: '{SSHA} ソルト付SHA-1 (非推奨)', value: '{SSHA}'},
+            {name: :md5, label: '{MD5} MD5', value: '{MD5}', deprecated: true},
+            {name: :sha, label: '{SHA} SHA-1', value: '{SHA}', deprecated: true},
+            {name: :sha256, label: '{SHA256} SHA-256', value: '{SHA256}', deprecated: true},
+            {name: :sha512, label: '{SHA512} SHA-512', value: '{SHA512}', deprecated: true},
+            {name: :smd5, label: '{SMD5} ソルト付MD5', value: '{SMD5}', deprecated: true},
+            {name: :ssha, label: '{SSHA} ソルト付SHA-1', value: '{SSHA}', deprecated: true},
             {name: :ssha256, label: '{SSHA256} ソルト付-SHA256', value: '{SSHA256}'},
             {name: :ssha512, label: '{SSHA512} ソルト付SHA-512', value: '{SSHA512}'},
-            {name: :pbkdf2_sha1, label: '{PBKDF2-SHA1} PBKDF2 SHA-1 (非推奨)', value: '{PBKDF2-SHA1}'},
+            {name: :pbkdf2_sha1, label: '{PBKDF2-SHA1} PBKDF2 SHA-1', value: '{PBKDF2-SHA1}', deprecated: true},
             {name: :pbkdf2_sha256, label: '{PBKDF2-SHA256} PBKDF2 SHA256', value: '{PBKDF2-SHA256}'},
             {name: :pbkdf2_sha512, label: '{PBKDF2-SHA512} PBKDF2 SHA256', value: '{PBKDF2-SHA512}'},
           ],
@@ -135,10 +134,15 @@ module Yuzakan
           description:
       'パスワードのスキームに{CRYPT}を使用している場合は、' \
       '記載のフォーマットでソルト値が作成されます。' \
-      '作成できる形式はサーバーのcryptの実装によります。' \
-      '何も指定しない場合はCRYPT-MD5("$1$%.8s")を使用します。',
+      '対応する形式はサーバーのcryptの実装によります。',
           type: :string,
-          required: false,
+          default: '$6$%.16s',
+          list: [
+            {name: :des, label: 'DES', value: '%.2s', deprecated: true},
+            {name: :md5, label: 'MD5', value: '$1$%.8s', deprecated: true},
+            {name: :sha256, label: 'SHA256', value: '$5$%.16s'},
+            {name: :sha512, label: 'SHA512', value: '$6$%.16s'},
+          ],
         }, {
           name: 'samba_password',
           label: 'Sambaパスワード設定',
@@ -330,12 +334,39 @@ module Yuzakan
         data
       end
 
-      # 現在のところ CRYPT-MD5のみ実装
-      # slappasswd -h '{CRYPT}' -c '$1$%.8s'
-      # $1$vuIZLw8r$d9mkddv58FuCPxOh6nO8f0
+      # https://trac.tools.ietf.org/id/draft-stroeder-hashed-userpassword-values-00.html
       private def generate_password(password)
-        salt = SecureRandom.base64(12).gsub('+', '.')
-        "{CRYPT}#{password.crypt(format('$1$%.8s', salt))}"
+        case @params[:password_scheme]
+        when '{CLEARTEXT}'
+          password
+        when '{CRYPT}'
+          # 16 [./0-9A-Za-z] chars
+          salt = SecureRandom.base64(12).tr('+', '.')
+          "{CRYPT}#{password.crypt(format(@params[:crypt_salt_format], salt))}"
+        when '{MD5}'
+          "{MD5}#{Base64.strict_encode64(Digest::MD5.digest(password))}"
+        when '{SHA}'
+          "{SHA}#{Base64.strict_encode64(Digest::SHA1.digest(password))}"
+        when '{SHA256}'
+          "{SHA256}#{Base64.strict_encode64(Digest::SHA256.digest(password))}"
+        when '{SHA512}'
+          "{SHA512}#{Base64.strict_encode64(Digest::SHA512.digest(password))}"
+        when '{SMD5}'
+          salt = SecureRandom.random_bytes(8)
+          "{SMD5}#{Base64.strict_encode64(Digest::MD5.digest(password + salt), salt)}"
+        when '{SSHA}'
+          salt = SecureRandom.random_bytes(8)
+          "{SSHA}#{Base64.strict_encode64(Digest::SHA1.digest(password + salt), salt)}"
+        when '{SSHA256}'
+          salt = SecureRandom.random_bytes(8)
+          "{SSHA256}#{Base64.strict_encode64(Digest::SHA256.digest(password + salt), salt)}"
+        when '{SSHA512}'
+          salt = SecureRandom.random_bytes(8)
+          "{SSHA512}#{Base64.strict_encode64(Digest::SHA512.digest(password + salt), salt)}"
+        else
+          # TODO: PBKDF2
+          raise NotImplementedError
+        end
       end
 
       private def generate_nt_password(password)
