@@ -17,10 +17,7 @@ jobs:
         ports:
           - 3306:3306
         env:
-          MARIADB_ROOT_PASSWORD: pass+yuzakan42
-          MARIADB_USER: yuzakan
-          MARIADB_PASSWORD: pass+yuzakan42
-          MARIADB_DATABASE: yuzakan_test
+          MARIADB_ROOT_PASSWORD: admin_password
     steps:
       - uses: actions/checkout@v2
       - name: Set up Ruby
@@ -29,7 +26,7 @@ jobs:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
       - name: Creat DB
-        run: bundle exec hanami db migrate
+        run: bundle exec hanami db prepare
         env:
           HANAMI_ENV: test
       - name: Run tests
