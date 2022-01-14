@@ -99,7 +99,7 @@ $ bundle exec rake build
 テスト実施:
 
 ```
-$ bundle exec rake
+$ bundle exec rake test
 ```
 
 開発コンソール起動:
