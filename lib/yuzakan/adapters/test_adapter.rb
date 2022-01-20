@@ -5,13 +5,9 @@ require_relative 'abstract_adapter'
 module Yuzakan
   module Adapters
     class TestAdapter < AbstractAdapter
-
-      KIND =
-        if Hanami.env != 'production'
-          :normal
-        else
-          :hidden
-        end
+      if Hanami.env == 'production'
+        self.hidden_adapter = true
+      end
 
       LABEL = 'テスト'
 

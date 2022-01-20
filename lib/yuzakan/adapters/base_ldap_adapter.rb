@@ -14,7 +14,7 @@ require_relative 'abstract_adapter'
 module Yuzakan
   module Adapters
     class BaseLdapAdapter < AbstractAdapter
-      KIND = :abstract
+      self.abstract_adapter = true
 
       PARAMS = PARAM_TYPES = [
         {
@@ -26,17 +26,15 @@ module Yuzakan
         }, {
           name: :port,
           label: 'ポート',
-          description:
-      'LDAPサーバーにアクセスするポート番号をして指定します。' \
-      '指定しない場合は既定値(LDAPは389、LDAPSは636)を使用します。',
+          description: 'LDAPサーバーにアクセスするポート番号をして指定します。' \
+                       '指定しない場合は既定値(LDAPは389、LDAPSは636)を使用します。',
           type: :integer,
           required: false,
           placeholder: '389 or 636',
         }, {
           name: :protocol,
           label: 'プロトコル/暗合形式',
-          description:
-      'LDAPサーバーにアクセスするプロトコルを指定します。',
+          description: 'LDAPサーバーにアクセスするプロトコルを指定します。',
           type: :string,
           default: 'ldaps',
           list: [
@@ -48,7 +46,8 @@ module Yuzakan
         }, {
           name: :certificate_check,
           label: '証明書チェックを行う。',
-          description: 'サーバー証明書のチェックを行います。LDAPサーバーには正式証明書が必要になります。',
+          description: 'サーバー証明書のチェックを行います。' \
+                       'LDAPサーバーには正式証明書が必要になります。',
           type: :boolean,
           default: true,
         }, {
@@ -76,7 +75,8 @@ module Yuzakan
         }, {
           name: :user_ou_dn,
           label: 'ユーザーのOU',
-          description: 'ユーザー作成するときのOUです。指定しない場合はLDAPサーバーのベースから検索します。',
+          description: 'ユーザー作成するときのOUです。' \
+                       '指定しない場合はLDAPサーバーのベースから検索します。',
           type: :string,
           required: false,
           placeholder: 'ou=Users',
@@ -100,14 +100,16 @@ module Yuzakan
         }, {
           name: :user_search_base_dn,
           label: 'ユーザー検索のベースDN',
-          description: 'ユーザー検索を行うときのベースです。指定しない場合はLDAPサーバーのベースから検索します。',
+          description: 'ユーザー検索を行うときのベースです。' \
+                       '指定しない場合はLDAPサーバーのベースから検索します。',
           type: :string,
           required: false,
           placeholder: 'ou=Users',
         }, {
           name: :user_search_scope,
           label: 'ユーザー検索のスコープ',
-          description: 'ユーザー検索を行うときのスコープです。通常は sub を使用します。',
+          description: 'ユーザー検索を行うときのスコープです。' \
+                       '通常は sub を使用します。',
           type: :string,
           default: 'sub',
           list: [

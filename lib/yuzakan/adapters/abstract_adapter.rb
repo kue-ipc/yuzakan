@@ -95,7 +95,7 @@ module Yuzakan
         string: 'text',
         text: 'textarea',
         integer: 'number',
-      }
+      }.freeze
 
       attr_reader :name, :label, :description,
                   :type, :default, :list, :encrypted,
@@ -150,108 +150,103 @@ module Yuzakan
     end
 
     class AbstractAdapter
-      KIND = :abstract
+      class << self
+        attr_accessor :abstract_adapter, :hidden_adapter
 
-      def self.label
-        self::LABEL || raise(NotImplementedError)
-      end
-
-      def self.kind
-        if defiend? self::KIND
-          self::KIND
-        else
-          :normal
+        def label
+          self::LABEL || raise(NotImplementedError)
         end
-      end
 
-      def self.selectable?
-        kind == :normal
-      end
-
-      def self.abstract?
-        kind == :abstract
-        @abstract
-      end
-
-      def self.param_types
-        @param_types ||= self::PARAM_TYPES.map do |data|
-          ParamType.new(**data)
+        def selectable?
+          !abstract_adapter && !hidden_adapter
         end
-      end
 
-      def self.param_type_by_name(name)
-        param_types_map.fetch(name)
-      end
+        def abstract?
+          !!abstract_adapter
+        end
 
-      def self.param_types_map
-        @param_types_map ||= param_types.map do |type|
-          [type.name, type]
-        end.to_h
-      end
-
-      # def self.params
-      #   self::PARAMS || []
-      # end
-
-      # def self.name_param_map
-      #   @name_param_map ||= params.map { |param| [param[:name].intern, param] }.to_h
-      # end
-
-      # def self.param_by_name(name)
-      #   name_param_map&.fetch(name)
-      # end
-
-      def self.decrypt(encrypted_params)
-        encrypted_params.to_h do |name, value|
-          param_type = param_type_by_name(name)
-          if param_type.encrypted
-            result = Decrypt.new.call(encrypted: value)
-            raise Yuzakan::Adapters::Error, result.errors if result.failure?
-
-            [name, result.data]
-          else
-            [name, value]
+        def param_types
+          @param_types ||= self::PARAM_TYPES.map do |data|
+            ParamType.new(**data)
           end
         end
-      end
 
-      def self.encrypt(plain_params)
-        plain_params.to_h do |name, value|
-          param_type = param_type_by_name(name)
-          if param_type.encrypted
-            encrypt_opts =
-              case param_type.type
-              when :string
-                {max: 4096}
-              when :text
-                {max: 0}
-              else
-                raise Yuzakan::Adapters::Error, "can not ecrypt type: #{param_type.type}"
-              end
-            encrypt = Encrypt.new(**encrypt_opts)
-            result = encrypt.call(data: value)
-            raise Yuzakan::Adapters::Error, result.errors if result.failure?
+        def param_type_by_name(name)
+          param_types_map.fetch(name)
+        end
 
-            [name, result.encrypted]
-          else
-            [name, value]
+        def param_types_map
+          @param_types_map ||= param_types.to_h do |type|
+            [type.name, type]
           end
         end
-      end
 
-      def self.normalize_params(params)
-        param_types.to_h do |param_type|
-          name = param_type.name
-          value =
-            if params[name].nil? ||
-               (params[name].is_a?(String) && params[name].empty?)
-              param_type.default
+        # def self.params
+        #   self::PARAMS || []
+        # end
+
+        # def self.name_param_map
+        #   @name_param_map ||= params.map { |param| [param[:name].intern, param] }.to_h
+        # end
+
+        # def self.param_by_name(name)
+        #   name_param_map&.fetch(name)
+        # end
+
+        def decrypt(encrypted_params)
+          encrypted_params.to_h do |name, value|
+            param_type = param_type_by_name(name)
+            if param_type.encrypted
+              result = Decrypt.new.call(encrypted: value)
+              raise Yuzakan::Adapters::Error, result.errors if result.failure?
+
+              [name, result.data]
             else
-              params[name]
+              [name, value]
             end
-          [name, value]
+          end
+        end
+
+        def encrypt(plain_params)
+          plain_params.to_h do |name, value|
+            param_type = param_type_by_name(name)
+            if param_type.encrypted
+              encrypt_opts =
+                case param_type.type
+                when :string
+                  {max: 4096}
+                when :text
+                  {max: 0}
+                else
+                  raise Yuzakan::Adapters::Error, "can not ecrypt type: #{param_type.type}"
+                end
+              encrypt = Encrypt.new(**encrypt_opts)
+              result = encrypt.call(data: value)
+              raise Yuzakan::Adapters::Error, result.errors if result.failure?
+
+              [name, result.encrypted]
+            else
+              [name, value]
+            end
+          end
+        end
+
+        def normalize_params(params)
+          param_types.to_h do |param_type|
+            name = param_type.name
+            value =
+              if params[name].nil? ||
+                 (params[name].is_a?(String) && params[name].empty?)
+                param_type.default
+              else
+                params[name]
+              end
+            [name, value]
+          end
         end
       end
+
+      self.abstract_adapter = true
 
       def initialize(params)
         @params = self.class.normalize_params(params)

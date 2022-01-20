@@ -3,12 +3,9 @@ require_relative 'abstract_adapter'
 module Yuzakan
   module Adapters
     class DummyAdapter < AbstractAdapter
-      KIND =
-        if Hanami.env == 'test'
-          :normal
-        else
-          :hidden
-        end
+      if Hanami.env != 'test'
+        self.hidden_adapter = true
+      end
 
       LABEL = 'Dummy'
     end
