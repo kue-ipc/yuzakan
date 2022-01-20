@@ -1,4 +1,4 @@
-require_relative '../../../spec_helper'
+require_relative '../../../../spec_helper'
 
 describe Admin::Controllers::Adapters::ParamTypes::Index do
   let(:action) { Admin::Controllers::Adapters::ParamTypes::Index.new }
