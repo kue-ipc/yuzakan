@@ -2,7 +2,7 @@ module Yuzakan
   module Utils
     class CacheStore
       def self.create_store(expires_in: 0, **opts)
-        if expires_in > 0
+        if expires_in.positive?
           RedisCacheStore.new(expires_in: expires_in, **opts)
         else
           NoCacheStore.new

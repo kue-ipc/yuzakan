@@ -20,9 +20,9 @@ module Admin
           @pagy_data, @users = pagy(UserRepository.new)
           @providers = ProviderRepository.new
             .operational_all_with_adapter(:list).to_a
-          @provider_users = @providers.each.map do |provider|
+          @provider_users = @providers.each.to_h do |provider|
             [provider.id, provider.list]
-          end.to_h
+          end
         end
       end
     end

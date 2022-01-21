@@ -12,7 +12,7 @@ class Provider < Hanami::Entity
     locked
     disabled
     unmanageable
-  ]
+  ].freeze
 
   class NoAdapterError < StandardError
     def initialize(msg = 'No adapter, but need an adapter.')

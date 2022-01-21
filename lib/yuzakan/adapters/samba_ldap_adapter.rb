@@ -41,7 +41,7 @@ module Yuzakan
         %i[user_name_attr user_filter].include?(data[:name])
       end
 
-      NO_PASSWORD = 'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
+      NO_PASSWORD = -'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
 
       def initialize(params)
         super

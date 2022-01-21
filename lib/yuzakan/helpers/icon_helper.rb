@@ -9,9 +9,9 @@ module Yuzakan
 
         case opts[:class]
         when Array
-          svg_opts[:class] += ' ' + opts[:class].join(' ')
+          svg_opts[:class] += " #{opts[:class].join(' ')}"
         when String
-          svg_opts[:class] += ' ' + opts[:class]
+          svg_opts[:class] += " #{opts[:class]}"
         end
 
         svg_opts.merge!(role: 'img', 'aria-label': alt) if alt
