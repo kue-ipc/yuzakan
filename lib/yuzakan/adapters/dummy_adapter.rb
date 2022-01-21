@@ -5,7 +5,9 @@ module Yuzakan
     class DummyAdapter < AbstractAdapter
       self.hidden_adapter = true if Hanami.env != 'test'
 
-      self.label = 'Dummy'
+      self.label = 'ダミー'
+
+      self.params = []
     end
   end
 end

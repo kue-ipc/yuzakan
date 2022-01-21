@@ -80,6 +80,10 @@ class Provider < Hanami::Entity
     @adapter.class.params
   end
 
+  def adapter_param_types
+    @adapter.class.param_types
+  end
+
   def key(*name)
     name.join(':')
   end

@@ -1,4 +1,4 @@
-require_relative '../../../spec_helper'
+require_relative '../../../../spec_helper'
 
 describe Admin::Views::Adapters::ParamTypes::Index do
   let(:exposures) { Hash[format: :html] }
