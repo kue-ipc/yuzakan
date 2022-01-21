@@ -12,9 +12,9 @@ require_relative 'base_ldap_adapter'
 module Yuzakan
   module Adapters
     class SambaLdapAdapter < BaseLdapAdapter
-      LABEL = 'Samba LDAP'
+      self.label = 'Samba LDAP'
 
-      PARAMS = PARAM_TYPES = (BaseLdapAdapter::PARAM_TYPES + [
+      self.params = (BaseLdapAdapter.params + [
         {
           name: :samba_domain_sid,
           label: 'Samba ドメインSID',
@@ -43,36 +43,20 @@ module Yuzakan
 
       NO_PASSWORD = 'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
 
-      MULTI_ATTRS = %w[
-        objectClass
-      ]
-
-      def self.multi_attrs
-        @multi_attrs ||= self::MULTI_ATTRS.map { |attr| attr.downcase.intern }
-      end
-
-      def self.hide_attrs
-        @multi_attrs ||= self::MULTI_ATTRS.map { |attr| attr.downcase.intern }
-      end
-
       def initialize(params)
         super
         @params[:user_name_attr] = 'uid'
         @params[:user_filter] = '(objectClass=sambaSamAccount)'
       end
 
-      def create(username, password = nil, **attrs)
+      def create(username, _password = nil, **attrs)
         opts = search_user_opts(username, filter: nil)
         result = ldap.search(opts)
 
         user_attrs = read(username)
 
         user_attrs[:classobject].include?('sambaSamAccount')
-
-        
         user_attrs.merge(attrs)
-
-
       end
 
       def auth(username, password)
@@ -87,9 +71,7 @@ module Yuzakan
 
         generate_nt_password(password) == user['sambantpassword']
 
-        opts = search_user_opts(username)
-        
-        .merge(password: password)
+        opts = search_user_opts(username).merge(password: password)
         # bind_as is re bind, so DON'T USE `ldap`
         user = generate_ldap.bind_as(opts)
         normalize_user(user&.first) if user

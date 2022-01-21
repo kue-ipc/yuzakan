@@ -5,13 +5,11 @@ require_relative 'abstract_adapter'
 module Yuzakan
   module Adapters
     class TestAdapter < AbstractAdapter
-      if Hanami.env == 'production'
-        self.hidden_adapter = true
-      end
+      self.hidden_adapter = true if Hanami.env == 'production'
 
-      LABEL = 'テスト'
+      self.label = 'テスト'
 
-      PARAM_TYPES = PARAMS = [
+      self.params = [
         {
           name: :str1,
           label: '文字列',

@@ -101,7 +101,8 @@ module Yuzakan
                   :type, :default, :list, :encrypted,
                   :input, :required, :placeholder
 
-      def initialize(name:, type:, label: nil, description: nil, default: nil, list: nil, encrypted: false,
+      def initialize(name:, label: nil, description: nil,
+                     type: :string, default: nil, list: nil, encrypted: false,
                      input: nil, required: nil, placeholder: nil)
         @name = name.intern
         @label = label || name.to_s
@@ -151,11 +152,7 @@ module Yuzakan
 
     class AbstractAdapter
       class << self
-        attr_accessor :abstract_adapter, :hidden_adapter
-
-        def label
-          self::LABEL || raise(NotImplementedError)
-        end
+        attr_accessor :abstract_adapter, :hidden_adapter, :label, :params
 
         def selectable?
           !abstract_adapter && !hidden_adapter
@@ -166,7 +163,7 @@ module Yuzakan
         end
 
         def param_types
-          @param_types ||= self::PARAM_TYPES.map do |data|
+          @param_types ||= params&.map do |data|
             ParamType.new(**data)
           end
         end
@@ -176,22 +173,10 @@ module Yuzakan
         end
 
         def param_types_map
-          @param_types_map ||= param_types.to_h do |type|
+          @param_types_map ||= param_types&.to_h do |type|
             [type.name, type]
           end
         end
-
-        # def self.params
-        #   self::PARAMS || []
-        # end
-
-        # def self.name_param_map
-        #   @name_param_map ||= params.map { |param| [param[:name].intern, param] }.to_h
-        # end
-
-        # def self.param_by_name(name)
-        #   name_param_map&.fetch(name)
-        # end
 
         def decrypt(encrypted_params)
           encrypted_params.to_h do |name, value|

@@ -3,8 +3,6 @@ require_relative '../utils/cache_store'
 class Provider < Hanami::Entity
   attr_reader :params
 
-  # attr_reader :adapter, :cache_store, :adapter_class
-
   NAME_RE = /\A[\w.-]+\z/.freeze
 
   BASE_ATTRS = %i[

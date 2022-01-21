@@ -3,14 +3,14 @@ require 'net/ldap'
 require 'smbhash'
 require 'base64'
 
-require_relative 'ldap_adapter'
+require_relative 'base_ldap_adapter'
 
 module Yuzakan
   module Adapters
-    class AdAdapter < LdapAdapter
-      LABEL = 'Active Directory'
+    class AdAdapter < BaseLdapAdapter
+      self.label = 'Active Directory'
 
-      PARAMS = [
+      self.params = [
         {
           name: :host,
           label: 'ドメインコントローラーのホスト名/IPアドレス',
@@ -84,18 +84,6 @@ module Yuzakan
           placeholder: '(objectclass=user)',
         },
       ]
-
-      def self.label
-        LABEL
-      end
-
-      def self.selectable?
-        true
-      end
-
-      def self.params
-        PARAMS
-      end
 
       def initialize(params)
         super(params.merge(
