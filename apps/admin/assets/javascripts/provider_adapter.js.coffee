@@ -1,6 +1,6 @@
 # プロバイダーのアダプター選択時にフォームを表示する
 
-import {h, text, app} from '../hyperapp.js?v=2.0.19'
+import {h, text, app} from '../hyperapp.js?v=2.0.20'
 import {fieldName, fieldId} from './form_helper.js?v=0.0.1'
 
 mainNode = document.getElementById('provider-adapter')

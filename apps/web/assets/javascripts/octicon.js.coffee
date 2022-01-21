@@ -1,6 +1,6 @@
 # Octicons for hyperapp
 
-import {h, text} from './hyperapp.js?v=2.0.19'
+import {h, text} from './hyperapp.js?v=2.0.20'
 import octicons from './octicons.js?v=16.2.0'
 
 export default octicon = ({name, size = 16, alt, props...}) ->

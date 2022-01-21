@@ -1,6 +1,6 @@
 # Bootstrap Icons for hyperapp
 
-import {h} from './hyperapp.js?v=2.0.19'
+import {h} from './hyperapp.js?v=2.0.20'
 
 export BsIcon = ({name, size = 16, alt, props...}) ->
   svg_props =

@@ -1,4 +1,4 @@
-import {h, text} from './hyperapp.js?v=2.0.19'
+import {h, text} from './hyperapp.js?v=2.0.20'
 
 export ModalHeader = ({labelId, title, closable}) =>
   titleProps = {class: 'modal-title'}
