@@ -5,6 +5,8 @@ class AttrMapping < Hanami::Entity
 
   # Adapter data -> Ruby data
   def convert_value(value)
+    return if value.nil?
+
     if conversion.nil?
       case attr.type
       when 'boolean'
@@ -45,6 +47,8 @@ class AttrMapping < Hanami::Entity
 
   # Ruby data -> Adapter data
   def map_value(value)
+    return if vlaue.nil?
+
     return value if conversion.nil?
 
     case conversion

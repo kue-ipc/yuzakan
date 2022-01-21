@@ -3,7 +3,7 @@
 # initialize(params)
 # check -> true or false
 #
-# attrs:
+# userdata:
 #   name: String = username
 #   display_name: String = display name
 #   email: String = mail address
@@ -11,18 +11,21 @@
 #   disabled: ?bool
 #   unmanageable: ?bool
 #   mfa: ?bool
-#   "key" => value
-#   ...
+#   attrs: Hash = {key: value, ...}
 #
-# CRUD
-# create(username, password = nil, **attrs) -> attrs [writable]
-# read(username) -> attrs or nil [readable]
-# update(username, **attrs) -> attrs [writeable]
+# groupdate:
+#   name: String = groupname
+#   dislay_name: String = display name
+#
+# -- CRUD --
+# create(username, password = nil, **userdata) -> userdata [writable]
+# read(username) -> userdata or nil [readable]
+# update(username, **userdata) -> userdata [writeable]
 # delete(username) -> nil [writable]
 #
 # auth(username, password) -> bool [authenticatable]
 #
-# change_password(username, password) -> attrs or nil [password_changeable]
+# change_password(username, password) -> nil [password_changeable]
 # generate_code(username) -> codes or nil [password_changeable]
 #
 # lock(username) -> nil [lockable]
@@ -32,22 +35,21 @@
 #
 # search(query) -> usernames [readable]
 #
-# group_attrs:
-#   name: String = username
+# groupdate:
+#   name: String = groupname
 #   display_name: String = display name
 #   disabled: ?bool
 #   unmanageable: ?bool
-#   "key" => value
-#   ...
+#   attrs: Hash = {key: value, ...}
 #
-# group_create(groupname, **group_attrs) -> group_attrs or nil [writable]
+# group_create(groupname, **groupdata) -> groupdata or nil [writable]
 # group_read(groupname) -> group or nil [readable]
-# group_update(groupname, **group_attrs) -> group_attrs or nil [writeable]
+# group_update(groupname, **groupdata) -> groupdata or nil [writeable]
 # group_delete(groupname) -> group or nil [writable]
 # group_list -> groupnames
 #
 # member_list(groupname)
-# member_insert(groupname, username)
+# member_add(groupname, username)
 # member_delete(groupname, username)
 #
 # params is Hash Array
@@ -55,8 +57,7 @@
 # - label: 表示名
 # - description: 説明
 # - type: 型
-#     - :boolean, :string, :text, :intger, :float, :date, :time, :datetime,
-#       :file
+#     - :boolean, :string, :text, :intger, :float, :date, :time, :datetime, :file
 # - input: form inputのタイプ
 #     - :text, :password, email, ...
 #     - 省略時はtypeによって自動決定
@@ -66,8 +67,7 @@
 #     - :free, select, button
 # - list: string等で自由入力ではなく一覧からの選択になる。
 # - default: 新規作成時のデフォルト値
-# - encrypted: 暗号化して保存するか (:string, :text, :fileのみ指定可能、
-#              デフォルト: fales)
+# - encrypted: 暗号化して保存するか (:string, :text, :fileのみ指定可能、デフォルト: fales)
 
 module Yuzakan
   module Adapters
@@ -241,7 +241,7 @@ module Yuzakan
         raise NotImplementedError
       end
 
-      def create(_username, _password = nil, **_attrs)
+      def create(_username, _password = nil, **_userdata)
         raise NotImplementedError
       end
 
@@ -249,7 +249,7 @@ module Yuzakan
         raise NotImplementedError
       end
 
-      def udpate(_username, **_attrs)
+      def udpate(_username, **_userdata)
         raise NotImplementedError
       end
 

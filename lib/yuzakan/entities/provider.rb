@@ -80,49 +80,61 @@ class Provider < Hanami::Entity
     @adapter.class.params
   end
 
+  def key(*name)
+    name.join(':')
+  end
+
   def user_key(username)
-    ['user', username].join(':')
+    key('user', username)
   end
 
   def group_key(groupname)
-    ['group', groupname].join(':')
+    key('group', groupname)
+  end
+
+  def list_key(name)
+    key('list', name)
   end
 
   def user_list_key
-    ['list', 'user'].join(':')
+    list_key('user')
   end
 
   def group_list_key
-    ['list', 'group'].join(':')
+    list_key('group')
   end
 
   # Ruby attrs -> Adapter aatrs
   def map_attrs(attrs)
-    mapped_attrs = attrs.slice(*Provider::BASE_ATTRS)
-    attr_mappings.each do |mapping|
-      value = attrs[mapping.attr_name]
-      next if value.nil?
+    return {} if attrs.nil?
 
-      mapped_attrs[mapping.name] = mapping.convert_value(value)
-    end
-    mapped_attrs
+    attr_mappings.to_h do |mapping|
+      [mapping.name, mapping.convert_value(attrs[mapping.attr_name.intern])]
+    end.compact
+  end
+
+  def map_userdata(userdata)
+    return if userdata.nil?
+
+    {**userdata, attrs: map_attrs(userdata[:attrs])}
   end
 
   # Adapter attrs -> Ruby attrs
   def convert_attrs(raw_attrs)
-    return nil if raw_attrs.nil?
+    return {} if raw_attrs.nil?
 
-    attrs = raw_attrs.slice(*Provider::BASE_ATTRS)
-    attr_mappings.each do |mapping|
-      value = raw_attrs[mapping.name] || raw_attrs[mapping.name.downcase]
-      next if value.nil?
-
-      attrs[mapping.attr_name] = mapping.map_value(value)
-    end
-    attrs
+    attr_mappings.to_h do |mapping|
+      [mapping.attr_name, mapping.map_value(raw_attrs[mapping.name.intern] || raw_attrs[mapping.name.downcase.intern])]
+    end.compact
   end
 
-  def need_adapter
+  def convert_userdata(raw_userdata)
+    return if raw_userdata.nil?
+
+    {**raw_userdata, attrs: map_attrs(raw_userdata[:attrs])}
+  end
+
+  def need_adapter!
     raise NoAdapterError unless @adapter
   end
 
@@ -133,89 +145,68 @@ class Provider < Hanami::Entity
   end
 
   def check
-    need_adapter
-
+    need_adapter!
     @adapter.check
   end
 
-  def create(username, password = nil, **attrs)
-    need_adapter
-
+  def create(username, password = nil, **userdata)
+    need_adapter!
     username = sanitize_name(username)
-    mapped_attrs = map_attrs(attrs)
-
-    raw_attrs = @adapter.create(username, password, **mapped_attrs)
-    @cache_store[user_key(username)] = convert_attrs(raw_attrs) if raw_attrs
+    raw_userdata = @adapter.create(username, password, **map_userdata(userdata))
+    @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
 
   def read(username)
-    need_adapter
-
+    need_adapter!
     username = sanitize_name(username)
-
     @cache_store.fetch(user_key(username)) do
-      raw_attrs = @adapter.read(username)
-      @cache_store[user_key(username)] = convert_attrs(raw_attrs) if raw_attrs
+      raw_userdata = @adapter.read(username)
+      @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
     end
   end
 
-  def udpate(username, **attrs)
-    need_adapter
-
+  def udpate(username, **userdata)
+    need_adapter!
     username = sanitize_name(username)
-    mapped_attrs = map_attrs(attrs)
-
-    raw_attrs = @adapter.update(username, **mapped_attrs)
-    @cache_store[user_key(username)] = convert_attrs(raw_attrs) if raw_attrs
+    raw_userdata = @adapter.update(username, **map_userdata(userdata))
+    @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
 
   def delete(username)
-    need_adapter
-
+    need_adapter!
     username = sanitize_name(username)
-
-    raw_attrs = @adapter.delete(username)
-    @cache_store.delete(user_key(username)) || convert_attrs(raw_attrs)
+    raw_userdata = @adapter.delete(username)
+    @cache_store.delete(user_key(username)) || convert_userdata(raw_userdata)
   end
 
   def auth(username, password)
-    need_adapter
-
+    need_adapter!
     username = sanitize_name(username)
-
-    raw_attrs = @adapter.auth(username, password)
-    @cache_store[user_key(username)] = convert_attrs(raw_attrs) if raw_attrs
+    @adapter.auth(username, password)
   end
 
   def change_password(username, password)
-    need_adapter
+    need_adapter!
     username = sanitize_name(username)
-
-    raw_attrs = @adapter.change_password(username, password)
-    @cache_store[user_key(username)] = convert_attrs(raw_attrs) if raw_attrs
+    @adapter.change_password(username, password)
   end
 
   def lock(username)
-    need_adapter
+    need_adapter!
     username = sanitize_name(username)
-
-    raw_attrs = @adapter.lock(username)
-    @cache_store[user_key(username)] = convert_attrs(raw_attrs) if raw_attrs
+    @adapter.lock(username)
   end
 
   def unlock(username, password = nil)
-    need_adapter
-    raw_attrs = @adapter.unlock(username, password)
-    @cache_store[user_key(username)] = convert_attrs(raw_attrs) if raw_attrs
+    need_adapter!
+    username = sanitize_name(username)
+    @adapter.unlock(username, password)
   end
 
   def generate_code(username)
-    need_adapter
+    need_adapter!
+    username = sanitize_name(username)
     @adapter.generate_code(username)
-  end
-
-  def admin?(username)
-    read(username)[:admin]
   end
 
   def enabled?(username)
@@ -223,20 +214,19 @@ class Provider < Hanami::Entity
   end
 
   def locked?(username)
-    !!read(username)[:locked]
+    nil | read(username)[:locked]
   end
 
   def disabled?(username)
-    !!read(username)[:disabled]
+    nil | read(username)[:disabled]
   end
 
   def unmanageable?(username)
-    !!read(username)[:unmanageable]
+    nil | read(username)[:unmanageable]
   end
 
   def list
-    need_adapter
-
+    need_adapter!
     @cache_store.fetch(user_list_key) do
       @cache_store[user_list_key] = @adapter.list
     end
