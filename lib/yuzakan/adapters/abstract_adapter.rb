@@ -159,7 +159,7 @@ module Yuzakan
         end
 
         def abstract?
-          !!abstract_adapter
+          nil | abstract_adapter
         end
 
         def param_types
