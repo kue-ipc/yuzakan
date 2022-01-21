@@ -66,6 +66,8 @@ Style/FrozenStringLiteralComment:
   EnforcedStyle: never
 Style/OneLineConditional:
   AlwaysCorrectToMultiline: true
+Style/FormatString:
+  EnforcedStyle: percent
 
 # applications
 

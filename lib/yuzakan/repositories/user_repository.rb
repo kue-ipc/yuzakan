@@ -29,16 +29,16 @@ class UserRepository < Hanami::Repository
       break if result
     end
 
-    if result
-      display_name = result[:display_name] || result[:name]
-      user = by_name(name)
-      if user
-        update(user.id, display_name: display_name) if user.display_name != display_name
-        update(user.id, email: result[:email]) if user.email != result[:email]
-        find(user.id)
-      else
-        create(name: name, display_name: display_name, email: result[:email])
-      end
+    return unless result
+
+    display_name = result[:display_name] || result[:name]
+    user = by_name(name)
+    if user
+      update(user.id, display_name: display_name) if user.display_name != display_name
+      update(user.id, email: result[:email]) if user.email != result[:email]
+      find(user.id)
+    else
+      create(name: name, display_name: display_name, email: result[:email])
     end
   end
 
