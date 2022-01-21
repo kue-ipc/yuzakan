@@ -40,9 +40,7 @@ class UpdateAttr
       if @attr
         @attr_repository.update(@attr.id, params)
       else
-        unless params[:order]
-          params[:order] = @attr_repository.last_order&.order.to_i + 1
-        end
+        params[:order] = @attr_repository.last_order&.order.to_i + 1 unless params[:order]
         @attr_repository.create(params)
       end
 

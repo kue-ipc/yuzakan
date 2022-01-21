@@ -33,9 +33,7 @@ class UserRepository < Hanami::Repository
       display_name = result[:display_name] || result[:name]
       user = by_name(name)
       if user
-        if user.display_name != display_name
-          update(user.id, display_name: display_name)
-        end
+        update(user.id, display_name: display_name) if user.display_name != display_name
         update(user.id, email: result[:email]) if user.email != result[:email]
         find(user.id)
       else
@@ -58,9 +56,7 @@ class UserRepository < Hanami::Repository
     email = result[:email]
     user = by_name(name).one
 
-    unless user
-      return create(name: name, display_name: display_name, email: email)
-    end
+    return create(name: name, display_name: display_name, email: email) unless user
 
     if user.display_name != display_name || user.email != email
       return update(user.id, {display_name: display_name, email: email})

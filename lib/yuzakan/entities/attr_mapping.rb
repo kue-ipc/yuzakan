@@ -43,7 +43,7 @@ class AttrMapping < Hanami::Entity
       end
     end
   end
-  alias :convert :convert_value
+  alias convert convert_value
 
   # Ruby data -> Adapter data
   def map_value(value)
@@ -66,7 +66,7 @@ class AttrMapping < Hanami::Entity
       value
     end
   end
-  alias :reverse_convert :map_value 
+  alias reverse_convert map_value
 
   E2J_LIST = [
     ['student', '学生'],

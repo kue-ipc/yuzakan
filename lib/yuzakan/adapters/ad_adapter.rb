@@ -90,9 +90,7 @@ module Yuzakan
           protocol: 'ldaps',
           port: 636,
           user_name_attr: 'cn'))
-        if @params[:user_filter] && !@params[:user_filter].empty?
-          @params[:user_filter] = '(objectclass=user)'
-        end
+        @params[:user_filter] = '(objectclass=user)' if @params[:user_filter] && !@params[:user_filter].empty?
       end
 
       # 初期作成のユーザーは'add'じゃないとエラーになるかもしれない。

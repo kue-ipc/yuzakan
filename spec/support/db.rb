@@ -21,16 +21,13 @@ def db_initialize
   # 一般ユーザー
   local_provider = provider_repository.find_by_name_with_adapter('local')
   local_provider.create('user', 'word',
-    display_name: '一般ユーザー',
-    email: 'user@yuzakan.test')
-  Authenticate.new(client: '::1', app: 'test')
-    .call({username: 'user', password: 'word'})
+                        display_name: '一般ユーザー',
+                        email: 'user@yuzakan.test')
+  Authenticate.new(client: '::1', app: 'test').call({username: 'user', password: 'word'})
 
   # ダミープロバイダー
   UpdateProvider.new(provider_repository: provider_repository).call(
-    name: 'dummy',
-    display_name: 'ダミー',
-    adapter_name: 'dummy')
+    name: 'dummy', display_name: 'ダミー', adapter_name: 'dummy')
 end
 
 def db_reset
