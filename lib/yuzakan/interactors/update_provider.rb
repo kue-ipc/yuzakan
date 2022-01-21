@@ -45,7 +45,7 @@ class UpdateProvider
         @provider_repository.create(params.merge(order: order))
       end
 
-    @param_repos = {
+    param_repos = {
       boolean: ProviderBooleanParamRepository.new,
       string: ProviderStringParamRepository.new,
       text: ProviderTextParamRepository.new,
@@ -54,17 +54,15 @@ class UpdateProvider
 
     provider_params = @provider.params_encrypt(provider_params)
 
-    @provider.adapter_params.each do |adapter_param|
-      name = adapter_param[:name]
-      value = provider_params[name.intern]
+    @provider.adapter_param_types.each do |param_type|
+      value = provider_params[param_type.name]
 
-      value = nil if adapter_param[:encrypted] && value && value.empty?
-
+      next if value&.empty? && param_type.encrypted?
       next if value.nil?
 
-      @param_repos[adapter_param[:type]].create_or_update(
+      param_repos[adapter_param[:type]].create_or_update(
         provider_id: @provider.id,
-        name: name,
+        name: param_type.name,
         value: value)
     end
   end

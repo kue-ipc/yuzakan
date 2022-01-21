@@ -76,10 +76,6 @@ class Provider < Hanami::Entity
     @adapter.class.label
   end
 
-  def adapter_params
-    @adapter.class.params
-  end
-
   def adapter_param_types
     @adapter.class.param_types
   end

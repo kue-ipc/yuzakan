@@ -101,6 +101,8 @@ module Yuzakan
                   :type, :default, :list, :encrypted,
                   :input, :required, :placeholder
 
+      alias encrypted? encrypted
+
       def initialize(name:, label: nil, description: nil,
                      type: :string, default: nil, list: nil, encrypted: false,
                      input: nil, required: nil, placeholder: nil)
