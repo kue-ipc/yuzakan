@@ -5,9 +5,8 @@
 /public/errors*
 /tmp/*
 /node_modules
-/apps/*/vendor/assets*
 /vendor/assets*
-/vendor/*
+/vendor/adapters/*
 
 /rollup.config.js
 /yarn-error.log
