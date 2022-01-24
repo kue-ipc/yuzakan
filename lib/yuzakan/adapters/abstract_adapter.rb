@@ -52,107 +52,18 @@
 # member_add(groupname, username)
 # member_delete(groupname, username)
 #
-# params is Hash Array
-# - name: 識別名
-# - label: 表示名
-# - description: 説明
-# - type: 型
-#     - :boolean, :string, :text, :intger, :float, :date, :time, :datetime, :file
-# - input: form inputのタイプ
-#     - :text, :password, email, ...
-#     - 省略時はtypeによって自動決定
-# - required: 必須かどうか (デフォルト: fales)
-# - placeholder: 入力時のプレースホルダー
-# - input:
-#     - :free, select, button
-# - list: string等で自由入力ではなく一覧からの選択になる。
-# - default: 新規作成時のデフォルト値
-# - encrypted: 暗号化して保存するか (:string, :text, :fileのみ指定可能、デフォルト: fales)
+
+require_relative 'param_type'
+require 'yuzakan/utils/hash_array'
 
 module Yuzakan
   module Adapters
     class Error < RuntimeError
     end
 
-    class ParamType
-      class ListItem
-        attr_reader :name, :label, :value, :deprecated
-
-        def initialize(name:, value:, label: nil, deprecated: false)
-          @name = name.intern
-          @label = label || name.to_s
-          @value = value
-          @deprecated = deprecated
-        end
-
-        def to_json(...)
-          {name: name, label: label, value: value, deprecated: deprecated}.to_json(...)
-        end
-      end
-
-      TYPE_INPUTS = {
-        boolean: 'checkbox',
-        string: 'text',
-        text: 'textarea',
-        integer: 'number',
-      }.freeze
-
-      attr_reader :name, :label, :description,
-                  :type, :default, :list, :encrypted,
-                  :input, :required, :placeholder
-
-      alias encrypted? encrypted
-
-      def initialize(name:, label: nil, description: nil,
-                     type: :string, default: nil, list: nil, encrypted: false,
-                     input: nil, required: nil, placeholder: nil)
-        @name = name.intern
-        @label = label || name.to_s
-        @description = description
-
-        @type = type
-        @default = default
-
-        @list = list&.map do |item|
-          if item.is_a?(ParamType::ListItem)
-            item
-          else
-            ParamType::ListItem.new(**item)
-          end
-        end
-        @encrypted = encrypted
-
-        @input = input || TYPE_INPUTS.fetch(type)
-
-        @required =
-          if required.nil?
-            default.nil?
-          else
-            required
-          end
-
-        @placeholder = placeholder || default
-      end
-
-      def to_json(...)
-        {
-          name: name,
-          label: label,
-          description: description,
-
-          type: type,
-          default: default,
-          list: list,
-          encrypted: encrypted,
-
-          input: input,
-          placeholder: placeholder,
-          required: required,
-        }.to_json(...)
-      end
-    end
-
     class AbstractAdapter
+      extend Yuzakan::Utils::HashArray
+
       class << self
         attr_accessor :abstract_adapter, :hidden_adapter, :label, :params
 

@@ -1,14 +1,14 @@
 # Person LDAP
 # inetOrgPerson and memberOf
 
-require_relative 'base_ldap_adapter'
+require_relative 'ldap_password_adapter'
 
 module Yuzakan
   module Adapters
-    class PersonLdapAdapter < BaseLdapAdapter
+    class PersonLdapAdapter < LdapBaseAdapter
       self.label = 'Person LDAP'
 
-      self.params = BaseLdapAdapter.params
+      self.params = LdapPasswordAdapter.params
     end
   end
 end

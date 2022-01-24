@@ -5,7 +5,9 @@ module Yuzakan
   module Adapters
     class Manager
       def initialize
-        @adapters = search_adapters(base: :abstract).freeze
+        @adapters = {}
+        search_adapters(File.expand_path('adapters', __dir__))
+        search_adapters(File.expand_path('../../vendor/adapters', __dir__))
       end
 
       def hash
@@ -28,29 +30,23 @@ module Yuzakan
         @adapters.key(adapter)
       end
 
-      private def search_adapters(base: :abstract)
-        base_file_basename = "#{base}_adapter"
-        require_relative "adapters/#{base_file_basename}"
-        base_class_name = camelize(base_file_basename)
-        base_class = ::Yuzakan::Adapters.const_get(base_class_name)
-
-        list = {}
-        Dir.each_child(File.join(__dir__, 'adapters')).each do |child|
-          next unless %w[.rb .so].include?(File.extname(child))
+      private def search_adapters(adapters_dir)
+        Dir.each_child(adapters_dir).each do |child|
+          next unless child.end_with?('_adapter.rb', '_adapter.so')
 
           adapter_file_basename = File.basename(child, '.*')
-          next unless adapter_file_basename.end_with?('_adapter')
-          next if adapter_file_basename == base_file_basename
 
-          require_relative "adapters/#{adapter_file_basename}"
+          require File.join(adapters_dir, child)
+
           adapter_class_name = camelize(adapter_file_basename)
           adapter_class = ::Yuzakan::Adapters.const_get(adapter_class_name)
-          if adapter_class < base_class
+
+          unless adapter_class.abstract?
             adapter_name = adapter_file_basename.sub(/_adapter$/, '')
-            list[adapter_name] = adapter_class
+            @adapters[adapter_name] = adapter_class
           end
         end
-        list
+        @adapters
       end
 
       private def camelize(str)
