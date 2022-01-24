@@ -9,7 +9,7 @@ require_relative 'ldap_base_adapter'
 
 module Yuzakan
   module Adapters
-    class LdapAdapter < LdapBaseAdapter
+    class LdapPasswordAdapter < LdapBaseAdapter
       self.abstract_adapter = true
 
       self.label = 'LDAP'
@@ -52,7 +52,7 @@ module Yuzakan
           {name: :sha256, label: 'SHA256', value: '$5$%.16s'},
           {name: :sha512, label: 'SHA512', value: '$6$%.16s'},
         ],
-      })
+      }, key: :name)
 
       # https://trac.tools.ietf.org/id/draft-stroeder-hashed-userpassword-values-00.html
       private def generate_password(password)

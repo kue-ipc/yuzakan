@@ -1,9 +1,7 @@
 module Yuzakan
   module Utils
     module HashArray
-      def ha_merge(*harr, key: nil, delete_key: :delete)
-        key = harr.first.keys.first if key.nil?
-
+      def ha_merge(*harr, key:, delete_key: :delete)
         data = Hash.new do |hash, new_key|
           hash[new_key] = {}
         end

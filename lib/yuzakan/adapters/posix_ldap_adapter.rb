@@ -2,7 +2,7 @@ require_relative 'ldap_password_adapter'
 
 module Yuzakan
   module Adapters
-    class PosixLdapAdapter < LdapBaseAdapter
+    class PosixLdapAdapter < LdapPasswordAdapter
       self.label = 'Posix LDAP'
 
       self.params = LdapPasswordAdapter.params

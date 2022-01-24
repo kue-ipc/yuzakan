@@ -38,15 +38,9 @@ module Yuzakan
       'パスワード設定時にSamba LM パスワード(sambaLMPassword)も設定します。LM パスワードは14文字までしか有効ではないため、使用を推奨しません。',
         type: :boolean,
         default: false,
-      })
+      }, key: :name)
 
       NO_PASSWORD = -'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
-
-      def initialize(params)
-        super
-        @params[:user_name_attr] = 'uid'
-        @params[:user_filter] = '(objectClass=sambaSamAccount)'
-      end
 
       def create(username, _password = nil, **attrs)
         opts = search_user_opts(username, filter: nil)

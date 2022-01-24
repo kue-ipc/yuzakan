@@ -5,7 +5,7 @@ require_relative 'ldap_password_adapter'
 
 module Yuzakan
   module Adapters
-    class PersonLdapAdapter < LdapBaseAdapter
+    class PersonLdapAdapter < LdapPasswordAdapter
       self.label = 'Person LDAP'
 
       self.params = LdapPasswordAdapter.params
