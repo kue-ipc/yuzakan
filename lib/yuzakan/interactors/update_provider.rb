@@ -57,12 +57,12 @@ class UpdateProvider
     @provider.adapter_param_types.each do |param_type|
       value = provider_params[param_type.name]
 
-      next if value&.empty? && param_type.encrypted?
       next if value.nil?
+      next if value&.empty? && param_type.encrypted?
 
       param_repos[param_type.type].create_or_update(
         provider_id: @provider.id,
-        name: param_type.name,
+        name: param_type.name.to_s,
         value: value)
     end
   end
