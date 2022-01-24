@@ -54,7 +54,7 @@
 #
 
 require_relative 'param_type'
-require 'yuzakan/utils/hash_array'
+require_relative '../utils/hash_array'
 
 module Yuzakan
   module Adapters

@@ -60,7 +60,7 @@ class UpdateProvider
       next if value&.empty? && param_type.encrypted?
       next if value.nil?
 
-      param_repos[adapter_param[:type]].create_or_update(
+      param_repos[param_type.type].create_or_update(
         provider_id: @provider.id,
         name: param_type.name,
         value: value)
