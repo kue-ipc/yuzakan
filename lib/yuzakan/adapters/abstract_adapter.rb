@@ -95,7 +95,7 @@ module Yuzakan
           encrypted_params.to_h do |name, value|
             param_type = param_type_by_name(name)
             if param_type.encrypted
-              result = Decrypt.new.call(encrypted: value)
+              result = Decrypt.new(text: true).call(encrypted: value)
               raise Yuzakan::Adapters::Error, result.errors if result.failure?
 
               [name, result.data]
@@ -112,9 +112,9 @@ module Yuzakan
               encrypt_opts =
                 case param_type.type
                 when :string
-                  {max: 4096}
+                  {max: 4096, text: true}
                 when :text
-                  {max: 0}
+                  {max: 0, text: true}
                 else
                   raise Yuzakan::Adapters::Error, "can not ecrypt type: #{param_type.type}"
                 end

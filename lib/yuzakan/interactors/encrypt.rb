@@ -17,7 +17,7 @@ class Encrypt
 
   expose :encrypted
 
-  def initialize(password: ENV.fetch('DB_SECRET'), max: 0, text: true)
+  def initialize(password: ENV.fetch('DB_SECRET'), max: 0, text: false)
     @pb_crypt = Yuzakan::Utils::PbCrypt.new(password)
     @max = max
     @text = text

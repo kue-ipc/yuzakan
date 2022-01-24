@@ -23,7 +23,7 @@ module Yuzakan
       @@default_salt_size = 8
       # rubocop:enable Style/ClassVars
 
-      def initialize(password = ENV.fetch('DB_SECRET'),
+      def initialize(password,
                      algorithm: @@default_algorithm,
                      iteration: @@default_iteration,
                      salt_size: @@default_salt_size)

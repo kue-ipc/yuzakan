@@ -28,9 +28,12 @@ class UpdateProvider
 
   expose :provider
 
-  def initialize(provider: nil, provider_repository: ProviderRepository.new)
+  def initialize(provider: nil,
+                 provider_repository: ProviderRepository.new,
+                 provider_param_repository: ProviderParamRepository.new)
     @provider = provider
     @provider_repository = provider_repository
+    @provider_param_repository = provider_param_repository
   end
 
   def call(params)
@@ -45,25 +48,17 @@ class UpdateProvider
         @provider_repository.create(params.merge(order: order))
       end
 
-    param_repos = {
-      boolean: ProviderBooleanParamRepository.new,
-      string: ProviderStringParamRepository.new,
-      text: ProviderTextParamRepository.new,
-      integer: ProviderIntegerParamRepository.new,
-    }
-
-    provider_params = @provider.params_encrypt(provider_params)
+    # provider_params = @provider.params_encrypt(provider_params)
 
     @provider.adapter_param_types.each do |param_type|
-      value = provider_params[param_type.name]
+      value = param_type.convert_value(provider_params[param_type.name])
 
       next if value.nil?
-      next if value&.empty? && param_type.encrypted?
 
-      param_repos[param_type.type].create_or_update(
+      @provider_param_repository.create_or_update(
         provider_id: @provider.id,
         name: param_type.name.to_s,
-        value: value)
+        value: param_type.dump_value(value))
     end
   end
 

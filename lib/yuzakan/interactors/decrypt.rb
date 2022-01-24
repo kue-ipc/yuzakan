@@ -17,12 +17,10 @@ class Decrypt
 
   expose :data
 
-  def initialize(password: ENV.fetch('DB_SECRET'),
-                 encoding: Encoding::UTF_8,
-                 text: true)
+  def initialize(password: ENV.fetch('DB_SECRET'), text: false, encoding: Encoding::UTF_8)
     @pb_crypt = Yuzakan::Utils::PbCrypt.new(password)
-    @encoding = encoding
     @text = text
+    @encoding = encoding
   end
 
   def call(params)

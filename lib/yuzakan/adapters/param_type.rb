@@ -18,9 +18,14 @@
 # - required: 必須かどうか (デフォルト: fales)
 # - placeholder: 入力時のプレースホルダー
 
+require 'date'
+require 'time'
+
 module Yuzakan
   module Adapters
     class ParamType
+      class Error; end
+
       TYPE_INPUTS = {
         boolean: 'checkbox',
         string: 'text',
@@ -80,6 +85,52 @@ module Yuzakan
           placeholder: placeholder,
           required: required,
         }.to_json(...)
+      end
+
+      def convert_value(str)
+        return if str.nil?
+
+        case type
+        when :boolean
+          ['1', 'yes', 'true'].include?(str.downcase)
+        when :string, :text
+          str
+        when :integer
+          str.to_i
+        when :float
+          str.to_f
+        when :date
+          Date.parse(str)
+        when :time
+          Time.parse(str)
+        when :datetime
+          DateTime.parse(str)
+        # when :file
+        #   str
+        else
+          raise "ParamType unknown type: #{type}"
+        end
+      end
+
+      def dump_value(value)
+        data = Marshal.dump(value)
+        if encrypted
+          result = Encrypt.new.call(data: data)
+          raise Yuzakan::Adapters::ParamType::Error, result.errors if result.failure?
+
+          data = result.encrypted
+        end
+        data
+      end
+
+      def load_value(data)
+        if encrypted
+          result = Decrypt.new.call(encrypted: data)
+          raise Yuzakan::Adapters::ParamType::Error, result.errors if result.failure?
+
+          data = result.data
+        end
+        Marshal.load(data)
       end
 
       # ListItem class
