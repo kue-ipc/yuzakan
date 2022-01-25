@@ -4,7 +4,6 @@ module Yuzakan
   module Adapters
     class AdAdapter < LdapBaseAdapter
       self.label = 'Active Directory'
-
       self.params = ha_merge(*LdapBaseAdapter.params, {
         name: :host,
         label: 'ドメインコントローラーのホスト名/IPアドレス',
@@ -43,9 +42,9 @@ module Yuzakan
           'LDAPの形式で指定します。' \
           '何も指定しない場合は(objectclass=user)になります。',
       }, key: :name)
+      self.multi_attrs = LdapBaseAdapter.multi_attrs
 
-      # 初期作成のユーザーは'add'じゃないとエラーになるかもしれない。
-      # パスワードが削除されている状況はあり得るのだろうか？
+      # ADではunicodePwdに平文パスワードを設定することで変更できる。
       private def change_password_operations(password)
         [generate_operation_replace(:unicodePwd, generate_unicode_password(password))]
       end

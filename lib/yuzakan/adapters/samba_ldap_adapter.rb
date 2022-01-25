@@ -10,7 +10,6 @@ module Yuzakan
   module Adapters
     class SambaLdapAdapter < LdapBaseAdapter
       self.label = 'Samba LDAP'
-
       self.params = ha_merge(*LdapBaseAdapter.params, {
         name: :user_name_attr,
         default: 'uid',
@@ -39,6 +38,7 @@ module Yuzakan
         type: :boolean,
         default: false,
       }, key: :name)
+      self.multi_attrs = LdapBaseAdapter.multi_attrs
 
       NO_PASSWORD = -'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
 

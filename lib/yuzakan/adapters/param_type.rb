@@ -93,7 +93,7 @@ module Yuzakan
         case type
         when :boolean
           if value.is_a?(String)
-            ['1', 'yes', 'true'].include?(str.downcase)
+            ['1', 'yes', 'true'].include?(value.downcase)
           else
             nil | value
           end

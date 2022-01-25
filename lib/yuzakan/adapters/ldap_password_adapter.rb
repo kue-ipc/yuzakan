@@ -11,9 +11,6 @@ module Yuzakan
   module Adapters
     class LdapPasswordAdapter < LdapBaseAdapter
       self.abstract_adapter = true
-
-      self.label = 'LDAP'
-
       self.params = ha_merge(*LdapBaseAdapter.params, {
         name: :password_scheme,
         label: 'パスワードのスキーム',
@@ -53,6 +50,11 @@ module Yuzakan
           {name: :sha512, label: 'SHA512', value: '$6$%.16s'},
         ],
       }, key: :name)
+      self.multi_attrs = LdapBaseAdapter.multi_attrs
+
+      private def change_password_operations(password)
+        [generate_operation_replace(:userPassword, generate_password(password))]
+      end
 
       # https://trac.tools.ietf.org/id/draft-stroeder-hashed-userpassword-values-00.html
       private def generate_password(password)

@@ -15,7 +15,6 @@ module Yuzakan
   module Adapters
     class LdapBaseAdapter < AbstractAdapter
       self.abstract_adapter = true
-
       self.params = [
         {
           name: :host,
@@ -261,8 +260,8 @@ module Yuzakan
         Net::LDAP.new(opts)
       end
 
-      private def search_user_opts(name, base: @params[:user_base] || @params[:base_dn],
-                                   scope: @params[:user_scope], filter: @params[:user_filter])
+      private def search_user_opts(name, base: @params[:user_searh_base_dn] || @params[:base_dn],
+                                   scope: @params[:user_search_scope], filter: @params[:user_search_filter])
         opts = {}
 
         opts[:base] = base
@@ -277,7 +276,7 @@ module Yuzakan
 
         common_filter =
           if filter
-            Net::LDAP::Filter.construct(@params[:user_filter])
+            Net::LDAP::Filter.construct(filter)
           else
             Net::LDAP::Filter.pres('objectClass')
           end
