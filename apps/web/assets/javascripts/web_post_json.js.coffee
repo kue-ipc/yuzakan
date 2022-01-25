@@ -210,7 +210,7 @@ STATUS_LEVELS = new Map([
 
 StatusIcon = ({status}) ->
   if status == 'running'
-    return h 'div', class: 'spinner-boder', role: 'status',
+    return h 'div', class: 'spinner-border', role: 'status',
       h 'span', class: 'visually-hidden',
         text '読込中...'
   {color, icon} = STATUS_LEVELS.get(status)

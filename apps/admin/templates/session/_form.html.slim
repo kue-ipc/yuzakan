@@ -1,13 +1,11 @@
 = javascript 'login', defer: true, type: 'module'
 #login.login.mx-auto.p-3.border.rounded
   h3.login-title.text-center.mb-2 ログイン
-  = form_for :session, routes.session_path, class: 'login-form', \
-                                            enctype: 'multipart/form-data' do
+  = form_for :session, routes.session_path, class: 'login-form', enctype: 'multipart/form-data' do
     - div class: 'mb-3' do
       - field_class = ['form-control']
       - field_class << 'is-invalid' if flash[:param_errors]&.key?('username')
-      - text_field :username, class: field_class, \
-                   placeholder: 'ユーザー名', required: true
+      - text_field :username, class: field_class, placeholder: 'ユーザー名', required: true
       - if flash[:param_errors]&.key?('username')
         - div class: 'invalid-feedback' do
           - h(flash[:param_errors]['username'].join)
@@ -20,5 +18,7 @@
         - div class: 'invalid-feedback' do
           - h(flash[:param_errors]['password'].join)
     - div class: 'd-grid gap-auto' do
-      - submit 'ログイン', class: 'login-submit btn btn-primary', \
-                          disabled: true
+      - submit class: 'login-submit btn btn-primary d-flex align-items-center justify-content-center"',
+               disabled: true do
+        - text bs_icon('box-arrow-in-left', class: 'flex-shrink-0 me-1')
+        - text 'ログイン'

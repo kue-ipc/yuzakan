@@ -20,5 +20,7 @@
         - div class: 'invalid-feedback' do
           - h(flash[:param_errors]['password'].join)
     - div class: 'd-grid gap-auto' do
-      - submit 'ログイン', class: 'login-submit btn btn-primary', \
-                          disabled: true
+      - submit class: 'login-submit btn btn-primary d-flex align-items-center justify-content-center"',
+               disabled: true do
+        - text bs_icon('box-arrow-in-left', class: 'flex-shrink-0 me-1')
+        - text 'ログイン'
