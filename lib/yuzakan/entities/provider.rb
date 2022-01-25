@@ -21,63 +21,57 @@ class Provider < Hanami::Entity
   end
 
   def initialize(attributes = nil)
-    unless attributes
+    if attributes.nil? || attributes[:adapter_name].nil?
       super
       return
     end
 
-    expires_in =
-      case Hanami.env
-      when 'test', 'development'
-        0
-      else
-        60 * 60
-      end
+    @adapter_class = ADAPTERS.by_name(attributes[:adapter_name])
+    raise NoAdapterError, "Not found adapter: #{attributes[:adapter_name]}" unless @adapter_class
+
+    if attributes[:provider_params].nil?
+      super
+      return
+    end
+
+    # cache_store
+    expires_in = if Hanami.env == 'production'
+                   60 * 60
+                 else
+                   0
+                 end
     namespace = ['yuzakan', 'provider', attributes[:name]].join(':')
     redis_url = ENV.fetch('REDIS_URL', 'redis://127.0.0.1:6379/0')
-    @cache_store ||= Yuzakan::Utils::CacheStore.create_store(
+    @cache_store = Yuzakan::Utils::CacheStore.create_store(
       expires_in: expires_in, namespace: namespace, redis_url: redis_url)
 
-    @params = {}.tap do |data|
-      ProviderRepository.params.each do |param_name|
-        attributes[param_name]&.each do |param|
-          data[param[:name].intern] = param[:value]
-        end
-      end
+    @params = attributes[:provider_params].to_h do |param|
+      name = param[:name].intern
+      param_type = @adapter_class.param_type_by_name(name)
+      [name, param_type.load_value(param[:value])]
+    rescue => e
+      Hanami.logger.error e
+      [name, nil]
     end
-    adapter_class = ADAPTERS.by_name(attributes[:adapter_name])
-    raise NoAdapterError unless adapter_class
 
-    @adapter = adapter_class.new(adapter_class.decrypt(@params))
+    @adapter = @adapter_class.new(@params)
 
     super
   end
 
   def safe_params
     @params.reject do |key, _value|
-      adapter_param = @adapter.class.param_by_name(key)
-      adapter_param.nil? || adapter_param[:encrypted]
+      param_type = @adapter_class.param_type_by_name(key)
+      param_type.nil? || param_type.encrypted?
     end
   end
 
-  def decrypted_params
-    params_decrypt(@params)
-  end
-
-  def params_encrypt(plain_params)
-    @adapter.class.encrypt(plain_params)
-  end
-
-  def params_decrypt(encrypted_params)
-    @adapter.class.decrypt(encrypted_params)
-  end
-
   def adapter_label
-    @adapter.class.label
+    @adapter_class.label
   end
 
   def adapter_param_types
-    @adapter.class.param_types
+    @adapter_class.param_types
   end
 
   def key(*name)

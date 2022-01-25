@@ -52,7 +52,7 @@ module Admin
             end
 
             provider_data['params'] = {}
-            params = provider.decrypted_params
+            params = provider.params
 
             provider_data['params'] = provider.adapter_param_types.to_h do |param_type|
               [param_type.name, params[param_type.name]]

@@ -241,21 +241,22 @@ module Yuzakan
         }
 
         port = @params[:port] if @params[:port] && !@params[:port].zero?
-        opts[:encryption] = {}
         case @params[:protocol]
         when 'ldap'
           opts[:port] = port || 389
         when 'ldap_starttls'
           opts[:port] = port || 389
-          opts[:encryption][:method] = :start_tls
+          opts[:encryption] = {method: :start_tls}
         when 'ldaps'
           opts[:port] = port || 636
-          opts[:encryption][:method] = :simple_tls
+          opts[:encryption] = {method: :simple_tls}
         else
           raise "invalid protcol: #{@params[:protocol]}"
         end
 
-        opts[:encryption][:tls_options] = {verify_mode: OpenSSL::SSL::VERIFY_NONE} unless @params[:certificate_check]
+        if opts[:encryption] && !@params[:certificate_check]
+          opts[:encryption][:tls_options] = {verify_mode: OpenSSL::SSL::VERIFY_NONE}
+        end
 
         Net::LDAP.new(opts)
       end

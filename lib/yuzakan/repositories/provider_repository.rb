@@ -1,24 +1,6 @@
 class ProviderRepository < Hanami::Repository
-  PARAMS = %i[
-    provider_boolean_params
-    provider_string_params
-    provider_text_params
-    provider_integer_params
-  ].freeze
-
-  def self.params
-    @params ||= %i[
-      provider_boolean_params
-      provider_string_params
-      provider_text_params
-      provider_integer_params
-    ].freeze
-  end
-
   associations do
-    ProviderRepository.params.each do |param|
-      has_many param
-    end
+    has_many :provider_params
     has_many :attr_mappings
     has_many :attrs, throught: :attr_mappings
   end
@@ -28,20 +10,20 @@ class ProviderRepository < Hanami::Repository
   end
 
   def all_with_adapter
-    aggregate(*ProviderRepository.params, attr_mappings: :attr)
+    aggregate(:provider_params, attr_mappings: :attr)
       .order(:order)
       .map_to(Provider)
   end
 
   def find_with_adapter(id)
-    aggregate(*ProviderRepository.params, attr_mappings: :attr)
+    aggregate(:provider_params, attr_mappings: :attr)
       .where(id: id)
       .map_to(Provider)
       .one
   end
 
   def find_by_name_with_adapter(name)
-    aggregate(*ProviderRepository.params, attr_mappings: :attr)
+    aggregate(:provider_params, attr_mappings: :attr)
       .where(name: name)
       .map_to(Provider)
       .one
@@ -84,7 +66,7 @@ class ProviderRepository < Hanami::Repository
         raise "不明な操作です。#{operation}"
       end
 
-    aggregate(*ProviderRepository.params, attr_mappings: :attr)
+    aggregate(:provider_params, attr_mappings: :attr)
       .where(operation_ability)
       .order { order.asc }
       .map_to(Provider)
@@ -99,7 +81,7 @@ class ProviderRepository < Hanami::Repository
   end
 
   def first_google_with_adapter
-    aggregate(*ProviderRepository.params, attr_mappings: :attr)
+    aggregate(:provider_params, attr_mappings: :attr)
       .where(adapter_name: 'google')
       .where(self_management: true)
       .order { order.asc }

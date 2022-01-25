@@ -38,6 +38,8 @@ module Yuzakan
                   :input, :list, :required, :placeholder
 
       alias encrypted? encrypted
+      alias fixed? fixed
+      alias required? required
 
       def initialize(name:, label: nil, description: nil,
                      type: :string, default: nil, fixed: true, encrypted: false,
@@ -48,7 +50,10 @@ module Yuzakan
 
         @type = type
         @default = default
+        @fixed = fixed
+        @encrypted = encrypted
 
+        @input = input || @@type_inputs.fetch(type)
         @list = list&.map do |item|
           if item.is_a?(ParamType::ListItem)
             item
@@ -56,17 +61,12 @@ module Yuzakan
             ParamType::ListItem.new(**item)
           end
         end
-        @encrypted = encrypted
-
-        @input = input || @@type_inputs.fetch(type)
-
         @required =
           if required.nil?
             default.nil?
           else
             required
           end
-
         @placeholder = placeholder || default
       end
 
@@ -114,7 +114,7 @@ module Yuzakan
 
       def dump_value(value)
         data = Marshal.dump(value)
-        if encrypted
+        if encrypted?
           result = Encrypt.new.call(data: data)
           raise Yuzakan::Adapters::Error, result.errors if result.failure?
 
@@ -124,7 +124,7 @@ module Yuzakan
       end
 
       def load_value(data)
-        if encrypted
+        if encrypted?
           result = Decrypt.new.call(encrypted: data)
           raise Yuzakan::Adapters::Error, result.errors if result.failure?
 
@@ -136,6 +136,8 @@ module Yuzakan
       # ListItem class
       class ListItem
         attr_reader :name, :label, :value, :deprecated
+
+        alias deprecated? deprecated
 
         def initialize(name:, value:, label: nil, deprecated: false)
           @name = name.intern

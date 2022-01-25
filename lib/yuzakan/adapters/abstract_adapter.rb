@@ -89,44 +89,6 @@ module Yuzakan
           end
         end
 
-        def decrypt(encrypted_params)
-          encrypted_params.to_h do |name, value|
-            param_type = param_type_by_name(name)
-            if param_type.encrypted
-              result = Decrypt.new(text: true).call(encrypted: value)
-              raise Yuzakan::Adapters::Error, result.errors if result.failure?
-
-              [name, result.data]
-            else
-              [name, value]
-            end
-          end
-        end
-
-        def encrypt(plain_params)
-          plain_params.to_h do |name, value|
-            param_type = param_type_by_name(name)
-            if param_type.encrypted
-              encrypt_opts =
-                case param_type.type
-                when :string
-                  {max: 4096, text: true}
-                when :text
-                  {max: 0, text: true}
-                else
-                  raise Yuzakan::Adapters::Error, "can not ecrypt type: #{param_type.type}"
-                end
-              encrypt = Encrypt.new(**encrypt_opts)
-              result = encrypt.call(data: value)
-              raise Yuzakan::Adapters::Error, result.errors if result.failure?
-
-              [name, result.encrypted]
-            else
-              [name, value]
-            end
-          end
-        end
-
         def normalize_params(params)
           param_types.to_h do |param_type|
             name = param_type.name

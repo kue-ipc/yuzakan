@@ -48,8 +48,6 @@ class UpdateProvider
         @provider_repository.create(params.merge(order: order))
       end
 
-    # provider_params = @provider.params_encrypt(provider_params)
-
     @provider.adapter_param_types.each do |param_type|
       value = param_type.convert_value(provider_params[param_type.name])
 
