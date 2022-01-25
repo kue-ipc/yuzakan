@@ -13,7 +13,7 @@ module Admin
           result = UpdateConfig.new.call(params[:config])
 
           if result.successful?
-            flash[:success] = ['設定を変更しました。']
+            flash[:success] = '設定を変更しました。'
           else
             flash[:errors] = result.errors
             flash[:errors] << '変更に失敗しました。'

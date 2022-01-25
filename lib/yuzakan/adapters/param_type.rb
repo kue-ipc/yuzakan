@@ -87,26 +87,42 @@ module Yuzakan
         }.to_json(...)
       end
 
-      def convert_value(str)
-        return if str.nil?
+      def convert_value(value)
+        return if value.nil?
 
         case type
         when :boolean
-          ['1', 'yes', 'true'].include?(str.downcase)
+          if value.is_a?(String)
+            ['1', 'yes', 'true'].include?(str.downcase)
+          else
+            nil | value
+          end
         when :string, :text
-          str
+          value.to_s
         when :integer
-          str.to_i
+          value.to_i
         when :float
-          str.to_f
+          value.to_f
         when :date
-          Date.parse(str)
+          if value.is_a?(Date) || value.is_a?(Time)
+            value.to_date
+          else
+            Date.parse(value.to_s)
+          end
         when :time
-          Time.parse(str)
+          if value.is_a?(Date) || value.is_a?(Time)
+            value.to_time
+          else
+            Time.parse(value.to_s)
+          end
         when :datetime
-          DateTime.parse(str)
-        # when :file
-        #   str
+          if value.is_a?(Date) || value.is_a?(Time)
+            value.to_datetime
+          else
+            DateTime.parse(value.to_s)
+          end
+        when :file
+          value
         else
           raise "ParamType unknown type: #{type}"
         end

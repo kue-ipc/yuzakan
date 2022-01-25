@@ -53,7 +53,7 @@ module Admin
                   end
                 end
               end
-              flash[:success] = ['インポートに成功しました。']
+              flash[:success] = 'インポートに成功しました。'
             rescue => e
               Hanami.logger.error e
               flash[:errors] << e.message
