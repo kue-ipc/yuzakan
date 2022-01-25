@@ -173,7 +173,7 @@ class PasswordInputGenerator
             onmousedown: [@showPassword, {visible: true}]
             onmouseup: [@showPassword, {visible: false}]
             onmouseleave: [@showPassword, {visible: false}]
-            BsIcon size: 16, name: if visible then 'eye-fill' else 'eye-slash-fill'
+            BsIcon size: 16, name: if visible then 'eye' else 'eye-slash'
           h 'div', class: 'valid-feedback',
             text message
           h 'div', class: 'invalid-feedback',

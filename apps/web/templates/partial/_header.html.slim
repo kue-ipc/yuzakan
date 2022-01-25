@@ -11,12 +11,12 @@ header
           ul.navbar-nav.me-auto
             li.nav-item
               = link_to routes.path(:dashboard), class: 'nav-link d-flex align-items-center' do
-                - text bs_icon('house-door-fill', class: 'flex-shrink-0 me-1')
+                - text bs_icon('house-door', class: 'flex-shrink-0 me-1')
                 - span class: 'd-none d-lg-inline' do
                   - text 'ホーム'
             li.nav-item
               = link_to routes.path(:edit_user_password), class: 'nav-link d-flex align-items-center' do 
-                - text bs_icon('key-fill', class: 'flex-shrink-0 me-1')
+                - text bs_icon('input-cursor-text', class: 'flex-shrink-0 me-1')
                 - span class: 'd-none d-lg-inline' do
                   - text 'パスワード'
             li.nav-item
