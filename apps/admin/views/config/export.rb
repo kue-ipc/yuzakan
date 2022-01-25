@@ -55,7 +55,7 @@ module Admin
             params = provider.params
 
             provider_data['params'] = provider.adapter_param_types.to_h do |param_type|
-              [param_type.name, params[param_type.name]]
+              [param_type.name.to_s, params[param_type.name]]
             end
             data['providers'] << provider_data
           end
