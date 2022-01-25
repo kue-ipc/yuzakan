@@ -2,7 +2,7 @@ require_relative '../../spec_helper'
 
 describe Encrypt do
   let(:interactor) { Encrypt.new(**params) }
-  let(:params) { {} }
+  let(:params) { {text: true} }
 
   it 'encryt text' do
     text = 'Ab01#'
@@ -38,7 +38,7 @@ describe Encrypt do
   end
 
   describe 'max 256' do
-    let(:params) { {max: 256} }
+    let(:params) { {text: true, max: 256} }
     it 'encryt 1..256 size text' do
       (1..256).each do |n|
         text = 'A' * n
@@ -54,7 +54,7 @@ describe Encrypt do
   end
 
   describe 'max 4096 * 8' do
-    let(:params) { {max: 4096 * 8} }
+    let(:params) { {text: true, max: 4096 * 8} }
     it 'encryt 4096 size text' do
       text = 'A' * 4096
       result = interactor.call({data: text})

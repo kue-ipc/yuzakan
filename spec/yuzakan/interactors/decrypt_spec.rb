@@ -2,7 +2,7 @@ require_relative '../../spec_helper'
 
 describe Decrypt do
   let(:interactor) { Decrypt.new(**params) }
-  let(:params) { {} }
+  let(:params) { {text: true} }
   let(:encrypted) do
     pb_crypt = Yuzakan::Utils::PbCrypt.new(ENV.fetch('DB_SECRET'))
     pb_crypt.encrypt_text(text)
@@ -17,7 +17,7 @@ describe Decrypt do
   end
 
   describe 'other password' do
-    let(:params) { {password: 'abc012'} }
+    let(:params) { {password: 'abc012', text: true} }
 
     it 'failed decryt text other password' do
       result = interactor.call({encrypted: encrypted})
@@ -28,7 +28,7 @@ describe Decrypt do
   end
 
   describe 'other encoding' do
-    let(:params) { {encoding: Encoding::WINDOWS_31J} }
+    let(:params) { {text: true, encoding: Encoding::WINDOWS_31J} }
 
     it 'decryt bad text' do
       result = interactor.call({encrypted: encrypted})

@@ -33,8 +33,8 @@ describe Admin::Controllers::Adapters::Params::Index do
       _(response[2]).must_equal []
     end
 
-    it 'ldap is successful' do
-      adapter_name = 'ldap'
+    it 'posix_ldap is successful' do
+      adapter_name = 'posix_ldap'
       response = action.call(params.merge(adapter_id: adapter_name))
       _(response[0]).must_equal 200
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
