@@ -43,6 +43,7 @@ module Yuzakan
           '何も指定しない場合は(objectclass=user)になります。',
       }, key: :name)
       self.multi_attrs = LdapBaseAdapter.multi_attrs
+      self.hide_attrs = LdapBaseAdapter.hide_attrs
 
       # ADではunicodePwdに平文パスワードを設定することで変更できる。
       private def change_password_operations(password)

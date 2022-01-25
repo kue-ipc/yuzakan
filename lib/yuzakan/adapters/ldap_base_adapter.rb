@@ -129,10 +129,11 @@ module Yuzakan
       ]
 
       class << self
-        attr_accessor :multi_attrs
+        attr_accessor :multi_attrs, :hide_attrs
       end
 
       self.multi_attrs = %w[objectClass]
+      self.hide_attrs = []
 
       def check
         base = ldap.search(
@@ -289,11 +290,14 @@ module Yuzakan
       private def entry2userdata(entry)
         attrs = {}
         entry.each do |name, value|
-          attrs[name.to_s] = if self.class.multi_attrs.include?(name)
-                               value
-                             else
-                               value.first
-                             end
+          cmp_name = name.to_s.method(:casecmp?)
+          next if self.class.hide_attrs.any?(&cmp_name)
+
+          attrs[name.to_s] = if self.class.multi_attrs.any?(&cmp_name)
+            value.to_a
+          else
+            value.first
+          end
         end
 
         {
