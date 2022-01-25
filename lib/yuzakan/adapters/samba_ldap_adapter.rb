@@ -40,7 +40,7 @@ module Yuzakan
       }, key: :name)
       self.multi_attrs = LdapBaseAdapter.multi_attrs
 
-      NO_PASSWORD = -'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
+      @@no_password = -'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX' # rubocop:disable Style/ClassVars
 
       def create(username, _password = nil, **attrs)
         opts = search_user_opts(username, filter: nil)
@@ -75,14 +75,14 @@ module Yuzakan
           if @params[:samba_nt_password]
             generate_nt_password(password)
           else
-            NO_PASSWORD
+            @@no_password
           end
 
         lm_password =
           if @params[:samba_lm_password]
             generate_lm_password(password)
           else
-            NO_PASSWORD
+            @@no_password
           end
 
         [

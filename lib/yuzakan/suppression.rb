@@ -11,5 +11,10 @@ module URI
       # warn "URI.escape is obsolete", uplevel: 1
       DEFAULT_PARSER.escape(*arg)
     end
+
+    def unescape(*arg)
+      # warn "URI.unescape is obsolete", uplevel: 1
+      DEFAULT_PARSER.unescape(*arg)
+    end
   end
 end
