@@ -10,22 +10,22 @@ header
         - if current_user
           ul.navbar-nav.me-auto
             li.nav-item.active
-              = link_to routes.path(:root), class: 'nav-link' do
-                - text octicon('home')
+              = link_to routes.path(:root), class: 'nav-link d-flex align-items-center' do
+                - text bs_icon('house-door-fill', class: 'flex-shrink-0 me-1')
                 - span class: 'd-none d-lg-inline' do
                   - text 'ホーム'
             li.nav-item
-              = link_to routes.path(:edit_config), class: 'nav-link' do
-                - text octicon('gear')
+              = link_to routes.path(:edit_config), class: 'nav-link d-flex align-items-center' do
+                - text bs_icon('gear', class: 'flex-shrink-0 me-1')
                 - span class: 'd-none d-lg-inline' do
                   - text '全体設定' 
-          span.navbar-text.me-2
-            => octicon('person')
+          span.navbar-text.me-2.d-flex.align-items-center
+            = bs_icon('person', class: 'flex-shrink-0 me-1')
             span.d-none.d-lg-inline
               = h(current_user.label_name)
           = form_for :session, routes.session_path, method: :delete do
-            - submit class: 'btn btn-sm btn-outline-light my-2' do
-              - text octicon('sign-out')
+            - submit class: 'btn btn-sm btn-outline-light my-2 d-flex align-items-center' do
+              - text bs_icon('box-arrow-right', class: 'flex-shrink-0 me-1')
               - span class: 'd-none d-md-inline' do
                 - text 'ログアウト'
         - else

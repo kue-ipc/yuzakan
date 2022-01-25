@@ -10,34 +10,34 @@ header
         - if current_user
           ul.navbar-nav.me-auto
             li.nav-item
-              = link_to routes.path(:dashboard), class: 'nav-link' do
-                - text octicon('home')
+              = link_to routes.path(:dashboard), class: 'nav-link d-flex align-items-center' do
+                - text bs_icon('house-door-fill', class: 'flex-shrink-0 me-1')
                 - span class: 'd-none d-lg-inline' do
                   - text 'ホーム'
             li.nav-item
-              = link_to routes.path(:edit_user_password), class: 'nav-link' do 
-                - text octicon('key')
+              = link_to routes.path(:edit_user_password), class: 'nav-link d-flex align-items-center' do 
+                - text bs_icon('key-fill', class: 'flex-shrink-0 me-1')
                 - span class: 'd-none d-lg-inline' do
                   - text 'パスワード'
             li.nav-item
-              = link_to routes.path(:google), class: 'nav-link' do
-                - text bs_icon('google')
+              = link_to routes.path(:google), class: 'nav-link d-flex align-items-center' do
+                - text bs_icon('google', class: 'flex-shrink-0 me-1')
                 - span class: 'd-none d-lg-inline' do
                  - text 'Google Workspace'
-          = link_to routes.path(:user), class: 'me-2 link-user' do
-            - text octicon('person')
+          = link_to routes.path(:user), class: 'me-2 link-user d-flex align-items-center' do
+            - text bs_icon('person', class: 'flex-shrink-0 me-1')
             - span class: 'd-none d-lg-inline' do
               - text current_user.label_name
           = form_for :session, routes.session_path, method: :delete do
-            - submit class: 'btn btn-sm btn-outline-light my-2' do
-              - text octicon('sign-out')
+            - submit class: 'btn btn-sm btn-outline-light my-2 d-flex align-items-center' do
+              - text bs_icon('box-arrow-right', class: 'flex-shrink-0 me-1')
               - span class: 'd-none d-md-inline' do
                 - text 'ログアウト'
         - else
           ul.navbar-nav.me-auto
             li.nav-item
               = link_to routes.path(:dashboard), class: 'nav-link' do
-                - text octicon('home')
+                - text bs_icon('house-door-fill')
                 - span class: 'd-none d-lg-inline' do
                   - text 'ホーム'
           span.navbar-text

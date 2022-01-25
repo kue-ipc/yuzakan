@@ -36,7 +36,7 @@ table.table.table-sm
               - param_type.list.each do |item|
                 li
                   - if item.deprecated
-                    = octicon(:thumbsdown)
+                    = bs_icon('hand-thumbs-down')
                   = item.name
                   | (
                   = item.value
