@@ -1,26 +1,6 @@
-require 'octicons'
-
 module Yuzakan
   module Helpers
     module IconHelper
-      private def octicon(name, size: 24, alt: nil, **opts)
-        icon = Octicons::Octicon.new(name, height: size, width: size)
-        svg_opts = icon.options.merge(fill: 'currentColor')
-
-        case opts[:class]
-        when Array
-          svg_opts[:class] += " #{opts[:class].join(' ')}"
-        when String
-          svg_opts[:class] += " #{opts[:class]}"
-        end
-
-        svg_opts.merge!(role: 'img', 'aria-label': alt) if alt
-
-        html.svg(**svg_opts) do
-          raw icon.path
-        end
-      end
-
       private def bs_icon(name, size: 24, alt: nil, **opts)
         svg_opts = {
           class: ['bi'],

@@ -193,7 +193,6 @@ GEM
     nokogiri (1.13.1)
       mini_portile2 (~> 2.7.0)
       racc (~> 1.4)
-    octicons (16.3.0)
     os (1.1.4)
     pagy (5.9.1)
       activesupport
@@ -295,7 +294,6 @@ DEPENDENCIES
   minitest
   mysql2
   net-ldap
-  octicons
   pagy
   pry
   puma (~> 5.5)
