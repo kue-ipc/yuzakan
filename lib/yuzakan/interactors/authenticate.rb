@@ -55,24 +55,26 @@ class Authenticate
              'しばらく待ってから再度ログインを試してください。')
     end
 
-    user_data = nil
+    userdata = nil
 
     @provider_repository.operational_all_with_adapter(:auth).each do |provider|
-      user_data = provider.auth(params[:username], params[:password])
-      # 最初に認証されたところを正とする。
-      break if user_data
+      if provider.auth(params[:username], params[:password])
+        # 最初に認証されたところを正とする。
+        userdata = provider.read(params[:username])
+        break
+      end
     rescue => e
       Hanami.logger.error e
       @activity_repository.create(activity_params.merge!({result: 'error'}))
       error!("認証時にエラーが発生しました。: #{e.message}")
     end
 
-    unless user_data
+    unless userdata
       @activity_repository.create(activity_params.merge!({result: 'failure'}))
       error!('ユーザー名またはパスワードが違います。')
     end
 
-    @user = create_or_upadte_user(user_data)
+    @user = create_or_upadte_user(userdata)
     @activity_repository.create(activity_params.merge!({
       user_id: @user.id,
       result: 'success',
@@ -89,10 +91,10 @@ class Authenticate
     true
   end
 
-  private def create_or_upadte_user(user_data)
-    name = user_data[:name]
-    display_name = user_data[:display_name] || user_data[:name]
-    email = user_data[:email]
+  private def create_or_upadte_user(userdata)
+    name = userdata[:name]
+    display_name = userdata[:display_name] || userdata[:name]
+    email = userdata[:email]
     user = @user_repository.by_name(name).one
     if user.nil?
       @user_repository.create(name: name,
