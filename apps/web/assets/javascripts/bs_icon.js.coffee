@@ -2,7 +2,7 @@
 
 import {h} from './hyperapp.js?v=2.0.20'
 
-export BsIcon = ({name, size = 16, alt, props...}) ->
+export default BsIcon = ({name, size = 24, alt, props...}) ->
   svg_props =
     class: ['bi']
     width: size
