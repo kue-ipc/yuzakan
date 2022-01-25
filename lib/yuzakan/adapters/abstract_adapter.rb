@@ -53,14 +53,12 @@
 # member_delete(groupname, username)
 #
 
+require_relative 'error'
 require_relative 'param_type'
 require_relative '../utils/hash_array'
 
 module Yuzakan
   module Adapters
-    class Error < RuntimeError
-    end
-
     class AbstractAdapter
       extend Yuzakan::Utils::HashArray
 

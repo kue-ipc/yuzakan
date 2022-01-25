@@ -21,17 +21,17 @@
 require 'date'
 require 'time'
 
+require_relative 'error'
+
 module Yuzakan
   module Adapters
     class ParamType
-      class Error; end
-
-      TYPE_INPUTS = {
+      @@type_inputs = {
         boolean: 'checkbox',
         string: 'text',
         text: 'textarea',
         integer: 'number',
-      }.freeze
+      }
 
       attr_reader :name, :label, :description,
                   :type, :default, :fixed, :encrypted,
@@ -58,7 +58,7 @@ module Yuzakan
         end
         @encrypted = encrypted
 
-        @input = input || TYPE_INPUTS.fetch(type)
+        @input = input || @@type_inputs.fetch(type)
 
         @required =
           if required.nil?
@@ -116,7 +116,7 @@ module Yuzakan
         data = Marshal.dump(value)
         if encrypted
           result = Encrypt.new.call(data: data)
-          raise Yuzakan::Adapters::ParamType::Error, result.errors if result.failure?
+          raise Yuzakan::Adapters::Error, result.errors if result.failure?
 
           data = result.encrypted
         end
@@ -126,7 +126,7 @@ module Yuzakan
       def load_value(data)
         if encrypted
           result = Decrypt.new.call(encrypted: data)
-          raise Yuzakan::Adapters::ParamType::Error, result.errors if result.failure?
+          raise Yuzakan::Adapters::Error, result.errors if result.failure?
 
           data = result.data
         end
