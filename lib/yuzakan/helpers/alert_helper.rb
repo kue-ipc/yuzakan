@@ -13,27 +13,27 @@ module Yuzakan
         },
         fatal: {
           color: 'danger',
-          icon: 'alert',
+          icon: 'slash-circle-fill',
         },
         error: {
           color: 'danger',
-          icon: 'alert',
+          icon: 'exclamation-octagon-fill',
         },
         warn: {
           color: 'warning',
-          icon: 'alert',
+          icon: 'exclamation-triangle-fill',
         },
         info: {
           color: 'info',
-          icon: 'info',
+          icon: 'info-square-fill',
         },
         debug: {
           color: 'secondary',
-          icon: 'info',
+          icon: 'bug-fill',
         },
         unknown: {
           color: 'primary',
-          icon: 'question',
+          icon: 'question-diamond-fill',
         },
       }
 
@@ -48,7 +48,7 @@ module Yuzakan
           d-flex align-items-center
         ] + ["alert-#{levels[level][:color]}"]
         html.div class: alert_class, role: 'alert' do
-          text octicon(levels[level][:icon], size: 24,
+          text bs_icon(levels[level][:icon], size: 24,
                                              class: 'flex-shrink-0 me-2')
           div do
             span h(msg)
