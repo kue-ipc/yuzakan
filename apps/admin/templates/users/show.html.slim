@@ -34,9 +34,10 @@ table.table
         th = provider.display_name
   tbody
     - attrs.each do |attr|
-      - attr_name = attr.name.intern
       tr
         td = attr.display_name
-        td = user_attrs[attr_name]
-        - provider_datas.each do |data|
-          td = data&.[](attr_name)
+        td = user_attrs[attr.name]
+        - user_providers_attrs.each do |provider_attrs|
+          if 
+          td
+            - if = provider_attrs&.[](attr.name)

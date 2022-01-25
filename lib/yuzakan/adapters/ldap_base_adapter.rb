@@ -165,22 +165,21 @@ module Yuzakan
       def read(username)
         opts = search_user_opts(username)
         result = ldap.search(opts)
-        normalize_user_attrs(result.first) if result
+        entry2userdata(result.first) if result
       end
 
       def udpate(username, **attrs)
         raise NotImplementedError
       end
 
-      # def delete(username)
-      #   raise NotImplementedError
-      # end
+      def delete(username)
+        raise NotImplementedError
+      end
 
       def auth(username, password)
         opts = search_user_opts(username).merge(password: password)
         # bind_as is re bind, so DON'T USE `ldap`
-        result = generate_ldap.bind_as(opts)
-        normalize_user_attrs(result&.first) if result
+        generate_ldap.bind_as(opts)
       end
 
       def change_password(username, password)
@@ -287,23 +286,22 @@ module Yuzakan
         opts
       end
 
-      private def normalize_user_attrs(entry)
-        attrs = {
+      private def entry2userdata(entry)
+        attrs = {}
+        entry.each do |name, value|
+          attrs[name.to_s] = if self.class.multi_attrs.include?(name)
+                               value
+                             else
+                               value.first
+                             end
+        end
+
+        {
           name: entry.first(@params[:user_name_attr]),
           display_name: entry.first(@params[:user_display_name_attr]),
           email: entry.first(@params[:user_email_attr]),
+          attrs: attrs,
         }
-
-        entry.each do |name, value|
-          attrs[name.to_s] =
-            if self.class.multi_attrs.include?(name)
-              value
-            else
-              value.first
-            end
-        end
-
-        attrs
       end
 
       private def attribute_name(name)

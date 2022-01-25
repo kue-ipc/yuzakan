@@ -38,7 +38,7 @@ class Provider < Hanami::Entity
     expires_in = if Hanami.env == 'production'
                    60 * 60
                  else
-                   0
+                   1
                  end
     namespace = ['yuzakan', 'provider', attributes[:name]].join(':')
     redis_url = ENV.fetch('REDIS_URL', 'redis://127.0.0.1:6379/0')
@@ -103,7 +103,7 @@ class Provider < Hanami::Entity
     return {} if attrs.nil?
 
     attr_mappings.to_h do |mapping|
-      [mapping.name, mapping.convert_value(attrs[mapping.attr_name.intern])]
+      [mapping.name, mapping.convert_value(attrs[mapping.attr_name])]
     end.compact
   end
 
@@ -116,16 +116,15 @@ class Provider < Hanami::Entity
   # Adapter attrs -> Ruby attrs
   def convert_attrs(raw_attrs)
     return {} if raw_attrs.nil?
-
     attr_mappings.to_h do |mapping|
-      [mapping.attr_name, mapping.map_value(raw_attrs[mapping.name.intern] || raw_attrs[mapping.name.downcase.intern])]
+      [mapping.attr_name, mapping.map_value(raw_attrs[mapping.name] || raw_attrs[mapping.name.downcase])]
     end.compact
   end
 
   def convert_userdata(raw_userdata)
     return if raw_userdata.nil?
 
-    {**raw_userdata, attrs: map_attrs(raw_userdata[:attrs])}
+    {**raw_userdata, attrs: convert_attrs(raw_userdata[:attrs])}
   end
 
   def need_adapter!

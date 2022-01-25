@@ -31,7 +31,6 @@ table.table
       th 値
   tbody
     - attrs.each do |attr|
-      - attr_name = attr.name.intern
       tr
         td = attr.display_name
-        td = user_attrs[attr_name]
+        td = user_attrs[attr.name]

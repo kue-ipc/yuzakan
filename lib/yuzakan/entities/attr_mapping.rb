@@ -1,6 +1,6 @@
 class AttrMapping < Hanami::Entity
   def attr_name
-    attr.name.intern
+    attr.name
   end
 
   # Adapter data -> Ruby data
@@ -47,7 +47,7 @@ class AttrMapping < Hanami::Entity
 
   # Ruby data -> Adapter data
   def map_value(value)
-    return if vlaue.nil?
+    return if value.nil?
 
     return value if conversion.nil?
 

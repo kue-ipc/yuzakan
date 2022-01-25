@@ -5,7 +5,7 @@ class UserAttrs
   include Hanami::Interactor
 
   expose :attrs
-  expose :datas
+  expose :providers_attrs
 
   def initialize(
     provider_attr_mapping_repository: AttrMappingRepository.new,
@@ -16,10 +16,11 @@ class UserAttrs
   end
 
   def call(params)
-    @datas = @readable_providers.each.to_h do |provider|
-      [provider.name, provider.read(params[:username])]
+    @providers_attrs = @readable_providers.each.map do |provider|
+      provider.read(params[:username])&.[](:attrs)
     end
-    @attrs = @datas.values.compact.inject({}) do |result, data|
+    # 最初の方を優先する。
+    @attrs = @providers_attrs.compact.inject({}) do |result, data|
       data.merge(result)
     end
   end
