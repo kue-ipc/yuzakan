@@ -102,7 +102,7 @@ module Yuzakan
           "#{m[1]}!#{m[2]}"
         else
           # 不正なパスワード
-          '{!}!'
+          '{CRYPT}!!'
         end
       end
 
