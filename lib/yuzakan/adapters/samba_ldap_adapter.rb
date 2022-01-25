@@ -39,6 +39,7 @@ module Yuzakan
         default: false,
       }, key: :name)
       self.multi_attrs = LdapBaseAdapter.multi_attrs
+      self.hide_attrs = LdapBaseAdapter.hide_attrs + %w[sambaNTPassword sambaLMPassword]
 
       @@no_password = -'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX' # rubocop:disable Style/ClassVars
 
