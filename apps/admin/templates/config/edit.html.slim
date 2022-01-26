@@ -27,7 +27,7 @@ h2 全体設定
             '制限を超えた文字数は単純に無視されます。'
       - ul
         - {'CRYPT-DES' => 8, 'LM' => 14, 'BCRYPT' => 72}.each do |name, size|
-          - li "#{name}: #{size} 文字" 
+          - li "#{name}: #{size} 文字"
 
   - div class: 'mb-3' do
     - label 'パスワードの文字種の最小数', class: 'form-label', for: :password_min_types
