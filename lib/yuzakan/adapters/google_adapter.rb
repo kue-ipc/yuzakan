@@ -210,7 +210,7 @@ module Yuzakan
       # $1$vuIZLw8r$d9mkddv58FuCPxOh6nO8f0
       private def generate_password(password)
         salt = SecureRandom.base64(12).gsub('+', '.')
-        password.crypt(format('$1$%.8s', salt))
+        password.crypt('$1$%.8s' % salt)
       end
 
       private def normalize_user(user)

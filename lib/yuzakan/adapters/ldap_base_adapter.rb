@@ -294,10 +294,10 @@ module Yuzakan
           next if self.class.hide_attrs.any?(&cmp_name)
 
           attrs[name.to_s] = if self.class.multi_attrs.any?(&cmp_name)
-            value.to_a
-          else
-            value.first
-          end
+                               value.to_a
+                             else
+                               value.first
+                             end
         end
 
         {

@@ -34,7 +34,7 @@ module Web
               if change_password_config[:unusable_chars]&.size&.positive?
                 codes = change_password_config[:unusable_chars]
                   .each_codepoint
-                  .map { |code| "\\u#{format('%04x', code)}" }
+                  .map { |code| "\\u#{'%04x' % code}" }
                   .join
                 opt.merge!(pattern: "[^#{codes}]*",
                            title: '使用不可文字を含めることはできません。')

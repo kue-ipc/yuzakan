@@ -116,6 +116,7 @@ class Provider < Hanami::Entity
   # Adapter attrs -> Ruby attrs
   def convert_attrs(raw_attrs)
     return {} if raw_attrs.nil?
+
     attr_mappings.to_h do |mapping|
       [mapping.attr_name, mapping.map_value(raw_attrs[mapping.name] || raw_attrs[mapping.name.downcase])]
     end.compact
