@@ -6,6 +6,11 @@ gem 'hanami-model', '~> 1.3'
 
 gem 'rack', '>= 2.2.2'
 
+# Database
+gem 'mysql2'
+# gem 'pg'
+# gem 'sqlite3'
+
 gem 'slim'
 
 gem 'sassc'
@@ -43,10 +48,6 @@ end
 group :test, :development do
   gem 'dotenv', '~> 2.4'
   gem 'pry'
-
-  # Database
-  gem 'mysql2'
-  # gem 'sqlite3'
 end
 
 group :test do
@@ -57,8 +58,4 @@ end
 group :production do
   gem 'puma', '~> 5.5'
   gem 'sd_notify'
-
-  # Database
-  gem 'mysql2'
-  # gem 'pg'
 end

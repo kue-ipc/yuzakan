@@ -44,9 +44,6 @@ module Yuzakan
       @@no_password = -'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX' # rubocop:disable Style/ClassVars
 
       def create(username, _password = nil, **attrs)
-        opts = search_user_opts(username, filter: nil)
-        result = ldap.search(opts)
-
         user_attrs = read(username)
 
         user_attrs[:classobject].include?('sambaSamAccount')
@@ -63,12 +60,9 @@ module Yuzakan
 
         return false unless user['sambantpassword'] && user['sambantpassword'].size == 32
 
-        generate_nt_password(password) == user['sambantpassword']
+        return false if user['sambantpassword'] == @@no_password
 
-        opts = search_user_opts(username).merge(password: password)
-        # bind_as is re bind, so DON'T USE `ldap`
-        user = generate_ldap.bind_as(opts)
-        normalize_user(user&.first) if user
+        generate_nt_password(password) == user['sambantpassword']
       end
 
       private def change_password_operations(password)

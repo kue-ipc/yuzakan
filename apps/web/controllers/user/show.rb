@@ -14,8 +14,6 @@ module Web
         expose :attrs
 
         def call(_params)
-          provider_attr_mapping_repository = AttrMappingRepository.new
-
           @user = current_user
 
           providers = ProviderRepository.new.operational_all_with_adapter(:read)

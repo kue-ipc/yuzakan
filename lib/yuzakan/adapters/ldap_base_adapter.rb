@@ -224,7 +224,7 @@ module Yuzakan
       end
 
       private def ldap
-        @ladp ||= generate_ldap
+        @ldap ||= generate_ldap
       end
 
       private def generate_ldap

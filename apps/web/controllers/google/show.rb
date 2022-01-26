@@ -18,12 +18,12 @@ module Web
           @google_user = @google_provider.read(current_user.name)
 
           @creatable = false
-          unless @google_user
-            result = UserAttrs.new.call(username: current_user.name)
-            if result.successful? &&
-               ['学生', '教員', '職員'].include?(result.attrs[:affiliation])
-              @creatable = true
-            end
+          return if @google_user
+
+          result = UserAttrs.new.call(username: current_user.name)
+          if result.successful? &&
+             ['学生', '教員', '職員'].include?(result.attrs[:affiliation])
+            @creatable = true
           end
         end
       end

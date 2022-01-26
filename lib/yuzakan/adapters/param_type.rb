@@ -26,7 +26,7 @@ require_relative 'error'
 module Yuzakan
   module Adapters
     class ParamType
-      @@type_inputs = {
+      @@type_inputs = { # rubocop:disable Style/ClassVars
         boolean: 'checkbox',
         string: 'text',
         text: 'textarea',
@@ -146,7 +146,8 @@ module Yuzakan
 
           data = result.data
         end
-        Marshal.load(data)
+        # データベース由来のデータしかloadしないようにすること
+        Marshal.load(data) # rubocop:disable Security/MarshalLoad
       end
 
       # ListItem class

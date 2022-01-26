@@ -63,8 +63,6 @@ module Yuzakan
         when '{CLEARTEXT}'
           password
         when '{CRYPT}'
-          # 16 [./0-9A-Za-z] chars
-          salt = SecureRandom.base64(12).tr('+', '.')
           "{CRYPT}#{generate_crypt_password(password)}"
         when '{MD5}'
           "{MD5}#{Base64.strict_encode64(Digest::MD5.digest(password))}"
@@ -93,6 +91,7 @@ module Yuzakan
       end
 
       private def generate_crypt_password(password, format: @params[:crypt_salt_format])
+        # 16 [./0-9A-Za-z] chars
         salt = SecureRandom.base64(12).tr('+', '.')
         password.crypt(format % salt)
       end
