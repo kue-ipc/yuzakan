@@ -1,0 +1,8 @@
+linters:
+  # FileLength:
+  #   enabled: false
+  #   max: 300
+
+  LineLength:
+    enabled: true
+    max: 120
