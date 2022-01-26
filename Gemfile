@@ -6,13 +6,8 @@ gem 'hanami-model', '~> 1.3'
 
 gem 'rack', '>= 2.2.2'
 
-# Database
-gem 'mysql2'
-# gem 'pg'
-
 gem 'slim'
 
-# gem 'sass'
 gem 'sassc'
 
 gem 'coffee-script'
@@ -23,7 +18,6 @@ gem 'zxcvbn-js', require: 'zxcvbn'
 
 # key-value storage
 gem 'redis-rack'
-# gem 'dalli'
 gem 'readthis'
 
 # default gem
@@ -52,15 +46,22 @@ end
 group :test, :development do
   gem 'dotenv', '~> 2.4'
   gem 'pry'
+
+  # Database
+  gem 'mysql2'
+  # gem 'sqlite3'
 end
 
 group :test do
   gem 'minitest'
   gem 'capybara'
-  gem 'sqlite3'
 end
 
 group :production do
   gem 'puma', '~> 5.5'
   gem 'sd_notify'
+
+  # Database
+  gem 'mysql2'
+  # gem 'pg'
 end
