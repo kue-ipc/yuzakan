@@ -1,6 +1,6 @@
 import {h, text} from './hyperapp.js?v=2.0.20'
 
-export ModalHeader = ({labelId, title, closable}) =>
+export ModalHeader = ({labelId, title, closable}) ->
   titleProps = {class: 'modal-title'}
   titleProps.id = labelId if labelId?
   h 'div', class: 'modal-header', [
@@ -13,10 +13,10 @@ export ModalHeader = ({labelId, title, closable}) =>
       'aria-label': '閉じる'
   ]
 
-export ModalBody = (_, children) =>
+export ModalBody = (_, children) ->
   h 'div', {class: 'modal-body'}, children
 
-export ModalFooter = ({closable, button}) =>
+export ModalFooter = ({closable, button}) ->
   h 'div', class: 'modal-footer',
     if button then h 'button',
       class: "btn btn-#{button.color}"
@@ -30,7 +30,7 @@ export ModalFooter = ({closable, button}) =>
       'data-bs-dismiss': 'modal'
       text '閉じる'
 
-export ModalDialog = ({modalSize, labelId, title, closable, button}, children) =>
+export ModalDialog = ({modalSize, labelId, title, closable, button}, children) ->
   dialogClasses = ['modal-dialog', 'modal-dialog-centered', 'modal-dialog-scrollable']
   if modalSize
     dialogClasses.push("modal-#{modalSize}")

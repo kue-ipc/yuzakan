@@ -12,7 +12,7 @@ view = (state) ->
     h 'div', class: ['col'],
       h 'input',
         class: ['form-control']
-        oninput: (_, e) =>
+        oninput: (_, e) ->
           {username: e.target.value}
     h 'div', class: ['col'],
       h 'a',

@@ -51,7 +51,7 @@ calcStrength = (str, dict = []) ->
     strength: result.guesses_log10 * 7
   }
 
-StrengthIndicator = ({score, strength}) =>
+StrengthIndicator = ({score, strength}) ->
   scoreLabel =
     if score == 0 && strength == 0
       {tag: 'danger', label: ''}
@@ -202,13 +202,13 @@ passwordInputs = {
   passwordConfirmation
 }
 
-SubmitButton = ({submitting, valid}) =>
+SubmitButton = ({submitting, valid}) ->
   h 'div', class: 'd-grid gap-auto',
     h 'button',
       class: 'btn btn-primary btn-block'
       type:'submit'
       disabled: submitting || !valid
-      onclick: (state, event) =>
+      onclick: (state, event) ->
         event.preventDefault()
         [
           startSubmit(state)
@@ -225,7 +225,7 @@ init =
   valid: false
   submitting: false
 
-checkPassword = (state) =>
+checkPassword = (state) ->
   newState = {
     state...
     passwordCurrent: {state.passwordCurrent...}
@@ -298,16 +298,16 @@ checkPassword = (state) =>
       newState.passwordConfirmation.valid
   }
 
-startSubmit = (state) => {
+startSubmit = (state) -> {
   state...
   submitting: true
 }
 
-stopSubmit = (state, messages) =>
+stopSubmit = (state, messages) ->
   for error in messages['errors']
     if typeof error == 'object'
       for name, message of error
-          state = passwordInputs[camelize(name)].setInvalid(state, message)
+        state = passwordInputs[camelize(name)].setInvalid(state, message)
   {
     state...
     submitting: false
