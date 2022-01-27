@@ -6,5 +6,9 @@
   - msg_errors.each do |msg|
     = alert(:error, msg)
 
+  - param_errors.each do |name, msgs|
+    - msgs.each do |msg|
+      = alert(:error, "#{name}: #{msg}")
+
   script#param-errors type="application/json"
     = hj(param_errors.to_json)
