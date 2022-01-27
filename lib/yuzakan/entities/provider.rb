@@ -5,15 +5,6 @@ class Provider < Hanami::Entity
 
   NAME_RE = /\A[\w.-]+\z/.freeze
 
-  BASE_ATTRS = %i[
-    name
-    display_name
-    email
-    locked
-    disabled
-    unmanageable
-  ].freeze
-
   class NoAdapterError < StandardError
     def initialize(msg = 'No adapter, but need an adapter.')
       super

@@ -22,19 +22,59 @@ h3 操作メニュー
   type: :modal)
 = user_password_modal
 
-h3 属性情報
+h3 登録状況
+
+ruby:
+  info_labels = {
+    name: 'ユーザー名',
+    dislay_name: '表示名',
+    email: 'メールアドレス',
+    locked: 'ロック',
+    disabled: '無効',
+    unmanageable: '管理不可',
+    mfa: '多要素',
+  }
 
 table.table
   thead
     tr
-      th 属性名
+      th
       th 値
       - providers.each do |provider|
         th = provider.display_name
   tbody
-    - attrs.each do |attr|
+    - info_labels.each do |key, label|
       tr
-        td = attr.display_name
-        td = user_attrs[attr.name]
-        - user_providers_attrs.each do |provider_attrs|
-          td = provider_attrs&.[](attr.name)
+        td = label
+        td = userdata[key]
+        - providers.each do |provider|
+          - value = provider_userdatas[provider.name]&.[](key)
+          td
+            - if value
+              = value
+            - else
+              span.text-muted N/A
+
+
+
+
+
+
+/ h3 
+
+/ h3 属性
+
+/ table.table
+/   thead
+/     tr
+/       th 属性名
+/       th 値
+/       - providers.each do |provider|
+/         th = provider.display_name
+/   tbody
+/     - attrs.each do |attr|
+/       tr
+/         td = attr.display_name
+/         td = user_attrs[attr.name]
+/         - user_providers_attrs.each do |provider_attrs|
+/           td = provider_attrs&.[](attr.name)

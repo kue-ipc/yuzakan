@@ -1,5 +1,3 @@
-# TODO: 未テスト、作りかけ
-
 class ReadUser
   include Hanami::Interactor
 
@@ -8,53 +6,45 @@ class ReadUser
     messages_path 'config/messages.yml'
 
     validations do
-      required(:username) { filled? & str? & size?(1..255) }
+      required(:username).filled(:str?, max_size?: 255)
     end
   end
 
-  def initialize(user:, client:,
-                 user_repository: UserRepository.new,
-                 provider_repository: ProviderRepository.new,
-                 activity_repository: ActivityRepository.new)
-    @user = user
-    @client = client
-    @user_repository = user_repository
-    @provider_repository = provider_repository
-    @activity_repository = activity_repository
+  expose :userdata
+  expose :provider_userdatas
+
+  def initialize(provider_repository: ProviderRepository.new, providers: nil)
+    @providers = providers || provider_repository.operational_all_with_adapter(:read).to_a
   end
 
   def call(params)
-    activity_params = {
-      user_id: @user.id,
-      client: @client,
-      type: 'user',
-      target: params[:username],
-      action: 'read_user',
+    username = params[:username]
+    @userdata = {
+      name: username,
+      display_name: nil,
+      email: nil,
+      attrs: {},
+      count: 0,
     }
-
-    user_data = nil
-
-    @provider_repository.operational_all_with_adapter(:read).each do |provider|
-      user_data = provider.read(params[:username])
-      # 最初に読み込みされたところを正とする。
-      break if user_data
+    @provider_userdatas = @providers.to_h do |provider|
+      userdata = provider.read(username)
+      if userdata
+        @userdata[:count] += 1
+        @userdata[:display_name] ||= userdata[:display_name]
+        @userdata[:email] ||= userdata[:email]
+        @userdata[:attrs].merge(userdata[:attrs]) do |_key, self_val, other_val|
+          if self_val.nil?
+            other_val
+          else
+            self_val
+          end
+        end
+      end
+      [provider.name, userdata]
     rescue => e
       Hanami.logger.error e
-      @activity_repository.create(**activity_params, result: 'error')
       error!("ユーザー情報の読み込み時にエラーが発生しました。: #{e.message}")
     end
-
-    unless user_data
-      @activity_repository.create(**activity_params, result: 'failure')
-      error!('該当のユーザーが見つかりません。')
-    end
-
-    register_user = RegisterUser.new(user: @user, client: @client,
-                                     user_repository: @user_repository,
-                                     activity_repository: @activity_repository)
-    create_or_upadte_user(user_data)
-    register_user.call(user_data)
-    @activity_repository.create(**activity_params, result: 'success')
   end
 
   private def valid?(params)
