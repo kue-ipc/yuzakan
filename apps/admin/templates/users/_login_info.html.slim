@@ -24,7 +24,7 @@ h3 アカウント ログイン情報 通知書
   div class=col_name
     | 発行日時:
   div class=col_value
-    = Time.now.strftime("%Y年%m月%d日 %H時%M分%S秒")
+    = Time.now.strftime('%Y年%m月%d日 %H時%M分%S秒')
 
 .d-print-none
   p
@@ -36,11 +36,11 @@ h3 アカウント ログイン情報 通知書
   = link_to 'ユーザーの画面に戻る', routes.path(:user, user.name)
 
 .d-none.d-print-block
-  p 
+  p
     strong この通知書を受け取ったら、必ずパスワード変更を実施してください。
 
   p 上記アカウント管理サイトにアクセスし、「ログイン」ボタンから初回パスワードでログインを実施してください。ログイン後、「パスワード変更」からパスワードを変更してください。
-  
+
   p この用紙はアカウント発行の承認書ではありません。パスワード変更後は直ちに破棄してください。
 
   p
@@ -76,5 +76,3 @@ h3 アカウント ログイン情報 通知書
           | 電話番号:
         div class=col_value
           = current_config&.contact_phone
-
-

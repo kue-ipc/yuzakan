@@ -1,13 +1,13 @@
-- abilities = [ \
-   {name: :readable, label: '読み取り'}, \
-   {name: :writable, label: '書き込み'}, \
-   {name: :authenticatable, label: '認証'}, \
-   {name: :password_changeable, label: 'パスワード変更'}, \
-   {name: :lockable, label: 'ロック'}, \
+- abilities = [\
+   {name: :readable, label: '読み取り'},
+   {name: :writable, label: '書き込み'},
+   {name: :authenticatable, label: '認証'},
+   {name: :password_changeable, label: 'パスワード変更'},
+   {name: :lockable, label: 'ロック'},
  ]
 
 - select_adapters = ADAPTERS.hash \
-   .select { |name, klass| klass.selectable? } \
+   .select { |_name, klass| klass.selectable? } \
    .transform_values(&:label) \
    .invert
 
@@ -39,7 +39,7 @@
     - label 'アダプター', class: 'form-label', for: :adapter_name
     - select :adapter_name, select_adapters, \
              id: 'provider-adapter-select', class: 'form-control', \
-             options: { prompt: '選択してください。' }
+             options: {prompt: '選択してください。'}
   - div id: 'provider-adapter', 'data-adapter-select': 'provider-adapter-select',
-        'data-provider-id': "#{ha(provider&.id.to_s)}"
+        'data-provider-id': ha(provider&.id.to_s)
   - submit submit_label, class: 'btn btn-primary'
