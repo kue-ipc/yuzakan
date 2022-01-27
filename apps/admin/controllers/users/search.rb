@@ -4,7 +4,6 @@ module Admin
       class Search
         include Admin::Action
         include Hanami::Action::Cache
-        include Yuzakan::Helpers::NameChecker
 
         cache_control :no_store
 

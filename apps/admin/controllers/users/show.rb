@@ -6,7 +6,6 @@ module Admin
       class Show
         include Admin::Action
         include Hanami::Action::Cache
-        include Yuzakan::Helpers::NameChecker
 
         cache_control :no_store
 
@@ -19,15 +18,7 @@ module Admin
 
         def call(params)
           user_id = params[:id]
-          @user =
-            case check_type(user_id)
-            when :id
-              UserRepository.new.find(user_id)
-            when :name
-              UserRepository.new.find_by_name_or_sync(user_id)
-            else
-              halt 400
-            end
+          @user = UserRepository.new.find(user_id)
 
           halt 404 unless @user
 
