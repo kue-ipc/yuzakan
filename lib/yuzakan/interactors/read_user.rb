@@ -32,7 +32,7 @@ class ReadUser
         @userdata[:count] += 1
         @userdata[:display_name] ||= userdata[:display_name]
         @userdata[:email] ||= userdata[:email]
-        @userdata[:attrs].merge(userdata[:attrs]) do |_key, self_val, other_val|
+        @userdata[:attrs].merge!(userdata[:attrs]) do |_key, self_val, other_val|
           if self_val.nil?
             other_val
           else

@@ -93,7 +93,7 @@ module Yuzakan
           name: user.name,
           display_name: user.display_name,
           email: user.email,
-          lockced: user.locked?,
+          locked: user.locked?,
           disabled: user.disabled?,
         }
       end

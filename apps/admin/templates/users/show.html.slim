@@ -27,7 +27,7 @@ h3 登録状況
 ruby:
   info_labels = {
     name: 'ユーザー名',
-    dislay_name: '表示名',
+    display_name: '表示名',
     email: 'メールアドレス',
     locked: 'ロック',
     disabled: '無効',
@@ -38,7 +38,7 @@ ruby:
 table.table
   thead
     tr
-      th
+      th 名前
       th 値
       - providers.each do |provider|
         th = provider.display_name
@@ -46,35 +46,33 @@ table.table
     - info_labels.each do |key, label|
       tr
         td = label
-        td = userdata[key]
+        td = userdata.dig(key)
         - providers.each do |provider|
-          - value = provider_userdatas[provider.name]&.[](key)
+          - value = provider_userdatas.dig(provider.name, key)
           td
-            - if value
-              = value
-            - else
+            - if value.nil?
               span.text-muted N/A
+            - else
+              = value
 
+h3 属性
 
-
-
-
-
-/ h3 
-
-/ h3 属性
-
-/ table.table
-/   thead
-/     tr
-/       th 属性名
-/       th 値
-/       - providers.each do |provider|
-/         th = provider.display_name
-/   tbody
-/     - attrs.each do |attr|
-/       tr
-/         td = attr.display_name
-/         td = user_attrs[attr.name]
-/         - user_providers_attrs.each do |provider_attrs|
-/           td = provider_attrs&.[](attr.name)
+table.table
+  thead
+    tr
+      th 属性名
+      th 値
+      - providers.each do |provider|
+        th = provider.display_name
+  tbody
+    - attrs.each do |attr|
+      tr
+        td = attr.display_name
+        td = userdata.dig(:attrs, attr.name)
+        - providers.each do |provider|
+          - value = provider_userdatas.dig(provider.name, :attrs, attr.name)
+          td
+            - if value.nil?
+              span.text-muted N/A
+            - else
+              = value
