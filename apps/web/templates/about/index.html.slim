@@ -34,13 +34,13 @@ dl.row
   dd class=col_value
     = Yuzakan.version
 
-p 
+p
   | このシステムは日本国内の大学向けに作成されたアカウント管理システムです。
 
 h4 ライセンス
 pre.border.rounded.bg-light.p-2
   code
-    = IO.read(Hanami.root / 'LICENSE')
+    = File.read(Hanami.root / 'LICENSE')
 
 / アラートメッセージのテスト用
 / - levels.each do |level, _|

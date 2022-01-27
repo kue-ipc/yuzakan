@@ -1,4 +1,3 @@
-
 h3 基本情報
 
 dl.row
@@ -17,7 +16,7 @@ dl.row
 
 h3 操作メニュー
 
-= menu_link(url: '#' + 'user_password', name: 'パスワードリセット',
+= menu_link(url: '#user_password', name: 'パスワードリセット',
   description: 'パスワードのリセットを行います。',
   color: 'danger',
   type: :modal)
@@ -38,6 +37,4 @@ table.table
         td = attr.display_name
         td = user_attrs[attr.name]
         - user_providers_attrs.each do |provider_attrs|
-          if 
-          td
-            - if = provider_attrs&.[](attr.name)
+          td = provider_attrs&.[](attr.name)

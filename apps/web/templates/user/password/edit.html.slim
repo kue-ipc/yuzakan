@@ -6,8 +6,7 @@ p 現在のパスワードと新しいパスワードを入力してください
 .change_password.mx-auto.p-3.border.rounded.mb-2
   = form_for form do
     - fields_for :password do
-      - div id: 'change-password', \
-            'data-change-password': ha(JSON.generate(change_password_data)) do
+      - div id: 'change-password', 'data-change-password': ha(JSON.generate(change_password_data))
 
 p
   | 新しいパスワードへの変更は、
@@ -45,17 +44,16 @@ ul
       - else
         | すべてのASCII印字可能文字(半角の英数字と記号)のみを使用している。
         strong 空白(スペース)は使用できない。
+    - elsif current_config.password_unusable_chars&.size&.positive?
+      | 下記を除くASCII印字可能文字(半角の英数字と記号)、および、空白(スペース)のみが使用している。
+      br
+      | 使用できないASCII印字可能文字:
+      - current_config.password_unusable_chars.each_char do |char|
+        strong<>
+          code
+            = h(char)
     - else
-      - if current_config.password_unusable_chars&.size&.positive?
-        | 下記を除くASCII印字可能文字(半角の英数字と記号)、および、空白(スペース)のみが使用している。
-        br
-        | 使用できないASCII印字可能文字:
-        - current_config.password_unusable_chars.each_char do |char|
-          strong<>
-            code
-              = h(char)
-      - else
-          | すべてのASCII印字可能文字(半角の英数字と記号)、および、空白(スペース)のみを使用している。
+        | すべてのASCII印字可能文字(半角の英数字と記号)、および、空白(スペース)のみを使用している。
     br
     small.text-muted タブ等の制御文字、漢字やカナ等のASCII以外の文字は使用できない。
   - if current_config.password_min_types > 2
@@ -69,7 +67,7 @@ ul
           = current_config.password_min_types
         | 種類以上使用している。
 
-  - if current_config.password_min_score > 0
+  - if current_config.password_min_score.positive?
     li パスワードの強度が一定以上のスコアである。
 
 h4 パスワードの強度について

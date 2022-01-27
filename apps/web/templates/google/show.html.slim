@@ -20,7 +20,7 @@ h3 Google アカウント の状態
       - else
         | 利用可能
       - case google_user[:state]
-        - when :available 
+        - when :available
           | 利用可能
         - when :locked
           | ロック中
@@ -82,7 +82,7 @@ h3 操作メニュー
 - else
   .menu.row
     - available_operations.each do |operation|
-      = menu_link(**menu_operations[operation], url: '#' + operation.to_s)
+      = menu_link(**menu_operations[operation], url: "\##{operation}")
 
   = javascript 'submit_before_agreement', type: 'module', defer: true
   - available_operations.each do |operation|
