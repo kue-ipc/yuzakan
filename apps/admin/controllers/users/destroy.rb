@@ -1,3 +1,5 @@
+require 'hanami/action/cache'
+
 module Admin
   module Controllers
     module Users

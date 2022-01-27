@@ -5,10 +5,11 @@ module Admin
     module Providers
       class Edit
         include Admin::Action
-        expose :provider
         include Hanami::Action::Cache
 
         cache_control :no_store
+
+        expose :provider
 
         def call(params)
           @provider = ProviderRepository.new.find(params[:id])

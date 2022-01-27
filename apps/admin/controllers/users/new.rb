@@ -1,3 +1,5 @@
+require 'hanami/action/cache'
+
 module Admin
   module Controllers
     module Users
@@ -7,7 +9,10 @@ module Admin
 
         cache_control :no_store
 
-        def call(params)
+        expose :user
+
+        def call(_params)
+          @user = nil
         end
       end
     end

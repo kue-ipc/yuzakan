@@ -5,10 +5,7 @@ module Admin
         include Admin::View
 
         def form
-          Form.new(:provider,
-                   routes.provider_path(id: provider.id),
-                   {provider: provider},
-                   method: :patch)
+          Form.new(:provider, routes.provider_path(id: provider.id), {provider: provider}, method: :patch)
         end
 
         def submit_label

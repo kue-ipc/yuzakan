@@ -5,10 +5,11 @@ module Admin
     module Providers
       class New
         include Admin::Action
-        expose :provider
         include Hanami::Action::Cache
 
         cache_control :no_store
+
+        expose :provider
 
         def call(_params)
           @provider = nil

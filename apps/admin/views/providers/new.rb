@@ -1,5 +1,3 @@
-require 'json'
-
 module Admin
   module Views
     module Providers

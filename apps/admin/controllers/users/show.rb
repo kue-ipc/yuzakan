@@ -39,8 +39,6 @@ module Admin
           flash[:errors] = result.errors if result.failure?
           @userdata = result.userdata || {}
           @provider_userdatas = result.provider_userdatas || {}
-          pp @userdata
-          pp @provider_userdatas
         end
       end
     end
