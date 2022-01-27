@@ -30,9 +30,10 @@ end
 
 resources 'attrs', only: [:index, :create, :update, :destroy]
 
-resources 'users', only: [:index, :show] do
-  # collection do
-  #   get 'sync'
-  # end
+resources 'users' do
+  collection do
+    get 'search'
+    get 'sync'
+  end
   resource 'password', only: [:create]
 end
