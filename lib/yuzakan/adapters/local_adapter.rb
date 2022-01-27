@@ -1,5 +1,3 @@
-require 'bcrypt'
-
 require_relative 'abstract_adapter'
 
 module Yuzakan
@@ -18,103 +16,85 @@ module Yuzakan
         true
       end
 
-      def create(username, password = nil, **attrs)
-        hashed_password = if password
-                            BCrypt::Password.create(password)
-                          else
-                            '!'
-                          end
-        user = @repository.create(
+      def create(username, password = nil, **userdata)
+        user2userdata(@repository.create_with_password(
           name: username,
-          display_name: attrs[:display_name] || username,
-          email: attrs[:email],
-          hashed_password: hashed_password)
-        normalize_user(user)
+          display_name: userdata[:display_name] || username,
+          email: userdata[:email],
+          password: password))
       end
 
       def read(username)
-        user = @repository.by_name(username)
-        normalize_user(user)
+        user2userdata(@repository.find_by_name(username))
       end
 
-      def udpate(username, **attrs)
-        user = @repository.by_name(username)
-        return unless user
+      def udpate(username, **userdata)
+        user = @repository.find_by_name(username)
+        raise "user not found: #{username}" if user.nil?
 
         data = {}
         %i[display_name email].each do |key|
           data[key] = attrs[key] if attrs[key]
         end
-        updated_user = @repository.update(user.id, data)
-        normalize_user(updated_user)
+        user2userdata(@repository.update(user.id, data))
       end
 
       def delete(username)
-        user = @repository.by_name(username)
-        return unless user
+        user = @repository.find_by_name(username)
+        raise "user not found: #{username}" if user.nil?
 
         @repository.delete(user.id)
       end
 
       def auth(username, password)
-        user = LocalUserRepository.new.by_name(username)
+        user = @repository.find_by_name(username)
+        return false if user.nil?
+        return false if user.hashed_password.start_with?('!')
 
-        if user &&
-           !user.hashed_password.start_with?('!') &&
-           BCrypt::Password.new(user.hashed_password) == password
-          return normalize_user(user)
-        end
-
-        nil
+        user.verify_password(password)
       end
 
       def change_password(username, password)
-        user = @repository.by_name(username)
-        return unless user
+        user = @repository.find_by_name(username)
+        raise "user not found: #{username}" if user.nil?
 
-        updated_user = @repository.update(
-          user.id,
-          hashed_password: BCrypt::Password.create(password))
-        normalize_user(updated_user)
+        @repository.change_password(user.id, password: password)
       end
 
       def lock(username)
-        user = @repository.by_name(username)
-        return unless user && !user.hashed_password.start_with?('!')
+        user = @repository.find_by_name(username)
+        raise "user not found: #{username}" if user.nil?
 
-        @repository.update(
-          user.id,
-          hashed_password: "!#{user.hashed_password}")
+        @repository.lock(user.id)
       end
 
-      def unlock(username)
-        user = @repository.by_name(username)
-        return unless user&.hashed_password&.start_with?('!$')
+      def unlock(username, password = nil)
+        user = @repository.find_by_name(username)
+        raise "user not found: #{username}" if user.nil?
 
-        @repository.update(
-          user.id,
-          hashed_password: user.hashed_password[1..])
+        @repository.unlock(user.id)
       end
 
       def locked?(username)
-        user = @repository.by_name(username)
-        # 存在しないユーザーは常にロックされているとみなす。
-        return true unless user
+        user = @repository.find_by_name(username)
+        raise "user not found: #{username}" if user.nil?
 
-        user.hashed_password.start_with?('!')
+        user.locked?
       end
 
       def list
         @repository.all.map(&:name)
       end
 
-      private def normalize_user(user)
-        return unless user
+      private def user2userdata(user)
+        return if user.nil?
 
         {
           name: user.name,
           display_name: user.display_name,
           email: user.email,
+          lockced: user.locked?,
+          disabled: user.disabled?,
         }
       end
     end
