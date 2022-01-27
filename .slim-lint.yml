@@ -1,8 +1,6 @@
 linters:
-  # FileLength:
-  #   enabled: false
-  #   max: 300
+  ConsecutiveControlStatements:
+    enabled: false
 
   LineLength:
-    enabled: true
     max: 120

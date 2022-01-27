@@ -1,15 +1,15 @@
-- abilities = [\
-   {name: :readable, label: '読み取り'},
-   {name: :writable, label: '書き込み'},
-   {name: :authenticatable, label: '認証'},
-   {name: :password_changeable, label: 'パスワード変更'},
-   {name: :lockable, label: 'ロック'},
- ]
-
-- select_adapters = ADAPTERS.hash \
-   .select { |_name, klass| klass.selectable? } \
-   .transform_values(&:label) \
-   .invert
+ruby:
+  abilities = [
+    {name: :readable, label: '読み取り'},
+    {name: :writable, label: '書き込み'},
+    {name: :authenticatable, label: '認証'},
+    {name: :password_changeable, label: 'パスワード変更'},
+    {name: :lockable, label: 'ロック'},
+  ]
+  select_adapters = ADAPTERS.hash
+    .select { |_name, klass| klass.selectable? }
+    .transform_values(&:label)
+    .invert
 
 = javascript 'provider_adapter', type: 'module', defer: true
 
