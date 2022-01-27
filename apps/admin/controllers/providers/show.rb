@@ -11,9 +11,20 @@ module Admin
 
         expose :provider
 
+        params do
+          required(:id).filled(:int?)
+        end
+
+        def initialize(provider_repository: ProviderRepository.new)
+          @provider_repository = provider_repository
+        end
+
         def call(params)
-          provider_repository = ProviderRepository.new
-          @provider = provider_repository.find_with_adapter(params[:id].to_i)
+          halt 400 unless params.valid?
+
+          @provider = @provider_repository.find_with_adapter(params[:id])
+
+          halt 404 unless @provider
         end
       end
     end
