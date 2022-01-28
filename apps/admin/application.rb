@@ -1,34 +1,45 @@
 require 'hanami/helpers'
 require 'hanami/assets'
 
+require_relative '../../lib/yuzakan/utils/uglifier_es_compressor'
+
 module Admin
   class Application < Hanami::Application
-    sassions_name = 'yuzakan:session:admin'
-    sessions_opts = {
-      expire_after: 24 * 60 * 60,
-      key: sassions_name.gsub(':', '.'),
-    }
-
-    configure do
+    configure do # rubocop:disable Metrics/BlockLength
       root __dir__
-
-      load_paths << [
-        'controllers',
-        'views',
-      ]
-
+      load_paths << ['controllers', 'views']
       routes 'config/routes'
 
-      layout :application
+      # sessions
+      sassions_name = 'yuzakan:session'
+      sessions_opts = {
+        expire_after: 24 * 60 * 60,
+        key: sassions_name.gsub(':', '.'),
+      }
 
+      # -- redis --
+      redis_url = ENV.fetch('REDIS_URL', 'redis://127.0.0.1:6379/0')
+      sessions :redis,
+               redis_server: "#{redis_url}/#{sassions_name}",
+               **sessions_opts
+
+      # -- memcached --
+      # require 'rack/session/dalli'
+      # sessions :dalli,
+      #          namespace: sassions_name,
+      #          **sessions_opts
+
+      # -- cookie --
+      # sessions :cookie,
+      #          secret: ENV.fetch('WEB_SESSIONS_SECRET'),
+      #          **sessions_opts
+
+      layout :application
       templates 'templates'
 
       assets do
-        require_relative '../../lib/yuzakan/utils/uglifier_es_compressor'
         javascript_compressor Yuzakan::Utils::UglifierEsCompressor.new
-
         stylesheet_compressor :sass
-
         sources << ['assets']
       end
 
@@ -70,23 +81,6 @@ module Admin
 
     configure :development do
       handle_exceptions false
-
-      # -- redis --
-      redis_url = ENV.fetch('REDIS_URL', 'redis://127.0.0.1:6379/0')
-      sessions :redis,
-               redis_server: "#{redis_url}/#{sassions_name}",
-               **sessions_opts
-
-      # -- memcached --
-      # require 'rack/session/dalli'
-      # sessions :dalli,
-      #          namespace: sassions_name,
-      #          **sessions_opts
-
-      # -- cookie --
-      # sessions :cookie,
-      #          secret: ENV.fetch('ADMIN_SESSIONS_SECRET'),
-      #          **sessions_opts
     end
 
     configure :test do
@@ -108,23 +102,6 @@ module Admin
         fingerprint true
         subresource_integrity :sha256
       end
-
-      # -- redis --
-      redis_url = ENV.fetch('REDIS_URL', 'redis://127.0.0.1:6379/0')
-      sessions :redis,
-               redis_server: "#{redis_url}/#{sassions_name}",
-               **sessions_opts
-
-      # -- memcached --
-      # require 'rack/session/dalli'
-      # sessions :dalli,
-      #          namespace: sassions_name,
-      #          **sessions_opts
-
-      # -- cookie --
-      # sessions :cookie,
-      #          secret: ENV.fetch('ADMIN_SESSIONS_SECRET'),
-      #          **sessions_opts
     end
   end
 end
