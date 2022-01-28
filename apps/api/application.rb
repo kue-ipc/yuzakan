@@ -94,9 +94,7 @@ module Api
       handle_exceptions false
 
       # -- cookie --
-      sessions :cookie,
-               secret: ENV.fetch('SESSIONS_SECRET'),
-               **sessions_opts
+      sessions :cookie, secret: ENV.fetch('SESSIONS_SECRET')
     end
 
     configure :production do
