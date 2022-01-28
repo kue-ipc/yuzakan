@@ -34,7 +34,7 @@ module Admin
 
       # -- cookie --
       # sessions :cookie,
-      #          secret: ENV.fetch('WEB_SESSIONS_SECRET'),
+      #          secret: ENV.fetch('SESSIONS_SECRET'),
       #          **sessions_opts
 
       layout :application
@@ -91,7 +91,7 @@ module Admin
 
       # -- cookie --
       sessions :cookie,
-               secret: ENV.fetch('ADMIN_SESSIONS_SECRET'),
+               secret: ENV.fetch('SESSIONS_SECRET'),
                **sessions_opts
     end
 
