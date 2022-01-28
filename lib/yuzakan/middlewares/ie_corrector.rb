@@ -1,9 +1,20 @@
-# IE11が次の条件のときにおかしなHTTP_ACCEPTを送る問題の解決
+# = IE11互換表示対応
+# IE11が次の条件のときにおかしなAcceptを送る問題の対応
 # * ローカル イントラネット (localhostを除く)
 # * HTTPS接続
-# この場合は互換モードになり、おかしな接続になる。
+# この場合は互換モードになり、'text/html'が含まれない。
 # そのため、'text/html'を先頭にし、htmlが常に優先されるようにする。
-# なお、IEでJSON接続はないため、考慮しなくてもよい。
+# IEはそもそも未対応であるため、JSON接続は考慮しない。
+# == IE11 互換表示(イントラネット)
+# Accept: image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*
+# Accept-Encoding: gzip, deflate
+# Accept-Language: ja
+# User-Agent: Mozilla/4.0 (MSIE 7.0; Trident/7.0; ...)
+# == IE11 通常
+# Accept: text/html, application/xhtml+xml, image/jxr, */*
+# Accept-Encoding: gzip, deflate
+# Accept-Language: ja
+# User-Agent: Mozilla/5.0 (Trident/7.0; ...) like Gecko
 
 module Yuzakan
   module Middlewares
