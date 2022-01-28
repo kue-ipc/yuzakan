@@ -16,6 +16,7 @@ module Web
               flash[:failure] = 'ログインに失敗しました。'
               redirect_to routes.path(:root)
             when :json
+              self.status = 422
               @data = {
                 result: 'failure',
                 messages: {

@@ -13,6 +13,7 @@ distDirs = [
 targets = [
   {name: 'hyperapp', ext: 'coffee'}
   {name: 'bootstrap', ext: 'coffee'}
+  {name: 'pluralize', ext: 'coffee'}
   {name: 'zxcvbn', ext: 'coffee'}
 ]
 

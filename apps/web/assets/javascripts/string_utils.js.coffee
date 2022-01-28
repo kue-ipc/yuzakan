@@ -1,5 +1,8 @@
-export capitalize = (str) ->
-  str && str[0].toUpperCase() + str[1..].toLowerCase()
+import Pluralize from './pluralize.js?v=0.0.1'
+
+# abcDef_ghi-jkl -> abc def ghi jkl
+export strToList = (str) ->
+  str.replace(/[A-Z]+/g, '_$&').toLowerCase().split(/[-_\s]+/)
 
 export listToCamel = (list...) ->
   (list[0]?.toLowerCase() ? '') +
@@ -18,8 +21,9 @@ export listToField = (list...) ->
   (list[0] ? '') +
     ("[#{str}]" for str in list[1..]).join('')
 
-export strToList = (str) ->
-  str.replace(/[A-Z]+/g, '_$&').toLowerCase().split(/[-_\s]+/)
+# Capitalize
+export capitalize = (str) ->
+  str && str[0].toUpperCase() + str[1..].toLowerCase()
 
 # camelCase
 export camelize = (str) ->
@@ -40,3 +44,11 @@ export kebabize = (str) ->
 # form[field][name]
 export fieldize = (str) ->
   listToField(strToList(str)...)
+
+# names
+export pluralize = (str) ->
+  Pluralize.plural(str)
+
+# name
+export singularize = (str) ->
+  Pluralize.singular(str)

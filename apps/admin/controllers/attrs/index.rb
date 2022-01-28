@@ -12,6 +12,11 @@ module Admin
         expose :attrs
         expose :providers
 
+        def initialize(attr_repository: AttrRepository.new, provider_repository: ProviderRepository.new)
+          @attr_repository = attr_repository
+          @provider_repository = provider_repository
+        end
+
         def call(_params)
           @attrs = AttrRepository.new.all_with_mappings
           @providers = ProviderRepository.new.all
