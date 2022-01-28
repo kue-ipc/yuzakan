@@ -3,6 +3,7 @@ module Web
     module About
       class Index
         include Web::Action
+        accept :html
 
         def call(_params)
         end

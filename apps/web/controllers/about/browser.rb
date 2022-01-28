@@ -3,6 +3,7 @@ module Web
     module About
       class Browser
         include Web::Action
+        accept :html
 
         def call(params)
         end
