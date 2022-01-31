@@ -44,7 +44,7 @@ describe Admin::Controllers::Dashboard::Index do
         response = action.call(params)
         flash = action.exposures[:flash]
         _(response[0]).must_equal 302
-        _(response[1]['Location']).must_equal '/admin'
+        _(response[1]['Location']).must_equal '/'
         _(flash[:warn]).must_be_nil
       end
     end
@@ -56,9 +56,8 @@ describe Admin::Controllers::Dashboard::Index do
         response = action.call(params)
         flash = action.exposures[:flash]
         _(response[0]).must_equal 302
-        _(response[1]['Location']).must_equal '/admin'
-        _(flash[:warn]).must_equal 'セッションがタイムアウトしました。' \
-                                   'ログインし直してください。'
+        _(response[1]['Location']).must_equal '/'
+        _(flash[:warn]).must_equal 'セッションがタイムアウトしました。'
       end
     end
 

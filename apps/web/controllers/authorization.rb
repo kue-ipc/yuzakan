@@ -24,7 +24,7 @@ module Web
     end
 
     private def authorize!
-      return reply_unauthorized unless authorized?
+      reply_unauthorized unless authorized?
     end
 
     private def authorized?

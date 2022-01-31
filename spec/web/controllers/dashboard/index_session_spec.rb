@@ -30,8 +30,7 @@ describe Web::Controllers::Dashboard::Index do
       flash = action.exposures[:flash]
       _(response[0]).must_equal 302
       _(response[1]['Location']).must_equal '/'
-      _(flash[:warn]).must_equal 'セッションがタイムアウトしました。' \
-                                 'ログインし直してください。'
+      _(flash[:warn]).must_equal 'セッションがタイムアウトしました。'
     end
   end
 

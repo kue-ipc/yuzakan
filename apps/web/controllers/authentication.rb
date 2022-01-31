@@ -15,11 +15,13 @@ module Web
     end
 
     private def authenticate!
-      return reply_unauthenticated unless authenticated?
+      return if security_level.zero?
+
+      reply_unauthenticated unless authenticated?
     end
 
     private def authenticated?
-      security_level.zero? || !current_user.nil?
+      !current_user.nil?
     end
 
     private def reply_unauthenticated

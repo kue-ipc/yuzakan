@@ -24,7 +24,7 @@ describe Admin::Controllers::Providers::Create do
                                  adapter_name: 'dummy',
                                }))
       _(response[0]).must_equal 302
-      _(response[1]['Location']).must_equal '/admin/setup'
+      _(response[1]['Location']).must_equal '/uninitialized'
     end
   end
 end
