@@ -8,6 +8,7 @@ module Admin
         include Hanami::Action::Cache
 
         cache_control :no_store
+        security_level 0
 
         expose :data
 
@@ -62,9 +63,6 @@ module Admin
               messages: {success: 'ログインしました。'},
             }
           end
-        end
-
-        def authenticate!
         end
       end
     end

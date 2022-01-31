@@ -3,7 +3,9 @@ module Web
     module Session
       class Create
         include Web::Action
+
         expose :data
+        security_level 0
 
         def call(params)
           result = Authenticate.new(client: remote_ip, app: 'web')
@@ -42,9 +44,6 @@ module Web
               messages: {success: 'ログインしました。'},
             }
           end
-        end
-
-        def authenticate!
         end
       end
     end

@@ -3,15 +3,11 @@ module Web
     module About
       class Index
         include Web::Action
+
         accept :html
+        security_level 0
 
         def call(_params)
-        end
-
-        def configurate!
-        end
-
-        def authenticate!
         end
       end
     end

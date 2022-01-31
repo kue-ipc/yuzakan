@@ -4,14 +4,13 @@ module Web
       class Index
         include Web::Action
 
+        security_level 0
+
         def call(params)
         end
 
         def configurate!
           redirect_to routes.path(:root) if configurated?
-        end
-
-        def authenticate!
         end
       end
     end

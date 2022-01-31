@@ -8,11 +8,9 @@ module Admin
         include Hanami::Action::Cache
 
         cache_control :no_store
+        security_level 0
 
         def call(params)
-        end
-
-        def authenticate!
         end
       end
     end

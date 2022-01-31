@@ -2,8 +2,18 @@ module Web
   module Connection
     def self.included(action)
       if action.is_a?(Class)
+        action.define_singleton_method(:security_level) do |level = nil|
+          if level
+            @level = level
+          else
+            @level || default_security_level
+          end
+        end
+        action.define_singleton_method(:default_security_level) { 1 }
+
         action.class_eval do
           before :connect!
+          before :check_session!
           after :done!
           expose :current_config
           expose :current_user
@@ -55,10 +65,51 @@ module Web
       @current_user ||= (session[:user_id] && @user_repository.find(session[:user_id]))
     end
 
+    private def current_user_level
+      if current_user&.admin
+        5
+      elsif current_user
+        2
+      else
+        0
+      end
+    end
+
     private def last_access_time
       @last_access_time ||= (session[:access_time] || Time.now).tap do
         session[:access_time] = Time.now
       end
+    end
+
+    def security_level
+      self.class.security_level
+    end
+
+    private def allowed_networks
+      if security_level >= 3
+        current_config.admin_networks
+      else
+        current_config.user_networks
+      end
+    end
+
+    private def check_session!
+      return unless session_timeout?
+
+      session[:user_id] = nil
+      reply_session_timeout
+    end
+
+    private def session_timeout?
+      timeout = current_config&.session_timeout || 3600
+      return false if timeout.zero?
+
+      Time.now - last_access_time > timeout
+    end
+
+    private def reply_session_timeout
+      flash[:warn] = 'セッションがタイムアウトしました。'
+      redirect_to Web.routes.path(:root)
     end
   end
 end

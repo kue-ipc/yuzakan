@@ -4,15 +4,14 @@ module Web
       class Index
         include Web::Action
 
+        security_level 0
+
         def call(params)
         end
 
         def configurate!
           redirect_to routes.path(:uninitialized) unless configurated?
           redirect_to routes.path(:root) unless maintenance?
-        end
-
-        def authenticate!
         end
       end
     end

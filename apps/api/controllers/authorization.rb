@@ -4,8 +4,8 @@ module Api
   module Authorization
     include Web::Authorization
 
-    private def allowed_networks
-      current_config.admin_networks
+    private def reply_unauthorized
+      halt 403
     end
   end
 end

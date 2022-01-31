@@ -3,15 +3,11 @@ module Web
     module About
       class Browser
         include Web::Action
+
         accept :html
+        security_level 0
 
         def call(params)
-        end
-
-        def configurate!
-        end
-
-        def authenticate!
         end
       end
     end

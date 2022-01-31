@@ -8,15 +8,13 @@ module Admin
         include Hanami::Action::Cache
 
         cache_control :no_store
+        security_level 0
 
         def call(_params)
           redirect_to routes.path(:setup_done) if configurated?
         end
 
         def configurate!
-        end
-
-        def authenticate!
         end
       end
     end
