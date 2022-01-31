@@ -1,8 +1,10 @@
 require 'hanami/helpers'
 require 'hanami/assets'
 
-require_relative './controllers/authentication'
+require_relative './controllers/connection'
 require_relative './controllers/configuration'
+require_relative './controllers/authentication'
+require_relative './controllers/authorization'
 
 require_relative '../../lib/yuzakan/utils/uglifier_es_compressor'
 
@@ -66,13 +68,10 @@ module Admin
       )
 
       controller.prepare do
+        include Connection
         include Configuration
         include Authentication
-        before :configurate!
-        before :authenticate!
-        expose :current_config
-        expose :current_user
-        expose :remote_ip
+        include Authorization
       end
 
       view.prepare do

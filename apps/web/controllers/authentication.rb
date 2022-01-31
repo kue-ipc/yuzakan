@@ -5,15 +5,18 @@ module Web
     include Connection
 
     def self.included(action)
-      return unless action.is_a?(Class)
-
-      action.class_eval do
-        before :authenticate!
+      if action.is_a?(Class)
+        action.class_eval do
+          before :authenticate!
+        end
+      else
+        action.define_singleton_method(:included, &method(:included))
       end
     end
 
     private def authenticate!
       return reply_unauthenticated unless authenticated?
+
       check_session!
     end
 

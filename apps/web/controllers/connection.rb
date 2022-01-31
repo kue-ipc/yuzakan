@@ -1,13 +1,14 @@
 module Web
   module Connection
     def self.included(action)
-      return unless action.is_a?(Class)
-
-      action.class_eval do
-        before :connect!
-        # after :done!
-        expose :current_config
-        expose :current_user
+      if action.is_a?(Class)
+        action.class_eval do
+          before :connect!
+          expose :current_config
+          expose :current_user
+        end
+      else
+        action.define_singleton_method(:included, &method(:included))
       end
     end
 

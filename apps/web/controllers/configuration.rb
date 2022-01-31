@@ -5,10 +5,12 @@ module Web
     include Connection
 
     def self.included(action)
-      return unless action.is_a?(Class)
-
-      action.class_eval do
-        before :configurate!
+      if action.is_a?(Class)
+        action.class_eval do
+          before :configurate!
+        end
+      else
+        action.define_singleton_method(:included, &method(:included))
       end
     end
 

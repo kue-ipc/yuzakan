@@ -2,15 +2,18 @@ require_relative './connection'
 
 module Web
   module Authorization
-    def self.included(action)
-      return unless action.is_a?(Class)
+    include Connection
 
-      action.class_eval do
-        before :authorize!
+    def self.included(action)
+      if action.is_a?(Class)
+        action.class_eval do
+          before :authorize!
+          before :authenticate!
+        end
+      else
+        action.define_singleton_method(:included, &method(:included))
       end
     end
-
-    include Connection
 
     private def authorize!
       return reply_unauthorized unless authorized?
