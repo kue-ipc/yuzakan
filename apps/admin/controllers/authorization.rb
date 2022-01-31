@@ -4,8 +4,9 @@ module Admin
   module Authorization
     include Web::Authorization
 
-    private def allowed_networks
-      current_config.admin_networks
+    def self.included(action)
+      Web::Authorization.included(action)
+      action.define_singleton_method(:default_security_level) { 3 }
     end
   end
 end

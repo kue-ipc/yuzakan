@@ -18,13 +18,12 @@ module Admin
         expose :providers
         expose :attrs
 
-        def initialize(user_repository: UserRepository.new,
-                       attr_repository: AttrRepository.new,
+        def initialize(attr_repository: AttrRepository.new,
                        provider_repository: ProviderRepository.new,
                        attrs: nil,
                        providers: nil,
-                       read_user: nil)
-          @user_repository = user_repository
+                       read_user: nil, **opts)
+          super(**opts)
           @provider_repository = provider_repository
           @attr_repository = attr_repository
 

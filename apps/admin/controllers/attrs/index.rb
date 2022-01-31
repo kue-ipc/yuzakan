@@ -12,7 +12,9 @@ module Admin
         expose :attrs
         expose :providers
 
-        def initialize(attr_repository: AttrRepository.new, provider_repository: ProviderRepository.new, **opts)
+        def initialize(attr_repository: AttrRepository.new,
+                       provider_repository: ProviderRepository.new,
+                       **opts)
           super(**opts)
           @attr_repository = attr_repository
           @provider_repository = provider_repository
