@@ -4,6 +4,7 @@ module Web
       if action.is_a?(Class)
         action.class_eval do
           before :connect!
+          after :done!
           expose :current_config
           expose :current_user
         end
@@ -12,8 +13,10 @@ module Web
       end
     end
 
-    def initialize(config_repository: ConfigRepository.new,
+    def initialize(activity_log_repository: ActivityLogRepository.new,
+                   config_repository: ConfigRepository.new,
                    user_repository: UserRepository.new)
+      @activity_log_repository = activity_log_repository
       @config_repository = config_repository
       @user_repository = user_repository
     end
@@ -22,13 +25,12 @@ module Web
       @log_info = {
         config_revision: current_config&.updated_at&.to_i,
         maintenance: current_config&.maintenance,
-        user: current_user,
+        username: current_user&.name,
         client: remote_ip,
         last_access_time: last_access_time,
         action: self.class.name,
         method: request.request_method,
         path: request.path,
-        params: params.to_h,
       }
 
       Hanami.logger.info(@log_info)
@@ -37,9 +39,9 @@ module Web
       last_access_time
     end
 
-    # private def done!
-    #   @activity_repository.create(**activity_params, result: params)
-    # end
+    private def done!
+      @activity_log_repository.create(**@log_info, status: response[0])
+    end
 
     private def current_config
       @current_config ||= @config_repository.current
