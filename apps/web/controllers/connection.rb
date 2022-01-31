@@ -28,6 +28,7 @@ module Web
         user: current_user,
         client: remote_ip,
         last_access_time: last_access_time,
+        action: self.class.name,
         method: request.request_method,
         path: request.path,
         params: params.to_h,
