@@ -6,4 +6,8 @@ class User < Hanami::Entity
       name
     end
   end
+
+  def to_s
+    name
+  end
 end

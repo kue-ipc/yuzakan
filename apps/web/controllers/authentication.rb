@@ -4,6 +4,14 @@ module Web
   module Authentication
     include Connection
 
+    def self.included(action)
+      return unless action.is_a?(Class)
+
+      action.class_eval do
+        before :authenticate!
+      end
+    end
+
     private def authenticate!
       return reply_unauthenticated unless authenticated?
       check_session!
