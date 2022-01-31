@@ -61,6 +61,10 @@ Hanami.configure do
     end
   end
 
+  environment :test do
+    logger level: :fatal
+  end
+
   environment :production do
     logger 'daily', level: :info,
                     formatter: :json,
