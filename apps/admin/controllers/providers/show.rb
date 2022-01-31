@@ -15,7 +15,8 @@ module Admin
           required(:id).filled(:int?)
         end
 
-        def initialize(provider_repository: ProviderRepository.new)
+        def initialize(provider_repository: ProviderRepository.new, **opts)
+          super(**opts)
           @provider_repository = provider_repository
         end
 

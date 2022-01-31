@@ -13,15 +13,16 @@ module Admin
 
         expose :user
 
-        def initialize(user_repository: UserRepository.new,
+        def initialize(config_repository: ConfigRepository.new,
+                       user_repository: UserRepository.new,
                        attr_repository: AttrRepository.new,
                        provider_repository: ProviderRepository.new,
                        attrs: nil,
                        providers: nil,
                        read_user: nil)
-          @user_repository = user_repository
-          @provider_repository = provider_repository
+          super(config_repository: config_repository, user_repository: user_repository)
           @attr_repository = attr_repository
+          @provider_repository = provider_repository
 
           @attrs = attrs || @attr_repository.all
           @providers = providers || @provider_repository.operational_all_with_adapter(:read).to_a

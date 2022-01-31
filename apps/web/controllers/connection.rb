@@ -12,14 +12,10 @@ module Web
       end
     end
 
-    def initialize(activity_repository: ActivityRepository.new,
-                   config_repository: ConfigRepository.new,
-                   user_repository: UserRepository.new,
-                   **opts)
-      super(**opts)
-      @activity_repository ||= activity_repository
-      @config_repository ||= config_repository
-      @user_repository ||= user_repository
+    def initialize(config_repository: ConfigRepository.new,
+                   user_repository: UserRepository.new)
+      @config_repository = config_repository
+      @user_repository = user_repository
     end
 
     private def connect!
