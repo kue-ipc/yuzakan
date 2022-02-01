@@ -10,7 +10,7 @@ header
         - if current_user
           ul.navbar-nav.me-auto
             li.nav-item
-              = link_to routes.path(:dashboard), class: 'nav-link d-flex align-items-center' do
+              = link_to routes.path(:root), class: 'nav-link d-flex align-items-center' do
                 - text bs_icon('house-door', class: 'flex-shrink-0 me-1')
                 - span class: 'd-none d-lg-inline' do
                   - text 'ホーム'
@@ -36,7 +36,7 @@ header
         - else
           ul.navbar-nav.me-auto
             li.nav-item
-              = link_to routes.path(:dashboard), class: 'nav-link' do
+              = link_to routes.path(:root), class: 'nav-link' do
                 - text bs_icon('house-door-fill')
                 - span class: 'd-none d-lg-inline' do
                   - text 'ホーム'

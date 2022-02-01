@@ -7,10 +7,10 @@ describe Web::Controllers::Home::Index do
   let(:user_id) { Authenticate.new(client: '::1', app: 'test').call(auth).user&.id }
   let(:auth)    { {username: 'user', password: 'word'} }
 
-  it 'redirect to dashboard' do
+  it 'redirect to root' do
     response = action.call(params)
     _(response[0]).must_equal 302
-    _(response[1]['Location']).must_equal '/dashboard'
+    _(response[1]['Location']).must_equal '/'
   end
 
   describe 'before login' do

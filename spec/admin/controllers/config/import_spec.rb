@@ -10,6 +10,6 @@ describe Admin::Controllers::Config::Import do
   it 'is successful' do
     response = action.call(params)
     _(response[0]).must_equal 302
-    _(response[1]['Location']).must_equal '/admin/dashboard'
+    _(response[1]['Location']).must_equal '/admin'
   end
 end

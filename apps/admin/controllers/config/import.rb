@@ -63,7 +63,7 @@ module Admin
             end
           end
 
-          redirect_to routes.path(:dashboard)
+          redirect_to routes.path(:root)
         end
       end
     end

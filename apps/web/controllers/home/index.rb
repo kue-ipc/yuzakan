@@ -8,7 +8,7 @@ module Web
         security_level 0
 
         def call(_params)
-          redirect_to routes.path(:dashboard) if authenticated?
+          self.body = Web::Views::Home::Login.render(exposures) unless authenticated?
         end
       end
     end

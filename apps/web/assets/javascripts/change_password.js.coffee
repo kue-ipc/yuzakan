@@ -320,7 +320,7 @@ webPost = new WebPostJson
     running: 'パスワード変更を実行しています。しばらくお待ち下さい。'
     success: '約10秒後にトップページに戻ります。'
   }
-  successLink: '/dashboard'
+  successLink: '/'
   reloadTime: 10 * 1000
 
 submitRunner = (dispatch) ->

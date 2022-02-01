@@ -9,11 +9,7 @@ module Admin
 
         cache_control :no_store
 
-        def call(_params)
-          redirect_to routes.path(:dashboard) if authenticated?
-        end
-
-        def authenticate!
+        def call(params)
         end
       end
     end

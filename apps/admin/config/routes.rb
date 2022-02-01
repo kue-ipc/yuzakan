@@ -4,7 +4,6 @@
 # Example:
 # get '/hello', to: ->(env) { [200, {}, ['Hello from Hanami!']] }
 root to: 'home#index'
-get '/dashboard', to: 'dashboard#index', as: :dashboard
 
 get '/setup', to: 'setup#index', as: :setup
 post '/setup', to: 'setup#create'

@@ -37,7 +37,7 @@ module Web
           case format
           when :html
             flash[:success] = 'ログインしました。'
-            redirect_to routes.path(:dashboard)
+            redirect_to routes.path(:root)
           when :json
             @data = {
               result: 'success',
