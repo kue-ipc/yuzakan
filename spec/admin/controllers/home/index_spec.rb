@@ -32,9 +32,9 @@ describe Admin::Controllers::Home::Index do
   describe 'before login' do
     let(:user_id) { nil }
 
-    it 'is successful' do
+    it 'is unauthorized' do
       response = action.call(params)
-      _(response[0]).must_equal 200
+      _(response[0]).must_equal 403
     end
   end
 end
