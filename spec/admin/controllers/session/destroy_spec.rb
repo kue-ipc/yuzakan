@@ -14,7 +14,7 @@ describe Admin::Controllers::Session::Destroy do
     it 'redirect setup' do
       response = action.call(params)
       _(response[0]).must_equal 302
-      _(response[1]['Location']).must_equal '/admin/setup'
+      _(response[1]['Location']).must_equal '/uninitialized'
     end
   end
 
@@ -24,7 +24,7 @@ describe Admin::Controllers::Session::Destroy do
     it 'redirect login' do
       response = action.call(params)
       _(response[0]).must_equal 302
-      _(response[1]['Location']).must_equal '/admin'
+      _(response[1]['Location']).must_equal '/'
     end
   end
 end

@@ -25,7 +25,7 @@ module Web
     end
 
     private def reply_unauthenticated
-      flash[:warn] = 'ログインしてください。'
+      flash[:warn] ||= 'ログインしてください。'
       redirect_to Web.routes.path(:root)
     end
   end

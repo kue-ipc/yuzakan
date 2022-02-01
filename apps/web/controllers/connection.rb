@@ -12,8 +12,8 @@ module Web
         action.define_singleton_method(:default_security_level) { 1 }
 
         action.class_eval do
-          before :connect!
           before :check_session!
+          before :connect!
           after :done!
           expose :current_config
           expose :current_user
@@ -76,9 +76,16 @@ module Web
     end
 
     private def last_access_time
-      @last_access_time ||= (session[:access_time] || Time.now).tap do
-        session[:access_time] = Time.now
-      end
+      update_access_time
+      @last_access_time
+    end
+
+    private def update_access_time
+      return if @access_time_updated
+
+      @last_access_time = session[:access_time]
+      session[:access_time] = Time.now
+      @access_time_updated = true
     end
 
     def security_level
@@ -96,11 +103,14 @@ module Web
     private def check_session!
       return unless session_timeout?
 
+      flash[:warn] = 'セッションがタイムアウトしました。' if last_access_time
       session[:user_id] = nil
-      reply_session_timeout
+      @current_user = nil
     end
 
     private def session_timeout?
+      return true unless last_access_time
+
       timeout = current_config&.session_timeout || 3600
       return false if timeout.zero?
 
@@ -108,7 +118,6 @@ module Web
     end
 
     private def reply_session_timeout
-      flash[:warn] = 'セッションがタイムアウトしました。'
       redirect_to Web.routes.path(:root)
     end
   end
