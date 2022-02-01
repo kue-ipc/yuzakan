@@ -1,8 +1,8 @@
 require_relative '../../../spec_helper'
 
-describe Admin::Controllers::Dashboard::Index do
+describe Admin::Controllers::Home::Index do
   describe 'admin net' do
-    let(:action) { Admin::Controllers::Dashboard::Index.new }
+    let(:action) { Admin::Controllers::Home::Index.new }
     let(:params) { {'rack.session' => session} }
     let(:session) { {user_id: user_id, access_time: Time.now} }
     let(:user_id) { Authenticate.new(client: '::1', app: 'test').call(auth).user&.id }

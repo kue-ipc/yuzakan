@@ -1,7 +1,7 @@
 require_relative '../../../spec_helper'
 
-describe Web::Controllers::Dashboard::Index do
-  let(:action)  { Web::Controllers::Dashboard::Index.new }
+describe Web::Controllers::User::Show do
+  let(:action)  { Web::Controllers::User::Show.new }
   let(:params)  { {'REMOTE_ADDR' => '::1', 'rack.session' => session} }
   let(:session) { {user_id: user_id, access_time: Time.now} }
   let(:user_id) { Authenticate.new(client: '::1', app: 'test').call(auth).user&.id }
