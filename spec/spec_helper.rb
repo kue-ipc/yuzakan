@@ -10,5 +10,3 @@ Warning[:deprecated] = false
 require_relative 'support/db'
 
 Hanami.boot
-
-db_reset

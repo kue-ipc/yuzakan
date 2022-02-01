@@ -7,9 +7,13 @@ module Api
         expose :result
         security_level 0
 
-        def initialize(authenticate: Authenticate.new, **opts)
-          super(**opts)
-          @authenticate = authenticate
+        def initialize(user_repository: UserRepository.new,
+                       provider_repository: ProviderRepository.new,
+                       auth_log_repository: AuthLogRepository.new, **opts)
+          super(user_repository: user_repository, **opts)
+          @authenticate = Authenticate.new(user_repository: user_repository,
+                                           provider_repository: provider_repository,
+                                           auth_log_repository: auth_log_repository)
         end
 
         def call(params)
