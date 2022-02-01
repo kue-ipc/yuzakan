@@ -1,3 +1,5 @@
+require 'securerandom'
+
 module Web
   module Connection
     def self.included(action)
@@ -33,20 +35,15 @@ module Web
 
     private def connect!
       @log_info = {
-        config_revision: current_config&.updated_at&.to_i,
-        maintenance: current_config&.maintenance,
-        username: current_user&.name,
+        uuid: uuid,
         client: remote_ip,
-        last_access_time: last_access_time,
+        username: current_user&.name,
         action: self.class.name,
         method: request.request_method,
         path: request.path,
+        last_access_time: last_access_time,
       }
-
       Hanami.logger.info(@log_info)
-
-      current_config
-      last_access_time
     end
 
     private def done!
@@ -55,6 +52,10 @@ module Web
 
     private def current_config
       @current_config ||= @config_repository.current
+    end
+
+    private def uuid
+      @uuid ||= session[:uuid] ||= SecureRandom.uuid
     end
 
     private def remote_ip

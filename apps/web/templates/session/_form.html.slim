@@ -1,7 +1,7 @@
 = javascript 'login', defer: true, type: 'module'
 #login.login.mx-auto.p-3.border.rounded
   h3.login-title.text-center.mb-2 ログイン
-  = form_for :session, routes.session_path, class: 'login-form', \
+  = form_for :session, Api.routes.session_path, class: 'login-form', \
                                             enctype: 'multipart/form-data' do
     - div class: 'mb-3' do
       - field_class = ['form-control']

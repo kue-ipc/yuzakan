@@ -6,6 +6,8 @@ require_relative './controllers/configuration'
 require_relative './controllers/authentication'
 require_relative './controllers/authorization'
 
+require_relative './views/accept_json'
+
 require_relative '../../lib/yuzakan/utils/uglifier_es_compressor'
 
 module Api
@@ -82,6 +84,7 @@ module Api
         include Hanami::Helpers
         include Api::Assets::Helpers
         include Yuzakan::Helpers
+        include Api::Views::AcceptJson
       end
     end
 

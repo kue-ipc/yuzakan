@@ -9,39 +9,35 @@ class Authenticate
     messages_path 'config/messages.yml'
 
     validations do
-      required(:username) { filled? & str? & size?(1..255) }
+      required(:username) { filled? & str? & max_size?(255) }
       required(:password) { filled? & str? & max_size?(255) }
+      required(:client).filled?(:str?)
+      required(:uuid).filled?(:str?)
     end
   end
 
   expose :user
 
-  def initialize(client:, app:,
-                 user_repository: UserRepository.new,
+  def initialize(user_repository: UserRepository.new,
                  provider_repository: ProviderRepository.new,
-                 activity_repository: ActivityRepository.new)
-    @client = client
-    @app = app
+                 auth_log_repository: AuthLogRepository.new)
     @user_repository = user_repository
     @provider_repository = provider_repository
-    @activity_repository = activity_repository
+    @auth_log_repository = auth_log_repository
   end
 
   def call(params)
-    activity_params = {
-      client: @client,
-      type: 'user',
-      target: params[:username],
-      action: 'auth',
-      params: {app: @app}.to_json,
+    auth_log_params = {
+      uuid: params[:uuid],
+      client: params[:client],
+      username: params[:username],
     }
 
     failure_count = 0
 
-    @activity_repository.user_auths(params[:username], ago: 60 * 60)
-      .each do |activity|
-      case activity.result
-      when 'success'
+    @auth_log_repository.by_username(params[:username]).each do |auth_log|
+      case auth_log.result
+      when 'success', 'recover'
         break
       when 'failure'
         failure_count += 1
@@ -49,7 +45,7 @@ class Authenticate
     end
 
     if failure_count >= 5
-      @activity_repository.create(activity_params.merge!({result: 'reject'}))
+      @auth_log_repository.create(**auth_log_params, result: 'reject')
       error!('時間あたりのログイン試行が規定の回数を超えたため、' \
              '現在ログインが禁止されています。' \
              'しばらく待ってから再度ログインを試してください。')
@@ -65,20 +61,17 @@ class Authenticate
       end
     rescue => e
       Hanami.logger.error e
-      @activity_repository.create(activity_params.merge!({result: 'error'}))
+      @auth_log_repository.create(**auth_log_params, result: 'error')
       error!("認証時にエラーが発生しました。: #{e.message}")
     end
 
     unless userdata
-      @activity_repository.create(activity_params.merge!({result: 'failure'}))
+      @auth_log_repository.create(**auth_log_params, result: 'failure')
       error!('ユーザー名またはパスワードが違います。')
     end
 
     @user = create_or_upadte_user(userdata)
-    @activity_repository.create(activity_params.merge!({
-      user_id: @user.id,
-      result: 'success',
-    }))
+    @auth_log_repository.create(**auth_log_params, result: 'success')
   end
 
   private def valid?(params)
