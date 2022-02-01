@@ -4,7 +4,14 @@ module Api
       class Destroy
         include Api::Action
 
-        def call(params)
+        def call(_params)
+          session[:user_id] = nil
+
+          @result = {
+            result: 'success',
+            messages: {success: 'ログアウトしました。'},
+            redirect_to: Web.routes.path(:root),
+          }
         end
       end
     end

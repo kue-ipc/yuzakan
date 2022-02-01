@@ -13,7 +13,7 @@ module Api
         end
 
         def call(params)
-          authenticate_result = @authenticate.call(**params[:session], uuid: uuid, client: remote_ip, )
+          authenticate_result = @authenticate.call(**params[:session], uuid: uuid, client: remote_ip)
 
           @result =
             if authenticate_result.successful?
@@ -23,6 +23,7 @@ module Api
               {
                 result: 'success',
                 messages: {success: 'ログインしました。'},
+                redirect_to: Web.routes.path(:root),
               }
             else
               self.status = 422
