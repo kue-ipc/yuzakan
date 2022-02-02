@@ -4,20 +4,34 @@ module Api
       class Create
         include Api::Action
 
-        expose :result
         security_level 0
+
+        params do
+          required(:session).schema do
+            required(:username).filled(:str?, size?: 1..255)
+            required(:password).filled(:str?, size?: 1..255)
+          end
+        end
+
+        expose :result
 
         def initialize(user_repository: UserRepository.new,
                        provider_repository: ProviderRepository.new,
                        auth_log_repository: AuthLogRepository.new, **opts)
           super(user_repository: user_repository, **opts)
-          @authenticate = Authenticate.new(user_repository: user_repository,
-                                           provider_repository: provider_repository,
-                                           auth_log_repository: auth_log_repository)
+          @provider_repository = provider_repository
+          @auth_log_repository = auth_log_repository
         end
 
         def call(params)
-          authenticate_result = @authenticate.call(**params[:session], uuid: uuid, client: remote_ip)
+          unless params.valid?
+            halt 400
+          end
+
+          authenticate = Authenticate.new(user_repository: @user_repository,
+                                          provider_repository: @provider_repository,
+                                          auth_log_repository: @auth_log_repository)
+          authenticate_result = authenticate.call(**params[:session], uuid: uuid, client: remote_ip)
 
           @result =
             if authenticate_result.successful?

@@ -69,13 +69,15 @@ describe Api::Controllers::Session::Create do
     end
   end
 
-  # it 'is error' do
-  #   response = action.call(**params, session: nil)
-  #   _(response[0]).must_equal 200
-  #   _(response[2]).must_equal [JSON.generate({
-  #     result: 'success',
-  #     messages: {success: 'ログインしました。'},
-  #     redirect_to: '/',
-  #   })]
-  # end
+  it 'is error' do
+    response = action.call(**params, session: nil)
+    _(response[0]).must_equal 400
+    _(response[2]).must_equal ['Bad Request']
+  end
+
+  it 'is error' do
+    response = action.call(**params, session: {username: 'user'})
+    _(response[0]).must_equal 400
+    _(response[2]).must_equal ['Bad Request']
+  end
 end
