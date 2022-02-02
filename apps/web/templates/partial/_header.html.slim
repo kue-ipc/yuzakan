@@ -11,9 +11,15 @@ header
           ul.navbar-nav.me-auto
             li.nav-item
               = link_to routes.path(:root), class: 'nav-link d-flex align-items-center' do
-                - text bs_icon('house-door', class: 'flex-shrink-0 me-1')
+                - text bs_icon('house', class: 'flex-shrink-0 me-1')
                 - span class: 'd-none d-lg-inline' do
-                  - text 'ホーム'
+                  - text '利用者用メニュー'
+            - if current_user_level >= 3
+              li.nav-item
+                = link_to Admin.routes.path(:root), class: 'nav-link d-flex align-items-center' do
+                  - text bs_icon('house-heart', class: 'flex-shrink-0 me-1')
+                  - span class: 'd-none d-lg-inline' do
+                    - text '管理者用メニュー'
             li.nav-item
               = link_to routes.path(:edit_user_password), class: 'nav-link d-flex align-items-center' do
                 - text bs_icon('input-cursor-text', class: 'flex-shrink-0 me-1')
@@ -24,6 +30,7 @@ header
                 - text bs_icon('google', class: 'flex-shrink-0 me-1')
                 - span class: 'd-none d-lg-inline' do
                  - text 'Google Workspace'
+
           = link_to routes.path(:user), class: 'me-2 link-user d-flex align-items-center' do
             - text bs_icon('person', class: 'flex-shrink-0 me-1')
             - span class: 'd-none d-lg-inline' do

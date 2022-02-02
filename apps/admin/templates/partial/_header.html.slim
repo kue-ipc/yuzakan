@@ -1,7 +1,7 @@
 header
   nav.navbar.navbar-expand-sm.navbar-dark.bg-dark-bar
     .container-fluid
-      = link_to current_config&.title || Yuzakan.name, routes.path(:root), class: 'navbar-brand'
+      = link_to current_config&.title || Yuzakan.name, Web.routes.path(:root), class: 'navbar-brand'
       button.navbar-toggler[type="button" data-bs-toggle="collapse" data-bs-target="#navbar-content"
                             aria-controls="navbar-content" aria-expanded="false"
                             aria-label="ナビゲーション切替"]
@@ -9,11 +9,16 @@ header
       #navbar-content.collapse.navbar-collapse
         - if current_user
           ul.navbar-nav.me-auto
-            li.nav-item.active
-              = link_to routes.path(:root), class: 'nav-link d-flex align-items-center' do
-                - text bs_icon('house-door', class: 'flex-shrink-0 me-1')
+            li.nav-item
+              = link_to Web.routes.path(:root), class: 'nav-link d-flex align-items-center' do
+                - text bs_icon('house', class: 'flex-shrink-0 me-1')
                 - span class: 'd-none d-lg-inline' do
-                  - text 'ホーム'
+                  - text '利用者用メニュー'
+            li.nav-item
+              = link_to routes.path(:root), class: 'nav-link d-flex align-items-center' do
+                - text bs_icon('house-heart', class: 'flex-shrink-0 me-1')
+                - span class: 'd-none d-lg-inline' do
+                  - text '管理者用メニュー'
             li.nav-item
               = link_to routes.path(:edit_config), class: 'nav-link d-flex align-items-center' do
                 - text bs_icon('gear', class: 'flex-shrink-0 me-1')

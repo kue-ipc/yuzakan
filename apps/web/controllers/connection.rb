@@ -19,6 +19,7 @@ module Web
           after :done!
           expose :current_config
           expose :current_user
+          expose :current_user_level
         end
       else
         action.define_singleton_method(:included, &method(:included))
@@ -67,13 +68,7 @@ module Web
     end
 
     private def current_user_level
-      if current_user&.admin
-        5
-      elsif current_user
-        2
-      else
-        0
-      end
+      current_user&.clearance_level || 0
     end
 
     private def last_access_time
