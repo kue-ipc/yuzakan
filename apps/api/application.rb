@@ -74,10 +74,10 @@ module Api
       )
 
       controller.prepare do
-        include Connection
-        include Configuration
-        include Authentication
-        include Authorization
+        include Api::Connection
+        include Api::Configuration
+        include Api::Authentication
+        include Api::Authorization
       end
 
       view.prepare do

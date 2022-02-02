@@ -2,9 +2,9 @@ require 'hanami/helpers'
 require 'hanami/assets'
 
 require_relative './controllers/connection'
-require_relative './controllers/configuration'
-require_relative './controllers/authentication'
-require_relative './controllers/authorization'
+require_relative '../web/controllers/configuration'
+require_relative '../web/controllers/authentication'
+require_relative '../web/controllers/authorization'
 
 require_relative '../../lib/yuzakan/utils/uglifier_es_compressor'
 
@@ -68,10 +68,10 @@ module Admin
       )
 
       controller.prepare do
-        include Connection
-        include Configuration
-        include Authentication
-        include Authorization
+        include Admin::Connection
+        include Web::Configuration
+        include Web::Authentication
+        include Web::Authorization
       end
 
       view.prepare do

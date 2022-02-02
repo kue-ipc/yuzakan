@@ -71,10 +71,10 @@ module Web
       )
 
       controller.prepare do
-        include Connection
-        include Configuration
-        include Authentication
-        include Authorization
+        include Web::Connection
+        include Web::Configuration
+        include Web::Authentication
+        include Web::Authorization
       end
 
       view.prepare do
