@@ -35,7 +35,8 @@ class Authenticate
 
     failure_count = 0
 
-    @auth_log_repository.by_username(params[:username]).each do |auth_log|
+    # 10 minutes
+    @auth_log_repository.recent_by_username(params[:username], 600).each do |auth_log|
       case auth_log.result
       when 'success', 'recover'
         break
@@ -88,7 +89,7 @@ class Authenticate
     name = userdata[:name]
     display_name = userdata[:display_name] || userdata[:name]
     email = userdata[:email]
-    user = @user_repository.by_name(name).one
+    user = @user_repository.find_by_name(name)
     if user.nil?
       @user_repository.create(name: name,
                               display_name: display_name,

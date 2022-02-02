@@ -39,6 +39,7 @@ module Api
                 },
               }
             end
+          self.body = JSON.generate(@result)
         end
       end
     end
