@@ -1,5 +1,6 @@
 require 'hanami/helpers'
 require 'hanami/assets'
+require 'hanami/action/cache'
 
 require_relative './controllers/connection'
 require_relative './controllers/configuration'
@@ -74,10 +75,13 @@ module Api
       )
 
       controller.prepare do
+        include Hanami::Action::Cache
         include Api::Connection
         include Api::Configuration
         include Api::Authentication
         include Api::Authorization
+        cache_control :no_store
+        accept :json
       end
 
       view.prepare do
@@ -89,7 +93,7 @@ module Api
     end
 
     configure :development do
-      handle_exceptions false
+      # handle_exceptions false
     end
 
     configure :test do
