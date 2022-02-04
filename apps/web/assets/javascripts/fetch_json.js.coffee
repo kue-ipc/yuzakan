@@ -1,7 +1,7 @@
 export fetchJson = (url, {method, data}) ->
   method = method.toUpperCase()
   unless ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'].includes(method)
-    throw "Unknown or unsupported method: #{method}"
+    throw new Error("Unknown or unsupported method: #{method}")
 
   fetchInit =
     method: method
