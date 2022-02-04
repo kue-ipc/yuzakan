@@ -7,7 +7,7 @@ module Web
 
           expose :excluded_providers
 
-          def call(_params)
+          def call(params) # rubocop:disable Lint/UnusedMethodArgument
             @excluded_providers = ProviderRepository.new
               .individual_password.to_a
           end

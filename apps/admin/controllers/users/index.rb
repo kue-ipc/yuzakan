@@ -16,7 +16,7 @@ module Admin
         expose :providers
         expose :provider_users
 
-        def call(_params)
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
           @pagy_data, @users = pagy(UserRepository.new)
           @providers = ProviderRepository.new
             .operational_all_with_adapter(:list).to_a

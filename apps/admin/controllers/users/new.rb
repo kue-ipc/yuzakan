@@ -11,7 +11,7 @@ module Admin
 
         expose :user
 
-        def call(_params)
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
           @user = nil
         end
       end

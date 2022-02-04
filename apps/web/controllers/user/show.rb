@@ -13,7 +13,7 @@ module Web
         expose :user_attrs
         expose :attrs
 
-        def call(_params)
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
           @user = current_user
 
           providers = ProviderRepository.new.operational_all_with_adapter(:read)

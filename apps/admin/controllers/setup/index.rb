@@ -10,7 +10,7 @@ module Admin
         cache_control :no_store
         security_level 0
 
-        def call(_params)
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
           redirect_to routes.path(:setup_done) if configurated?
         end
 

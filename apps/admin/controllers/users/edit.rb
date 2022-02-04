@@ -28,7 +28,7 @@ module Admin
           @read_user = read_user || ReadUser.new(provider_repository: @provider_repository, providers: @providers)
         end
 
-        def call(_params)
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
         end
       end
     end

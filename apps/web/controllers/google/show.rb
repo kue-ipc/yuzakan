@@ -13,7 +13,7 @@ module Web
         expose :google_user
         expose :creatable
 
-        def call(_params)
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
           @google_provider = ProviderRepository.new.first_google_with_adapter
           @google_user = @google_provider.read(current_user.name)
 

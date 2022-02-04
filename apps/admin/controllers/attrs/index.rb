@@ -20,7 +20,7 @@ module Admin
           @provider_repository = provider_repository
         end
 
-        def call(_params)
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
           @attrs = AttrRepository.new.all_with_mappings
           @providers = ProviderRepository.new.all
         end

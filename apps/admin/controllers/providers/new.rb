@@ -11,7 +11,7 @@ module Admin
 
         expose :provider
 
-        def call(_params)
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
           @provider = nil
         end
       end

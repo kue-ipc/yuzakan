@@ -9,7 +9,7 @@ module Admin
 
         cache_control :no_store
 
-        def call(_params)
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
           session[:user_id] = nil
           session[:access_time] = nil
           flash[:success] = 'ログアウトしました。'

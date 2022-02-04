@@ -4,7 +4,7 @@ module Web
       class Destroy
         include Web::Action
 
-        def call(_params)
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
           session[:user_id] = nil
           flash[:success] = 'ログアウトしました。'
           redirect_to routes.path(:root)

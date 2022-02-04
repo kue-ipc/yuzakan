@@ -10,7 +10,7 @@ module Admin
 
         cache_control :no_store
 
-        def call(_params)
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
           @providers = ProviderRepository.new.all
         end
       end

@@ -33,7 +33,7 @@ module Admin
                        ReadUser.new(provider_repository: @provider_repository, providers: @providers)
         end
 
-        def call(_params)
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
           result = @read_user.call(username: @user.name)
           flash[:errors] = result.errors if result.failure?
           @userdata = result.userdata || {}

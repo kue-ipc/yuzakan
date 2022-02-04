@@ -12,7 +12,7 @@ module Web
 
           expose :codes
 
-          def call(_params)
+          def call(params) # rubocop:disable Lint/UnusedMethodArgument
             provider = ProviderRepository.new.first_google_with_adapter
 
             result = GenerateVerificationCode.new(

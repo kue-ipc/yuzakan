@@ -10,7 +10,7 @@ module Admin
         expose :providers
         expose :attrs
 
-        def call(_params)
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
           self.format = :yml
 
           @providers = ProviderRepository.new.all_with_adapter

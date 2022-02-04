@@ -7,7 +7,7 @@ module Web
         accept :html
         security_level 0
 
-        def call(_params)
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
         end
       end
     end

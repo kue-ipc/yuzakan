@@ -12,7 +12,7 @@ module Admin
 
         expose :counts
 
-        def call(_params)
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
           user_repository = UserRepository.new
           @counts = {}
           user_names = Set.new(user_repository.all.map(&:name))
