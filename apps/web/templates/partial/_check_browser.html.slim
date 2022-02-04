@@ -6,10 +6,9 @@
   #legacy-browser.d-none
     .alert.alert-danger role="alert"
       | お使いのブラウザーは未サポートです。
-      | 最新のモダンブラウザーをを使用してください。
+      | 最新のモダンブラウザーを使用してください。
       | (
-      = link_to 'サポートしているブラウザーについて',
-                routes.path(:about_browser)
+      = link_to 'サポートしているブラウザーについて', routes.path(:about_browser)
       | )
   = javascript 'legacy_browser', nomodule: 'nomodule'
   = javascript 'modern_browser', type: 'module', async: true

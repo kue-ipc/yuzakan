@@ -1,8 +1,6 @@
 # login_form.js
 # version 0.0.1
 
-import './modern_browser.js?v=0.0.1'
-
 import WebPostJson from './web_post_json.js?v=0.0.1'
 
 clearChildren = (node) ->

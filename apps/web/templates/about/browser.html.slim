@@ -14,9 +14,6 @@ ul
   - supported_browsers.each do |browser|
     li
       => link_to browser[:name], browser[:url], target: '_blank'
-      | (バージョン
-      = browser[:version]
-      | 以上)
       - if browser[:note]&.size&.positive?
         small.text-muted<
           = browser[:note]

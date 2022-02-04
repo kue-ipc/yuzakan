@@ -9,18 +9,9 @@ html lang="ja"
     = stylesheet 'application'
     = javascript 'application', defer: true, type: 'module'
   body
-    .p-3.mb-3.bg-dark-bar.text-white
-      .container-fluid.py-1
-        h1.text-center.display-5
-          = current_config&.title
-        p.lead.text-center.smaller
-          | アカウント管理システム
-        hr.my-2
-        p
-          | このサイトは大学メールアカウントの管理ポータルです。
-          | パスワード変更とGoogle Workspace(Googleアカウント)の管理ができます。
-    .container-fluid
+    = render partial: 'partial/header_login'
+    .container-fluid.mt-2
       = render partial: 'partial/check_browser'
       = render partial: 'partial/alert'
       = render partial: 'session/form'
-      = render partial: 'partial/footer'
+    = render partial: 'partial/footer'
