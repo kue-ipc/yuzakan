@@ -1,9 +1,9 @@
-import {h, text, app} from './hyperapp.js?v=2.0.20'
-import zxcvbn from './zxcvbn.js?v=4.4.2'
+import {h, text, app} from './hyperapp.js?v=0.6.0'
+import zxcvbn from './zxcvbn.js?v=0.6.0'
 
-import BsIcon from './bs_icon.js?v=0.0.1'
-import {listToField, listToKebab, camelize} from './string_utils.js?v=0.0.1'
-import WebPostJson from './web_post_json.js?v=0.0.1'
+import BsIcon from './bs_icon.js?v=0.6.0'
+import {listToField, listToKebab, camelize} from './string_utils.js?v=0.6.0'
+import WebPostJson from './web_post_json.js?v=0.6.0'
 
 changePasswordNode = document.getElementById('change-password')
 changePasswordData = JSON.parse(changePasswordNode.getAttribute(

@@ -1,5 +1,5 @@
-import {h, text, app} from './hyperapp.js?v=2.0.20'
-import WebPostJson from './web_post_json.js?v=0.0.1'
+import {h, text, app} from './hyperapp.js?v=0.6.0'
+import WebPostJson from './web_post_json.js?v=0.6.0'
 
 agreementCheck = (state, agreement) -> {
   state...

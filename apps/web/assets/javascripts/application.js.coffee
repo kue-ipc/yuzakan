@@ -1,1 +1,1 @@
-import './bootstrap.js?v=5.1.3'
+import './bootstrap.js?v=0.6.0'

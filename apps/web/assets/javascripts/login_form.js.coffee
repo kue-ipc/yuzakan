@@ -1,7 +1,7 @@
 # login_form.js
 # version 0.0.1
 
-import WebPostJson from './web_post_json.js?v=0.0.1'
+import WebPostJson from './web_post_json.js?v=0.6.0'
 
 clearChildren = (node) ->
   node.removeChild(node.firstChild) while node.firstChild
