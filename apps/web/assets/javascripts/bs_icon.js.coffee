@@ -11,7 +11,7 @@ export default BsIcon = ({name, size = 24, alt, props...}) ->
 
   svg_props.class.push(props.class) if props.class?
 
-  Object.assign(svg_props, role: 'img', 'aria-label': alt) if alt?
+  svg_props = {svg_props..., role: 'img', 'aria-label': alt} if alt?
 
   h 'svg', svg_props,
     h 'use', href: "/assets/bootstrap-icons.svg\##{name}"
