@@ -63,7 +63,7 @@ export default class WebData
     @modalMessage
       status: 'running'
       title: "#{@title}中"
-      messages: @messages.running
+      messages: "#{@title}を実施しています。しばらくお待ち下さい。"
       closable: false
     @modal.backdrop = 'static'
     @modal.keyboard = false
@@ -85,7 +85,7 @@ export default class WebData
           successLink: @successLink
           messages: [
             data.message
-            @messages[data.result]
+            '画面を切り替えます。しばらくお待ち下さい。'
           ]
         setTimeout =>
           location.href = @successLink

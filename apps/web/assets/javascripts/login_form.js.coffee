@@ -12,7 +12,7 @@ loginSet = (formNode, {successLink = '/'}) ->
     title: 'ログイン'
     messages: {
       running: 'ログインを実施しています。しばらくお待ち下さい。'
-      success: '画面を切り替えています。しばらくお待ち下さい。'
+      success: '画面を切り替えます。しばらくお待ち下さい。'
     }
     successLink: successLink
     reloadTime: 0
