@@ -93,7 +93,7 @@ module Api
     end
 
     configure :development do
-      # handle_exceptions false
+      handle_exceptions false
     end
 
     configure :test do

@@ -8,8 +8,8 @@ module Api
 
         params do
           required(:session).schema do
-            required(:username).filled(:str?, size?: 1..255)
-            required(:password).filled(:str?, size?: 1..255)
+            required(:username).filled(:str?, max_size?: 255)
+            required(:password).filled(:str?, max_size?: 255)
           end
         end
 
@@ -25,7 +25,11 @@ module Api
 
         def call(params)
           unless params.valid?
-            halt 400
+            halt 400, JSON.generate({
+              result: 'error',
+              message: '不正なパラメーターです。',
+              errors: params.error_messages,
+            })
           end
 
           authenticate = Authenticate.new(user_repository: @user_repository,
@@ -40,17 +44,14 @@ module Api
 
               {
                 result: 'success',
-                messages: {success: 'ログインしました。'},
-                redirect_to: Web.routes.path(:root),
+                message: 'ログインしました。',
               }
             else
               self.status = 422
               {
                 result: 'failure',
-                messages: {
-                  errors: authenticate_result.errors,
-                  failure: 'ログインに失敗しました。',
-                },
+                message: 'ログインに失敗しました。',
+                errors: authenticate_result.errors,
               }
             end
           self.body = JSON.generate(@result)

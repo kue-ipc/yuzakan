@@ -8,8 +8,11 @@ describe Api::Controllers::Session::Create do
                                           provider_repository: provider_repository,
                                           auth_log_repository: auth_log_repository)
   end
-  let(:params) { {session: {username: 'user', password: 'pass'}, 'REMOTE_ADDR' => '::1', 'rack.session' => session} }
+  let(:params) { {session: {username: 'user', password: 'pass'}, **env} }
+  let(:env) { {'REMOTE_ADDR' => remote_ip, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
+  let(:remote_ip) { '::1' }
   let(:session) { {uuid: 'x', user_id: 42, access_time: Time.now} }
+  let(:format)  { 'application/json' }
 
   let(:activity_log_repository) { Minitest::Mock.new.expect(:create, nil, [Hash]) }
 
@@ -42,12 +45,11 @@ describe Api::Controllers::Session::Create do
     _(response[0]).must_equal 200
     _(response[2]).must_equal [JSON.generate({
       result: 'success',
-      messages: {success: 'ログインしました。'},
-      redirect_to: '/',
+      message: 'ログインしました。',
     })]
   end
 
-  describe "no auth" do
+  describe 'no auth' do
     let(:providers) do
       [
         Minitest::Mock.new
@@ -61,10 +63,8 @@ describe Api::Controllers::Session::Create do
       _(response[0]).must_equal 422
       _(response[2]).must_equal [JSON.generate({
         result: 'failure',
-        messages: {
-          errors: ['ユーザー名またはパスワードが違います。'],
-          failure: 'ログインに失敗しました。',
-        },
+        message: 'ログインに失敗しました。',
+        errors: ['ユーザー名またはパスワードが違います。'],
       })]
     end
   end
@@ -72,12 +72,43 @@ describe Api::Controllers::Session::Create do
   it 'is error' do
     response = action.call(**params, session: nil)
     _(response[0]).must_equal 400
-    _(response[2]).must_equal ['Bad Request']
+    _(response[2]).must_equal [JSON.generate({
+      result: 'error',
+      message: '不正なパラメーターです。',
+      errors: ['Session must be a hash'],
+    })]
+  end
+
+  it 'is error' do
+    response = action.call(**params, session: {username: 'user' * 64, password: 'pass'})
+    _(response[0]).must_equal 400
+    _(response[2]).must_equal [JSON.generate({
+      result: 'error',
+      message: '不正なパラメーターです。',
+      errors: ['Username size cannot be greater than 255'],
+    })]
+  end
+
+  it 'is error' do
+    response = action.call(**params, session: {username: 'user', password: ''})
+    _(response[0]).must_equal 400
+    _(response[2]).must_equal [JSON.generate({
+      result: 'error',
+      message: '不正なパラメーターです。',
+      errors: ['Password must be filled', 'Password size cannot be greater than 255'],
+    })]
   end
 
   it 'is error' do
     response = action.call(**params, session: {username: 'user'})
     _(response[0]).must_equal 400
-    _(response[2]).must_equal ['Bad Request']
+    _(response[2]).must_equal [JSON.generate({
+      result: 'error',
+      message: '不正なパラメーターです。',
+      errors: [
+        'Password is missing',
+        'Password size cannot be greater than 255',
+      ],
+    })]
   end
 end

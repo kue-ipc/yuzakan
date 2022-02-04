@@ -1,12 +1,8 @@
 module Api
   module Controllers
-    module Account
+    module CurrentUser
       class Show
         include Api::Action
-
-        expose :user
-        expose :userdata
-        expose :providers
 
         def initialize(provider_repository: ProviderRepository.new,
                        attr_repository: AttrRepository.new,
@@ -16,14 +12,17 @@ module Api
           @attr_repository = attr_repository
         end
 
-        def call(_params)
-          @user = current_user
-          halt 400 if @user.nil?
-
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+          user = current_user
           read_user = ReadUser.new(provider_repository: @provider_repository)
-          result = read_user.call(username: @user.name)
-          @userdata = result.userdata || {}
-          @providers = result.provider_userdatas&.compact&.keys || []
+          result = read_user.call(username: user.name)
+          userdata = result.userdata || {}
+          providers = result.provider_userdatas&.compact&.keys || []
+          self.body = JSON.generate({
+            **user.to_h,
+            data: userdata,
+            providers: providers,
+          })
         end
       end
     end
