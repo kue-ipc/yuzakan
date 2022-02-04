@@ -11,7 +11,7 @@ export fetchJson = (url, {method, body}) ->
   {
     ok: response.ok
     status: response.status
-    data
+    data: data
   }
 
 export fetchJsonGet = (url) ->

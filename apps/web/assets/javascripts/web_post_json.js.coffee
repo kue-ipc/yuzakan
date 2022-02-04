@@ -5,6 +5,7 @@
 import {h, text, app} from './hyperapp.js?v=2.0.20'
 import {Modal} from './bootstrap.js?v=5.1.3'
 import BsIcon from './bs_icon.js?v=0.0.1'
+import {fetchJsonPost} from './fetch_json.js?v=0.0.0'
 
 export default class WebPostJson
   MESSAGE_EVENT = 'webpostjson.message'
@@ -72,15 +73,9 @@ export default class WebPostJson
 
     try
       formData = new FormData(@form)
-      response = await fetch @form.action,
-        method: 'POST'
-        mode: 'same-origin'
-        credentials: 'same-origin'
-        headers:
-          'Accept': 'application/json'
-        body: formData
 
-      data = await response.json()
+      renponse = await fetchJsonPost @form.action, body: formData
+      data = response.data
 
       resultTitle =
         switch data.result
