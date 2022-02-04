@@ -80,17 +80,7 @@ export default class WebPostJson
           'Accept': 'application/json'
         body: formData
 
-      data =
-        if response.ok
-          await response.json()
-        else
-          console.warn(await response.text())
-          {
-            result: 'error'
-            messages:
-              failure: 'サーバー側でエラーが発生、または、接続を拒否されました。'
-              errors: ["サーバーメッセージ: #{response.statusText}"]
-          }
+      data = await response.json()
 
       resultTitle =
         switch data.result
@@ -99,16 +89,14 @@ export default class WebPostJson
           when 'error' then 'エラー'
           else ''
 
-
-
       if data.result == 'success'
         @modalMessage
-          status: 'success'
+          status: data.result
           title: "#{@title}#{resultTitle}"
           closable: false
           successLink: @successLink
           messages: [
-            data.messages.success
+            data.message
             @messages[data.result]
           ]
         setTimeout =>
@@ -122,8 +110,8 @@ export default class WebPostJson
           closable: true
           successLink: null
           messages: [
-            data.messages.failure
-            (data.messages.errors ? [])...
+            data.message
+            (data.errors ? [])...
             @messages[data.result]
           ]
         return data
