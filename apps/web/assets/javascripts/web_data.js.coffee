@@ -59,7 +59,7 @@ export default class WebData
     event = new CustomEvent(WebData.MESSAGE_EVENT, detail: state)
     @modalNode.dispatchEvent(event)
 
-  submitPromise: (method, ) ->
+  submitPromise: ({url = @url, method = @method, data = null}) ->
     @modalMessage
       status: 'running'
       title: "#{@title}中"
