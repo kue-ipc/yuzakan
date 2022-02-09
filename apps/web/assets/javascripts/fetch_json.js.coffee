@@ -1,4 +1,4 @@
-export fetchJson = (url, {method, data}) ->
+export fetchJson = (url, { method, data, type = 'json' }) ->
   method = method.toUpperCase()
   unless ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'].includes(method)
     throw new Error("Unknown or unsupported method: #{method}")
@@ -28,11 +28,11 @@ export fetchJson = (url, {method, data}) ->
     data: data
   }
 
-export fetchJsonGet = (url) ->
-  await fetchJson(url, method: 'GET')
+export fetchJsonGet = (url, {data = null}) ->
+  await fetchJson(url, {method: 'GET', data, type: 'urlencoded'})
 
-export fetchJsonHead = (url) ->
-  await fetchJson(url, method: 'HEAD')
+export fetchJsonHead = (url, {data = null}) ->
+  await fetchJson(url, method: 'HEAD', data: data, type: 'urlencoded')
 
 export fetchJsonPost = (url, {data}) ->
   await fetchJson(url, method: 'POST', data: data)
