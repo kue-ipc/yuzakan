@@ -1,15 +1,17 @@
-export fetchJson = (url, { method, data, type = 'json' }) ->
+export fetchJson = (url, {method, data, type = 'json'}) ->
   method = method.toUpperCase()
   unless ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'].includes(method)
     throw new Error("Unknown or unsupported method: #{method}")
 
-  fetchInit =
+  fetchInit = {
     method: method
     mode: 'same-origin'
     credentials: 'same-origin'
+  }
 
-  headers = new Headers
+  headers = new Headers {
     'Accept': 'application/json'
+  }
 
   if ['POST', 'PUT', 'PATCH'].includes(method) and data?
     body = JSON.stringify(data)
@@ -32,16 +34,16 @@ export fetchJsonGet = (url, {data = null}) ->
   await fetchJson(url, {method: 'GET', data, type: 'urlencoded'})
 
 export fetchJsonHead = (url, {data = null}) ->
-  await fetchJson(url, method: 'HEAD', data: data, type: 'urlencoded')
+  await fetchJson(url, {method: 'HEAD', data, type: 'urlencoded'})
 
-export fetchJsonPost = (url, {data}) ->
-  await fetchJson(url, method: 'POST', data: data)
+export fetchJsonPost = (url, {data, type = 'json'}) ->
+  await fetchJson(url, {method: 'POST', data, type})
 
-export fetchJsonPut = (url, {data}) ->
-  await fetchJson(url, method: 'PUT', data: data)
+export fetchJsonPut = (url, {data, type = 'json'}) ->
+  await fetchJson(url, {method: 'PUT', data, type})
 
-export fetchJsonPatch = (url, {data}) ->
-  await fetchJson(url, method: 'PATCH', data: data)
+export fetchJsonPatch = (url, {data, type = 'json'}) ->
+  await fetchJson(url, {method: 'PATCH', data, type})
 
-export fetchJsonDelete = (url) ->
-  await fetchJson(url, method: 'DELETE')
+export fetchJsonDelete = (url, {data = null}) ->
+  await fetchJson(url, {method: 'DELETE', data, type: 'urlencoded'})

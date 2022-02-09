@@ -2,7 +2,7 @@
 
 ALERTS_CLASS = 'alerts'
 
-LEVELS_COLOR =
+LEVELS_COLOR = {
   success: 'success'
   failure: 'warning'
   fatal: 'danger'
@@ -11,6 +11,7 @@ LEVELS_COLOR =
   info: 'info'
   debug: 'secondary'
   unknown: 'primary'
+}
 
 DEFALT_COLOR = 'primary'
 
