@@ -7,7 +7,7 @@ clearChildren = (node) ->
   node.removeChild(node.firstChild) while node.firstChild
 
 loginSet = (formNode, {successLink = '/'}) ->
-  webPost = new WebPostJson
+  webPost = new WebPostJson {
     form: formNode
     title: 'ログイン'
     messages: {
@@ -16,6 +16,7 @@ loginSet = (formNode, {successLink = '/'}) ->
     }
     successLink: successLink
     reloadTime: 0
+  }
 
   formNode.addEventListener 'submit', (e) ->
     e.preventDefault()

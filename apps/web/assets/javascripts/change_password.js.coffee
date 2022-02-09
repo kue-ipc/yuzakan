@@ -58,18 +58,18 @@ StrengthIndicator = ({score, strength}) ->
 
   strength = 100 if strength >= 100
 
-  h 'div', class: 'row mb-3', [
-    h 'div', class: changePasswordData.cols.left
-    h 'div', class: changePasswordData.cols.right,
-      h 'div', class: 'progress', style: {height: '2em'},
-        h 'div',
+  h 'div', {class: 'row mb-3'}, [
+    h 'div', {class: changePasswordData.cols.left}
+    h 'div', {class: changePasswordData.cols.right},
+      h 'div', {class: 'progress', style: {height: '2em'}},
+        h 'div', {
           class: "progress-bar bg-#{scoreLabel.tag}",
           style: {width: "#{strength}%"}
           role: 'progressbar'
           'aria-valuenow': strength
           'aria-valuemin': '0'
           'aria-valuemax': '100'
-          text scoreLabel.label
+        }, text scoreLabel.label
   ]
 
 class PasswordInputGenerator
@@ -79,16 +79,18 @@ class PasswordInputGenerator
     @idName = listToKebab(@nameList...)
     @fieldName = listToField(@nameList...)
 
-  init: () ->
-    state =
+  init: ->
+    state = {
       visible: false
       valid: false
       value: ''
       entered: false
+    }
     if error?
-      Object.assign @state,
+      Object.assign @state, {
         wasValidated: true
         message: error
+      }
     state
 
   showPassword: (state, {visible}) => {
@@ -148,14 +150,14 @@ class PasswordInputGenerator
       else
         ''
 
-    h 'div', class: 'mb-3 row', [
-      h 'label',
+    h 'div', {class: 'mb-3 row'}, [
+      h 'label', {
         class: "col-form-label #{changePasswordData.cols.left}"
         for: @idName
-        text @label
-      h 'div', class: "#{changePasswordData.cols.right}",
-        h 'div', class: "input-group", [
-          h 'input',
+      }, text @label
+      h 'div', {class: "#{changePasswordData.cols.right}"},
+        h 'div', {class: "input-group"}, [
+          h 'input', {
             id: @idName
             name: @fieldName
             class: "form-control #{validState}"
@@ -164,35 +166,37 @@ class PasswordInputGenerator
             placeholder: 'パスワードを入力'
             'aria-describedby': "#{@idName}-visible-button"
             oninput: (_, event) => [@setValue, {value: event.target.value}]
-          h 'div',
+          }
+          h 'div', {
             id: "#{@idName}-visible-button"
-            class:
-              "input-group-text #{if visible then 'text-primary' else ''}"
+            class: "input-group-text #{if visible then 'text-primary' else ''}"
             onmousedown: [@showPassword, {visible: true}]
             onmouseup: [@showPassword, {visible: false}]
             onmouseleave: [@showPassword, {visible: false}]
-            BsIcon size: 16, name: if visible then 'eye' else 'eye-slash'
-          h 'div', class: 'valid-feedback',
-            text message
-          h 'div', class: 'invalid-feedback',
-            text message
+          },
+            BsIcon {size: 16, name: if visible then 'eye' else 'eye-slash'}
+          h 'div', {class: 'valid-feedback'}, text message
+          h 'div', {class: 'invalid-feedback'}, text message
         ]
     ]
 
-passwordCurrent = new PasswordInputGenerator
+passwordCurrent = new PasswordInputGenerator {
   name: 'password_current'
   label: '現在のパスワード'
   error: paramErrors['password_current']
+}
 
-password = new PasswordInputGenerator
+password = new PasswordInputGenerator {
   name: 'password'
   label: '新しいパスワード'
   error: paramErrors['password']
+}
 
-passwordConfirmation = new PasswordInputGenerator
+passwordConfirmation = new PasswordInputGenerator {
   name: 'password_confirmation'
   label: 'パスワードの確認'
   error: paramErrors['password_confirmation']
+}
 
 passwordInputs = {
   passwordCurrent
@@ -201,10 +205,10 @@ passwordInputs = {
 }
 
 SubmitButton = ({submitting, valid}) ->
-  h 'div', class: 'd-grid gap-auto',
-    h 'button',
+  h 'div', {class: 'd-grid gap-auto'},
+    h 'button', {
       class: 'btn btn-primary btn-block'
-      type:'submit'
+      type: 'submit'
       disabled: submitting || !valid
       onclick: (state, event) ->
         event.preventDefault()
@@ -212,9 +216,9 @@ SubmitButton = ({submitting, valid}) ->
           startSubmit(state)
           [submitRunner]
         ]
-      text '変更'
+    }, text '変更'
 
-init =
+init = {
   [passwordCurrent.camelName]: passwordCurrent.init()
   [password.camelName]: password.init()
   [passwordConfirmation.camelName]: passwordConfirmation.init()
@@ -222,6 +226,7 @@ init =
   strength: 0
   valid: false
   submitting: false
+}
 
 checkPassword = (state) ->
   newState = {
@@ -233,7 +238,7 @@ checkPassword = (state) ->
 
   result =
     if state.password.value?.length > 0
-      if state.passwordCurrent.value?.length >0
+      if state.passwordCurrent.value?.length > 0
         calcStrength(state.password.value, [state.passwordCurrent.value])
       else
         calcStrength(state.password.value)
@@ -311,7 +316,7 @@ stopSubmit = (state, messages) ->
     submitting: false
   }
 
-webPost = new WebPostJson
+webPost = new WebPostJson {
   form: changePasswordForm
   title: 'パスワード変更'
   messages: {
@@ -320,6 +325,7 @@ webPost = new WebPostJson
   }
   successLink: '/'
   reloadTime: 10 * 1000
+}
 
 submitRunner = (dispatch) ->
   (->
@@ -350,12 +356,13 @@ view = (state) ->
       disabled: state.submitting
       state.passwordConfirmation...
     }
-    h 'div', class: 'row', [
-      h 'div', class: "#{changePasswordData.cols.left}"
-      h 'div', class: "#{changePasswordData.cols.right}",
-        SubmitButton
+    h 'div', {class: 'row'}, [
+      h 'div', {class: "#{changePasswordData.cols.left}"}
+      h 'div', {class: "#{changePasswordData.cols.right}"},
+        SubmitButton {
           valid: state.valid
           submitting: state.submitting
+        }
     ]
   ]
 

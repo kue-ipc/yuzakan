@@ -8,9 +8,9 @@ agreementCheck = (state, agreement) -> {
 
 AgreementCheck = ({agreement}) ->
   id = 'google-create-user-agreement'
-  h 'div', class: 'form-check', [
-    h 'input', type: 'hidden', name: 'agreement', value: '0'
-    h 'input',
+  h 'div', {class: 'form-check'}, [
+    h 'input', {type: 'hidden', name: 'agreement', value: '0'}
+    h 'input', {
       id: id
       type: 'checkbox'
       name: 'agreement'
@@ -18,8 +18,8 @@ AgreementCheck = ({agreement}) ->
       class: 'form-check-input'
       checked: agreement
       onchange: [agreementCheck, (e) -> e.target.checked]
-    h 'label', class: 'form-check-label', for: id,
-      text '上記について確認し、内容に同意します。'
+    }
+    h 'label', {class: 'form-check-label', for: id}, text '上記について確認し、内容に同意します。'
   ]
 
 googleCreateUserRules = [
@@ -63,7 +63,7 @@ init = {
 }
 
 view = (state) ->
-  ModalDialog
+  ModalDialog {
     modalSize: 'lg'
     labelId: 'google-create-user'
     title: 'Google アカウント 作成' + (if state.created then ' 完了' else '')
@@ -74,11 +74,10 @@ view = (state) ->
       onClick: (state) -> state
       disabled: true
     }
+  },
     if state.created
-      h 'p', {},
-        text '未実装'
+      h 'p', {}, text '未実装'
     else
-      CreateUserContent agreement: state.agreement
-
+      CreateUserContent {agreement: state.agreement}
 
 app({init, view, node})

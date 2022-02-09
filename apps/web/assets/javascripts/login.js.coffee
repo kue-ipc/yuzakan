@@ -1,5 +1,6 @@
 import loginForm from './login_form.js?v=0.6.0'
 
-loginForm
+loginForm {
   loginNode: document.getElementById('login')
   successLink: '/'
+}

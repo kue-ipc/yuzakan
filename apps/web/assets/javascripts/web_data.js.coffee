@@ -34,7 +34,7 @@ export default class WebData
     globalThis.modalNode = @modalNode
     globalThis.modal = @modal
 
-    app
+    app {
       init: {
         status: 'unknown'
         title: 'no title'
@@ -45,8 +45,9 @@ export default class WebData
       view: ModalView
       node: @modalContentNode
       subscriptions: (state) => [
-        messageSub messageAction, node: @modalNode
+        messageSub messageAction, {node: @modalNode}
       ]
+    }
 
   modalMessage: (state) ->
     if state.closable
@@ -56,15 +57,16 @@ export default class WebData
       @modal.backdrop = 'static'
       @modal.keyboard = false
 
-    event = new CustomEvent(WebData.MESSAGE_EVENT, detail: state)
+    event = new CustomEvent(WebData.MESSAGE_EVENT, {detail: state})
     @modalNode.dispatchEvent(event)
 
   submitPromise: ({url = @url, method = @method, data = null}) ->
-    @modalMessage
+    @modalMessage {
       status: 'running'
       title: "#{@title}中"
       messages: "#{@title}を実施しています。しばらくお待ち下さい。"
       closable: false
+    }
     @modal.backdrop = 'static'
     @modal.keyboard = false
     @modal.show()
@@ -72,13 +74,13 @@ export default class WebData
     try
       formData = new FormData(@form)
 
-      renponse = await fetchJsonPost @form.action, body: formData
+      renponse = await fetchJsonPost @form.action, {body: formData}
       data = response.data
 
       resultTitle = statusInfo(data.result).label
 
       if data.result == 'success'
-        @modalMessage
+        @modalMessage {
           status: data.result
           title: "#{@title}#{resultTitle}"
           closable: false
@@ -87,12 +89,13 @@ export default class WebData
             data.message
             '画面を切り替えます。しばらくお待ち下さい。'
           ]
+        }
         setTimeout =>
           location.href = @successLink
         , @reloadTime
         return data
       else
-        @modalMessage
+        @modalMessage {
           status: data.result
           title: "#{@title}#{resultTitle}"
           closable: true
@@ -102,16 +105,19 @@ export default class WebData
             (data.errors ? [])...
             @messages[data.result]
           ]
+        }
         return data
 
     catch error
       console.error error
-      data =
+      data = {
         result: 'error'
-        messages:
+        messages: {
           failure: 'サーバー接続時にエラーが発生しました。しばらく待ってから、再度試してください。'
+        }
+      }
 
-      @modalMessage
+      @modalMessage {
         status: 'error'
         title: '接続エラー'
         closable: true
@@ -121,13 +127,14 @@ export default class WebData
           (data.messages.errors ? [])...
           @messages[data.result]
         ]
+      }
       return data
 
 messageRunner = (dispatch, {action, node}) ->
   func = (e) ->
     dispatch(action, e.detail)
   node.addEventListener(WebData.MESSAGE_EVENT, func)
-  () -> node.removeEventListener(WebData.MESSAGE_EVENT, func)
+  -> node.removeEventListener(WebData.MESSAGE_EVENT, func)
 
 messageSub = (action, {node}) ->
   [
@@ -141,35 +148,36 @@ messageAction = (state, params) -> {
 }
 
 ModalView = ({status, title, messages, closable, successLink}) ->
-  h 'div', class: 'modal-content', [
-    h 'div', class: 'modal-header', [
-      h 'h5', class: 'modal-title', [
-        StatusIcon status: status
+  h 'div', {class: 'modal-content'}, [
+    h 'div', {class: 'modal-header'}, [
+      h 'h5', {class: 'modal-title'}, [
+        StatusIcon {status: status}
         text " #{title}"
       ]
       if closable
-        h 'button',
+        h 'button', {
           class: 'btn-close'
           type: 'button'
           'data-bs-dismiss': 'modal'
           'aria-label': "閉じる"
+        }
     ]
-    h 'div', class: 'modal-body',
-      MessageList messages: messages
+    h 'div', {class: 'modal-body'},
+      MessageList {messages: messages}
     if closable || successLink?
-      h 'div', class: 'modal-footer', [
+      h 'div', {class: 'modal-footer'}, [
         if successLink?
-          h 'a',
+          h 'a', {
             class: 'btn btn-primary'
             role: 'button'
             href: successLink
-            text 'すぐに移動'
+          }, text 'すぐに移動'
         if closable
-          h 'button',
+          h 'button', {
             class: 'btn btn-secondary'
             type: 'button'
             'data-bs-dismiss': 'modal'
-            text '閉じる'
+          }, text '閉じる'
       ]
   ]
 

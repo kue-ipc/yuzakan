@@ -17,21 +17,25 @@ providerId =
 parentNames = ['provider', 'params']
 
 getAdapterParams = (adapterName) ->
-  result = await fetch "/admin/adapters/#{adapterName}/params",
+  result = await fetch "/admin/adapters/#{adapterName}/params", {
     method: 'GET'
     mode: 'same-origin'
     credentials: 'same-origin'
-    headers:
+    headers: {
       accept: 'application/json'
+    }
+  }
   result.json()
 
 getProviderParams = (providerId) ->
-  result = await fetch "/admin/providers/#{providerId}/params",
+  result = await fetch "/admin/providers/#{providerId}/params", {
     method: 'GET'
     mode: 'same-origin'
     credentials: 'same-origin'
-    headers:
+    headers: {
       accept: 'application/json'
+    }
+  }
   result.json()
 
 InputControl = (props) ->
@@ -40,13 +44,14 @@ InputControl = (props) ->
   id = fieldId(props.name, parentNames)
   describeId = "#{id}-help"
 
-  inputOpts =
+  inputOpts = {
     id: id
     name: name
     type: props.input
     class: 'form-control'
     value: props.value ? (if props.encrypted? then props.default else '')
     'aria-edscribedby': describeId
+  }
 
   for key in [
     'required', 'placeholder', 'maxlength', 'minlength', 'pattern', 'size'
@@ -57,18 +62,14 @@ InputControl = (props) ->
   if providerId?
     inputOpts['required'] = false
 
-  h 'div', class: 'mb-3', [
-    h 'label', class: 'form-label', for: id,
-      text label
+  h 'div', {class: 'mb-3'}, [
+    h 'label', {class: 'form-label', for: id}, text label
     h 'input', inputOpts
-    if props.encrypted? then h 'small', class: 'form-text',
-      text '''
+    if props.encrypted? then h 'small', {class: 'form-text'}, text '''
       この項目は暗号化されて保存され、現在の値は表示されません。
       変更しない場合は、空欄のままにしてください。
-      '''
-    if props.description? then h 'small',
-      id: describeId, class: 'form-text',
-      text props.description
+    '''
+    if props.description? then h 'small', {id: describeId, class: 'form-text'}, text props.description
   ]
 
 InputCheckbox = (props) ->
@@ -77,30 +78,30 @@ InputCheckbox = (props) ->
   id = fieldId(props.name, parentNames)
   describeId = "#{id}-help"
 
-  hiddenInputOpts =
+  hiddenInputOpts = {
     name: name
     type: 'hidden'
     value: '0'
+  }
 
-  inputOpts =
+  inputOpts = {
     id: id
     name: name
     type: 'checkbox'
     class: 'form-check-input'
     value: '1'
     'aria-edscribedby': describeId
+  }
 
   if props.value
     inputOpts['checked'] = true
 
-  h 'div', class: 'form-check', [
+  h 'div', {class: 'form-check'}, [
     h 'input', hiddenInputOpts
     h 'input', inputOpts
-    h 'label', class: 'form-check-label', for: id,
+    h 'label', {class: 'form-check-label', for: id},
       text label
-    if props.description? then h 'small',
-      id: describeId, class: 'form-text',
-      text props.description
+    if props.description? then h 'small', {id: describeId, class: 'form-text'}, text props.description
   ]
 
 InputTextarea = (props) ->
@@ -109,12 +110,13 @@ InputTextarea = (props) ->
   id = fieldId(props.name, parentNames)
   describeId = "#{id}-help"
 
-  inputOpts =
+  inputOpts = {
     id: id
     name: name
     class: 'form-control'
     value: props.value ? (if props.encrypted? then props.default else '')
     'aria-edscribedby': describeId
+  }
 
   for key in [
     'required', 'placeholder', 'maxlength', 'minlength', 'cols', 'rows'
@@ -124,19 +126,14 @@ InputTextarea = (props) ->
   if providerId?
     inputOpts['required'] = false
 
-  h 'div', class: 'mb-3', [
-    h 'label', class: 'form-label', for: id,
-      text label
+  h 'div', {class: 'mb-3'}, [
+    h 'label', {class: 'form-label', for: id}, text label
     h 'textarea', inputOpts
-    if props.encrypted? then h 'small', class: 'form-text',
-      text '''
+    if props.encrypted? then h 'small', {class: 'form-text'}, text '''
       この項目は暗号化されて保存され、現在の値は表示されません。
       変更しない場合は、空欄のままにしてください。
-      '''
-    if props.description? then h 'small',
-      id: describeId,
-      class: 'form-text',
-      text props.description
+    '''
+    if props.description? then h 'small', {id: describeId, class: 'form-text'}, text props.description
   ]
 
 InputList = (props) ->
@@ -147,24 +144,19 @@ InputList = (props) ->
 
   selected = props.value ? props.default
 
-  h 'div', class: 'mb-3', [
-    h 'label', class: 'form-label', for: id,
-      text label
-    h 'select',
+  h 'div', {class: 'mb-3'}, [
+    h 'label', {class: 'form-label', for: id}, text label
+    h 'select', {
       id: id
-      class: 'form-control',
-      name: name,
-      'aria-edscribedby': describeId,
-      props.list.map (option) ->
-        if selected == option.value
-          h 'option', value: option.value, selected: true,
-            text option.name
-        else
-          h 'option', value: option.value,
-            text option.name
-      if props.description? then h 'small',
-        id: describeId, class: 'form-text',
-        text props.description
+      class: 'form-control'
+      name: name
+      'aria-edscribedby': describeId
+    }, props.list.map (option) ->
+      if selected == option.value
+        h 'option', {value: option.value, selected: true}, text option.name
+      else
+        h 'option', {value: option.value}, text option.name
+    if props.description? then h 'small', {id: describeId, class: 'form-text'}, text props.description
   ]
 
 
@@ -226,9 +218,10 @@ providerRunner = (dispatch, {providerId}) ->
   params = await getProviderParams(providerId)
   dispatch(updateProviderParams, params)
 
-initState =
+initState = {
   adapterParams: []
   providerParams: {}
+}
 
 view = (state) ->
   h 'div', {}, [
@@ -237,17 +230,18 @@ view = (state) ->
     Params state
   ]
 
-app
+app {
   init: [
     initState
     [
       providerRunner
-      providerId: providerId
+      {providerId: providerId}
     ]
     [
       changeSelectRunner
-      node: adapterSelectNode
+      {node: adapterSelectNode}
     ]
   ]
   view: view
   node: mainNode
+}
