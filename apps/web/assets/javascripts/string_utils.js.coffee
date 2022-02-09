@@ -17,10 +17,6 @@ export listToSnake = (list...) ->
 export listToKebab = (list...) ->
   (str.toLowerCase().replace(/_/g, '-') for str in list).join('-')
 
-export listToField = (list...) ->
-  (list[0] ? '') +
-    ("[#{str}]" for str in list[1..]).join('')
-
 # Capitalize
 export capitalize = (str) ->
   str && str[0].toUpperCase() + str[1..].toLowerCase()
@@ -40,10 +36,6 @@ export snakize = (str) ->
 # kebab-case
 export kebabize = (str) ->
   listToKebab(strToList(str)...)
-
-# form[field][name]
-export fieldize = (str) ->
-  listToField(strToList(str)...)
 
 # names
 export pluralize = (str) ->

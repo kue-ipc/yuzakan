@@ -1,13 +1,18 @@
 # form helper
 
-export fieldName = (name, parents = []) ->
-  list = [parents..., name]
-  str = list[0]
-  str += "[#{key}]" for key in list[1..]
-  str
+import {listToKebab} from './string_utils.js?v=0.6.0'
 
+export listToField = (list...) ->
+  (list[0] ? '') + ("[#{str}]" for str in list[1..]).join('')
+
+export filedToList = (str) ->
+  list = []
+  list.push str.match(/^([^\[]*)/)[0]
+  list.push ...str.matchAll(/\[[^\]]*\]/g)
+  list
+
+export fieldName = (name, parents = []) ->
+  listToField(parents..., name)
 
 export fieldId = (name, parents = []) ->
-  [parents..., name]
-    .map (key) -> key.replace(/_/g, '-')
-    .join('-')
+  listToKebab(parents..., name)
