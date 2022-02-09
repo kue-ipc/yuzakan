@@ -1,36 +1,52 @@
 import WebData from './web_data.js?v=0.6.0'
+import BsIcon from './bs_icon.js?v=0.6.0'
+import {app, h, text} from './hyperapp.js?v=0.6.0'
 
 
-webData = new WabData {
+webData = new WebData {
   title: 'ログアウト'
-  url: '/api/session'
   method: 'DELETE'
-  statuses: new Map [
+  url: '/api/session'
+  statusActions: new Map [
     ['success', {ridirectTo: '/', reloadTime: 10}]
   ]
 }
 
+# for el in document.getElementsByClassName('logout-button')
+#   el.addEventListener 'click', (e) ->
+#     e.preventDefault()
+#     (->
+#       data = await webData.submitPromise {
+#         method: 'DELETE'
+#         url: '/api/session'
+#       }
+
+#       if result == 'success'
+#         # do nothing
+#       else
+#         for input in inputTextNodes
+#           input.value = ''
+#           disableSubmit()
+#     )()
+
+
+logout = (dispatch) ->
+  await webData.submitPromise()
+  
+view = (state) ->
+  h 'button', {
+    class: state.buttonClassList
+    onclick: (state, event) ->
+      [state, [logout]]
+  }, [
+    BsIcon {name: 'box-arrow-right', class: 'flex-shrink-0 me-1'}
+    h 'span', {class: 'd-none d-md-inline'}, text 'ログアウト'
+  ]
+
+defaultButtonClassList = 'btn btn-sm btn-outline-light d-flex align-items-center'.split(' ').filter((_) -> _)
+
 for el in document.getElementsByClassName('logout-button')
-  el.addEventListener 'click', (e) ->
-    e.preventDefault()
-    (->
-      data = await webData.submitPromise {
-        method: 'DELETE'
-        url: '/api/session'
-      }
-
-      if result == 'success'
-        # do nothing
-      else
-        for input in inputTextNodes
-          input.value = ''
-          disableSubmit()
-    )()
-
-
-import loginForm from './login_form.js?v=0.6.0'
-
-loginForm {
-  loginNode: document.getElementById('login')
-  successLink: '/'
-}
+  init = {
+    buttonClassList: [name for name in el.classList when name != 'logout-button'].concat(defaultButtonClassList)
+  }
+  app {init, view, node: el}

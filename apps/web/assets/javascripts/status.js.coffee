@@ -1,4 +1,5 @@
 import {h, text} from './hyperapp.js?v=0.6.0'
+import BsIcon from './bs_icon.js?v=0.6.0'
 
 
 STATUSES = new Map([

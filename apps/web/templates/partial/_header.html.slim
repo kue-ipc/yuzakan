@@ -40,6 +40,8 @@ header
               - text bs_icon('box-arrow-right', class: 'flex-shrink-0 me-1')
               - span class: 'd-none d-md-inline' do
                 - text 'ログアウト'
+          .logout-button
+          = javascript 'logout', defer: true, type: 'module'
         - else
           ul.navbar-nav.me-auto
             li.nav-item

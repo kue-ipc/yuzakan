@@ -3,7 +3,7 @@
 
 import {h, text, app} from './hyperapp.js?v=0.6.0'
 import {Modal} from './bootstrap.js?v=0.6.0'
-import {StautsIcon, statusInfo} from './status.js?v=0.6.0'
+import {StatusIcon, statusInfo} from './status.js?v=0.6.0'
 import {fetchJsonPost} from './fetch_json.js?v=0.6.0'
 
 export default class WebData
@@ -11,9 +11,9 @@ export default class WebData
 
   constructor: ({
     @title
-    @messages = {}
-    @successLink = null
-    @reloadTime = 0
+    @method = 'GET'
+    @url = null
+    @statusActions = new Map
   }) ->
     @modalNode = document.createElement('div')
     @modalNode.classList.add('modal')
@@ -23,10 +23,10 @@ export default class WebData
     modalDialogNode = document.createElement('div')
     modalDialogNode.classList.add('modal-dialog', 'modal-dialog-centered')
 
-    @modalContentNode = document.createElement('div')
-    @modalContentNode.classList.add('modal-content')
+    modalContentNode = document.createElement('div')
+    modalContentNode.classList.add('modal-content')
 
-    modalDialogNode.appendChild(@modalContentNode)
+    modalDialogNode.appendChild(modalContentNode)
     @modalNode.appendChild(modalDialogNode)
     document.body.appendChild(@modalNode)
 
@@ -42,12 +42,52 @@ export default class WebData
         closable: false
         successLink: null
       }
-      view: ModalView
-      node: @modalContentNode
+      view: @ModalView
+      node: modalContentNode
       subscriptions: (state) => [
-        messageSub messageAction, {node: @modalNode}
+        @messageSub @messageAction, {node: @modalNode}
       ]
     }
+
+  modalView: ({status, title, messages, closable, successLink}) =>
+    h 'div', {class: 'modal-content'}, [
+      h 'div', {class: 'modal-header'}, [
+        h 'h5', {class: 'modal-title'}, [
+          StatusIcon {status: status}
+          text " #{title}"
+        ]
+        if closable
+          h 'button', {
+            class: 'btn-close'
+            type: 'button'
+            'data-bs-dismiss': 'modal'
+            'aria-label': "閉じる"
+          }
+      ]
+      h 'div', {class: 'modal-body'},
+        @messageList {messages: messages}
+      if closable || successLink?
+        h 'div', {class: 'modal-footer'}, [
+          if successLink?
+            h 'a', {
+              class: 'btn btn-primary'
+              role: 'button'
+              href: successLink
+            }, text 'すぐに移動'
+          if closable
+            h 'button', {
+              class: 'btn btn-secondary'
+              type: 'button'
+              'data-bs-dismiss': 'modal'
+            }, text '閉じる'
+        ]
+    ]
+
+  messageList: ({messages}) ->
+    messages = [messages] unless messages instanceof Array
+    h 'div', {}, messages.filter((x) -> typeof x == 'string').map (msg) ->
+      h 'div', {},
+        text msg
 
   modalMessage: (state) ->
     if state.closable
@@ -59,6 +99,23 @@ export default class WebData
 
     event = new CustomEvent(WebData.MESSAGE_EVENT, {detail: state})
     @modalNode.dispatchEvent(event)
+
+  messageRunner: (dispatch, {action, node}) ->
+    func = (e) ->
+      dispatch(action, e.detail)
+    node.addEventListener(WebData.MESSAGE_EVENT, func)
+    -> node.removeEventListener(WebData.MESSAGE_EVENT, func)
+
+  messageSub: (action, {node}) =>
+    [
+      @messageRunner
+      {action, node}
+    ]
+
+  messageAction: (state, params) -> {
+    state...
+    params...
+  }
 
   submitPromise: ({url = @url, method = @method, data = null}) ->
     @modalMessage {
@@ -130,59 +187,3 @@ export default class WebData
       }
       return data
 
-messageRunner = (dispatch, {action, node}) ->
-  func = (e) ->
-    dispatch(action, e.detail)
-  node.addEventListener(WebData.MESSAGE_EVENT, func)
-  -> node.removeEventListener(WebData.MESSAGE_EVENT, func)
-
-messageSub = (action, {node}) ->
-  [
-    messageRunner
-    {action, node}
-  ]
-
-messageAction = (state, params) -> {
-  state...
-  params...
-}
-
-ModalView = ({status, title, messages, closable, successLink}) ->
-  h 'div', {class: 'modal-content'}, [
-    h 'div', {class: 'modal-header'}, [
-      h 'h5', {class: 'modal-title'}, [
-        StatusIcon {status: status}
-        text " #{title}"
-      ]
-      if closable
-        h 'button', {
-          class: 'btn-close'
-          type: 'button'
-          'data-bs-dismiss': 'modal'
-          'aria-label': "閉じる"
-        }
-    ]
-    h 'div', {class: 'modal-body'},
-      MessageList {messages: messages}
-    if closable || successLink?
-      h 'div', {class: 'modal-footer'}, [
-        if successLink?
-          h 'a', {
-            class: 'btn btn-primary'
-            role: 'button'
-            href: successLink
-          }, text 'すぐに移動'
-        if closable
-          h 'button', {
-            class: 'btn btn-secondary'
-            type: 'button'
-            'data-bs-dismiss': 'modal'
-          }, text '閉じる'
-      ]
-  ]
-
-MessageList = ({messages}) ->
-  messages = [messages] unless messages instanceof Array
-  h 'div', {}, messages.filter((x) -> typeof x == 'string').map (msg) ->
-    h 'div', {},
-      text msg

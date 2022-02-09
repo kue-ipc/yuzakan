@@ -1,4 +1,4 @@
-import {filetToList} from './form_helper.js?v=0.6.0'
+import {filedToList} from './form_helper.js?v=0.6.0'
 
 export fetchJson = (url, {method, data, type = 'json'}) ->
   method = method.toUpperCase()
