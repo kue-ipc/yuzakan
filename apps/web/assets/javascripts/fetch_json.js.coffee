@@ -49,7 +49,16 @@ export fetchJson = (url, {method, data, type = 'json'}) ->
 
   request = new Request url, init
   response = await fetch request
-  data = await response.json()
+
+  contentType = response.headers.get('Content-Type')
+  if not contentType?
+    data = null
+  if contentType.startsWith('application/json')
+    data = await response.json()
+  else if contentType.startsWith('text/plain')
+    data = await response.text()
+  else
+    throw new Error("Unknown or unsupported content type: #{contentType}")
 
   {
     ok: response.ok

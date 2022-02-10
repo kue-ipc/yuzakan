@@ -31,25 +31,22 @@ export default class WebData
     document.body.appendChild(@modalNode)
 
     @modal = new Modal(@modalNode)
-    globalThis.modalNode = @modalNode
-    globalThis.modal = @modal
 
     app {
       init: {
         status: 'unknown'
         title: 'no title'
         messages: 'n/a'
-        closable: false
-        successLink: null
+        closable: true
       }
-      view: @ModalView
+      view: @modalView
       node: modalContentNode
       subscriptions: (state) => [
         @messageSub @messageAction, {node: @modalNode}
       ]
     }
 
-  modalView: ({status, title, messages, closable, successLink}) =>
+  modalView: ({status, title, messages, closable}) =>
     h 'div', {class: 'modal-content'}, [
       h 'div', {class: 'modal-header'}, [
         h 'h5', {class: 'modal-title'}, [
@@ -90,34 +87,28 @@ export default class WebData
         text msg
 
   modalMessage: (state) ->
+    # hack modal config
+    # https://github.com/twbs/bootstrap/issues/35664
     if state.closable
-      @modal.backdrop = true
-      @modal.keyboard = true
+      @modal._config.backdrop = true
+      @modal._config.keyboard = true
     else
-      @modal.backdrop = 'static'
-      @modal.keyboard = false
+      @modal._config.backdrop = 'static'
+      @modal._config.keyboard = false
 
     event = new CustomEvent(WebData.MESSAGE_EVENT, {detail: state})
     @modalNode.dispatchEvent(event)
 
   messageRunner: (dispatch, {action, node}) ->
-    func = (e) ->
-      dispatch(action, e.detail)
+    func = (e) -> dispatch(action, e.detail)
     node.addEventListener(WebData.MESSAGE_EVENT, func)
     -> node.removeEventListener(WebData.MESSAGE_EVENT, func)
 
-  messageSub: (action, {node}) =>
-    [
-      @messageRunner
-      {action, node}
-    ]
+  messageSub: (action, {node}) => [@messageRunner, {action, node}]
 
-  messageAction: (state, params) -> {
-    state...
-    params...
-  }
+  messageAction: (state, params) -> {state..., params...}
 
-  submitPromise: ({url = @url, method = @method, data = null}) ->
+  submitPromise: ({url = @url, method = @method, data, type} = {}) ->
     @modalMessage {
       status: 'running'
       title: "#{@title}中"
@@ -128,22 +119,21 @@ export default class WebData
     @modal.keyboard = false
     @modal.show()
 
+    return
+
     try
-      formData = new FormData(@form)
+      response = await fetchJsonPost url, {data, type}
 
-      renponse = await fetchJsonPost @form.action, {body: formData}
-      data = response.data
+      resultTitle = statusInfo(response.data.result).label
 
-      resultTitle = statusInfo(data.result).label
-
-      if data.result == 'success'
+      if response.data.result == 'success'
         @modalMessage {
-          status: data.result
+          status: response.data.result
           title: "#{@title}#{resultTitle}"
           closable: false
           successLink: @successLink
           messages: [
-            data.message
+            response.data.message
             '画面を切り替えます。しばらくお待ち下さい。'
           ]
         }
