@@ -334,7 +334,7 @@ submitRunner = (dispatch) ->
       if result != 'success'
         dispatch(stopSubmit, messages)
     catch error
-      console.log(error)
+      console.error(error)
       dispatch(stopSubmit, {})
   )()
 

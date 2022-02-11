@@ -119,61 +119,51 @@ export default class WebData
     @modal.keyboard = false
     @modal.show()
 
-    return
-
     try
-      response = await fetchJsonPost url, {data, type}
+      response = await fetchJsonPost {url, data, type}
 
-      resultTitle = statusInfo(response.data.result).label
-
-      if response.data.result == 'success'
-        @modalMessage {
-          status: response.data.result
-          title: "#{@title}#{resultTitle}"
-          closable: false
-          successLink: @successLink
-          messages: [
-            response.data.message
-            '画面を切り替えます。しばらくお待ち下さい。'
-          ]
-        }
-        setTimeout =>
-          location.href = @successLink
-        , @reloadTime
-        return data
-      else
-        @modalMessage {
-          status: data.result
-          title: "#{@title}#{resultTitle}"
-          closable: true
-          successLink: null
-          messages: [
-            data.message
-            (data.errors ? [])...
-            @messages[data.result]
-          ]
-        }
-        return data
+      switch response.type
+        when 'json'
+          responseData = response.data
+        when 'text'
+          responseData = {
+            result: 'fatal'
+            messeage: 'サーバーの処理で致命的なエラーが発生しました。'
+            errors: [response.data]
+          }
+        else
+          throw new Error("Unsupported respose type: #{response.type}")
 
     catch error
       console.error error
-      data = {
+      responseData = {
         result: 'error'
-        messages: {
-          failure: 'サーバー接続時にエラーが発生しました。しばらく待ってから、再度試してください。'
-        }
+        messages: 'サーバー接続時にエラーが発生しました。しばらく待ってから、再度試してください。'
       }
 
-      @modalMessage {
-        status: 'error'
-        title: '接続エラー'
-        closable: true
-        successLink: null
-        messages: [
-          data.messages.failure
-          (data.messages.errors ? [])...
-          @messages[data.result]
-        ]
-      }
-      return data
+    messages = [responseData.message, (responseData.errors ? [])...]
 
+    statusAction = @statusActions.get(responseData.result)
+    messages.push(statusAction?.message) if statusAction?.message?
+
+    if statusAction?.redirectTo?
+      closable = false
+      link = statusAction.redirectTo
+      messages.push('画面を切り替えます。しばらくお待ち下さい。')
+    else
+      closable = true
+      link = null
+
+    @modalMessage {
+      status: responseData.result
+      title: "#{@title}#{statusInfo(responseData.result).label}"
+      closable
+      link
+      messages
+    }
+    if link?
+      setTimeout =>
+        location.href = @link
+      , statusAction?.reloadTime ? 0
+
+    return responseData

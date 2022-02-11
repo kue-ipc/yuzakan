@@ -1,6 +1,6 @@
 import {filedToList} from './form_helper.js?v=0.6.0'
 
-export fetchJson = (url, {method, data, type = 'json'}) ->
+export fetchJson = ({url, method, data = null, type = 'json'}) ->
   method = method.toUpperCase()
   unless ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'].includes(method)
     throw new Error("Unknown or unsupported method: #{method}")
@@ -33,6 +33,9 @@ export fetchJson = (url, {method, data, type = 'json'}) ->
         content_type = 'multipart/form-data'
         unless data intanceof FormData
           throw new Error('Not implument')
+      when 'text'
+        content_type = 'text/plain'
+        data = String(data)
       else
         throw new Error("Unknown or unsupported type: #{type}")
 
@@ -52,10 +55,13 @@ export fetchJson = (url, {method, data, type = 'json'}) ->
 
   contentType = response.headers.get('Content-Type')
   if not contentType?
+    type = undefined
     data = null
   if contentType.startsWith('application/json')
+    type = 'json'
     data = await response.json()
   else if contentType.startsWith('text/plain')
+    type = 'text'
     data = await response.text()
   else
     throw new Error("Unknown or unsupported content type: #{contentType}")
@@ -63,26 +69,27 @@ export fetchJson = (url, {method, data, type = 'json'}) ->
   {
     ok: response.ok
     status: response.status
-    data: data
+    type
+    data
   }
 
-export fetchJsonGet = (url, {data = null}) ->
-  await fetchJson(url, {method: 'GET', data, type: 'urlencoded'})
+export fetchJsonGet = ({url, data = null}) ->
+  await fetchJson({url, method: 'GET', data, type: 'urlencoded'})
 
-export fetchJsonHead = (url, {data = null}) ->
-  await fetchJson(url, {method: 'HEAD', data, type: 'urlencoded'})
+export fetchJsonHead = ({url, data = null}) ->
+  await fetchJson({url, method: 'HEAD', data, type: 'urlencoded'})
 
-export fetchJsonPost = (url, {data, type = 'json'}) ->
-  await fetchJson(url, {method: 'POST', data, type})
+export fetchJsonPost = ({url, data, type = 'json'}) ->
+  await fetchJson({url, method: 'POST', data, type})
 
-export fetchJsonPut = (url, {data, type = 'json'}) ->
-  await fetchJson(url, {method: 'PUT', data, type})
+export fetchJsonPut = ({url, data, type = 'json'}) ->
+  await fetchJson({url, method: 'PUT', data, type})
 
-export fetchJsonPatch = (url, {data, type = 'json'}) ->
-  await fetchJson(url, {method: 'PATCH', data, type})
+export fetchJsonPatch = ({url, data, type = 'json'}) ->
+  await fetchJson({url, method: 'PATCH', data, type})
 
-export fetchJsonDelete = (url, {data = null}) ->
-  await fetchJson(url, {method: 'DELETE', data, type: 'urlencoded'})
+export fetchJsonDelete = ({url, data = null}) ->
+  await fetchJson({url, method: 'DELETE', data, type: 'urlencoded'})
 
 formDataToObj = (formData) ->
   obj = {}

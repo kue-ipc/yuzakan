@@ -8,27 +8,9 @@ webData = new WebData {
   method: 'DELETE'
   url: '/api/session'
   statusActions: new Map [
-    ['success', {ridirectTo: '/', reloadTime: 10}]
+    ['success', {redirectTo: '/', reloadTime: 10}]
   ]
 }
-
-# for el in document.getElementsByClassName('logout-button')
-#   el.addEventListener 'click', (e) ->
-#     e.preventDefault()
-#     (->
-#       data = await webData.submitPromise {
-#         method: 'DELETE'
-#         url: '/api/session'
-#       }
-
-#       if result == 'success'
-#         # do nothing
-#       else
-#         for input in inputTextNodes
-#           input.value = ''
-#           disableSubmit()
-#     )()
-
 
 logout = (dispatch) ->
   await webData.submitPromise()
