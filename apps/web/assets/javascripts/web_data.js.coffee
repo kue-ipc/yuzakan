@@ -4,7 +4,7 @@
 import {h, text, app} from './hyperapp.js?v=0.6.0'
 import {Modal} from './bootstrap.js?v=0.6.0'
 import {StatusIcon, statusInfo} from './status.js?v=0.6.0'
-import {fetchJsonPost} from './fetch_json.js?v=0.6.0'
+import {fetchJson} from './fetch_json.js?v=0.6.0'
 
 export default class WebData
   MESSAGE_EVENT = 'webdata.message'
@@ -108,7 +108,7 @@ export default class WebData
 
   messageAction: (state, params) -> {state..., params...}
 
-  submitPromise: ({url = @url, method = @method, data, type} = {}) ->
+  submitPromise: ({url = @url, method = @method, data, type}) ->
     @modalMessage {
       status: 'running'
       title: "#{@title}中"
@@ -120,7 +120,7 @@ export default class WebData
     @modal.show()
 
     try
-      response = await fetchJsonPost {url, data, type}
+      response = await fetchJson {url, method, data, type}
 
       switch response.type
         when 'json'
@@ -138,7 +138,7 @@ export default class WebData
       console.error error
       responseData = {
         result: 'error'
-        messages: 'サーバー接続時にエラーが発生しました。しばらく待ってから、再度試してください。'
+        message: 'サーバー接続時にエラーが発生しました。しばらく待ってから、再度試してください。'
       }
 
     messages = [responseData.message, (responseData.errors ? [])...]

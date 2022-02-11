@@ -1,6 +1,7 @@
 import WebData from './web_data.js?v=0.6.0'
 import BsIcon from './bs_icon.js?v=0.6.0'
 import {app, h, text} from './hyperapp.js?v=0.6.0'
+import csrf from './csrf.js?v=0.6.0'
 
 
 webData = new WebData {
@@ -13,7 +14,7 @@ webData = new WebData {
 }
 
 logout = (dispatch) ->
-  await webData.submitPromise()
+  await webData.submitPromise({data: csrf()})
   
 view = (state) ->
   h 'button', {

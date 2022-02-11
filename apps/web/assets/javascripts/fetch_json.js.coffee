@@ -1,4 +1,4 @@
-import {filedToList} from './form_helper.js?v=0.6.0'
+import {filedToList, fieldName} from './form_helper.js?v=0.6.0'
 
 export fetchJson = ({url, method, data = null, type = 'json'}) ->
   method = method.toUpperCase()
@@ -15,38 +15,47 @@ export fetchJson = ({url, method, data = null, type = 'json'}) ->
     'Accept': 'application/json'
   }
 
-  if data?
-    switch type
-      when 'json'
-        content_type = 'application/json'
-        if data instanceof FormData
-          data = formDataToJson(data)
-        else if typeof data != 'string'
-          data = JSON.stringify(data)
-      when 'urlencoded'
-        content_type = 'application/x-www-form-urlencoded'
-        if data instanceof FormData
-          data = formDataToUrlencoded(data)
-        else if typeof data != 'string'
-          data = objToUrlencoded(data)
-      when 'form-data'
-        content_type = 'multipart/form-data'
-        unless data intanceof FormData
-          throw new Error('Not implument')
-      when 'text'
-        content_type = 'text/plain'
-        data = String(data)
-      else
-        throw new Error("Unknown or unsupported type: #{type}")
+  console.log method
 
+  if data?
     if ['POST', 'PUT', 'PATCH'].includes(method)
+      switch type
+        when 'json'
+          content_type = 'application/json'
+          if data instanceof FormData
+            data = formDataToJson(data)
+          else if typeof data != 'string'
+            data = JSON.stringify(data)
+        when 'urlencoded'
+          content_type = 'application/x-www-form-urlencoded'
+          if data instanceof FormData
+            data = formDataToUrlencoded(data)
+          else if typeof data != 'string'
+            data = objToUrlencoded(data)
+        when 'form-data'
+          content_type = 'multipart/form-data'
+          unless data intanceof FormData
+            throw new Error('Not implument')
+        when 'text'
+          content_type = 'text/plain'
+          data = String(data)
+        else
+          throw new Error("Unknown or unsupported type: #{type}")
       headers.append('Content-Type', content_type)
       headers.append('Content-Length', data.length.toString())
       init.body = data
-    else if type == 'urlencoded'
-      url = url + '?' + data
     else
-      throw new Error("Unsupported type for method: #{method}, #{type}")
+      if data instanceof FormData
+        data = formDataToUrlencoded(data)
+      else if typeof data == 'object'
+        data = objToUrlencoded(data)
+      else
+        data = encodeURIComponent(data)
+      console.log data
+      url = url + '?' + data
+
+
+  console.log url
 
   init.headers = headers
 
@@ -73,23 +82,23 @@ export fetchJson = ({url, method, data = null, type = 'json'}) ->
     data
   }
 
-export fetchJsonGet = ({url, data = null}) ->
-  await fetchJson({url, method: 'GET', data, type: 'urlencoded'})
+export fetchJsonGet = (params) ->
+  await fetchJson({method: 'GET', params...})
 
-export fetchJsonHead = ({url, data = null}) ->
-  await fetchJson({url, method: 'HEAD', data, type: 'urlencoded'})
+export fetchJsonHead = (params) ->
+  await fetchJson({method: 'HEAD', params...})
 
-export fetchJsonPost = ({url, data, type = 'json'}) ->
-  await fetchJson({url, method: 'POST', data, type})
+export fetchJsonPost = (params) ->
+  await fetchJson({method: 'POST', params...})
 
-export fetchJsonPut = ({url, data, type = 'json'}) ->
-  await fetchJson({url, method: 'PUT', data, type})
+export fetchJsonPut = (params) ->
+  await fetchJson({method: 'PUT', params...})
 
-export fetchJsonPatch = ({url, data, type = 'json'}) ->
-  await fetchJson({url, method: 'PATCH', data, type})
+export fetchJsonPatch = (params) ->
+  await fetchJson({method: 'PATCH', params...})
 
-export fetchJsonDelete = ({url, data = null}) ->
-  await fetchJson({url, method: 'DELETE', data, type: 'urlencoded'})
+export fetchJsonDelete = (params) ->
+  await fetchJson({method: 'DELETE', params...})
 
 formDataToObj = (formData) ->
   obj = {}
@@ -108,5 +117,12 @@ formDataToUrlencoded = (formData) ->
   throw new Error('Not implument')
 
 objToUrlencoded = (obj) ->
-  throw new Error('Not implument')
+  objToUrlencodedParams(obj).join('&')
 
+objToUrlencodedParams = (obj, parents = []) ->
+  [for own key, value of obj
+    if typeof value == 'object'
+      objToUrlencodedParams(obj, [parents..., key])
+    else
+      "#{encodeURIComponent(fieldName(key, parents))}=#{encodeURIComponent(value)}"
+  ].flat()
