@@ -9,7 +9,7 @@ webData = new WebData {
   method: 'DELETE'
   url: '/api/session'
   statusActions: new Map [
-    ['success', {redirectTo: '/', reloadTime: 10}]
+    ['success', {redirectTo: '/'}]
   ]
 }
 

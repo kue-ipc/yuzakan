@@ -46,7 +46,7 @@ export default class WebData
       ]
     }
 
-  modalView: ({status, title, messages, closable}) =>
+  modalView: ({status, title, messages, closable, link}) =>
     h 'div', {class: 'modal-content'}, [
       h 'div', {class: 'modal-header'}, [
         h 'h5', {class: 'modal-title'}, [
@@ -63,13 +63,13 @@ export default class WebData
       ]
       h 'div', {class: 'modal-body'},
         @messageList {messages: messages}
-      if closable || successLink?
+      if closable || link?
         h 'div', {class: 'modal-footer'}, [
-          if successLink?
+          if link?
             h 'a', {
               class: 'btn btn-primary'
               role: 'button'
-              href: successLink
+              href: link
             }, text 'すぐに移動'
           if closable
             h 'button', {
@@ -149,7 +149,12 @@ export default class WebData
     if statusAction?.redirectTo?
       closable = false
       link = statusAction.redirectTo
-      messages.push('画面を切り替えます。しばらくお待ち下さい。')
+      if statusAction.reloadTime? and statusAction.reloadTime > 0
+        reloadDelay = statusAction.reloadTime * 1000
+        messages.push("約#{statusAction.reloadTime}秒後に画面を切り替えます。")
+      else
+        reloadDelay = 0 # default 0 msec
+        messages.push('画面を切り替えます。しばらくお待ち下さい。')
     else
       closable = true
       link = null
@@ -157,13 +162,13 @@ export default class WebData
     @modalMessage {
       status: responseData.result
       title: "#{@title}#{statusInfo(responseData.result).label}"
+      messages
       closable
       link
-      messages
     }
     if link?
-      setTimeout =>
-        location.href = @link
-      , statusAction?.reloadTime ? 0
+      setTimeout ->
+        location.href = link
+      , reloadDelay
 
     return responseData

@@ -15,8 +15,6 @@ export fetchJson = ({url, method, data = null, type = 'json'}) ->
     'Accept': 'application/json'
   }
 
-  console.log method
-
   if data?
     if ['POST', 'PUT', 'PATCH'].includes(method)
       switch type
@@ -51,11 +49,8 @@ export fetchJson = ({url, method, data = null, type = 'json'}) ->
         data = objToUrlencoded(data)
       else
         data = encodeURIComponent(data)
-      console.log data
       url = url + '?' + data
 
-
-  console.log url
 
   init.headers = headers
 

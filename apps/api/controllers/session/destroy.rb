@@ -7,21 +7,21 @@ module Api
         security_level 0
 
         def call(params) # rubocop:disable Lint/UnusedMethodArgument
-          messages = flash.map(&itself).to_h
           result =
             if session[:user_id]
               session[:user_id] = nil
 
               {
                 result: 'success',
-                messages: {**messages, success: 'ログアウトしました。'},
-                redirect_to: Web.routes.path(:root),
+                message: 'ログアウトしました。',
+                errors: [*flash[errors]],
               }
             else
               self.status = 422
               {
                 result: 'failure',
-                messages: {**messages, failure: 'ログインしていません。'},
+                message: 'ログインしていません。',
+                errors: [*flash[errors]],
               }
             end
           self.body = JSON.generate(result)
