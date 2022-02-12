@@ -28,11 +28,8 @@ header
             = bs_icon('person', class: 'flex-shrink-0 me-1')
             span.d-none.d-lg-inline
               = h(current_user.label_name)
-          = form_for :session, routes.session_path, method: :delete do
-            - submit class: 'btn btn-sm btn-outline-light my-2 d-flex align-items-center' do
-              - text bs_icon('box-arrow-right', class: 'flex-shrink-0 me-1')
-              - span class: 'd-none d-md-inline' do
-                - text 'ログアウト'
+          .logout-button
+          = javascript 'logout', defer: true, type: 'module'
         - else
           ul.navbar-nav.me-auto
             li.nav-item.active
