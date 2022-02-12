@@ -37,8 +37,6 @@ module Yuzakan
           type: :text,
           required: false,
           placeholder: '',
-          cols: 10,
-          rows: 10,
         },
         {
           name: :int1,
@@ -48,6 +46,26 @@ module Yuzakan
           type: :integer,
           required: false,
           placeholder: '',
+        },
+        {
+          name: :username,
+          type: :string,
+          default: 'user',
+        },
+        {
+          name: :password,
+          type: :string,
+          default: 'password',
+        },
+        {
+          name: :display_name,
+          type: :string,
+          default: 'ユーザー',
+        },
+        {
+          name: :email,
+          type: :string,
+          default: 'user@example.jp',
         },
       ]
 
