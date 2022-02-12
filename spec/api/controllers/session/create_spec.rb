@@ -1,13 +1,13 @@
 require_relative '../../../spec_helper'
 
 describe Api::Controllers::Session::Create do
-  let(:action) do
+  let(:action) {
     Api::Controllers::Session::Create.new(activity_log_repository: activity_log_repository,
                                           config_repository: config_repository,
                                           user_repository: user_repository,
                                           provider_repository: provider_repository,
                                           auth_log_repository: auth_log_repository)
-  end
+  }
   let(:params) { {session: {username: 'user', password: 'pass'}, **env} }
   let(:env) { {'REMOTE_ADDR' => remote_ip, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
   let(:remote_ip) { '::1' }
@@ -20,25 +20,23 @@ describe Api::Controllers::Session::Create do
   let(:config_repository) { Minitest::Mock.new.expect(:current, config) }
 
   let(:user) { User.new(name: 'user', display_name: 'ユーザー', email: 'user@example.jp') }
-  let(:user_repository) do
+  let(:user_repository) {
     Minitest::Mock.new
       .expect(:find, user, [42])
       .expect(:find_by_name, user, ['user'])
       .expect(:update, nil, [42, {display_name: 'ユーザー', email: 'user@example.jp'}])
-  end
-  let(:providers) do
+  }
+  let(:providers) {
     [
       Minitest::Mock.new
         .expect(:auth, true, ['user', 'pass'])
         .expect(:read, {name: 'user', display_name: 'ユーザー', email: 'user@example.jp'}, ['user']),
     ]
-  end
+  }
   let(:provider_repository) { Minitest::Mock.new.expect(:operational_all_with_adapter, providers, [:auth]) }
-  let(:auth_log_repository) do
-    Minitest::Mock.new
-      .expect(:create, nil, [Hash])
-      .expect(:recent_by_username, [], [String, Integer])
-  end
+  let(:auth_log_repository) {
+    Minitest::Mock.new.expect(:create, nil, [Hash]).expect(:recent_by_username, [], [String, Integer])
+  }
 
   it 'is successful' do
     response = action.call(params)
@@ -50,13 +48,13 @@ describe Api::Controllers::Session::Create do
   end
 
   describe 'no auth' do
-    let(:providers) do
+    let(:providers) {
       [
         Minitest::Mock.new
           .expect(:auth, false, ['user', 'pass'])
           .expect(:read, {name: 'user', display_name: 'ユーザー', email: 'user@example.jp'}, ['user']),
       ]
-    end
+    }
 
     it 'is failed' do
       response = action.call(params)

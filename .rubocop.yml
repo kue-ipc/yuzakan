@@ -44,12 +44,22 @@ Style/AccessModifierDeclarations:
   EnforcedStyle: inline
 Style/AsciiComments:
   Enabled: false
+Style/BlockDelimiters:
+  EnforcedStyle: braces_for_chaining
+  AllowBracesOnProceduralOneLiners: true
+  BracesRequiredMethods: ['let']
 Style/Documentation:
   Enabled: false
 Style/EmptyMethod:
   EnforcedStyle: expanded
+Style/FormatString:
+  EnforcedStyle: percent
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: never
 Style/NumericLiterals:
   MinDigits: 7
+Style/OneLineConditional:
+  AlwaysCorrectToMultiline: true
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: consistent_comma
 Style/TrailingCommaInHashLiteral:
@@ -62,12 +72,6 @@ Style/SymbolArray:
   MinSize: 8
 Style/WordArray:
   MinSize: 8
-Style/FrozenStringLiteralComment:
-  EnforcedStyle: never
-Style/OneLineConditional:
-  AlwaysCorrectToMultiline: true
-Style/FormatString:
-  EnforcedStyle: percent
 
 # applications
 
