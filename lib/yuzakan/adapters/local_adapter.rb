@@ -18,17 +18,17 @@ module Yuzakan
 
       def create(username, password = nil, **userdata)
         user2userdata(@repository.create_with_password(
-          name: username,
-          display_name: userdata[:display_name] || username,
-          email: userdata[:email],
-          password: password))
+                        name: username,
+                        display_name: userdata[:display_name] || username,
+                        email: userdata[:email],
+                        password: password))
       end
 
       def read(username)
         user2userdata(@repository.find_by_name(username))
       end
 
-      def udpate(username, **userdata)
+      def udpate(username, **_userdata)
         user = @repository.find_by_name(username)
         raise "user not found: #{username}" if user.nil?
 
@@ -68,7 +68,7 @@ module Yuzakan
         @repository.lock(user.id)
       end
 
-      def unlock(username, password = nil)
+      def unlock(username, _password = nil)
         user = @repository.find_by_name(username)
         raise "user not found: #{username}" if user.nil?
 

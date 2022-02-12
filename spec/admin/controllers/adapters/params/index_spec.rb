@@ -8,13 +8,13 @@ describe Admin::Controllers::Adapters::Params::Index do
   let(:auth)    { {username: 'admin', password: 'pass'} }
 
   describe 'json format' do
-    let(:params) do
+    let(:params) {
       {
         'HTTP_ACCEPT' => format,
         'rack.session' => session,
         'REMOTE_ADDR' => '::1',
       }
-    end
+    }
     let(:format) { 'application/json' }
 
     it 'dummy is successful' do

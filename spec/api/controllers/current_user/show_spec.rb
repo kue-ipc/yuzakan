@@ -2,7 +2,7 @@ require_relative '../../../spec_helper'
 
 describe Api::Controllers::CurrentUser::Show do
   let(:action) { Api::Controllers::CurrentUser::Show.new }
-  let(:params) { Hash[] }
+  let(:params) { {} }
 
   it 'is successful' do
     response = action.call(params)

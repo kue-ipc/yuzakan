@@ -3,10 +3,10 @@ require_relative '../../spec_helper'
 describe Decrypt do
   let(:interactor) { Decrypt.new(**params) }
   let(:params) { {text: true} }
-  let(:encrypted) do
+  let(:encrypted) {
     pb_crypt = Yuzakan::Utils::PbCrypt.new(ENV.fetch('DB_SECRET'))
     pb_crypt.encrypt_text(text)
-  end
+  }
   let(:text) { 'Ab01#日本語😺🀄等' }
 
   it 'decryt text' do

@@ -10,7 +10,7 @@ require_relative '../../lib/yuzakan/utils/uglifier_es_compressor'
 
 module Admin
   class Application < Hanami::Application
-    configure do # rubocop:disable Metrics/BlockLength
+    configure do
       root __dir__
       load_paths << ['controllers', 'views']
       routes 'config/routes'

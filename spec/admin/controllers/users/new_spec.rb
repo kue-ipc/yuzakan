@@ -2,7 +2,7 @@ require_relative '../../../spec_helper'
 
 describe Admin::Controllers::Users::New do
   let(:action) { Admin::Controllers::Users::New.new }
-  let(:params) { Hash[] }
+  let(:params) { {} }
 
   # it 'is successful' do
   #   response = action.call(params)

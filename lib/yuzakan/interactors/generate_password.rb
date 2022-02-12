@@ -16,9 +16,9 @@ class GeneratePassword
       if @chars == :alphanumeric
         SecureRandom.alphanumeric(@size)
       else
-        @password = @size.times.map do
+        @password = @size.times.map {
           @chars[SecureRandom.random_number(@chars.size)]
-        end.join
+        }.join
       end
   end
 end
