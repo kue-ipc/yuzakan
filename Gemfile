@@ -56,6 +56,6 @@ group :test do
 end
 
 group :production do
-  gem 'puma', '~> 5.5'
+  gem 'puma', '~> 5.6'
   gem 'sd_notify'
 end
