@@ -17,14 +17,16 @@ targets = [
   {name: 'zxcvbn', ext: 'coffee'}
 ]
 
-export default targets.map (target) ->
+export default targets.map (target) -> {
   input: "#{srcDir}/#{target.name}.#{target.ext ? 'js'}"
-  output: distDirs.map (dir) ->
+  output: distDirs.map (dir) -> {
     file: "#{dir}/#{target.name}.js"
     format: 'esm'
+  }
   plugins: [
-    nodeResolve(moduleDirectories: ['node_modules'])
-    commonjs(include: /node_modules/)
+    nodeResolve({moduleDirectories: ['node_modules']})
+    commonjs({include: /node_modules/})
     json()
     coffeeScript() if target.ext == 'coffee'
   ]
+}
