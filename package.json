@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@popperjs/core": "^2.11.2",
+    "@typopro/web-iosevka": "^3.7.5",
     "bootstrap": "^5.1.3",
     "bootstrap-icons": "^1.8.1",
     "hyperapp": "^2.0.20",
