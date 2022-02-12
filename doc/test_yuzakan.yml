@@ -1,0 +1,47 @@
+---
+config:
+  title: テストサイト
+  session_timeout: 3600
+  password_min_size: 8
+  password_max_size: 64
+  password_min_types: 1
+  password_min_score: 0
+  password_unusable_chars: ''
+  password_extra_dict: ''
+  admin_networks: ''
+  user_networks: ''
+  contact_name: ''
+  contact_email: ''
+  contact_phone: ''
+providers:
+- name: ldap
+  display_name: ldap
+  adapter_name: posix_ldap
+  order: 1
+  immutable: false
+  readable: true
+  writable: true
+  authenticatable: true
+  password_changeable: true
+  lockable: true
+  individual_password: false
+  self_management: false
+  params:
+    host: localhost
+    port: 0
+    protocol: ldap
+    certificate_check: false
+    base_dn: dc=example,dc=jp
+    bind_username: cn=admin,dc=example,dc=jp
+    bind_password: admin_password
+    user_dn_attr: uid
+    user_ou_dn: ou=Users
+    user_name_attr: uid
+    user_display_name_attr: displayName;lang-ja
+    user_email_attr: mail
+    user_search_base_dn: ou=Users
+    user_search_scope: sub
+    user_search_filter: ''
+    password_scheme: "{CRYPT}"
+    crypt_salt_format: "$6$%.16s"
+attrs: []
