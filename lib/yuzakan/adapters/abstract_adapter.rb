@@ -20,12 +20,12 @@
 # -- CRUD --
 # create(username, password = nil, **userdata) -> userdata [writable]
 # read(username) -> userdata or nil [readable]
-# update(username, **userdata) -> userdata [writeable]
-# delete(username) -> nil [writable]
+# update(username, **userdata) -> userdata or nil [writeable]
+# delete(username) -> userdata or nil [writable]
 #
 # auth(username, password) -> bool [authenticatable]
 #
-# change_password(username, password) -> nil [password_changeable]
+# change_password(username, password) -> userdata or nil [password_changeable]
 # generate_code(username) -> codes or nil [password_changeable]
 #
 # lock(username) -> nil [lockable]
@@ -147,10 +147,6 @@ module Yuzakan
       end
 
       def unlock(_username, _password = nil)
-        raise NotImplementedError
-      end
-
-      def locked?(_username)
         raise NotImplementedError
       end
 

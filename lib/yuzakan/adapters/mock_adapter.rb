@@ -4,48 +4,36 @@ require_relative 'abstract_adapter'
 
 module Yuzakan
   module Adapters
-    class TestAdapter < AbstractAdapter
+    class MockAdapter < AbstractAdapter
       self.hidden_adapter = true if Hanami.env == 'production'
 
-      self.label = 'テスト'
+      self.label = 'モック'
 
       self.params = [
         {
-          name: :str1,
-          label: '文字列',
-          description:
-            '文字列のパラメーターです。',
+          name: :check,
+          type: :boolean,
+          default: true,
+        },
+        {
+          name: :username,
           type: :string,
-          required: false,
-          placeholder: '',
+          default: 'user',
         },
         {
-          name: :str_enc,
-          label: '暗号文字列',
-          description:
-            '文字列のパラメーターです。',
+          name: :password,
           type: :string,
-          required: false,
-          placeholder: 'テスト',
-          encrypted: true,
+          default: 'password',
         },
         {
-          name: :txt1,
-          label: '長い文字列',
-          description:
-            '文字列のパラメーターです。',
-          type: :text,
-          required: false,
-          placeholder: '',
+          name: :display_name,
+          type: :string,
+          default: 'ユーザー',
         },
         {
-          name: :int1,
-          label: '数値',
-          description:
-            '数値のパラメーターです。',
-          type: :integer,
-          required: false,
-          placeholder: '',
+          name: :email,
+          type: :string,
+          default: 'user@example.jp',
         },
       ]
 
