@@ -77,21 +77,21 @@ module Yuzakan
 
       def initialize(params)
         super
-        @passwords = {@params.username => BCrypt::Password.create(@params.password)}
-        @users = {@params.username => {
-          name: @params.username,
-          display_name: @params.display_name,
-          email: @params.email,
-          locked: @params.locked,
-          disabled: @params.disabled,
-          unmanageable: @params.unmanageable,
-          mfa: @params.mfa,
-          attrs: YAML.safe_load(@params.attrs),
+        @passwords = {@params[:username] => BCrypt::Password.create(@params[:password])}
+        @users = {@params[:username] => {
+          name: @params[:username],
+          display_name: @params[:display_name],
+          email: @params[:email],
+          locked: @params[:locked],
+          disabled: @params[:disabled],
+          unmanageable: @params[:unmanageable],
+          mfa: @params[:mfa],
+          attrs: YAML.safe_load(@params[:attrs]),
         }}
       end
 
       def check
-        @params.check
+        @params[:check]
       end
 
       def create(username, password = nil, **userdata)
