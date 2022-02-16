@@ -13,8 +13,6 @@ module Api
           end
         end
 
-        expose :result
-
         def initialize(user_repository: UserRepository.new,
                        provider_repository: ProviderRepository.new,
                        auth_log_repository: AuthLogRepository.new, **opts)
@@ -24,6 +22,13 @@ module Api
         end
 
         def call(params)
+          if current_user
+            halt 409, JSON.generate({
+              result: 'error',
+              message: '既にログインしています。',
+            })
+          end
+
           unless params.valid?
             halt 400, JSON.generate({
               result: 'error',
@@ -37,11 +42,12 @@ module Api
                                           auth_log_repository: @auth_log_repository)
           authenticate_result = authenticate.call(**params[:session], uuid: uuid, client: remote_ip)
 
-          @result =
+          result =
             if authenticate_result.successful?
               # セッション情報を保存
               session[:user_id] = authenticate_result.user.id
 
+              self.status = 201
               {
                 result: 'success',
                 message: 'ログインしました。',
@@ -54,7 +60,7 @@ module Api
                 errors: authenticate_result.errors,
               }
             end
-          self.body = JSON.generate(@result)
+          self.body = JSON.generate(result)
         end
       end
     end
