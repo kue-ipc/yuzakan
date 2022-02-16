@@ -160,7 +160,7 @@ module Yuzakan
         return nil unless @users.key?(username)
         raise Error, '管理不可ユーザーであるため、アンロックできません。' if @users.dig(username, :unmanageable)
 
-        change_password(usnername, password) if password
+        change_password(usename, password) if password
 
         @users[username][:locked] = false
         @users[username]

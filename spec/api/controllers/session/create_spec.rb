@@ -21,19 +21,17 @@ describe Api::Controllers::Session::Create do
 
   let(:user) { User.new(name: 'user', display_name: 'ユーザー', email: 'user@example.jp') }
   let(:user_repository) {
-    Minitest::Mock.new
-      .expect(:find, user, [42])
-      .expect(:find_by_name, user, ['user'])
-      .expect(:update, nil, [42, {display_name: 'ユーザー', email: 'user@example.jp'}])
+    Minitest::Mock.new.expect(:find, user, [Integer]).expect(:find_by_name, user, [String])
+      .expect(:update, nil, [Integer, Hash])
   }
+
   let(:providers) {
-    [
-      Minitest::Mock.new
-        .expect(:auth, true, ['user', 'pass'])
-        .expect(:read, {name: 'user', display_name: 'ユーザー', email: 'user@example.jp'}, ['user']),
-    ]
+    [Provider.new(name: 'provider', dispaly_name: 'プロバイダー', adapter_name: 'mock',
+                  provider_params: [{name: 'username', value: Marshal.dump('user')},
+                                    {name: 'password', value: Marshal.dump('pass')},])]
   }
   let(:provider_repository) { Minitest::Mock.new.expect(:operational_all_with_adapter, providers, [:auth]) }
+
   let(:auth_log_repository) {
     Minitest::Mock.new.expect(:create, nil, [Hash]).expect(:recent_by_username, [], [String, Integer])
   }
@@ -48,16 +46,8 @@ describe Api::Controllers::Session::Create do
   end
 
   describe 'no auth' do
-    let(:providers) {
-      [
-        Minitest::Mock.new
-          .expect(:auth, false, ['user', 'pass'])
-          .expect(:read, {name: 'user', display_name: 'ユーザー', email: 'user@example.jp'}, ['user']),
-      ]
-    }
-
     it 'is failed' do
-      response = action.call(params)
+      response = action.call(**params, session: {username: 'user', password: 'nopass'})
       _(response[0]).must_equal 422
       _(response[2]).must_equal [JSON.generate({
         result: 'failure',

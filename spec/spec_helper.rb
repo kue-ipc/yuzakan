@@ -8,5 +8,6 @@ require 'minitest/autorun'
 Warning[:deprecated] = false
 
 require_relative 'support/db'
+require_relative 'support/mock'
 
 Hanami.boot
