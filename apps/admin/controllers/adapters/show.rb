@@ -13,7 +13,7 @@ module Admin
 
         def call(params)
           adapter_id = params[:id]
-          @adapter = ADAPTERS.by_name(adapter_id)
+          @adapter = ADAPTERS_MANAGER.by_name(adapter_id)
           halt 404 unless @adapter
         end
       end

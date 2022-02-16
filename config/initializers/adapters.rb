@@ -1,1 +1,1 @@
-ADAPTERS = Yuzakan::Adapters::Manager.new
+ADAPTERS_MANAGER = Yuzakan::Adapters::Manager.new

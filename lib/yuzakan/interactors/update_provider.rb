@@ -93,7 +93,7 @@ class UpdateProvider
         result = false
       end
 
-      unless ADAPTERS.by_name(params[:adapter_name])
+      unless ADAPTERS_MANAGER.by_name(params[:adapter_name])
         error({adapter_name: ['指定のアダプターはありません。']})
         result = false
       end

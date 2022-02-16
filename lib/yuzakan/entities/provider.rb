@@ -17,7 +17,7 @@ class Provider < Hanami::Entity
       return
     end
 
-    @adapter_class = ADAPTERS.by_name(attributes[:adapter_name])
+    @adapter_class = ADAPTERS_MANAGER.by_name(attributes[:adapter_name])
     raise NoAdapterError, "Not found adapter: #{attributes[:adapter_name]}" unless @adapter_class
 
     if attributes[:provider_params].nil?

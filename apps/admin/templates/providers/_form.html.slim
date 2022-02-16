@@ -6,7 +6,7 @@ ruby:
     {name: :password_changeable, label: 'パスワード変更'},
     {name: :lockable, label: 'ロック'},
   ]
-  select_adapters = ADAPTERS.hash
+  select_adapters = ADAPTERS_MANAGER.hash
     .select { |_name, klass| klass.selectable? }
     .transform_values(&:label)
     .invert
