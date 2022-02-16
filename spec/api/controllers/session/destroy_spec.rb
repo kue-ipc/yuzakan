@@ -25,4 +25,17 @@ describe Api::Controllers::Session::Destroy do
       message: 'ログアウトしました。',
     })]
   end
+
+  describe 'no login session' do
+    let(:session) { {uuid: 'x', user_id: nil, access_time: Time.now} }
+
+    it 'is error' do
+      response = action.call(params)
+      _(response[0]).must_equal 410
+      _(response[2]).must_equal [JSON.generate({
+        result: 'error',
+        message: 'ログインしていません。',
+      })]
+    end
+  end
 end

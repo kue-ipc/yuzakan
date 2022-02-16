@@ -14,14 +14,12 @@ module Api
               {
                 result: 'success',
                 message: 'ログアウトしました。',
-                errors: [*flash[errors]],
               }
             else
-              self.status = 422
+              self.status = 410
               {
-                result: 'failure',
+                result: 'error',
                 message: 'ログインしていません。',
-                errors: [*flash[errors]],
               }
             end
           self.body = JSON.generate(result)
