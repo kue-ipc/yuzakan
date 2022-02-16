@@ -55,11 +55,8 @@ class Authenticate
     userdata = nil
 
     @provider_repository.operational_all_with_adapter(:auth).each do |provider|
-      if provider.auth(params[:username], params[:password])
-        # 最初に認証されたところを正とする。
-        userdata = provider.read(params[:username])
-        break
-      end
+      userdata = provider.auth(params[:username], params[:password])
+      break if userdata
     rescue => e
       Hanami.logger.error e
       @auth_log_repository.create(**auth_log_params, result: 'error')

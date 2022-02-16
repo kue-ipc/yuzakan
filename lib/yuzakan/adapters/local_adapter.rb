@@ -48,10 +48,9 @@ module Yuzakan
 
       def auth(username, password)
         user = @repository.find_by_name(username)
-        return false if user.nil?
-        return false if user.hashed_password.start_with?('!')
-
-        user.verify_password(password)
+        user2userdata(user) if user &&
+                               !user.hashed_password.start_with?('!') &&
+                               user.verify_password(password)
       end
 
       def change_password(username, password)

@@ -167,7 +167,8 @@ class Provider < Hanami::Entity
   def auth(username, password)
     need_adapter!
     username = sanitize_name(username)
-    @adapter.auth(username, password)
+    raw_userdata = @adapter.auth(username, password)
+    @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
 
   def change_password(username, password)

@@ -180,7 +180,8 @@ module Yuzakan
       def auth(username, password)
         opts = search_user_opts(username).merge(password: password)
         # bind_as is re bind, so DON'T USE `ldap`
-        generate_ldap.bind_as(opts)
+        result = generate_ldap.bind_as(opts)
+        entry2userdata(result.first) if result
       end
 
       def change_password(username, password)
