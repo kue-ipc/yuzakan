@@ -13,28 +13,14 @@ describe Api::Controllers::Session::Create do
   let(:remote_ip) { '::1' }
   let(:session) { {uuid: 'x', user_id: 42, access_time: Time.now} }
   let(:format)  { 'application/json' }
-
-  let(:activity_log_repository) { Minitest::Mock.new.expect(:create, nil, [Hash]) }
-
+  let(:activity_log_repository) { create_mock(create: [nil, [Hash]]) }
   let(:config) { Config.new(title: 'title', session_timeout: 3600, user_networks: '') }
-  let(:config_repository) { Minitest::Mock.new.expect(:current, config) }
-
+  let(:config_repository) { create_mock(current: [config]) }
   let(:user) { User.new(name: 'user', display_name: 'ユーザー', email: 'user@example.jp') }
-  let(:user_repository) {
-    Minitest::Mock.new.expect(:find, user, [Integer]).expect(:find_by_name, user, [String])
-      .expect(:update, nil, [Integer, Hash])
-  }
-
-  let(:providers) {
-    [Provider.new(name: 'provider', dispaly_name: 'プロバイダー', adapter_name: 'mock',
-                  provider_params: [{name: 'username', value: Marshal.dump('user')},
-                                    {name: 'password', value: Marshal.dump('pass')},])]
-  }
-  let(:provider_repository) { Minitest::Mock.new.expect(:operational_all_with_adapter, providers, [:auth]) }
-
-  let(:auth_log_repository) {
-    Minitest::Mock.new.expect(:create, nil, [Hash]).expect(:recent_by_username, [], [String, Integer])
-  }
+  let(:user_repository) { create_mock(find: [user, [42]], find_by_name: [user, ['user']], update: [nil, [42, Hash]]) }
+  let(:providers) { [create_mock_provider(username: 'user', password: 'pass')] }
+  let(:provider_repository) { create_mock(operational_all_with_adapter: [providers, [:auth]]) }
+  let(:auth_log_repository) { create_mock(create: [nil, [Hash]], recent_by_username: [[], [String, Integer]]) }
 
   it 'is successful' do
     response = action.call(params)
@@ -45,16 +31,24 @@ describe Api::Controllers::Session::Create do
     })]
   end
 
-  describe 'no auth' do
-    it 'is failed' do
-      response = action.call(**params, session: {username: 'user', password: 'nopass'})
-      _(response[0]).must_equal 422
-      _(response[2]).must_equal [JSON.generate({
-        result: 'failure',
-        message: 'ログインに失敗しました。',
-        errors: ['ユーザー名またはパスワードが違います。'],
-      })]
-    end
+  it 'is failed with bad password' do
+    response = action.call(**params, session: {username: 'user', password: 'nopass'})
+    _(response[0]).must_equal 422
+    _(response[2]).must_equal [JSON.generate({
+      result: 'failure',
+      message: 'ログインに失敗しました。',
+      errors: ['ユーザー名またはパスワードが違います。'],
+    })]
+  end
+
+  it 'is failed with bad username' do
+    response = action.call(**params, session: {username: 'user1', password: 'pass'})
+    _(response[0]).must_equal 422
+    _(response[2]).must_equal [JSON.generate({
+      result: 'failure',
+      message: 'ログインに失敗しました。',
+      errors: ['ユーザー名またはパスワードが違います。'],
+    })]
   end
 
   it 'is error' do
