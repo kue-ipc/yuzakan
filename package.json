@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@hyperapp/dom": "^1.0.0",
     "@popperjs/core": "^2.11.2",
     "@typopro/web-iosevka": "^3.7.5",
     "bootstrap": "^5.1.3",

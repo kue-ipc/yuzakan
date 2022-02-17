@@ -1,7 +1,7 @@
 # データをJSONとしてfetchし、受け取ったJSONをメッセージとして表示する。
 # その際、modalを使用する。
 
-import {h, text, app} from './hyperapp.js?v=0.6.0'
+import {h, text, app, focus} from './hyperapp.js?v=0.6.0'
 import {Modal} from './bootstrap.js?v=0.6.0'
 import {StatusIcon, statusInfo} from './status.js?v=0.6.0'
 import {fetchJson} from './fetch_json.js?v=0.6.0'
@@ -73,6 +73,7 @@ export default class WebData
             }, text 'すぐに移動'
           if closable
             h 'button', {
+              id: 'modal-close-button'
               class: 'btn btn-secondary'
               type: 'button'
               'data-bs-dismiss': 'modal'
@@ -106,7 +107,12 @@ export default class WebData
 
   messageSub: (action, {node}) => [@messageRunner, {action, node}]
 
-  messageAction: (state, params) -> {state..., params...}
+  messageAction: (state, params) ->
+    newState = {state..., params...}
+    if newState.closable
+      [newState, focus('modal-close-button')]
+    else
+      newState
 
   submitPromise: ({url = @url, method = @method, data, type}) ->
     @modalMessage {
