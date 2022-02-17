@@ -1,6 +1,7 @@
 require 'bundler/setup'
 require 'hanami/setup'
 require 'hanami/model'
+require 'hanami/middleware/body_parser'
 require_relative '../lib/yuzakan'
 require_relative '../apps/admin/application'
 require_relative '../apps/api/application'
@@ -81,4 +82,7 @@ Hanami.configure do
                       port: ENV.fetch('SMTP_PORT')
     end
   end
+
+  # json request
+  middleware.use Hanami::Middleware::BodyParser, :json
 end
