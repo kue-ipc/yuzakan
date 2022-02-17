@@ -58,15 +58,14 @@ export default class WebData
       action: if link? then {
         label: 'すぐに移動する'
         color: 'primary'
-        onclick: (state) -> [state, [-> location.href = link]]
+        onclick: (state) -> [state, [ -> location.href = link]]
       }
     }, @messageList {messages: messages}
 
   messageList: ({messages}) ->
     messages = [messages] unless messages instanceof Array
     div {}, messages.filter((x) -> typeof x == 'string').map (msg) ->
-      div {},
-        text msg
+      div {}, text msg
 
   modalMessage: (state) ->
     # hack modal config

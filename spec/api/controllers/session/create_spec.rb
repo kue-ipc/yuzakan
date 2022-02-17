@@ -37,73 +37,80 @@ describe Api::Controllers::Session::Create do
     it 'is successful' do
       response = action.call(params)
       _(response[0]).must_equal 201
-      _(response[2]).must_equal [JSON.generate({
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
         result: 'success',
         message: 'ログインしました。',
-      })]
+      })
     end
 
     it 'is failed with bad password' do
       response = action.call(**params, session: {username: 'user', password: 'nopass'})
       _(response[0]).must_equal 422
-      _(response[2]).must_equal [JSON.generate({
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
         result: 'failure',
         message: 'ログインに失敗しました。',
         errors: ['ユーザー名またはパスワードが違います。'],
-      })]
+      })
     end
 
     it 'is failed with bad username' do
       response = action.call(**params, session: {username: 'user1', password: 'pass'})
       _(response[0]).must_equal 422
-      _(response[2]).must_equal [JSON.generate({
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
         result: 'failure',
         message: 'ログインに失敗しました。',
         errors: ['ユーザー名またはパスワードが違います。'],
-      })]
+      })
     end
 
     it 'is error with nil' do
       response = action.call(**params, session: nil)
       _(response[0]).must_equal 400
-      _(response[2]).must_equal [JSON.generate({
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
         result: 'error',
         message: '不正なパラメーターです。',
         errors: ['Session must be a hash'],
-      })]
+      })
     end
 
     it 'is error with bad params' do
       response = action.call(**params, session: {username: 'user' * 64, password: 'pass'})
       _(response[0]).must_equal 400
-      _(response[2]).must_equal [JSON.generate({
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
         result: 'error',
         message: '不正なパラメーターです。',
         errors: ['Username size cannot be greater than 255'],
-      })]
+      })
     end
 
     it 'is error with bad params' do
       response = action.call(**params, session: {username: 'user', password: ''})
       _(response[0]).must_equal 400
-      _(response[2]).must_equal [JSON.generate({
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
         result: 'error',
         message: '不正なパラメーターです。',
         errors: ['Password must be filled', 'Password size cannot be greater than 255'],
-      })]
+      })
     end
 
     it 'is error with bad params' do
       response = action.call(**params, session: {username: 'user'})
       _(response[0]).must_equal 400
-      _(response[2]).must_equal [JSON.generate({
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
         result: 'error',
         message: '不正なパラメーターです。',
         errors: [
           'Password is missing',
           'Password size cannot be greater than 255',
         ],
-      })]
+      })
     end
   end
 
@@ -113,10 +120,11 @@ describe Api::Controllers::Session::Create do
     it 'is successful' do
       response = action.call(params)
       _(response[0]).must_equal 201
-      _(response[2]).must_equal [JSON.generate({
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
         result: 'success',
         message: 'ログインしました。',
-      })]
+      })
     end
   end
 
@@ -127,10 +135,11 @@ describe Api::Controllers::Session::Create do
     it 'is successful' do
       response = action.call(params)
       _(response[0]).must_equal 201
-      _(response[2]).must_equal [JSON.generate({
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
         result: 'success',
         message: 'ログインしました。',
-      })]
+      })
     end
   end
 end
