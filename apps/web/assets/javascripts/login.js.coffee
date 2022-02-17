@@ -7,6 +7,7 @@ import BsIcon from './bs_icon.js?v=0.6.0'
 import csrf from './csrf.js?v=0.6.0'
 
 webData = new WebData {
+  id: 'login'
   title: 'ログイン'
   method: 'POST'
   url: '/api/session'

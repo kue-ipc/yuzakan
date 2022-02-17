@@ -6,6 +6,7 @@ import csrf from './csrf.js?v=0.6.0'
 
 
 webData = new WebData {
+  id: 'logout'
   title: 'ログアウト'
   method: 'DELETE'
   url: '/api/session'

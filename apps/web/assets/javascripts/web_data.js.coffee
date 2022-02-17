@@ -7,28 +7,28 @@ import {div, h5, a, button} from './hyperapp-html.js?v=0.6.0'
 import {Modal} from './bootstrap.js?v=0.6.0'
 import {StatusIcon, statusInfo} from './status.js?v=0.6.0'
 import {fetchJson} from './fetch_json.js?v=0.6.0'
+import {modalDialog} from './modal.js?v=0.6.0'
 
 export default class WebData
   MESSAGE_EVENT = 'webdata.message'
 
   constructor: ({
+    @id
     @title
     @method = 'GET'
     @url = null
     @statusActions = new Map
   }) ->
     @modalNode = document.createElement('div')
+    @modalNode.id = "#{@id}-modal"
     @modalNode.classList.add('modal')
     @modalNode.setAttribute('tabindex', -1)
     @modalNode.setAttribute('aria-hidden', 'true')
 
     modalDialogNode = document.createElement('div')
+    @modalNode.id = "#{@id}-modal-dialog"
     modalDialogNode.classList.add('modal-dialog', 'modal-dialog-centered')
 
-    modalContentNode = document.createElement('div')
-    modalContentNode.classList.add('modal-content')
-
-    modalDialogNode.appendChild(modalContentNode)
     @modalNode.appendChild(modalDialogNode)
     document.body.appendChild(@modalNode)
 
@@ -42,46 +42,25 @@ export default class WebData
         closable: true
       }
       view: @modalView
-      node: modalContentNode
+      node: modalDialogNode
       subscriptions: (state) => [
         @messageSub @messageAction, {node: @modalNode}
       ]
     }
-
+  
   modalView: ({status, title, messages, closable, link}) =>
-    div {class: 'modal-content'}, [
-      div {class: 'modal-header'}, [
-        h5 {class: 'modal-title'}, [
-          StatusIcon {status: status}
-          text " #{title}"
-        ]
-        if closable
-          button {
-            class: 'btn-close'
-            type: 'button'
-            'data-bs-dismiss': 'modal'
-            'aria-label': "閉じる"
-          }
-      ]
-      div {class: 'modal-body'},
-        @messageList {messages: messages}
-      if closable || link?
-        div {class: 'modal-footer'}, [
-          if link?
-            a {
-              class: 'btn btn-primary'
-              role: 'button'
-              href: link
-            }, text 'すぐに移動'
-          if closable
-            button {
-              id: 'modal-close-button'
-              class: 'btn btn-secondary'
-              type: 'button'
-              'data-bs-dismiss': 'modal'
-            }, text '閉じる'
-        ]
-    ]
+    modalDialog {
+      id: @id,
+      centered: true
+      title: title
+      status
+      closable
+      action: if link? then {
+        label: 'すぐに移動する'
+        color: 'primary'
+        onclick: (state) -> [state, [-> location.href = link]]
+      }
+    }, @messageList {messages: messages}
 
   messageList: ({messages}) ->
     messages = [messages] unless messages instanceof Array
@@ -109,10 +88,10 @@ export default class WebData
 
   messageSub: (action, {node}) => [@messageRunner, {action, node}]
 
-  messageAction: (state, params) ->
+  messageAction: (state, params) =>
     newState = {state..., params...}
     if newState.closable
-      [newState, focus('modal-close-button')]
+      [newState, focus("#{@id}-modal-close-button")]
     else
       newState
 
