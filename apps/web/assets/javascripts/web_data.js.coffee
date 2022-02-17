@@ -1,8 +1,9 @@
 # データをJSONとしてfetchし、受け取ったJSONをメッセージとして表示する。
 # その際、modalを使用する。
 
-import {app, h, text} from './hyperapp.js?v=0.6.0'
+import {app, text} from './hyperapp.js?v=0.6.0'
 import {focus} from './hyperapp-dom.js?v=0.6.0'
+import {div, h5, a, button} from './hyperapp-html.js?v=0.6.0'
 import {Modal} from './bootstrap.js?v=0.6.0'
 import {StatusIcon, statusInfo} from './status.js?v=0.6.0'
 import {fetchJson} from './fetch_json.js?v=0.6.0'
@@ -48,32 +49,32 @@ export default class WebData
     }
 
   modalView: ({status, title, messages, closable, link}) =>
-    h 'div', {class: 'modal-content'}, [
-      h 'div', {class: 'modal-header'}, [
-        h 'h5', {class: 'modal-title'}, [
+    div {class: 'modal-content'}, [
+      div {class: 'modal-header'}, [
+        h5 {class: 'modal-title'}, [
           StatusIcon {status: status}
           text " #{title}"
         ]
         if closable
-          h 'button', {
+          button {
             class: 'btn-close'
             type: 'button'
             'data-bs-dismiss': 'modal'
             'aria-label': "閉じる"
           }
       ]
-      h 'div', {class: 'modal-body'},
+      div {class: 'modal-body'},
         @messageList {messages: messages}
       if closable || link?
-        h 'div', {class: 'modal-footer'}, [
+        div {class: 'modal-footer'}, [
           if link?
-            h 'a', {
+            a {
               class: 'btn btn-primary'
               role: 'button'
               href: link
             }, text 'すぐに移動'
           if closable
-            h 'button', {
+            button {
               id: 'modal-close-button'
               class: 'btn btn-secondary'
               type: 'button'
@@ -84,8 +85,8 @@ export default class WebData
 
   messageList: ({messages}) ->
     messages = [messages] unless messages instanceof Array
-    h 'div', {}, messages.filter((x) -> typeof x == 'string').map (msg) ->
-      h 'div', {},
+    div {}, messages.filter((x) -> typeof x == 'string').map (msg) ->
+      div {},
         text msg
 
   modalMessage: (state) ->
