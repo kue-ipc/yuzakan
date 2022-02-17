@@ -179,4 +179,12 @@ export default class WebData
         location.href = link
       , reloadDelay
 
+    await @waitModalClose()
+
     return responseData
+
+  waitModalClose: =>
+    new Promise (resolve, reject) =>
+      @modalNode.addEventListener 'hidden.bs.modal', ->
+        resolve()
+      , {once: true}

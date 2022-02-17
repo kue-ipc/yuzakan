@@ -1,6 +1,7 @@
 import {app, text} from './hyperapp.js?v=0.6.0'
 import {focus} from './hyperapp-dom.js?v=0.6.0'
 import {div, h3, input, button} from './hyperapp-html.js?v=0.6.0'
+import {delay} from './hyperapp-time.js?v0.6.0'
 import WebData from './web_data.js?v=0.6.0'
 import BsIcon from './bs_icon.js?v=0.6.0'
 import csrf from './csrf.js?v=0.6.0'
@@ -21,12 +22,15 @@ runLogin = (dispatch, payload) ->
     csrf()...
     session: payload
   }}
-  dispatch (state) -> {
-    state...
-    disabled: false
-    username: null
-    password: null
-  }
+  dispatch (state) -> [
+    {
+      state...
+      disabled: false
+      username: null
+      password: null
+    }
+    focus('session-username')
+  ]
 
 login = ({username, password}) -> [runLogin, {username, password}]
 
@@ -42,11 +46,14 @@ enterToSubmitOrNextInput = (state, event) ->
   else
     state
 
-init = {
-  disabled: false
-  username: null
-  password: null
-}
+init = [
+  {
+    disabled: false
+    username: null
+    password: null
+  }
+  delay 10, (state) -> [state, focus('session-username')]
+]
 
 view = ({username, password, disabled}) ->
   div {id: 'login', class: 'login mx-auto p-3 border rounded'}, [
