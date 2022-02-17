@@ -1,3 +1,5 @@
+# 現在のところ使用していない
+
 import {h, text, app} from './hyperapp.js?v=0.6.0'
 import WebPostJson from './web_post_json.js?v=0.6.0'
 
