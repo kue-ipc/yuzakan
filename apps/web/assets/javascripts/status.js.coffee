@@ -1,4 +1,5 @@
-import {h, text} from './hyperapp.js?v=0.6.0'
+import {text} from './hyperapp.js?v=0.6.0'
+import {div, span} from './hyperapp-html.js?v=0.6.0'
 import BsIcon from './bs_icon.js?v=0.6.0'
 
 
@@ -16,14 +17,14 @@ STATUSES = new Map([
 UNKNOWN_STATUS = 'unknown'
 RUNNING_LABEL = '読込中...'
 
-export StatusIcon = ({status}) ->
+export StatusIcon = ({status, props...}) ->
   if status == 'running'
-    return h 'div', {class: 'spinner-border', role: 'status'},
-      h 'span', {class: 'visually-hidden'}, text RUNNING_LABEL
-
-  {label, color, icon} = statusInfo(status)
-  h 'span', {class: ["text-#{color}", 'align-text-bottom']},
-    BsIcon {name: icon, size: 24, alt: label}
+    div {class: "spinner-border #{props.class}", role: 'status'},
+      span {class: 'visually-hidden'}, text RUNNING_LABEL
+  else
+    {label, color, icon} = statusInfo(status)
+    div {class: "text-#{color} #{props.class}"},
+      BsIcon {name: icon, alt: label, size: 32}
 
 export statusInfo = (status) ->
   STATUSES.get(status) ? STATUSES.get(UNKNOWN_STATUS)

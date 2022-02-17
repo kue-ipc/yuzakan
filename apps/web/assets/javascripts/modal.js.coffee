@@ -7,9 +7,9 @@ export modalHeader = ({id, title, status, closable}) ->
   titleProps.id = labelId if labelId?
 
   div {id: "#{id}-modal-header", class: 'modal-header'}, [
-    h5 {id: "#{id}-modal-title", class: 'modal-title'}, [
-      StatusIcon {status} if status
-      text title
+    h5 {id: "#{id}-modal-title", class: 'modal-title d-flex align-items-center'}, [
+      StatusIcon {status, class: 'flex-shrink-0 me-2'} if status
+      div {}, text title
     ]
     if closable then button {
       id: "#{id}-modal-header-close"
