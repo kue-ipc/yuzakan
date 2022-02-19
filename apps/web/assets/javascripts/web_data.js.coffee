@@ -11,14 +11,21 @@ import {modalDialog} from './modal.js?v=0.6.0'
 
 export default class WebData
   MESSAGE_EVENT = 'webdata.message'
+  DEFAULT_CODE_ACTIONS = new Map [
+    [0, {status: 'error', 'サーバー接続時にエラーが発生しました。しばらく待ってから、再度試してください。'}]
+    [500, {status: 'fatal', message: 'サーバー側で致命的なエラーが発生しました。管理者に連絡してください。'}]
+  ]
+  UNKNOWN_CODE_ACTION = {status: 'unknown', message: 'サーバーから不明なコードが返されました。'}
 
   constructor: ({
     @id
     @title
     @method = 'GET'
     @url = null
-    @statusActions = new Map
+    codeActions = []
   }) ->
+    @codeActions = new Map [DEFAULT_CODE_ACTIONS..., codeActions...]
+
     @modalNode = document.createElement('div')
     @modalNode.id = "#{@id}-modal"
     @modalNode.classList.add('modal')
@@ -107,37 +114,40 @@ export default class WebData
 
     try
       response = await fetchJson {url, method, data, type}
-
-      switch response.type
-        when 'json'
-          responseData = response.data
-        when 'text'
-          responseData = {
-            result: 'fatal'
-            messeage: 'サーバーの処理で致命的なエラーが発生しました。'
-            errors: [response.data]
-          }
-        else
-          throw new Error("Unsupported respose type: #{response.type}")
-
     catch error
       console.error error
-      responseData = {
-        result: 'error'
-        message: 'サーバー接続時にエラーが発生しました。しばらく待ってから、再度試してください。'
+      response = {
+        ok: false
+        code: 0
+        type: 'json'
+        data: {
+          message: 'サーバー接続時にエラーが発生しました。しばらく待ってから、再度試してください。'
+        }
       }
 
-    messages = [responseData.message, (responseData.errors ? [])...]
+    switch response.type
+      when 'json'
+        responseData = response.data
+      when 'text'
+        responseData = {
+          messeage: response.data
+        }
+      else
+        console.error "Unsupported respose type: #{response.type}"
+        responseData = {
+          messeage: '異常なレスポンスが返されました。再度試してください。'
+        }
 
-    statusAction = @statusActions.get(responseData.result)
-    messages.push(statusAction?.message) if statusAction?.message?
+    codeAction = @codeActions.get(response.code) || UNKNOWN_CODE_ACTION
 
-    if statusAction?.redirectTo?
+    messages = [codeAction.message, responseData.message, (responseData.errors ? [])...].filter((v) -> v?)
+
+    if codeAction?.redirectTo?
       closable = false
-      link = statusAction.redirectTo
-      if statusAction.reloadTime? and statusAction.reloadTime > 0
-        reloadDelay = statusAction.reloadTime * 1000
-        messages.push("約#{statusAction.reloadTime}秒後に画面を切り替えます。")
+      link = codeAction.redirectTo
+      if codeAction.reloadTime? and codeAction.reloadTime > 0
+        reloadDelay = codeAction.reloadTime * 1000
+        messages.push("約#{codeAction.reloadTime}秒後に画面を切り替えます。")
       else
         reloadDelay = 0 # default 0 msec
         messages.push('画面を切り替えます。しばらくお待ち下さい。')
@@ -146,8 +156,8 @@ export default class WebData
       link = null
 
     @modalMessage {
-      status: responseData.result
-      title: "#{@title}#{statusInfo(responseData.result).label}"
+      status: codeAction.status
+      title: "#{@title}#{statusInfo(codeAction.status).label}"
       messages
       closable
       link

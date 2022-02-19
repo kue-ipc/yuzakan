@@ -10,8 +10,9 @@ webData = new WebData {
   title: 'ログアウト'
   method: 'DELETE'
   url: '/api/session'
-  statusActions: new Map [
-    ['success', {redirectTo: '/'}]
+  codeActions: new Map [
+    [204, {status: 'success', message: 'ログアウトしました。', redirectTo: '/'}]
+    [410, {status: 'error'}]
   ]
 }
 

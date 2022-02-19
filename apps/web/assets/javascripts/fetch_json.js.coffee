@@ -61,7 +61,7 @@ export fetchJson = ({url, method, data = null, type = 'json'}) ->
   if not contentType?
     type = undefined
     data = null
-  if contentType.startsWith('application/json')
+  else if contentType.startsWith('application/json')
     type = 'json'
     data = await response.json()
   else if contentType.startsWith('text/plain')
@@ -72,7 +72,7 @@ export fetchJson = ({url, method, data = null, type = 'json'}) ->
 
   {
     ok: response.ok
-    status: response.status
+    code: parseInt(response.status, 10)
     type
     data
   }
