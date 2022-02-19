@@ -25,10 +25,10 @@ describe Api::Controllers::Session::Create do
   it 'is failed' do
     response = action.call(params)
     _(response[0]).must_equal 409
-    _(response[2]).must_equal [JSON.generate({
+    _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
       result: 'error',
       message: '既にログインしています。',
-    })]
+    })
   end
 
   describe 'no login session' do
