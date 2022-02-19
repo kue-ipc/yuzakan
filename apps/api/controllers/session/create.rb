@@ -22,32 +22,16 @@ module Api
         end
 
         def call(params)
-          if current_user
-            halt 409, JSON.generate({
-              code: 409,
-              message: '既にログインしています。',
-            })
-          end
+          halt_json(409, '既にログインしています。') if current_user
 
-          unless params.valid?
-            halt 400, JSON.generate({
-              code: 400,
-              message: 'パラメーターが不正です。',
-              errors: params.error_messages,
-            })
-          end
+          halt_json(400, 'パラメーターが不正です。', errors: params.error_messages) unless params.valid?
 
           authenticate = Authenticate.new(user_repository: @user_repository,
                                           provider_repository: @provider_repository,
                                           auth_log_repository: @auth_log_repository)
           authenticate_result = authenticate.call(**params[:session], uuid: uuid, client: remote_ip)
 
-          if authenticate_result.failure?
-            halt 422, JSON.generate({
-              code: 422,
-              message: authenticate_result.errors.first || 'ログインに失敗しました。',
-            })
-          end
+          halt_json(422, authenticate_result.errors.first || 'ログインに失敗しました。') if authenticate_result.failure?
 
           # セッション情報を保存
           session[:user_id] = authenticate_result.user.id

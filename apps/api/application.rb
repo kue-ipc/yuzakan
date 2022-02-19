@@ -6,6 +6,7 @@ require_relative './controllers/connection'
 require_relative './controllers/configuration'
 require_relative './controllers/authentication'
 require_relative './controllers/authorization'
+require_relative './controllers/message_json'
 
 require_relative './views/accept_json'
 
@@ -80,6 +81,7 @@ module Api
         include Api::Configuration
         include Api::Authentication
         include Api::Authorization
+        include Api::MessageJson
         cache_control :no_store
         accept :json
       end
