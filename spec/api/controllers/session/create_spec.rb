@@ -10,8 +10,8 @@ describe Api::Controllers::Session::Create do
   }
   let(:params) { {session: {username: 'user', password: 'pass'}, **env} }
   let(:env) { {'REMOTE_ADDR' => remote_ip, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
-  let(:remote_ip) { '::1' }
-  let(:session) { {uuid: 'x', user_id: 42, access_time: Time.now} }
+  let(:remote_ip) { '192.0.2.1' }
+  let(:session) { {uuid: 'ffffffff-ffff-4fff-bfff-ffffffffffff', user_id: 42, access_time: Time.now} }
   let(:format)  { 'application/json' }
   let(:activity_log_repository) { create_mock(create: [nil, [Hash]]) }
   let(:config) { Config.new(title: 'title', session_timeout: 3600, user_networks: '') }
@@ -26,21 +26,22 @@ describe Api::Controllers::Session::Create do
     response = action.call(params)
     _(response[0]).must_equal 409
     _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
-      result: 'error',
+      code: 409,
       message: '既にログインしています。',
     })
   end
 
   describe 'no login session' do
-    let(:session) { {uuid: 'x', user_id: nil, access_time: Time.now} }
+    let(:session) { {uuid: 'ffffffff-ffff-4fff-bfff-ffffffffffff', user_id: nil, access_time: Time.now} }
 
     it 'is successful' do
       response = action.call(params)
       _(response[0]).must_equal 201
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
-        result: 'success',
-        message: 'ログインしました。',
+        uuid: 'ffffffff-ffff-4fff-bfff-ffffffffffff',
+        username: 'user',
+        display_name: 'ユーザー',
       })
     end
 
@@ -49,9 +50,8 @@ describe Api::Controllers::Session::Create do
       _(response[0]).must_equal 422
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
-        result: 'failure',
-        message: 'ログインに失敗しました。',
-        errors: ['ユーザー名またはパスワードが違います。'],
+        code: 422,
+        message: 'ユーザー名またはパスワードが違います。',
       })
     end
 
@@ -60,9 +60,8 @@ describe Api::Controllers::Session::Create do
       _(response[0]).must_equal 422
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
-        result: 'failure',
-        message: 'ログインに失敗しました。',
-        errors: ['ユーザー名またはパスワードが違います。'],
+        code: 422,
+        message: 'ユーザー名またはパスワードが違います。',
       })
     end
 
@@ -71,8 +70,8 @@ describe Api::Controllers::Session::Create do
       _(response[0]).must_equal 400
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
-        result: 'error',
-        message: '不正なパラメーターです。',
+        code: 400,
+        message: 'パラメーターが不正です。',
         errors: ['Session must be a hash'],
       })
     end
@@ -82,8 +81,8 @@ describe Api::Controllers::Session::Create do
       _(response[0]).must_equal 400
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
-        result: 'error',
-        message: '不正なパラメーターです。',
+        code: 400,
+        message: 'パラメーターが不正です。',
         errors: ['Username size cannot be greater than 255'],
       })
     end
@@ -93,8 +92,8 @@ describe Api::Controllers::Session::Create do
       _(response[0]).must_equal 400
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
-        result: 'error',
-        message: '不正なパラメーターです。',
+        code: 400,
+        message: 'パラメーターが不正です。',
         errors: ['Password must be filled', 'Password size cannot be greater than 255'],
       })
     end
@@ -104,8 +103,8 @@ describe Api::Controllers::Session::Create do
       _(response[0]).must_equal 400
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
-        result: 'error',
-        message: '不正なパラメーターです。',
+        code: 400,
+        message: 'パラメーターが不正です。',
         errors: [
           'Password is missing',
           'Password size cannot be greater than 255',
@@ -121,15 +120,15 @@ describe Api::Controllers::Session::Create do
       response = action.call(params)
       _(response[0]).must_equal 201
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-      _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
-        result: 'success',
-        message: 'ログインしました。',
-      })
+      json = JSON.parse(response[2].first, symbolize_names: true)
+      _(json[:uuid]).must_match(/\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/)
+      _(json[:username]).must_equal('user')
+      _(json[:display_name]).must_equal('ユーザー')
     end
   end
 
   describe 'session timeout' do
-    let(:session) { {uuid: 'x', user_id: 42, access_time: Time.now - (3600 * 2)} }
+    let(:session) { {uuid: 'ffffffff-ffff-4fff-bfff-ffffffffffff', user_id: 42, access_time: Time.now - (3600 * 2)} }
     let(:config) { Config.new(title: 'title', session_timeout: 3600, user_networks: '') }
 
     it 'is successful' do
@@ -137,8 +136,9 @@ describe Api::Controllers::Session::Create do
       _(response[0]).must_equal 201
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       _(JSON.parse(response[2].first, symbolize_names: true)).must_equal({
-        result: 'success',
-        message: 'ログインしました。',
+        uuid: 'ffffffff-ffff-4fff-bfff-ffffffffffff',
+        username: 'user',
+        display_name: 'ユーザー',
       })
     end
   end

@@ -7,22 +7,15 @@ module Api
         security_level 0
 
         def call(params) # rubocop:disable Lint/UnusedMethodArgument
-          result =
-            if session[:user_id]
-              session[:user_id] = nil
+          unless current_user
+            halt 410, JSON.generate({
+              code: 410,
+              message: 'ログインしていません。',
+            })
+          end
 
-              {
-                result: 'success',
-                message: 'ログアウトしました。',
-              }
-            else
-              self.status = 410
-              {
-                result: 'error',
-                message: 'ログインしていません。',
-              }
-            end
-          self.body = JSON.generate(result)
+          session[:user_id] = nil
+          self.status = 204
         end
       end
     end

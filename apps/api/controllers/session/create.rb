@@ -24,15 +24,15 @@ module Api
         def call(params)
           if current_user
             halt 409, JSON.generate({
-              result: 'error',
+              code: 409,
               message: '既にログインしています。',
             })
           end
 
           unless params.valid?
             halt 400, JSON.generate({
-              result: 'error',
-              message: '不正なパラメーターです。',
+              code: 400,
+              message: 'パラメーターが不正です。',
               errors: params.error_messages,
             })
           end
@@ -42,25 +42,21 @@ module Api
                                           auth_log_repository: @auth_log_repository)
           authenticate_result = authenticate.call(**params[:session], uuid: uuid, client: remote_ip)
 
-          result =
-            if authenticate_result.successful?
-              # セッション情報を保存
-              session[:user_id] = authenticate_result.user.id
+          if authenticate_result.failure?
+            halt 422, JSON.generate({
+              code: 422,
+              message: authenticate_result.errors.first || 'ログインに失敗しました。',
+            })
+          end
 
-              self.status = 201
-              {
-                result: 'success',
-                message: 'ログインしました。',
-              }
-            else
-              self.status = 422
-              {
-                result: 'failure',
-                message: 'ログインに失敗しました。',
-                errors: authenticate_result.errors,
-              }
-            end
-          self.body = JSON.generate(result)
+          # セッション情報を保存
+          session[:user_id] = authenticate_result.user.id
+          self.status = 201
+          self.body = JSON.generate({
+            uuid: session[:uuid],
+            username: authenticate_result.user.name,
+            display_name: authenticate_result.user.display_name,
+          })
         end
       end
     end

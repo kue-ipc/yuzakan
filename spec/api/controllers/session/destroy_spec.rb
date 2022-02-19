@@ -8,8 +8,8 @@ describe Api::Controllers::Session::Destroy do
   }
   let(:params) { {**env} }
   let(:env) { {'REMOTE_ADDR' => remote_ip, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
-  let(:remote_ip) { '::1' }
-  let(:session) { {uuid: 'x', user_id: 42, access_time: Time.now} }
+  let(:remote_ip) { '192.0.2.1' }
+  let(:session) { {uuid: 'ffffffff-ffff-4fff-bfff-ffffffffffff', user_id: 42, access_time: Time.now} }
   let(:format)  { 'application/json' }
   let(:activity_log_repository) { create_mock(create: [nil, [Hash]]) }
   let(:config) { Config.new(title: 'title', session_timeout: 3600, user_networks: '') }
@@ -19,11 +19,8 @@ describe Api::Controllers::Session::Destroy do
 
   it 'is successful' do
     response = action.call(params)
-    _(response[0]).must_equal 200
-    _(response[2]).must_equal [JSON.generate({
-      result: 'success',
-      message: 'ログアウトしました。',
-    })]
+    _(response[0]).must_equal 204
+    _(response[2]).must_equal []
   end
 
   describe 'no login session' do
@@ -33,7 +30,7 @@ describe Api::Controllers::Session::Destroy do
       response = action.call(params)
       _(response[0]).must_equal 410
       _(response[2]).must_equal [JSON.generate({
-        result: 'error',
+        code: 410,
         message: 'ログインしていません。',
       })]
     end
