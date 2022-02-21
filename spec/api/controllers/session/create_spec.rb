@@ -22,8 +22,8 @@ describe Api::Controllers::Session::Create do
     create_mock(find: [user, [Integer]], find_by_name: [user, [String]], update: [nil, [Integer, Hash]])
   }
 
-  let(:providers) { [create_mock_provider(username: 'user', password: 'pass')] }
-  let(:provider_repository) { create_mock(operational_all_with_adapter: [providers, [:auth]]) }
+  let(:providers) { [create_mock_provider(params: {username: 'user', password: 'pass'})] }
+  let(:provider_repository) { create_mock(operational_all_with_adapter: [providers, [Symbol]]) }
   let(:auth_log_repository) { create_mock(create: [nil, [Hash]], recent_by_username: [[], [String, Integer]]) }
 
   it 'is see other' do
@@ -36,7 +36,7 @@ describe Api::Controllers::Session::Create do
     _(json).must_equal({
       code: 303,
       message: '既にログインしています。',
-      location: '/api/session'
+      location: '/api/session',
     })
   end
 

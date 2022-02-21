@@ -9,12 +9,13 @@ CLOBBER << 'node_modules'
 CLOBBER << 'rollup.config.js'
 
 Rake::TestTask.new do |t|
-  t.pattern = 'spec/**/*_spec.rb'
+  # t.pattern = 'spec/**/*_spec.rb'
+  t.pattern = 'spec/api/**/*_spec.rb'
   t.libs << 'spec'
   t.warning = false
 end
 
-# task default: :test
+task default: :test
 task spec: :test
 
 task build: [:build_errors, 'vendor:build']

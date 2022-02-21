@@ -1,4 +1,4 @@
-require_relative '../../../spec_helper'
+require_relative '../../../../../spec_helper'
 
 describe Api::Controllers::Providers::CurrentUser::Password::Create do
   let(:action) { Api::Controllers::Providers::CurrentUser::Password::Create.new }

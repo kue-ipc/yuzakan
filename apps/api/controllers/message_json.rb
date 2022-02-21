@@ -1,3 +1,4 @@
+require 'time'
 require 'hanami/http/status'
 
 module Api
@@ -14,6 +15,24 @@ module Api
       url = url.to_s
       headers['Location'] = url
       halt_json(status, message, location: url, **others)
+    end
+
+    private def generate_json(obj)
+      JSON.generate(convert_for_json(obj))
+    end
+
+    # Timeの精度は2桁までに統一
+    private def convert_for_json(obj)
+      case obj
+      when Array
+        obj.map { |v| convert_for_json(v) }
+      when Hash
+        obj.transform_values { |v| convert_for_json(v) }
+      when Time
+        obj.iso8601
+      else
+        obj
+      end
     end
   end
 end

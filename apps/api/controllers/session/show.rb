@@ -1,5 +1,3 @@
-require 'time'
-
 module Api
   module Controllers
     module Session

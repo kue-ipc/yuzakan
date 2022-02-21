@@ -5,11 +5,9 @@ module Api
         include Api::Action
 
         def initialize(provider_repository: ProviderRepository.new,
-                       attr_repository: AttrRepository.new,
                        **opts)
           super(**opts)
           @provider_repository = provider_repository
-          @attr_repository = attr_repository
         end
 
         def call(params) # rubocop:disable Lint/UnusedMethodArgument
@@ -18,9 +16,14 @@ module Api
           result = read_user.call(username: user.name)
           userdata = result.userdata || {}
           providers = result.provider_userdatas&.compact&.keys || []
-          self.body = JSON.generate({
-            **user.to_h,
-            data: userdata,
+          self.body = generate_json({
+            name: user.name,
+            display_name: user.display_name,
+            email: user.email,
+            clearance_level: user.clearance_level,
+            created_at: user.created_at,
+            updated_at: user.updated_at,
+            userdata: userdata,
             providers: providers,
           })
         end

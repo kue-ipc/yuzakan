@@ -1,4 +1,4 @@
-require_relative '../../../spec_helper'
+require_relative '../../../../../spec_helper'
 
 describe Api::Controllers::Providers::CurrentUser::Lock::Destroy do
   let(:action) { Api::Controllers::Providers::CurrentUser::Lock::Destroy.new }
