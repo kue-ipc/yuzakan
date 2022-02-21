@@ -5,7 +5,7 @@ module Api
     include Web::Authentication
 
     private def reply_unauthenticated
-      halt 401
+      halt_json 401, 'ログインしてください。'
     end
   end
 end

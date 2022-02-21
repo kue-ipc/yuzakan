@@ -5,11 +5,11 @@ module Api
     include Web::Configuration
 
     private def reply_uninitialized
-      halt 503
+      halt_json 503, '初期化されていません。'
     end
 
     private def reply_maintenance
-      halt 503
+      halt_json 503, 'メンテナンス中です。'
     end
   end
 end

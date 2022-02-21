@@ -24,7 +24,7 @@ describe Api::Controllers::Session::Destroy do
   end
 
   describe 'no login session' do
-    let(:session) { {uuid: 'x', user_id: nil, access_time: Time.now} }
+    let(:session) { {uuid: 'ffffffff-ffff-4fff-bfff-ffffffffffff', user_id: nil, access_time: Time.now} }
 
     it 'is error' do
       response = action.call(params)

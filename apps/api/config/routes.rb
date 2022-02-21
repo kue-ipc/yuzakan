@@ -10,3 +10,4 @@ end
 # get '/adapters', to: 'adapters#index'
 # get '/adapters/:id', to: 'adapters#show'
 # get '/adapters/param_types', to: 'adapters/param_types#index'
+get '/session/:id', to: 'session#show'
