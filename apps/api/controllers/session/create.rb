@@ -25,11 +25,6 @@ module Api
 
         def call(params)
           if current_user
-            self.body = JSON.generate({
-              code: 303,
-              location: routes.path(:session),
-              message: '既にログインしています。'
-            })
             redirect_to routes.path(:session), status: 303
           end
 

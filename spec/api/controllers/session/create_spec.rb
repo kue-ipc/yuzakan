@@ -38,9 +38,9 @@ describe Api::Controllers::Session::Create do
     let(:session) { {uuid: uuid} }
 
     it 'is successful' do
-      begin_time = Time.now - 1
+      begin_time = Time.now.floor
       response = action.call(params)
-      end_time = Time.now + 1
+      end_time = Time.now.floor
       _(response[0]).must_equal 201
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
@@ -132,9 +132,9 @@ describe Api::Controllers::Session::Create do
     let(:session) { {} }
 
     it 'is successful' do
-      begin_time = Time.now - 1
+      begin_time = Time.now.floor
       response = action.call(params)
-      end_time = Time.now + 1
+      end_time = Time.now.floor
       _(response[0]).must_equal 201
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
