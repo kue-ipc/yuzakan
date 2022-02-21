@@ -31,6 +31,7 @@ describe Api::Controllers::Session::Create do
     response = action.call(params)
     _(response[0]).must_equal 303
     _(response[1]['Location']).must_equal '/api/session'
+    _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
     _(json).must_equal({
       code: 303,
