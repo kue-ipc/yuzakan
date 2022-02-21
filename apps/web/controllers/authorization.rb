@@ -40,7 +40,7 @@ module Web
     end
 
     private def allowed_user?
-      current_user_level >= security_level
+      (current_user&.clearance_level || 0) >= security_level
     end
 
     private def reply_unauthorized

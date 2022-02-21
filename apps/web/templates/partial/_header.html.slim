@@ -14,7 +14,7 @@ header
                 - text bs_icon('house', class: 'flex-shrink-0 me-1')
                 - span class: 'd-none d-lg-inline' do
                   - text '利用者用メニュー'
-            - if current_user_level >= 3
+            - if current_user.clearance_level >= 3
               li.nav-item
                 = link_to Admin.routes.path(:root), class: 'nav-link d-flex align-items-center' do
                   - text bs_icon('house-heart', class: 'flex-shrink-0 me-1')

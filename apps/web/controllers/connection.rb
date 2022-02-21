@@ -67,10 +67,6 @@ module Web
       @current_user ||= (session[:user_id] && @user_repository.find(session[:user_id]))
     end
 
-    private def current_user_level
-      current_user&.clearance_level || 0
-    end
-
     private def current_time
       @current_time ||= Time.now
     end
