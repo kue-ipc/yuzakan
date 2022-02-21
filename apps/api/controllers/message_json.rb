@@ -4,7 +4,7 @@ require 'hanami/http/status'
 module Api
   module MessageJson
     private def halt_json(code, message = nil, **others)
-      halt(code, JSON.generate({
+      halt(code, generate_json({
         code: code,
         message: message || Hanami::Http::Status.message_for(code),
         **others,

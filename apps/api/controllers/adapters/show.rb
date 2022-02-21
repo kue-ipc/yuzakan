@@ -9,7 +9,7 @@ module Api
           adapter = ADAPTERS_MANAGER.by_name(adapter_id)
           halt 404 unless adapter
 
-          self.body = JSON.generate({
+          self.body = generate_json({
             name: adapter_id,
             label: adapter.label,
           })

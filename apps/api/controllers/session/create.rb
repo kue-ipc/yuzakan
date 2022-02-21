@@ -1,5 +1,3 @@
-require 'time'
-
 module Api
   module Controllers
     module Session
@@ -41,11 +39,11 @@ module Api
           session[:updated_at] = current_time
 
           self.status = 201
-          self.body = JSON.generate({
+          self.body = generate_json({
             username: authenticate_result.user.name,
             display_name: authenticate_result.user.display_name,
-            created_at: current_time.iso8601,
-            updated_at: current_time.iso8601,
+            created_at: current_time,
+            updated_at: current_time,
           })
         end
       end

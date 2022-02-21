@@ -11,7 +11,7 @@ module Api
               label: value.label,
             }
           end
-          self.body = JSON.generate(adapters)
+          self.body = generate_json(adapters)
         end
       end
     end
