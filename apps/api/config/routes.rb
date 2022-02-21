@@ -13,3 +13,5 @@ resources :providers, only: [:index, :show, :create, :update, :destroy] do
     resource :lock, only: [:destroy]
   end
 end
+
+resources :attrs, only: [:index, :show, :create, :update, :destroy]
