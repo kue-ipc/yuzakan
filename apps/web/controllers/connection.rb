@@ -19,7 +19,6 @@ module Web
           after :done!
           expose :current_config
           expose :current_user
-          expose :current_user_level
         end
       else
         action.define_singleton_method(:included, &method(:included))
@@ -35,6 +34,8 @@ module Web
     end
 
     private def connect!
+      session[:updated_at] = current_time if current_config && current_user
+
       @log_info = {
         uuid: uuid,
         client: remote_ip,
@@ -42,7 +43,6 @@ module Web
         action: self.class.name,
         method: request.request_method,
         path: request.path,
-        last_access_time: last_access_time,
       }
       Hanami.logger.info(@log_info)
     end
@@ -71,17 +71,8 @@ module Web
       current_user&.clearance_level || 0
     end
 
-    private def last_access_time
-      update_access_time
-      @last_access_time
-    end
-
-    private def update_access_time
-      return if @access_time_updated
-
-      @last_access_time = session[:access_time]
-      session[:access_time] = Time.now
-      @access_time_updated = true
+    private def current_time
+      @current_time ||= Time.now
     end
 
     def security_level
@@ -97,23 +88,26 @@ module Web
     end
 
     private def check_session!
+      return if session[:user_id].nil?
       return unless session_timeout?
 
-      flash[:warn] = 'セッションがタイムアウトしました。' if last_access_time
       session[:user_id] = nil
+      session[:created_at] = nil
+      session[:updated_at] = nil
       @current_user = nil
+
+      reply_session_timeout
     end
 
     private def session_timeout?
-      return true unless last_access_time
+      return false if session[:updated_at].nil?
 
       timeout = current_config&.session_timeout || 3600
-      return false if timeout.zero?
-
-      Time.now - last_access_time > timeout
+      timeout.zero? || current_time - session[:updated_at] > timeout
     end
 
     private def reply_session_timeout
+      flash[:warn] = 'セッションがタイムアウトしました。'
       redirect_to Web.routes.path(:root)
     end
   end

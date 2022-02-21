@@ -1,3 +1,5 @@
+require 'time'
+
 module Api
   module Controllers
     module Session
@@ -22,7 +24,14 @@ module Api
         end
 
         def call(params)
-          halt_json(409, '既にログインしています。') if current_user
+          if current_user
+            self.body = JSON.generate({
+              code: 303,
+              location: routes.path(:session),
+              message: '既にログインしています。'
+            })
+            redirect_to routes.path(:session), status: 303
+          end
 
           halt_json(400, 'パラメーターが不正です。', errors: params.error_messages) unless params.valid?
 
@@ -35,11 +44,15 @@ module Api
 
           # セッション情報を保存
           session[:user_id] = authenticate_result.user.id
+          session[:created_at] = current_time
+          session[:updated_at] = current_time
+
           self.status = 201
           self.body = JSON.generate({
-            uuid: session[:uuid],
             username: authenticate_result.user.name,
             display_name: authenticate_result.user.display_name,
+            created_at: current_time.iso8601,
+            updated_at: current_time.iso8601,
           })
         end
       end
