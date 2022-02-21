@@ -1,4 +1,5 @@
 require_relative '../../../spec_helper'
+require 'yaml'
 
 describe Api::Controllers::CurrentUser::Show do
   let(:action) {
@@ -22,7 +23,18 @@ describe Api::Controllers::CurrentUser::Show do
   let(:config_repository) { create_mock(current: [config]) }
   let(:user_repository) { create_mock(find: [user, [Integer]]) }
 
-  let(:providers) { [create_mock_provider(name: 'provider', params: {username: 'user', password: 'pass'})] }
+  let(:providers) {
+    [create_mock_provider(
+      name: 'provider',
+      params: {
+        username: 'user', display_name: 'ユーザー', email: 'user@example.jp',
+        attrs: YAML.dump({'displayName' => '表示ユーザー'}),
+      },
+      attr_mappings: [{
+        name: 'displayName', conversion: nil,
+        attr: {name: 'display_name', display_name: '表示名', type: 'string', hidden: false},
+      }])]
+  }
   let(:provider_repository) { create_mock(operational_all_with_adapter: [providers, [Symbol]]) }
 
   it 'is successful' do
@@ -41,7 +53,7 @@ describe Api::Controllers::CurrentUser::Show do
         name: 'user',
         display_name: 'ユーザー',
         email: 'user@example.jp',
-        attrs: {},
+        attrs: {display_name: '表示ユーザー'},
         count: 1,
       },
       providers: ['provider'],

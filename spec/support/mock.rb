@@ -1,6 +1,6 @@
-def create_mock_provider(name: 'provider', dispaly_name: 'プロバイダー', params: {})
+def create_mock_provider(params: {}, **attributes)
   provider_params = params.map { |key, value| {name: key, value: Marshal.dump(value)} }
-  Provider.new(name: name, dispaly_name: dispaly_name, adapter_name: 'mock', provider_params: provider_params)
+  Provider.new(**attributes, adapter_name: 'mock', provider_params: provider_params)
 end
 
 def create_mock(**expects)
