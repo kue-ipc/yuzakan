@@ -27,11 +27,16 @@ describe Api::Controllers::Session::Create do
   let(:auth_log_repository) { create_mock(create: [nil, [Hash]], recent_by_username: [[], [String, Integer]]) }
 
   it 'is see other' do
+    Rack::Utils::HTTP_STATUS_CODES[303] = 'Hoge'
     response = action.call(params)
     _(response[0]).must_equal 303
     _(response[1]['Location']).must_equal '/api/session'
-    # TODO
-    _(response[2]).must_equal ['See Other']
+    json = JSON.parse(response[2].first, symbolize_names: true)
+    _(json).must_equal({
+      code: 303,
+      message: '既にログインしています。',
+      location: '/api/session'
+    })
   end
 
   describe 'no login session' do

@@ -24,9 +24,7 @@ module Api
         end
 
         def call(params)
-          if current_user
-            redirect_to routes.path(:session), status: 303
-          end
+          redirect_to_json routes.path(:session), '既にログインしています。', status: 303 if current_user
 
           halt_json(400, 'パラメーターが不正です。', errors: params.error_messages) unless params.valid?
 
