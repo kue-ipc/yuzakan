@@ -70,7 +70,7 @@ class InitialSetup
   private def setup_admin(username)
     UserRepository.new.create({
       name: username,
-      admin: true,
+      clearance_level: 5,
     })
   end
 end

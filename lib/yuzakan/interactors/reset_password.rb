@@ -112,7 +112,7 @@ class ResetPassword
       ok = false
     end
 
-    return ok if @user.admin
+    return ok if @user.clearance_level >= 3
 
     unless @providers&.all?(&:self_management)
       error('自己管理可能なシステム以外でパスワードをリセットすることはできません。')

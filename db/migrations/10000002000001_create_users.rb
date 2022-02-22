@@ -7,8 +7,7 @@ Hanami::Model.migration do
       column :display_name, String, null: true
       column :email, String, null: true
 
-      # administrator authority
-      column :admin, TrueClass, null: false, default: false
+      column :clearance_level, Integer, null: false, default: 1
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

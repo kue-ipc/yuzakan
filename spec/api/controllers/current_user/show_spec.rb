@@ -13,7 +13,7 @@ describe Api::Controllers::CurrentUser::Show do
   let(:remote_ip) { '192.0.2.1' }
   let(:uuid) { 'ffffffff-ffff-4fff-bfff-ffffffffffff' }
   let(:user) {
-    User.new(id: 42, name: 'user', display_name: 'ユーザー', email: 'user@example.jp', admin: false,
+    User.new(id: 42, name: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1,
              created_at: Time.now - 86400, updated_at: Time.now - 3600)
   }
   let(:session) { {uuid: uuid, user_id: user.id, created_at: Time.now - 600, updated_at: Time.now - 60} }
@@ -46,7 +46,7 @@ describe Api::Controllers::CurrentUser::Show do
       name: 'user',
       display_name: 'ユーザー',
       email: 'user@example.jp',
-      clearance_level: 2,
+      clearance_level: 1,
       created_at: user.created_at.floor.iso8601,
       updated_at: user.updated_at.floor.iso8601,
       userdata: {
