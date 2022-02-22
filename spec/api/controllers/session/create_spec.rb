@@ -129,6 +129,31 @@ describe Api::Controllers::Session::Create do
         errors: ['Password must be filled', 'Password size cannot be greater than 255'],
       })
     end
+
+    describe 'too many access' do
+      let(:auth_log_repository) {
+        create_mock(create: [nil, [Hash]], recent_by_username: [[
+                      AuthLog.new(result: 'failure'),
+                      AuthLog.new(result: 'failure'),
+                      AuthLog.new(result: 'failure'),
+                      AuthLog.new(result: 'failure'),
+                      AuthLog.new(result: 'failure'),
+                    ], [String, Integer],])
+      }
+
+      it 'is failure' do
+        response = action.call(params)
+        _(response[0]).must_equal 403
+        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        json = JSON.parse(response[2].first, symbolize_names: true)
+        _(json).must_equal({
+          code: 403,
+          message: '時間あたりのログイン試行が規定の回数を超えたため、' \
+                   '現在ログインが禁止されています。' \
+                   'しばらく待ってから再度ログインを試してください。',
+        })
+      end
+    end
   end
 
   describe 'no session' do

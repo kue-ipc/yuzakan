@@ -1,41 +1,24 @@
-# 自分自身のパスワードのみ変更可能
-# パスワードの制限値はconifgで管理
-# 強度チェックはzxcvbnを使用
-
 require 'hanami/interactor'
-require 'hanami/validations/form'
-require 'zxcvbn'
 
 class ChangePassword
   include Hanami::Interactor
 
-  class Validations
-    include Hanami::Validations::Form
-    messages_path 'config/messages.yml'
+  expose :userdatas
 
-    validations do
-      required(:username).filled
-      required(:password).filled
-    end
-  end
-
-  expose :count
-
-  def initialize(provider_repository: ProviderRepository.new)
+  def initialize(provider_repository: ProviderRepository.new, providers: nil)
     @provider_repository = provider_repository
+    @providers = providers || @provider_repository.operational_all_with_adapter(:change_password)
   end
 
   def call(params)
-    username = params[:username]
-    password = params[:password]
-
-    @count = 0
-
-    @provider_repository.operational_all_with_adapter(:change_password).each do |provider|
-      count += 1 if provider.change_password(username, password)
+    @userdatas = {}
+    @providers.each do |provider|
+      userdata = provider.change_password(params[:username], params[:password])
+      @userdatas[provider.name] = userdata if userdata
     rescue => e
       Hanami.logger.error e
-      unless count.zero?
+      error("パスワード変更時にエラーが発生しました。(#{provider.display_name})")
+      unless @userdatas.empty?
         error <<~'ERROR_MESSAGE'
           一部のシステムのパスワードは変更されましたが、
           別のシステムの変更時にエラーが発生し、処理が中断されました。
@@ -44,20 +27,6 @@ class ChangePassword
           現在のパスワードはすでに変更されている場合があります。
         ERROR_MESSAGE
       end
-      error!("パスワード変更時にエラーが発生しました。: #{e.message}")
     end
-
-    error!('どのシステムでもパスワードは変更されませんでした。') if count.zero?
-  end
-
-  private def valid?(params)
-    ok = true
-    validation = Validations.new(params).validate
-    if validation.failure?
-      error(validation.messages)
-      ok = false
-    end
-
-    ok
   end
 end

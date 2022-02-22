@@ -6,7 +6,7 @@ require 'hanami/interactor'
 require 'hanami/validations/form'
 require 'zxcvbn'
 
-class ChangePassword
+class CheckChangePassword
   include Hanami::Interactor
 
   class Validations
