@@ -23,7 +23,7 @@ module Api
             clearance_level: current_user.clearance_level,
             created_at: current_user.created_at,
             updated_at: current_user.updated_at,
-            userdatas: result.userdatas.map { |k, v| {provider: k, **v} },
+            userdatas: result.userdatas.map { |k, v| {provider: k, userdata: v} },
           })
         end
       end

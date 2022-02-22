@@ -49,17 +49,19 @@ describe Api::Controllers::CurrentUser::Show do
       clearance_level: 1,
       created_at: user.created_at.floor.iso8601,
       updated_at: user.updated_at.floor.iso8601,
-      userdatas: [
+      userdatas: [{
         provider: 'provider',
-        name: 'user',
-        display_name: 'ユーザー',
-        email: 'user@example.jp',
-        locked: false,
-        disabled: false,
-        unmanageable: false,
-        mfa: false,
-        attrs: {display_name: '表示ユーザー'},
-      ]
+        userdata: {
+          name: 'user',
+          display_name: 'ユーザー',
+          email: 'user@example.jp',
+          locked: false,
+          disabled: false,
+          unmanageable: false,
+          mfa: false,
+          attrs: {display_name: '表示ユーザー'},
+        },
+      }],
     })
   end
 
