@@ -24,10 +24,10 @@ module Api
 
           redirect_to_json routes.path(:session), '既にログインしています。', status: 303 if current_user
 
-          authenticate = Authenticate.new(user_repository: @user_repository,
+          authenticate = Authenticate.new(connection_info: connection_info,
+                                          user_repository: @user_repository,
                                           provider_repository: @provider_repository,
-                                          auth_log_repository: @auth_log_repository,
-                                          uuid: uuid, client: client)
+                                          auth_log_repository: @auth_log_repository)
           authenticate_result = authenticate.call(username: params[:username], password: params[:password])
 
           halt_json(422, authenticate_result.errors.first || 'ログインに失敗しました。') if authenticate_result.failure?

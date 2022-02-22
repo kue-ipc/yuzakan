@@ -11,14 +11,12 @@ class Authenticate
     validations do
       required(:username).filled(:str?, size?: 1..255)
       required(:password).filled(:str?, size?: 1..255)
-      required(:client).filled(:str?, size?: 1..255)
-      required(:uuid).filled(:str?, size?: 1..255)
     end
   end
 
   expose :user
 
-  def initialize(connection_info:,
+  def initialize(connection_info: {},
                  user_repository: UserRepository.new,
                  provider_repository: ProviderRepository.new,
                  auth_log_repository: AuthLogRepository.new)
@@ -30,8 +28,8 @@ class Authenticate
 
   def call(params)
     auth_log_params = {
-      uuid: params[:uuid],
-      client: params[:client],
+      uuid: @connection_info[:uuid],
+      client: @connection_info[:client],
       username: params[:username],
     }
 

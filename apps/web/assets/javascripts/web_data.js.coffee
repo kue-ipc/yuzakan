@@ -125,18 +125,21 @@ export default class WebData
         }
       }
 
-    switch response.type
-      when 'json'
-        responseData = response.data
-      when 'text'
-        responseData = {
-          messeage: response.data
-        }
-      else
-        console.error "Unsupported respose type: #{response.type}"
-        responseData = {
-          messeage: '異常なレスポンスが返されました。再度試してください。'
-        }
+    responseData =
+      switch response.type
+        when 'json'
+          response.data
+        when 'text'
+          {
+            message: response.data
+          }
+        when null, undefined
+          {}
+        else
+          console.error "Unsupported respose type: #{response.type}"
+          responseData = {
+            message: '異常なレスポンスが返されました。再度試してください。'
+          }
 
     codeAction = @codeActions.get(response.code) || UNKNOWN_CODE_ACTION
 

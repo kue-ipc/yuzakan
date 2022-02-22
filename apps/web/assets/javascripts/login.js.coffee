@@ -25,7 +25,7 @@ submittable = ({username, password, disabled}) -> not disabled and username and 
 runLogin = (dispatch, payload) ->
   await webData.submitPromise {data: {
     csrf()...
-    session: payload
+    payload...
   }}
   dispatch (state) -> [
     {
