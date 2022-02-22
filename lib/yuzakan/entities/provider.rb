@@ -175,19 +175,22 @@ class Provider < Hanami::Entity
   def change_password(username, password)
     need_adapter!
     username = sanitize_name(username)
-    @adapter.change_password(username, password)
+    raw_userdata = @adapter.change_password(username, password)
+    @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
 
   def lock(username)
     need_adapter!
     username = sanitize_name(username)
-    @adapter.lock(username)
+    raw_userdata = @adapter.lock(username)
+    @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
 
   def unlock(username, password = nil)
     need_adapter!
     username = sanitize_name(username)
-    @adapter.unlock(username, password)
+    raw_userdata = @adapter.unlock(username, password)
+    @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
 
   def generate_code(username)

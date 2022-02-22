@@ -73,8 +73,9 @@ module Web
 
     private def connection_info
       {
+        config: current_config,
         uuid: uuid,
-        current_user: current_user,
+        user: current_user,
         client: client,
       }
     end

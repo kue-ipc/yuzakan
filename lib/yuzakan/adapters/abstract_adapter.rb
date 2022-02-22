@@ -28,8 +28,8 @@
 # change_password(username, password) -> userdata or nil [password_changeable]
 # generate_code(username) -> codes or nil [password_changeable]
 #
-# lock(username) -> nil [lockable]
-# unlock(username, password = nil) -> nil [lockable]
+# lock(username) -> userdata or nil [lockable]
+# unlock(username, password = nil) -> userdata or nil [lockable]
 #
 # list -> usernames [readable]
 #
@@ -43,12 +43,12 @@
 #   attrs: Hash = {key: value, ...}
 #
 # group_create(groupname, **groupdata) -> groupdata or nil [writable]
-# group_read(groupname) -> group or nil [readable]
+# group_read(groupname) -> groupdata or nil [readable]
 # group_update(groupname, **groupdata) -> groupdata or nil [writeable]
-# group_delete(groupname) -> group or nil [writable]
+# group_delete(groupname) -> groupdata or nil [writable]
 # group_list -> groupnames
 #
-# member_list(groupname)
+# member_list(groupname) -> usernames
 # member_add(groupname, username)
 # member_delete(groupname, username)
 #
