@@ -6,8 +6,7 @@ class Authenticate
   expose :userdatas
 
   def initialize(provider_repository: ProviderRepository.new, providers: nil, find_break: true)
-    @provider_repository = provider_repository
-    @providers = providers || @provider_repository.operational_all_with_adapter(:auth)
+    @providers = providers || provider_repository.operational_all_with_adapter(:auth).to_a
     @find_break = find_break
   end
 

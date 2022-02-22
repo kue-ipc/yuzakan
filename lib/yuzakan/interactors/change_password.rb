@@ -6,8 +6,7 @@ class ChangePassword
   expose :userdatas
 
   def initialize(provider_repository: ProviderRepository.new, providers: nil)
-    @provider_repository = provider_repository
-    @providers = providers || @provider_repository.operational_all_with_adapter(:change_password)
+    @providers = providers || provider_repository.operational_all_with_adapter(:change_password).to_a
   end
 
   def call(params)
