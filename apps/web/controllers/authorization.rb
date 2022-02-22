@@ -35,7 +35,7 @@ module Web
     private def allowed_ip?
       return true if allowed_networks.empty?
 
-      result = CheckIp.new(allowed_networks: allowed_networks).call(ip: remote_ip)
+      result = CheckIp.new(allowed_networks: allowed_networks).call(ip: client)
       result.successful?
     end
 

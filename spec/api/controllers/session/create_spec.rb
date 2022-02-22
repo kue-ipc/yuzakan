@@ -8,11 +8,11 @@ describe Api::Controllers::Session::Create do
                                           provider_repository: provider_repository,
                                           auth_log_repository: auth_log_repository)
   }
-  let(:params) { {session: {username: 'user', password: 'pass'}, **env} }
-  let(:env) { {'REMOTE_ADDR' => remote_ip, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
-  let(:remote_ip) { '192.0.2.1' }
+  let(:params) { {username: 'user', password: 'pass', **env} }
+  let(:env) { {'REMOTE_ADDR' => client, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
+  let(:client) { '192.0.2.1' }
   let(:uuid) { 'ffffffff-ffff-4fff-bfff-ffffffffffff' }
-  let(:user) { User.new(id: 42, name: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1)}
+  let(:user) { User.new(id: 42, name: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1) }
   let(:session) { {uuid: uuid, user_id: user.id, created_at: Time.now - 600, updated_at: Time.now - 60} }
   let(:format) { 'application/json' }
   let(:config) { Config.new(title: 'title', session_timeout: 3600, user_networks: '') }
@@ -60,19 +60,8 @@ describe Api::Controllers::Session::Create do
       _(updated_at).must_be :<=, end_time
     end
 
-    it 'is failed with bad password' do
-      response = action.call(**params, session: {username: 'user', password: 'nopass'})
-      _(response[0]).must_equal 422
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
-        code: 422,
-        message: 'ユーザー名またはパスワードが違います。',
-      })
-    end
-
     it 'is failed with bad username' do
-      response = action.call(**params, session: {username: 'user1', password: 'pass'})
+      response = action.call(**params, username: 'baduser')
       _(response[0]).must_equal 422
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
@@ -82,20 +71,43 @@ describe Api::Controllers::Session::Create do
       })
     end
 
-    it 'is error with nil' do
-      response = action.call(**params, session: nil)
+    it 'is failed with bad password' do
+      response = action.call(**params, password: 'badpass')
+      _(response[0]).must_equal 422
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      json = JSON.parse(response[2].first, symbolize_names: true)
+      _(json).must_equal({
+        code: 422,
+        message: 'ユーザー名またはパスワードが違います。',
+      })
+    end
+
+    it 'is error with no username' do
+      response = action.call(**params.reject { |k, _v| k == :username })
       _(response[0]).must_equal 400
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
         code: 400,
         message: 'パラメーターが不正です。',
-        errors: ['Session must be a hash'],
+        errors: ['Username is missing', 'Username size cannot be greater than 255'],
       })
     end
 
-    it 'is error with bad params' do
-      response = action.call(**params, session: {username: 'user' * 64, password: 'pass'})
+    it 'is error with no password' do
+      response = action.call(**params.reject { |k, _v| k == :password })
+      _(response[0]).must_equal 400
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      json = JSON.parse(response[2].first, symbolize_names: true)
+      _(json).must_equal({
+        code: 400,
+        message: 'パラメーターが不正です。',
+        errors: ['Password is missing', 'Password size cannot be greater than 255'],
+      })
+    end
+
+    it 'is error with too large username' do
+      response = action.call(**params, username: 'user' * 64)
       _(response[0]).must_equal 400
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
@@ -106,8 +118,8 @@ describe Api::Controllers::Session::Create do
       })
     end
 
-    it 'is error with bad params' do
-      response = action.call(**params, session: {username: 'user', password: ''})
+    it 'is error with empty password' do
+      response = action.call(**params, password: '')
       _(response[0]).must_equal 400
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
@@ -115,21 +127,6 @@ describe Api::Controllers::Session::Create do
         code: 400,
         message: 'パラメーターが不正です。',
         errors: ['Password must be filled', 'Password size cannot be greater than 255'],
-      })
-    end
-
-    it 'is error with bad params' do
-      response = action.call(**params, session: {username: 'user'})
-      _(response[0]).must_equal 400
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
-        code: 400,
-        message: 'パラメーターが不正です。',
-        errors: [
-          'Password is missing',
-          'Password size cannot be greater than 255',
-        ],
       })
     end
   end

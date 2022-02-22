@@ -18,7 +18,7 @@ module Admin
             halt 404 unless @user
 
             result = ResetPassword.new(user: current_user,
-                                       client: remote_ip,
+                                       client: client,
                                        config: current_config)
               .call(username: @user.name)
 

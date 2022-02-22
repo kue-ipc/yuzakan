@@ -17,7 +17,7 @@ module Web
 
             result = GenerateVerificationCode.new(
               user: current_user,
-              client: remote_ip,
+              client: client,
               config: current_config,
               providers: [provider]).call(params.get(:google_code_create))
 

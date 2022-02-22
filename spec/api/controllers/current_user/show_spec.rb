@@ -8,9 +8,9 @@ describe Api::Controllers::CurrentUser::Show do
                                             user_repository: user_repository,
                                             provider_repository: provider_repository)
   }
-  let(:params) { {session: {username: 'user', password: 'pass'}, **env} }
-  let(:env) { {'REMOTE_ADDR' => remote_ip, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
-  let(:remote_ip) { '192.0.2.1' }
+  let(:params) { env }
+  let(:env) { {'REMOTE_ADDR' => client, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
+  let(:client) { '192.0.2.1' }
   let(:uuid) { 'ffffffff-ffff-4fff-bfff-ffffffffffff' }
   let(:user) {
     User.new(id: 42, name: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1,

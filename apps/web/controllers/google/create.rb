@@ -24,7 +24,7 @@ module Web
 
           provider = ProviderRepository.new.first_google_with_adapter
 
-          result = CreateUser.new(user: current_user, client: remote_ip,
+          result = CreateUser.new(user: current_user, client: client,
                                   config: current_config,
                                   providers: [provider])
             .call(params.get(:google_create))

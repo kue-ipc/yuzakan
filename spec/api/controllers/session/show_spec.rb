@@ -7,8 +7,8 @@ describe Api::Controllers::Session::Show do
                                         user_repository: user_repository)
   }
   let(:params) { {session: {username: 'user', password: 'pass'}, **env} }
-  let(:env) { {'REMOTE_ADDR' => remote_ip, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
-  let(:remote_ip) { '192.0.2.1' }
+  let(:env) { {'REMOTE_ADDR' => client, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
+  let(:client) { '192.0.2.1' }
   let(:uuid) { 'ffffffff-ffff-4fff-bfff-ffffffffffff' }
   let(:user) { User.new(id: 42, name: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1)}
   let(:session) { {uuid: uuid, user_id: user.id, created_at: Time.now - 600, updated_at: Time.now - 60} }

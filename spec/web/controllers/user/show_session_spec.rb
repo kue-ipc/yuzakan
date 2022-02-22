@@ -10,7 +10,7 @@ describe Web::Controllers::User::Show do
   it 'is successful' do
     response = action.call(params)
     _(response[0]).must_equal 200
-    _(action.send(:remote_ip).to_s).must_equal '::1'
+    _(action.send(:client).to_s).must_equal '::1'
   end
 
   describe 'admin login' do

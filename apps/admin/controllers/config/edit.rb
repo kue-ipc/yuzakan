@@ -9,7 +9,7 @@ module Admin
 
         cache_control :no_store
 
-        expose :remote_ip
+        expose :client
 
         def call(params)
         end

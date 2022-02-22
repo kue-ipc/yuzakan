@@ -26,7 +26,7 @@ describe Admin::Controllers::Home::Index do
     describe 'reverse proxy' do
       before do
         UpdateConfig.new.call(
-          remote_ip_header: 'X-Forwarded-For',
+          client_header: 'X-Forwarded-For',
           trusted_reverse_proxies: '::1 127.0.0.1')
       end
       after { db_reset }
@@ -71,7 +71,7 @@ describe Admin::Controllers::Home::Index do
         _(response[0]).must_equal 403
       end
 
-      it 'remote_ip is first in network' do
+      it 'client is first in network' do
         response = action.call(params.merge(
                                  'REMOTE_ADDR' => '::1',
                                  'HTTP_X_FORWARDED_FOR' =>
@@ -83,7 +83,7 @@ describe Admin::Controllers::Home::Index do
     # describe 'check x-real-ip' do
     #   before do
     #     UpdateConfig.new.call(
-    #       remote_ip_header: 'X-Real-Ip',
+    #       client_header: 'X-Real-Ip',
     #       trusted_reverse_proxies: '::1 127.0.0.1')
     #   end
     #   after { db_reset }

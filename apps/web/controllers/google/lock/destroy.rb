@@ -18,7 +18,7 @@ module Web
 
             result = UnlockUser.new(
               user: current_user,
-              client: remote_ip,
+              client: client,
               config: current_config,
               providers: [provider]).call(params.get(:google_lock_destroy))
 

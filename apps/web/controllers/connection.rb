@@ -38,7 +38,7 @@ module Web
 
       @log_info = {
         uuid: uuid,
-        client: remote_ip,
+        client: client,
         username: current_user&.name,
         action: self.class.name,
         method: request.request_method,
@@ -59,8 +59,8 @@ module Web
       @uuid ||= session[:uuid] ||= SecureRandom.uuid
     end
 
-    private def remote_ip
-      @remote_ip ||= request.ip
+    private def client
+      request.ip
     end
 
     private def current_user
@@ -69,6 +69,14 @@ module Web
 
     private def current_time
       @current_time ||= Time.now
+    end
+
+    private def connection_info
+      {
+        uuid: uuid,
+        current_user: current_user,
+        client: client,
+      }
     end
 
     def security_level
