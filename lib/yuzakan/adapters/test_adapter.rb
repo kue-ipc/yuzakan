@@ -6,10 +6,45 @@ module Yuzakan
   module Adapters
     class TestAdapter < AbstractAdapter
       self.hidden_adapter = true if Hanami.env == 'production'
-
       self.label = 'テスト'
-
       self.params = [
+        {
+          name: :str,
+          label: '文字列',
+          description: '文字列の詳細',
+          type: :string,
+          default: 'デフォルト文字列',
+          required: true,
+          placeholder: 'プレースホルダー',
+        },
+        {
+          name: :str_enc,
+          label: '暗号文字列',
+          description:
+            '文字列のパラメーターです。',
+          type: :string,
+          required: false,
+          placeholder: 'テスト',
+          encrypted: true,
+        },
+        {
+          name: :txt1,
+          label: '長い文字列',
+          description:
+            '文字列のパラメーターです。',
+          type: :text,
+          required: false,
+          placeholder: '',
+        },
+        {
+          name: :int1,
+          label: '数値',
+          description:
+            '数値のパラメーターです。',
+          type: :integer,
+          required: false,
+          placeholder: '',
+        },
         {
           name: :str1,
           label: '文字列',
@@ -53,7 +88,7 @@ module Yuzakan
         true
       end
 
-      def create(username, password = nil, **userdata)
+      def create(username, _password = nil, **userdata)
         {**userdata, name: username}
       end
 
@@ -61,7 +96,7 @@ module Yuzakan
         nil
       end
 
-      def udpate(username, **userdata)
+      def udpate(_username, **_userdata)
         nil
       end
 

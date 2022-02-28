@@ -91,15 +91,7 @@ module Yuzakan
 
         def normalize_params(params)
           param_types.to_h do |param_type|
-            name = param_type.name
-            value =
-              if params[name].nil? ||
-                 (params[name].is_a?(String) && params[name].empty?)
-                param_type.default
-              else
-                params[name]
-              end
-            [name, value]
+            [param_type.name, param_type.load_value(params[param_type.name])]
           end
         end
       end
@@ -107,7 +99,7 @@ module Yuzakan
       self.abstract_adapter = true
 
       def initialize(params)
-        @params = self.class.normalize_params(params)
+        @params = params
       end
 
       def check

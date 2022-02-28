@@ -3,8 +3,7 @@ require_relative 'abstract_adapter'
 module Yuzakan
   module Adapters
     class LocalAdapter < AbstractAdapter
-      self.label = 'Local'
-
+      self.label = 'ローカル'
       self.params = []
 
       def initialize(params)

@@ -37,17 +37,11 @@ class Provider < Hanami::Entity
     @cache_store = Yuzakan::Utils::CacheStore.create_store(expires_in: expires_in, namespace: namespace,
                                                            redis_url: redis_url)
 
-    @params = attributes[:provider_params].to_h do |param|
-      name = param[:name].intern
-      param_type = @adapter_class.param_type_by_name(name)
-      [name, param_type.load_value(param[:value])]
-    rescue => e
-      Hanami.logger.error e
-      [name, nil]
+    provider_params_hash = attributes[:provider_params].to_h do |param|
+      [param[:name].intern, param[:value]]
     end
-
+    @params = @adapter_class.normalize_params(provider_params_hash)
     @adapter = @adapter_class.new(@params)
-
     super
   end
 

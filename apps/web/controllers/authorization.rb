@@ -33,10 +33,9 @@ module Web
     end
 
     private def allowed_ip?
-      return true if allowed_networks.empty?
+      return true if allowed_networks.nil? || allowed_networks.empty?
 
-      result = CheckIp.new(allowed_networks: allowed_networks).call(ip: client)
-      result.successful?
+      CheckIp.new(allowed_networks: allowed_networks).call(ip: client).successful?
     end
 
     private def allowed_user?

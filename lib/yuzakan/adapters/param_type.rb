@@ -42,7 +42,7 @@ module Yuzakan
       alias required? required
 
       def initialize(name:, label: nil, description: nil,
-                     type: :string, default: nil, fixed: true, encrypted: false,
+                     type: :string, default: nil, fixed: false, encrypted: false,
                      input: nil, list: nil, required: nil, placeholder: nil)
         @name = name.intern
         @label = label || name.to_s
@@ -78,12 +78,13 @@ module Yuzakan
 
           type: type,
           default: default,
-          list: list,
+          fixed: fixed,
           encrypted: encrypted,
 
           input: input,
-          placeholder: placeholder,
+          list: list,
           required: required,
+          placeholder: placeholder,
         }.to_json(...)
       end
 
@@ -140,6 +141,9 @@ module Yuzakan
       end
 
       def load_value(data)
+        return default if fixed
+        return default if data.nil?
+
         if encrypted?
           result = Decrypt.new.call(encrypted: data)
           raise Yuzakan::Adapters::Error, result.errors if result.failure?
@@ -147,7 +151,11 @@ module Yuzakan
           data = result.data
         end
         # データベース由来のデータしかloadしないようにすること
-        Marshal.load(data) # rubocop:disable Security/MarshalLoad
+        value = Marshal.load(data) # rubocop:disable Security/MarshalLoad
+
+        return default if default&.then { value.nil? || (value.respond_to?(:empty) && value.empty?) }
+
+        value
       end
 
       # ListItem class
