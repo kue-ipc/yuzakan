@@ -7,8 +7,8 @@ class AttrRepository < Hanami::Repository
     attrs.where(name: name)
   end
 
-  def by_display_name(display_name)
-    attrs.where(display_name: display_name)
+  def by_label(label)
+    attrs.where(label: label)
   end
 
   def all_no_hidden

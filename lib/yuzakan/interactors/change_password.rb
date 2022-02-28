@@ -16,7 +16,7 @@ class ChangePassword
       @userdatas[provider.name] = userdata if userdata
     rescue => e
       Hanami.logger.error e
-      error("パスワード変更時にエラーが発生しました。(#{provider.display_name})")
+      error("パスワード変更時にエラーが発生しました。(#{provider.label})")
       unless @userdatas.empty?
         error <<~'ERROR_MESSAGE'
           一部のシステムのパスワードは変更されましたが、

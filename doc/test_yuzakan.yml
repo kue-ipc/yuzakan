@@ -15,7 +15,7 @@ config:
   contact_phone: ''
 providers:
 - name: ldap
-  display_name: ldap
+  label: ldap
   adapter_name: posix_ldap
   order: 1
   immutable: false

@@ -37,8 +37,8 @@ class ProviderRepository < Hanami::Repository
     providers.where(name: name)
   end
 
-  def find_by_display_name(display_name)
-    providers.where(display_name: display_name).one
+  def find_by_label(label)
+    providers.where(label: label).one
   end
 
   def individual_password

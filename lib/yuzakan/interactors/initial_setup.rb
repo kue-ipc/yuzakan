@@ -53,7 +53,7 @@ class InitialSetup
   private def setup_local_provider(username, password)
     ProviderRepository.new.create({
       name: 'local',
-      display_name: 'ローカル',
+      label: 'ローカル',
       immutable: true,
       order: '0',
       adapter_name: 'local',

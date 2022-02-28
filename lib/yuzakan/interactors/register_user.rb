@@ -40,13 +40,9 @@ class RegisterUser
     user = @user_repository.by_name(name).one
     @user_id =
       if user.nil?
-        @user_repository.create(name: name,
-                                display_name: display_name,
-                                email: email)
+        @user_repository.create(name: name, display_name: display_name, email: email)
       elsif user.display_name != display_name || user.email != email
-        @user_repository.update(user.id,
-                                display_name: display_name,
-                                email: email)
+        @user_repository.update(user.id, display_name: display_name, email: email)
       else
         user
       end.id

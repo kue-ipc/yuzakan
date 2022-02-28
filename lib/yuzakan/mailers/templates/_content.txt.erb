@@ -6,7 +6,7 @@
 <%- end -%>
 実施日時: <%= Time.now %>
 <%- if defined?(providers) -%>
-システム: <%= providers.map(&:display_name).join('、') %>
+システム: <%= providers.map(&:label).join('、') %>
 <%- else -%>
 システム: <%= config.title %>
 <%- end -%>

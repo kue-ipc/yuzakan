@@ -6,7 +6,7 @@ table.table
       th 型/隠し
       th 操作
       - providers.each do |provider|
-        th = provider.display_name
+        th = provider.label
   tbody
     = form_attr(nil, providers)
     - attrs.each do |attr|

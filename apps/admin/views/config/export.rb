@@ -36,7 +36,7 @@ module Admin
             provider_data = {}
             %w[
               name
-              display_name
+              label
               adapter_name
               order
               immutable
@@ -65,7 +65,7 @@ module Admin
             attr_data = {}
             %w[
               name
-              display_name
+              label
               type
               order
               hidden

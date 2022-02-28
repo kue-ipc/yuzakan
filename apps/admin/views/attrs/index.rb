@@ -17,7 +17,7 @@ module Admin
               routes.path(:attr, id: attr.id),
               {attr: Attr.new(
                 name: attr.name,
-                display_name: attr.display_name,
+                label: attr.label,
                 type: attr.type,
                 hidden: attr.hidden,
                 attr_mappings: mappings)},
@@ -40,7 +40,7 @@ module Admin
 
                 td class: 'table-primary' do
                   text_field :name, class: 'form-control mb-1', required: true
-                  text_field :display_name, class: 'form-control',
+                  text_field :label, class: 'form-control',
                                             required: true
                 end
 

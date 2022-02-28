@@ -10,7 +10,7 @@ class UpdateAttr
 
     validations do
       required(:name) { filled? & str? }
-      required(:display_name) { str? }
+      required(:label) { str? }
       required(:type) { str? }
 
       optional(:order) { gt? 0 }
@@ -83,24 +83,24 @@ class UpdateAttr
       # update
       if params[:name] != @attr.name &&
          @attr_repository.by_name(params[:name]).exist?
-        error({name: ['その名前は既に存在します。']})
+        error({name: ['その識別名は既に存在します。']})
         result = false
       end
 
-      if params[:display_name] != @attr.display_name &&
-         @attr_repository.by_display_name(params[:display_name]).exist?
-        error({display_name: ['その表示名は既に存在します。']})
+      if params[:label] != @attr.label &&
+         @attr_repository.by_label(params[:label]).exist?
+        error({label: ['その属性名は既に存在します。']})
         result = false
       end
     else
       # create
       if @attr_repository.by_name(params[:name]).exist?
-        error({name: ['その名前は既に存在します。']})
+        error({name: ['その識別名は既に存在します。']})
         result = false
       end
 
-      if @attr_repository.by_display_name(params[:display_name]).exist?
-        error({display_name: ['その表示名は既に存在します。']})
+      if @attr_repository.by_label(params[:label]).exist?
+        error({label: ['その属性名は既に存在します。']})
         result = false
       end
     end

@@ -10,7 +10,7 @@ class UpdateProvider
 
     validations do
       required(:name) { str? }
-      required(:display_name) { str? }
+      required(:label) { str? }
       required(:adapter_name) { str? }
 
       optional(:readable) { bool? }
@@ -81,9 +81,9 @@ class UpdateProvider
         result = false
       end
 
-      if params[:display_name] != @provider.display_name &&
-         @provider_repository.find_by_display_name(params[:display_name])
-        error({display_name: ['そのプロバイダー名は既に存在します。']})
+      if params[:label] != @provider.label &&
+         @provider_repository.find_by_label(params[:label])
+        error({label: ['そのプロバイダー名は既に存在します。']})
         result = false
       end
     else
@@ -98,8 +98,8 @@ class UpdateProvider
         result = false
       end
 
-      if @provider_repository.find_by_display_name(params[:display_name])
-        error({display_name: ['そのプロバイダー名は既に存在します。']})
+      if @provider_repository.find_by_label(params[:label])
+        error({label: ['そのプロバイダー名は既に存在します。']})
         result = false
       end
     end

@@ -14,7 +14,7 @@ p
   | 適用されます。
   - unless excluded_providers.empty?
     | ただし、
-    = excluded_providers.map(&:display_name).join('、')
+    = excluded_providers.map(&:label).join('、')
     | 、Microsoft 365等の外部サービスについては、パスワードが別管理になっているため変更されません。
 
 hr

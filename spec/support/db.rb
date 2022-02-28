@@ -27,7 +27,7 @@ def db_initialize
 
   # ダミープロバイダー
   UpdateProvider.new(provider_repository: provider_repository).call(
-    name: 'dummy', display_name: 'ダミー', adapter_name: 'dummy')
+    name: 'dummy', label: 'ダミー', adapter_name: 'dummy')
 end
 
 def db_reset

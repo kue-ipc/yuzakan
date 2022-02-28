@@ -41,7 +41,7 @@ table.table
       th 名前
       th 値
       - providers.each do |provider|
-        th = provider.display_name
+        th = provider.label
   tbody
     - info_labels.each do |key, label|
       tr
@@ -63,11 +63,11 @@ table.table
       th 属性名
       th 値
       - providers.each do |provider|
-        th = provider.display_name
+        th = provider.label
   tbody
     - attrs.each do |attr|
       tr
-        td = attr.display_name
+        td = attr.label
         td = userdata.dig(:attrs, attr.name)
         - providers.each do |provider|
           - value = provider_userdatas.dig(provider.name, :attrs, attr.name)

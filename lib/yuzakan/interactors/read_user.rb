@@ -14,7 +14,7 @@ class ReadUser
       @userdatas[provider.name] = userdata if userdata
     rescue => e
       Hanami.logger.error e
-      error("ユーザー情報の読み込み時にエラーが発生しました。(#{provider.display_name}")
+      error("ユーザー情報の読み込み時にエラーが発生しました。(#{provider.label}")
     end
   end
 end
