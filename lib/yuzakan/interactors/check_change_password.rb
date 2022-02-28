@@ -20,9 +20,9 @@ class CheckChangePassword
     end
   end
 
-  def initialize(connection_info:, provider_repository: ProviderRepository.new)
+  def initialize(connection_info:, authenticate: nil, providers: nil, provider_repository: nil)
     @connection_info = connection_info
-    @provider_repository = provider_repository
+    @authenticate = authenticate || Authenticate.new(providers: providers, provider_repository: provider_repository)
   end
 
   expose :username
@@ -30,8 +30,7 @@ class CheckChangePassword
 
   def call(params)
     # 現在のパスワード確認
-    authenticate = Authenticate.new(provider_repository: @provider_repository)
-    result = authenticate.call(username: @connection_info[:user].name, password: params[:current_password])
+    result = @authenticate.call(username: @connection_info[:user].name, password: params[:current_password])
     error!(current_password: ['パスワードが違います。']) if result.failure?
 
     @username = @connection_info[:user].name

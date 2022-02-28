@@ -9,10 +9,12 @@ module Api
                          user_notify: Mailers::UserNotify,
                          **opts)
             super(**opts)
+            @provider_repository = provider_repository
+            @user_notify = user_notify
           end
 
           def call(params)
-            check_change_password = CheckChangePassword.new(conn)
+            check_change_password = CheckChangePassword.new(connection_info, provider_repository: @provider_repository)
 
             check_result = check_change_password.call(params)
 
