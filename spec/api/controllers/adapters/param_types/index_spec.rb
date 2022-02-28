@@ -43,19 +43,42 @@ describe Api::Controllers::Adapters::ParamTypes::Index do
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal [
-        {name: 'str', label: '文字列', description: '文字列の詳細です。', type: 'string', default: nil,
-         list: nil, encrypted: false, input: 'text', placeholder: '', required: false,},
-        {name: 'str_enc', label: '暗号文字列', description: '文字列のパラメーターです。', type: 'string', default: nil,
-         list: nil, encrypted: true, input: 'text', placeholder: 'テスト', required: false,},
-        {name: 'txt', label: '長い文字列', description: '文字列のパラメーターです。', type: 'text', default: nil,
-         list: nil, encrypted: false, input: 'textarea', placeholder: '', required: false,},
-        {name: 'int', label: '数値', description: '数値のパラメーターです。', type: 'integer', default: nil,
-         list: nil, encrypted: false, input: 'number', placeholder: '', required: false,},
+        {name: 'default', label: 'default', description: nil,
+         type: 'string', default: nil, fixed: false, encrypted: false,
+         input: 'text', list: nil, required: true, placeholder: nil,},
+        {name: 'str', label: '文字列', description: '詳細',
+         type: 'string', default: nil, fixed: false, encrypted: false,
+         input: 'text', list: nil, required: true, placeholder: 'プレースホルダー',},
+        {name: 'str', label: 'デフォルト値', description: nil,
+         type: 'string', default: 'デフォルト', fixed: false, encrypted: false,
+         input: 'text', list: nil, required: false, placeholder: 'デフォルト',},
+        {name: 'fixed', label: '固定値', description: nil,
+         type: 'string', default: '固定', fixed: true, encrypted: false,
+         input: 'text', list: nil, required: false, placeholder: '固定',},
+        {name: 'required', label: '必須文字列', description: nil,
+         type: 'string', default: nil, fixed: false, encrypted: false,
+         input: 'text', list: nil, required: true, placeholder: nil,},
+        {name: 'str_enc', label: '暗号文字列', description: nil,
+         type: 'string', default: nil, fixed: false, encrypted: true,
+         input: 'text', list: nil, required: true, placeholder: nil,},
+        {name: 'txt', label: 'テキスト', description: nil,
+         type: 'text', default: nil, fixed: false, encrypted: false,
+         input: 'textarea', list: nil, required: true, placeholder: nil,},
+        {name: 'int', label: '整数', description: nil,
+         type: 'integer', default: nil, fixed: false, encrypted: false,
+         input: 'number', list: nil, required: true, placeholder: nil,},
+        {name: 'list', label: 'リスト', description: nil,
+         type: 'string', default: 'default', fixed: false, encrypted: false,
+         input: 'text', list: [
+           {name: 'cleartext', label: 'デフォルト', value: 'default', deprecated: false},
+           {name: 'cleartext', label: 'その他', value: 'other', deprecated: false},
+           {name: 'cleartext', label: '非推奨', value: 'deprecated', deprecated: true},
+         ], required: false, placeholder: 'default',},
       ]
     end
 
     it 'is failure with unknown id' do
-      response = action.call({**params, id: 'hoge'})
+      response = action.call({**params, adapter_id: 'hoge'})
       _(response[0]).must_equal 404
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)

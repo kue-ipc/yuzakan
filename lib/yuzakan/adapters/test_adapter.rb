@@ -9,78 +9,54 @@ module Yuzakan
       self.label = 'テスト'
       self.params = [
         {
+          name: :default,
+        },
+        {
           name: :str,
           label: '文字列',
-          description: '文字列の詳細',
-          type: :string,
-          default: 'デフォルト文字列',
-          required: true,
+          description: '詳細',
           placeholder: 'プレースホルダー',
         },
         {
-          name: :str_enc,
-          label: '暗号文字列',
-          description:
-            '文字列のパラメーターです。',
-          type: :string,
-          required: false,
-          placeholder: 'テスト',
-          encrypted: true,
+          name: :str,
+          label: 'デフォルト値',
+          default: 'デフォルト',
         },
         {
-          name: :txt1,
-          label: '長い文字列',
-          description:
-            '文字列のパラメーターです。',
-          type: :text,
-          required: false,
-          placeholder: '',
+          name: :fixed,
+          label: '固定値',
+          default: '固定',
+          fixed: true,
         },
         {
-          name: :int1,
-          label: '数値',
-          description:
-            '数値のパラメーターです。',
-          type: :integer,
-          required: false,
-          placeholder: '',
-        },
-        {
-          name: :str1,
-          label: '文字列',
-          description:
-            '文字列のパラメーターです。',
-          type: :string,
-          required: false,
-          placeholder: '',
+          name: :required,
+          label: '必須文字列',
+          required: true,
         },
         {
           name: :str_enc,
           label: '暗号文字列',
-          description:
-            '文字列のパラメーターです。',
-          type: :string,
-          required: false,
-          placeholder: 'テスト',
           encrypted: true,
         },
         {
-          name: :txt1,
-          label: '長い文字列',
-          description:
-            '文字列のパラメーターです。',
+          name: :txt,
+          label: 'テキスト',
           type: :text,
-          required: false,
-          placeholder: '',
         },
         {
-          name: :int1,
-          label: '数値',
-          description:
-            '数値のパラメーターです。',
+          name: :int,
+          label: '整数',
           type: :integer,
-          required: false,
-          placeholder: '',
+        },
+        {
+          name: :list,
+          label: 'リスト',
+          default: 'default',
+          list: [
+            {name: :cleartext, label: 'デフォルト', value: 'default'},
+            {name: :cleartext, label: 'その他', value: 'other'},
+            {name: :cleartext, label: '非推奨', value: 'deprecated', deprecated: true},
+          ],
         },
       ]
 
