@@ -44,4 +44,58 @@ providers:
     user_search_filter: ''
     password_scheme: "{CRYPT}"
     crypt_salt_format: "$6$%.16s"
-attrs: []
+attrs:
+- name: ja_display_name
+  label: 表示名(日本語)
+  type: string
+  order: 1
+  hidden: false
+  attr_mappings:
+  - provider_name: ldap
+    name: displayName;lang-ja
+    conversion: 
+- name: ja_family_name
+  label: 姓(日本語)
+  type: string
+  order: 2
+  hidden: false
+  attr_mappings:
+  - provider_name: ldap
+    name: sn;lang-ja
+    conversion: 
+- name: ja_given_name
+  label: 名(日本語)
+  type: string
+  order: 3
+  hidden: false
+  attr_mappings:
+  - provider_name: ldap
+    name: givenName;lange-ja
+    conversion: 
+- name: display_name
+  label: 表示名(ローマ字)
+  type: string
+  order: 4
+  hidden: false
+  attr_mappings:
+  - provider_name: ldap
+    name: displayName
+    conversion: 
+- name: family_name
+  label: 姓(ローマ字)
+  type: string
+  order: 5
+  hidden: false
+  attr_mappings:
+  - provider_name: ldap
+    name: sn
+    conversion: 
+- name: given_name
+  label: 名(ローマ字)
+  type: string
+  order: 6
+  hidden: false
+  attr_mappings:
+  - provider_name: ldap
+    name: givenName
+    conversion: 
