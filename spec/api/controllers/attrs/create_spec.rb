@@ -17,7 +17,7 @@ describe Api::Controllers::Attrs::Create do
   let(:format) { 'application/json' }
   let(:config) { Config.new(title: 'title', session_timeout: 3600, user_networks: '') }
   let(:activity_log_repository) { create_mock(create: [nil, [Hash]]) }
-  let(:config_repository) { create_mock(current: [config]) }
+  let(:config_repository) { create_mock(current: config) }
   let(:user_repository) { create_mock(find: [user, [Integer]]) }
 
   let(:attr_params) { {name: 'name', display_name: '表示名', type: 'string'} }
@@ -27,7 +27,10 @@ describe Api::Controllers::Attrs::Create do
   let(:created_attr) {
     Attr.new(id: 42, **attr_params, order: 7, hidden: false, created_at: created_time, updated_at: created_time)
   }
-  let(:attr_repository) { create_mock(last_order: [last_attr], create: [created_attr, [Hash]]) }
+  let(:attr_repository) {
+    create_mock(last_order: last_attr, create: [created_attr, [Hash]],
+                by_name: create_mock(exist: false), by_label: create_mock(exist: false))
+  }
   let(:attr_mapping_repository) { create_mock(create: [AttrMapping.new, [Hash]]) }
 
   it 'is failure' do

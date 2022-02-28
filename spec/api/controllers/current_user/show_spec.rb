@@ -20,7 +20,7 @@ describe Api::Controllers::CurrentUser::Show do
   let(:format) { 'application/json' }
   let(:config) { Config.new(title: 'title', session_timeout: 3600, user_networks: '') }
   let(:activity_log_repository) { create_mock(create: [nil, [Hash]]) }
-  let(:config_repository) { create_mock(current: [config]) }
+  let(:config_repository) { create_mock(current: config) }
   let(:user_repository) { create_mock(find: [user, [Integer]]) }
 
   let(:providers) {

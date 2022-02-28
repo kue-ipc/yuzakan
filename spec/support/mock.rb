@@ -5,6 +5,14 @@ end
 
 def create_mock(**expects)
   mock = Minitest::Mock.new
-  expects.each { |key, value| mock.expect(key, value[0], value[1] || []) }
+  expects.each do |key, value|
+    if value.is_a?(Array)
+      mock.expect(key, value[0], value[1] || [])
+    else
+      mock.expect(key, value, [])
+    end
+  rescue NoMethodError
+    mock.expect(key, value, [])
+  end
   mock
 end
