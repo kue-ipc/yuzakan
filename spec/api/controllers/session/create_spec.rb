@@ -8,7 +8,7 @@ describe Api::Controllers::Session::Create do
                                           provider_repository: provider_repository,
                                           auth_log_repository: auth_log_repository)
   }
-  let(:params) { {username: 'user', password: 'pass', **env} }
+  let(:params) { {**env, username: 'user', password: 'pass'} }
   let(:env) { {'REMOTE_ADDR' => client, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
   let(:client) { '192.0.2.1' }
   let(:uuid) { 'ffffffff-ffff-4fff-bfff-ffffffffffff' }
