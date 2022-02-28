@@ -29,7 +29,7 @@ describe Api::Controllers::Attrs::Create do
   }
   let(:attr_repository) {
     create_mock(last_order: last_attr, create: [created_attr, [Hash]],
-                by_name: create_mock(exist: false), by_label: create_mock(exist: false))
+                by_name: create_mock(exist?: false), by_label: create_mock(exist?: false))
   }
   let(:attr_mapping_repository) { create_mock(create: [AttrMapping.new, [Hash]]) }
 
@@ -59,6 +59,67 @@ describe Api::Controllers::Attrs::Create do
         created_at: created_time.iso8601,
         updated_at: created_time.iso8601,
       })
+    end
+
+    describe 'existed name' do
+      let(:attr_repository) {
+        create_mock(last_order: last_attr, create: [created_attr, [Hash]],
+                    by_name: create_mock(exist?: true), by_label: create_mock(exist?: false))
+      }
+
+      it 'is failure' do
+        response = action.call(params)
+        _(response[0]).must_equal 422
+        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        json = JSON.parse(response[2].first, symbolize_names: true)
+        _(json).must_equal({
+          code: 422,
+          message: '属性を作成できませんでした。',
+          errors: [
+            {name: ['既に存在します。']},
+          ],
+        })
+      end
+    end
+
+    describe 'existed label' do
+      let(:attr_repository) {
+        create_mock(last_order: last_attr, create: [created_attr, [Hash]],
+                    by_name: create_mock(exist?: false), by_label: create_mock(exist?: true))
+      }
+
+      it 'is failure' do
+        response = action.call(params)
+        _(response[0]).must_equal 422
+        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        json = JSON.parse(response[2].first, symbolize_names: true)
+        _(json).must_equal({
+          code: 422,
+          message: '属性を作成できませんでした。',
+          errors: [
+            {label: ['既に存在します。']},
+          ],
+        })
+      end
+    end
+
+    describe 'existed name nad label' do
+      let(:attr_repository) {
+        create_mock(last_order: last_attr, create: [created_attr, [Hash]],
+                    by_name: create_mock(exist?: true), by_label: create_mock(exist?: true))
+      }
+
+      it 'is failure' do
+        response = action.call(params)
+        _(response[0]).must_equal 422
+        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        json = JSON.parse(response[2].first, symbolize_names: true)
+        _(json).must_equal({
+          code: 422,
+          message: '属性を作成できませんでした。',
+          errors: [{name: ['既に存在します。'], label: ['既に存在します。']}],
+        })
+      end
     end
   end
 
