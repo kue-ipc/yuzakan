@@ -11,7 +11,7 @@ module Admin
 
         def call(params)
           attr_repo = AttrRepository.new
-          order = attr_repo.last_order&.order.to_i + 1
+          order = attr_repo.last_order + 1
           attr = attr_repo.create(params[:attr].merge(order: order))
           attr_mapping_repo = AttrMappingRepository.new
           params[:attr][:attr_mappings].each do |mapping_params|
