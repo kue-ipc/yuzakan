@@ -19,15 +19,15 @@ describe Api::Controllers::Attrs::Index do
   let(:config_repository) { create_mock(current: config) }
   let(:user_repository) { create_mock(find: [user, [Integer]]) }
 
-  let(:attr_params) { {name: 'name', display_name: '表示名', type: 'string'} }
+  let(:attr_params) { {name: 'name', label: '表示名', type: 'string'} }
 
   let(:time) { Time.now - 3600 }
   let(:all_attr) {
     [
-      Attr.new(id: 42, name: 'name', display_name: '表示名', type: 'string', order: 1, hidden: false),
-      Attr.new(id: 24, name: 'name', display_name: '表示名', type: 'string', order: 2, hidden: false),
-      Attr.new(id: 19, name: 'name', display_name: '表示名', type: 'string', order: 3, hidden: false),
-      Attr.new(id: 27, name: 'name', display_name: '表示名', type: 'string', order: 4, hidden: false),
+      Attr.new(id: 42, name: 'name42', label: 'ラベル42', type: 'string', order: 1, hidden: false),
+      Attr.new(id: 24, name: 'name24', label: 'ラベル24', type: 'string', order: 2, hidden: false),
+      Attr.new(id: 19, name: 'name19', label: 'ラベル19', type: 'string', order: 3, hidden: false),
+      Attr.new(id: 27, name: 'name27', label: 'ラベル27', type: 'string', order: 4, hidden: false),
     ]
   }
   let(:attr_repository) { create_mock(ordered_all: all_attr) }
@@ -38,10 +38,10 @@ describe Api::Controllers::Attrs::Index do
     _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
     _(json).must_equal [
-      {id: 42, name: 'name', display_name: '表示名', type: 'string', order: 1, hidden: false},
-      {id: 24, name: 'name', display_name: '表示名', type: 'string', order: 2, hidden: false},
-      {id: 19, name: 'name', display_name: '表示名', type: 'string', order: 3, hidden: false},
-      {id: 27, name: 'name', display_name: '表示名', type: 'string', order: 4, hidden: false},
+      {id: 42, name: 'name42', label: '表示名42', type: 'string', order: 1, hidden: false},
+      {id: 24, name: 'name24', label: '表示名24', type: 'string', order: 2, hidden: false},
+      {id: 19, name: 'name19', label: '表示名19', type: 'string', order: 3, hidden: false},
+      {id: 27, name: 'name27', label: '表示名27', type: 'string', order: 4, hidden: false},
     ]
   end
 

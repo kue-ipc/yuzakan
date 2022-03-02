@@ -25,6 +25,7 @@ module Web
       end
     end
 
+    # その他のオプションはここで捨てる。
     def initialize(activity_log_repository: ActivityLogRepository.new,
                    config_repository: ConfigRepository.new,
                    user_repository: UserRepository.new)

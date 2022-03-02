@@ -30,6 +30,8 @@ module Api
         obj.transform_values { |v| convert_for_json(v) }
       when Time
         obj.iso8601
+      when Hanami::Entity
+        convert_for_json(obj.to_h)
       else
         obj
       end
