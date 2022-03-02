@@ -75,14 +75,46 @@ describe Api::Controllers::Attrs::Create do
         _(json).must_equal({
           code: 422,
           message: 'Unprocessable Entity',
-          errors: [{
-            name: ['必須項目です。']}],
+          errors: [{name: ['入力が必須です。']}],
         })
+      end
+
+      describe 'existed name' do
+        let(:attr_repository) {
+          create_mock(create_with_mappings: [created_attr, [Hash]], last_order: 6,
+                      by_name: [create_mock(exist?: true), [String]],
+                      by_label: [create_mock(exist?: false), [String]])
+        }
+
+        it 'is failure' do
+          response = action.call(params)
+          _(response[0]).must_equal 422
+          _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+          json = JSON.parse(response[2].first, symbolize_names: true)
+          _(json).must_equal({
+            code: 422,
+            message: 'Unprocessable Entity',
+            errors: [{name: ['入力が必須です。', '重複しています。']}],
+          })
+        end
       end
     end
 
+    describe 'no params' do
+      let(:attr_params) { {} }
 
-
+      it 'is failure' do
+        response = action.call(params)
+        _(response[0]).must_equal 422
+        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        json = JSON.parse(response[2].first, symbolize_names: true)
+        _(json).must_equal({
+          code: 422,
+          message: 'Unprocessable Entity',
+          errors: [{name: ['存在しません。'], label: ['存在しません。'], type: ['存在しません。']}],
+        })
+      end
+    end
 
     describe 'existed name' do
       let(:attr_repository) {
@@ -99,7 +131,7 @@ describe Api::Controllers::Attrs::Create do
         _(json).must_equal({
           code: 422,
           message: 'Unprocessable Entity',
-          errors: [{name: ['既に存在します。']}],
+          errors: [{name: ['重複しています。']}],
         })
       end
     end
@@ -119,7 +151,7 @@ describe Api::Controllers::Attrs::Create do
         _(json).must_equal({
           code: 422,
           message: 'Unprocessable Entity',
-          errors: [{label: ['既に存在します。']}],
+          errors: [{label: ['重複しています。']}],
         })
       end
     end
@@ -139,7 +171,7 @@ describe Api::Controllers::Attrs::Create do
         _(json).must_equal({
           code: 422,
           message: 'Unprocessable Entity',
-          errors: [{name: ['既に存在します。'], label: ['既に存在します。']}],
+          errors: [{name: ['重複しています。'], label: ['重複しています。']}],
         })
       end
     end

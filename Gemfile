@@ -21,6 +21,8 @@ gem 'uglifier'
 gem 'bcrypt'
 gem 'zxcvbn-js', require: 'zxcvbn'
 
+gem 'i18n'
+
 # key-value storage
 gem 'redis-rack'
 gem 'readthis'

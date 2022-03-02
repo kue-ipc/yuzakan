@@ -9,24 +9,20 @@ module Api
         security_level 5
 
         class Params < Hanami::Action::Params
-          class AttrMappingValidator
-            include Hanami::Validations
-
-            validations do
-              required(:provider_id).filled(:int?)
-              required(:name).filled(:str?)
-              optional(:conversion).maybe(:str?)
-            end
-          end
-
-          messages_path 'config/messages.yml'
+          messages :i18n
 
           params do
             required(:name).filled(:str?)
             required(:label).filled(:str?)
             required(:type).filled(:str?)
             optional(:hidden).maybe(:bool?)
-            optional(:attr_mappings) { array? { each { schema(AttrMappingValidator) } } }
+            # rubocop:disable all
+            optional(:attr_mappings) { array? { each { schema {
+              required(:provider_id).filled(:int?)
+              required(:name).filled(:str?)
+              optional(:conversion).maybe(:str?)
+             } } } }
+            # rubocop:enable all
           end
         end
 
@@ -38,21 +34,18 @@ module Api
         end
 
         def call(params)
-          param_errors = params.errors
-          (param_errors[:name] ||= []) << '既に存在します。' if @attr_repository.by_name(params[:name]).exist?
-          (param_errors[:label] ||= []) << '既に存在します。' if @attr_repository.by_label(params[:label]).exist?
+          param_errors = Hash.new { |hash, key| hash[key] = [] }
+          param_errors.merge!(params.errors)
+
+          if params[:name] && @attr_repository.by_name(params[:name]).exist?
+            param_errors[:name] << I18n.t('errors.uniq?')
+          end
+          if params[:label] && @attr_repository.by_label(params[:label]).exist?
+            param_errors[:label] << I18n.t('errors.uniq?')
+          end
           halt_json(422, errors: [param_errors]) unless param_errors.empty?
 
-          data = {
-            name: params[:name],
-            label: params[:label],
-            type: params[:string],
-            hidden: nil | params[:hidden],
-            order: @attr_repository.last_order + 1,
-            attr_mappings: params[:attr_mappings],
-          }
-
-          attr = @attr_repository.create_with_mappings(data)
+          attr = @attr_repository.create_with_mappings(params.to_h)
 
           halt_json 500, '作成時にエラーが発生しました。' unless attr
 

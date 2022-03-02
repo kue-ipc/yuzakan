@@ -6,7 +6,7 @@ en:
 ja:
   errors:
     eql?: 値が一致しません。
-    filled?: 必須項目です。
+    filled?: aaa必須項目です。
     required: ありません。
 # en:
 #   errors:

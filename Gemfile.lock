@@ -270,6 +270,7 @@ DEPENDENCIES
   hanami (~> 1.3)
   hanami-model (~> 1.3)
   hanami-webconsole
+  i18n
   ipaddr
   minitest
   mysql2
