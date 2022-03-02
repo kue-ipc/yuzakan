@@ -24,15 +24,16 @@ describe Api::Controllers::Attrs::Create do
       name: 'name', label: '表示名', type: 'string', hidden: false,
       attr_mappings: [
         {name: 'name', conversion: nil, provider_id: 3},
-        {name: '', conversion: 'e2j', provider_id: 8},
+        {name: 'name_en', conversion: 'e2j', provider_id: 8},
       ],
     }
   }
 
-  let(:created_attr) { Attr.new(id: 42, order: 7, **attr_params,) }
+  let(:created_attr) { Attr.new(id: 42, order: 7, **attr_params) }
   let(:attr_repository) {
     create_mock(create_with_mappings: [created_attr, [Hash]], last_order: 6,
-                by_name: create_mock(exist?: false), by_label: create_mock(exist?: false))
+                by_name: [create_mock(exist?: false), [String]],
+                by_label: [create_mock(exist?: false), [String]])
   }
 
   it 'is failure' do
@@ -55,10 +56,15 @@ describe Api::Controllers::Attrs::Create do
       _(json).must_equal({id: 42, order: 7, **attr_params})
     end
 
-    describe 'existed name' do
-      let(:attr_repository) {
-        create_mock(last_order: last_attr, create: [created_attr, [Hash]],
-                    by_name: create_mock(exist?: true), by_label: create_mock(exist?: false))
+    describe 'bad params' do
+      let(:attr_params) {
+        {
+          name: '', label: '表示名', type: 'string', hidden: false,
+          attr_mappings: [
+            {name: 'name', conversion: nil, provider_id: 3},
+            {name: 'name_en', conversion: 'e2j', provider_id: 8},
+          ],
+        }
       }
 
       it 'is failure' do
@@ -68,7 +74,31 @@ describe Api::Controllers::Attrs::Create do
         json = JSON.parse(response[2].first, symbolize_names: true)
         _(json).must_equal({
           code: 422,
-          message: '属性を作成できませんでした。',
+          message: 'Unprocessable Entity',
+          errors: [{
+            name: ['必須項目です。']}],
+        })
+      end
+    end
+
+
+
+
+    describe 'existed name' do
+      let(:attr_repository) {
+        create_mock(create_with_mappings: [created_attr, [Hash]], last_order: 6,
+                    by_name: [create_mock(exist?: true), [String]],
+                    by_label: [create_mock(exist?: false), [String]])
+      }
+
+      it 'is failure' do
+        response = action.call(params)
+        _(response[0]).must_equal 422
+        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        json = JSON.parse(response[2].first, symbolize_names: true)
+        _(json).must_equal({
+          code: 422,
+          message: 'Unprocessable Entity',
           errors: [{name: ['既に存在します。']}],
         })
       end
@@ -76,8 +106,9 @@ describe Api::Controllers::Attrs::Create do
 
     describe 'existed label' do
       let(:attr_repository) {
-        create_mock(last_order: 6, create: [created_attr, [Hash]],
-                    by_name: create_mock(exist?: false), by_label: create_mock(exist?: true))
+        create_mock(create_with_mappings: [created_attr, [Hash]], last_order: 6,
+                    by_name: [create_mock(exist?: false), [String]],
+                    by_label: [create_mock(exist?: true), [String]])
       }
 
       it 'is failure' do
@@ -87,7 +118,7 @@ describe Api::Controllers::Attrs::Create do
         json = JSON.parse(response[2].first, symbolize_names: true)
         _(json).must_equal({
           code: 422,
-          message: '属性を作成できませんでした。',
+          message: 'Unprocessable Entity',
           errors: [{label: ['既に存在します。']}],
         })
       end
@@ -95,8 +126,9 @@ describe Api::Controllers::Attrs::Create do
 
     describe 'existed name nad label' do
       let(:attr_repository) {
-        create_mock(last_order: last_attr, create: [created_attr, [Hash]],
-                    by_name: create_mock(exist?: true), by_label: create_mock(exist?: true))
+        create_mock(create_with_mappings: [created_attr, [Hash]], last_order: 6,
+                    by_name: [create_mock(exist?: true), [String]],
+                    by_label: [create_mock(exist?: true), [String]])
       }
 
       it 'is failure' do
@@ -106,7 +138,7 @@ describe Api::Controllers::Attrs::Create do
         json = JSON.parse(response[2].first, symbolize_names: true)
         _(json).must_equal({
           code: 422,
-          message: '属性を作成できませんでした。',
+          message: 'Unprocessable Entity',
           errors: [{name: ['既に存在します。'], label: ['既に存在します。']}],
         })
       end

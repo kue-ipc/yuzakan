@@ -6,18 +6,19 @@ module Api
       class Create
         include Api::Action
 
-        class AttrMappingValidator
-          include Hanami::Validations
-          messages_path 'config/messages.yml'
-
-          validations do
-            required(:provider_id).filled(:int?)
-            required(:name).filled(:str?)
-            optional(:conversion).maybe(:str?)
-          end
-        end
+        security_level 5
 
         class Params < Hanami::Action::Params
+          class AttrMappingValidator
+            include Hanami::Validations
+
+            validations do
+              required(:provider_id).filled(:int?)
+              required(:name).filled(:str?)
+              optional(:conversion).maybe(:str?)
+            end
+          end
+
           messages_path 'config/messages.yml'
 
           params do
@@ -31,19 +32,16 @@ module Api
 
         params Params
 
-        # params_class.class_eval do
-        #   # messages :i18n
-        # end
-        # pp params_class
-
         def initialize(attr_repository: AttrRepository.new, **opts)
           super(**opts)
           @attr_repository = attr_repository
         end
 
         def call(params)
-          pp params.errors
-          halt_json(400, errors: params.errors) unless params.valid?
+          param_errors = params.errors
+          (param_errors[:name] ||= []) << '既に存在します。' if @attr_repository.by_name(params[:name]).exist?
+          (param_errors[:label] ||= []) << '既に存在します。' if @attr_repository.by_label(params[:label]).exist?
+          halt_json(422, errors: [param_errors]) unless param_errors.empty?
 
           data = {
             name: params[:name],
