@@ -24,14 +24,14 @@ describe Api::Controllers::Attrs::Create do
       name: 'name', label: '表示名', type: 'string', hidden: false,
       attr_mappings: [
         {name: 'name', conversion: nil, provider_id: 3},
-        {name: 'name_en', conversion: 'e2j', provider_id: 8},
+        {name: 'name_name', conversion: 'e2j', provider_id: 8},
       ],
     }
   }
 
-  let(:created_attr) { Attr.new(id: 42, order: 7, **attr_params) }
+  let(:attr_with_mappings) { Attr.new(id: 42, order: 7, **attr_params) }
   let(:attr_repository) {
-    create_mock(create_with_mappings: [created_attr, [Hash]], last_order: 6,
+    create_mock(create_with_mappings: [attr_with_mappings, [Hash]], last_order: 6,
                 by_name: [create_mock(exist?: false), [String]],
                 by_label: [create_mock(exist?: false), [String]])
   }

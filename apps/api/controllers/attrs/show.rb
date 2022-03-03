@@ -4,8 +4,25 @@ module Api
       class Show
         include Api::Action
 
+        security_level 5
+
+        params do
+          required(:id).filled(:int?)
+        end
+
+        def initialize(attr_repository: AttrRepository.new, **opts)
+          super(**opts)
+          @attr_repository = attr_repository
+        end
+
         def call(params)
-          self.body = 'OK'
+          halt_json 400, errors: params.errors unless params.valid?
+
+          @attr = @attr_repository.find_with_mappings(params[:id])
+          halt_json 404 if @attr.nil?
+
+          self.status = 200
+          self.body = generate_json(@attr)
         end
       end
     end

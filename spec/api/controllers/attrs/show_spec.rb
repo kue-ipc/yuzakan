@@ -19,17 +19,18 @@ describe Api::Controllers::Attrs::Show do
   let(:config_repository) { create_mock(current: config) }
   let(:user_repository) { create_mock(find: [user, [Integer]]) }
 
-  let(:attr_params) { {name: 'name', display_name: '表示名', type: 'string'} }
-
-  let(:time) { Time.now - 3600 }
-  let(:found_attr) {
-    Attr.new(id: 42, name: 'name', display_name: '表示名', type: 'string', order: 1, hidden: false,
-             attr_mappings: [
-               {name: 'name', conversion: nil, provider_id: 9},
-               {name: 'name_name', conversion: 'e2j', provider_id: 13},
-             ])
+  let(:attr_params) {
+    {
+      name: 'name', label: '表示名', type: 'string', hidden: false,
+      attr_mappings: [
+        {name: 'name', conversion: nil, provider_id: 3},
+        {name: 'name_name', conversion: 'e2j', provider_id: 8},
+      ],
+    }
   }
-  let(:attr_repository) { create_mock(find_with_mappings: [found_attr, [Integer]]) }
+
+  let(:attr_with_mappings) { Attr.new(id: 42, order: 7, **attr_params) }
+  let(:attr_repository) { create_mock(find_with_mappings: [attr_with_mappings, [Integer]]) }
 
   it 'is failure' do
     response = action.call(params)
@@ -47,13 +48,7 @@ describe Api::Controllers::Attrs::Show do
       _(response[0]).must_equal 200
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
-        id: 42, name: 'name', display_name: '表示名', type: 'string', order: 1, hidden: false,
-        attr_mappings: [
-          {name: 'name', conversion: nil, provider_id: 9},
-          {name: 'name_name', conversion: 'e2j', provider_id: 13},
-        ],
-      })
+      _(json).must_equal({id: 42, order: 7, **attr_params})
     end
 
     describe 'not existed' do
@@ -66,7 +61,7 @@ describe Api::Controllers::Attrs::Show do
         json = JSON.parse(response[2].first, symbolize_names: true)
         _(json).must_equal({
           code: 404,
-          message: 'その属性は存在しません。',
+          message: 'Not Found',
         })
       end
     end

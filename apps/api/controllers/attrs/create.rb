@@ -45,13 +45,13 @@ module Api
           end
           halt_json(422, errors: [param_errors]) unless param_errors.empty?
 
-          attr = @attr_repository.create_with_mappings(params.to_h)
+          @attr = @attr_repository.create_with_mappings(params.to_h)
 
-          halt_json 500, '作成時にエラーが発生しました。' unless attr
+          halt_json 500, '作成時にエラーが発生しました。' if @attr.nil?
 
           self.status = 201
-          headers['Location'] = routes.attr_path(attr.id)
-          self.body = generate_json(attr)
+          headers['Location'] = routes.attr_path(@attr.id)
+          self.body = generate_json(@attr)
         end
       end
     end

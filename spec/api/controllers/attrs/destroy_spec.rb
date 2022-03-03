@@ -19,7 +19,14 @@ describe Api::Controllers::Attrs::Destroy do
   let(:config_repository) { create_mock(current: config) }
   let(:user_repository) { create_mock(find: [user, [Integer]]) }
 
-  let(:attr_repository) { create_mock(delete: [Attr.new, [Integer]]) }
+  let(:attr_params) {
+    {
+      name: 'name', label: '表示名', type: 'string', hidden: false,
+    }
+  }
+
+  let(:attr) { Attr.new(id: 42, order: 7, **attr_params) }
+  let(:attr_repository) { create_mock(delete: [attr, [Integer]]) }
 
   it 'is failure' do
     response = action.call(params)
@@ -34,8 +41,10 @@ describe Api::Controllers::Attrs::Destroy do
 
     it 'is successful' do
       response = action.call(params)
-      _(response[0]).must_equal 204
-      _(response[2]).must_equal []
+      _(response[0]).must_equal 200
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      json = JSON.parse(response[2].first, symbolize_names: true)
+      _(json).must_equal({id: 42, order: 7, **attr_params})
     end
 
     describe 'not existend' do
@@ -48,7 +57,7 @@ describe Api::Controllers::Attrs::Destroy do
         json = JSON.parse(response[2].first, symbolize_names: true)
         _(json).must_equal({
           code: 404,
-          message: 'その属性は存在しません。',
+          message: 'Not Found',
         })
       end
     end

@@ -20,13 +20,18 @@ describe Api::Controllers::Attrs::Update do
   let(:config_repository) { create_mock(current: config) }
   let(:user_repository) { create_mock(find: [user, [Integer]]) }
 
-  let(:attr_params) { {name: 'name', display_name: '表示名', type: 'string'} }
-
-  let(:last_attr) { Attr.new(order: 6) }
-  let(:updated_attr) { Attr.new(id: 42, **attr_params, order: 7, hidden: false) }
+  let(:attr_params) {
+    {
+      name: 'name', label: '表示名', type: 'string', hidden: false,
+      attr_mappings: [
+        {name: 'name', conversion: nil, provider_id: 3},
+        {name: 'name_name', conversion: 'e2j', provider_id: 8},
+      ],
+    }
+  }
 
   let(:attr_repository) {
-    create_mock(update: [Attr.new, [Integer, Hash]],
+    create_mock(update: [attr_with_mappings, [Integer, Hash]],
                 add_mapping: [AttrMapping.new, [Integer, Hash]],
                 remove_mapping: [AttrMapping.new, [Ineteger, Hash]])
   }
