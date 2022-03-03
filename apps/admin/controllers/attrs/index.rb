@@ -21,7 +21,7 @@ module Admin
         end
 
         def call(params) # rubocop:disable Lint/UnusedMethodArgument
-          @attrs = AttrRepository.new.all_with_mappings
+          @attrs = AttrRepository.new.ordered_all_with_mappings
           @providers = ProviderRepository.new.all
         end
       end

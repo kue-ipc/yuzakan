@@ -14,7 +14,7 @@ module Admin
           self.format = :yml
 
           @providers = ProviderRepository.new.all_with_adapter
-          @attrs = AttrRepository.new.all_with_mappings
+          @attrs = AttrRepository.new.ordered_all_with_mappings
         end
       end
     end

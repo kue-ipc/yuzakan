@@ -36,10 +36,10 @@ module Api
         def call(params)
           param_errors = Hash.new { |hash, key| hash[key] = [] }
           param_errors.merge!(params.errors) unless params.valid?
-          if params[:name] && @attr_repository.by_name(params[:name]).exist?
+          if params[:name] && @attr_repository.exist_by_name?(params[:name])
             param_errors[:name] << I18n.t('errors.uniq?')
           end
-          if params[:label] && @attr_repository.by_label(params[:label]).exist?
+          if params[:label] && @attr_repository.exist_by_label?(params[:label])
             param_errors[:label] << I18n.t('errors.uniq?')
           end
           halt_json(422, errors: [param_errors]) unless param_errors.empty?

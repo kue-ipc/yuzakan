@@ -7,6 +7,9 @@ require 'minitest/autorun'
 # so, set no deprectaed warning
 Warning[:deprecated] = false
 
+require 'rr'
+extend RR # rubocop:disable Style/MixinUsage
+
 require_relative 'support/db'
 require_relative 'support/mock'
 

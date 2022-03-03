@@ -15,9 +15,9 @@ describe Api::Controllers::Attrs::Create do
   let(:session) { {uuid: uuid, user_id: user.id, created_at: Time.now - 600, updated_at: Time.now - 60} }
   let(:format) { 'application/json' }
   let(:config) { Config.new(title: 'title', session_timeout: 3600, user_networks: '') }
-  let(:activity_log_repository) { create_mock(create: [nil, [Hash]]) }
-  let(:config_repository) { create_mock(current: config) }
-  let(:user_repository) { create_mock(find: [user, [Integer]]) }
+  let(:activity_log_repository) { ActivityLogRepository.new.tap { |obj| stub(obj).create } }
+  let(:config_repository) { ConfigRepository.new.tap { |obj| stub(obj).current { config } } }
+  let(:user_repository) { UserRepository.new.tap { |obj| stub(obj).find { user } } }
 
   let(:attr_params) {
     {
@@ -31,9 +31,12 @@ describe Api::Controllers::Attrs::Create do
 
   let(:attr_with_mappings) { Attr.new(id: 42, order: 7, **attr_params) }
   let(:attr_repository) {
-    create_mock(create_with_mappings: [attr_with_mappings, [Hash]], last_order: 6,
-                by_name: [create_mock(exist?: false), [String]],
-                by_label: [create_mock(exist?: false), [String]])
+    AttrRepository.new.tap do |obj|
+      stub(obj).last_order { 6 }
+      stub(obj).create_with_mappings { attr_with_mappings }
+      stub(obj).exist_by_name? { false }
+      stub(obj).exist_by_label? { false }
+    end
   }
 
   it 'is failure' do
@@ -81,9 +84,12 @@ describe Api::Controllers::Attrs::Create do
 
       describe 'existed name' do
         let(:attr_repository) {
-          create_mock(create_with_mappings: [attr_with_mappings, [Hash]], last_order: 6,
-                      by_name: [create_mock(exist?: true), [String]],
-                      by_label: [create_mock(exist?: false), [String]])
+          AttrRepository.new.tap do |obj|
+            stub(obj).last_order { 6 }
+            stub(obj).create_with_mappings { attr_with_mappings }
+            stub(obj).exist_by_name? { true }
+            stub(obj).exist_by_label? { false }
+          end
         }
 
         it 'is failure' do
@@ -118,9 +124,12 @@ describe Api::Controllers::Attrs::Create do
 
     describe 'existed name' do
       let(:attr_repository) {
-        create_mock(create_with_mappings: [attr_with_mappings, [Hash]], last_order: 6,
-                    by_name: [create_mock(exist?: true), [String]],
-                    by_label: [create_mock(exist?: false), [String]])
+        AttrRepository.new.tap do |obj|
+          stub(obj).last_order { 6 }
+          stub(obj).create_with_mappings { attr_with_mappings }
+          stub(obj).exist_by_name? { true }
+          stub(obj).exist_by_label? { false }
+        end
       }
 
       it 'is failure' do
@@ -138,9 +147,12 @@ describe Api::Controllers::Attrs::Create do
 
     describe 'existed label' do
       let(:attr_repository) {
-        create_mock(create_with_mappings: [attr_with_mappings, [Hash]], last_order: 6,
-                    by_name: [create_mock(exist?: false), [String]],
-                    by_label: [create_mock(exist?: true), [String]])
+        AttrRepository.new.tap do |obj|
+          stub(obj).last_order { 6 }
+          stub(obj).create_with_mappings { attr_with_mappings }
+          stub(obj).exist_by_name? { false }
+          stub(obj).exist_by_label? { true }
+        end
       }
 
       it 'is failure' do
@@ -158,9 +170,12 @@ describe Api::Controllers::Attrs::Create do
 
     describe 'existed name nad label' do
       let(:attr_repository) {
-        create_mock(create_with_mappings: [attr_with_mappings, [Hash]], last_order: 6,
-                    by_name: [create_mock(exist?: true), [String]],
-                    by_label: [create_mock(exist?: true), [String]])
+        AttrRepository.new.tap do |obj|
+          stub(obj).last_order { 6 }
+          stub(obj).create_with_mappings { attr_with_mappings }
+          stub(obj).exist_by_name? { true }
+          stub(obj).exist_by_label? { true }
+        end
       }
 
       it 'is failure' do
