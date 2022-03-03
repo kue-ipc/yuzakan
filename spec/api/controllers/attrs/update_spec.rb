@@ -29,11 +29,16 @@ describe Api::Controllers::Attrs::Update do
       ],
     }
   }
+  let(:attr_with_mappings) { Attr.new(id: 42, order: 7, **attr_params) }
+  let(:attr_without_mappings) { Attr.new(id: 42, order: 7, **attr_params.except(:attr_mappings)) }
 
   let(:attr_repository) {
-    create_mock(update: [attr_with_mappings, [Integer, Hash]],
-                add_mapping: [AttrMapping.new, [Integer, Hash]],
-                remove_mapping: [AttrMapping.new, [Ineteger, Hash]])
+    create_mock(mapping_by_provider_id: [AttrMapping.new(id: 3), [Attr, Integer]],
+                find_with_mappings: [attr_with_mappings, [Integer]],
+                update: [attr_without_mappings, [Integer, Hash]],
+                add_mapping: [AttrMapping.new, [Attr, Hash]],
+                remove_mapping: [AttrMapping.new, [Attr, Hash]],
+                by_name: create_mock(exist?: true), by_label: create_mock(exist?: true))
   }
   let(:attr_mapping_repository) { create_mock(update: [AttrMapping.new, [Integer, Hash]]) }
 
@@ -56,7 +61,12 @@ describe Api::Controllers::Attrs::Update do
 
     describe 'not existend' do
       let(:attr_repository) {
-        create_mock(update: [nil, [Integer, Hash]])
+        create_mock(mapping_by_provider_id: [AttrMapping.new(id: 3), [Attr, Integer]],
+                    find_with_mappings: [nil, [Integer]],
+                    update: [attr_without_mappings, [Integer, Hash]],
+                    add_mapping: [AttrMapping.new, [Attr, Hash]],
+                    remove_mapping: [AttrMapping.new, [Attr, Hash]],
+                    by_name: create_mock(exist?: true), by_label: create_mock(exist?: true))
       }
 
       it 'is failure' do
@@ -66,14 +76,18 @@ describe Api::Controllers::Attrs::Update do
         json = JSON.parse(response[2].first, symbolize_names: true)
         _(json).must_equal({
           code: 404,
-          message: 'その属性は存在しません。',
+          message: 'Not Found',
         })
       end
     end
 
     describe 'existed name' do
       let(:attr_repository) {
-        create_mock(last_order: last_attr, create: [created_attr, [Hash]],
+        create_mock(mapping_by_provider_id: [AttrMapping.new(id: 3), [Attr, Integer]],
+                    find_with_mappings: [attr_with_mappings, [Integer]],
+                    update: [attr_without_mappings, [Integer, Hash]],
+                    add_mapping: [AttrMapping.new, [Attr, Hash]],
+                    remove_mapping: [AttrMapping.new, [Attr, Hash]],
                     by_name: create_mock(exist?: true), by_label: create_mock(exist?: false))
       }
 
@@ -92,8 +106,12 @@ describe Api::Controllers::Attrs::Update do
 
     describe 'existed label' do
       let(:attr_repository) {
-        create_mock(last_order: last_attr, create: [created_attr, [Hash]],
-                    by_name: create_mock(exist?: false), by_label: create_mock(exist?: true))
+        create_mock(mapping_by_provider_id: [AttrMapping.new(id: 3), [Attr, Integer]],
+                    find_with_mappings: [attr_with_mappings, [Integer]],
+                    update: [attr_without_mappings, [Integer, Hash]],
+                    add_mapping: [AttrMapping.new, [Attr, Hash]],
+                    remove_mapping: [AttrMapping.new, [Attr, Hash]],
+                    by_name: create_mock(exist?: true), by_label: create_mock(exist?: false))
       }
 
       it 'is failure' do
@@ -111,7 +129,11 @@ describe Api::Controllers::Attrs::Update do
 
     describe 'existed name nad label' do
       let(:attr_repository) {
-        create_mock(last_order: last_attr, create: [created_attr, [Hash]],
+        create_mock(mapping_by_provider_id: [AttrMapping.new(id: 3), [Attr, Integer]],
+                    find_with_mappings: [attr_with_mappings, [Integer]],
+                    update: [attr_without_mappings, [Integer, Hash]],
+                    add_mapping: [AttrMapping.new, [Attr, Hash]],
+                    remove_mapping: [AttrMapping.new, [Attr, Hash]],
                     by_name: create_mock(exist?: true), by_label: create_mock(exist?: true))
       }
 

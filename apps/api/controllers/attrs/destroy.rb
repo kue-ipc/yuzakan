@@ -1,5 +1,3 @@
-require_relative './set_attr'
-
 module Api
   module Controllers
     module Attrs

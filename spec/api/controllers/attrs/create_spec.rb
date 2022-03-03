@@ -51,7 +51,7 @@ describe Api::Controllers::Attrs::Create do
       response = action.call(params)
       _(response[0]).must_equal 201
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-      _(response[1]['Location']).must_equal "/api/attrs/#{created_attr.id}"
+      _(response[1]['Location']).must_equal "/api/attrs/#{attr_with_mappings.id}"
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({id: 42, order: 7, **attr_params})
     end
@@ -81,7 +81,7 @@ describe Api::Controllers::Attrs::Create do
 
       describe 'existed name' do
         let(:attr_repository) {
-          create_mock(create_with_mappings: [created_attr, [Hash]], last_order: 6,
+          create_mock(create_with_mappings: [attr_with_mappings, [Hash]], last_order: 6,
                       by_name: [create_mock(exist?: true), [String]],
                       by_label: [create_mock(exist?: false), [String]])
         }
@@ -118,7 +118,7 @@ describe Api::Controllers::Attrs::Create do
 
     describe 'existed name' do
       let(:attr_repository) {
-        create_mock(create_with_mappings: [created_attr, [Hash]], last_order: 6,
+        create_mock(create_with_mappings: [attr_with_mappings, [Hash]], last_order: 6,
                     by_name: [create_mock(exist?: true), [String]],
                     by_label: [create_mock(exist?: false), [String]])
       }
@@ -138,7 +138,7 @@ describe Api::Controllers::Attrs::Create do
 
     describe 'existed label' do
       let(:attr_repository) {
-        create_mock(create_with_mappings: [created_attr, [Hash]], last_order: 6,
+        create_mock(create_with_mappings: [attr_with_mappings, [Hash]], last_order: 6,
                     by_name: [create_mock(exist?: false), [String]],
                     by_label: [create_mock(exist?: true), [String]])
       }
@@ -158,7 +158,7 @@ describe Api::Controllers::Attrs::Create do
 
     describe 'existed name nad label' do
       let(:attr_repository) {
-        create_mock(create_with_mappings: [created_attr, [Hash]], last_order: 6,
+        create_mock(create_with_mappings: [attr_with_mappings, [Hash]], last_order: 6,
                     by_name: [create_mock(exist?: true), [String]],
                     by_label: [create_mock(exist?: true), [String]])
       }

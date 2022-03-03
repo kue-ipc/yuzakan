@@ -30,6 +30,10 @@ class AttrRepository < Hanami::Repository
     attrs.order(:order).last&.fetch(:order).to_i
   end
 
+  def create_with_mappings(data)
+    assoc(:attr_mappings).create(data)
+  end
+
   def add_mapping(attr, data)
     assoc(:attr_mappings, attr).add(data)
   end
@@ -38,7 +42,15 @@ class AttrRepository < Hanami::Repository
     assoc(:attr_mappings, attr).remove(id)
   end
 
-  def create_with_mappings(data)
-    assoc(:attr_mappings).create(data)
+  def mapping_for(attr, id)
+    assoc(:attr_mappings, attr).where(id: id)
+  end
+
+  def mapping_by_provider_id(attr, provider_id)
+    assoc(:attr_mappings, attr).where(provider_id: provider_id)
+  end
+
+  def mapping_by_provider(attr, provider)
+    mapping_by_provider_id(attr, provider.id)
   end
 end
