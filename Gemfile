@@ -55,6 +55,7 @@ end
 group :test do
   gem 'minitest'
   gem 'capybara'
+  gem 'rr', require: false
 end
 
 group :production do

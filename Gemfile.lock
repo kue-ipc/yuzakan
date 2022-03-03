@@ -225,6 +225,7 @@ GEM
       dry-types (~> 0.11.0)
       rom (~> 3.2, >= 3.2.2)
       sequel (~> 4.43)
+    rr (3.0.9)
     ruby2_keywords (0.0.5)
     sassc (2.4.0)
       ffi (~> 1.9)
@@ -282,6 +283,7 @@ DEPENDENCIES
   rake
   readthis
   redis-rack
+  rr
   sassc
   sd_notify
   shotgun
