@@ -23,7 +23,7 @@ describe Api::Controllers::Adapters::ParamTypes::Index do
     _(response[0]).must_equal 403
     _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    _(json).must_equal({code: 403, message: '許可されていません。'})
+    _(json).must_equal({code: 403, message: 'Forbidden'})
   end
 
   describe 'admin' do
@@ -94,7 +94,7 @@ describe Api::Controllers::Adapters::ParamTypes::Index do
       _(response[0]).must_equal 401
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({code: 401, message: 'ログインしてください。'})
+      _(json).must_equal({code: 401, message: 'Unauthorized'})
     end
   end
 end

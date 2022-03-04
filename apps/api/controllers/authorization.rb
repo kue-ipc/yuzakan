@@ -5,7 +5,7 @@ module Api
     include Web::Authorization
 
     private def reply_unauthorized
-      halt_json 403, '許可されていません。'
+      halt_json 403
     end
   end
 end

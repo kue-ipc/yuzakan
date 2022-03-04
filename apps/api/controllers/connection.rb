@@ -5,7 +5,7 @@ module Api
     include Web::Connection
 
     private def reply_session_timeout
-      halt_json 400, 'セッションがタイムアウトしました。'
+      halt_json 401, errors: ['セッションがタイムアウトしました。']
     end
   end
 end

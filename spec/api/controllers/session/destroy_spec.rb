@@ -59,12 +59,13 @@ describe Api::Controllers::Session::Destroy do
 
     it 'is error' do
       response = action.call(params)
-      _(response[0]).must_equal 400
+      _(response[0]).must_equal 401
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
-        code: 400,
-        message: 'セッションがタイムアウトしました。',
+        code: 401,
+        message: 'Unauthorized',
+        errors: ['セッションがタイムアウトしました。'],
       })
     end
   end
