@@ -32,10 +32,10 @@ describe Api::Controllers::Attrs::Create do
   let(:attr_with_mappings) { Attr.new(id: 42, order: 7, **attr_params) }
   let(:attr_repository) {
     AttrRepository.new.tap do |obj|
-      stub(obj).last_order { 6 }
-      stub(obj).create_with_mappings { attr_with_mappings }
       stub(obj).exist_by_name? { false }
       stub(obj).exist_by_label? { false }
+      stub(obj).last_order { 6 }
+      stub(obj).create_with_mappings { attr_with_mappings }
     end
   }
 
@@ -85,10 +85,10 @@ describe Api::Controllers::Attrs::Create do
       describe 'existed name' do
         let(:attr_repository) {
           AttrRepository.new.tap do |obj|
-            stub(obj).last_order { 6 }
-            stub(obj).create_with_mappings { attr_with_mappings }
             stub(obj).exist_by_name? { true }
             stub(obj).exist_by_label? { false }
+            stub(obj).last_order { 6 }
+            stub(obj).create_with_mappings { attr_with_mappings }
           end
         }
 
@@ -125,10 +125,10 @@ describe Api::Controllers::Attrs::Create do
     describe 'existed name' do
       let(:attr_repository) {
         AttrRepository.new.tap do |obj|
-          stub(obj).last_order { 6 }
-          stub(obj).create_with_mappings { attr_with_mappings }
           stub(obj).exist_by_name? { true }
           stub(obj).exist_by_label? { false }
+          stub(obj).last_order { 6 }
+          stub(obj).create_with_mappings { attr_with_mappings }
         end
       }
 
@@ -148,10 +148,10 @@ describe Api::Controllers::Attrs::Create do
     describe 'existed label' do
       let(:attr_repository) {
         AttrRepository.new.tap do |obj|
-          stub(obj).last_order { 6 }
-          stub(obj).create_with_mappings { attr_with_mappings }
           stub(obj).exist_by_name? { false }
           stub(obj).exist_by_label? { true }
+          stub(obj).last_order { 6 }
+          stub(obj).create_with_mappings { attr_with_mappings }
         end
       }
 
@@ -171,10 +171,10 @@ describe Api::Controllers::Attrs::Create do
     describe 'existed name nad label' do
       let(:attr_repository) {
         AttrRepository.new.tap do |obj|
-          stub(obj).last_order { 6 }
-          stub(obj).create_with_mappings { attr_with_mappings }
           stub(obj).exist_by_name? { true }
           stub(obj).exist_by_label? { true }
+          stub(obj).last_order { 6 }
+          stub(obj).create_with_mappings { attr_with_mappings }
         end
       }
 

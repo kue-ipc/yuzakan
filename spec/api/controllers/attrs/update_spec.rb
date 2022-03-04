@@ -17,8 +17,8 @@ describe Api::Controllers::Attrs::Update do
   let(:format) { 'application/json' }
   let(:config) { Config.new(title: 'title', session_timeout: 3600, user_networks: '') }
   let(:activity_log_repository) { ActivityLogRepository.new.tap { |obj| stub(obj).create } }
-  let(:config_repository) { create_mock(current: config) }
-  let(:user_repository) { create_mock(find: [user, [Integer]]) }
+  let(:config_repository) { ConfigRepository.new.tap { |obj| stub(obj).current { config } } }
+  let(:user_repository) { UserRepository.new.tap { |obj| stub(obj).find { user } } }
 
   let(:attr_params) {
     {
@@ -33,14 +33,20 @@ describe Api::Controllers::Attrs::Update do
   let(:attr_without_mappings) { Attr.new(id: 42, order: 7, **attr_params.except(:attr_mappings)) }
 
   let(:attr_repository) {
-    create_mock(mapping_by_provider_id: [AttrMapping.new(id: 3), [Attr, Integer]],
-                find_with_mappings: [attr_with_mappings, [Integer]],
-                update: [attr_without_mappings, [Integer, Hash]],
-                add_mapping: [AttrMapping.new, [Attr, Hash]],
-                remove_mapping: [AttrMapping.new, [Attr, Hash]],
-                by_name: create_mock(exist?: true), by_label: create_mock(exist?: true))
+    AttrRepository.new.tap do |obj|
+      stub(obj).find_with_mappings { attr_with_mappings }
+      stub(obj).exist_by_name? { false }
+      stub(obj).exist_by_label? { false }
+      stub(obj).update { attr_without_mappings }
+      stub(obj).delete_mapping_by_provider_id { 1 }
+      stub(obj).add_mapping { AttrMapping.new }
+    end
   }
-  let(:attr_mapping_repository) { create_mock(update: [AttrMapping.new, [Integer, Hash]]) }
+  let(:attr_mapping_repository) {
+    AttrMappingRepository.new.tap do |obj|
+      stub(obj).update { AttrMapping.new }
+    end
+  }
 
   it 'is failure' do
     response = action.call(params)
@@ -55,18 +61,25 @@ describe Api::Controllers::Attrs::Update do
 
     it 'is successful' do
       response = action.call(params)
-      _(response[0]).must_equal 204
-      _(response[2]).must_equal []
+      _(response[0]).must_equal 200
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      json = JSON.parse(response[2].first, symbolize_names: true)
+      _(json).must_equal({id: 42, order: 7, **attr_params})
     end
 
-    describe 'not existend' do
+    it 'is successful with different' do
+      response = action.call({**params, name: 'hoge', label: 'ほげ'})
+      _(response[0]).must_equal 200
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      json = JSON.parse(response[2].first, symbolize_names: true)
+      _(json).must_equal({id: 42, order: 7, **attr_params})
+    end
+
+    describe 'not existed' do
       let(:attr_repository) {
-        create_mock(mapping_by_provider_id: [AttrMapping.new(id: 3), [Attr, Integer]],
-                    find_with_mappings: [nil, [Integer]],
-                    update: [attr_without_mappings, [Integer, Hash]],
-                    add_mapping: [AttrMapping.new, [Attr, Hash]],
-                    remove_mapping: [AttrMapping.new, [Attr, Hash]],
-                    by_name: create_mock(exist?: true), by_label: create_mock(exist?: true))
+        AttrRepository.new.tap do |obj|
+          stub(obj).find_with_mappings { nil }
+        end
       }
 
       it 'is failure' do
@@ -83,69 +96,123 @@ describe Api::Controllers::Attrs::Update do
 
     describe 'existed name' do
       let(:attr_repository) {
-        create_mock(mapping_by_provider_id: [AttrMapping.new(id: 3), [Attr, Integer]],
-                    find_with_mappings: [attr_with_mappings, [Integer]],
-                    update: [attr_without_mappings, [Integer, Hash]],
-                    add_mapping: [AttrMapping.new, [Attr, Hash]],
-                    remove_mapping: [AttrMapping.new, [Attr, Hash]],
-                    by_name: create_mock(exist?: true), by_label: create_mock(exist?: false))
+        AttrRepository.new.tap do |obj|
+          stub(obj).find_with_mappings { attr_with_mappings }
+          stub(obj).exist_by_name? { true }
+          stub(obj).exist_by_label? { false }
+          stub(obj).update { attr_without_mappings }
+          stub(obj).delete_mapping_by_provider_id { 1 }
+          stub(obj).add_mapping { AttrMapping.new }
+        end
       }
 
-      it 'is failure' do
+      it 'is successful' do
         response = action.call(params)
+        _(response[0]).must_equal 200
+        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        json = JSON.parse(response[2].first, symbolize_names: true)
+        _(json).must_equal({id: 42, order: 7, **attr_params})
+      end
+
+      it 'is successful with diffrent only label' do
+        response = action.call({**params, labal: 'ほげ'})
+        _(response[0]).must_equal 200
+        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        json = JSON.parse(response[2].first, symbolize_names: true)
+        _(json).must_equal({id: 42, order: 7, **attr_params})
+      end
+
+      it 'is failure with different' do
+        response = action.call({**params, name: 'hoge', label: 'ほげ'})
         _(response[0]).must_equal 422
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
         _(json).must_equal({
           code: 422,
-          message: '属性を更新できませんでした。',
-          errors: [{name: ['既に存在します。']}],
+          message: 'Unprocessable Entity',
+          errors: [{name: ['重複しています。']}],
         })
       end
     end
 
     describe 'existed label' do
       let(:attr_repository) {
-        create_mock(mapping_by_provider_id: [AttrMapping.new(id: 3), [Attr, Integer]],
-                    find_with_mappings: [attr_with_mappings, [Integer]],
-                    update: [attr_without_mappings, [Integer, Hash]],
-                    add_mapping: [AttrMapping.new, [Attr, Hash]],
-                    remove_mapping: [AttrMapping.new, [Attr, Hash]],
-                    by_name: create_mock(exist?: true), by_label: create_mock(exist?: false))
+        AttrRepository.new.tap do |obj|
+          stub(obj).find_with_mappings { attr_with_mappings }
+          stub(obj).exist_by_name? { false }
+          stub(obj).exist_by_label? { true }
+          stub(obj).update { attr_without_mappings }
+          stub(obj).delete_mapping_by_provider_id { 1 }
+          stub(obj).add_mapping { AttrMapping.new }
+        end
       }
 
-      it 'is failure' do
+      it 'is successful' do
         response = action.call(params)
+        _(response[0]).must_equal 200
+        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        json = JSON.parse(response[2].first, symbolize_names: true)
+        _(json).must_equal({id: 42, order: 7, **attr_params})
+      end
+
+      it 'is successful with diffrent only name' do
+        response = action.call({**params, name: 'hoge'})
+        _(response[0]).must_equal 200
+        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        json = JSON.parse(response[2].first, symbolize_names: true)
+        _(json).must_equal({id: 42, order: 7, **attr_params})
+      end
+
+      it 'is failure with different' do
+        response = action.call({**params, name: 'hoge', label: 'ほげ'})
         _(response[0]).must_equal 422
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
         _(json).must_equal({
           code: 422,
-          message: '属性を更新できませんでした。',
-          errors: [{label: ['既に存在します。']}],
+          message: 'Unprocessable Entity',
+          errors: [{label: ['重複しています。']}],
         })
       end
     end
 
     describe 'existed name nad label' do
       let(:attr_repository) {
-        create_mock(mapping_by_provider_id: [AttrMapping.new(id: 3), [Attr, Integer]],
-                    find_with_mappings: [attr_with_mappings, [Integer]],
-                    update: [attr_without_mappings, [Integer, Hash]],
-                    add_mapping: [AttrMapping.new, [Attr, Hash]],
-                    remove_mapping: [AttrMapping.new, [Attr, Hash]],
-                    by_name: create_mock(exist?: true), by_label: create_mock(exist?: true))
+        AttrRepository.new.tap do |obj|
+          stub(obj).find_with_mappings { attr_with_mappings }
+          stub(obj).exist_by_name? { true }
+          stub(obj).exist_by_label? { true }
+          stub(obj).update { attr_without_mappings }
+          stub(obj).delete_mapping_by_provider_id { 1 }
+          stub(obj).add_mapping { AttrMapping.new }
+        end
       }
 
-      it 'is failure' do
+      it 'is successful' do
         response = action.call(params)
+        _(response[0]).must_equal 200
+        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        json = JSON.parse(response[2].first, symbolize_names: true)
+        _(json).must_equal({id: 42, order: 7, **attr_params})
+      end
+
+      it 'is successful with diffrent only hidden' do
+        response = action.call({**params, hidden: 'true'})
+        _(response[0]).must_equal 200
+        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        json = JSON.parse(response[2].first, symbolize_names: true)
+        _(json).must_equal({id: 42, order: 7, **attr_params})
+      end
+
+      it 'is failure with different' do
+        response = action.call({**params, name: 'hoge', label: 'ほげ'})
         _(response[0]).must_equal 422
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
         _(json).must_equal({
           code: 422,
-          message: '属性を更新できませんでした。',
-          errors: [{name: ['既に存在します。'], label: ['既に存在します。']}],
+          message: 'Unprocessable Entity',
+          errors: [{name: ['重複しています。'], label: ['重複しています。']}],
         })
       end
     end
