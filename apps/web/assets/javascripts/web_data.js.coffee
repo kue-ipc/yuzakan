@@ -12,10 +12,14 @@ import {modalDialog} from './modal.js?v=0.6.0'
 export default class WebData
   MESSAGE_EVENT = 'webdata.message'
   DEFAULT_CODE_ACTIONS = new Map [
-    [0, {status: 'error', 'サーバー接続時にエラーが発生しました。しばらく待ってから、再度試してください。'}]
-    [500, {status: 'fatal', message: 'サーバー側で致命的なエラーが発生しました。管理者に連絡してください。'}]
+    [0, {status: 'error'}]
+    [400, {status: 'error', message: 'パラメーターが不正です。'}]
+    [401, {status: 'error', message: 'ログインが必要です。', reload: true}]
+    [403, {status: 'error', message: 'アクセスする権限がありません。', reload: true}]
+    [422, {status: 'failure', message: '失敗しました。'}]
+    [500, {status: 'fatal', message: 'サーバー側で致命的なエラーが発生しました。管理者に連絡してください。', reload: true}]
   ]
-  UNKNOWN_CODE_ACTION = {status: 'unknown', message: 'サーバーから不明なコードが返されました。'}
+  UNKNOWN_CODE_ACTION = {status: 'unknown'}
 
   constructor: ({
     @id
@@ -47,6 +51,8 @@ export default class WebData
         title: 'no title'
         messages: 'n/a'
         closable: true
+        link: null
+        reload: false
       }
       view: @modalView
       node: modalDialogNode
@@ -54,19 +60,26 @@ export default class WebData
         @messageSub @messageAction, {node: @modalNode}
       ]
     }
-  
-  modalView: ({status, title, messages, closable, link}) =>
+
+  modalView: ({status, title, messages, closable, link, reload}) =>
     modalDialog {
       id: @id,
       centered: true
       title: title
       status
       closable
-      action: if link? then {
-        label: 'すぐに移動する'
-        color: 'primary'
-        onclick: (state) -> [state, [ -> location.href = link]]
-      }
+      action: if link?
+        {
+          label: 'すぐに移動する'
+          color: 'primary'
+          onclick: (state) -> [state, [ -> location.href = link]]
+        }
+      else if reload
+        {
+          label: 'ページの再読み込み'
+          color: 'danger'
+          onclick: (state) -> [state, [ -> location.reload()]]
+        }
     }, @messageList {messages: messages}
 
   messageList: ({messages}) ->
@@ -75,6 +88,7 @@ export default class WebData
       div {}, text msg
 
   modalMessage: (state) ->
+    console.log state
     # hack modal config
     # https://github.com/twbs/bootstrap/issues/35664
     if state.closable
@@ -107,6 +121,8 @@ export default class WebData
       title: "#{@title}中"
       messages: "#{@title}を実施しています。しばらくお待ち下さい。"
       closable: false
+      link: null
+      reload: false
     }
     @modal.backdrop = 'static'
     @modal.keyboard = false
@@ -143,7 +159,8 @@ export default class WebData
 
     codeAction = @codeActions.get(response.code) || UNKNOWN_CODE_ACTION
 
-    messages = [codeAction.message, responseData.message, (responseData.errors ? [])...].filter((v) -> v?)
+    messages = [(codeAction.message || responseData.message), (responseData.errors ? [])...]
+      .filter (v) -> typeof v == 'string'
 
     if codeAction?.redirectTo?
       closable = false
@@ -154,9 +171,14 @@ export default class WebData
       else
         reloadDelay = 0 # default 0 msec
         messages.push('画面を切り替えます。しばらくお待ち下さい。')
+    else if codeAction?.reload
+      closable = false
+      link = null
+      reload = true
     else
       closable = true
       link = null
+      reload = false
 
     @modalMessage {
       status: codeAction.status
@@ -164,6 +186,7 @@ export default class WebData
       messages
       closable
       link
+      reload
     }
     if link?
       setTimeout ->

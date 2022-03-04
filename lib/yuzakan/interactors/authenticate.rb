@@ -20,7 +20,7 @@ class Authenticate
       end
     rescue => e
       Hanami.logger.error e
-      error!("認証時にエラーが発生しました。(#{provider.label})")
+      error!("認証処理でエラーが発生しました。(#{provider.label})")
     end
   end
 end

@@ -12,11 +12,8 @@ webData = new WebData {
   method: 'POST'
   url: '/api/session'
   codeActions: new Map [
-    [201, {status: 'success', message: 'ログインしました。', redirectTo: '/'}]
-    [400, {status: 'error'}]
-    [409, {status: 'error'}]
-    [422, {status: 'failure'}]
-    [500, {status: 'fatal'}]
+    [201, {status: 'success', message: 'ログインに成功しました。', redirectTo: '/'}]
+    [422, {status: 'failure', message: 'ログインに失敗しました。', }]
   ]
 }
 
