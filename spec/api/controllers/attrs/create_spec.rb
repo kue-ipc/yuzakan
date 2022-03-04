@@ -8,6 +8,7 @@ describe Api::Controllers::Attrs::Create do
                                         attr_repository: attr_repository)
   }
   let(:params) { {**env, **attr_params} }
+
   let(:env) { {'REMOTE_ADDR' => client, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
   let(:client) { '192.0.2.1' }
   let(:uuid) { 'ffffffff-ffff-4fff-bfff-ffffffffffff' }
@@ -28,7 +29,6 @@ describe Api::Controllers::Attrs::Create do
       ],
     }
   }
-
   let(:attr_with_mappings) { Attr.new(id: 42, order: 7, **attr_params) }
   let(:attr_repository) {
     AttrRepository.new.tap do |obj|

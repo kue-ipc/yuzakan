@@ -9,6 +9,7 @@ describe Api::Controllers::Attrs::Update do
                                         attr_mapping_repository: attr_mapping_repository)
   }
   let(:params) { {**env, id: 42, **attr_params} }
+
   let(:env) { {'REMOTE_ADDR' => client, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
   let(:client) { '192.0.2.1' }
   let(:uuid) { 'ffffffff-ffff-4fff-bfff-ffffffffffff' }
@@ -29,9 +30,8 @@ describe Api::Controllers::Attrs::Update do
       ],
     }
   }
-  let(:attr_with_mappings) { Attr.new(id: 42, order: 7, **attr_params) }
   let(:attr_without_mappings) { Attr.new(id: 42, order: 7, **attr_params.except(:attr_mappings)) }
-
+  let(:attr_with_mappings) { Attr.new(id: 42, order: 7, **attr_params) }
   let(:attr_repository) {
     AttrRepository.new.tap do |obj|
       stub(obj).find_with_mappings { attr_with_mappings }
