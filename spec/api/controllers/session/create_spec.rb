@@ -16,15 +16,26 @@ describe Api::Controllers::Session::Create do
   let(:session) { {uuid: uuid, user_id: user.id, created_at: Time.now - 600, updated_at: Time.now - 60} }
   let(:format) { 'application/json' }
   let(:config) { Config.new(title: 'title', session_timeout: 3600, user_networks: '') }
-  let(:activity_log_repository) { create_mock(create: [nil, [Hash]]) }
-  let(:config_repository) { create_mock(current: config) }
+  let(:activity_log_repository) { ActivityLogRepository.new.tap { |obj| stub(obj).create } }
+  let(:config_repository) { ConfigRepository.new.tap { |obj| stub(obj).current { config } } }
   let(:user_repository) {
-    create_mock(find: [user, [Integer]], find_by_name: [user, [String]], update: [nil, [Integer, Hash]])
+    UserRepository.new.tap do |obj|
+      stub(obj).find { user }
+      stub(obj).find_by_name { user }
+      stub(obj).update { user }
+    end
   }
 
   let(:providers) { [create_mock_provider(params: {username: 'user', password: 'pass'})] }
-  let(:provider_repository) { create_mock(operational_all_with_adapter: [providers, [Symbol]]) }
-  let(:auth_log_repository) { create_mock(create: [nil, [Hash]], recent_by_username: [[], [String, Integer]]) }
+  let(:provider_repository) {
+    ProviderRepository.new.tap { |obj| stub(obj).operational_all_with_adapter { providers } }
+  }
+  let(:auth_log_repository) {
+    AuthLogRepository.new.tap do |obj|
+      stub(obj).create { AuthLog.new }
+      stub(obj).recent_by_username { [] }
+    end
+  }
 
   it 'is see other' do
     Rack::Utils::HTTP_STATUS_CODES[303] = 'Hoge'
@@ -132,13 +143,18 @@ describe Api::Controllers::Session::Create do
 
     describe 'too many access' do
       let(:auth_log_repository) {
-        create_mock(create: [nil, [Hash]], recent_by_username: [[
-                      AuthLog.new(result: 'failure'),
-                      AuthLog.new(result: 'failure'),
-                      AuthLog.new(result: 'failure'),
-                      AuthLog.new(result: 'failure'),
-                      AuthLog.new(result: 'failure'),
-                    ], [String, Integer],])
+        AuthLogRepository.new.tap do |obj|
+          stub(obj).create { AuthLog.new }
+          stub(obj).recent_by_username do
+            [
+              AuthLog.new(result: 'failure'),
+              AuthLog.new(result: 'failure'),
+              AuthLog.new(result: 'failure'),
+              AuthLog.new(result: 'failure'),
+              AuthLog.new(result: 'failure'),
+            ]
+          end
+        end
       }
 
       it 'is failure' do

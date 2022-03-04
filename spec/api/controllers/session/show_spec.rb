@@ -14,9 +14,9 @@ describe Api::Controllers::Session::Show do
   let(:session) { {uuid: uuid, user_id: user.id, created_at: Time.now - 600, updated_at: Time.now - 60} }
   let(:format) { 'application/json' }
   let(:config) { Config.new(title: 'title', session_timeout: 3600, user_networks: '') }
-  let(:activity_log_repository) { create_mock(create: [nil, [Hash]]) }
-  let(:config_repository) { create_mock(current: config) }
-  let(:user_repository) { create_mock(find: [user, [Integer]]) }
+  let(:activity_log_repository) { ActivityLogRepository.new.tap { |obj| stub(obj).create } }
+  let(:config_repository) { ConfigRepository.new.tap { |obj| stub(obj).current { config } } }
+  let(:user_repository) { UserRepository.new.tap { |obj| stub(obj).find { user } } }
 
   it 'is successful' do
     begin_time = Time.now.floor

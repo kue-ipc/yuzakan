@@ -30,11 +30,7 @@ describe Api::Controllers::Attrs::Show do
     }
   }
   let(:attr_with_mappings) { Attr.new(id: 42, order: 7, **attr_params) }
-  let(:attr_repository) {
-    AttrRepository.new.tap do |obj|
-      stub(obj).find_with_mappings { attr_with_mappings }
-    end
-  }
+  let(:attr_repository) { AttrRepository.new.tap { |obj| stub(obj).find_with_mappings { attr_with_mappings } } }
 
   it 'is failure' do
     response = action.call(params)
@@ -56,7 +52,7 @@ describe Api::Controllers::Attrs::Show do
     end
 
     describe 'not existed' do
-      let(:attr_repository) { create_mock(find_with_mappings: [nil, [Integer]]) }
+      let(:attr_repository) { AttrRepository.new.tap { |obj| stub(obj).find_with_mappings { nil } } }
 
       it 'is failure' do
         response = action.call(params)

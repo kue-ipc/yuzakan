@@ -8,6 +8,7 @@ describe Api::Controllers::CurrentUser::Password::Update do
                                                         provider_repository: provider_repository)
   }
   let(:params) { {current_password: 'pass', password: 'word', password_confirmation: 'word', **env} }
+
   let(:env) { {'REMOTE_ADDR' => client, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
   let(:client) { '192.0.2.1' }
   let(:uuid) { 'ffffffff-ffff-4fff-bfff-ffffffffffff' }
@@ -15,12 +16,15 @@ describe Api::Controllers::CurrentUser::Password::Update do
   let(:session) { {uuid: uuid, user_id: user.id, created_at: Time.now - 600, updated_at: Time.now - 60} }
   let(:format) { 'application/json' }
   let(:config) { Config.new(title: 'title', session_timeout: 3600, user_networks: '') }
-  let(:activity_log_repository) { create_mock(create: [nil, [Hash]]) }
-  let(:config_repository) { create_mock(current: config) }
-  let(:user_repository) { create_mock(find: [user, [Integer]]) }
+  let(:activity_log_repository) { ActivityLogRepository.new.tap { |obj| stub(obj).create } }
+  let(:config_repository) { ConfigRepository.new.tap { |obj| stub(obj).current { config } } }
+  let(:user_repository) { UserRepository.new.tap { |obj| stub(obj).find { user } } }
 
   let(:providers) { [create_mock_provider(params: {username: 'user', password: 'pass'})] }
-  let(:provider_repository) { create_mock(operational_all_with_adapter: [providers, [Symbol]]) }
+  let(:provider_repository) {
+    ProviderRepository.new.tap { |obj| stub(obj).operational_all_with_adapter { providers } }
+  }
+
 
   # it 'is successful' do
   #   response = action.call(params)

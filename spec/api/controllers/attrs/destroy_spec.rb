@@ -20,17 +20,9 @@ describe Api::Controllers::Attrs::Destroy do
   let(:config_repository) { ConfigRepository.new.tap { |obj| stub(obj).current { config } } }
   let(:user_repository) { UserRepository.new.tap { |obj| stub(obj).find { user } } }
 
-  let(:attr_params) {
-    {
-      name: 'name', label: '表示名', type: 'string', hidden: false,
-    }
-  }
+  let(:attr_params) { {name: 'name', label: '表示名', type: 'string', hidden: false} }
   let(:attr) { Attr.new(id: 42, order: 7, **attr_params) }
-  let(:attr_repository) {
-    AttrRepository.new.tap do |obj|
-      stub(obj).delete { attr }
-    end
-  }
+  let(:attr_repository) { AttrRepository.new.tap { |obj| stub(obj).delete { attr } } }
 
   it 'is failure' do
     response = action.call(params)
@@ -52,7 +44,7 @@ describe Api::Controllers::Attrs::Destroy do
     end
 
     describe 'not existend' do
-      let(:attr_repository) { create_mock(delete: [nil, [Integer]]) }
+      let(:attr_repository) { AttrRepository.new.tap { |obj| stub(obj).delete { nil } } }
 
       it 'is failure' do
         response = action.call(params)
