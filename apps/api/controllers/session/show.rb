@@ -5,11 +5,12 @@ module Api
         include Api::Action
 
         def call(params) # rubocop:disable Lint/UnusedMethodArgument
-          self.body = JSON.generate({
+          self.body = generate_json({
             username: current_user.name,
             display_name: current_user.display_name,
-            created_at: session[:created_at].iso8601,
-            updated_at: session[:updated_at].iso8601,
+            created_at: session[:created_at],
+            updated_at: session[:updated_at],
+            deleted_at: session[:updated_at] + current_config.session_timeout,
           })
         end
       end

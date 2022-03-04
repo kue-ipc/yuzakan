@@ -12,10 +12,7 @@ describe Api::Controllers::CurrentUser::Show do
   let(:env) { {'REMOTE_ADDR' => client, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
   let(:client) { '192.0.2.1' }
   let(:uuid) { 'ffffffff-ffff-4fff-bfff-ffffffffffff' }
-  let(:user) {
-    User.new(id: 42, name: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1,
-             created_at: Time.now - 86400, updated_at: Time.now - 3600)
-  }
+  let(:user) { User.new(id: 42, name: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1) }
   let(:session) { {uuid: uuid, user_id: user.id, created_at: Time.now - 600, updated_at: Time.now - 60} }
   let(:format) { 'application/json' }
   let(:config) { Config.new(title: 'title', session_timeout: 3600, user_networks: '') }
@@ -49,8 +46,6 @@ describe Api::Controllers::CurrentUser::Show do
       display_name: 'ユーザー',
       email: 'user@example.jp',
       clearance_level: 1,
-      created_at: user.created_at.floor.iso8601,
-      updated_at: user.updated_at.floor.iso8601,
       userdatas: [{
         provider: 'provider',
         userdata: {

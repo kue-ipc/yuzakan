@@ -32,7 +32,10 @@ describe Api::Controllers::Session::Show do
     updated_at = Time.iso8601(json[:updated_at])
     _(updated_at).must_be :>=, begin_time
     _(updated_at).must_be :<=, end_time
-  end
+    deleted_at = Time.iso8601(json[:deleted_at])
+    _(deleted_at).must_be :>=, begin_time + 3600
+    _(deleted_at).must_be :<=, end_time + 3600
+end
 
   describe 'no login session' do
     let(:session) { {uuid: uuid} }

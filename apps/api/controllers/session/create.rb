@@ -76,6 +76,7 @@ module Api
             display_name: user.display_name,
             created_at: current_time,
             updated_at: current_time,
+            deleted_at: current_time + current_config.session_timeout,
           })
         end
 
