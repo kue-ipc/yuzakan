@@ -10,7 +10,7 @@ module Api
           def call(params)
             adapter_id = params[:adapter_id]
             adapter = ADAPTERS_MANAGER.by_name(adapter_id)
-            halt_json 404, '該当のアダプターはありません。' unless adapter
+            halt_json 404 unless adapter
             self.body = generate_json(adapter.param_types)
           end
         end

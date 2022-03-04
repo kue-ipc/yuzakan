@@ -46,7 +46,7 @@ describe Api::Controllers::Session::Create do
     json = JSON.parse(response[2].first, symbolize_names: true)
     _(json).must_equal({
       code: 303,
-      message: '既にログインしています。',
+      message: 'See Other',
       location: '/api/session',
     })
   end
@@ -78,7 +78,8 @@ describe Api::Controllers::Session::Create do
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
         code: 422,
-        message: 'ユーザー名またはパスワードが違います。',
+        message: 'Unprocessable Entity',
+        errors: ['ユーザー名またはパスワードが違います。'],
       })
     end
 
@@ -89,7 +90,8 @@ describe Api::Controllers::Session::Create do
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
         code: 422,
-        message: 'ユーザー名またはパスワードが違います。',
+        message: 'Unprocessable Entity',
+        errors: ['ユーザー名またはパスワードが違います。'],
       })
     end
 
@@ -100,7 +102,7 @@ describe Api::Controllers::Session::Create do
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
         code: 400,
-        message: 'パラメーターが不正です。',
+        message: 'Bad Request',
         errors: ['Username is missing', 'Username size cannot be greater than 255'],
       })
     end
@@ -112,7 +114,7 @@ describe Api::Controllers::Session::Create do
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
         code: 400,
-        message: 'パラメーターが不正です。',
+        message: 'Bad Request',
         errors: ['Password is missing', 'Password size cannot be greater than 255'],
       })
     end
@@ -124,7 +126,7 @@ describe Api::Controllers::Session::Create do
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
         code: 400,
-        message: 'パラメーターが不正です。',
+        message: 'Bad Request',
         errors: ['Username size cannot be greater than 255'],
       })
     end
@@ -136,7 +138,7 @@ describe Api::Controllers::Session::Create do
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
         code: 400,
-        message: 'パラメーターが不正です。',
+        message: 'Bad Request',
         errors: ['Password must be filled', 'Password size cannot be greater than 255'],
       })
     end
@@ -164,9 +166,9 @@ describe Api::Controllers::Session::Create do
         json = JSON.parse(response[2].first, symbolize_names: true)
         _(json).must_equal({
           code: 403,
-          message: '時間あたりのログイン試行が規定の回数を超えたため、' \
-                   '現在ログインが禁止されています。' \
-                   'しばらく待ってから再度ログインを試してください。',
+          message: 'Forbidden',
+          errors: ['時間あたりのログイン試行が規定の回数を超えたため、現在ログインが禁止されています。 ' \
+                   'しばらく待ってから再度ログインを試してください。'],
         })
       end
     end

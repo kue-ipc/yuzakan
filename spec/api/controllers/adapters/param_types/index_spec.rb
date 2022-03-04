@@ -82,7 +82,7 @@ describe Api::Controllers::Adapters::ParamTypes::Index do
       _(response[0]).must_equal 404
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({code: 404, message: '該当のアダプターはありません。'})
+      _(json).must_equal({code: 404, message: 'Not Found'})
     end
   end
 

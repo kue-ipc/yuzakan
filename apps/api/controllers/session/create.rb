@@ -20,9 +20,9 @@ module Api
         end
 
         def call(params)
-          halt_json(400, 'パラメーターが不正です。', errors: params.error_messages) unless params.valid?
+          halt_json(400, errors: params.error_messages) unless params.valid?
 
-          redirect_to_json routes.path(:session), '既にログインしています。', status: 303 if current_user
+          redirect_to_json routes.path(:session), status: 303 if current_user
 
           auth_log_params = {
             uuid: uuid,
@@ -44,8 +44,7 @@ module Api
 
           if failure_count >= 5
             @auth_log_repository.create(**auth_log_params, result: 'reject')
-            halt_json 403, '時間あたりのログイン試行が規定の回数を超えたため、現在ログインが禁止されています。' \
-                           'しばらく待ってから再度ログインを試してください。'
+            halt_json 403, errors: [I18n.t('session.errors.too_many_failure')]
           end
 
           authenticate = Authenticate.new(provider_repository: @provider_repository)
@@ -53,14 +52,14 @@ module Api
 
           if authenticate_result.failure?
             @auth_log_repository.create(**auth_log_params, result: 'error')
-            halt_json 500, 'エラーが発生しました。', errors: authenticate_result.errors
+            halt_json 500, errors: authenticate_result.errors
           end
 
           userdata = authenticate_result.userdatas.values.first
 
           if userdata.nil?
             @auth_log_repository.create(**auth_log_params, result: 'failure')
-            halt_json 422, 'ユーザー名またはパスワードが違います。'
+            halt_json 422, errors: ['ユーザー名またはパスワードが違います。']
           end
 
           @auth_log_repository.create(**auth_log_params, result: 'success')

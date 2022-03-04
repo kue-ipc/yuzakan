@@ -34,7 +34,7 @@ describe Api::Controllers::Session::Destroy do
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
         code: 410,
-        message: 'ログインしていません。',
+        message: 'Gone',
       })
     end
   end
@@ -49,7 +49,7 @@ describe Api::Controllers::Session::Destroy do
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
         code: 410,
-        message: 'ログインしていません。',
+        message: 'Gone',
       })
     end
   end

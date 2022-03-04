@@ -14,7 +14,7 @@ module Api
           read_user = ReadUser.new(provider_repository: @provider_repository)
           result = read_user.call(username: current_user.name)
 
-          halt_json 500, 'エラーが発生しました。', erros: result.errors if result.failure?
+          halt_json 500, erros: result.errors if result.failure?
 
           self.body = generate_json({
             name: current_user.name,

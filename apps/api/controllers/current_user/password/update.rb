@@ -18,7 +18,7 @@ module Api
 
             check_result = check_change_password.call(params)
 
-            halt_json 422, 'パスワード変更に失敗しました。', errors: check_result.errors if check_result.filure?
+            halt_json 422, errors: check_result.errors if check_result.filure?
 
             change_password = ChangePassword.new(provider_repository: provider_repository)
             result = change_password.call(username: check_result.username, password: check_result.password)
@@ -33,7 +33,7 @@ module Api
 
             if result.failure?
               user_notify.deliver(**mailer_params, result: :error) if  current_user.email
-              halt_json 500, 'パスワード変更時にエラーが発生しました。', errors: result.errors
+              halt_json 500, errors: result.errors
             end
 
             self.status = 204

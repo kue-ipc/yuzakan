@@ -53,8 +53,6 @@ module Api
 
           @attr = @attr_repository.create_with_mappings(attr_params)
 
-          halt_json 500, '作成時にエラーが発生しました。' if @attr.nil?
-
           self.status = 201
           headers['Location'] = routes.attr_path(@attr.id)
           self.body = generate_json(@attr)
