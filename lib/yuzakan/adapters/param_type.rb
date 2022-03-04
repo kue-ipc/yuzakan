@@ -153,7 +153,7 @@ module Yuzakan
         # データベース由来のデータしかloadしないようにすること
         value = Marshal.load(data) # rubocop:disable Security/MarshalLoad
 
-        return default if default&.then { value.nil? || (value.respond_to?(:empty) && value.empty?) }
+        return default if default && (value.nil? || (value.respond_to?(:empty?) && value.empty?))
 
         value
       end

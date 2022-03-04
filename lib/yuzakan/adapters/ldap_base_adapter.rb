@@ -124,6 +124,7 @@ module Yuzakan
         'LDAPの形式で指定します。' \
         '何も指定しない場合は(objectclass=*)になります。',
           type: :string,
+          default: '(objectclass=*)',
           required: false,
         },
       ]
