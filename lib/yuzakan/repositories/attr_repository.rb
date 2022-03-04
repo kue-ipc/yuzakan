@@ -1,6 +1,7 @@
 class AttrRepository < Hanami::Repository
   associations do
     has_many :attr_mappings
+    has_many :providers, throught: :attr_mappings
   end
 
   private def by_name(name)
@@ -47,23 +48,16 @@ class AttrRepository < Hanami::Repository
     assoc(:attr_mappings, attr).add(data)
   end
 
+  private def mapping_by_provider_id(attr, provider_id)
+    assoc(:attr_mappings, attr).where(provider_id: provider_id)
+  end
+
   def delete_mapping_by_provider_id(attr, provider_id)
-    assoc(:attr_mappings, attr).where(provider_id: provider_id).delete
+    mapping_by_provider_id(attr, provider_id).delete
   end
 
-  def update_mapping_by_provider_id(attr, provider_id, data)
-    assoc(:attr_mappings, attr).where(provider_id: provider_id).update(data)
+  def find_mapping_by_provider_id(attr, provider_id)
+    mapping_by_provider_id(attr, provider_id).to_a.first
   end
 
-  # def update_mapping(attr, id, data)
-  #   assoc(:attr_mappings, attr).update(id, data)
-  # end
-
-  # def mapping_by_provider_id(attr, provider_id)
-  #   assoc(:attr_mappings, attr).where(provider_id: provider_id)
-  # end
-
-  # def mapping_by_provider(attr, provider)
-  #   mapping_by_provider_id(attr, provider.id)
-  # end
 end

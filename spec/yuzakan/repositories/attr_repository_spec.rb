@@ -104,31 +104,9 @@ describe AttrRepository do
       _(attr_mapping_repository.all.count).must_equal 1
     end
 
-    it 'update_mapping_by_provider_id' do
-      up = attr_repository.update_mapping_by_provider_id(@attr_hoge, @provider_hoge.id, {name: 'fuga_hoge'})
-      pp up
-      # _(delete_count).must_be_instance_of 1
-      # _(attr_mapping_repository.all.count).must_equal 1
-
-      # delete_count = attr_repository.delete_mapping_by_provider_id(@attr_fuga, @provider_hoge.id)
-      # _(delete_count).must_be_instance_of 0
-      # _(attr_mapping_repository.all.count).must_equal 1
+    it 'find_mapping_by_provider_id' do
+      attr_mapping = attr_repository.find_mapping_by_provider_id(@attr_hoge, @provider_hoge.id)
+      _(attr_mapping).must_equal @attr_mapping_hoge_hoge
     end
-
-    # it 'remove_mapping' do
-    #   attr_mapping = attr_repository.remove_mapping(@attr_fuga, @attr_mapping_hoge_hoge.id)
-    #   _(attr_mapping).must_be_instance_of AttrMapping
-    #   _(attr_mapping.name).must_equal 'hoge_hoge'
-    #   _(attr_mapping_repository.all.count).must_equal 1
-    # end
-
-    # it 'update_mapping' do
-    #   attr_mapping = attr_repository.update_mapping(@attr_fuga, @attr_mapping_hoge_hoge.id, {provider_id: @provider_hoge.id, name: 'fuga_hoge'})
-    #   _(attr_mapping).must_be_instance_of AttrMapping
-    #   _(attr_mapping.name).must_equal 'hoge_hoge'
-    #   _(attr_mapping_repository.all.count).must_equal 1
-    # end
-
-    # mapping_by_provider_id
   end
 end

@@ -82,24 +82,24 @@ class UpdateAttr
     if @attr
       # update
       if params[:name] != @attr.name &&
-         @attr_repository.by_name(params[:name]).exist?
+         @attr_repository.exist_by_name?(params[:name])
         error({name: ['その識別名は既に存在します。']})
         result = false
       end
 
       if params[:label] != @attr.label &&
-         @attr_repository.by_label(params[:label]).exist?
+         @attr_repository.exist_by_label?(params[:label])
         error({label: ['その属性名は既に存在します。']})
         result = false
       end
     else
       # create
-      if @attr_repository.by_name(params[:name]).exist?
+      if @attr_repository.exist_by_name?(params[:name])
         error({name: ['その識別名は既に存在します。']})
         result = false
       end
 
-      if @attr_repository.by_label(params[:label]).exist?
+      if @attr_repository.exist_by_label?(params[:label])
         error({label: ['その属性名は既に存在します。']})
         result = false
       end
