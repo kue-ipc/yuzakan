@@ -7,7 +7,7 @@ describe Api::Controllers::Attrs::Destroy do
                                          user_repository: user_repository,
                                          attr_repository: attr_repository)
   }
-  let(:params) { {**env, id: 42} }
+  let(:params) { {**env, id: 'name'} }
 
   let(:env) { {'REMOTE_ADDR' => client, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
   let(:client) { '192.0.2.1' }

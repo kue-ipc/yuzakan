@@ -5,14 +5,15 @@ class ProviderRepository < Hanami::Repository
     has_many :attrs, throught: :attr_mappings
   end
 
-  def all
+  def ordered_all
     providers.order(:order).to_a
   end
 
-  def all_with_adapter
+  def ordered_all_with_adapter
     aggregate(:provider_params, attr_mappings: :attr)
       .order(:order)
       .map_to(Provider)
+      .to_a
   end
 
   def find_with_adapter(id)
@@ -30,10 +31,10 @@ class ProviderRepository < Hanami::Repository
   end
 
   def find_by_name(name)
-    providers.where(name: name).one
+    by_name(name).one
   end
 
-  def by_name(name)
+  private def by_name(name)
     providers.where(name: name)
   end
 

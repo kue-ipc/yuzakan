@@ -5,7 +5,8 @@ describe Api::Controllers::Attrs::Create do
     Api::Controllers::Attrs::Create.new(activity_log_repository: activity_log_repository,
                                         config_repository: config_repository,
                                         user_repository: user_repository,
-                                        attr_repository: attr_repository)
+                                        attr_repository: attr_repository,
+                                        provider_repository: provider_repository)
   }
   let(:params) { {**env, **attr_params} }
 
@@ -24,8 +25,8 @@ describe Api::Controllers::Attrs::Create do
     {
       name: 'name', label: '表示名', type: 'string', hidden: false,
       attr_mappings: [
-        {name: 'name', conversion: nil, provider_id: 3},
-        {name: 'name_name', conversion: 'e2j', provider_id: 8},
+        {name: 'name', conversion: nil, provider: {name: 'provider'}},
+        {name: 'name_name', conversion: 'e2j', provider: {name: 'provider_provider'}},
       ],
     }
   }
@@ -37,6 +38,15 @@ describe Api::Controllers::Attrs::Create do
       stub(obj).last_order { 6 }
       stub(obj).create_with_mappings { attr_with_mappings }
     end
+  }
+  let(:providers) {
+    [
+      Provider.new(id: 3, name: 'provider'),
+      Provider.new(id: 7, name: 'provider_provider'),
+    ]
+  }
+  let(:provider_repository) {
+    ProviderRepository.new.tap { |obj| stub(obj).all { providers } }
   }
 
   it 'is failure' do
@@ -56,7 +66,7 @@ describe Api::Controllers::Attrs::Create do
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       _(response[1]['Location']).must_equal "/api/attrs/#{attr_with_mappings.id}"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({id: 42, order: 7, **attr_params})
+      _(json).must_equal({**attr_params, order: 7})
     end
 
     describe 'bad params' do
@@ -64,12 +74,12 @@ describe Api::Controllers::Attrs::Create do
         {
           name: '', label: '表示名', type: 'string', hidden: false,
           attr_mappings: [
-            {name: 'name', conversion: nil, provider_id: 3},
-            {name: 'name_en', conversion: 'e2j', provider_id: 8},
+            {name: 'name', conversion: nil, provider: {name: 'provider'}},
+            {name: 'name_name', conversion: 'e2j', provider: {name: 'provider_provider'}},
           ],
         }
       }
-
+    
       it 'is failure' do
         response = action.call(params)
         _(response[0]).must_equal 422

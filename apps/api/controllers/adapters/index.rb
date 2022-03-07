@@ -4,7 +4,7 @@ module Api
       class Index
         include Api::Action
 
-        def call(params)
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
           adapters = ADAPTERS_MANAGER.hash.map do |key, value|
             {
               name: key,

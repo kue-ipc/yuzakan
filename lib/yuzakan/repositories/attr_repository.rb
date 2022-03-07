@@ -33,11 +33,11 @@ class AttrRepository < Hanami::Repository
   end
 
   def ordered_all_with_mappings
-    aggregate(:attr_mappings).order(:order).map_to(Attr).to_a
+    aggregate(attr_mappings: :provider).order(:order).map_to(Attr).to_a
   end
 
   def find_with_mappings(id)
-    aggregate(:attr_mappings).where(id: id).map_to(Attr).one
+    aggregate(attr_mappings: :provider).where(id: id).map_to(Attr).one
   end
 
   def create_with_mappings(data)
