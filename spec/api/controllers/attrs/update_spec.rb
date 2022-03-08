@@ -6,9 +6,10 @@ describe Api::Controllers::Attrs::Update do
                                         config_repository: config_repository,
                                         user_repository: user_repository,
                                         attr_repository: attr_repository,
-                                        attr_mapping_repository: attr_mapping_repository)
+                                        attr_mapping_repository: attr_mapping_repository,
+                                        provider_repository: provider_repository)
   }
-  let(:params) { {**env, id: 42, **attr_params} }
+  let(:params) { {**env, id: 'attr1', **attr_params} }
 
   let(:env) { {'REMOTE_ADDR' => client, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
   let(:client) { '192.0.2.1' }
@@ -23,30 +24,30 @@ describe Api::Controllers::Attrs::Update do
 
   let(:attr_params) {
     {
-      name: 'name', label: '表示名', type: 'string', hidden: false,
+      name: 'attr1', label: '属性①', type: 'string', order: 8, hidden: false,
       attr_mappings: [
-        {name: 'name', conversion: nil, provider_id: 3},
-        {name: 'name_name', conversion: 'e2j', provider_id: 8},
+        {name: 'attr1_1', conversion: nil, provider: {name: 'provider1'}},
+        {name: 'attr1_2', conversion: 'e2j', provider: {name: 'provider2'}},
       ],
     }
   }
-  let(:attr_without_mappings) { Attr.new(id: 42, order: 7, **attr_params.except(:attr_mappings)) }
-  let(:attr_with_mappings) { Attr.new(id: 42, order: 7, **attr_params) }
+  let(:attr_without_mappings) { Attr.new(id: 42, **attr_params.except(:attr_mappings)) }
+  let(:attr_with_mappings) { Attr.new(id: 42, **attr_params) }
   let(:attr_repository) {
     AttrRepository.new.tap do |obj|
+      stub(obj).find_with_mappings_by_name { attr_with_mappings }
       stub(obj).find_with_mappings { attr_with_mappings }
       stub(obj).exist_by_name? { false }
       stub(obj).exist_by_label? { false }
+      stub(obj).exist_by_order? { false }
       stub(obj).update { attr_without_mappings }
       stub(obj).delete_mapping_by_provider_id { 1 }
       stub(obj).add_mapping { AttrMapping.new }
     end
   }
-  let(:attr_mapping_repository) {
-    AttrMappingRepository.new.tap do |obj|
-      stub(obj).update { AttrMapping.new }
-    end
-  }
+  let(:attr_mapping_repository) { AttrMappingRepository.new.tap { |obj| stub(obj).update { AttrMapping.new } } }
+  let(:providers) { [Provider.new(id: 3, name: 'provider1'), Provider.new(id: 7, name: 'provider2')] }
+  let(:provider_repository) { ProviderRepository.new.tap { |obj| stub(obj).all { providers } } }
 
   it 'is failure' do
     response = action.call(params)
@@ -64,7 +65,7 @@ describe Api::Controllers::Attrs::Update do
       _(response[0]).must_equal 200
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({id: 42, order: 7, **attr_params})
+      _(json).must_equal(attr_params)
     end
 
     it 'is successful with different' do
@@ -72,13 +73,20 @@ describe Api::Controllers::Attrs::Update do
       _(response[0]).must_equal 200
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({id: 42, order: 7, **attr_params})
+      _(json).must_equal(attr_params)
     end
 
     describe 'not existed' do
       let(:attr_repository) {
         AttrRepository.new.tap do |obj|
+          stub(obj).find_with_mappings_by_name { nil }
           stub(obj).find_with_mappings { nil }
+          stub(obj).exist_by_name? { false }
+          stub(obj).exist_by_label? { false }
+          stub(obj).exist_by_order? { false }
+          stub(obj).update { attr_without_mappings }
+          stub(obj).delete_mapping_by_provider_id { 1 }
+          stub(obj).add_mapping { AttrMapping.new }
         end
       }
 
@@ -97,9 +105,11 @@ describe Api::Controllers::Attrs::Update do
     describe 'existed name' do
       let(:attr_repository) {
         AttrRepository.new.tap do |obj|
+          stub(obj).find_with_mappings_by_name { attr_with_mappings }
           stub(obj).find_with_mappings { attr_with_mappings }
           stub(obj).exist_by_name? { true }
           stub(obj).exist_by_label? { false }
+          stub(obj).exist_by_order? { false }
           stub(obj).update { attr_without_mappings }
           stub(obj).delete_mapping_by_provider_id { 1 }
           stub(obj).add_mapping { AttrMapping.new }
@@ -111,7 +121,7 @@ describe Api::Controllers::Attrs::Update do
         _(response[0]).must_equal 200
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({id: 42, order: 7, **attr_params})
+        _(json).must_equal(attr_params)
       end
 
       it 'is successful with diffrent only label' do
@@ -119,7 +129,7 @@ describe Api::Controllers::Attrs::Update do
         _(response[0]).must_equal 200
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({id: 42, order: 7, **attr_params})
+        _(json).must_equal(attr_params)
       end
 
       it 'is failure with different' do
@@ -138,9 +148,11 @@ describe Api::Controllers::Attrs::Update do
     describe 'existed label' do
       let(:attr_repository) {
         AttrRepository.new.tap do |obj|
+          stub(obj).find_with_mappings_by_name { attr_with_mappings }
           stub(obj).find_with_mappings { attr_with_mappings }
           stub(obj).exist_by_name? { false }
           stub(obj).exist_by_label? { true }
+          stub(obj).exist_by_order? { false }
           stub(obj).update { attr_without_mappings }
           stub(obj).delete_mapping_by_provider_id { 1 }
           stub(obj).add_mapping { AttrMapping.new }
@@ -152,7 +164,7 @@ describe Api::Controllers::Attrs::Update do
         _(response[0]).must_equal 200
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({id: 42, order: 7, **attr_params})
+        _(json).must_equal(attr_params)
       end
 
       it 'is successful with diffrent only name' do
@@ -160,7 +172,7 @@ describe Api::Controllers::Attrs::Update do
         _(response[0]).must_equal 200
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({id: 42, order: 7, **attr_params})
+        _(json).must_equal(attr_params)
       end
 
       it 'is failure with different' do
@@ -179,9 +191,11 @@ describe Api::Controllers::Attrs::Update do
     describe 'existed name nad label' do
       let(:attr_repository) {
         AttrRepository.new.tap do |obj|
+          stub(obj).find_with_mappings_by_name { attr_with_mappings }
           stub(obj).find_with_mappings { attr_with_mappings }
           stub(obj).exist_by_name? { true }
           stub(obj).exist_by_label? { true }
+          stub(obj).exist_by_order? { false }
           stub(obj).update { attr_without_mappings }
           stub(obj).delete_mapping_by_provider_id { 1 }
           stub(obj).add_mapping { AttrMapping.new }
@@ -193,7 +207,7 @@ describe Api::Controllers::Attrs::Update do
         _(response[0]).must_equal 200
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({id: 42, order: 7, **attr_params})
+        _(json).must_equal(attr_params)
       end
 
       it 'is successful with diffrent only hidden' do
@@ -201,7 +215,7 @@ describe Api::Controllers::Attrs::Update do
         _(response[0]).must_equal 200
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({id: 42, order: 7, **attr_params})
+        _(json).must_equal(attr_params)
       end
 
       it 'is failure with different' do

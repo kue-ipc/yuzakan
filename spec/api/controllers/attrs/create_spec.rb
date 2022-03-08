@@ -23,7 +23,7 @@ describe Api::Controllers::Attrs::Create do
 
   let(:attr_params) {
     {
-      name: 'attr1', label: '属性①', type: 'string', hidden: false, order: 8,
+      name: 'attr1', label: '属性①', type: 'string', order: 8, hidden: false, 
       attr_mappings: [
         {name: 'attr1_1', conversion: nil, provider: {name: 'provider1'}},
         {name: 'attr1_2', conversion: 'e2j', provider: {name: 'provider2'}},
@@ -40,15 +40,8 @@ describe Api::Controllers::Attrs::Create do
       stub(obj).create_with_mappings { attr_with_mappings }
     end
   }
-  let(:providers) {
-    [
-      Provider.new(id: 3, name: 'provider1'),
-      Provider.new(id: 7, name: 'provider2'),
-    ]
-  }
-  let(:provider_repository) {
-    ProviderRepository.new.tap { |obj| stub(obj).all { providers } }
-  }
+  let(:providers) { [Provider.new(id: 3, name: 'provider1'), Provider.new(id: 7, name: 'provider2')] }
+  let(:provider_repository) { ProviderRepository.new.tap { |obj| stub(obj).all { providers } } }
 
   it 'is failure' do
     response = action.call(params)

@@ -16,7 +16,7 @@ module Api
         end
 
         def call(params)
-          halt_json 400, errors: params.errors unless params.valid?
+          halt_json 400, errors: [params.errors] unless params.valid?
 
           @attr = @attr_repository.find_with_mappings_by_name(params[:id])
           halt_json 404 if @attr.nil?

@@ -22,7 +22,7 @@ describe Api::Controllers::Attrs::Destroy do
 
   let(:attr_params) {
     {
-      name: 'attr1', label: '属性①', type: 'string', hidden: false, order: 8,
+      name: 'attr1', label: '属性①', type: 'string', order: 8, hidden: false, 
       attr_mappings: [
         {name: 'attr1_1', conversion: nil, provider: {name: 'provider1'}},
         {name: 'attr1_2', conversion: 'e2j', provider: {name: 'provider2'}},
@@ -30,11 +30,11 @@ describe Api::Controllers::Attrs::Destroy do
     }
   }
   let(:attr_with_mappings) { Attr.new(id: 42, **attr_params) }
-  let(:attr) { Attr.new(id: 42, **attr_params.except(:attr_mappings)) }
+  let(:attr_without_mappings) { Attr.new(id: 42, **attr_params.except(:attr_mappings)) }
   let(:attr_repository) {
     AttrRepository.new.tap do |obj|
       stub(obj).find_with_mappings_by_name { attr_with_mappings }
-      stub(obj).delete { attr }
+      stub(obj).delete { attr_without_mappings }
     end
   }
 

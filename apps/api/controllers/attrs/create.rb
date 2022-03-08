@@ -15,8 +15,8 @@ module Api
             required(:name).filled(:str?)
             required(:label).filled(:str?)
             required(:type).filled(:str?)
-            optional(:hidden).maybe(:bool?)
             optional(:order).maybe(:int?)
+            optional(:hidden).maybe(:bool?)
             # rubocop:disable all
             optional(:attr_mappings) { array? { each { schema {
               required(:provider).schema { required(:name).filled(:str?) }
