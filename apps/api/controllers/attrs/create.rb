@@ -38,6 +38,7 @@ module Api
 
         def call(params)
           param_errors = params.errors.dup
+
           if !param_errors.key?(:name) && @attr_repository.exist_by_name?(params[:name])
             param_errors[:name] = [I18n.t('errors.uniq?')]
           end
@@ -52,10 +53,10 @@ module Api
             providers_by_name = @provider_repository.all.to_h { |provider| [provider.name, provider] }
             idx = 0
             attr_params[:attr_mappings] = attr_params[:attr_mappings].map do |attr_mapping_params|
-              provider = providers_by_name[attr_mapping_params.fetch(:provider, :name)]
+              provider = providers_by_name[attr_mapping_params.dig(:provider, :name)]
               if provider.nil?
                 param_errors[:attr_mappings] ||= {}
-                param_errors[:attr_mappings][idx] = {provider: {name: '存在しません。'}}
+                param_errors[:attr_mappings][idx] = {provider: {name: [I18n.t('errors.found?')]}}
               end
               idx += 1
               {**attr_mapping_params.slice(:name, :conversion), provider_id: provider&.id}

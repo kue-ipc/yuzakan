@@ -23,10 +23,10 @@ describe Api::Controllers::Attrs::Create do
 
   let(:attr_params) {
     {
-      name: 'name', label: '表示名', type: 'string', hidden: false,
+      name: 'attr1', label: '属性①', type: 'string', hidden: false,
       attr_mappings: [
-        {name: 'name', conversion: nil, provider: {name: 'provider'}},
-        {name: 'name_name', conversion: 'e2j', provider: {name: 'provider_provider'}},
+        {name: 'attr1_1', conversion: nil, provider: {name: 'provider1'}},
+        {name: 'attr1_2', conversion: 'e2j', provider: {name: 'provider2'}},
       ],
     }
   }
@@ -41,8 +41,8 @@ describe Api::Controllers::Attrs::Create do
   }
   let(:providers) {
     [
-      Provider.new(id: 3, name: 'provider'),
-      Provider.new(id: 7, name: 'provider_provider'),
+      Provider.new(id: 3, name: 'provider1'),
+      Provider.new(id: 7, name: 'provider2'),
     ]
   }
   let(:provider_repository) {
@@ -72,14 +72,14 @@ describe Api::Controllers::Attrs::Create do
     describe 'bad params' do
       let(:attr_params) {
         {
-          name: '', label: '表示名', type: 'string', hidden: false,
+          name: '', label: '属性①', type: 'string', hidden: false,
           attr_mappings: [
-            {name: 'name', conversion: nil, provider: {name: 'provider'}},
-            {name: 'name_name', conversion: 'e2j', provider: {name: 'provider_provider'}},
+            {name: 'attr1_1', conversion: nil, provider: {name: ''}},
+            {name: 'attr1_2', conversion: 'e2j'},
           ],
         }
       }
-    
+
       it 'is failure' do
         response = action.call(params)
         _(response[0]).must_equal 422
@@ -88,7 +88,13 @@ describe Api::Controllers::Attrs::Create do
         _(json).must_equal({
           code: 422,
           message: 'Unprocessable Entity',
-          errors: [{name: ['入力が必須です。']}],
+          errors: [{
+            name: ['入力が必須です。'],
+            attr_mappings: {
+              '0': {provider: {name: ['入力が必須です。']}},
+              '1': {provider: ['存在しません。']},
+            },
+          }],
         })
       end
 
@@ -110,7 +116,43 @@ describe Api::Controllers::Attrs::Create do
           _(json).must_equal({
             code: 422,
             message: 'Unprocessable Entity',
-            errors: [{name: ['入力が必須です。', '重複しています。']}],
+            errors: [{
+              name: ['入力が必須です。'],
+              attr_mappings: {
+                '0': {provider: {name: ['入力が必須です。']}},
+                '1': {provider: ['存在しません。']},
+              },
+            }],
+          })
+        end
+      end
+
+      describe 'existed label' do
+        let(:attr_repository) {
+          AttrRepository.new.tap do |obj|
+            stub(obj).exist_by_name? { false }
+            stub(obj).exist_by_label? { true }
+            stub(obj).last_order { 6 }
+            stub(obj).create_with_mappings { attr_with_mappings }
+          end
+        }
+
+        it 'is failure' do
+          response = action.call(params)
+          _(response[0]).must_equal 422
+          _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+          json = JSON.parse(response[2].first, symbolize_names: true)
+          _(json).must_equal({
+            code: 422,
+            message: 'Unprocessable Entity',
+            errors: [{
+              name: ['入力が必須です。'],
+              label: ['重複しています。'],
+              attr_mappings: {
+                '0': {provider: {name: ['入力が必須です。']}},
+                '1': {provider: ['存在しません。']},
+              },
+            }],
           })
         end
       end
@@ -197,6 +239,22 @@ describe Api::Controllers::Attrs::Create do
           code: 422,
           message: 'Unprocessable Entity',
           errors: [{name: ['重複しています。'], label: ['重複しています。']}],
+        })
+      end
+    end
+
+    describe 'not found provider' do
+      let(:providers) { [Provider.new(id: 3, name: 'provider1')] }
+
+      it 'is failure' do
+        response = action.call(params)
+        _(response[0]).must_equal 422
+        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        json = JSON.parse(response[2].first, symbolize_names: true)
+        _(json).must_equal({
+          code: 422,
+          message: 'Unprocessable Entity',
+          errors: [{attr_mappings: {'1': {provider: {name: ['見つかりません。']}}}}],
         })
       end
     end

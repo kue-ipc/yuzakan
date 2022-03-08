@@ -31,7 +31,7 @@ module Api
       when Time
         obj.iso8601
       when Hanami::Entity
-        convert_for_json(obj.to_h)
+        convert_for_json(obj.to_h.except(:id, :created_at, :updated_at))
       else
         obj
       end

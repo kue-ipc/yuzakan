@@ -54,6 +54,8 @@ ja:
             range: "長さは%{size_left}〜%{size_right}の範囲内にしてください。"
     # orginal messages
     uniq?: "重複しています。"
+    exist?: "存在しません。"
+    found?: "見つかりません。"
   session:
     errors:
       too_many_failure: >-
