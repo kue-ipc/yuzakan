@@ -22,7 +22,7 @@ describe Api::Controllers::Attrs::Show do
 
   let(:attr_params) {
     {
-      name: 'attr1', label: '属性①', type: 'string', order: 8, hidden: false, 
+      name: 'attr1', label: '属性①', type: 'string', order: 8, hidden: false,
       attr_mappings: [
         {name: 'attr1_1', conversion: nil, provider: {name: 'provider1'}},
         {name: 'attr1_2', conversion: 'e2j', provider: {name: 'provider2'}},

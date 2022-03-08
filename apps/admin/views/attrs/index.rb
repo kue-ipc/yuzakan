@@ -41,7 +41,7 @@ module Admin
                 td class: 'table-primary' do
                   text_field :name, class: 'form-control mb-1', required: true
                   text_field :label, class: 'form-control',
-                                            required: true
+                                     required: true
                 end
 
                 td class: 'table-primary' do

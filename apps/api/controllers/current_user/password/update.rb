@@ -32,7 +32,7 @@ module Api
             }
 
             if result.failure?
-              user_notify.deliver(**mailer_params, result: :error) if  current_user.email
+              user_notify.deliver(**mailer_params, result: :error) if current_user.email
               halt_json 500, errors: result.errors
             end
 

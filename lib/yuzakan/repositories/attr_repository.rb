@@ -71,5 +71,4 @@ class AttrRepository < Hanami::Repository
   def find_mapping_by_provider_id(attr, provider_id)
     mapping_by_provider_id(attr, provider_id).to_a.first
   end
-
 end

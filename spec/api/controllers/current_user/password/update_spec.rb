@@ -25,7 +25,6 @@ describe Api::Controllers::CurrentUser::Password::Update do
     ProviderRepository.new.tap { |obj| stub(obj).operational_all_with_adapter { providers } }
   }
 
-
   # it 'is successful' do
   #   response = action.call(params)
   #   _(response[0]).must_equal 204

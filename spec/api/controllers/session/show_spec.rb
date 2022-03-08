@@ -10,7 +10,7 @@ describe Api::Controllers::Session::Show do
   let(:env) { {'REMOTE_ADDR' => client, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
   let(:client) { '192.0.2.1' }
   let(:uuid) { 'ffffffff-ffff-4fff-bfff-ffffffffffff' }
-  let(:user) { User.new(id: 42, name: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1)}
+  let(:user) { User.new(id: 42, name: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1) }
   let(:session) { {uuid: uuid, user_id: user.id, created_at: Time.now - 600, updated_at: Time.now - 60} }
   let(:format) { 'application/json' }
   let(:config) { Config.new(title: 'title', session_timeout: 3600, user_networks: '') }
@@ -35,7 +35,7 @@ describe Api::Controllers::Session::Show do
     deleted_at = Time.iso8601(json[:deleted_at])
     _(deleted_at).must_be :>=, begin_time + 3600
     _(deleted_at).must_be :<=, end_time + 3600
-end
+  end
 
   describe 'no login session' do
     let(:session) { {uuid: uuid} }

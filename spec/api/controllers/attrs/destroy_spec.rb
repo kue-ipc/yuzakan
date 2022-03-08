@@ -22,7 +22,7 @@ describe Api::Controllers::Attrs::Destroy do
 
   let(:attr_params) {
     {
-      name: 'attr1', label: '属性①', type: 'string', order: 8, hidden: false, 
+      name: 'attr1', label: '属性①', type: 'string', order: 8, hidden: false,
       attr_mappings: [
         {name: 'attr1_1', conversion: nil, provider: {name: 'provider1'}},
         {name: 'attr1_2', conversion: 'e2j', provider: {name: 'provider2'}},
@@ -58,9 +58,11 @@ describe Api::Controllers::Attrs::Destroy do
     end
 
     describe 'not existend' do
-      let(:attr_repository) { 
-        AttrRepository.new.tap { |obj| stub(obj).find_by_name { nil } 
-      } }
+      let(:attr_repository) {
+        AttrRepository.new.tap do |obj|
+          stub(obj).find_by_name { nil }
+        end
+      }
 
       it 'is failure' do
         response = action.call(params)
