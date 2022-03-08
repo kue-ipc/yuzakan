@@ -17,8 +17,8 @@ module Api
           halt_json 500, erros: result.errors if result.failure?
 
           self.body = generate_json({
-            **current_user.to_h.except(:id),
-            userdatas: result.userdatas.map { |k, v| {provider: k, userdata: v} },
+            **convert_for_json(current_user),
+            userdatas: result.userdatas,
           })
         end
       end

@@ -47,7 +47,10 @@ describe Api::Controllers::CurrentUser::Show do
       email: 'user@example.jp',
       clearance_level: 1,
       userdatas: [{
-        provider: 'provider',
+        provider: {
+          name: 'provider',
+          adapter_name: 'mock',
+        },
         userdata: {
           name: 'user',
           display_name: 'ユーザー',

@@ -45,6 +45,10 @@ class Provider < Hanami::Entity
     super
   end
 
+  def to_h
+    super.except(:provider_params, :attr_mappings)
+  end
+
   def safe_params
     @params.reject do |key, _value|
       param_type = @adapter_class.param_type_by_name(key)

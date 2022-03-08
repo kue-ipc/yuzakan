@@ -8,10 +8,10 @@ class ReadUser
   end
 
   def call(params)
-    @userdatas = {}
+    @userdatas = []
     @providers.each do |provider|
       userdata = provider.read(params[:username])
-      @userdatas[provider.name] = userdata if userdata
+      @userdatas << {provider: provider, userdata: userdata} if userdata
     rescue => e
       Hanami.logger.error e
       error("ユーザー情報の読み込み時にエラーが発生しました。(#{provider.label}")
