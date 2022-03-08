@@ -56,6 +56,7 @@ ja:
     uniq?: "重複しています。"
     exist?: "存在しません。"
     found?: "見つかりません。"
+    name?: "名前付けの規則に違反しています。"
   session:
     errors:
       too_many_failure: >-

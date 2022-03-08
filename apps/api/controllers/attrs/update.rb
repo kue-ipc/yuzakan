@@ -7,19 +7,23 @@ module Api
         security_level 5
 
         class Params < Hanami::Action::Params
+          predicates NamePredicates
           messages :i18n
 
           params do
-            required(:id).filled(:str?)
-            optional(:name).filled(:str?)
-            optional(:label).filled(:str?)
+            required(:id).filled(:str?, :name?, max_size?: 255)
+            optional(:name).filled(:str?, :name?, max_size?: 255)
+            optional(:label).filled(:str?, max_size?: 255)
             optional(:type).filled(:str?)
             optional(:order).maybe(:int?)
             optional(:hidden).maybe(:bool?)
             # rubocop:disable all
             optional(:attr_mappings) { array? { each { schema {
-              required(:provider).schema { required(:name).filled(:str?) }
-              required(:name).maybe(:str?)
+              required(:provider).schema {
+                predicates NamePredicates
+                required(:name).filled(:str?, :name?, max_size?: 255)
+              }
+              required(:name).maybe(:str?, max_size?: 255)
               optional(:conversion).maybe(:str?)
              } } } }
             # rubocop:enable all
@@ -44,7 +48,7 @@ module Api
           @attr = @attr_repository.find_with_mappings_by_name(params[:id])
           halt_json 404 if @attr.nil?
 
-          param_errors = params.errors.dup
+          param_errors = only_first_errors(params.errors.to_h)
           attr_params = params.to_h.except(:id)
 
           if !param_errors.key?(:name) && params[:name] && @attr.name != params[:name] &&

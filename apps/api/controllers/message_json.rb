@@ -36,5 +36,16 @@ module Api
         obj
       end
     end
+
+    private def only_first_errors(errors)
+      case errors
+      when Hash
+        errors.transform_values { |v| only_first_errors(v) }
+      when Array
+        errors[0, 1]
+      else
+        errors
+      end
+    end
   end
 end

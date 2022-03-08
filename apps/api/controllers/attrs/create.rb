@@ -5,22 +5,25 @@ module Api
     module Attrs
       class Create
         include Api::Action
-
         security_level 5
 
         class Params < Hanami::Action::Params
+          predicates NamePredicates
           messages :i18n
 
           params do
-            required(:name).filled(:str?)
-            required(:label).filled(:str?)
+            required(:name).filled(:str?, :name?, max_size?: 255)
+            required(:label).filled(:str?, max_size?: 255)
             required(:type).filled(:str?)
             optional(:order).maybe(:int?)
             optional(:hidden).maybe(:bool?)
             # rubocop:disable all
             optional(:attr_mappings) { array? { each { schema {
-              required(:provider).schema { required(:name).filled(:str?) }
-              required(:name).maybe(:str?)
+              required(:provider).schema {
+                predicates NamePredicates
+                required(:name).filled(:str?, :name?, max_size?: 255)
+              }
+              required(:name).maybe(:str?, max_size?: 255)
               optional(:conversion).maybe(:str?)
              } } } }
             # rubocop:enable all
@@ -38,7 +41,7 @@ module Api
         end
 
         def call(params)
-          param_errors = params.errors.dup
+          param_errors = only_first_errors(params.errors.to_h)
           attr_params = params.to_h.dup
 
           if !param_errors.key?(:name) && @attr_repository.exist_by_name?(attr_params[:name])
