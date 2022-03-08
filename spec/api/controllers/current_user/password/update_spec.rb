@@ -5,7 +5,8 @@ describe Api::Controllers::CurrentUser::Password::Update do
     Api::Controllers::CurrentUser::Password::Update.new(activity_log_repository: activity_log_repository,
                                                         config_repository: config_repository,
                                                         user_repository: user_repository,
-                                                        provider_repository: provider_repository)
+                                                        provider_repository: provider_repository,
+                                                        user_notify: user_notify)
   }
   let(:params) { {current_password: 'pass', password: 'word', password_confirmation: 'word', **env} }
 
@@ -24,12 +25,15 @@ describe Api::Controllers::CurrentUser::Password::Update do
   let(:provider_repository) {
     ProviderRepository.new.tap { |obj| stub(obj).operational_all_with_adapter { providers } }
   }
+  let(:user_notify) { Object.new.tap { |obj| stub(obj).deliver } }
 
-  # it 'is successful' do
-  #   response = action.call(params)
-  #   _(response[0]).must_equal 204
-  #   _(response[2]).must_equal []
-  # end
+  it 'is successful' do
+    response = action.call(params)
+    _(response[0]).must_equal 200
+    _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    json = JSON.parse(response[2].first, symbolize_names: true)
+    _(json).must_equal({password: {size: 4, types: 1, score: 0}})
+  end
 
   describe 'no login session' do
     let(:session) { {uuid: uuid} }
