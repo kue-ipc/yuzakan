@@ -16,6 +16,7 @@ module Api
             required(:label).filled(:str?)
             required(:type).filled(:str?)
             optional(:hidden).maybe(:bool?)
+            optional(:order).maybe(:int?)
             # rubocop:disable all
             optional(:attr_mappings) { array? { each { schema {
               required(:provider).schema { required(:name).filled(:str?) }
@@ -38,17 +39,20 @@ module Api
 
         def call(params)
           param_errors = params.errors.dup
+          attr_params = params.to_h.dup
 
-          if !param_errors.key?(:name) && @attr_repository.exist_by_name?(params[:name])
+          if !param_errors.key?(:name) && @attr_repository.exist_by_name?(attr_params[:name])
             param_errors[:name] = [I18n.t('errors.uniq?')]
           end
-          if !param_errors.key?(:label) && @attr_repository.exist_by_label?(params[:label])
+
+          if !param_errors.key?(:label) && @attr_repository.exist_by_label?(attr_params[:label])
             param_errors[:label] = [I18n.t('errors.uniq?')]
           end
 
-          params[:attr_mappings] if !param_errors.has_key?(:attr_mappings) && params[:attr_mappings]
+          if !param_errors.key?(:order) && attr_params[:order] && @attr_repository.exist_by_order?(attr_params[:order])
+            param_errors[:order] = [I18n.t('errors.uniq?')]
+          end
 
-          attr_params = params.to_h.dup
           if !param_errors.key?(:attr_mappings) && attr_params[:attr_mappings]
             providers_by_name = @provider_repository.all.to_h { |provider| [provider.name, provider] }
             idx = 0
@@ -67,6 +71,7 @@ module Api
 
           halt_json(422, errors: [param_errors]) unless param_errors.empty?
 
+          attr_params[:order] ||= @attr_repository.last_order + 8
           @attr = @attr_repository.create_with_mappings(attr_params)
 
           self.status = 201

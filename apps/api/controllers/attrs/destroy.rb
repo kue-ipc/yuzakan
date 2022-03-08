@@ -7,7 +7,7 @@ module Api
         security_level 5
 
         params do
-          required(:id).filled(:int?)
+          required(:id).filled(:str?)
         end
 
         def initialize(attr_repository: AttrRepository.new, **opts)
@@ -18,8 +18,10 @@ module Api
         def call(params)
           halt_json 400, errors: params.errors unless params.valid?
 
-          @attr = @attr_repository.delete(params[:id])
+          @attr = @attr_repository.find_with_mappings_by_name(params[:id])
           halt_json 404 if @attr.nil?
+
+          @attr_repository.delete(@attr.id)
 
           self.status = 200
           self.body = generate_json(@attr)

@@ -23,19 +23,20 @@ describe Api::Controllers::Attrs::Create do
 
   let(:attr_params) {
     {
-      name: 'attr1', label: '属性①', type: 'string', hidden: false,
+      name: 'attr1', label: '属性①', type: 'string', hidden: false, order: 8,
       attr_mappings: [
         {name: 'attr1_1', conversion: nil, provider: {name: 'provider1'}},
         {name: 'attr1_2', conversion: 'e2j', provider: {name: 'provider2'}},
       ],
     }
   }
-  let(:attr_with_mappings) { Attr.new(id: 42, order: 7, **attr_params) }
+  let(:attr_with_mappings) { Attr.new(id: 42, **attr_params) }
   let(:attr_repository) {
     AttrRepository.new.tap do |obj|
       stub(obj).exist_by_name? { false }
       stub(obj).exist_by_label? { false }
-      stub(obj).last_order { 6 }
+      stub(obj).exist_by_order? { false }
+      stub(obj).last_order { 16 }
       stub(obj).create_with_mappings { attr_with_mappings }
     end
   }
@@ -66,7 +67,16 @@ describe Api::Controllers::Attrs::Create do
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       _(response[1]['Location']).must_equal "/api/attrs/#{attr_with_mappings.id}"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({**attr_params, order: 7})
+      _(json).must_equal(attr_params)
+    end
+
+    it 'is successful without order param' do
+      response = action.call(params.except(:order))
+      _(response[0]).must_equal 201
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      _(response[1]['Location']).must_equal "/api/attrs/#{attr_with_mappings.id}"
+      json = JSON.parse(response[2].first, symbolize_names: true)
+      _(json).must_equal(attr_params)
     end
 
     describe 'bad params' do
@@ -103,6 +113,7 @@ describe Api::Controllers::Attrs::Create do
           AttrRepository.new.tap do |obj|
             stub(obj).exist_by_name? { true }
             stub(obj).exist_by_label? { false }
+            stub(obj).exist_by_order? { false }
             stub(obj).last_order { 6 }
             stub(obj).create_with_mappings { attr_with_mappings }
           end
@@ -132,6 +143,7 @@ describe Api::Controllers::Attrs::Create do
           AttrRepository.new.tap do |obj|
             stub(obj).exist_by_name? { false }
             stub(obj).exist_by_label? { true }
+            stub(obj).exist_by_order? { false }
             stub(obj).last_order { 6 }
             stub(obj).create_with_mappings { attr_with_mappings }
           end
@@ -179,6 +191,7 @@ describe Api::Controllers::Attrs::Create do
         AttrRepository.new.tap do |obj|
           stub(obj).exist_by_name? { true }
           stub(obj).exist_by_label? { false }
+          stub(obj).exist_by_order? { false }
           stub(obj).last_order { 6 }
           stub(obj).create_with_mappings { attr_with_mappings }
         end
@@ -202,6 +215,7 @@ describe Api::Controllers::Attrs::Create do
         AttrRepository.new.tap do |obj|
           stub(obj).exist_by_name? { false }
           stub(obj).exist_by_label? { true }
+          stub(obj).exist_by_order? { false }
           stub(obj).last_order { 6 }
           stub(obj).create_with_mappings { attr_with_mappings }
         end
@@ -225,6 +239,7 @@ describe Api::Controllers::Attrs::Create do
         AttrRepository.new.tap do |obj|
           stub(obj).exist_by_name? { true }
           stub(obj).exist_by_label? { true }
+          stub(obj).exist_by_order? { false }
           stub(obj).last_order { 6 }
           stub(obj).create_with_mappings { attr_with_mappings }
         end

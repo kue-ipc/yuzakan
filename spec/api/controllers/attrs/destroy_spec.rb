@@ -7,7 +7,7 @@ describe Api::Controllers::Attrs::Destroy do
                                          user_repository: user_repository,
                                          attr_repository: attr_repository)
   }
-  let(:params) { {**env, id: 'name'} }
+  let(:params) { {**env, id: 'attr1'} }
 
   let(:env) { {'REMOTE_ADDR' => client, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
   let(:client) { '192.0.2.1' }
@@ -20,9 +20,22 @@ describe Api::Controllers::Attrs::Destroy do
   let(:config_repository) { ConfigRepository.new.tap { |obj| stub(obj).current { config } } }
   let(:user_repository) { UserRepository.new.tap { |obj| stub(obj).find { user } } }
 
-  let(:attr_params) { {name: 'name', label: '表示名', type: 'string', hidden: false} }
-  let(:attr) { Attr.new(id: 42, order: 7, **attr_params) }
-  let(:attr_repository) { AttrRepository.new.tap { |obj| stub(obj).delete { attr } } }
+  let(:attr_params) {
+    {
+      name: 'attr1', label: '属性①', type: 'string', hidden: false, order: 8,
+      attr_mappings: [
+        {name: 'attr1_1', conversion: nil, provider: {name: 'provider1'}},
+        {name: 'attr1_2', conversion: 'e2j', provider: {name: 'provider2'}},
+      ],
+    }
+  }
+  let(:attr) { Attr.new(id: 42, **attr_params) }
+  let(:attr_repository) {
+    AttrRepository.new.tap do |obj|
+      stub(obj).find_with_mappings_by_name { attr }
+      stub(obj).delete { attr }
+    end
+  }
 
   it 'is failure' do
     response = action.call(params)
@@ -40,11 +53,13 @@ describe Api::Controllers::Attrs::Destroy do
       _(response[0]).must_equal 200
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({id: 42, order: 7, **attr_params})
+      _(json).must_equal({order: 7, **attr_params})
     end
 
     describe 'not existend' do
-      let(:attr_repository) { AttrRepository.new.tap { |obj| stub(obj).delete { nil } } }
+      let(:attr_repository) { 
+        AttrRepository.new.tap { |obj| stub(obj).find_by_name { nil } 
+      } }
 
       it 'is failure' do
         response = action.call(params)

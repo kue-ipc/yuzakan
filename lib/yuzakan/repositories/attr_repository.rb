@@ -12,6 +12,10 @@ class AttrRepository < Hanami::Repository
     attrs.where(label: label)
   end
 
+  private def by_order(order)
+    attrs.where(order: order)
+  end
+
   def find_by_name(name)
     by_name(name).one
   end
@@ -22,6 +26,10 @@ class AttrRepository < Hanami::Repository
 
   def exist_by_label?(label)
     by_label(label).exist?
+  end
+
+  def exist_by_order?(order)
+    by_order(order).exist?
   end
 
   def ordered_all
@@ -38,6 +46,10 @@ class AttrRepository < Hanami::Repository
 
   def find_with_mappings(id)
     aggregate(attr_mappings: :provider).where(id: id).map_to(Attr).one
+  end
+
+  def find_with_mappings_by_name(name)
+    aggregate(attr_mappings: :provider).where(name: name).map_to(Attr).one
   end
 
   def create_with_mappings(data)
