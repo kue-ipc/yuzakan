@@ -72,15 +72,6 @@ module Web
       @current_time ||= Time.now
     end
 
-    private def connection_info
-      {
-        config: current_config,
-        uuid: uuid,
-        user: current_user,
-        client: client,
-      }
-    end
-
     def security_level
       self.class.security_level
     end
