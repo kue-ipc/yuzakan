@@ -25,7 +25,7 @@ module Api
               }
               required(:name).maybe(:str?, max_size?: 255)
               optional(:conversion).maybe(:str?)
-             } } } }
+            } } } }
             # rubocop:enable all
           end
         end
