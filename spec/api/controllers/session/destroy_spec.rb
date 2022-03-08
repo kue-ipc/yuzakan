@@ -19,9 +19,22 @@ describe Api::Controllers::Session::Destroy do
   let(:user_repository) { UserRepository.new.tap { |obj| stub(obj).find { user } } }
 
   it 'is successful' do
+    begin_time = Time.now.floor
     response = action.call(params)
-    _(response[0]).must_equal 204
-    _(response[2]).must_equal []
+    end_time = Time.now.floor
+    _(response[0]).must_equal 200
+    _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    json = JSON.parse(response[2].first, symbolize_names: true)
+    _(json[:uuid]).must_match uuid
+    _(json[:current_user]).must_equal user.to_h.except(:id)
+    created_at = Time.iso8601(json[:created_at])
+    _(created_at).must_equal session[:created_at].floor
+    updated_at = Time.iso8601(json[:updated_at])
+    _(updated_at).must_be :>=, begin_time
+    _(updated_at).must_be :<=, end_time
+    deleted_at = Time.iso8601(json[:deleted_at])
+    _(deleted_at).must_be :>=, begin_time
+    _(deleted_at).must_be :<=, end_time
   end
 
   describe 'no login session' do

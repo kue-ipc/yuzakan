@@ -72,8 +72,8 @@ module Api
 
           self.status = 201
           self.body = generate_json({
-            username: user.name,
-            display_name: user.display_name,
+            uuid: session[:uuid],
+            current_user: user,
             created_at: current_time,
             updated_at: current_time,
             deleted_at: current_time + current_config.session_timeout,

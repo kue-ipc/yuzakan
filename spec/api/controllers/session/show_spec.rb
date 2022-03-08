@@ -25,8 +25,8 @@ describe Api::Controllers::Session::Show do
     _(response[0]).must_equal 200
     _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    _(json[:username]).must_equal 'user'
-    _(json[:display_name]).must_equal 'ユーザー'
+    _(json[:uuid]).must_equal uuid
+    _(json[:current_user]).must_equal user.to_h.except(:id)
     created_at = Time.iso8601(json[:created_at])
     _(created_at).must_equal session[:created_at].floor
     updated_at = Time.iso8601(json[:updated_at])

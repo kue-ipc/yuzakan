@@ -106,7 +106,7 @@ module Web
     end
 
     private def session_timeout?
-      return false if session[:updated_at].nil?
+      return true if session[:updated_at].nil?
 
       timeout = current_config&.session_timeout || 3600
       timeout.zero? || current_time - session[:updated_at] > timeout
