@@ -29,10 +29,11 @@ describe Api::Controllers::Attrs::Destroy do
       ],
     }
   }
-  let(:attr) { Attr.new(id: 42, **attr_params) }
+  let(:attr_with_mappings) { Attr.new(id: 42, **attr_params) }
+  let(:attr) { Attr.new(id: 42, **attr_params.except(:attr_mappings)) }
   let(:attr_repository) {
     AttrRepository.new.tap do |obj|
-      stub(obj).find_with_mappings_by_name { attr }
+      stub(obj).find_with_mappings_by_name { attr_with_mappings }
       stub(obj).delete { attr }
     end
   }

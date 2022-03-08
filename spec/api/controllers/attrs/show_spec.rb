@@ -7,7 +7,7 @@ describe Api::Controllers::Attrs::Show do
                                       user_repository: user_repository,
                                       attr_repository: attr_repository)
   }
-  let(:params) { {**env, id: 42} }
+  let(:params) { {**env, id: 'attr1'} }
 
   let(:env) { {'REMOTE_ADDR' => client, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
   let(:client) { '192.0.2.1' }
@@ -22,15 +22,15 @@ describe Api::Controllers::Attrs::Show do
 
   let(:attr_params) {
     {
-      name: 'name', label: '表示名', type: 'string', hidden: false,
+      name: 'attr1', label: '属性①', type: 'string', hidden: false, order: 8,
       attr_mappings: [
-        {name: 'name', conversion: nil, provider_id: 3},
-        {name: 'name_name', conversion: 'e2j', provider_id: 8},
+        {name: 'attr1_1', conversion: nil, provider: {name: 'provider1'}},
+        {name: 'attr1_2', conversion: 'e2j', provider: {name: 'provider2'}},
       ],
     }
   }
-  let(:attr_with_mappings) { Attr.new(id: 42, order: 7, **attr_params) }
-  let(:attr_repository) { AttrRepository.new.tap { |obj| stub(obj).find_with_mappings { attr_with_mappings } } }
+  let(:attr_with_mappings) { Attr.new(id: 42, **attr_params) }
+  let(:attr_repository) { AttrRepository.new.tap { |obj| stub(obj).find_with_mappings_by_name { attr_with_mappings } } }
 
   it 'is failure' do
     response = action.call(params)
@@ -48,7 +48,7 @@ describe Api::Controllers::Attrs::Show do
       _(response[0]).must_equal 200
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({id: 42, order: 7, **attr_params})
+      _(json).must_equal(attr_params)
     end
 
     describe 'not existed' do
