@@ -198,7 +198,12 @@ destroyAttrRunner = (dispatch, {attr}) ->
   else
     console.error response
 
-getAttrRunner = (dispatch, {attr}) ->
+
+
+
+
+
+showAttrRunner = (dispatch, {attr}) ->
   response = await fetchJsonGet({url: "/api/attrs/#{attr.name}"})
   if response.ok
     dispatch(attrAction, {attr: response.data})
@@ -206,9 +211,9 @@ getAttrRunner = (dispatch, {attr}) ->
     console.error response
 
 initAllAttrsAction = (state, {attrs}) ->
-  [{state..., attrs}].concat(attrs.map (attr) -> [getAttrRunner, {attr}])
+  [{state..., attrs}].concat(attrs.map (attr) -> [showAttrRunner, {attr}])
 
-getAllAttrsRunner = (dispatch) ->
+indexAllAttrsRunner = (dispatch) ->
   response = await fetchJsonGet({url: '/api/attrs'})
   if response.ok
     dispatch(initAllAttrsAction, {attrs: response.data})
@@ -218,7 +223,7 @@ getAllAttrsRunner = (dispatch) ->
 initAllProvidersAction = (state, {providers}) ->
   {state..., providers}
 
-getAllProvidersRunner = (dispatch) ->
+indexAllProvidersRunner = (dispatch) ->
   response = await fetchJsonGet({url: '/api/providers'})
   if response.ok
     dispatch(initAllProvidersAction, {providers: response.data})
@@ -240,8 +245,8 @@ init = [
     providers: []
     newAttr: initNewAttr
   }
-  [getAllAttrsRunner]
-  [getAllProvidersRunner]
+  [indexAllAttrsRunner]
+  [indexAllProvidersRunner]
 ]
 
 view = ({attrs, providers, newAttr}) ->
