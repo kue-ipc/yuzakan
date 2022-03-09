@@ -1,13 +1,2 @@
-table.table
-  thead
-    tr.text-center
-      th 順
-      th 名前/表示名
-      th 型/隠し
-      th 操作
-      - providers.each do |provider|
-        th = provider.label
-  tbody
-    = form_attr(nil, providers)
-    - attrs.each do |attr|
-      = form_attr(attr, providers)
+= javascript 'admin_attrs_index', type: 'module', defer: true
+#admin_attrs_index

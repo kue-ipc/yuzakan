@@ -51,17 +51,17 @@ module Api
           param_errors = only_first_errors(params.errors.to_h)
           attr_params = params.to_h.except(:id)
 
-          if !param_errors.key?(:name) && params[:name] && @attr.name != params[:name] &&
+          if !param_errors.key?(:name) && attr_params[:name] && @attr.name != attr_params[:name] &&
              @attr_repository.exist_by_name?(params[:name])
             param_errors[:name] = [I18n.t('errors.uniq?')]
           end
 
-          if !param_errors.key?(:label) && params[:label] && @attr.label != params[:label] &&
+          if !param_errors.key?(:label) && attr_params[:label] && @attr.label != attr_params[:label] &&
              @attr_repository.exist_by_label?(attr_params[:label])
             param_errors[:label] = [I18n.t('errors.uniq?')]
           end
 
-          if !param_errors.key?(:order) && attr_params[:order] && @attr.order != params[:order] &&
+          if !param_errors.key?(:order) && attr_params[:order] && @attr.order != attr_params[:order] &&
              @attr_repository.exist_by_order?(attr_params[:order])
             param_errors[:order] = [I18n.t('errors.uniq?')]
           end
@@ -77,8 +77,6 @@ module Api
               end
               idx += 1
               {**attr_mapping_params.slice(:name, :conversion), provider_id: provider&.id}
-            end.reject do |attr_mapping_params|
-              attr_mapping_params[:name].nil? || attr_mapping_params[:name].empty?
             end
           end
 
@@ -86,11 +84,12 @@ module Api
 
           @attr_repository.update(@attr.id, attr_params)
 
-          params[:attr_mappings]&.each do |attr_mapping_params|
+          attr_params[:attr_mappings]&.each do |attr_mapping_params|
             if attr_mapping_params[:name] && !attr_mapping_params[:name].empty?
               existing_attr_mapping = @attr.attr_mappings.find do |mapping|
                 mapping.provider_id == attr_mapping_params[:provider_id]
               end
+
               if existing_attr_mapping
                 @attr_mapping_repository.update(existing_attr_mapping.id, attr_mapping_params)
               else
