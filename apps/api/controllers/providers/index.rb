@@ -4,7 +4,7 @@ module Api
       class Index
         include Api::Action
 
-        def initialize(provider_repository: PorviderRepository.new, **opts)
+        def initialize(provider_repository: ProviderRepository.new, **opts)
           super(**opts)
           @provider_repository = provider_repository
         end
