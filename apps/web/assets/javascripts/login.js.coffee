@@ -13,7 +13,7 @@ webData = new WebData {
   url: '/api/session'
   codeActions: new Map [
     [201, {status: 'success', message: 'ログインに成功しました。', redirectTo: '/'}]
-    [422, {status: 'failure', message: 'ログインに失敗しました。', }]
+    [422, {status: 'failure', message: 'ログインに失敗しました。'}]
   ]
 }
 

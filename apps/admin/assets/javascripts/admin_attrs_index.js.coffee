@@ -3,8 +3,6 @@ import {div, table, thead, tbody, tr, th, td, input, select, option, button} fro
 import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '../fetch_json.js?v=0.6.0'
 import csrf from '../csrf.js?v=0.6.0'
 
-
-
 attrTypes = [
   {name: 'string', value: 'string', label: '文字列'}
   {name: 'boolean', value: 'boolean', label: '真偽'}
@@ -29,7 +27,7 @@ providerTh = ({provider}) ->
 
 attrMappingTd = ({attr, provider}) ->
   unless attr.attr_mappings?
-    return td {}, text '読み込み中' 
+    return td {}, text '読み込み中'
 
   mapping = attr.attr_mappings.find (attr_mapping) ->
     attr_mapping.provider.name == provider.name
@@ -40,15 +38,25 @@ attrMappingTd = ({attr, provider}) ->
       class: 'form-control mb-1'
       type: 'text'
       value: mapping.name
+      oninput: (state, event) ->
+        [
+          attrMappingAction
+          {name: attr.name, attr_mapping: {name: event.target.value, provider: {name: provider.name}}}
+        ]
     }
-    select {class: 'form-control'},
-      mappingConversions.map (conversion) ->
+    select {
+      class: 'form-control'
+      oninput: (state, event) ->
+        [
+          attrMappingAction
+          {name: attr.name, attr_mapping: {conversion: event.target.value, provider: {name: provider.name}}}
+        ]
+      }, mappingConversions.map (conversion) ->
         option {
           value: conversion.value
           selected: conversion.value == mapping.conversion
         }, text conversion.label
   ]
-
 
 attrTr = ({attr, index, providers}) ->
   tr {}, [
@@ -68,16 +76,21 @@ attrTr = ({attr, index, providers}) ->
         type: 'text'
         value: attr.newName ? attr.name
         required: true
+        oninput: (state, event) -> [attrAction, {name: attr.name, attr: {newName: event.target.value}}]
       }
       input {
         class: 'form-control'
         type: 'text'
         value: attr.label
         required: true
+        oninput: (state, event) -> [attrAction, {name: attr.name, attr: {label: event.target.value}}]
       }
     ]
     td {class: 'table-primary'}, [
-      select {class: 'form-control'},
+      select {
+        class: 'form-control'
+        onchange: (state, event) -> [attrAction, {name: attr.name, attr: {type: event.target.value}}]
+      },
         attrTypes.map (attrType) ->
           option {
             value: attrType.value
@@ -87,6 +100,7 @@ attrTr = ({attr, index, providers}) ->
         type: 'checkbox'
         class: 'form-check-input'
         checked: attr.hidden
+        onchange: (state, event) -> [attrAction, {name: attr.name, attr: {hidden: !attr.hidden}}]
       }
     ]
     td {},
@@ -109,49 +123,79 @@ attrTr = ({attr, index, providers}) ->
         ]
   ].concat(providers.map (provider) -> attrMappingTd({attr, provider}))
 
+attrAction = (state, {name, attr}) ->
+  name ?= attr.name
+  if name
+    attrs = state.attrs.map (currentAttr) ->
+      if currentAttr.name == name
+        {currentAttr..., attr...}
+      else
+        currentAttr
+    {state..., attrs}
+  else
+    {state..., newAttr: {state.newAttr..., attr...}}
+
+replaceAttrMapping = (attr_mappings, attr_mapping) ->
+  replaced = false
+  new_attr_mappings = attr_mappings.map (current_mapping) ->
+    if current_mapping.provider.name == attr_mapping.provider.name
+      replaced = true
+      {current_mapping..., attr_mapping...}
+    else
+      current_mapping
+
+  if replaced
+    new_attr_mappings
+  else
+    [new_attr_mappings..., {name: '', conversion: null, attr_mapping...}]
+
+attrMappingAction = (state, {name, attr_mapping}) ->
+  if name
+    attrs = state.attrs.map (attr) ->
+      if attr.name == name
+        {attr..., attr_mappings: replaceAttrMapping(attr.attr_mappings, attr_mapping)}
+      else
+        attr
+    {state..., attrs}
+  else
+    {
+      state...
+      newAttr: {state.newAttr..., attr_mappings: replaceAttrMapping(state.newAttr.mappings, attr_mapping)}
+    }
+
 updateAttrRunner = (dispatch, {attr}) ->
   {newName, name, attr...} = attr
   attr = {attr..., name: newName} if newName?
   response = await fetchJsonPatch({url: "/api/attrs/#{name}", data: {csrf()..., attr...}})
   if response.ok
-    dispatch(getAttrAction, {name: name, attr: response.data})
+    dispatch(attrAction, {name, attr: {response.data..., newName: undefined}})
   else
     console.error response
-
-
-getAttrAction = (state, {name, attr}) ->
-  name ?= attr.name
-  attrs = state.attrs.map (currentAttr) ->
-    if currentAttr.name == name
-      attr
-    else
-      currentAttr
-  {state..., attrs}
 
 getAttrRunner = (dispatch, {attr}) ->
   response = await fetchJsonGet({url: "/api/attrs/#{attr.name}"})
   if response.ok
-    dispatch(getAttrAction, {attr: response.data})
+    dispatch(attrAction, {attr: response.data})
   else
     console.error response
 
-getAllAttrsAction = (state, {attrs}) ->
+initAllAttrsAction = (state, {attrs}) ->
   [{state..., attrs}].concat(attrs.map (attr) -> [getAttrRunner, {attr}])
 
 getAllAttrsRunner = (dispatch) ->
   response = await fetchJsonGet({url: '/api/attrs'})
   if response.ok
-    dispatch(getAllAttrsAction, {attrs: response.data})
+    dispatch(initAllAttrsAction, {attrs: response.data})
   else
     console.error response
 
-getAllProvidersAction = (state, {providers}) ->
+initAllProvidersAction = (state, {providers}) ->
   {state..., providers}
 
 getAllProvidersRunner = (dispatch) ->
   response = await fetchJsonGet({url: '/api/providers'})
   if response.ok
-    dispatch(getAllProvidersAction, {providers: response.data})
+    dispatch(initAllProvidersAction, {providers: response.data})
   else
     console.error response
 
@@ -159,19 +203,20 @@ init = [
   {
     attrs: []
     providers: []
+    newAttr: {
+      name: undefined
+      newName: ''
+      label: ''
+      type: 'string'
+      hidden: false
+      attr_mappings: []
+    }
   }
   [getAllAttrsRunner]
   [getAllProvidersRunner]
 ]
 
-view = (state) ->
-  newAttr = {
-    name: ''
-    label: ''
-    type: 'string'
-    hidden: false
-    attr_mappings: []
-  }
+view = ({attrs, providers, newAttr}) ->
   table {class: 'table'}, [
     thead {}, [
       tr {class: 'text-center'}, [
@@ -179,10 +224,10 @@ view = (state) ->
         th {}, text '名前/表示名'
         th {}, text '型/隠し'
         th {}, text '操作'
-      ].concat(state.providers.map (provider) -> providerTh({provider}))
+      ].concat(providers.map (provider) -> providerTh({provider}))
     ]
     tbody {},
-      [state.attrs..., newAttr].map (attr, index) -> attrTr({attr, index, providers: state.providers})
+      [attrs..., newAttr].map (attr, index) -> attrTr({attr, index, providers: providers})
   ]
 
 node = document.getElementById('admin_attrs_index')
