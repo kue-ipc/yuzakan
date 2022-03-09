@@ -65,9 +65,11 @@ attrTr = ({attr, index, providers}) ->
         [
           div {class: 'mb-1'}, button {
             class: 'btn btn-secondary'
+            onclick: (state) -> [upAttrAction, {name: attr.name}]
           }, text '上'
           div {}, button {
             class: 'btn btn-secondary'
+            onclick: (state) -> [downAttrAction, {name: attr.name}]
           }, text '下'
         ]
     td {class: 'table-primary'}, [
@@ -198,11 +200,63 @@ destroyAttrRunner = (dispatch, {attr}) ->
   else
     console.error response
 
+upAttrAction = (state, {name}) ->
+  attrIndex = state.attrs.findIndex (attr) -> attr.name == name
+  diffOrder =
+    switch attrIndex
+      when 0
+        1
+      when 1
+        state.attrs[0].order
+      else
+        state.attrs[attrIndex - 1].order - state.attrs[attrIndex - 2].order
 
+  if diffOrder == 1
+    console.log '隙間がありません。'
+    return state
+ 
+  newAttr = {state.attrs[attrIndex]..., order: state.attrs[attrIndex - 1].order - Math.floor(diffOrder / 2)}
+  [
+    {
+      state...
+      attrs: [
+        state.attrs[...(attrIndex - 1)]...
+        newAttr
+        state.attrs[attrIndex - 1]
+        state.attrs[(attrIndex + 1)..]...
+      ]
+    }
+    [updateAttrRunner, {attr: newAttr}]
+  ]
 
+downAttrAction = (state, {name}) ->
+  attrIndex = state.attrs.findIndex (attr) -> attr.name == name
+  diffOrder =
+    switch attrIndex
+      when state.attrs.length - 1, state.attrs.length - 2
+        16
+      else
+        diffOreder = state.attrs[attrIndex + 2].order - state.attrs[attrIndex + 1].order
 
-
-
+  if diffOrder == 1
+    console.log '隙間がありません。'
+    return state
+ 
+  newAttr = {
+    state.attrs[attrIndex]...
+    order: (state.attrs[attrIndex + 1]?.order ? state.attrs[attrIndex].order) + Math.floor(diffOrder / 2)}
+  [
+    {
+      state...
+      attrs: [
+        state.attrs[...attrIndex]...
+        state.attrs[attrIndex + 1]
+        newAttr
+        state.attrs[(attrIndex + 2)..]...
+      ].filter (_) -> _?
+    }
+    [updateAttrRunner, {attr: newAttr}]
+  ]
 showAttrRunner = (dispatch, {attr}) ->
   response = await fetchJsonGet({url: "/api/attrs/#{attr.name}"})
   if response.ok
