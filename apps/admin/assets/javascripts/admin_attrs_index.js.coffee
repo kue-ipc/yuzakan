@@ -116,21 +116,25 @@ attrTr = ({attr, index, providers}) ->
         ]
       else
         [
-          div {class: 'mb-1'},
-            button {
-              class: 'btn btn-primary'
-            }, text '作成'
+          div {class: 'mb-1'}, button {
+            class: 'btn btn-primary'
+            onclick: (state) -> [state, [createAttrRunner, {attr}]]
+          }, text '作成'
         ]
   ].concat(providers.map (provider) -> attrMappingTd({attr, provider}))
 
 attrAction = (state, {name, attr}) ->
   name ?= attr.name
   if name
+    replaced = false
     attrs = state.attrs.map (currentAttr) ->
       if currentAttr.name == name
+        replaced = true
         {currentAttr..., attr...}
       else
         currentAttr
+    unless replaced
+      attrs = [attrs..., attr]
     {state..., attrs}
   else
     {state..., newAttr: {state.newAttr..., attr...}}
@@ -163,8 +167,18 @@ attrMappingAction = (state, {name, attr_mapping}) ->
       newAttr: {state.newAttr..., attr_mappings: replaceAttrMapping(state.newAttr.mappings, attr_mapping)}
     }
 
+createAttrRunner = (dispatch, {attr}) ->
+  {name, newName, attr...} = attr
+  attr = {attr..., name: newName}
+  response = await fetchJsonPost({url: "/api/attrs", data: {csrf()..., attr...}})
+  if response.ok
+    dispatch(attrAction, {attr: response.data})
+    dispatch(attrAction, {attr: initNewAttr})
+  else
+    console.error response
+
 updateAttrRunner = (dispatch, {attr}) ->
-  {newName, name, attr...} = attr
+  {name, newName, attr...} = attr
   attr = {attr..., name: newName} if newName?
   response = await fetchJsonPatch({url: "/api/attrs/#{name}", data: {csrf()..., attr...}})
   if response.ok
@@ -199,18 +213,20 @@ getAllProvidersRunner = (dispatch) ->
   else
     console.error response
 
+initNewAttr = {
+  name: undefined
+  newName: ''
+  label: ''
+  type: 'string'
+  hidden: false
+  attr_mappings: []
+}
+
 init = [
   {
     attrs: []
     providers: []
-    newAttr: {
-      name: undefined
-      newName: ''
-      label: ''
-      type: 'string'
-      hidden: false
-      attr_mappings: []
-    }
+    newAttr: initNewAttr
   }
   [getAllAttrsRunner]
   [getAllProvidersRunner]
