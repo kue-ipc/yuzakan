@@ -117,7 +117,7 @@ objToUrlencoded = (obj) ->
 objToUrlencodedParams = (obj, parents = []) ->
   [for own key, value of obj
     if typeof value == 'object'
-      objToUrlencodedParams(obj, [parents..., key])
+      objToUrlencodedParams(value, [parents..., key])
     else
       "#{encodeURIComponent(fieldName(key, parents))}=#{encodeURIComponent(value)}"
   ].flat()

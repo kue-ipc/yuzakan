@@ -112,6 +112,7 @@ attrTr = ({attr, index, providers}) ->
           }, text '更新'
           div {}, button {
             class: 'btn btn-danger'
+            onclick: (state) -> [state, [destroyAttrRunner, {attr}]]
           }, text '削除'
         ]
       else
@@ -138,6 +139,10 @@ attrAction = (state, {name, attr}) ->
     {state..., attrs}
   else
     {state..., newAttr: {state.newAttr..., attr...}}
+
+deleteAttrAction = (state, {name}) ->
+  attrs = state.attrs.filter (attr) -> attr.name != name
+  {state..., attrs}
 
 replaceAttrMapping = (attr_mappings, attr_mapping) ->
   replaced = false
@@ -183,6 +188,13 @@ updateAttrRunner = (dispatch, {attr}) ->
   response = await fetchJsonPatch({url: "/api/attrs/#{name}", data: {csrf()..., attr...}})
   if response.ok
     dispatch(attrAction, {name, attr: {response.data..., newName: undefined}})
+  else
+    console.error response
+
+destroyAttrRunner = (dispatch, {attr}) ->
+  response = await fetchJsonDelete({url: "/api/attrs/#{attr.name}", data: csrf()})
+  if response.ok
+    dispatch(deleteAttrAction, {name: attr.name})
   else
     console.error response
 
