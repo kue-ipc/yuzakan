@@ -29,11 +29,7 @@ describe Api::Controllers::Attrs::Index do
     ]
   }
   let(:all_attrs) { all_attrs_attributes.map { |attributes| Attr.new(attributes) } }
-  let(:attr_repository) {
-    AttrRepository.new.tap do |obj|
-      stub(obj).ordered_all { all_attrs }
-    end
-  }
+  let(:attr_repository) { AttrRepository.new.tap { |obj| stub(obj).ordered_all { all_attrs } } }
 
   it 'is successful' do
     response = action.call(params)
