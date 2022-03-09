@@ -7,12 +7,12 @@ import csrf from '../csrf.js?v=0.6.0'
 
 attrTypes = [
   {name: 'string', value: 'string', label: '文字列'}
-  {name: 'boolean', value: 'string', label: '真偽'}
-  {name: 'integer', value: 'string', label: '整数'}
-  {name: 'float', value: 'string', label: '小数点数'}
-  {name: 'datetime', value: 'string', label: '日時'}
-  {name: 'date', value: 'string', label: '日付'}
-  {name: 'time', value: 'string', label: '時刻'}
+  {name: 'boolean', value: 'boolean', label: '真偽'}
+  {name: 'integer', value: 'integer', label: '整数'}
+  {name: 'float', value: 'float', label: '小数点数'}
+  {name: 'datetime', value: 'datetime', label: '日時'}
+  {name: 'date', value: 'date', label: '日付'}
+  {name: 'time', value: 'time', label: '時刻'}
 ]
 
 mappingConversions = [
@@ -109,7 +109,7 @@ attrTr = ({attr, index, providers}) ->
         ]
   ].concat(providers.map (provider) -> attrMappingTd({attr, provider}))
 
-updateAttrRunner = (state, {attr}) ->
+updateAttrRunner = (dispatch, {attr}) ->
   {newName, name, attr...} = attr
   attr = {attr..., name: newName} if newName?
   response = await fetchJsonPatch({url: "/api/attrs/#{name}", data: {csrf()..., attr...}})
