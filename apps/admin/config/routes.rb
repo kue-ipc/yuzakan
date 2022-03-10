@@ -25,7 +25,7 @@ resources 'adapters', only: [:show] do
   resources 'param_types', only: [:index]
 end
 
-resources 'attrs', only: [:index, :create, :update, :destroy]
+resources 'attrs', only: [:index]
 
 resources 'users' do
   collection do

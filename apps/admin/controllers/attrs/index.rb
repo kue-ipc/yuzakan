@@ -5,24 +5,10 @@ module Admin
     module Attrs
       class Index
         include Admin::Action
-        include Hanami::Action::Cache
 
-        cache_control :no_store
+        security_level 5
 
-        expose :attrs
-        expose :providers
-
-        def initialize(attr_repository: AttrRepository.new,
-                       provider_repository: ProviderRepository.new,
-                       **opts)
-          super(**opts)
-          @attr_repository = attr_repository
-          @provider_repository = provider_repository
-        end
-
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
-          @attrs = AttrRepository.new.ordered_all_with_mappings
-          @providers = ProviderRepository.new.all
+        def call(params)
         end
       end
     end

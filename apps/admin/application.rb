@@ -68,10 +68,12 @@ module Admin
       )
 
       controller.prepare do
+        include Hanami::Action::Cache
         include Admin::Connection
         include Web::Configuration
         include Web::Authentication
         include Web::Authorization
+        cache_control :no_store
       end
 
       view.prepare do
