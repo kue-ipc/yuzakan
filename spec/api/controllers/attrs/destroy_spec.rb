@@ -54,7 +54,7 @@ describe Api::Controllers::Attrs::Destroy do
       _(response[0]).must_equal 200
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({order: 7, **attr_params})
+      _(json).must_equal({**attr_params})
     end
 
     describe 'not existend' do

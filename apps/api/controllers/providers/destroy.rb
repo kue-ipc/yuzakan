@@ -25,13 +25,13 @@ module Api
         def call(params)
           halt_json 400, errors: [params.errors] unless params.valid?
 
-          @provider = @provider_repository.find_with_params_by_name(params[:id])
-          halt_json 404 if @attr.nil?
+          provider = @provider_repository.find_with_params_by_name(params[:id])
+          halt_json 404 if provider.nil?
 
-          @provider_repository.delete(@provider.id)
+          @provider_repository.delete(provider.id)
 
           self.status = 200
-          self.body = generate_json({**convert_entity(@provider), params: @provider.params})
+          self.body = generate_json({**convert_entity(provider), params: provider.params})
         end
       end
     end

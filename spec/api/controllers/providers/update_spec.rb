@@ -24,7 +24,7 @@ describe Api::Controllers::Providers::Update do
   let(:provider_params) {
     {
       name: 'provider1', label: 'プロバイダー①',
-      adapter_name: 'test', oredr: 16,
+      adapter_name: 'test', order: 16,
       readable: true,
       writable: true,
       authenticatable: true,
@@ -48,7 +48,21 @@ describe Api::Controllers::Providers::Update do
   let(:provider_params_attributes) {
     [
       {name: 'str', value: Marshal.dump('hoge')},
+      {name: 'int', value: Marshal.dump(42)},
     ]
+  }
+  let(:provider_params_attributes_params) {
+    {
+      default: nil,
+      str: 'hoge',
+      str_default: 'デフォルト',
+      str_fixed: '固定',
+      str_required: nil,
+      str_enc: nil,
+      text: nil,
+      int: 42,
+      list: 'default',
+    }
   }
   let(:provider_with_params) { Provider.new(id: 3, **provider_params, provider_params: provider_params_attributes) }
   let(:provider_without_params) { Provider.new(id: 3, **provider_params) }
@@ -61,7 +75,7 @@ describe Api::Controllers::Providers::Update do
       stub(obj).exist_by_order? { false }
       stub(obj).last_order? { 16 }
       stub(obj).update { provider_without_params }
-      stub(obj).delete_params_by_name { 1 }
+      stub(obj).delete_param_by_name { 1 }
       stub(obj).add_param { ProviderParam.new }
     end
   }
@@ -83,7 +97,7 @@ describe Api::Controllers::Providers::Update do
       _(response[0]).must_equal 200
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal(provider_params)
+      _(json).must_equal({**provider_params, params: provider_params_attributes_params})
     end
 
     it 'is successful with different' do
@@ -91,7 +105,7 @@ describe Api::Controllers::Providers::Update do
       _(response[0]).must_equal 200
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal(provider_params)
+      _(json).must_equal({**provider_params, params: provider_params_attributes_params})
     end
 
     describe 'not existed' do
@@ -123,7 +137,7 @@ describe Api::Controllers::Providers::Update do
           stub(obj).exist_by_order? { false }
           stub(obj).last_order? { 16 }
           stub(obj).update { provider_without_params }
-          stub(obj).delete_params_by_name { 1 }
+          stub(obj).delete_param_by_name { 1 }
           stub(obj).add_param { ProviderParam.new }
         end
       }
@@ -133,7 +147,7 @@ describe Api::Controllers::Providers::Update do
         _(response[0]).must_equal 200
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal(provider_params)
+        _(json).must_equal({**provider_params, params: provider_params_attributes_params})
       end
 
       it 'is successful with diffrent only label' do
@@ -141,7 +155,7 @@ describe Api::Controllers::Providers::Update do
         _(response[0]).must_equal 200
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal(provider_params)
+        _(json).must_equal({**provider_params, params: provider_params_attributes_params})
       end
 
       it 'is failure with different' do
@@ -167,7 +181,7 @@ describe Api::Controllers::Providers::Update do
           stub(obj).exist_by_order? { false }
           stub(obj).last_order? { 16 }
           stub(obj).update { provider_without_params }
-          stub(obj).delete_params_by_name { 1 }
+          stub(obj).delete_param_by_name { 1 }
           stub(obj).add_param { ProviderParam.new }
         end
       }
@@ -177,7 +191,7 @@ describe Api::Controllers::Providers::Update do
         _(response[0]).must_equal 200
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal(provider_params)
+        _(json).must_equal({**provider_params, params: provider_params_attributes_params})
       end
 
       it 'is successful with diffrent only name' do
@@ -185,7 +199,7 @@ describe Api::Controllers::Providers::Update do
         _(response[0]).must_equal 200
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal(provider_params)
+        _(json).must_equal({**provider_params, params: provider_params_attributes_params})
       end
 
       it 'is failure with different' do
@@ -211,7 +225,7 @@ describe Api::Controllers::Providers::Update do
           stub(obj).exist_by_order? { false }
           stub(obj).last_order? { 16 }
           stub(obj).update { provider_without_params }
-          stub(obj).delete_params_by_name { 1 }
+          stub(obj).delete_param_by_name { 1 }
           stub(obj).add_param { ProviderParam.new }
         end
       }
@@ -221,7 +235,7 @@ describe Api::Controllers::Providers::Update do
         _(response[0]).must_equal 200
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal(provider_params)
+        _(json).must_equal({**provider_params, params: provider_params_attributes_params})
       end
 
       it 'is successful with diffrent only hidden' do
@@ -229,7 +243,7 @@ describe Api::Controllers::Providers::Update do
         _(response[0]).must_equal 200
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal(provider_params)
+        _(json).must_equal({**provider_params, params: provider_params_attributes_params})
       end
 
       it 'is failure with different' do

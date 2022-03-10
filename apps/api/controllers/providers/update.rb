@@ -41,7 +41,7 @@ module Api
           halt_json 400, errors: [params.errors.slice(:id)] if params.errors.key?(:id)
 
           provider = @provider_repository.find_with_params_by_name(params[:id])
-          halt_json 404 if @provider.nil?
+          halt_json 404 if provider.nil?
 
           param_errors = only_first_errors(params.errors.to_h)
           provider_params = params.to_h.dup
@@ -76,10 +76,13 @@ module Api
               if existing_params.key?(param_type.name)
                 existing_value = existing_params.delete(param_type.name)
                 if existing_value != value
-                  existing_provider_param = provider.provider_params.find do |param|
-                    param.name == param_type.name.name
+                  param_name = param_type.name.to_s
+                  existing_provider_param = provider.provider_params.find { |param| param.name == param_name }
+                  if existing_provider_param
+                    @provider_param_repository.update(existing_provider_param.id, {value: param_type.dump_value(value)})
+                  else
+                    @provider_repository.add_param({name: param_type.name.to_s, value: param_type.dump_value(value)})
                   end
-                  @provider_param_repository.update(existing_provider_param.id, {value: param_type.dump_value(value)})
                 end
               else
                 @provider_repository.add_param({name: param_type.name.to_s, value: param_type.dump_value(value)})

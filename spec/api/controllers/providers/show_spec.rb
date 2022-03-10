@@ -23,7 +23,7 @@ describe Api::Controllers::Providers::Show do
   let(:provider_params) {
     {
       name: 'provider1', label: 'プロバイダー①',
-      adapter_name: 'test', oredr: 16,
+      adapter_name: 'test', order: 16,
       readable: true,
       writable: true,
       authenticatable: true,
@@ -34,30 +34,36 @@ describe Api::Controllers::Providers::Show do
       self_management: false,
     }
   }
-  let(:provider_params_params) {
-    [
-      {name: 'str', value: 'hoge'},
-      {name: 'str_required', value: 'fuga'},
-      {name: 'str_enc', value: 'piyo'},
-      {name: 'text', valu: 'moe'},
-      {name: 'int', valu: 42},
-      {name: 'list', valu: 'other'},
-    ]
-  }
   let(:provider_params_attributes) {
     [
       {name: 'str', value: Marshal.dump('hoge')},
+      {name: 'int', value: Marshal.dump(42)},
     ]
   }
+  let(:provider_params_attributes_params) {
+    {
+      default: nil,
+      str: 'hoge',
+      str_default: 'デフォルト',
+      str_fixed: '固定',
+      str_required: nil,
+      str_enc: nil,
+      text: nil,
+      int: 42,
+      list: 'default',
+    }
+  }
   let(:provider_with_params) { Provider.new(id: 3, **provider_params, provider_params: provider_params_attributes) }
-  let(:provider_repository) { ProviderRepository.new.tap { |obj| stub(obj).find_with_mappings_by_name { providers } } }
+  let(:provider_repository) {
+    ProviderRepository.new.tap { |obj| stub(obj).find_with_params_by_name { provider_with_params } }
+  }
 
-  it 'is failure' do
+  it 'is successful' do
     response = action.call(params)
-    _(response[0]).must_equal 403
+    _(response[0]).must_equal 200
     _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    _(json).must_equal({code: 403, message: 'Forbidden'})
+    _(json).must_equal({**provider_params})
   end
 
   describe 'admin' do
@@ -68,12 +74,12 @@ describe Api::Controllers::Providers::Show do
       _(response[0]).must_equal 200
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({**provider_params, params: provider_params_params})
+      _(json).must_equal({**provider_params, params: provider_params_attributes_params})
     end
 
     describe 'not existed' do
       let(:provider_repository) {
-        ProviderRepository.new.tap { |obj| mock(obj).find_with_mappings_by_name('provider1') { nil } }
+        ProviderRepository.new.tap { |obj| mock(obj).find_with_params_by_name('provider1') { nil } }
       }
 
       it 'is failure' do

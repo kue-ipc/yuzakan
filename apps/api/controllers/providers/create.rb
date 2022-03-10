@@ -68,7 +68,7 @@ module Api
           provider = @provider_repository.find_with_params(provider.id)
 
           self.status = 201
-          headers['Location'] = routes.attr_path(provider.id)
+          headers['Location'] = routes.provider_path(provider.id)
           self.body = generate_json({**convert_entity(provider), params: provider.params})
         end
       end
