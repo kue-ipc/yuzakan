@@ -17,7 +17,11 @@ export default class WebData
     [401, {status: 'error', message: 'ログインが必要です。', reload: true}]
     [403, {status: 'error', message: 'アクセスする権限がありません。', reload: true}]
     [422, {status: 'failure', message: '失敗しました。'}]
-    [500, {status: 'fatal', message: 'サーバー側で致命的なエラーが発生しました。管理者に連絡してください。', reload: true}]
+    [500, {
+      status: 'fatal'
+      message: 'サーバー側で致命的なエラーが発生しました。管理者に連絡してください。'
+      reload: true
+    }]
   ]
   UNKNOWN_CODE_ACTION = {status: 'unknown'}
 
