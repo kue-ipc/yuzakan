@@ -5,6 +5,7 @@ module Api
     module Attrs
       class Create
         include Api::Action
+
         security_level 5
 
         class Params < Hanami::Action::Params

@@ -35,14 +35,14 @@ describe Api::Controllers::Providers::Create do
     }
   }
   let(:provider_params_params) {
-    [
-      {name: 'str', value: 'hoge'},
-      {name: 'str_required', value: 'fuga'},
-      {name: 'str_enc', value: 'piyo'},
-      {name: 'text', valu: 'moe'},
-      {name: 'int', valu: 42},
-      {name: 'list', valu: 'other'},
-    ]
+    {
+      str: 'hoge',
+      str_required: 'fuga',
+      str_enc: 'piyo',
+      text: 'moe',
+      int: 42,
+      list: 'other',
+    }
   }
   let(:provider_params_attributes) {
     [
