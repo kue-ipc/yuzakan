@@ -60,7 +60,8 @@ describe Api::Controllers::Attrs::Destroy do
     describe 'not existend' do
       let(:attr_repository) {
         AttrRepository.new.tap do |obj|
-          stub(obj).find_by_name { nil }
+          mock(obj).find_with_mappings_by_name('attr1') { nil }
+          dont_allow(obj).delete
         end
       }
 

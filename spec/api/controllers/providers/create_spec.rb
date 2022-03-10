@@ -1,9 +1,6 @@
 require_relative '../../../spec_helper'
 
 describe Api::Controllers::Providers::Create do
-  let(:action) { Api::Controllers::Providers::Create.new }
-  let(:params) { {} }
-
   let(:action) {
     Api::Controllers::Providers::Create.new(activity_log_repository: activity_log_repository,
                                             config_repository: config_repository,
@@ -47,13 +44,11 @@ describe Api::Controllers::Providers::Create do
       {name: 'list', valu: 'other'},
     ]
   }
-
   let(:provider_params_attributes) {
     [
       {name: 'str', value: Marshal.dump('hoge')},
     ]
   }
-
   let(:provider_with_params) { Provider.new(id: 3, **provider_params, provider_params: provider_params_attributes) }
   let(:provider_repository) {
     ProviderRepository.new.tap do |obj|
