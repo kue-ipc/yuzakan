@@ -73,7 +73,7 @@ describe Api::Controllers::Providers::Update do
       stub(obj).exist_by_name? { false }
       stub(obj).exist_by_label? { false }
       stub(obj).exist_by_order? { false }
-      stub(obj).last_order? { 16 }
+      stub(obj).last_order { 16 }
       stub(obj).update { provider_without_params }
       stub(obj).delete_param_by_name { 1 }
       stub(obj).add_param { ProviderParam.new }
@@ -135,7 +135,7 @@ describe Api::Controllers::Providers::Update do
           stub(obj).exist_by_name? { true }
           stub(obj).exist_by_label? { false }
           stub(obj).exist_by_order? { false }
-          stub(obj).last_order? { 16 }
+          stub(obj).last_order { 16 }
           stub(obj).update { provider_without_params }
           stub(obj).delete_param_by_name { 1 }
           stub(obj).add_param { ProviderParam.new }
@@ -179,7 +179,7 @@ describe Api::Controllers::Providers::Update do
           stub(obj).exist_by_name? { false }
           stub(obj).exist_by_label? { true }
           stub(obj).exist_by_order? { false }
-          stub(obj).last_order? { 16 }
+          stub(obj).last_order { 16 }
           stub(obj).update { provider_without_params }
           stub(obj).delete_param_by_name { 1 }
           stub(obj).add_param { ProviderParam.new }
@@ -223,7 +223,7 @@ describe Api::Controllers::Providers::Update do
           stub(obj).exist_by_name? { true }
           stub(obj).exist_by_label? { true }
           stub(obj).exist_by_order? { false }
-          stub(obj).last_order? { 16 }
+          stub(obj).last_order { 16 }
           stub(obj).update { provider_without_params }
           stub(obj).delete_param_by_name { 1 }
           stub(obj).add_param { ProviderParam.new }

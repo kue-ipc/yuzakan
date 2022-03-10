@@ -13,25 +13,31 @@ describe AttrRepository do
     attr_repository.clear
   end
 
+  it 'ordered_all' do
+    all = attr_repository.ordered_all
+    _(all).must_be_instance_of Array
+    _(all.map(&:name)).must_equal ['hoge', 'piyo', 'fuga']
+  end
+
+
   it 'find_by_name' do
     _(attr_repository.find_by_name('hoge')).must_be_instance_of Attr
     _(attr_repository.find_by_name('moe')).must_be_nil
   end
 
-  it 'exist_by_name' do
+  it 'exist_by_name?' do
     _(attr_repository.exist_by_name?('hoge')).must_equal true
     _(attr_repository.exist_by_name?('moe')).must_equal false
   end
 
-  it 'exist_by_label' do
+  it 'exist_by_label?' do
     _(attr_repository.exist_by_label?('ほげ')).must_equal true
     _(attr_repository.exist_by_label?('もえ')).must_equal false
   end
 
-  it 'ordered_all' do
-    all = attr_repository.ordered_all
-    _(all).must_be_instance_of Array
-    _(all.map(&:name)).must_equal ['hoge', 'piyo', 'fuga']
+  it 'exist_by_order?' do
+    _(attr_repository.exist_by_order?(8)).must_equal true
+    _(attr_repository.exist_by_order?(24)).must_equal false
   end
 
   it 'last_order' do
