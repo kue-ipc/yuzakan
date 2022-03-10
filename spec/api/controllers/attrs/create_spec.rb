@@ -108,108 +108,40 @@ describe Api::Controllers::Attrs::Create do
       })
     end
 
-    # describe 'bad params' do
-    #   let(:attr_params) {
-    #     {
-    #       name: '', label: '属性①', type: 'string', hidden: false,
-    #       attr_mappings: [
-    #         {name: 'attr1_1', conversion: nil, provider: {name: ''}},
-    #         {name: 'attr1_2', conversion: 'e2j'},
-    #       ],
-    #     }
-    #   }
+    it 'is failure with bad mapping params' do
+      response = action.call({
+        **params,
+        attr_mappings: [
+          {name: 'attr1_1', conversion: nil, provider: {name: ''}},
+          {name: 'attr1_2', conversion: 'e2j'},
+        ],
+      })
+      _(response[0]).must_equal 422
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      json = JSON.parse(response[2].first, symbolize_names: true)
+      _(json).must_equal({
+        code: 422,
+        message: 'Unprocessable Entity',
+        errors: [{
+          attr_mappings: {
+            '0': {provider: {name: ['入力が必須です。']}},
+            '1': {provider: ['存在しません。']},
+          },
+        }],
+      })
+    end
 
-    #   it 'is failure' do
-    #     response = action.call(params)
-    #     _(response[0]).must_equal 422
-    #     _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-    #     json = JSON.parse(response[2].first, symbolize_names: true)
-    #     _(json).must_equal({
-    #       code: 422,
-    #       message: 'Unprocessable Entity',
-    #       errors: [{
-    #         name: ['入力が必須です。'],
-    #         attr_mappings: {
-    #           '0': {provider: {name: ['入力が必須です。']}},
-    #           '1': {provider: ['存在しません。']},
-    #         },
-    #       }],
-    #     })
-    #   end
-
-    # describe 'existed name' do
-    #   let(:attr_repository) {
-    #     AttrRepository.new.tap do |obj|
-    #       stub(obj).exist_by_name? { true }
-    #       stub(obj).exist_by_label? { false }
-    #       stub(obj).exist_by_order? { false }
-    #       stub(obj).last_order { 6 }
-    #       stub(obj).create_with_mappings { attr_with_mappings }
-    #     end
-    #   }
-
-    #   it 'is failure' do
-    #     response = action.call(params)
-    #     _(response[0]).must_equal 422
-    #     _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-    #     json = JSON.parse(response[2].first, symbolize_names: true)
-    #     _(json).must_equal({
-    #       code: 422,
-    #       message: 'Unprocessable Entity',
-    #       errors: [{
-    #         name: ['入力が必須です。'],
-    #         attr_mappings: {
-    #           '0': {provider: {name: ['入力が必須です。']}},
-    #           '1': {provider: ['存在しません。']},
-    #         },
-    #       }],
-    #     })
-    #   end
-    # end
-
-    #   describe 'existed label' do
-    #     let(:attr_repository) {
-    #       AttrRepository.new.tap do |obj|
-    #         stub(obj).exist_by_name? { false }
-    #         stub(obj).exist_by_label? { true }
-    #         stub(obj).exist_by_order? { false }
-    #         stub(obj).last_order { 6 }
-    #         stub(obj).create_with_mappings { attr_with_mappings }
-    #       end
-    #     }
-
-    #     it 'is failure' do
-    #       response = action.call(params)
-    #       _(response[0]).must_equal 422
-    #       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-    #       json = JSON.parse(response[2].first, symbolize_names: true)
-    #       _(json).must_equal({
-    #         code: 422,
-    #         message: 'Unprocessable Entity',
-    #         errors: [{
-    #           name: ['入力が必須です。'],
-    #           label: ['重複しています。'],
-    #           attr_mappings: {
-    #             '0': {provider: {name: ['入力が必須です。']}},
-    #             '1': {provider: ['存在しません。']},
-    #           },
-    #         }],
-    #       })
-    #     end
-    #   end
-    # end
-
-    # it 'is failure without params' do
-    #   response = action.call(env)
-    #   _(response[0]).must_equal 422
-    #   _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-    #   json = JSON.parse(response[2].first, symbolize_names: true)
-    #   _(json).must_equal({
-    #     code: 422,
-    #     message: 'Unprocessable Entity',
-    #     errors: [{name: ['存在しません。'], label: ['存在しません。'], type: ['存在しません。']}],
-    #   })
-    # end
+    it 'is failure without params' do
+      response = action.call(env)
+      _(response[0]).must_equal 422
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      json = JSON.parse(response[2].first, symbolize_names: true)
+      _(json).must_equal({
+        code: 422,
+        message: 'Unprocessable Entity',
+        errors: [{name: ['存在しません。'], label: ['存在しません。'], type: ['存在しません。']}],
+      })
+    end
 
     describe 'existed name' do
       let(:attr_repository) {
@@ -231,6 +163,18 @@ describe Api::Controllers::Attrs::Create do
           code: 422,
           message: 'Unprocessable Entity',
           errors: [{name: ['重複しています。']}],
+        })
+      end
+
+      it 'is failure with bad name pattern' do
+        response = action.call({**params, name: '!'})
+        _(response[0]).must_equal 422
+        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        json = JSON.parse(response[2].first, symbolize_names: true)
+        _(json).must_equal({
+          code: 422,
+          message: 'Unprocessable Entity',
+          errors: [{name: ['名前付けの規則に違反しています。']}],
         })
       end
     end
@@ -255,6 +199,18 @@ describe Api::Controllers::Attrs::Create do
           code: 422,
           message: 'Unprocessable Entity',
           errors: [{label: ['重複しています。']}],
+        })
+      end
+
+      it 'is failure with bad name pattern' do
+        response = action.call({**params, name: '!'})
+        _(response[0]).must_equal 422
+        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        json = JSON.parse(response[2].first, symbolize_names: true)
+        _(json).must_equal({
+          code: 422,
+          message: 'Unprocessable Entity',
+          errors: [{name: ['名前付けの規則に違反しています。'], label: ['重複しています。']}],
         })
       end
     end
