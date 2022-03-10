@@ -187,7 +187,7 @@ describe Api::Controllers::Session::Create do
       _(response[0]).must_equal 201
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json[:uuid]).must_match /\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/
+      _(json[:uuid]).must_match(/\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/)
       _(json[:current_user]).must_equal user.to_h.except(:id)
       created_at = Time.iso8601(json[:created_at])
       _(created_at).must_be :>=, begin_time

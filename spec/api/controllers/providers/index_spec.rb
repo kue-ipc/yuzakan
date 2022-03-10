@@ -22,14 +22,14 @@ describe Api::Controllers::Providers::Index do
 
   let(:providers_attributes) {
     [
-      {id: 1, name: 'local', label: 'ローカル', adapter_name: 'local', order: 8 },
+      {id: 1, name: 'local', label: 'ローカル', adapter_name: 'local', order: 8},
       {id: 24, name: 'provider24', label: 'プロバイダー24', adapter_name: 'dummy', order: 16},
       {id: 19, name: 'provider19', label: 'プロバイダー19', adapter_name: 'test', order: 24},
       {id: 27, name: 'provider27', label: 'プロバイダー27', adapter_name: 'mock', order: 32},
     ]
   }
 
-  let(:providers) { providers_attributes.map { |attributes| Provider.new(attributes) }}
+  let(:providers) { providers_attributes.map { |attributes| Provider.new(attributes) } }
   let(:provider_repository) { ProviderRepository.new.tap { |obj| stub(obj).ordered_all { providers } } }
 
   it 'is successful' do
