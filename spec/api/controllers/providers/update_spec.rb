@@ -24,7 +24,7 @@ describe Api::Controllers::Providers::Update do
   let(:provider_params) {
     {
       name: 'provider1', label: 'プロバイダー①',
-      adatper_name: 'test', oredr: 16,
+      adapter_name: 'test', oredr: 16,
       readable: true,
       writable: true,
       authenticatable: true,
@@ -36,14 +36,14 @@ describe Api::Controllers::Providers::Update do
     }
   }
   let(:provider_params_params) {
-    [
-      {name: 'str', value: 'hoge'},
-      {name: 'str_required', value: 'fuga'},
-      {name: 'str_enc', value: 'piyo'},
-      {name: 'text', valu: 'moe'},
-      {name: 'int', valu: 42},
-      {name: 'list', valu: 'other'},
-    ]
+    {
+      str: 'hoge',
+      str_required: 'fuga',
+      str_enc: 'piyo',
+      text: 'moe',
+      int: 42,
+      list: 'other',
+    }
   }
   let(:provider_params_attributes) {
     [
@@ -59,6 +59,7 @@ describe Api::Controllers::Providers::Update do
       stub(obj).exist_by_name? { false }
       stub(obj).exist_by_label? { false }
       stub(obj).exist_by_order? { false }
+      stub(obj).last_order? { 16 }
       stub(obj).update { provider_without_params }
       stub(obj).delete_params_by_name { 1 }
       stub(obj).add_param { ProviderParam.new }
@@ -120,6 +121,7 @@ describe Api::Controllers::Providers::Update do
           stub(obj).exist_by_name? { true }
           stub(obj).exist_by_label? { false }
           stub(obj).exist_by_order? { false }
+          stub(obj).last_order? { 16 }
           stub(obj).update { provider_without_params }
           stub(obj).delete_params_by_name { 1 }
           stub(obj).add_param { ProviderParam.new }
@@ -163,6 +165,7 @@ describe Api::Controllers::Providers::Update do
           stub(obj).exist_by_name? { false }
           stub(obj).exist_by_label? { true }
           stub(obj).exist_by_order? { false }
+          stub(obj).last_order? { 16 }
           stub(obj).update { provider_without_params }
           stub(obj).delete_params_by_name { 1 }
           stub(obj).add_param { ProviderParam.new }
@@ -206,6 +209,7 @@ describe Api::Controllers::Providers::Update do
           stub(obj).exist_by_name? { true }
           stub(obj).exist_by_label? { true }
           stub(obj).exist_by_order? { false }
+          stub(obj).last_order? { 16 }
           stub(obj).update { provider_without_params }
           stub(obj).delete_params_by_name { 1 }
           stub(obj).add_param { ProviderParam.new }

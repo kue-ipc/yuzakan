@@ -23,7 +23,7 @@ describe Api::Controllers::Providers::Show do
   let(:provider_params) {
     {
       name: 'provider1', label: 'プロバイダー①',
-      adatper_name: 'test', oredr: 16,
+      adapter_name: 'test', oredr: 16,
       readable: true,
       writable: true,
       authenticatable: true,

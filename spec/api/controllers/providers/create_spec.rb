@@ -23,7 +23,7 @@ describe Api::Controllers::Providers::Create do
   let(:provider_params) {
     {
       name: 'provider1', label: 'プロバイダー①',
-      adatper_name: 'test', oredr: 16,
+      adapter_name: 'test', oredr: 16,
       readable: true,
       writable: true,
       authenticatable: true,
@@ -128,10 +128,7 @@ describe Api::Controllers::Providers::Create do
     it 'is failure with bad provider_params params' do
       response = action.call({
         **params,
-        params: [
-          {name: '', value: 'hoge'},
-          {name: '!', value: 'fuga'},
-        ],
+        params: 'abc',
       })
       _(response[0]).must_equal 422
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
@@ -140,10 +137,7 @@ describe Api::Controllers::Providers::Create do
         code: 422,
         message: 'Unprocessable Entity',
         errors: [{
-          params: {
-            '0': {name: ['入力が必須です。']},
-            '1': {name: ['名前付けの規則に違反しています。']},
-          },
+          params: ['連想配列を入力してください。'],
         }],
       })
     end
@@ -156,7 +150,7 @@ describe Api::Controllers::Providers::Create do
       _(json).must_equal({
         code: 422,
         message: 'Unprocessable Entity',
-        errors: [{name: ['存在しません。'], label: ['存在しません。'], adatper_name: ['存在しません。']}],
+        errors: [{name: ['存在しません。'], label: ['存在しません。'], adapter_name: ['存在しません。']}],
       })
     end
 

@@ -22,13 +22,7 @@ module Api
             optional(:lockable).maybe(:bool?)
             optional(:individual_password).maybe(:bool?)
             optional(:self_management).maybe(:bool?)
-            # rubocop:disable all
-            optional(:params) { array? { each { schema {
-              predicates NamePredicates
-              required(:name).filled(:str?, :name?, max_size?: 255)
-              required(:value)
-            } } } }
-            # rubocop:enable all
+            optional(:params) { hash? }
           end
         end
 
