@@ -25,6 +25,7 @@ module Api
             optional(:self_management).maybe(:bool?)
             # rubocop:disable all
             optional(:params) { array? { each { schema {
+              predicates NamePredicates
               required(:name).filled(:str?, :name?, max_size?: 255)
               required(:value)
             } } } }

@@ -115,7 +115,7 @@ class Provider < Hanami::Entity
 
   def need_adapter_and_mappings!
     raise NoAdapterError unless @adapter
-    raise NoMappingsError unless @attr_mappings
+    raise NoMappingsError unless attr_mappings
   end
 
   def sanitize_name(name)

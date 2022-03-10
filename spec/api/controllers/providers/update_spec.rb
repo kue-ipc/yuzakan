@@ -6,7 +6,7 @@ describe Api::Controllers::Providers::Update do
                                             config_repository: config_repository,
                                             user_repository: user_repository,
                                             provider_repository: provider_repository,
-                                            provider_params_repository: provider_params_repository)
+                                            provider_param_repository: provider_param_repository)
   }
   let(:params) { {**env, id: 'provider1', **provider_params, params: provider_params_params} }
 
