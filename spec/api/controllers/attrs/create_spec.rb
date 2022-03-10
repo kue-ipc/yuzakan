@@ -149,7 +149,7 @@ describe Api::Controllers::Attrs::Create do
           stub(obj).exist_by_name? { true }
           stub(obj).exist_by_label? { false }
           stub(obj).exist_by_order? { false }
-          stub(obj).last_order { 6 }
+          stub(obj).last_order { 16 }
           stub(obj).create_with_mappings { attr_with_mappings }
         end
       }
@@ -185,7 +185,7 @@ describe Api::Controllers::Attrs::Create do
           stub(obj).exist_by_name? { false }
           stub(obj).exist_by_label? { true }
           stub(obj).exist_by_order? { false }
-          stub(obj).last_order { 6 }
+          stub(obj).last_order { 16 }
           stub(obj).create_with_mappings { attr_with_mappings }
         end
       }
@@ -221,7 +221,7 @@ describe Api::Controllers::Attrs::Create do
           stub(obj).exist_by_name? { true }
           stub(obj).exist_by_label? { true }
           stub(obj).exist_by_order? { false }
-          stub(obj).last_order { 6 }
+          stub(obj).last_order { 16 }
           stub(obj).create_with_mappings { attr_with_mappings }
         end
       }

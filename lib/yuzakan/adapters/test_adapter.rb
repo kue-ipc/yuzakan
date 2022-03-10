@@ -18,18 +18,18 @@ module Yuzakan
           placeholder: 'プレースホルダー',
         },
         {
-          name: :str,
+          name: :str_default,
           label: 'デフォルト値',
           default: 'デフォルト',
         },
         {
-          name: :fixed,
+          name: :str_fixed,
           label: '固定値',
           default: '固定',
           fixed: true,
         },
         {
-          name: :required,
+          name: :str_required,
           label: '必須文字列',
           required: true,
         },
@@ -39,7 +39,7 @@ module Yuzakan
           encrypted: true,
         },
         {
-          name: :txt,
+          name: :text,
           label: 'テキスト',
           type: :text,
         },
@@ -53,9 +53,9 @@ module Yuzakan
           label: 'リスト',
           default: 'default',
           list: [
-            {name: :cleartext, label: 'デフォルト', value: 'default'},
-            {name: :cleartext, label: 'その他', value: 'other'},
-            {name: :cleartext, label: '非推奨', value: 'deprecated', deprecated: true},
+            {name: :default, label: 'デフォルト', value: 'default'},
+            {name: :other, label: 'その他', value: 'other'},
+            {name: :deprecated, label: '非推奨', value: 'deprecated', deprecated: true},
           ],
         },
       ]

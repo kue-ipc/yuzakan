@@ -61,7 +61,7 @@ Style/MultilineBlockChain:
 Style/NumericLiterals:
   MinDigits: 7
 Style/OneLineConditional:
-  AlwaysCorrectToMultiline: true
+  Enabled: false
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: consistent_comma
 Style/TrailingCommaInHashLiteral:
