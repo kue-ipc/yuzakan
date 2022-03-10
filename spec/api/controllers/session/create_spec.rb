@@ -28,7 +28,7 @@ describe Api::Controllers::Session::Create do
 
   let(:providers) { [create_mock_provider(params: {username: 'user', password: 'pass'})] }
   let(:provider_repository) {
-    ProviderRepository.new.tap { |obj| stub(obj).operational_all_with_adapter { providers } }
+    ProviderRepository.new.tap { |obj| stub(obj).ordered_all_with_adapter_by_operation { providers } }
   }
   let(:auth_log_repository) {
     AuthLogRepository.new.tap do |obj|

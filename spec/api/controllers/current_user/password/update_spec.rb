@@ -23,7 +23,7 @@ describe Api::Controllers::CurrentUser::Password::Update do
 
   let(:providers) { [create_mock_provider(params: {username: 'user', password: 'pass'})] }
   let(:provider_repository) {
-    ProviderRepository.new.tap { |obj| stub(obj).operational_all_with_adapter { providers } }
+    ProviderRepository.new.tap { |obj| stub(obj).ordered_all_with_adapter_by_operation { providers } }
   }
   let(:user_notify) { Object.new.tap { |obj| stub(obj).deliver } }
 

@@ -28,7 +28,7 @@ module Admin
           @attr_repository = attr_repository
 
           @attrs = attrs || @attr_repository.all
-          @providers = providers || @provider_repository.operational_all_with_adapter(:read).to_a
+          @providers = providers || @provider_repository.ordered_all_with_adapter_by_operation(:read).to_a
           @read_user = read_user ||
                        ReadUser.new(provider_repository: @provider_repository, providers: @providers)
         end

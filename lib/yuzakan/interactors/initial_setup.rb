@@ -63,7 +63,7 @@ class InitialSetup
       password_changeable: true,
       lockable: true,
     })
-    local_provider = ProviderRepository.new.find_by_name_with_adapter('local')
+    local_provider = ProviderRepository.new.find_with_adapter_by_name('local')
     local_provider.create(username, password, display_name: 'ローカル管理者')
   end
 

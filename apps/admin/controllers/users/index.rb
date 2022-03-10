@@ -19,7 +19,7 @@ module Admin
         def call(params) # rubocop:disable Lint/UnusedMethodArgument
           @pagy_data, @users = pagy(UserRepository.new)
           @providers = ProviderRepository.new
-            .operational_all_with_adapter(:list).to_a
+            .ordered_all_with_adapter_by_operation(:list).to_a
           @provider_users = @providers.each.to_h do |provider|
             [provider.id, provider.list]
           end

@@ -77,7 +77,7 @@ class ResetPassword
     result = :success
 
     (@providers ||
-      @provider_repository.operational_all_with_adapter(:change_password)
+      @provider_repository.ordered_all_with_adapter_by_operation(:change_password)
     ).each do |provider|
       user_data = provider.change_password(@username, @password)
       @user_datas[provider.name] = user_data if user_data

@@ -19,7 +19,7 @@ def db_initialize
   provider_repository = ProviderRepository.new
 
   # 一般ユーザー
-  local_provider = provider_repository.find_by_name_with_adapter('local')
+  local_provider = provider_repository.find_with_adapter_by_name('local')
   local_provider.create('user', 'word',
                         display_name: '一般ユーザー',
                         email: 'user@yuzakan.test')

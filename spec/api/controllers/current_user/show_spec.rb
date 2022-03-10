@@ -33,7 +33,7 @@ describe Api::Controllers::CurrentUser::Show do
       }])]
   }
   let(:provider_repository) {
-    ProviderRepository.new.tap { |obj| stub(obj).operational_all_with_adapter { providers } }
+    ProviderRepository.new.tap { |obj| stub(obj).ordered_all_with_adapter_by_operation { providers } }
   }
 
   it 'is successful' do

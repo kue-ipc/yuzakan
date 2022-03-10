@@ -76,20 +76,30 @@ describe ProviderRepository do
     end
 
     it 'add_param' do
-      provider_param = provider_repository.add_mapping(@attr_fuga, {name: 'str', value: Marshal.dump('ふがふが')})
+      provider_param = provider_repository.add_param(@provider_fuga, {name: 'str', value: Marshal.dump('ふがふが')})
       _(provider_param).must_be_instance_of ProviderParam
       _(provider_param.name).must_equal 'str'
       _(provider_param_repository.all.count).must_equal 3
     end
 
     it 'delete_param_by_name' do
-      delete_count = provider_repository.delete_param_by_name(@attr_hoge, 'str')
+      delete_count = provider_repository.delete_param_by_name(@provider_hoge, 'str')
       _(delete_count).must_equal 1
-      _(attr_mapping_repository.all.count).must_equal 1
+      _(provider_param_repository.all.count).must_equal 1
 
-      delete_count = provider_repository.delete_param_by_name(@attr_fuga, 'str')
+      delete_count = provider_repository.delete_param_by_name(@provider_fuga, 'str')
       _(delete_count).must_equal 0
-      _(attr_mapping_repository.all.count).must_equal 1
+      _(provider_param_repository.all.count).must_equal 1
+    end
+
+    describe 'with adapter' do
+      # TODO
+      # attr_mappings and attr
+      
+      # ordered_all_with_adapter
+      # find_with_adapter
+      # find_with_adapter_by_name
+      # ordered_all_with_adapter_by_operation
     end
   end
 end

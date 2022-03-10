@@ -26,7 +26,7 @@ class UserRepository < Hanami::Repository
   end
 
   def auth(name, password)
-    providers = ProviderRepository.new.operational_all_with_adapter(:auth)
+    providers = ProviderRepository.new.ordered_all_with_adapter_by_operation(:auth)
     result = nil
     providers.each do |provider|
       result = provider.auth(name, password)
@@ -47,7 +47,7 @@ class UserRepository < Hanami::Repository
   end
 
   def sync(name)
-    providers = ProviderRepository.new.operational_all_with_adapter(:read)
+    providers = ProviderRepository.new.ordered_all_with_adapter_by_operation(:read)
     result = nil
     providers.each do |provider|
       result = provider.read(name)
