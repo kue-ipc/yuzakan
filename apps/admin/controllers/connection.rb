@@ -6,7 +6,7 @@ module Admin
 
     def self.included(action)
       Web::Connection.included(action)
-      action.define_singleton_method(:default_security_level) { 3 }
+      action.define_singleton_method(:default_security_level) { 2 }
     end
   end
 end

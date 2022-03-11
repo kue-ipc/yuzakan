@@ -4,8 +4,6 @@ module Api
       class Show
         include Api::Action
 
-        security_level 1
-
         class Params < Hanami::Action::Params
           predicates NamePredicates
           messages :i18n
