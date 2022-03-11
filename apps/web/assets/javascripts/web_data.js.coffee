@@ -41,7 +41,7 @@ export default class WebData
     @modalNode.setAttribute('aria-hidden', 'true')
 
     modalDialogNode = document.createElement('div')
-    @modalNode.id = "#{@id}-modal-dialog"
+    modalDialogNode.id = "#{@id}-modal-dialog"
     modalDialogNode.classList.add('modal-dialog', 'modal-dialog-centered')
 
     @modalNode.appendChild(modalDialogNode)
@@ -69,7 +69,7 @@ export default class WebData
     modalDialog {
       id: @id,
       centered: true
-      title: title
+      title
       status
       closable
       action: if link?
@@ -92,7 +92,6 @@ export default class WebData
       div {}, text msg
 
   modalMessage: (state) ->
-    console.log state
     # hack modal config
     # https://github.com/twbs/bootstrap/issues/35664
     if state.closable
@@ -128,8 +127,6 @@ export default class WebData
       link: null
       reload: false
     }
-    @modal.backdrop = 'static'
-    @modal.keyboard = false
     @modal.show()
 
     try
