@@ -11,6 +11,8 @@ STATUSES = new Map([
   {status: 'warn', label: '警告', color: 'warning', icon: 'exclamation-triangle-fill'}
   {status: 'info', label: '情報', color: 'info', icon: 'info-square-fill'}
   {status: 'debug', label: 'デバッグ', color: 'secondary', icon: 'bug-fill'}
+  {status: 'alert', label: 'アラート', color: 'danger', icon: 'exclamation-triangle-fill'}
+  {status: 'caution', label: '注意', color: 'warning', icon: 'exclamation-triangle-fill'}
   {status: 'unknown', label: '不明', color: 'primary', icon: 'question-diamond-fill'}
 ].map((status) -> [status.status, status]))
 

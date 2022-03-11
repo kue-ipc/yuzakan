@@ -23,28 +23,30 @@ export modalHeader = ({id, title, status, closable}) ->
 export modalBody = ({id}, children) ->
   div {id: "#{id}-modal-body", class: 'modal-body'}, children
 
-export modalFooter = ({id, closable, action}) ->
-  div {id: "#{id}-modal-footer", class: 'modal-footer'}, [
+export modalFooter = ({id, closable, action, close}) ->
+  buttons = [
     if closable then button {
       id: "#{id}-modal-close-button"
-      class: 'btn btn-secondary'
+      class: "btn btn-#{close?.color || 'secondary'}"
       type: 'button'
       'data-bs-dismiss': 'modal'
-    }, text '閉じる'
+    }, text close?.label || '閉じる'
     if action? then button {
       id: "#{id}-modal-action-button"
       class: "btn btn-#{action.color}"
       type: 'button'
       onclick: action.onclick
-      disabled: button.disabled
+      disabled: action.disabled
     }, text action.label
   ]
+  buttons = buttons.reverse() if action?.side == 'left'
+  div {id: "#{id}-modal-footer", class: 'modal-footer'}, buttons
 
-export modalContent = ({id, title, status, closable, action}, children) ->
+export modalContent = ({id, title, status, closable, action, close}, children) ->
   div {class: 'modal-content'}, [
     modalHeader {id, title, status, closable}
     modalBody {id}, children
-    modalFooter {id, closable, action} if closable || action?
+    modalFooter {id, closable, action, close} if closable || action?
   ]
 
 export modalDialog = ({id, size, scrollable, centered, props...}, children) ->

@@ -2,6 +2,7 @@ import {h, text, app} from '../hyperapp.js?v=6.0.0'
 import {div, table, thead, tbody, tr, th, td, input, select, option, button} from '../hyperapp-html.js?v=0.6.0'
 import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '../fetch_json.js?v=0.6.0'
 import csrf from '../csrf.js?v=0.6.0'
+import ConfirmDialog from '../confirm_dialog.js?v=0.6.0'
 
 attrTypes = [
   {name: 'string', value: 'string', label: '文字列'}
@@ -21,6 +22,17 @@ mappingConversions = [
   {name: 'e2j', value: 'e2j', label: '英日'}
   {name: 'j2e', value: 'j2e', label: '日英'}
 ]
+
+delete_confirm = new ConfirmDialog {
+  id: 'admin_attrs_index_confirm'
+  status: 'alert'
+  title: '属性の削除'
+  message: '属性を削除してもよろしいですか？'
+  action: {
+    color: 'danger'
+    label: '削除'
+  }
+}
 
 providerTh = ({provider}) ->
   th {}, text provider.label
@@ -194,11 +206,13 @@ updateAttrRunner = (dispatch, {attr}) ->
     console.error response
 
 destroyAttrRunner = (dispatch, {attr}) ->
-  response = await fetchJsonDelete({url: "/api/attrs/#{attr.name}", data: csrf()})
-  if response.ok
-    dispatch(deleteAttrAction, {name: attr.name})
-  else
-    console.error response
+  confirm = await delete_confirm.confirmPromise({message: "属性「#{attr.name}」を削除してもよろしいですか？"})
+  if confirm
+    response = await fetchJsonDelete({url: "/api/attrs/#{attr.name}", data: csrf()})
+    if response.ok
+      dispatch(deleteAttrAction, {name: attr.name})
+    else
+      console.error response
 
 upAttrAction = (state, {name}) ->
   attrIndex = state.attrs.findIndex (attr) -> attr.name == name
