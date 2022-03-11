@@ -19,6 +19,7 @@ module Web
           after :done!
           expose :current_config
           expose :current_user
+          expose :current_level
         end
       else
         action.define_singleton_method(:included, &method(:included))
@@ -68,20 +69,29 @@ module Web
       @current_user ||= (session[:user_id] && @user_repository.find(session[:user_id]))
     end
 
+    private def current_level
+      return @current_level if @current_level
+
+      @current_level = current_user&.clearance_level || 0
+      if @current_level >= 2 && current_config.admin_networks&.size&.positive? &&
+         CheckIp.new(allowed_networks: current_config.admin_networks).call(ip: client).failure?
+        @current_level = 1
+      end
+
+      if @current_level == 1 && current_config.user_networks&.size&.positive? &&
+         CheckIp.new(allowed_networks: current_config.user_networks).call(ip: client).failure?
+        @current_level = 0
+      end
+
+      @current_level
+    end
+
     private def current_time
       @current_time ||= Time.now
     end
 
     def security_level
       self.class.security_level
-    end
-
-    private def allowed_networks
-      if security_level >= 3
-        current_config.admin_networks
-      else
-        current_config.user_networks
-      end
     end
 
     private def check_session!

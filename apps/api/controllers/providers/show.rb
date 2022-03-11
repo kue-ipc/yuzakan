@@ -28,7 +28,7 @@ module Api
 
           self.status = 200
           self.body =
-            if current_user.clearance_level == 5
+            if current_level >= 5
               generate_json({**convert_entity(@provider), params: @provider.params})
             else
               generate_json(@provider)

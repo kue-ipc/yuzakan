@@ -27,19 +27,7 @@ module Web
     end
 
     private def authorized?
-      return true if security_level.zero?
-
-      allowed_ip? && allowed_user?
-    end
-
-    private def allowed_ip?
-      return true if allowed_networks.nil? || allowed_networks.empty?
-
-      CheckIp.new(allowed_networks: allowed_networks).call(ip: client).successful?
-    end
-
-    private def allowed_user?
-      (current_user&.clearance_level || 0) >= security_level
+      current_level >= security_level
     end
 
     private def reply_unauthorized
