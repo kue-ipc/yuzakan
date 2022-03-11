@@ -23,15 +23,15 @@ module Api
         def call(params)
           halt_json 400, errors: [params.errors] unless params.valid?
 
-          @attr = @attr_repository.find_with_mappings_by_name(params[:id])
-          halt_json 404 if @attr.nil?
+          found_attr = @attr_repository.find_with_mappings_by_name(params[:id])
+          halt_json 404 if found_attr.nil?
 
           self.status = 200
           self.body =
             if current_level >= 2
-              generate_json(@attr)
+              generate_json(found_attr)
             else
-              generate_json(convert_entity(@attr).except(:attr_mappings))
+              generate_json(convert_entity(found_attr).except(:attr_mappings))
             end
         end
       end

@@ -76,11 +76,11 @@ module Api
           halt_json(422, errors: [param_errors]) unless param_errors.empty?
 
           attr_params[:order] ||= @attr_repository.last_order + 8
-          @attr = @attr_repository.create_with_mappings(attr_params)
+          created_attr = @attr_repository.create_with_mappings(attr_params)
 
           self.status = 201
-          headers['Location'] = routes.attr_path(@attr.id)
-          self.body = generate_json(@attr)
+          headers['Location'] = routes.attr_path(created_attr.id)
+          self.body = generate_json(created_attr)
         end
       end
     end

@@ -71,10 +71,12 @@ module Web
       )
 
       controller.prepare do
+        include Hanami::Action::Cache
         include Web::Connection
         include Web::Configuration
         include Web::Authentication
         include Web::Authorization
+        cache_control :no_store
       end
 
       view.prepare do
