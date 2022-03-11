@@ -15,7 +15,7 @@ describe Api::Controllers::Providers::Show do
   let(:user) { User.new(id: 42, name: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1) }
   let(:session) { {uuid: uuid, user_id: user.id, created_at: Time.now - 600, updated_at: Time.now - 60} }
   let(:format) { 'application/json' }
-  let(:config) { Config.new(title: 'title', session_timeout: 3600, user_networks: '') }
+  let(:config) { Config.new(title: 'title', session_timeout: 3600) }
   let(:activity_log_repository) { ActivityLogRepository.new.tap { |obj| stub(obj).create } }
   let(:config_repository) { ConfigRepository.new.tap { |obj| stub(obj).current { config } } }
   let(:user_repository) { UserRepository.new.tap { |obj| stub(obj).find { user } } }
@@ -91,6 +91,18 @@ describe Api::Controllers::Providers::Show do
           code: 404,
           message: 'Not Found',
         })
+      end
+    end
+
+    describe 'not allowed network' do
+      let(:config) { Config.new(title: 'title', session_timeout: 3600, admin_networks: '10.10.10.0/24') }
+
+      it 'is successful, bat no params' do
+        response = action.call(params)
+        _(response[0]).must_equal 200
+        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        json = JSON.parse(response[2].first, symbolize_names: true)
+        _(json).must_equal({**provider_params})
       end
     end
   end
