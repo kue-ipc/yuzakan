@@ -42,7 +42,7 @@ module Api
         end
 
         def call(params)
-          param_errors = only_first_errors(params.errors.to_h)
+          param_errors = only_first_errors(params.errors)
           attr_params = params.to_h.dup
 
           if !param_errors.key?(:name) && @attr_repository.exist_by_name?(attr_params[:name])

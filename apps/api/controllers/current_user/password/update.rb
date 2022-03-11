@@ -27,7 +27,7 @@ module Api
           end
 
           def call(params)
-            param_errors = only_first_errors(params.errors.to_h)
+            param_errors = only_first_errors(params.errors)
 
             unless param_errors.key?(:password)
               password_size = params[:password].size

@@ -34,7 +34,7 @@ module Api
         end
 
         def call(_params)
-          param_errors = only_first_errors(params.errors.to_h)
+          param_errors = only_first_errors(params.errors)
           provider_params = params.to_h.dup
 
           if !param_errors.key?(:name) && @provider_repository.exist_by_name?(provider_params[:name])

@@ -43,7 +43,7 @@ module Api
           provider = @provider_repository.find_with_params_by_name(params[:id])
           halt_json 404 if provider.nil?
 
-          param_errors = only_first_errors(params.errors.to_h)
+          param_errors = only_first_errors(params.errors)
           provider_params = params.to_h.dup
 
           if !param_errors.key?(:name) && provider_params[:name] && provider_params[:name] != provider.name &&

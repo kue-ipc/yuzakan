@@ -30,7 +30,7 @@ module Api
         end
 
         def call(params)
-          halt_json 400, errors: [only_first_errors(params.errors.to_h)] unless params.valid?
+          halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
           halt_json 403, errors: ['現在のネットワークからのログインは許可されていません。'] unless allowed_user_networks?
 

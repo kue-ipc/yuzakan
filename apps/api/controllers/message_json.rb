@@ -47,6 +47,8 @@ module Api
         errors.transform_values { |v| only_first_errors(v) }
       when Array
         errors[0, 1]
+      when Hanami::Action::Params::Errors
+        only_first_errors(errors.to_h)
       else
         errors
       end

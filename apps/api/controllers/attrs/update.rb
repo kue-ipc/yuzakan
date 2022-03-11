@@ -48,7 +48,7 @@ module Api
           @attr = @attr_repository.find_with_mappings_by_name(params[:id])
           halt_json 404 if @attr.nil?
 
-          param_errors = only_first_errors(params.errors.to_h)
+          param_errors = only_first_errors(params.errors)
           attr_params = params.to_h.except(:id)
 
           if !param_errors.key?(:name) && attr_params[:name] && @attr.name != attr_params[:name] &&
