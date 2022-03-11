@@ -37,6 +37,22 @@ describe Api::Controllers::Session::Destroy do
     _(deleted_at).must_be :<=, end_time
   end
 
+  describe 'not allowed network' do
+    let(:config) { Config.new(title: 'title', session_timeout: 3600, user_networks: '10.10.10.0/24') }
+
+    it 'is failure' do
+      response = action.call(params)
+      _(response[0]).must_equal 403
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      json = JSON.parse(response[2].first, symbolize_names: true)
+      _(json).must_equal({
+        code: 403,
+        message: 'Forbidden',
+        errors: ['現在のネットワークからのログアウトは許可されていません。'],
+      })
+    end
+  end
+
   describe 'no login session' do
     let(:session) { {uuid: uuid} }
 

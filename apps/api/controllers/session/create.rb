@@ -7,9 +7,19 @@ module Api
         security_level 0
 
         params do
-          required(:username).filled(:str?, max_size?: 255)
-          required(:password).filled(:str?, max_size?: 255)
         end
+
+        class Params < Hanami::Action::Params
+          predicates NamePredicates
+          messages :i18n
+
+          params do
+            required(:username).filled(:str?, max_size?: 255)
+            required(:password).filled(:str?, max_size?: 255)
+          end
+        end
+
+        params Params
 
         def initialize(user_repository: UserRepository.new,
                        provider_repository: ProviderRepository.new,
@@ -20,7 +30,9 @@ module Api
         end
 
         def call(params)
-          halt_json(400, errors: params.error_messages) unless params.valid?
+          halt_json 400, errors: [only_first_errors(params.errors.to_h)] unless params.valid?
+
+          halt_json 403, errors: ['現在のネットワークからのログインは許可されていません。'] unless allowed_user_networks?
 
           redirect_to_json routes.path(:session), status: 303 if current_user
 

@@ -106,7 +106,7 @@ describe Api::Controllers::Session::Create do
       _(json).must_equal({
         code: 400,
         message: 'Bad Request',
-        errors: ['Username is missing', 'Username size cannot be greater than 255'],
+        errors: [{username: ['存在しません。']}],
       })
     end
 
@@ -118,7 +118,7 @@ describe Api::Controllers::Session::Create do
       _(json).must_equal({
         code: 400,
         message: 'Bad Request',
-        errors: ['Password is missing', 'Password size cannot be greater than 255'],
+        errors: [{password: ['存在しません。']}],
       })
     end
 
@@ -130,7 +130,7 @@ describe Api::Controllers::Session::Create do
       _(json).must_equal({
         code: 400,
         message: 'Bad Request',
-        errors: ['Username size cannot be greater than 255'],
+        errors: [{username: ['サイズが255を超えてはいけません。']}],
       })
     end
 
@@ -142,7 +142,7 @@ describe Api::Controllers::Session::Create do
       _(json).must_equal({
         code: 400,
         message: 'Bad Request',
-        errors: ['Password must be filled', 'Password size cannot be greater than 255'],
+        errors: [{password: ['入力が必須です。']}],
       })
     end
 
@@ -172,6 +172,22 @@ describe Api::Controllers::Session::Create do
           message: 'Forbidden',
           errors: ['時間あたりのログイン試行が規定の回数を超えたため、現在ログインが禁止されています。 ' \
                    'しばらく待ってから再度ログインを試してください。'],
+        })
+      end
+    end
+
+    describe 'not allowed network' do
+      let(:config) { Config.new(title: 'title', session_timeout: 3600, user_networks: '10.10.10.0/24') }
+
+      it 'is failure' do
+        response = action.call(params)
+        _(response[0]).must_equal 403
+        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        json = JSON.parse(response[2].first, symbolize_names: true)
+        _(json).must_equal({
+          code: 403,
+          message: 'Forbidden',
+          errors: ['現在のネットワークからのログインは許可されていません。'],
         })
       end
     end
