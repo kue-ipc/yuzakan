@@ -9,28 +9,28 @@ get '/setup', to: 'setup#index', as: :setup
 post '/setup', to: 'setup#create'
 get '/setup/done', to: 'setup#done', as: :setup_done
 
-resource 'config', only: [:edit, :update] do
+resource :config, only: [:edit, :update] do
   member do
     post 'import'
     get 'export'
   end
 end
 
-resources 'providers' do
-  resources 'params', only: [:index]
+resources :providers do
+  resources :params, only: [:index]
 end
 
-resources 'adapters', only: [:show] do
-  resources 'params', only: [:index]
-  resources 'param_types', only: [:index]
+resources :adapters, only: [:show] do
+  resources :params, only: [:index]
+  resources :param_types, only: [:index]
 end
 
-resources 'attrs', only: [:index]
+resources :attrs, only: [:index]
 
-resources 'users' do
+resources :users do
   collection do
     get 'search'
     get 'sync'
   end
-  resource 'password', only: [:create]
+  resource :password, only: [:create]
 end

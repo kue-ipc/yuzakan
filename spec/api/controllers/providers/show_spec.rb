@@ -97,7 +97,7 @@ describe Api::Controllers::Providers::Show do
     describe 'not allowed network' do
       let(:config) { Config.new(title: 'title', session_timeout: 3600, admin_networks: '10.10.10.0/24') }
 
-      it 'is successful, bat no params' do
+      it 'is successful, but no params' do
         response = action.call(params)
         _(response[0]).must_equal 200
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"

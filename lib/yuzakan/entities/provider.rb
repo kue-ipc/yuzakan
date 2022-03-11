@@ -3,8 +3,6 @@ require_relative '../utils/cache_store'
 class Provider < Hanami::Entity
   attr_reader :params
 
-  NAME_RE = /\A[\w.-]+\z/.freeze
-
   class NoAdapterError < StandardError
     def initialize(msg = 'No adapter, but need an adapter.')
       super
@@ -113,32 +111,31 @@ class Provider < Hanami::Entity
     {**raw_userdata, attrs: convert_attrs(raw_userdata[:attrs])}
   end
 
-  def need_adapter_and_mappings!
+  def need_adapter!
     raise NoAdapterError unless @adapter
+  end
+
+  def need_mappings!
     raise NoMappingsError unless attr_mappings
   end
 
-  def sanitize_name(name)
-    raise ArgumentError, 'invalid name' unless name =~ Provider::NAME_RE
-
-    name.downcase(:ascii)
-  end
-
   def check
-    need_adapter_and_mappings!
+    need_adapter!
     @adapter.check
   end
 
   def create(username, password = nil, **userdata)
-    need_adapter_and_mappings!
-    username = sanitize_name(username)
+    need_adapter!
+    need_mappings!
+    
     raw_userdata = @adapter.create(username, password, **map_userdata(userdata))
     @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
 
   def read(username)
-    need_adapter_and_mappings!
-    username = sanitize_name(username)
+    need_adapter!
+    need_mappings!
+    
     @cache_store.fetch(user_key(username)) do
       raw_userdata = @adapter.read(username)
       @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
@@ -146,50 +143,56 @@ class Provider < Hanami::Entity
   end
 
   def udpate(username, **userdata)
-    need_adapter_and_mappings!
-    username = sanitize_name(username)
+    need_adapter!
+    need_mappings!
+    
     raw_userdata = @adapter.update(username, **map_userdata(userdata))
     @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
 
   def delete(username)
-    need_adapter_and_mappings!
-    username = sanitize_name(username)
+    need_adapter!
+    need_mappings!
+    
     raw_userdata = @adapter.delete(username)
     @cache_store.delete(user_key(username)) || convert_userdata(raw_userdata)
   end
 
   def auth(username, password)
-    need_adapter_and_mappings!
-    username = sanitize_name(username)
+    need_adapter!
+    need_mappings!
+    
     raw_userdata = @adapter.auth(username, password)
     @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
 
   def change_password(username, password)
-    need_adapter_and_mappings!
-    username = sanitize_name(username)
+    need_adapter!
+    need_mappings!
+    
     raw_userdata = @adapter.change_password(username, password)
     @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
 
   def lock(username)
-    need_adapter_and_mappings!
-    username = sanitize_name(username)
+    need_adapter!
+    need_mappings!
+    
     raw_userdata = @adapter.lock(username)
     @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
 
   def unlock(username, password = nil)
-    need_adapter_and_mappings!
-    username = sanitize_name(username)
+    need_adapter!
+    need_mappings!
+    
     raw_userdata = @adapter.unlock(username, password)
     @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
 
   def generate_code(username)
-    need_adapter_and_mappings!
-    username = sanitize_name(username)
+    need_adapter!
+    
     @adapter.generate_code(username)
   end
 
@@ -210,7 +213,7 @@ class Provider < Hanami::Entity
   end
 
   def list
-    need_adapter_and_mappings!
+    need_adapter!
     @cache_store.fetch(user_list_key) do
       @cache_store[user_list_key] = @adapter.list
     end
