@@ -4,7 +4,7 @@ module Api
       class Show
         include Api::Action
 
-        security_level 5
+        security_level 1
 
         class Params < Hanami::Action::Params
           predicates NamePredicates
@@ -29,7 +29,12 @@ module Api
           halt_json 404 if @attr.nil?
 
           self.status = 200
-          self.body = generate_json(@attr)
+          self.body =
+            if current_level >= 2
+              generate_json(@attr)
+            else
+              generate_json(convert_entity(@attr).except(:attr_mappings))
+            end
         end
       end
     end

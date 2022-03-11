@@ -32,12 +32,26 @@ describe Api::Controllers::Attrs::Show do
   let(:attr_with_mappings) { Attr.new(id: 42, **attr_params) }
   let(:attr_repository) { AttrRepository.new.tap { |obj| stub(obj).find_with_mappings_by_name { attr_with_mappings } } }
 
-  it 'is failure' do
+  it 'is successful' do
     response = action.call(params)
-    _(response[0]).must_equal 403
+    _(response[0]).must_equal 200
     _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    _(json).must_equal({code: 403, message: 'Forbidden'})
+    _(json).must_equal(attr_params.except(:attr_mappings))
+  end
+
+  describe 'monitor' do
+    let(:user) {
+      User.new(id: 1, name: 'monitor', display_name: '監視者', email: 'monitor@example.jp', clearance_level: 2)
+    }
+
+    it 'is successful' do
+      response = action.call(params)
+      _(response[0]).must_equal 200
+      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      json = JSON.parse(response[2].first, symbolize_names: true)
+      _(json).must_equal(attr_params)
+    end
   end
 
   describe 'admin' do
