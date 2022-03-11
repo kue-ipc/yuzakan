@@ -320,7 +320,7 @@ init = [
 view = ({attrs, providers, newAttr}) ->
   table {class: 'table'}, [
     thead {}, [
-      tr {class: 'text-center'}, [
+      tr {}, [
         th {}, text '順番'
         th {}, text '名前/表示名'
         th {}, text '型/隠し'

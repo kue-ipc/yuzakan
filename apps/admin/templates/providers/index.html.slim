@@ -1,4 +1,4 @@
-= link_to '新規作成', routes.new_provider_path
+= link_to '新規作成', routes.provider_path('*')
 
 table.table
   tr
@@ -22,3 +22,6 @@ table.table
             = link_to '編集', routes.edit_provider_path(provider.id), class: 'btn btn-primary'
             = form_for provider, routes.provider_path(provider.id), method: :delete, class: 'ms-2' do
               - submit '削除', class: 'btn btn-danger'
+
+= javascript 'admin_providers_index', type: 'module', defer: true
+#admin_providers_index
