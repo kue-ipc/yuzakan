@@ -1,27 +1,6 @@
-= link_to '新規作成', routes.provider_path('*')
+h3 プロバイダー
 
-table.table
-  tr
-    th
-      | 識別名
-    th
-      | プロバイダー名
-    th
-      | アダプター
-  - providers.each do |provider|
-    tr
-      td
-        = link_to provider.name, routes.provider_path(provider.id)
-      td
-        = provider.label
-      td
-        = provider.adapter_label
-      td
-        - unless provider.immutable
-          .d-flex.flex-row
-            = link_to '編集', routes.edit_provider_path(provider.id), class: 'btn btn-primary'
-            = form_for provider, routes.provider_path(provider.id), method: :delete, class: 'ms-2' do
-              - submit '削除', class: 'btn btn-danger'
+= link_to '新規作成', routes.provider_path('*')
 
 = javascript 'admin_providers_index', type: 'module', defer: true
 #admin_providers_index
