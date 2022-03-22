@@ -63,6 +63,6 @@ view = ({providers}) ->
     tbody {}, (attrTr({provider}) for provider in providers)
   ]
 
-node = document.getElementById('admin_providers_index')
+node = document.getElementById('admin_providers')
 
 app {init, view, node}

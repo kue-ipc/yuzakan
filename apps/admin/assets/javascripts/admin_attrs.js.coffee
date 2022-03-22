@@ -24,7 +24,7 @@ mappingConversions = [
 ]
 
 delete_confirm = new ConfirmDialog {
-  id: 'admin_attrs_index_confirm'
+  id: 'admin_attrs_confirm'
   status: 'alert'
   title: '属性の削除'
   message: '属性を削除してもよろしいですか？'
@@ -336,7 +336,7 @@ view = ({attrs, providers, newAttr}) ->
         attrTr({attr, index, providers: providers})
   ]
 
-node = document.getElementById('admin_attrs_index')
+node = document.getElementById('admin_attrs')
 
 app {init, view, node}
 
