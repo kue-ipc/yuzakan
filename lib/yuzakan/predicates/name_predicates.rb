@@ -6,4 +6,8 @@ module NamePredicates
   predicate(:name?) do |current|
     current =~ /\A[a-z0-9_](?:[0-9a-z_-]|\.[0-9a-z_-])*\z/
   end
+
+  predicate(:name_or_star?) do |current|
+    current =~ /\A(?:[a-z0-9_](?:[0-9a-z_-]|\.[0-9a-z_-])*|\*)\z/
+  end
 end

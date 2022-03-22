@@ -1,12 +1,2 @@
-- if provider
-  p
-    = provider.name
-  p
-    = provider.label
-  p
-    = provider.adapter_label
-  p
-    - if provider.check
-      | OK
-    - else
-      | NG
+= javascript 'admin_providers_show', type: 'module', defer: true
+#admin_providers_show data-id="#{params[:id]}"

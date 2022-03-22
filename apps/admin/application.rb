@@ -6,6 +6,7 @@ require_relative '../web/controllers/configuration'
 require_relative '../web/controllers/authentication'
 require_relative '../web/controllers/authorization'
 
+require_relative '../../lib/yuzakan/predicates/name_predicates'
 require_relative '../../lib/yuzakan/utils/uglifier_es_compressor'
 
 module Admin
