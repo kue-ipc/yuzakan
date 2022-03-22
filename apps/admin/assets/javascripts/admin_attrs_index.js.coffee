@@ -104,12 +104,11 @@ attrTr = ({attr, index, providers}) ->
       select {
         class: 'form-control'
         onchange: (state, event) -> [attrAction, {name: attr.name, attr: {type: event.target.value}}]
-      },
-        attrTypes.map (attrType) ->
-          option {
-            value: attrType.value
-            selected: attrType.value == attr.type
-          }, text attrType.label
+      }, attrTypes.map (attrType) ->
+        option {
+          value: attrType.value
+          selected: attrType.value == attr.type
+        }, text attrType.label
       input {
         type: 'checkbox'
         class: 'form-check-input'
@@ -136,18 +135,19 @@ attrTr = ({attr, index, providers}) ->
             onclick: (state) -> [state, [createAttrRunner, {attr}]]
           }, text '作成'
         ]
-  ].concat(providers.map (provider) -> attrMappingTd({attr, provider}))
+    (attrMappingTd({attr, provider}) for provider in providers)...
+  ]
 
 attrAction = (state, {name, attr}) ->
   name ?= attr.name
   if name
     replaced = false
-    attrs = state.attrs.map (currentAttr) ->
-      if currentAttr.name == name
+    attrs = for current in state.attrs
+      if current.name == name
         replaced = true
-        {currentAttr..., attr...}
+        {current..., attr...}
       else
-        currentAttr
+        current
     unless replaced
       attrs = [attrs..., attr]
     {state..., attrs}
@@ -160,12 +160,12 @@ deleteAttrAction = (state, {name}) ->
 
 replaceAttrMapping = (attr_mappings, attr_mapping) ->
   replaced = false
-  new_attr_mappings = attr_mappings.map (current_mapping) ->
-    if current_mapping.provider.name == attr_mapping.provider.name
+  new_attr_mappings = for current in attr_mappings
+    if current.provider.name == attr_mapping.provider.name
       replaced = true
-      {current_mapping..., attr_mapping...}
+      {current..., attr_mapping...}
     else
-      current_mapping
+      current
 
   if replaced
     new_attr_mappings
@@ -174,7 +174,7 @@ replaceAttrMapping = (attr_mappings, attr_mapping) ->
 
 attrMappingAction = (state, {name, attr_mapping}) ->
   if name
-    attrs = state.attrs.map (attr) ->
+    attrs = for attr in state.attrs
       if attr.name == name
         {attr..., attr_mappings: replaceAttrMapping(attr.attr_mappings, attr_mapping)}
       else
@@ -258,7 +258,7 @@ downAttrAction = (state, {name}) ->
  
   newAttr = {
     state.attrs[attrIndex]...
-    order: (state.attrs[attrIndex + 1]?.order ? state.attrs[attrIndex].order) + Math.floor(diffOrder / 2)}
+    order: (state.attrs[attrIndex + 1]?.order ? state.attrs[attrIndex].order) + diffOrder // 2}
   [
     {
       state...
@@ -279,7 +279,10 @@ showAttrRunner = (dispatch, {attr}) ->
     console.error response
 
 initAllAttrsAction = (state, {attrs}) ->
-  [{state..., attrs}].concat(attrs.map (attr) -> [showAttrRunner, {attr}])
+  [
+    {state..., attrs}
+    ([showAttrRunner, {attr}] for attr in attrs)...
+  ]
 
 indexAllAttrsRunner = (dispatch) ->
   response = await fetchJsonGet({url: '/api/attrs'})
@@ -325,10 +328,12 @@ view = ({attrs, providers, newAttr}) ->
         th {}, text '名前/表示名'
         th {}, text '型/隠し'
         th {}, text '操作'
-      ].concat(providers.map (provider) -> providerTh({provider}))
+        (providerTh({provider}) for provider in providers)...
+      ]
     ]
     tbody {},
-      [attrs..., newAttr].map (attr, index) -> attrTr({attr, index, providers: providers})
+      for attr, index in [attrs..., newAttr]
+        attrTr({attr, index, providers: providers})
   ]
 
 node = document.getElementById('admin_attrs_index')
