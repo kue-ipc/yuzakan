@@ -19,15 +19,18 @@ attrTr = ({provider}) ->
 
 providerAction = (state, {name, provider}) ->
   name ?= provider.name
-  providers = state.providers.map (currentProvider) ->
-    if currentProvider.name == name
-      {currentProvider..., provider...}
+  providers = for current in state.providers
+    if current.name == name
+      {current..., provider...}
     else
-      currentProvider
+      current
   {state..., providers}
 
 initAllProvidersAction = (state, {providers}) ->
-  [{state..., providers}].concat(providers.map (provider) -> [checkProviderRunner, {provider}])
+  [
+    {state..., providers}
+    ([checkProviderRunner, {provider}] for provider in providers)...
+  ]
 
 checkProviderRunner = (dispatch, {provider}) ->
   response = await fetchJsonGet({url: "/api/providers/#{provider.name}/check"})
@@ -57,7 +60,7 @@ view = ({providers}) ->
         th {}, text 'アダプター'
         th {}, text '状態'
       ]
-    tbody {}, providers.map (provider) -> attrTr({provider})
+    tbody {}, (attrTr({provider}) for provider in providers)
   ]
 
 node = document.getElementById('admin_providers_index')
