@@ -1,6 +1,10 @@
-import {h, text, app} from '../hyperapp.js?v=6.0.0'
+# プロバイダー
+
+import {text, app} from '../hyperapp.js?v=6.0.0'
 import {div, span, label, input, select, option, button, br} from '../hyperapp-html.js?v=0.6.0'
 import {fetchJsonGet} from '../fetch_json.js?v=0.6.0'
+import {fieldName, fieldId} from '../form_helper.js?v=0.6.0'
+import providerParams from './provider_params.js?v=0.6.0'
 
 abilities = [
   {name: 'readable', label: '読み取り'}
@@ -10,9 +14,42 @@ abilities = [
   {name: 'lockable', label: 'ロック'}
 ]
 
+parentNames = ['provider']
+
+providerParamAction = (state, {name, value}) ->
+  {state..., provider: {state.provider..., params: {state.provider.params..., [name]: value}}}
 
 providerAction = (state, {provider}) ->
-  {state..., provider: {state.provider..., provider...}}
+  newState = {state..., provider: {state.provider..., provider...}}
+  return newState unless provider.adapter_name?
+
+  for adapter in state.adapters when adapter.name == provider.adapter_name
+    return newState if adapter.param_types?
+    break
+
+  [
+    newState
+    [showAdapterRunner, {name: provider.adapter_name}]
+  ]
+
+adapterAction = (state, {name, adapter}) ->
+  name ?= adapter.name
+  adapters = for current in state.adapters
+    if current.name == adapter.name
+      {current..., adapter...}
+    else
+      current
+  {state..., adapters}
+
+
+showAdapterRunner = (dispatch, {name}) ->
+  return unless name?
+
+  response = await fetchJsonGet({url: "/api/adapters/#{name}"})
+  if response.ok
+    dispatch(adapterAction, {name: name, adapter: response.data})
+  else
+    console.log respons
 
 showProviderRunner = (dispatch, {name}) ->
   return unless name?
@@ -37,12 +74,13 @@ name = location.pathname.split('/').at(-1)
 name = undefined if name == '*'
 
 init = [
-  {name, provider: {}, adapters: []}
+  {name, provider: {params: {}}, adapters: []}
   [indexAllAdaptersRunner]
   [showProviderRunner, {name}]
 ]
 
 view = ({name, provider, adapters}) ->
+  provider_adapter = (adapter for adapter in adapters when adapter.name == provider.adapter_name)[0]
   div {}, [
     div {class: 'mb-3'}, [
       label {class: 'form-label', for: 'provider-name'}, text '名前'
@@ -96,12 +134,22 @@ view = ({name, provider, adapters}) ->
         id: 'provider-adapter_name', class: 'form-control'
         oninput: (state, event) -> [providerAction, {provider: {adapter_name: event.target.value}}]
       },
-        for adapter in adapters
-          option {value: adapter.name, selected: adapter.name == provider.adapter_name}, text adapter.label
+        if provider.adapter_name?
+          for adapter in adapters
+            option {value: adapter.name, selected: adapter.name == provider.adapter_name}, text adapter.label
+        else
+          [
+            option {selected: true}, text '選択してください。'
+            (for adapter in adapters
+              option {value: adapter.name, selected: adapter.name == provider.adapter_name}, text adapter.label
+            )...
+          ]
     ]
-
-    # providerParams()
-
+    providerParams {
+      params: provider.params
+      param_types: provider_adapter?.param_types ? []
+      action: providerParamAction
+    }
     div {class: 'mb-1'},
       if provider.immutable
         []
