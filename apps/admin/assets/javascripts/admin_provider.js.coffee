@@ -151,9 +151,14 @@ view = ({name, provider, adapters}) ->
       action: providerParamAction
     }
     div {class: 'mb-1'},
-      if provider.immutable
-        []
-      else if name?
+      if !name?
+        [
+          button {
+            class: 'btn btn-primary'
+            onclick: (state) -> [state, [createProviderRunner, {provider}]]
+          }, text '作成'
+        ]
+      else if provider.immutable == false
         [
           button {
             class: 'btn btn-warning'
@@ -163,13 +168,6 @@ view = ({name, provider, adapters}) ->
             class: 'ms-1 btn btn-danger'
             onclick: (state) -> [state, [destroyProviderRunner, {provider}]]
           }, text '削除'
-        ]
-      else
-        [
-          button {
-            class: 'btn btn-primary'
-            onclick: (state) -> [state, [createProviderRunner, {provider}]]
-          }, text '作成'
         ]
   ]
 

@@ -2,115 +2,97 @@
 
 import {h, text, app} from '../hyperapp.js?v=0.6.0'
 import {fieldName, fieldId} from '../form_helper.js?v=0.6.0'
-import {h5, div, small, label, input, textarea, select, option} from '../hyperapp-html.js?v=0.6.0'
+import * as html from '../hyperapp-html.js?v=0.6.0'
 
 parentNames = ['provider', 'params']
 
+
+inputControlPropKeys = [
+  'required', 'placeholder', 'maxlength', 'minlength', 'pattern'
+  'size', 'max', 'min', 'step'
+]
+
 inputControl = (props) ->
-  name = fieldName(props.name, parentNames)
   id = fieldId(props.name, parentNames)
   describeId = "#{id}-help"
 
-  inputOpts = {
-    id: id
-    name: name
-    type: props.inputType
-    class: 'form-control'
-    value: props.value ? (if props.encrypted? then props.default else '')
-    'aria-edscribedby': describeId
-  }
+  inputControlProps = Object.fromEntries([key, props[key]] for key in inputControlPropKeys when props[key]?)
 
-  for key in [
-    'required', 'placeholder', 'maxlength', 'minlength', 'pattern', 'size'
-     'max', 'min', 'step'
-  ]
-    inputOpts[key] = props[key] if props[key]?
-
-  div {class: 'mb-3'}, [
-    label {class: 'form-label', for: id}, text props.label
-    input inputOpts
-    if props.encrypted then small {class: 'form-text'}, text '''
-      この項目は暗号化されて保存されます。
-    '''
-    if props.description then small {id: describeId, class: 'form-text'}, text props.description
+  html.div {class: 'mb-3'}, [
+    html.label {class: 'form-label', for: id}, text props.label
+    html.input {
+      id: id
+      name: fieldName(props.name, parentNames)
+      type: props.inputType
+      class: 'form-control'
+      value: props.value ? (if props.encrypted? then props.default else '')
+      'aria-describedby': describeId
+      inputControlProps...
+      oninput: (state, event) -> [props.action, {name: props.name, value: event.target.value}]
+    }
+    if props.encrypted then html.small {class: 'form-text'}, text 'この項目は暗号化されて保存されます。'
+    if props.description then html.small {id: describeId, class: 'form-text'}, text props.description
   ]
 
 inputCheckbox = (props) ->
-  name = fieldName(props.name, parentNames)
   id = fieldId(props.name, parentNames)
   describeId = "#{id}-help"
 
-  hiddenInputOpts = {
-    name: name
-    type: 'hidden'
-    value: '0'
-  }
-
-  inputOpts = {
-    id: id
-    name: name
-    type: 'checkbox'
-    class: 'form-check-input'
-    value: '1'
-    'aria-edscribedby': describeId
-  }
-
-  if props.value
-    inputOpts['checked'] = true
-
-  div {class: 'form-check'}, [
-    input hiddenInputOpts
-    input inputOpts
-    label {class: 'form-check-label', for: id}, text props.label
-    if props.description? then small {id: describeId, class: 'form-text'}, text props.description
+  html.div {class: 'form-check'}, [
+    html.input {
+      id: id
+      name: fieldName(props.name, parentNames)
+      type: 'checkbox'
+      class: 'form-check-input'
+      'aria-describedby': describeId
+      checked: props.value
+      onchange: (state, event) -> [props.action, {name: props.name, value: !props.value}]
+    }
+    html.label {class: 'form-check-label', for: id}, text props.label
+    if props.description? then html.small {id: describeId, class: 'form-text'}, text props.description
   ]
+
+inputTextareaPropKeys = ['required', 'placeholder', 'maxlength', 'minlength', 'cols', 'rows']
 
 inputTextarea = (props) ->
-  name = fieldName(props.name, parentNames)
   id = fieldId(props.name, parentNames)
   describeId = "#{id}-help"
 
-  inputOpts = {
-    id: id
-    name: name
-    class: 'form-control'
-    value: props.value ? (if props.encrypted? then props.default else '')
-    'aria-edscribedby': describeId
-  }
+  inputTextareaProps = Object.fromEntries([key, props[key]] for key in inputTextareaPropKeys when props[key]?)
 
-  for key in [
-    'required', 'placeholder', 'maxlength', 'minlength', 'cols', 'rows'
-  ]
-    inputOpts[key] = props[key] if props[key]?
-
-  div {class: 'mb-3'}, [
-    label {class: 'form-label', for: id}, text props.label
-    textarea inputOpts
-    if props.encrypted? then small {class: 'form-text'}, text '''
-      この項目は暗号化されて保存され、現在の値は表示されません。
-      変更しない場合は、空欄のままにしてください。
-    '''
-    if props.description? then small {id: describeId, class: 'form-text'}, text props.description
+  html.div {class: 'mb-3'}, [
+    html.label {class: 'form-label', for: id}, text props.label
+    html.textarea {
+      id: id
+      name: fieldName(props.name, parentNames)
+      class: 'form-control'
+      value: props.value ? (if props.encrypted? then props.default else '')
+      'aria-edscribedby': describeId
+      inputTextareaProps...
+      oninput: (state, event) -> [props.action, {name: props.name, value: event.target.value}]
+    }
+    if props.encrypted? then html.small {class: 'form-text'}, text 'この項目は暗号化されて保存されます。'
+    if props.description? then html.small {id: describeId, class: 'form-text'}, text props.description
   ]
 
 inputList = (props) ->
-  name = fieldName(props.name, parentNames)
   id = fieldId(props.name, parentNames)
   describeId = "#{id}-help"
 
   selected = props.value ? props.default
 
-  div {class: 'mb-3'}, [
-    label {class: 'form-label', for: id}, text props.label
-    select {
+  html.div {class: 'mb-3'}, [
+    html.label {class: 'form-label', for: id}, text props.label
+    html.select {
       id: id
       class: 'form-control'
-      name: name
+      name: fieldName(props.name, parentNames)
       'aria-describedby': describeId
+      oninput: (state, event) -> [props.action, {name: props.name, value: event.target.value}]
     },
       for item in props.list
-        option {value: item.value, selected: selected == item.value}, text item.name
-    if props.description? then small {id: describeId, class: 'form-text'}, text props.description
+        html.option {value: item.value, selected: selected == item.value}, text item.name
+    if props.description? then html.small {id: describeId, class: 'form-text'}, text props.description
   ]
 
 inputParam = (props) ->
@@ -142,10 +124,11 @@ inputParam = (props) ->
 
 
 export default providerParams = ({params, param_types, props...}) ->
-  div {}, [
-    h5 {},
+  console.log params
+  html.div {}, [
+    html.h5 {},
       text 'パラメーター'
-    div {},
+    html.div {},
       if param_types.length > 0
         for param_type in param_types
           inputParam {props..., param_type..., value: params[param_type.name]}
