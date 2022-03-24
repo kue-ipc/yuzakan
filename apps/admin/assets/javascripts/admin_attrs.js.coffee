@@ -23,7 +23,7 @@ mappingConversions = [
   {name: 'j2e', value: 'j2e', label: '日英'}
 ]
 
-delete_confirm = new ConfirmDialog {
+deleteConfirm = new ConfirmDialog {
   id: 'admin_attrs_confirm'
   status: 'alert'
   title: '属性の削除'
@@ -206,7 +206,7 @@ updateAttrRunner = (dispatch, {attr}) ->
     console.error response
 
 destroyAttrRunner = (dispatch, {attr}) ->
-  confirm = await delete_confirm.confirmPromise({message: "属性「#{attr.name}」を削除してもよろしいですか？"})
+  confirm = await deleteConfirm.confirmPromise({message: "属性「#{attr.name}」を削除してもよろしいですか？"})
   if confirm
     response = await fetchJsonDelete({url: "/api/attrs/#{attr.name}", data: csrf()})
     if response.ok

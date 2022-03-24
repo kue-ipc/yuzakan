@@ -5,6 +5,11 @@ import {div, span, label, input, select, option, button, br} from '../hyperapp-h
 import {fetchJsonGet} from '../fetch_json.js?v=0.6.0'
 import {fieldName, fieldId} from '../form_helper.js?v=0.6.0'
 import providerParams from './provider_params.js?v=0.6.0'
+import WebData from '../web_data.js?v=0.6.0'
+import ConfirmDialog from '../confirm_dialog.js?v=0.6.0'
+import csrf from '../csrf.js?v=0.6.0'
+
+parentNames = ['provider']
 
 abilities = [
   {name: 'readable', label: '読み取り'}
@@ -14,13 +19,59 @@ abilities = [
   {name: 'lockable', label: 'ロック'}
 ]
 
+destroyConfirm = new ConfirmDialog {
+  id: fieldId('destroy', ['modal', 'confirm', parentNames...])
+  status: 'alert'
+  title: 'プロバイダーの削除'
+  message: 'プロバイダーを削除してもよろしいですか？'
+  action: {
+    color: 'danger'
+    label: '削除'
+  }
+}
+
+createWebData = new WebData {
+  id: fieldId('create', ['modal', 'web', parentNames...])
+  title: 'プロバイダーの作成'
+  method: 'POST'
+  url: '/api/providers'
+  codeActions: new Map [
+    [201, {status: 'success', message: 'プロバイダーを作成しました。'}]
+  ]
+}
+
+updateWebData = new WebData {
+  id: fieldId('update', ['modal', 'web', parentNames...])
+  title: 'プロバイダーの更新'
+  method: 'PATCH'
+  codeActions: new Map [
+    [200, {status: 'success', message: 'プロバイダーを更新しました。'}]
+  ]
+}
+
+destroyWebData = new WebData {
+  id: fieldId('destroy', ['modal', 'web', parentNames...])
+  title: 'プロバイダーの削除'
+  method: 'DELETE'
+  codeActions: new Map [
+    [200, {status: 'success', message: 'プロバイダーを削除しました。', redirectTo: '/admin/providers', reloadTime: 10}]
+  ]
+}
+
 parentNames = ['provider']
 
 providerParamAction = (state, {name, value}) ->
   {state..., provider: {state.provider..., params: {state.provider.params..., [name]: value}}}
 
-providerAction = (state, {provider}) ->
-  newState = {state..., provider: {state.provider..., provider...}}
+providerAction = (state, {name, provider}) ->
+  newState = {
+    state...
+    name: name ? state.name
+    provider: {state.provider..., provider...}
+  }
+
+  history.pushState(null, null, '/admin/providers/#{name}') if name? && name != state.name
+
   return newState unless provider.adapter_name?
 
   for adapter in state.adapters when adapter.name == provider.adapter_name
@@ -41,7 +92,6 @@ adapterAction = (state, {name, adapter}) ->
       current
   {state..., adapters}
 
-
 showAdapterRunner = (dispatch, {name}) ->
   return unless name?
 
@@ -50,6 +100,33 @@ showAdapterRunner = (dispatch, {name}) ->
     dispatch(adapterAction, {name: name, adapter: response.data})
   else
     console.log respons
+
+createProviderRunner = (dispatch, {provider}) ->
+  response = await createWebData.submitPromise {data: {csrf()..., provider...}}
+  if response.ok
+    provider = response.data
+    dispatch(providerAction, {name: provider.name, provider})
+  else
+    console.error response
+
+
+updateAttrRunner = (dispatch, {name, provider}) ->
+  response = await updateWebData.submitPromise {url: "/api/providers/#{name}", data: {csrf()..., provider...}}
+  if response.ok
+    provider = response.data
+    dispatch(providerAction, {name: provider.name, provider})
+  else
+    console.error response
+
+destroyAttrRunner = (dispatch, {attr}) ->
+  confirm = await deleteConfirm.confirmPromise({message: "属性「#{attr.name}」を削除してもよろしいですか？"})
+  if confirm
+    response = await fetchJsonDelete({url: "/api/attrs/#{attr.name}", data: csrf()})
+    if response.ok
+      dispatch(deleteAttrAction, {name: attr.name})
+    else
+      console.error response
+
 
 showProviderRunner = (dispatch, {name}) ->
   return unless name?
@@ -162,11 +239,11 @@ view = ({name, provider, adapters}) ->
         [
           button {
             class: 'btn btn-warning'
-            onclick: (state) -> [state, [updateProviderRunner, {provider}]]
+            onclick: (state) -> [state, [updateProviderRunner, {name, provider}]]
           }, text '更新'
           button {
             class: 'ms-1 btn btn-danger'
-            onclick: (state) -> [state, [destroyProviderRunner, {provider}]]
+            onclick: (state) -> [state, [destroyProviderRunner, {name}]]
           }, text '削除'
         ]
   ]

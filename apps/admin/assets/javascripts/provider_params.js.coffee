@@ -6,7 +6,6 @@ import * as html from '../hyperapp-html.js?v=0.6.0'
 
 parentNames = ['provider', 'params']
 
-
 inputControlPropKeys = [
   'required', 'placeholder', 'maxlength', 'minlength', 'pattern'
   'size', 'max', 'min', 'step'
@@ -124,7 +123,6 @@ inputParam = (props) ->
 
 
 export default providerParams = ({params, param_types, props...}) ->
-  console.log params
   html.div {}, [
     html.h5 {},
       text 'パラメーター'
