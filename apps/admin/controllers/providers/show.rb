@@ -17,24 +17,15 @@ module Admin
 
         # expose :name
 
-        # def initialize(provider_repository: ProviderRepository.new, **opts)
-        #   super(**opts)
-        #   @provider_repository = provider_repository
-        # end
+        def initialize(provider_repository: ProviderRepository.new, **opts)
+          super(**opts)
+          @provider_repository = provider_repository
+        end
 
         def call(params)
           halt 400 unless params.valid?
-
-          # @name = params[:id]
-
-          # @provider = @provider_repository.find_with_params_by_name(params[:id])
-          # halt 404 unless @provider
-
-          # halt 400 unless params.valid?
-
-          # @provider = @provider_repository.find_with_adapter(params[:id])
-
-          # halt 404 unless @provider
+          name = params[:id].to_s
+          halt 404 unless name == '*' || @provider_repository.exist_by_name?(name)
         end
       end
     end

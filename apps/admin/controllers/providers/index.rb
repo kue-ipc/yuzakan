@@ -5,10 +5,8 @@ module Admin
     module Providers
       class Index
         include Admin::Action
-        expose :providers
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
-          @providers = ProviderRepository.new.all
+        def call(params)
         end
       end
     end
