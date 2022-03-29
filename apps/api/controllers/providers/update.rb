@@ -44,7 +44,7 @@ module Api
           halt_json 404 if provider.nil?
 
           param_errors = only_first_errors(params.errors)
-          provider_params = params.to_h.dup
+          provider_params = params.to_h.except(:id)
 
           if !param_errors.key?(:name) && provider_params[:name] && provider_params[:name] != provider.name &&
              @provider_repository.exist_by_name?(provider_params[:name])
@@ -73,23 +73,26 @@ module Api
               value = param_type.convert_value(provider_params_params[param_type.name])
               next if value.nil?
 
+              data = {name: param_type.name.to_s, value: param_type.dump_value(value)}
               if existing_params.key?(param_type.name)
                 existing_value = existing_params.delete(param_type.name)
+
                 if existing_value != value
                   param_name = param_type.name.to_s
                   existing_provider_param = provider.provider_params.find { |param| param.name == param_name }
                   if existing_provider_param
-                    @provider_param_repository.update(existing_provider_param.id, {value: param_type.dump_value(value)})
+                    @provider_param_repository.update(existing_provider_param.id, data)
                   else
-                    @provider_repository.add_param({name: param_type.name.to_s, value: param_type.dump_value(value)})
+                    # 名前がないということはあり得ない？
+                    @provider_repository.add_param(provider, data)
                   end
                 end
               else
-                @provider_repository.add_param({name: param_type.name.to_s, value: param_type.dump_value(value)})
+                @provider_repository.add_param(provider, data)
               end
             end
             existing_params.each_key do |key|
-              @provider_repository.delete_param_by_name(provider, key)
+              @provider_repository.delete_param_by_name(provider, key.to_s)
             end
           end
 

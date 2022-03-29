@@ -196,7 +196,7 @@ export default class WebData
 
     await @waitModalClose()
 
-    return responseData
+    return response
 
   waitModalClose: =>
     new Promise (resolve, reject) =>

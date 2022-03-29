@@ -70,7 +70,7 @@ providerAction = (state, {name, provider}) ->
     provider: {state.provider..., provider...}
   }
 
-  history.pushState(null, null, '/admin/providers/#{name}') if name? && name != state.name
+  history.pushState(null, null, "/admin/providers/#{name}") if name? && name != state.name
 
   return newState unless provider.adapter_name?
 
@@ -110,7 +110,7 @@ createProviderRunner = (dispatch, {provider}) ->
     console.error response
 
 
-updateAttrRunner = (dispatch, {name, provider}) ->
+updateProviderRunner = (dispatch, {name, provider}) ->
   response = await updateWebData.submitPromise {url: "/api/providers/#{name}", data: {csrf()..., provider...}}
   if response.ok
     provider = response.data
@@ -118,12 +118,12 @@ updateAttrRunner = (dispatch, {name, provider}) ->
   else
     console.error response
 
-destroyAttrRunner = (dispatch, {attr}) ->
-  confirm = await deleteConfirm.confirmPromise({message: "属性「#{attr.name}」を削除してもよろしいですか？"})
+destroyProviderRunner = (dispatch, {name}) ->
+  confirm = await destroyConfirm.confirmPromise({message: "属性「#{name}」を削除してもよろしいですか？"})
   if confirm
-    response = await fetchJsonDelete({url: "/api/attrs/#{attr.name}", data: csrf()})
+    response = await destroyWebData.submitPromise {url: "/api/providers/#{name}", data: csrf()}
     if response.ok
-      dispatch(deleteAttrAction, {name: attr.name})
+      # redirect...
     else
       console.error response
 
