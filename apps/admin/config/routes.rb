@@ -16,9 +16,7 @@ resource :config, only: [:edit, :update] do
   end
 end
 
-resources :providers do
-  resources :params, only: [:index]
-end
+resources :providers, only: [:index, :show]
 
 resources :attrs, only: [:index]
 
