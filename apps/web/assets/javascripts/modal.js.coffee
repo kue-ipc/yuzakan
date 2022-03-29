@@ -1,17 +1,17 @@
-import {h, text} from './hyperapp.js?v=0.6.0'
-import {div, h5, button} from './hyperapp-html.js?v=0.6.0'
+import {text} from './hyperapp.js?=0.6.0'
+import * as html from './hyperapp-html.js?v=0.6.0'
 import {StatusIcon} from './status.js?v=0.6.0'
 
 export modalHeader = ({id, title, status, closable}) ->
   titleProps = {class: 'modal-title'}
   titleProps.id = labelId if labelId?
 
-  div {id: "#{id}-modal-header", class: 'modal-header'}, [
-    h5 {id: "#{id}-modal-title", class: 'modal-title d-flex align-items-center'}, [
+  html.div {id: "#{id}-modal-header", class: 'modal-header'}, [
+    html.h5 {id: "#{id}-modal-title", class: 'modal-title d-flex align-items-center'}, [
       StatusIcon {status, class: 'flex-shrink-0 me-2'} if status
-      div {}, text title
+      html.div {}, text title
     ]
-    if closable then button {
+    if closable then html.button {
       id: "#{id}-modal-header-close"
       class: 'btn-close',
       type: 'button',
@@ -21,17 +21,17 @@ export modalHeader = ({id, title, status, closable}) ->
   ]
 
 export modalBody = ({id}, children) ->
-  div {id: "#{id}-modal-body", class: 'modal-body'}, children
+  html.div {id: "#{id}-modal-body", class: 'modal-body'}, children
 
 export modalFooter = ({id, closable, action, close}) ->
   buttons = [
-    if closable then button {
+    if closable then html.button {
       id: "#{id}-modal-close-button"
       class: "btn btn-#{close?.color || 'secondary'}"
       type: 'button'
       'data-bs-dismiss': 'modal'
     }, text close?.label || '閉じる'
-    if action? then button {
+    if action? then html.button {
       id: "#{id}-modal-action-button"
       class: "btn btn-#{action.color}"
       type: 'button'
@@ -40,10 +40,10 @@ export modalFooter = ({id, closable, action, close}) ->
     }, text action.label
   ]
   buttons = buttons.reverse() if action?.side == 'left'
-  div {id: "#{id}-modal-footer", class: 'modal-footer'}, buttons
+  html.div {id: "#{id}-modal-footer", class: 'modal-footer'}, buttons
 
 export modalContent = ({id, title, status, closable, action, close}, children) ->
-  div {class: 'modal-content'}, [
+  html.div {class: 'modal-content'}, [
     modalHeader {id, title, status, closable}
     modalBody {id}, children
     modalFooter {id, closable, action, close} if closable || action?
@@ -57,5 +57,5 @@ export modalDialog = ({id, size, scrollable, centered, props...}, children) ->
     "modal-#{size}" if size
   ].filter (v) -> v?
 
-  div {id: "#{id}-modal-dialog", class: dialogClasses},
+  html.div {id: "#{id}-modal-dialog", class: dialogClasses},
     modalContent {id, props...}, children

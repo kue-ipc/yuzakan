@@ -1,7 +1,7 @@
 # プロバイダー
 
 import {text, app} from '../hyperapp.js?v=6.0.0'
-import {div, span, label, input, select, option, button, br} from '../hyperapp-html.js?v=0.6.0'
+import * as html from '../hyperapp-html.js?v=0.6.0'
 import {fetchJsonGet} from '../fetch_json.js?v=0.6.0'
 import {fieldName, fieldId} from '../form_helper.js?v=0.6.0'
 import providerParams from './provider_params.js?v=0.6.0'
@@ -158,67 +158,67 @@ init = [
 
 view = ({name, provider, adapters}) ->
   provider_adapter = (adapter for adapter in adapters when adapter.name == provider.adapter_name)[0]
-  div {}, [
-    div {class: 'mb-3'}, [
-      label {class: 'form-label', for: 'provider-name'}, text '名前'
-      input {
+  html.div {}, [
+    html.div {class: 'mb-3'}, [
+      html.label {class: 'form-label', for: 'provider-name'}, text '名前'
+      html.input {
         id: 'provider-name', class: 'form-control', type: 'text', required: true, value: provider.name
         oninput: (state, event) -> [providerAction, {provider: {name: event.target.value}}]
       }
     ]
-    div {class: 'mb-3'}, [
-      label {class: 'form-label', for: 'provider-label'}, text '表示名'
-      input {
+    html.div {class: 'mb-3'}, [
+      html.label {class: 'form-label', for: 'provider-label'}, text '表示名'
+      html.input {
         id: 'provider-label', class: 'form-control', type: 'text', required: true, value: provider.label
         oninput: (state, event) -> [providerAction, {provider: {label: event.target.value}}]
       }
     ]
-    div {}, [
-      label {class: 'form-label'}, text '可能な操作'
-      br {}
+    html.div {}, [
+      html.label {class: 'form-label'}, text '可能な操作'
+      html.br {}
       (abilities.map (ability) ->
-        div {class: 'form-check form-check-inline'}, [
-          input {
+        html.div {class: 'form-check form-check-inline'}, [
+          html.input {
             id: "provider-#{ability.name}", class: 'form-check-input', type: 'checkbox'
             checked: provider[ability.name]
             onchange: (state, event) -> [providerAction, {provider: {[ability.name]: !provider[ability.name]}}]
           }
-          label {class: 'form-check-label', for: "provider-#{ability.name}"}, text ability.label
+          html.label {class: 'form-check-label', for: "provider-#{ability.name}"}, text ability.label
         ]
       )...
     ]
-    div {class: 'form-check'}, [
-      input {
+    html.div {class: 'form-check'}, [
+      html.input {
         id: "provider-individual_password", class: 'form-check-input', type: 'checkbox'
         checked: provider.individual_password
         onchange: (state, event) -> [providerAction, {provider: {individual_password: !provider.individual_password}}]
       }
-      label {class: 'form-check-label', for: "provider-individual_password"}, text 'パスワード個別設定'
-      span {class: 'ms-1 form-text'}, text '複数プロバイダー一括でのパスワード変更やリセットの対象になりません。'
+      html.label {class: 'form-check-label', for: "provider-individual_password"}, text 'パスワード個別設定'
+      html.span {class: 'ms-1 form-text'}, text '複数プロバイダー一括でのパスワード変更やリセットの対象になりません。'
     ]
-    div {class: 'form-check'}, [
-      input {
+    html.div {class: 'form-check'}, [
+      html.input {
         id: "provider-self_management", class: 'form-check-input', type: 'checkbox'
         checked: provider.self_management
         onchange: (state, event) -> [providerAction, {provider: {self_management: !provider.self_management}}]
       }
-      label {class: 'form-check-label', for: "provider-self_management"}, text '自己管理可能'
-      span {class: 'ms-1 form-text'}, text 'ユーザー自身が登録やパスワードリセット等ができるようになります。'
+      html.label {class: 'form-check-label', for: "provider-self_management"}, text '自己管理可能'
+      html.span {class: 'ms-1 form-text'}, text 'ユーザー自身が登録やパスワードリセット等ができるようになります。'
     ]
-    div {class: 'mb-3'}, [
-      label {class: 'form-label', for: 'provider-adapter_name'}, text 'アダプター'
-      select {
+    html.div {class: 'mb-3'}, [
+      html.label {class: 'form-label', for: 'provider-adapter_name'}, text 'アダプター'
+      html.select {
         id: 'provider-adapter_name', class: 'form-control'
         oninput: (state, event) -> [providerAction, {provider: {adapter_name: event.target.value}}]
       },
         if provider.adapter_name?
           for adapter in adapters
-            option {value: adapter.name, selected: adapter.name == provider.adapter_name}, text adapter.label
+            html.option {value: adapter.name, selected: adapter.name == provider.adapter_name}, text adapter.label
         else
           [
-            option {selected: true}, text '選択してください。'
+            html.option {selected: true}, text '選択してください。'
             (for adapter in adapters
-              option {value: adapter.name, selected: adapter.name == provider.adapter_name}, text adapter.label
+              html.option {value: adapter.name, selected: adapter.name == provider.adapter_name}, text adapter.label
             )...
           ]
     ]
@@ -227,21 +227,21 @@ view = ({name, provider, adapters}) ->
       param_types: provider_adapter?.param_types ? []
       action: providerParamAction
     }
-    div {class: 'mb-1'},
+    html.div {class: 'mb-1'},
       if !name?
         [
-          button {
+          html.button {
             class: 'btn btn-primary'
             onclick: (state) -> [state, [createProviderRunner, {provider}]]
           }, text '作成'
         ]
       else if provider.immutable == false
         [
-          button {
+          html.button {
             class: 'btn btn-warning'
             onclick: (state) -> [state, [updateProviderRunner, {name, provider}]]
           }, text '更新'
-          button {
+          html.button {
             class: 'ms-1 btn btn-danger'
             onclick: (state) -> [state, [destroyProviderRunner, {name}]]
           }, text '削除'

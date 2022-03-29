@@ -1,8 +1,8 @@
 # プロバイダーのパラメーター
 
-import {h, text, app} from '../hyperapp.js?v=0.6.0'
-import {fieldName, fieldId} from '../form_helper.js?v=0.6.0'
+import {text} from '../hyperapp.js?v=0.6.0'
 import * as html from '../hyperapp-html.js?v=0.6.0'
+import {fieldName, fieldId} from '../form_helper.js?v=0.6.0'
 
 parentNames = ['provider', 'params']
 

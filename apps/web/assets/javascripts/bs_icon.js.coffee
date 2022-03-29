@@ -1,6 +1,6 @@
 # Bootstrap Icons for hyperapp
 
-import {svg, use} from './hyperapp-svg.js?v=0.6.0'
+import * as svg from './hyperapp-svg.js?v=0.6.0'
 
 export default BsIcon = ({name, size = 24, alt, props...}) ->
   svg_props = {
@@ -14,5 +14,5 @@ export default BsIcon = ({name, size = 24, alt, props...}) ->
 
   svg_props = {svg_props..., role: 'img', 'aria-label': alt} if alt?
 
-  svg svg_props,
-    use {href: "/assets/bootstrap-icons.svg\##{name}"}
+  svg.svg svg_props,
+    svg.use {href: "/assets/bootstrap-icons.svg\##{name}"}

@@ -1,6 +1,6 @@
 import {Modal} from './bootstrap.js?v=0.6.0'
-import {app, h, text} from './hyperapp.js?=0.6.0'
-import {div, p, hr} from './hyperapp-html.js?v=0.6.0'
+import {app, text} from './hyperapp.js?=0.6.0'
+import * as html from './hyperapp-html.js?v=0.6.0'
 import {modalDialog} from './modal.js?v=0.6.0'
 
 export default class ConfirmDialog
@@ -78,12 +78,12 @@ export default class ConfirmDialog
     }, @modalBody {agreement_required, agreed, props...}
 
   modalBody: ({message, confirmations, agreement_required, agreed}) ->
-    div {}, [
-      p {}, text message
+    html.div {}, [
+      html.p {}, text message
       if confirmations?
         [
-          hr {}
-          p {}, text if agreement_required
+          html.hr {}
+          html.p {}, text if agreement_required
             '処理を実行する前に、下記全てを確認し、その内容について同意してください。'
           else
             '処理を実行する前に、下記全てを確認してください。'
@@ -92,8 +92,8 @@ export default class ConfirmDialog
         ]
       if agreement_required
         [
-          hr {}
-          div {class: 'form-check'}, [
+          html.hr {}
+          html.div {class: 'form-check'}, [
             input {
               class: 'form-check-input', type: 'checkbox'
               value: agreed

@@ -2,8 +2,8 @@
 # その際、modalを使用する。
 
 import {app, text} from './hyperapp.js?v=0.6.0'
+import * as html from './hyperapp-html.js?v=0.6.0'
 import {focus} from './hyperapp-dom.js?v=0.6.0'
-import {div, h5, a, button} from './hyperapp-html.js?v=0.6.0'
 import {Modal} from './bootstrap.js?v=0.6.0'
 import {StatusIcon, statusInfo} from './status.js?v=0.6.0'
 import {fetchJson} from './fetch_json.js?v=0.6.0'
@@ -88,8 +88,8 @@ export default class WebData
 
   messageList: ({messages}) ->
     messages = [messages] unless messages instanceof Array
-    div {}, messages.filter((x) -> typeof x == 'string').map (msg) ->
-      div {}, text msg
+    html.div {}, messages.filter((x) -> typeof x == 'string').map (msg) ->
+      html.div {}, text msg
 
   modalMessage: (state) ->
     # hack modal config

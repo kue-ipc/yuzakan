@@ -1,20 +1,20 @@
-import {h, text, app} from '../hyperapp.js?v=6.0.0'
-import {div, span, table, thead, tbody, tr, th, td, a} from '../hyperapp-html.js?v=0.6.0'
+import {text, app} from '../hyperapp.js?v=6.0.0'
+import * as html from '../hyperapp-html.js?v=0.6.0'
 import {fetchJsonGet} from '../fetch_json.js?v=0.6.0'
 
 attrTr = ({provider}) ->
-  tr {}, [
-    td {},
-      a {href: "/admin/providers/#{provider.name}"}, text provider.name
-    td {}, text provider.label
-    td {}, text provider.adapter_name
-    td {}, if provider.check?
+  html.tr {}, [
+    html.td {},
+      html.a {href: "/admin/providers/#{provider.name}"}, text provider.name
+    html.td {}, text provider.label
+    html.td {}, text provider.adapter_name
+    html.td {}, if provider.check?
       if provider.check
-        span {class: 'text-success'}, text 'OK'
+        html.span {class: 'text-success'}, text 'OK'
       else
-        span {class: 'text-danger'}, text 'NG'
+        html.span {class: 'text-danger'}, text 'NG'
     else
-      span {class: 'text-secondary'}, text '確認中'
+      html.span {class: 'text-secondary'}, text '確認中'
   ]
 
 providerAction = (state, {name, provider}) ->
@@ -52,15 +52,15 @@ init = [
 ]
 
 view = ({providers}) ->
-  table {class: 'table'}, [
-    thead {},
-      tr {}, [
-        th {}, text '名前'
-        th {}, text '表示名'
-        th {}, text 'アダプター'
-        th {}, text '状態'
+  html.table {class: 'table'}, [
+    html.thead {},
+      html.tr {}, [
+        html.th {}, text '名前'
+        html.th {}, text '表示名'
+        html.th {}, text 'アダプター'
+        html.th {}, text '状態'
       ]
-    tbody {}, (attrTr({provider}) for provider in providers)
+    html.tbody {}, (attrTr({provider}) for provider in providers)
   ]
 
 node = document.getElementById('admin_providers')

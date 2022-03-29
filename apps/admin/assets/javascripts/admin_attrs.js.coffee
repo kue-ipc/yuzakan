@@ -1,5 +1,5 @@
-import {h, text, app} from '../hyperapp.js?v=6.0.0'
-import {div, table, thead, tbody, tr, th, td, input, select, option, button} from '../hyperapp-html.js?v=0.6.0'
+import {text, app} from '../hyperapp.js?v=6.0.0'
+import * as html from '../hyperapp-html.js?v=0.6.0'
 import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '../fetch_json.js?v=0.6.0'
 import csrf from '../csrf.js?v=0.6.0'
 import ConfirmDialog from '../confirm_dialog.js?v=0.6.0'
@@ -35,18 +35,18 @@ deleteConfirm = new ConfirmDialog {
 }
 
 providerTh = ({provider}) ->
-  th {}, text provider.label
+  html.th {}, text provider.label
 
 attrMappingTd = ({attr, provider}) ->
   unless attr.attr_mappings?
-    return td {}, text '読み込み中'
+    return html.td {}, text '読み込み中'
 
   mapping = attr.attr_mappings.find (attr_mapping) ->
     attr_mapping.provider.name == provider.name
   mapping ?= {name: '', conversion: null}
 
-  td {}, [
-    input {
+  html.td {}, [
+    html.input {
       class: 'form-control mb-1'
       type: 'text'
       value: mapping.name
@@ -56,7 +56,7 @@ attrMappingTd = ({attr, provider}) ->
           {name: attr.name, attr_mapping: {name: event.target.value, provider: {name: provider.name}}}
         ]
     }
-    select {
+    html.select {
       class: 'form-control'
       oninput: (state, event) ->
         [
@@ -64,35 +64,35 @@ attrMappingTd = ({attr, provider}) ->
           {name: attr.name, attr_mapping: {conversion: event.target.value, provider: {name: provider.name}}}
         ]
       }, mappingConversions.map (conversion) ->
-        option {
+        html.option {
           value: conversion.value
           selected: conversion.value == mapping.conversion
         }, text conversion.label
   ]
 
 attrTr = ({attr, index, providers}) ->
-  tr {}, [
-    td {},
+  html.tr {}, [
+    html.td {},
       if attr.order
         [
-          div {class: 'mb-1'}, button {
+          html.div {class: 'mb-1'}, html.button {
             class: 'btn btn-secondary'
             onclick: (state) -> [upAttrAction, {name: attr.name}]
           }, text '上'
-          div {}, button {
+          html.div {}, html.button {
             class: 'btn btn-secondary'
             onclick: (state) -> [downAttrAction, {name: attr.name}]
           }, text '下'
         ]
-    td {class: 'table-primary'}, [
-      input {
+    html.td {class: 'table-primary'}, [
+      html.input {
         class: 'form-control mb-1'
         type: 'text'
         value: attr.newName ? attr.name
         required: true
         oninput: (state, event) -> [attrAction, {name: attr.name, attr: {newName: event.target.value}}]
       }
-      input {
+      html.input {
         class: 'form-control'
         type: 'text'
         value: attr.label
@@ -100,37 +100,37 @@ attrTr = ({attr, index, providers}) ->
         oninput: (state, event) -> [attrAction, {name: attr.name, attr: {label: event.target.value}}]
       }
     ]
-    td {class: 'table-primary'}, [
-      select {
+    html.td {class: 'table-primary'}, [
+      html.select {
         class: 'form-control'
         onchange: (state, event) -> [attrAction, {name: attr.name, attr: {type: event.target.value}}]
       }, attrTypes.map (attrType) ->
-        option {
+        html.option {
           value: attrType.value
           selected: attrType.value == attr.type
         }, text attrType.label
-      input {
+      html.input {
         type: 'checkbox'
         class: 'form-check-input'
         checked: attr.hidden
         onchange: (state, event) -> [attrAction, {name: attr.name, attr: {hidden: !attr.hidden}}]
       }
     ]
-    td {},
+    html.td {},
       if attr.order
         [
-          div {class: 'mb-1'}, button {
+          html.div {class: 'mb-1'}, html.button {
             class: 'btn btn-warning'
             onclick: (state) -> [state, [updateAttrRunner, {attr}]]
           }, text '更新'
-          div {}, button {
+          html.div {}, html.button {
             class: 'btn btn-danger'
             onclick: (state) -> [state, [destroyAttrRunner, {attr}]]
           }, text '削除'
         ]
       else
         [
-          div {class: 'mb-1'}, button {
+          html.div {class: 'mb-1'}, html.button {
             class: 'btn btn-primary'
             onclick: (state) -> [state, [createAttrRunner, {attr}]]
           }, text '作成'
@@ -321,17 +321,17 @@ init = [
 ]
 
 view = ({attrs, providers, newAttr}) ->
-  table {class: 'table'}, [
-    thead {}, [
-      tr {}, [
-        th {}, text '順番'
-        th {}, text '名前/表示名'
-        th {}, text '型/隠し'
-        th {}, text '操作'
+  html.table {class: 'table'}, [
+    html.thead {}, [
+      html.tr {}, [
+        html.th {}, text '順番'
+        html.th {}, text '名前/表示名'
+        html.th {}, text '型/隠し'
+        html.th {}, text '操作'
         (providerTh({provider}) for provider in providers)...
       ]
     ]
-    tbody {},
+    html.tbody {},
       for attr, index in [attrs..., newAttr]
         attrTr({attr, index, providers: providers})
   ]

@@ -1,6 +1,6 @@
-import {app, text} from './hyperapp.js?v=0.6.0'
+import {app, text} from './hyperapp.js?=0.6.0'
+import * as html from './hyperapp-html.js?v=0.6.0'
 import {focus} from './hyperapp-dom.js?v=0.6.0'
-import {div, h3, input, button} from './hyperapp-html.js?v=0.6.0'
 import {delay} from './hyperapp-time.js?v0.6.0'
 import WebData from './web_data.js?v=0.6.0'
 import BsIcon from './bs_icon.js?v=0.6.0'
@@ -58,10 +58,10 @@ init = [
 ]
 
 view = ({username, password, disabled}) ->
-  div {id: 'login', class: 'login mx-auto p-3 border rounded'}, [
-    h3 {class: 'login-title text-center mb-2'}, text 'ログイン'
-    div {class: 'mb-3'},
-      input {
+  html.div {id: 'login', class: 'login mx-auto p-3 border rounded'}, [
+    html.h3 {class: 'login-title text-center mb-2'}, text 'ログイン'
+    html.div {class: 'mb-3'},
+      html.input {
         id: 'session-username'
         class: 'form-control', type: 'text', required: true, placeholder: 'ユーザー名'
         disabled
@@ -69,8 +69,8 @@ view = ({username, password, disabled}) ->
         oninput: (state, event) -> {state..., username: event.target.value}
         onkeypress: enterToSubmitOrNextInput
       }
-    div {class: 'mb-3'},
-      input {
+    html.div {class: 'mb-3'},
+      html.input {
         id: 'session-password
         '
         class: 'form-control', type: 'password', required: true, placeholder: 'パスワード'
@@ -79,8 +79,8 @@ view = ({username, password, disabled}) ->
         oninput: (state, event) -> {state..., password: event.target.value}
         onkeypress: enterToSubmitOrNextInput
       }
-    div {class: 'd-grid gap-auto'},
-      button {
+    html.div {class: 'd-grid gap-auto'},
+      html.button {
         class: 'login-submit btn btn-primary d-flex align-items-center justify-content-center'
         disabled: not submittable({username, password, disabled})
         onclick: (state, event) -> [{state..., disabled: true}, login(state)]
