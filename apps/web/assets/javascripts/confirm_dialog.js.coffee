@@ -1,5 +1,5 @@
 import {Modal} from './bootstrap.js'
-import {app, text} from './hyperapp.js?=0.6.0'
+import {app, text} from './hyperapp.js'
 import * as html from './hyperapp-html.js'
 import {modalDialog} from './modal.js'
 

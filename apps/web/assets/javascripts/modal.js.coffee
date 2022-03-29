@@ -1,4 +1,4 @@
-import {text} from './hyperapp.js?=0.6.0'
+import {text} from './hyperapp.js'
 import * as html from './hyperapp-html.js'
 import {StatusIcon} from './status.js'
 
