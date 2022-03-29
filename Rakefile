@@ -52,10 +52,14 @@ namespace :vendor do
       in_path = "node_modules/@hyperapp/#{name}/index.js"
       out_path = "vendor/assets/javascripts/hyperapp-#{name}.js"
       js_data = File.read(in_path)
-      js_data.gsub!(/((?:^|;)\s*import\s[\w\s,*{}]*)"([^"]*)"(\s*(?:[;\#]|$))/, '\1"./\2.js"\3')
-      js_data.gsub!(/((?:^|;)\s*import\s[\w\s,*{}]*)'([^']*)'(\s*(?:[;\#]|$))/, '\1\'./\2.js\'\3')
-      js_data.gsub!(/((?:^|;)\s*export\s[\w\s,*{}]*\sfrom\s+)"([^"]*)"(\s*(?:[;\#]|$))/, '\1"./\2.js"\3')
-      js_data.gsub!(/((?:^|;)\s*import\s[\w\s,*{}]*\sfrom\s+)'([^']*)'(\s*(?:[;\#]|$))/, '\1\'./\2.js\'\3')
+      [
+        '(\b(?:im|ex)port\b[\s\w,*{}]*\bfrom\b\s*)"([^"]*)"',
+        '(\bimport\b\s*)"([^"]*)"',
+        '(\bimport\b\s*\(\s*)"([^"]*)"(\s*\))',
+      ].each do |re_str|
+        js_data.gsub!(Regexp.compile(re_str), '\1"./\2.js"\3')
+        js_data.gsub!(Regexp.compile(re_str.tr('"', "'")), '\1\'./\2.js\'\3')
+      end
       File.write(out_path, js_data)
     end
   end

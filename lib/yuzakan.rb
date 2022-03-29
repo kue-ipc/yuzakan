@@ -4,7 +4,7 @@ require_relative 'yuzakan/suppression'
 
 module Yuzakan
   @@name = -'Yuzakan'   # rubocop:disable Style/ClassVars
-  @@version = -'v0.5.1' # rubocop:disable Style/ClassVars
+  @@version = -'0.6.0' # rubocop:disable Style/ClassVars
 
   def self.name
     @@name
