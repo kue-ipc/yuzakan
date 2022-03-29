@@ -1,13 +1,13 @@
 # プロバイダー
 
-import {text, app} from '../hyperapp.js?v=6.0.0'
-import * as html from '../hyperapp-html.js?v=0.6.0'
-import {fetchJsonGet} from '../fetch_json.js?v=0.6.0'
-import {fieldName, fieldId} from '../form_helper.js?v=0.6.0'
-import providerParams from './provider_params.js?v=0.6.0'
-import WebData from '../web_data.js?v=0.6.0'
-import ConfirmDialog from '../confirm_dialog.js?v=0.6.0'
-import csrf from '../csrf.js?v=0.6.0'
+import {text, app} from '../hyperapp.js'
+import * as html from '../hyperapp-html.js'
+import {fetchJsonGet} from '../fetch_json.js'
+import {fieldName, fieldId} from '../form_helper.js'
+import providerParams from './provider_params.js'
+import WebData from '../web_data.js'
+import ConfirmDialog from '../confirm_dialog.js'
+import csrf from '../csrf.js'
 
 parentNames = ['provider']
 

@@ -1,10 +1,10 @@
 import {app, text} from './hyperapp.js?=0.6.0'
-import * as html from './hyperapp-html.js?v=0.6.0'
-import {focus} from './hyperapp-dom.js?v=0.6.0'
+import * as html from './hyperapp-html.js'
+import {focus} from './hyperapp-dom.js'
 import {delay} from './hyperapp-time.js?v0.6.0'
-import WebData from './web_data.js?v=0.6.0'
-import BsIcon from './bs_icon.js?v=0.6.0'
-import csrf from './csrf.js?v=0.6.0'
+import WebData from './web_data.js'
+import BsIcon from './bs_icon.js'
+import csrf from './csrf.js'
 
 webData = new WebData {
   id: 'login'

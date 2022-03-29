@@ -1,4 +1,4 @@
-import {fetchJsonGet} from '../fetch_json.js?v=0.6.0'
+import {fetchJsonGet} from '../fetch_json.js'
 
 export default class Model
   @model_name = ->

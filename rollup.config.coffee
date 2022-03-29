@@ -15,8 +15,6 @@ targets = [
   {name: 'hyperapp', ext: 'coffee'}
   {name: 'hyperapp-dom', ext: 'coffee'}
   {name: 'hyperapp-events', ext: 'coffee'}
-  {name: 'hyperapp-html', ext: 'coffee'}
-  {name: 'hyperapp-svg', ext: 'coffee'}
   {name: 'hyperapp-time', ext: 'coffee'}
   {name: 'pluralize', ext: 'coffee'}
   {name: 'zxcvbn', ext: 'coffee'}

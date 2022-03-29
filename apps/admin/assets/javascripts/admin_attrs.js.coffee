@@ -1,8 +1,8 @@
-import {text, app} from '../hyperapp.js?v=6.0.0'
-import * as html from '../hyperapp-html.js?v=0.6.0'
-import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '../fetch_json.js?v=0.6.0'
-import csrf from '../csrf.js?v=0.6.0'
-import ConfirmDialog from '../confirm_dialog.js?v=0.6.0'
+import {text, app} from '../hyperapp.js'
+import * as html from '../hyperapp-html.js'
+import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '../fetch_json.js'
+import csrf from '../csrf.js'
+import ConfirmDialog from '../confirm_dialog.js'
 
 attrTypes = [
   {name: 'string', value: 'string', label: '文字列'}

@@ -46,6 +46,18 @@ namespace :vendor do
 
   task build_js: ['rollup.config.js', 'node_modules/.bin/rollup'] do
     sh 'node_modules/.bin/rollup -c'
+
+    # hyperapp sub module
+    ['html', 'svg'].each do |name|
+      in_path = "node_modules/@hyperapp/#{name}/index.js"
+      out_path = "vendor/assets/javascripts/hyperapp-#{name}.js"
+      js_data = File.read(in_path)
+      js_data.gsub!(/((?:^|;)\s*import\s[\w\s,*{}]*)"([^"]*)"(\s*(?:[;\#]|$))/, '\1"./\2.js"\3')
+      js_data.gsub!(/((?:^|;)\s*import\s[\w\s,*{}]*)'([^']*)'(\s*(?:[;\#]|$))/, '\1\'./\2.js\'\3')
+      js_data.gsub!(/((?:^|;)\s*export\s[\w\s,*{}]*\sfrom\s+)"([^"]*)"(\s*(?:[;\#]|$))/, '\1"./\2.js"\3')
+      js_data.gsub!(/((?:^|;)\s*import\s[\w\s,*{}]*\sfrom\s+)'([^']*)'(\s*(?:[;\#]|$))/, '\1\'./\2.js\'\3')
+      File.write(out_path, js_data)
+    end
   end
 
   rule 'vendor/assets/fonts' do

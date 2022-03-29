@@ -1,7 +1,7 @@
-import {Modal} from './bootstrap.js?v=0.6.0'
+import {Modal} from './bootstrap.js'
 import {app, text} from './hyperapp.js?=0.6.0'
-import * as html from './hyperapp-html.js?v=0.6.0'
-import {modalDialog} from './modal.js?v=0.6.0'
+import * as html from './hyperapp-html.js'
+import {modalDialog} from './modal.js'
 
 export default class ConfirmDialog
   MESSAGE_EVENT = 'confirmdialog.message'

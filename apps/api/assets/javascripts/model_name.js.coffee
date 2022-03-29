@@ -1,4 +1,4 @@
-import {snakize, pluralize} from '../string_utils.js?v=0.6.0'
+import {snakize, pluralize} from '../string_utils.js'
 
 export default class ModelName
   constructor: (@klass) ->
