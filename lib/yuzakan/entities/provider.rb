@@ -127,7 +127,7 @@ class Provider < Hanami::Entity
   def create(username, password = nil, **userdata)
     need_adapter!
     need_mappings!
-    
+
     raw_userdata = @adapter.create(username, password, **map_userdata(userdata))
     @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
@@ -135,7 +135,7 @@ class Provider < Hanami::Entity
   def read(username)
     need_adapter!
     need_mappings!
-    
+
     @cache_store.fetch(user_key(username)) do
       raw_userdata = @adapter.read(username)
       @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
@@ -145,7 +145,7 @@ class Provider < Hanami::Entity
   def udpate(username, **userdata)
     need_adapter!
     need_mappings!
-    
+
     raw_userdata = @adapter.update(username, **map_userdata(userdata))
     @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
@@ -153,7 +153,7 @@ class Provider < Hanami::Entity
   def delete(username)
     need_adapter!
     need_mappings!
-    
+
     raw_userdata = @adapter.delete(username)
     @cache_store.delete(user_key(username)) || convert_userdata(raw_userdata)
   end
@@ -161,7 +161,7 @@ class Provider < Hanami::Entity
   def auth(username, password)
     need_adapter!
     need_mappings!
-    
+
     raw_userdata = @adapter.auth(username, password)
     @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
@@ -169,7 +169,7 @@ class Provider < Hanami::Entity
   def change_password(username, password)
     need_adapter!
     need_mappings!
-    
+
     raw_userdata = @adapter.change_password(username, password)
     @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
@@ -177,7 +177,7 @@ class Provider < Hanami::Entity
   def lock(username)
     need_adapter!
     need_mappings!
-    
+
     raw_userdata = @adapter.lock(username)
     @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
@@ -185,14 +185,14 @@ class Provider < Hanami::Entity
   def unlock(username, password = nil)
     need_adapter!
     need_mappings!
-    
+
     raw_userdata = @adapter.unlock(username, password)
     @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
 
   def generate_code(username)
     need_adapter!
-    
+
     @adapter.generate_code(username)
   end
 
