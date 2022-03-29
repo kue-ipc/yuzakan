@@ -20,11 +20,6 @@ resources :providers do
   resources :params, only: [:index]
 end
 
-resources :adapters, only: [:show] do
-  resources :params, only: [:index]
-  resources :param_types, only: [:index]
-end
-
 resources :attrs, only: [:index]
 
 resources :users do
