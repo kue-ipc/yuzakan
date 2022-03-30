@@ -32,7 +32,10 @@ header
           = javascript 'logout', defer: true, type: 'module'
         - else
           ul.navbar-nav.me-auto
-            li.nav-item.active
-              = link_to 'ホーム', routes.path(:root), class: 'nav-link'
+            li.nav-item
+              = link_to Web.routes.path(:root), class: 'nav-link' do
+                - text bs_icon('box-arrow-in-left')
+                - span class: 'd-none d-lg-inline' do
+                  - text 'ログイン'
           span.navbar-text
             = '未ログイン'

@@ -9,6 +9,9 @@ module Web
 
         def call(params)
         end
+
+        def configurate!
+        end
       end
     end
   end

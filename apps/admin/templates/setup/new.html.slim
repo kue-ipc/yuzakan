@@ -1,0 +1,18 @@
+h2 初期セットアップ
+= form_for :setup, routes.path(:setup) do
+  - fields_for :config do
+    - div class: 'mb-3' do
+      - label 'サイト題名', class: 'form-label', for: :username
+      - text_field :title, class: 'form-control'
+  - fields_for :admin_user do
+    - p 'ローカル管理者のユーザー名とパスワードを入力してください。'
+    - div class: 'mb-3' do
+      - label 'ユーザー名', class: 'form-label', for: :username
+      - text_field :username, class: 'form-control'
+    - div class: 'mb-3' do
+      - label 'パスワード', class: 'form-label', for: :password
+      - password_field :password, class: 'form-control'
+    - div class: 'mb-3' do
+      - label 'パスワード(確認)', class: 'form-label', for: :confirm_password
+      - password_field :password_confirmation, class: 'form-control'
+  - submit 'セットアップ', class: 'btn btn-primary'

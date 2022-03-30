@@ -5,13 +5,11 @@ module Admin
     module Setup
       class Create
         include Admin::Action
-        include Hanami::Action::Cache
 
-        cache_control :no_store
         security_level 0
 
         def call(params)
-          redirect_to routes.path(:setup_done) if configurated?
+          redirect_to routes.path(:setup) if configurated?
 
           result = InitialSetup.new.call(params[:setup])
 
