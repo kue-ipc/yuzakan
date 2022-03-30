@@ -6,32 +6,6 @@ module Api
 
         security_level 5
 
-        class Params < Hanami::Action::Params
-          predicates NamePredicates
-          messages :i18n
-
-          params do
-            required(:id).filled(:str?, :name?, max_size?: 255)
-            optional(:name).filled(:str?, :name?, max_size?: 255)
-            optional(:label).filled(:str?, max_size?: 255)
-            optional(:type).filled(:str?)
-            optional(:order).maybe(:int?)
-            optional(:hidden).maybe(:bool?)
-            # rubocop:disable all
-            optional(:attr_mappings) { array? { each { schema {
-              required(:provider).schema {
-                predicates NamePredicates
-                required(:name).filled(:str?, :name?, max_size?: 255)
-              }
-              required(:name).maybe(:str?, max_size?: 255)
-              optional(:conversion).maybe(:str?)
-            } } } }
-            # rubocop:enable all
-          end
-        end
-
-        params Params
-
         def initialize(attr_repository: AttrRepository.new,
                        attr_mapping_repository: AttrMappingRepository.new,
                        provider_repository: ProviderRepository.new,
@@ -43,67 +17,22 @@ module Api
         end
 
         def call(params)
-          halt_json 400, errors: [params.errors.slice(:id)] if params.errors.key?(:id)
+          id_validation = IdValidations.new(params).validate
+          halt_json 400, errors: [id_validation.messages] if id_validation.failure?
 
-          found_attr = @attr_repository.find_with_mappings_by_name(params[:id])
-          halt_json 404 if found_attr.nil?
+          attr = @attr_repository.find_with_mappings_by_name(params[:id])
+          halt_json 404 if attr.nil?
 
-          param_errors = only_first_errors(params.errors)
-          attr_params = params.to_h.except(:id)
+          update_attr = UpdateAttr.new(attr: attr,
+                                       attr_repository: @attr_repository,
+                                       attr_mapping_repository: @attr_mapping_repository,
+                                       provider_repository: @provider_repository)
+          result = update_attr.call(params.to_h.except(:id))
 
-          if !param_errors.key?(:name) && attr_params[:name] && found_attr.name != attr_params[:name] &&
-             @attr_repository.exist_by_name?(params[:name])
-            param_errors[:name] = [I18n.t('errors.uniq?')]
-          end
-
-          if !param_errors.key?(:label) && attr_params[:label] && found_attr.label != attr_params[:label] &&
-             @attr_repository.exist_by_label?(attr_params[:label])
-            param_errors[:label] = [I18n.t('errors.uniq?')]
-          end
-
-          if !param_errors.key?(:order) && attr_params[:order] && found_attr.order != attr_params[:order] &&
-             @attr_repository.exist_by_order?(attr_params[:order])
-            param_errors[:order] = [I18n.t('errors.uniq?')]
-          end
-
-          if !param_errors.key?(:attr_mappings) && attr_params[:attr_mappings]
-            providers_by_name = @provider_repository.all.to_h { |provider| [provider.name, provider] }
-            idx = 0
-            attr_params[:attr_mappings] = attr_params[:attr_mappings].map do |attr_mapping_params|
-              provider = providers_by_name[attr_mapping_params.dig(:provider, :name)]
-              if provider.nil?
-                param_errors[:attr_mappings] ||= {}
-                param_errors[:attr_mappings][idx] = {provider: {name: [I18n.t('errors.found?')]}}
-              end
-              idx += 1
-              {**attr_mapping_params.slice(:name, :conversion), provider_id: provider&.id}
-            end
-          end
-
-          halt_json 422, errors: [param_errors] unless param_errors.empty?
-
-          @attr_repository.update(found_attr.id, attr_params)
-
-          attr_params[:attr_mappings]&.each do |attr_mapping_params|
-            if attr_mapping_params[:name] && !attr_mapping_params[:name].empty?
-              existing_attr_mapping = found_attr.attr_mappings.find do |mapping|
-                mapping.provider_id == attr_mapping_params[:provider_id]
-              end
-
-              if existing_attr_mapping
-                @attr_mapping_repository.update(existing_attr_mapping.id, attr_mapping_params)
-              else
-                @attr_repository.add_mapping(found_attr, attr_mapping_params)
-              end
-            else
-              @attr_repository.delete_mapping_by_provider_id(found_attr, attr_mapping_params[:provider_id])
-            end
-          end
-
-          updated_attr = @attr_repository.find_with_mappings(found_attr.id)
+          halt_json(422, errors: merge_errors(result.errors)) if result.failure?
 
           self.status = 200
-          self.body = generate_json(updated_attr)
+          self.body = generate_json(result.attr)
         end
       end
     end

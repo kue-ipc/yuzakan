@@ -15,8 +15,6 @@ module Admin
 
         params Params
 
-        # expose :name
-
         def initialize(provider_repository: ProviderRepository.new, **opts)
           super(**opts)
           @provider_repository = provider_repository

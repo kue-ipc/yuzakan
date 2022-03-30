@@ -6,23 +6,31 @@ class UpdateAttr
 
   class Validations
     include Hanami::Validations::Form
-    messages_path 'config/messages.yml'
+    predicates NamePredicates
+    messages :i18n
 
     validations do
-      required(:name) { filled? & str? }
-      required(:label) { str? }
-      required(:type) { str? }
-
-      optional(:order) { gt? 0 }
-      optional(:hidden) { bool? }
-
-      optional(:attr_mappings) { array? }
+      optional(:name).filled(:str?, :name?, max_size?: 255)
+      optional(:label).filled(:str?, max_size?: 255)
+      optional(:type).filled(:str?, max_size?: 255)
+      optional(:order).maybe(:int?, gt?: 0)
+      optional(:hidden).maybe(:bool?)
+      # rubocop:disable all
+      optional(:attr_mappings) { array? { each { schema {
+        required(:provider).schema {
+          predicates NamePredicates
+          required(:name).filled(:str?, :name?, max_size?: 255)
+        }
+        required(:name).maybe(:str?, max_size?: 255)
+        optional(:conversion).maybe(:str?)
+      } } } }
+      # rubocop:enable all
     end
   end
 
   expose :attr
 
-  def initialize(attr: nil,
+  def initialize(attr:,
                  attr_repository: AttrRepository.new,
                  attr_mapping_repository: AttrMappingRepository.new,
                  provider_repository: ProviderRepository.new)
@@ -33,41 +41,36 @@ class UpdateAttr
   end
 
   def call(params)
-    params = params.dup
-    params_attr_mappings = params.delete(:attr_mappings) || []
+    params = params.to_h.dup
 
-    @attr =
-      if @attr
-        @attr_repository.update(@attr.id, params)
-      else
-        params[:order] = @attr_repository.last_order&.order.to_i + 1 unless params[:order]
-        @attr_repository.create(params)
-      end
-
-    params_attr_mappings.each do |attr_mapping_params|
-      attr_mapping_params[:provider_id] ||=
-        @provider_repository.find_by_name(attr_mapping_params[:provider_name])&.id
-      next if attr_mapping_params[:provider_id].nil?
-
-      attr_mapping = @attr_mapping_repository.find_by_provider_attr(
-        attr_mapping_params[:provider_id], @attr.id)
-
-      if attr_mapping_params[:name].nil? || attr_mapping_params[:name].empty?
-        @attr_repository.remove_mapping(@attr, attr_mapping.id) if attr_mapping
-        next
-      end
-
-      if attr_mapping_params[:conversion].nil? ||
-         attr_mapping_params[:conversion].empty?
-        attr_mapping_params[:conversion] = nil
-      end
-
-      if attr_mapping
-        @attr_mapping_repository.update(attr_mapping.id, attr_mapping_params)
-      else
-        @attr_repository.add_mapping(@attr, attr_mapping_params)
+    if params[:attr_mappings]
+      params[:attr_mappings] = params[:attr_mappings].map do |am_params|
+        {
+          **am_params.slice(:name, :conversion),
+          provider_id: provider_id_by_name(am_params.dig(:provider, :name)),
+        }
       end
     end
+
+    @attr_repository.update(@attr.id, params)
+
+    params[:attr_mappings]&.each do |am_params|
+      if am_params[:name] && !am_params[:name].empty?
+        existing_attr_mapping = @attr.attr_mappings.find do |mapping|
+          mapping.provider_id == am_params[:provider_id]
+        end
+
+        if existing_attr_mapping
+          @attr_mapping_repository.update(existing_attr_mapping.id, am_params)
+        else
+          @attr_repository.add_mapping(@attr, am_params)
+        end
+      else
+        @attr_repository.delete_mapping_by_provider_id(@attr, am_params[:provider_id])
+      end
+    end
+
+    @attr = @attr_repository.find_with_mappings(@attr.id)
   end
 
   private def valid?(params)
@@ -79,32 +82,38 @@ class UpdateAttr
 
     result = true
 
-    if @attr
-      # update
-      if params[:name] != @attr.name &&
-         @attr_repository.exist_by_name?(params[:name])
-        error({name: ['その識別名は既に存在します。']})
-        result = false
-      end
+    if params[:name] && @attr.name != params[:name] && @attr_repository.exist_by_name?(params[:name])
+      error({name: [I18n.t('errors.uniq?')]})
+      result = false
+    end
 
-      if params[:label] != @attr.label &&
-         @attr_repository.exist_by_label?(params[:label])
-        error({label: ['その属性名は既に存在します。']})
-        result = false
-      end
-    else
-      # create
-      if @attr_repository.exist_by_name?(params[:name])
-        error({name: ['その識別名は既に存在します。']})
-        result = false
-      end
+    if params[:label] && @attr.label != params[:label] && @attr_repository.exist_by_label?(params[:label])
+      error({label: [I18n.t('errors.uniq?')]})
+      result = false
+    end
 
-      if @attr_repository.exist_by_label?(params[:label])
-        error({label: ['その属性名は既に存在します。']})
-        result = false
+    if params[:order] && @attr.order != params[:order] && @attr_repository.exist_by_order?(params[:order])
+      error({order: [I18n.t('errors.uniq?')]})
+      result = false
+    end
+
+    if params[:attr_mappings]
+      params[:attr_mappings].each_with_index do |am_params, idx|
+        if provider_id_by_name(am_params.dig(:provider, :name)).nil?
+          error({attr_mappings: {idx => {provider: {name: [I18n.t('errors.found?')]}}}})
+          result = false
+        end
       end
     end
 
     result
+  end
+
+  private def named_providers
+    @named_providers ||= @provider_repository.all.to_h { |provider| [provider.name, provider.id] }
+  end
+
+  private def provider_id_by_name(name)
+    named_providers[name]
   end
 end

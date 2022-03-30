@@ -6,6 +6,8 @@ require_relative './controllers/configuration'
 require_relative './controllers/authentication'
 require_relative './controllers/authorization'
 
+require_relative '../../lib/yuzakan/validations/id_validations'
+require_relative '../../lib/yuzakan/predicates/name_predicates'
 require_relative '../../lib/yuzakan/utils/uglifier_es_compressor'
 
 module Web

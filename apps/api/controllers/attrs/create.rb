@@ -14,13 +14,12 @@ module Api
           super(**opts)
           @attr_repository = attr_repository
           @provider_repository = provider_repository
-
-          @create_attr = CreateAttr.new(attr_repository: @attr_repository,
-                                        provider_repository: @provider_repository)
         end
 
         def call(params)
-          result = @create_attr.call(params)
+          create_attr = CreateAttr.new(attr_repository: @attr_repository,
+                                       provider_repository: @provider_repository)
+          result = create_attr.call(params)
 
           halt_json(422, errors: merge_errors(result.errors)) if result.failure?
 

@@ -43,7 +43,10 @@ class CreateAttr
       params[:attr_mappings] = params[:attr_mappings]
         .reject { |am_params| am_params[:name].nil? || am_params[:name].empty? }
         .map do |am_params|
-        {**am_params.slice(:name, :conversion), provider_id: provider_id_by_name(am_params.dig(:provider, :name))}
+        {
+          **am_params.slice(:name, :conversion),
+          provider_id: provider_id_by_name(am_params.dig(:provider, :name)),
+        }
       end
     end
 
