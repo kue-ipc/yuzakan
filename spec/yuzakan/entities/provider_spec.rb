@@ -21,12 +21,16 @@ describe Provider do
 
   let(:provider_params) {
     [
-      ProviderParam.new(name: 'username', value: Marshal.dump('username')),
+      {
+        name: 'str',
+        value:  Marshal.dump('文字列'),
+      }
     ]
   }
 
-  it 'dummy adapter provider' do
+  it 'test adapter provider' do
     provider = Provider.new(**attributes)
     _(provider.name).must_equal 'test'
+    _(provider.params[:str]).must_equal '文字列'
   end
 end

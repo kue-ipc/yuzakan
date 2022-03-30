@@ -73,25 +73,18 @@ module Web
       return @current_level if @current_level
 
       @current_level = current_user&.clearance_level || 0
-      if @current_level >= 2 && !allowed_admin_networks?
-        @current_level = 1
-      end
-
-      if @current_level == 1 && !allowed_user_networks?
-         CheckIp.new(allowed_networks: current_config.user_networks).call(ip: client).failure?
-        @current_level = 0
-      end
-
+      @current_level = 1 if @current_level >= 2 && !allowed_admin_networks?
+      @current_level = 0 if @current_level >= 1 && !allowed_user_networks?
       @current_level
     end
 
     private def allowed_admin_networks?
-      !current_config.admin_networks&.size&.positive? ||
+      !current_config&.admin_networks&.size&.positive? ||
       CheckIp.new(allowed_networks: current_config.admin_networks).call(ip: client).successful?
     end
 
     private def allowed_user_networks?
-      !current_config.user_networks&.size&.positive? ||
+      !current_config&.user_networks&.size&.positive? ||
       CheckIp.new(allowed_networks: current_config.user_networks).call(ip: client).successful?
     end
 
