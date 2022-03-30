@@ -33,16 +33,5 @@ describe Web::Controllers::User::Password::Update do
         _(response[1]['Location']).must_equal '/uninitialized'
       end
     end
-
-    describe 'in maintenace' do
-      before { UpdateConfig.new.call(maintenance: true) }
-      after { db_reset }
-
-      it 'redirect maintenance' do
-        response = action.call(params)
-        _(response[0]).must_equal 302
-        _(response[1]['Location']).must_equal '/maintenance'
-      end
-    end
   end
 end

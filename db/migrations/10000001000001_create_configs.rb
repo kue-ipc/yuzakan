@@ -4,7 +4,6 @@ Hanami::Model.migration do
       primary_key :id
 
       column :title, String, null: false
-      column :maintenance, TrueClass, null: false, default: false
 
       column :session_timeout, Integer, null: false, default: 3600
 
