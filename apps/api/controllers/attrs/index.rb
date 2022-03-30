@@ -5,8 +5,8 @@ module Api
         include Api::Action
 
         def initialize(attr_repository: AttrRepository.new, **opts)
-          super(**opts)
-          @attr_repository = attr_repository
+          super
+          @attr_repository ||= attr_repository
         end
 
         def call(params) # rubocop:disable Lint/UnusedMethodArgument

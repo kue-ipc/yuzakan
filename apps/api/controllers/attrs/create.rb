@@ -11,9 +11,9 @@ module Api
         def initialize(attr_repository: AttrRepository.new,
                        provider_repository: ProviderRepository.new,
                        **opts)
-          super(**opts)
-          @attr_repository = attr_repository
-          @provider_repository = provider_repository
+          super
+          @attr_repository ||= attr_repository
+          @provider_repository ||= provider_repository
         end
 
         def call(params)
