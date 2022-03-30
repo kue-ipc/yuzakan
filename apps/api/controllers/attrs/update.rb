@@ -1,8 +1,11 @@
+require_relative './set_attr'
+
 module Api
   module Controllers
     module Attrs
       class Update
         include Api::Action
+        include SetAttr
 
         security_level 5
 
@@ -10,20 +13,14 @@ module Api
                        attr_mapping_repository: AttrMappingRepository.new,
                        provider_repository: ProviderRepository.new,
                        **opts)
-          super(**opts)
-          @attr_repository = attr_repository
-          @attr_mapping_repository = attr_mapping_repository
-          @provider_repository = provider_repository
+          super
+          @attr_repository ||= attr_repository
+          @attr_mapping_repository ||= attr_mapping_repository
+          @provider_repository ||= provider_repository
         end
 
         def call(params)
-          id_validation = IdValidations.new(params).validate
-          halt_json 400, errors: [id_validation.messages] if id_validation.failure?
-
-          attr = @attr_repository.find_with_mappings_by_name(params[:id])
-          halt_json 404 if attr.nil?
-
-          update_attr = UpdateAttr.new(attr: attr,
+          update_attr = UpdateAttr.new(attr: @attr,
                                        attr_repository: @attr_repository,
                                        attr_mapping_repository: @attr_mapping_repository,
                                        provider_repository: @provider_repository)
