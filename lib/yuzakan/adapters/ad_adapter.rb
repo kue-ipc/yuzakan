@@ -3,7 +3,9 @@ require_relative 'ldap_base_adapter'
 module Yuzakan
   module Adapters
     class AdAdapter < LdapBaseAdapter
+      self.name = 'ad'
       self.label = 'Active Directory'
+      self.version = '0.0.1'
       self.params = ha_merge(*LdapBaseAdapter.params, {
         name: :host,
         label: 'ドメインコントローラーのホスト名/IPアドレス',

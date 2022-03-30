@@ -1,40 +1,40 @@
+require 'digest/md5'
+
 module Api
   module Controllers
     module Adapters
       class Show
         include Api::Action
 
-        class Params < Hanami::Action::Params
-          predicates NamePredicates
-          messages :i18n
-
-          params do
-            required(:id).filled(:str?, :name?, max_size?: 255)
-          end
-        end
-
-        params Params
+        @cache_control_directives = nil # hack
+        cache_control :private
 
         def call(params)
-          halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
+          id_validation = IdValidations.new(params).validate
+          halt_json 400, errors: [id_validation.messages] if id_validation.failure?
 
-          adapter_id = params[:id]
-          adapter = ADAPTERS_MANAGER.by_name(adapter_id)
-          halt_json 404 unless adapter
+          @adapter = ADAPTERS_MANAGER.by_name(params[:id])
+          halt_json 404 unless @adapter
+
+          fresh etag: etag
 
           self.body =
             if current_level >= 5
               generate_json({
-                name: adapter_id,
-                label: adapter.label,
-                param_types: adapter.param_types,
+                name: @adapter.name,
+                label: @adapter.label,
+                param_types: @adapter.param_types,
               })
             else
               generate_json({
-                name: adapter_id,
-                label: adapter.label,
+                name: @adapter.name,
+                label: @adapter.label,
               })
             end
+        end
+
+        private def etag
+          Digest::MD5.hexdigest("#{@adapter.name}-#{@adapter.version}")
         end
       end
     end
