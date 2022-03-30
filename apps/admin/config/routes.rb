@@ -1,11 +1,5 @@
 root to: 'home#index'
 
-# get '/setup', to: 'setup#index', as: :setup
-# post '/setup', to: 'setup#create'
-# get '/setup/done', to: 'setup#done', as: :setup_done
-# get '/setup/:id', to: 'setup#show'
-# get '/setup/new', to: 'setup#new'
-
 resource :setup, only: [:show, :create]
 
 resource :config, only: [:edit, :update] do
