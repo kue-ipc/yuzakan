@@ -24,7 +24,11 @@ class Provider < Hanami::Entity
     return super if attributes[:provider_params].nil? # rubocop:disable Lint/ReturnInVoidContext
 
     # cache_store
-    expires_in = if Hanami.env == 'production' then 60 * 60 else 0 end
+    expires_in = case Hanami.env
+                 when 'production' then 60 * 60
+                 when 'development' then 60
+                 else 0
+                 end
     namespace = ['yuzakan', 'provider', attributes[:name]].join(':')
     redis_url = ENV.fetch('REDIS_URL', 'redis://127.0.0.1:6379/0')
     @cache_store =
