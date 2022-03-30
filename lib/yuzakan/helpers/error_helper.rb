@@ -23,16 +23,14 @@ module Yuzakan
         return [[], {}] if errors.nil?
 
         array_errors = []
-        hash_errors = Hash.new { [] }
+        hash_errors = {}
 
         errors.each do |error|
           case error
           when String
             array_errors << error
           when Hash
-            error.each do |key, value|
-              hash_errors[key] += value
-            end
+            hash_errors.merge!(error) { |_, s, o| s + o }
           end
         end
         [array_errors, hash_errors]

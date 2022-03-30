@@ -46,7 +46,8 @@ module Admin
                 end
 
                 data[:attrs].each do |attr_data|
-                  result = UpdateAttr.new(attr_repository: attr_repository).call(attr_data)
+                  pp attr_data
+                  result = CreateAttr.new(attr_repository: attr_repository).call(attr_data)
                   if result.failure?
                     flash[:errors].concat(result.errors)
                     raise '属性の設定に失敗しました。'
