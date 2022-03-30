@@ -1,8 +1,8 @@
 require_relative '../../../../spec_helper'
 
-describe Api::Controllers::CurrentUser::Password::Update do
+describe Api::Controllers::Myself::Password::Update do
   let(:action) {
-    Api::Controllers::CurrentUser::Password::Update.new(activity_log_repository: activity_log_repository,
+    Api::Controllers::Myself::Password::Update.new(activity_log_repository: activity_log_repository,
                                                         config_repository: config_repository,
                                                         user_repository: user_repository,
                                                         provider_repository: provider_repository,

@@ -1,7 +1,7 @@
 module Api
   module Controllers
     module Providers
-      module CurrentUser
+      module Myself
         module Lock
           class Destroy
             include Api::Action

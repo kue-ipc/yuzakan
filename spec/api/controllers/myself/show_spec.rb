@@ -1,9 +1,9 @@
 require_relative '../../../spec_helper'
 require 'yaml'
 
-describe Api::Controllers::CurrentUser::Show do
+describe Api::Controllers::Myself::Show do
   let(:action) {
-    Api::Controllers::CurrentUser::Show.new(activity_log_repository: activity_log_repository,
+    Api::Controllers::Myself::Show.new(activity_log_repository: activity_log_repository,
                                             config_repository: config_repository,
                                             user_repository: user_repository,
                                             provider_repository: provider_repository)

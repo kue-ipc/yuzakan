@@ -1,6 +1,6 @@
 module Api
   module Controllers
-    module CurrentUser
+    module Myself
       module Password
         class Update
           include Api::Action

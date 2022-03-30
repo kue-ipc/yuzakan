@@ -1,7 +1,7 @@
 module Api
   module Controllers
     module Providers
-      module CurrentUser
+      module Myself
         class Create
           include Api::Action
 

@@ -1,7 +1,7 @@
 require_relative '../../../../../spec_helper'
 
-describe Api::Controllers::Providers::CurrentUser::Code::Create do
-  let(:action) { Api::Controllers::Providers::CurrentUser::Code::Create.new }
+describe Api::Controllers::Providers::Myself::Code::Create do
+  let(:action) { Api::Controllers::Providers::Myself::Code::Create.new }
   let(:params) { Hash[] }
 
   # it 'is successful' do

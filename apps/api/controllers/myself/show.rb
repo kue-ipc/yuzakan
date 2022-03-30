@@ -1,6 +1,6 @@
 module Api
   module Controllers
-    module CurrentUser
+    module Myself
       class Show
         include Api::Action
 
