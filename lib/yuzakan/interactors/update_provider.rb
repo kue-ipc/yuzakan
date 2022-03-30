@@ -44,7 +44,7 @@ class UpdateProvider
       if @provider
         @provider_repository.update(@provider.id, params)
       else
-        order = @provider_repository.last_order.order + 1
+        order = @provider_repository.last_order + 1
         @provider_repository.create(params.merge(order: order))
       end
 
