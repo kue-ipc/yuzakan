@@ -53,5 +53,22 @@ module Api
         errors
       end
     end
+
+    private def merge_errors(errors)
+      return errors unless errors.is_a?(Array)
+
+      hash = {}
+      list = []
+      errors.each do |error|
+        if error.is_a?(Hash)
+          error = only_first_errors(error)
+          hash = hash.deep_merge(only_first_errors(error)) { |_k, s, o| s + o }
+        else
+          list << error
+        end
+      end
+      list << hash unless hash.empty?
+      list
+    end
   end
 end

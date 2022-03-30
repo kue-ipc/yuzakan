@@ -210,7 +210,7 @@ describe Api::Controllers::Attrs::Create do
         _(json).must_equal({
           code: 422,
           message: 'Unprocessable Entity',
-          errors: [{name: ['名前付けの規則に違反しています。'], label: ['重複しています。']}],
+          errors: [{name: ['名前付けの規則に違反しています。']}],
         })
       end
     end
