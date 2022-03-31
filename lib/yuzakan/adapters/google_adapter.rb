@@ -176,6 +176,31 @@ module Yuzakan
         users
       end
 
+      def search(query)
+        query_str = query.dup
+        query_str.delete!('*?')
+        query_str.gsub!("'", "\\'")
+        query_str = "'#{query_str}'"
+
+        users = []
+        next_page_token = nil
+        # 最大でも20回で10,000ユーザーしか取得できない
+        20.times do
+          response = service.list_users(domain: @params[:domain],
+                                        max_results: 500,
+                                        query: query_str,
+                                        page_token: next_page_token)
+          users.concat(response.users
+            .map(&:primary_email)
+            .map { |email| email.split('@', 2) }
+            .select { |_name, domain| domain == @params[:domain] }
+            .map(&:first))
+          next_page_token = response.next_page_token
+          break unless next_page_token
+        end
+        users
+      end
+
       def generate_code(username)
         user = read(username)
         unless user[:mfa]
