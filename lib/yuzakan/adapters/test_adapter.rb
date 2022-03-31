@@ -6,7 +6,10 @@ module Yuzakan
   module Adapters
     class TestAdapter < AbstractAdapter
       self.hidden_adapter = true if Hanami.env == 'production'
+
+      self.name = 'test'
       self.label = 'テスト'
+      self.version = '0.0.1'
       self.params = [
         {
           name: :default,

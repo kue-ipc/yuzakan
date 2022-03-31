@@ -9,7 +9,9 @@ require_relative 'ldap_base_adapter'
 module Yuzakan
   module Adapters
     class SambaLdapAdapter < LdapBaseAdapter
+      self.name = 'samba_ldap'
       self.label = 'Samba LDAP'
+      self.version = '0.0.1'
       self.params = ha_merge(*LdapBaseAdapter.params, {
         name: :user_name_attr,
         default: 'uid',

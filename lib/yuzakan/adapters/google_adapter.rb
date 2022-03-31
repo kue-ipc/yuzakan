@@ -25,7 +25,10 @@ require 'google/apis/admin_directory_v1'
 module Yuzakan
   module Adapters
     class GoogleAdapter < AbstractAdapter
+      self.name = 'google'
       self.label = 'Google Workspace'
+      self.version = '0.0.1'
+      self.params = []
 
       self.params = [
         {
