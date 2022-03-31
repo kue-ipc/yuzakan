@@ -75,7 +75,7 @@ module Admin
         include Web::Configuration
         include Web::Authentication
         include Web::Authorization
-        cache_control :no_store
+        cache_control :private, :no_cache
       end
 
       view.prepare do

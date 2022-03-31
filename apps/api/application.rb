@@ -84,7 +84,7 @@ module Api
         include Api::Authentication
         include Api::Authorization
         include Api::MessageJson
-        cache_control :no_store
+        cache_control :private, :no_cache
         accept :json
       end
 

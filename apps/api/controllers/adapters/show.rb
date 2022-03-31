@@ -6,9 +6,6 @@ module Api
       class Show
         include Api::Action
 
-        @cache_control_directives = nil # hack
-        cache_control :private
-
         def call(params)
           id_validation = IdValidations.new(params).validate
           halt_json 400, errors: [id_validation.messages] if id_validation.failure?
