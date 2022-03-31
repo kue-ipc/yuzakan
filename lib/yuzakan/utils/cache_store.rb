@@ -28,7 +28,11 @@ module Yuzakan
         end
 
         def delete(key)
-          @cache.delet(key)
+          @cache.delete(key)
+        end
+
+        def delete_matched(pattern)
+          @cache.delete_matched(pattern)
         end
 
         def fetch(key, default = nil, &block)

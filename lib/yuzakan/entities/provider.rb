@@ -1,3 +1,4 @@
+require 'digest/md5'
 require_relative '../utils/cache_store'
 
 class Provider < Hanami::Entity
@@ -85,6 +86,19 @@ class Provider < Hanami::Entity
     list_key('group')
   end
 
+  def user_search_key_raw(name)
+    key('search', 'user', name)
+  end
+
+  def user_search_key(query)
+    user_search_key_raw(Digest::MD5.hexdigest(query))
+  end
+
+  def clear_user_list_cache
+    @cache_store.delete(user_list_key)
+    @cache_store.delete_matched(user_search_key_raw('*'))
+  end
+
   # Ruby attrs -> Adapter aatrs
   def map_attrs(attrs)
     return {} if attrs.nil?
@@ -133,7 +147,8 @@ class Provider < Hanami::Entity
     need_mappings!
 
     raw_userdata = @adapter.create(username, password, **map_userdata(userdata))
-    @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
+    clear_user_list_cache
+    @cache_store[user_key(username)] = convert_userdata(raw_userdata)
   end
 
   def read(username)
@@ -151,7 +166,10 @@ class Provider < Hanami::Entity
     need_mappings!
 
     raw_userdata = @adapter.update(username, **map_userdata(userdata))
-    @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
+    return if raw_userdata.nil?
+
+    clear_user_list_cache
+    @cache_store[user_key(username)] = convert_userdata(raw_userdata)
   end
 
   def delete(username)
@@ -159,6 +177,9 @@ class Provider < Hanami::Entity
     need_mappings!
 
     raw_userdata = @adapter.delete(username)
+    return if raw_userdata.nil?
+
+    clear_user_list_cache
     @cache_store.delete(user_key(username)) || convert_userdata(raw_userdata)
   end
 
@@ -178,6 +199,12 @@ class Provider < Hanami::Entity
     @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
   end
 
+  def generate_code(username)
+    need_adapter!
+
+    @adapter.generate_code(username)
+  end
+
   def lock(username)
     need_adapter!
     need_mappings!
@@ -192,12 +219,6 @@ class Provider < Hanami::Entity
 
     raw_userdata = @adapter.unlock(username, password)
     @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
-  end
-
-  def generate_code(username)
-    need_adapter!
-
-    @adapter.generate_code(username)
   end
 
   def enabled?(username)
@@ -221,5 +242,13 @@ class Provider < Hanami::Entity
     @cache_store.fetch(user_list_key) do
       @cache_store[user_list_key] = @adapter.list
     end
+  end
+
+  def search(query)
+    need_adapter!
+    # @cache_store.fetch(user_search_key(query)) do
+    #   @cache_store[user_search_key(query)] = @adapter.search(query)
+    # end
+    @adapter.search(query)
   end
 end

@@ -203,6 +203,13 @@ module Yuzakan
         end
       end
 
+      def search(query)
+        []
+        # local_users.where { 
+        #   name.like('%?%', query) || display_name.like('%?%', query) || email.like('%?%', query)
+        # }
+      end
+    
       private def change_password_operations(_password)
         raise NotImplementedError
       end

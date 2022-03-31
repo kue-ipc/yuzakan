@@ -19,24 +19,27 @@ module Yuzakan
       end
 
       def create(username, password = nil, **userdata)
-        user2userdata(@repository.create_with_password(
-                        name: username,
-                        display_name: userdata[:display_name] || username,
-                        email: userdata[:email],
-                        password: password))
+        hashed_password = LocalUser.create_hashed_password(password)
+        user = @repository.create({
+          name: username,
+          display_name: userdata[:display_name] || username,
+          email: userdata[:email],
+          hashed_password: hashed_password,
+        })
+        user2userdata(user)
       end
 
       def read(username)
         user2userdata(@repository.find_by_name(username))
       end
 
-      def udpate(username, **_userdata)
+      def udpate(username, **userdata)
         user = @repository.find_by_name(username)
         raise "user not found: #{username}" if user.nil?
 
         data = {}
         %i[display_name email].each do |key|
-          data[key] = attrs[key] if attrs[key]
+          data[key] = userdata[key] if userdata[key]
         end
         user2userdata(@repository.update(user.id, data))
       end
@@ -59,21 +62,26 @@ module Yuzakan
         user = @repository.find_by_name(username)
         raise "user not found: #{username}" if user.nil?
 
-        @repository.change_password(user.id, password: password)
+        hashed_password = LocalUser.create_hashed_password(password)
+        hashed_password = LocalUser.lock_password(hashed_password) if user.locked?
+    
+        @repository.update(user.id, hashed_password: hashed_password)
       end
 
       def lock(username)
         user = @repository.find_by_name(username)
         raise "user not found: #{username}" if user.nil?
+        return if user.locked?
 
-        @repository.lock(user.id)
+        @repository.update(user.id, hashed_password: LocalUser.lock_password(user.hashed_password))
       end
 
       def unlock(username, _password = nil)
         user = @repository.find_by_name(username)
         raise "user not found: #{username}" if user.nil?
+        return unless user.locked?
 
-        @repository.unlock(user.id)
+        @repository.update(user.id, hashed_password: LocalUser.unlock(user.hashed_password))
       end
 
       def locked?(username)
@@ -85,6 +93,15 @@ module Yuzakan
 
       def list
         @repository.all.map(&:name)
+      end
+
+      def search(query)
+        pattern = query.dup
+        pattern.gsub!('\\', '\\\\')
+        pattern.gsub!('%', '\\%')
+        pattern.gsub!('_', '\\_')
+        pattern.tr!('*?', '%_')
+        @repository.ilike(pattern).map { |data| data[:name] }
       end
 
       private def user2userdata(user)
