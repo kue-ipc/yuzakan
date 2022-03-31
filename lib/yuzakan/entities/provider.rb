@@ -246,9 +246,8 @@ class Provider < Hanami::Entity
 
   def search(query)
     need_adapter!
-    # @cache_store.fetch(user_search_key(query)) do
-    #   @cache_store[user_search_key(query)] = @adapter.search(query)
-    # end
-    @adapter.search(query)
+    @cache_store.fetch(user_search_key(query)) do
+      @cache_store[user_search_key(query)] = @adapter.search(query)
+    end
   end
 end

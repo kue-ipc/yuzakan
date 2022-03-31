@@ -204,12 +204,15 @@ module Yuzakan
       end
 
       def search(query)
-        []
-        # local_users.where { 
-        #   name.like('%?%', query) || display_name.like('%?%', query) || email.like('%?%', query)
-        # }
+        filter =
+          Net::LDAP::Filter.eq(@params[:user_name_attr], query) |
+          Net::LDAP::Filter.eq(@params[:user_display_name_attr], query) |
+          Net::LDAP::Filter.eq(@params[:user_email_attr], query)
+        generate_ldap.search(search_user_opts('*', filter: filter)).map do |user|
+          user[@params[:user_name_attr]]&.first
+        end
       end
-    
+
       private def change_password_operations(_password)
         raise NotImplementedError
       end
@@ -283,15 +286,15 @@ module Yuzakan
           else raise 'Invalid scope'
           end
 
-        common_filter =
-          if filter
-            Net::LDAP::Filter.construct(filter)
-          else
-            Net::LDAP::Filter.pres('objectClass')
+        opts[:filter] =
+          case filter
+          when Net::LDAP::Filter then filter
+          when String then Net::LDAP::Filter.construct(filter)
+          when nil then Net::LDAP::Filter.pres('objectClass')
+          else raise 'Invalid filter'
           end
 
-        opts[:filter] = common_filter &
-                        Net::LDAP::Filter.eq(@params[:user_name_attr], name)
+        opts[:filter] &= Net::LDAP::Filter.eq(@params[:user_name_attr], name) if name != '*'
 
         opts
       end
