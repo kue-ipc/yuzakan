@@ -5,10 +5,7 @@ module Admin
     module Users
       class Index
         include Admin::Action
-        include Hanami::Action::Cache
         include Pagy::Backend
-
-        cache_control :no_store
 
         expose :pagy_data
 
