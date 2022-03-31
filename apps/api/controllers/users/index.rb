@@ -1,8 +1,22 @@
+require 'set'
+
 module Api
   module Controllers
     module Users
       class Index
         include Api::Action
+
+        class Params < Hanami::Action::Params
+          predicates NamePredicates
+          messages :i18n
+
+          params do
+            optional(:page).filled(:int?)
+            optional(:query).maybe(:str?, max_size?: 255)
+          end
+        end
+
+        params Params
 
         def initialize(user_repository: UserRepository.new,
                        provider_repository: ProviderRepository.new,
@@ -13,30 +27,50 @@ module Api
         end
 
         def call(params)
+          halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
+
           query = params[:query]
           query = nil if query&.empty?
-          page = params[:page].to_i
+          page = params[:page] || 1
           per_page = if Hanami.env == 'production' then 100 else 10 end
 
           @providers = @provider_repository.ordered_all_with_adapter_by_operation(:read)
 
-          all_list =
+          providers_list =
             if query
-              query = "*#{query}*"
-              @providers.flat_map { |provider| provider.search(query) }.uniq.sort
+              @providers.to_h { |provider| [provider.name, Set.new(provider.search("*#{query}*"))] }
             else
-              @providers.flat_map { |provider| provider.list }.uniq.sort
+              @providers.to_h { |provider| [provider.name, Set.new(provider.list)] }
             end
-          @total_count = all_list.size
-          page_list = all_list[(page * per_page), per_page]
+
+          all_list = providers_list.values.sum(Set.new).to_a.sort
+          total_count = all_list.size
+
+          page_list = all_list[((page - 1) * per_page), per_page] || []
+
           users_data = @user_repository.by_name(page_list).to_a.to_h { |user| [user.name, user] }
           @users = page_list.map do |name|
             users_data[name] || create_user(name)
           end
 
+          first_page = 1
+          last_page = ((total_count / per_page) + 1)
+          links = []
+          links << "<#{routes.users_url(page: first_page, query: query)}>; rel=\"first\""
+          links << "<#{routes.users_url(page: page - 1, query: query)}>; rel=\"prev\"" if page != first_page
+          links << "<#{routes.users_url(page: page + 1, query: query)}>; rel=\"next\"" if page != last_page
+          links << "<#{routes.users_url(page: last_page, query: query)}>; rel=\"last\""
+          data = @users.map do |user|
+            {
+              **convert_for_json(user),
+              providers: providers_list.filter { |_, v| v.include?(user.name) }.keys,
+            }
+          end
+
           self.status = 200
-          headers['Total-Count'] = @total_count.to_s
-          self.body = generate_json(@users)
+          headers['Total-Count'] = total_count.to_s
+          headers['Link'] = links.join(', ')
+          self.body = generate_json(data)
         end
 
         private def create_user(name)

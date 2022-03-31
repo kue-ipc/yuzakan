@@ -199,7 +199,7 @@ module Yuzakan
 
       def list
         generate_ldap.search(search_user_opts('*')).map do |user|
-          user[@params[:user_name_attr]]&.first
+          user[@params[:user_name_attr]].first
         end
       end
 
@@ -209,7 +209,7 @@ module Yuzakan
           Net::LDAP::Filter.eq(@params[:user_display_name_attr], query) |
           Net::LDAP::Filter.eq(@params[:user_email_attr], query)
         generate_ldap.search(search_user_opts('*', filter: filter)).map do |user|
-          user[@params[:user_name_attr]]&.first
+          user[@params[:user_name_attr]].first
         end
       end
 
@@ -292,9 +292,7 @@ module Yuzakan
           when String then Net::LDAP::Filter.construct(filter)
           when nil then Net::LDAP::Filter.pres('objectClass')
           else raise 'Invalid filter'
-          end
-
-        opts[:filter] &= Net::LDAP::Filter.eq(@params[:user_name_attr], name) if name != '*'
+          end & Net::LDAP::Filter.eq(@params[:user_name_attr], name)
 
         opts
       end
