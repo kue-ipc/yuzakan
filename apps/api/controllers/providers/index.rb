@@ -5,8 +5,8 @@ module Api
         include Api::Action
 
         def initialize(provider_repository: ProviderRepository.new, **opts)
-          super(**opts)
-          @provider_repository = provider_repository
+          super
+          @provider_repository ||= provider_repository
         end
 
         def call(params) # rubocop:disable Lint/UnusedMethodArgument

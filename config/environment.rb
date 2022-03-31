@@ -60,6 +60,8 @@ Hanami.configure do
     mailer do
       delivery :logger
     end
+
+    Pagy::DEFAULT[:items] = 10
   end
 
   environment :test do
@@ -81,6 +83,8 @@ Hanami.configure do
       delivery :smtp, address: ENV.fetch('SMTP_HOST'),
                       port: ENV.fetch('SMTP_PORT')
     end
+
+    Pagy::DEFAULT[:items] = 100
   end
 
   # json request
