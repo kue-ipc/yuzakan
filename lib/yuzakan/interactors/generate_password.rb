@@ -15,6 +15,11 @@ class GeneratePassword
     @password =
       if @chars == :alphanumeric
         SecureRandom.alphanumeric(@size)
+      elsif @chars == :ascii
+        chars = ("\x20".."\x7e").to_a
+        @password = @size.times.map do
+          chars[SecureRandom.random_number(chars.size)]
+        end.join
       else
         @password = @size.times.map do
           @chars[SecureRandom.random_number(@chars.size)]
