@@ -40,11 +40,7 @@ module Yuzakan
 
           adapter_class_name = camelize(adapter_file_basename)
           adapter_class = ::Yuzakan::Adapters.const_get(adapter_class_name)
-
-          unless adapter_class.abstract?
-            adapter_name = adapter_file_basename.sub(/_adapter$/, '')
-            @adapters[adapter_name] = adapter_class
-          end
+          @adapters[adapter_class.name] = adapter_class unless adapter_class.abstract?
         end
         @adapters
       end
