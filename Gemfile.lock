@@ -174,8 +174,6 @@ GEM
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     os (1.1.4)
-    pagy (5.10.1)
-      activesupport
     pry (0.14.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -263,6 +261,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activesupport
   bcrypt
   capybara
   coffee-script
@@ -276,7 +275,6 @@ DEPENDENCIES
   minitest
   mysql2
   net-ldap
-  pagy
   pry
   puma (~> 5.6)
   rack (>= 2.2.2)

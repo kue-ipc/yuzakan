@@ -30,8 +30,8 @@ gem 'readthis'
 # default gem
 gem 'ipaddr'
 
-# Pager
-gem 'pagy'
+# Active Support
+gem 'activesupport'
 
 # LDAP
 gem 'net-ldap'
