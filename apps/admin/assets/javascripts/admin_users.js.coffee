@@ -3,6 +3,44 @@ import * as html from '../hyperapp-html.js'
 import {fetchJsonGet} from '../fetch_json.js'
 import BsIcon from '../bs_icon.js'
 
+searchAction = (state, {query}) ->
+  newState = {state..., query}
+  [
+    newState
+    [indexAllUsersRunner, newState]
+  ]
+
+search = ({query}) ->
+  searchInput = html.input {
+    class: 'form-control'
+    type: 'search'
+    placeholder: '検索...'
+    onkeypress: (state, event) ->
+      if event.keyCode == 13
+        [searchAction, {query: event.target.value}]
+      else
+        state
+  }
+
+  html.div {class: 'row mb-3'}, [
+    html.div {class: 'col-md-3'},
+      html.div {class: 'input-group'}, [
+        searchInput
+        html.button {
+          type: 'button'
+          class: 'btn btn-outline-secondary'
+          onclick: (state) -> [searchAction, {query: searchInput.node.value}]
+        }, BsIcon({name: 'search'})
+      ]
+    html.div {class: 'col-md-3'},
+      html.input {
+        id: 'search-query'
+        type: 'text'
+        class: 'form-control-plaintext'
+        value: query
+      }
+  ]
+
 pageAction = (state, {page}) ->
   newState = {state..., page}
   [
@@ -16,6 +54,7 @@ pageItem = ({content, page, active = false, disabled = false}) ->
   liClass.push 'disabled' if disabled
   html.li {class: liClass},
     html.button {
+      type: 'button'
       class: 'page-link'
       onclick: (state) -> [pageAction, {page: page}]
     }, text content
@@ -89,7 +128,7 @@ init = [
 
 view = ({users, providers, page, per_page, total, query}) ->
   html.div {}, [
-    # query({query})
+    search({query})
     pagination({page, per_page, total})
     html.table {class: 'table'}, [
       html.thead {},
