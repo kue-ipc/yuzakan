@@ -7,7 +7,7 @@ module Api
         def call(params) # rubocop:disable Lint/UnusedMethodArgument
           adapters = ADAPTERS_MANAGER.hash.map do |key, value|
             {name: key, label: value.label}
-          end
+          end.sort_by { |adapter| adapter[:name] }
           self.body = generate_json(adapters)
         end
       end
