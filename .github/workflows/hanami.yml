@@ -7,7 +7,7 @@ on:
     branches: [main]
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         ruby-version: ["2.7"]
@@ -17,7 +17,9 @@ jobs:
         ports:
           - 3306:3306
         env:
-          MARIADB_ROOT_PASSWORD: admin_password
+          MARIADB_DATABASE: yuzakan_test
+          MARIADB_USER: admin
+          MARIADB_PASSWORD: admin_password
     steps:
       - uses: actions/checkout@v2
       - name: Set up Ruby
@@ -25,8 +27,8 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
-      - name: Creat DB
-        run: bundle exec hanami db prepare
+      - name: Migrate DB
+        run: bundle exec hanami db migrate
         env:
           HANAMI_ENV: test
       - name: Run tests
