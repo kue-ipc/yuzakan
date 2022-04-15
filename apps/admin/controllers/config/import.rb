@@ -46,7 +46,6 @@ module Admin
                 end
 
                 data[:attrs].each do |attr_data|
-                  pp attr_data
                   result = CreateAttr.new(attr_repository: attr_repository).call(attr_data)
                   if result.failure?
                     flash[:errors].concat(result.errors)

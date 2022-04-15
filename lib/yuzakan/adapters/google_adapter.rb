@@ -109,7 +109,6 @@ module Yuzakan
 
         raise 'このシステムで、管理者を削除することはできません。' if user.is_admin?
 
-        # pp email
         # service.delete_user(email)
       end
 
