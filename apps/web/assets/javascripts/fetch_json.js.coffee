@@ -74,7 +74,7 @@ export fetchJson = ({url, method, data = null, type = 'json'}) ->
   totalCount = response.headers.get('Total-Count')
 
   pageInfo =
-    if totalCount
+    if totalCount && totalCount != '0'
       contentRange = response.headers.get('Content-Range')
       result = contentRange.match(/^items\s+(\d+)-(\d+)\/(\d+)$/)
       if result[3] != totalCount

@@ -4,32 +4,3 @@ h3 ユーザー一覧
 
 = javascript 'admin_users', type: 'module', defer: true
 #admin_users
-
-= pagy_nav(pagy_data)
-= pagy_info(pagy_data)
-
-table.table
-  thead
-    tr
-      th ユーザー名
-      th 表示名
-      th メールアドレス
-      - providers.each do |provider|
-        th = provider.label
-  tbody
-    - users.each do |user|
-      tr
-        td
-          = link_to user.name, routes.path(:user, user.name)
-        td = user.display_name
-        td = user.email
-        - providers.each do |provider|
-          td
-            - if provider_users[provider.id].include?(user.name)
-              | ○
-            - else
-              span.text-muted
-                | N/A
-
-= pagy_nav(pagy_data)
-= pagy_info(pagy_data)
