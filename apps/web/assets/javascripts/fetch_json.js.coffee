@@ -1,4 +1,8 @@
 import {filedToList, fieldName} from './form_helper.js'
+import HttpLinkHeader from './http-link-header.js'
+
+DEFAULT_PAGE = 1
+DEFAULT_PER_PAGE = 20
 
 export fetchJson = ({url, method, data = null, type = 'json'}) ->
   method = method.toUpperCase()
@@ -44,13 +48,12 @@ export fetchJson = ({url, method, data = null, type = 'json'}) ->
       init.body = data
     else
       if data instanceof FormData
-        data = formDataToUrlencoded(data)
+        query = formDataToUrlencoded(data)
       else if typeof data == 'object'
-        data = objToUrlencoded(data)
+        query = objToUrlencoded(data)
       else
-        data = encodeURIComponent(data)
-      url = url + '?' + data
-
+        query = encodeURIComponent(data)
+      url += '?' + query
 
   init.headers = headers
 
@@ -58,23 +61,47 @@ export fetchJson = ({url, method, data = null, type = 'json'}) ->
   response = await fetch request
 
   contentType = response.headers.get('Content-Type')
-  if not contentType?
-    type = undefined
-    data = null
-  else if contentType.startsWith('application/json')
-    type = 'json'
-    data = await response.json()
-  else if contentType.startsWith('text/plain')
-    type = 'text'
-    data = await response.text()
-  else
-    throw new Error("Unknown or unsupported content type: #{contentType}")
+  responseData =
+    if not contentType?
+      {type: undefined, data: null}
+    else if contentType.startsWith('application/json')
+      {type: 'json', data: await response.json()}
+    else if contentType.startsWith('text/plain')
+      {type: 'text', data: await response.text()}
+    else
+      throw new Error("Unknown or unsupported content type: #{contentType}")
+
+  totalCount = response.headers.get('Total-Count')
+
+  pageInfo =
+    if totalCount
+      contentRange = response.headers.get('Content-Range')
+      result = contentRange.match(/^items\s+(\d+)-(\d+)\/(\d+)$/)
+      if result[3] != totalCount
+        console.warn "do not match Total-Count(#{totalCount}) and size of Content-Range(#{result[2]})"
+      {
+        page: (data.page ? DEFAULT_PAGE)
+        per_page: (data.per_page ? DEFAULT_PER_PAGE)
+        total: parseInt(totalCount, 10)
+        start: parseInt(result[1], 10)
+        end: parseInt(result[2], 10)
+      }
+    else
+      {}
+
+  linkHeader = response.headers.get('Link')
+  link =
+    if linkHeader
+      {link: HttpLinkHeader.parse(linkHeader)}
+    else
+      {}
 
   {
     ok: response.ok
     code: parseInt(response.status, 10)
-    type
-    data
+    responseData...
+    pageInfo...
+    link...
   }
 
 export fetchJsonGet = (params) ->

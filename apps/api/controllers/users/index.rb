@@ -11,7 +11,8 @@ module Api
           messages :i18n
 
           params do
-            optional(:page).filled(:int?)
+            optional(:page).filled(:int?, gteq?: 1, lteq?: 10000)
+            optional(:per_page).filled(:int?, gteq?: 10, lteq?: 100)
             optional(:query).maybe(:str?, max_size?: 255)
           end
         end
@@ -32,7 +33,7 @@ module Api
           query = params[:query]
           query = nil if query&.empty?
           page = params[:page] || 1
-          per_page = if Hanami.env == 'production' then 100 else 10 end
+          per_page = params[:per_mage] || 20
 
           @providers = @provider_repository.ordered_all_with_adapter_by_operation(:read)
 
@@ -45,8 +46,9 @@ module Api
 
           all_list = providers_list.values.sum(Set.new).to_a.sort
           total_count = all_list.size
+          item_offset = (page - 1) * per_page
 
-          page_list = all_list[((page - 1) * per_page), per_page] || []
+          page_list = all_list[item_offset, per_page] || []
 
           users_data = @user_repository.by_name(page_list).to_a.to_h { |user| [user.name, user] }
           @users = page_list.map do |name|
@@ -70,6 +72,7 @@ module Api
           self.status = 200
           headers['Total-Count'] = total_count.to_s
           headers['Link'] = links.join(', ')
+          headers['Content-Range'] = "items #{item_offset}-#{item_offset + data.size - 1}/#{total_count}"
           self.body = generate_json(data)
         end
 
