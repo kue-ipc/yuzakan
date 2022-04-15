@@ -4,7 +4,10 @@ import {fetchJsonGet} from '../fetch_json.js'
 import BsIcon from '../bs_icon.js'
 
 searchAction = (state, {query}) ->
-  newState = {state..., query}
+  return state if state.query == query
+
+  # ページを初期化
+  newState = {state..., page: 1, query}
   [
     newState
     [indexAllUsersRunner, newState]
@@ -130,17 +133,20 @@ view = ({users, providers, page, per_page, total, query}) ->
   html.div {}, [
     search({query})
     pagination({page, per_page, total})
-    html.table {class: 'table'}, [
-      html.thead {},
-        html.tr {}, [
-          html.th {}, text 'ユーザー名'
-          html.th {}, text '表示名'
-          html.th {}, text 'メールアドレス'
-          html.th {}, text '権限レベル'
-          (providerTh({provider}) for provider in providers)...
-        ]
-      html.tbody {}, (userTr({user, providers}) for user in users)
-    ]
+    if query && total == 0
+      html.p {}, text '該当するユーザーはいません。'
+    else
+      html.table {class: 'table'}, [
+        html.thead {},
+          html.tr {}, [
+            html.th {}, text 'ユーザー名'
+            html.th {}, text '表示名'
+            html.th {}, text 'メールアドレス'
+            html.th {}, text '権限レベル'
+            (providerTh({provider}) for provider in providers)...
+          ]
+        html.tbody {}, (userTr({user, providers}) for user in users)
+      ]
   ]
 
 node = document.getElementById('admin_users')

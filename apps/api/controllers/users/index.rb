@@ -72,7 +72,12 @@ module Api
           self.status = 200
           headers['Total-Count'] = total_count.to_s
           headers['Link'] = links.join(', ')
-          headers['Content-Range'] = "items #{item_offset}-#{item_offset + data.size - 1}/#{total_count}"
+          headers['Content-Range'] =
+            if total_count.positive?
+              "items #{item_offset}-#{item_offset + data.size - 1}/#{total_count}"
+            else
+              'items 0-0/0'
+            end
           self.body = generate_json(data)
         end
 
