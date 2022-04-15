@@ -41,7 +41,7 @@ providers:
     user_email_attr: mail
     user_search_base_dn: ou=Users
     user_search_scope: sub
-    user_search_filter: ''
+    user_search_filter: "(objectclass=*)"
     password_scheme: "{CRYPT}"
     crypt_salt_format: "$6$%.16s"
 attrs:
@@ -51,7 +51,8 @@ attrs:
   order: 1
   hidden: false
   attr_mappings:
-  - provider_name: ldap
+  - provider:
+      name: ldap
     name: displayName;lang-ja
     conversion: 
 - name: ja_family_name
@@ -60,7 +61,8 @@ attrs:
   order: 2
   hidden: false
   attr_mappings:
-  - provider_name: ldap
+  - provider:
+      name: ldap
     name: sn;lang-ja
     conversion: 
 - name: ja_given_name
@@ -69,7 +71,8 @@ attrs:
   order: 3
   hidden: false
   attr_mappings:
-  - provider_name: ldap
+  - provider:
+      name: ldap
     name: givenName;lange-ja
     conversion: 
 - name: display_name
@@ -78,7 +81,8 @@ attrs:
   order: 4
   hidden: false
   attr_mappings:
-  - provider_name: ldap
+  - provider:
+      name: ldap
     name: displayName
     conversion: 
 - name: family_name
@@ -87,7 +91,8 @@ attrs:
   order: 5
   hidden: false
   attr_mappings:
-  - provider_name: ldap
+  - provider:
+      name: ldap
     name: sn
     conversion: 
 - name: given_name
@@ -96,6 +101,7 @@ attrs:
   order: 6
   hidden: false
   attr_mappings:
-  - provider_name: ldap
+  - provider:
+      name: ldap
     name: givenName
     conversion: 
