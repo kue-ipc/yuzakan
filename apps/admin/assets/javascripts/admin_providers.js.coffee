@@ -2,7 +2,7 @@ import {text, app} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
 import {fetchJsonGet} from '../fetch_json.js'
 
-attrTr = ({provider}) ->
+providerTr = ({provider}) ->
   html.tr {}, [
     html.td {},
       html.a {href: "/admin/providers/#{provider.name}"}, text provider.name
@@ -60,7 +60,7 @@ view = ({providers}) ->
         html.th {}, text 'アダプター'
         html.th {}, text '状態'
       ]
-    html.tbody {}, (attrTr({provider}) for provider in providers)
+    html.tbody {}, (providerTr({provider}) for provider in providers)
   ]
 
 node = document.getElementById('admin_providers')
