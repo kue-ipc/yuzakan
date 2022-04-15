@@ -30,9 +30,6 @@ gem 'readthis'
 # default gem
 gem 'ipaddr'
 
-# Active Support
-gem 'activesupport'
-
 # LDAP
 gem 'net-ldap'
 gem 'smbhash'

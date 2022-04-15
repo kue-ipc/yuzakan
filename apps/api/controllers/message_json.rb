@@ -62,13 +62,25 @@ module Api
       errors.each do |error|
         if error.is_a?(Hash)
           error = only_first_errors(error)
-          hash = hash.deep_merge(only_first_errors(error)) { |_k, s, o| s + o }
+          hash = hash_deep_merge(hash, only_first_errors(error)) { |_k, s, o| s + o }
         else
           list << error
         end
       end
       list << hash unless hash.empty?
       list
+    end
+
+    private def hash_deep_merge(h1, h2, &block)
+      h1.merge(h2) do |key, h1_v, h2_v|
+        if h1_v.is_a?(Hash) && h2_v.is_a?(Hash)
+          hash_deep_merge(h1_v, h2_v, &block)
+        elsif block_given?
+          block.call(key, h1_v, h2_v)
+        else
+          h2_v
+        end
+      end
     end
   end
 end
