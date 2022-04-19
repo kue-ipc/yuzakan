@@ -3,20 +3,21 @@ require 'hanami/interactor'
 class Authenticate
   include Hanami::Interactor
 
-  expose :userdatas
+  expose :provider
 
-  def initialize(providers: nil, provider_repository: nil, find_break: true)
-    @providers = providers || (provider_repository || ProviderRepository.new).ordered_all_with_adapter_by_operation(:auth).to_a
-    @find_break = find_break
+  def initialize(provider_repository: ProviderRepository.new)
+    @provider_repository = ProviderRepository.new
   end
 
   def call(params)
-    @userdatas = {}
-    @providers.each do |provider|
-      userdata = provider.auth(params[:username], params[:password])
-      if userdata
-        @userdatas[provider.name] = userdata
-        break if @find_break
+    providers = @provider_repository.ordered_all_with_adapter_by_operation(:auth)
+
+    @provider = nil
+    providers.each do |provider|
+      result = provider.auth(params[:username], params[:password])
+      if result
+        @provider = provider
+        break
       end
     rescue => e
       Hanami.logger.error e

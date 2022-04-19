@@ -14,7 +14,7 @@ module Api
           messages :i18n
 
           params do
-            required(:username).filled(:str?, max_size?: 255)
+            required(:username).filled(:str?, :name?, max_size?: 255)
             required(:password).filled(:str?, max_size?: 255)
           end
         end
@@ -24,15 +24,18 @@ module Api
         def initialize(user_repository: UserRepository.new,
                        provider_repository: ProviderRepository.new,
                        auth_log_repository: AuthLogRepository.new, **opts)
-          super(user_repository: user_repository, **opts)
-          @provider_repository = provider_repository
-          @auth_log_repository = auth_log_repository
+          super
+          @user_repository ||= user_repository
+          @provider_repository ||= provider_repository
+          @auth_log_repository ||= auth_log_repository
         end
 
         def call(params)
-          halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
+          unless params.valid?
+            halt_json 400, errors: [only_first_errors(params.errors), I18n.t('session.errors.invalid_params')]
+          end
 
-          halt_json 403, errors: ['現在のネットワークからのログインは許可されていません。'] unless allowed_user_networks?
+          halt_json 403, errors: [I18n.t('session.errors.deny_network')] unless allowed_user_networks?
 
           redirect_to_json routes.path(:session), status: 303 if current_user
 
@@ -67,15 +70,32 @@ module Api
             halt_json 500, errors: authenticate_result.errors
           end
 
-          userdata = authenticate_result.userdatas.values.first
-
-          if userdata.nil?
+          provider = authenticate_result.provider
+          if provider.nil?
             @auth_log_repository.create(**auth_log_params, result: 'failure')
-            halt_json 422, errors: ['ユーザー名またはパスワードが違います。']
+            halt_json 422, errors: [I18n.t('session.errors.incorrect')]
           end
 
-          @auth_log_repository.create(**auth_log_params, result: 'success')
-          user = create_or_upadte_user(userdata)
+          @auth_log_repository.create(**auth_log_params, result: "success:#{provider.name}")
+
+          user = @user_repository.find_by_name(params[:username])
+          if user.nil?
+            read_user = ReadUser.new(provider_repository: @provider_repository)
+            read_user_result = read_user.call({username: params[:username]})
+
+            halt_json 500, errors: read_user_result.errors if read_user_result.failure?
+
+            userdata = read_user_result.userdatas
+              .map { |data| data[:userdata] }
+              .inject({}) { |result, item| item.merge(result) }
+              .slice(:name, :display_name, :email)
+
+            register_user = RegisterUser.new(user_repository: @user_repository)
+            register_user_result = register_user.call(userdata)
+            halt_json 500, errors: register_user_result.errors if register_user_result.failure?
+
+            user = register_user_result.user
+          end
 
           # セッション情報を保存
           session[:user_id] = user.id
@@ -92,19 +112,19 @@ module Api
           })
         end
 
-        private def create_or_upadte_user(userdata)
-          name = userdata[:name]
-          display_name = userdata[:display_name] || userdata[:name]
-          email = userdata[:email]
-          user = @user_repository.find_by_name(name)
-          if user.nil?
-            @user_repository.create(name: name, display_name: display_name, email: email)
-          elsif user.display_name != display_name || user.email != email
-            @user_repository.update(user.id, display_name: display_name, email: email)
-          else
-            user
-          end
-        end
+        # private def create_or_upadte_user(userdata)
+        #   name = userdata[:name]
+        #   display_name = userdata[:display_name] || userdata[:name]
+        #   email = userdata[:email]
+        #   user = @user_repository.find_by_name(name)
+        #   if user.nil?
+        #     @user_repository.create(name: name, display_name: display_name, email: email)
+        #   elsif user.display_name != display_name || user.email != email
+        #     @user_repository.update(user.id, display_name: display_name, email: email)
+        #   else
+        #     user
+        #   end
+        # end
       end
     end
   end

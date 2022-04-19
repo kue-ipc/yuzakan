@@ -1,52 +1,42 @@
-# TODO: 未テスト、作りかけ
+require 'hanami/interactor'
+require 'hanami/validations/form'
+require_relative '../predicates/name_predicates'
 
 class RegisterUser
   include Hanami::Interactor
 
   class Validations
     include Hanami::Validations
-    messages_path 'config/messages.yml'
+    predicates NamePredicates
+    messages :i18n
 
     validations do
-      required(:name) { filled? & str? & size?(1..255) }
-      optional(:display) { filled? & str? & max_size?(255) }
-      optional(:email) { filled? & str? & max_size?(255) }
+      required(:name).filled(:str?, :name?, max_size?: 255)
+      optional(:display_name).maybe(:str?, max_size?: 255)
+      optional(:email).maybe(:str?, :email?, max_size?: 255)
     end
   end
 
-  def initialize(user:,
-                 client:,
-                 user_repository: UserRepository.new,
-                 activity_repository: ActivityRepository.new)
-    @user = user
-    @client = client
+  def initialize(user_repository: UserRepository.new)
     @user_repository = user_repository
-    @activity_repository = activity_repository
   end
 
+  expose :user
+
   def call(params)
-    activity_params = {
-      user_id: @user.id,
-      client: @client,
-      type: 'user',
-      target: params[:username],
-      action: 'register_user',
-    }
+    name = params[:name]
+    display_name = params[:display_name] || params[:name]
+    email = params[:email]
 
-    name = user_data[:name]
-    display_name = user_data[:display_name] || user_data[:name]
-    email = user_data[:email]
-
-    user = @user_repository.by_name(name).one
-    @user_id =
+    user = @user_repository.find_by_name(name)
+    @user =
       if user.nil?
         @user_repository.create(name: name, display_name: display_name, email: email)
       elsif user.display_name != display_name || user.email != email
         @user_repository.update(user.id, display_name: display_name, email: email)
       else
         user
-      end.id
-    @activity_repository.create(**activity_params, result: 'success')
+      end
   end
 
   private def valid?(params)
