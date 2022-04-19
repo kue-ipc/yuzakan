@@ -32,9 +32,9 @@ module Api
         def initialize(provider_repository: ProviderRepository.new,
                        provider_param_repository: ProviderParamRepository.new,
                        **opts)
-          super(**opts)
-          @provider_repository = provider_repository
-          @provider_param_repository = provider_param_repository
+          super
+          @provider_repository ||= provider_repository
+          @provider_param_repository ||= provider_param_repository
         end
 
         def call(params)
