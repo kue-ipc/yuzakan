@@ -31,9 +31,7 @@ module Api
         end
 
         def call(params)
-          unless params.valid?
-            halt_json 400, errors: [only_first_errors(params.errors), I18n.t('session.errors.invalid_params')]
-          end
+          halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
           halt_json 403, errors: [I18n.t('session.errors.deny_network')] unless allowed_user_networks?
 
