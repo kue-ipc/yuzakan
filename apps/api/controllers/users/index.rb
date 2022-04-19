@@ -6,6 +6,8 @@ module Api
       class Index
         include Api::Action
 
+        security_level 2
+
         class Params < Hanami::Action::Params
           predicates NamePredicates
           messages :i18n
