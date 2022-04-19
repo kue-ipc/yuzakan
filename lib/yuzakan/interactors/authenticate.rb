@@ -6,7 +6,7 @@ class Authenticate
   expose :provider
 
   def initialize(provider_repository: ProviderRepository.new)
-    @provider_repository = ProviderRepository.new
+    @provider_repository = provider_repository
   end
 
   def call(params)
