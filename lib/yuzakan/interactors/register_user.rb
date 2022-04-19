@@ -1,5 +1,5 @@
 require 'hanami/interactor'
-require 'hanami/validations/form'
+require 'hanami/validations'
 require_relative '../predicates/name_predicates'
 
 class RegisterUser
