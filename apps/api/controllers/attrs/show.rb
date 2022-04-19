@@ -8,8 +8,6 @@ module Api
         include SetAttr
 
         def call(params) # rubocop:disable Lint/UnusedMethodArgument
-          @attr_repository.delete(@attr.id)
-
           self.status = 200
           self.body =
             if current_level >= 2
