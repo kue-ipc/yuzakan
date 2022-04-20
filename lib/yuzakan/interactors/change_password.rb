@@ -3,21 +3,21 @@ require 'hanami/interactor'
 class ChangePassword
   include Hanami::Interactor
 
-  expose :userdatas
+  expose :userdata_list
 
   def initialize(provider_repository: ProviderRepository.new, providers: nil)
     @providers = providers || provider_repository.ordered_all_with_adapter_by_operation(:change_password).to_a
   end
 
   def call(params)
-    @userdatas = {}
+    @userdata_list = {}
     @providers.each do |provider|
       userdata = provider.change_password(params[:username], params[:password])
-      @userdatas[provider.name] = userdata if userdata
+      @userdata_list[provider.name] = userdata if userdata
     rescue => e
       Hanami.logger.error e
       error("パスワード変更時にエラーが発生しました。(#{provider.label})")
-      unless @userdatas.empty?
+      unless @userdata_list.empty?
         error <<~'ERROR_MESSAGE'
           一部のシステムのパスワードは変更されましたが、
           別のシステムの変更時にエラーが発生し、処理が中断されました。

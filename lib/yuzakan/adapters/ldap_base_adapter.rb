@@ -167,7 +167,7 @@ module Yuzakan
       def read(username)
         opts = search_user_opts(username)
         result = ldap.search(opts)
-        entry2userdata(entry) if result && !result.empty?
+        entry2userdata(result.first) if result && !result.empty?
       end
 
       def udpate(username, **attrs)

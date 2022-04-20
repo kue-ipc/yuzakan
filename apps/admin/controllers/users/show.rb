@@ -13,7 +13,7 @@ module Admin
 
         expose :user
         expose :userdata
-        expose :provider_userdatas
+        expose :provider_userdata_list
 
         expose :providers
         expose :attrs
@@ -37,7 +37,7 @@ module Admin
           result = @read_user.call(username: @user.name)
           flash[:errors] = result.errors if result.failure?
           @userdata = result.userdata || {}
-          @provider_userdatas = result.provider_userdatas || {}
+          @provider_userdata_list = result.provider_userdata_list || {}
         end
       end
     end

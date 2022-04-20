@@ -4,9 +4,9 @@ require 'yaml'
 describe Api::Controllers::Myself::Show do
   let(:action) {
     Api::Controllers::Myself::Show.new(activity_log_repository: activity_log_repository,
-                                            config_repository: config_repository,
-                                            user_repository: user_repository,
-                                            provider_repository: provider_repository)
+                                       config_repository: config_repository,
+                                       user_repository: user_repository,
+                                       provider_repository: provider_repository)
   }
   let(:params) { env }
   let(:env) { {'REMOTE_ADDR' => client, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
@@ -25,11 +25,11 @@ describe Api::Controllers::Myself::Show do
       name: 'provider',
       params: {
         username: 'user', display_name: 'ユーザー', email: 'user@example.jp',
-        attrs: YAML.dump({'displayName' => '表示ユーザー'}),
+        attrs: YAML.dump({'jaDisplayName' => '表示ユーザー'}),
       },
       attr_mappings: [{
-        name: 'displayName', conversion: nil,
-        attr: {name: 'display_name', display_name: '表示名', type: 'string', hidden: false},
+        name: 'jaDisplayName', conversion: nil,
+        attr: {name: 'ja_display_name', display_name: '日本語表示名', type: 'string', hidden: false},
       }])]
   }
   let(:provider_repository) {
@@ -46,7 +46,13 @@ describe Api::Controllers::Myself::Show do
       display_name: 'ユーザー',
       email: 'user@example.jp',
       clearance_level: 1,
-      userdatas: [{
+      userdata: {
+        name: 'user',
+        display_name: 'ユーザー',
+        email: 'user@example.jp',
+        attrs: {ja_display_name: '表示ユーザー'},
+      },
+      userdata_list: [{
         provider: {
           name: 'provider',
           adapter_name: 'mock',
@@ -59,7 +65,7 @@ describe Api::Controllers::Myself::Show do
           disabled: false,
           unmanageable: false,
           mfa: false,
-          attrs: {display_name: '表示ユーザー'},
+          attrs: {ja_display_name: '表示ユーザー'},
         },
       }],
     })

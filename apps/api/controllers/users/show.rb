@@ -17,29 +17,29 @@ module Api
 
         params Params
 
-        def initialize(user_repository: UserRepository.new,
-                       provider_repository: ProviderRepository.new, **opts)
+        def initialize(provider_repository: ProviderRepository.new,
+                       user_repository: UserRepository.new,
+                       **opts)
           super
-          @user_repository ||= user_repository
           @provider_repository ||= provider_repository
+          @user_repository ||= user_repository
         end
 
         def call(params)
           halt_json 400, errors: [params.errors] unless params.valid?
 
           username = params[:id]
-          user = user_repository.find_by_name(username)
 
-          read_user = ReadUser.new(provider_repository: @provider_repository)
-          result = read_user.call(username: username)
-
+          sync_user = SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
+          result = sync_user.call({username: username})
           halt_json 500, erros: result.errors if result.failure?
 
-          halt_json 404 if user.nil? && result.userdatas.empty?
+          halt_json 404 unless result.user
 
           self.body = generate_json({
-            **convert_for_json(user),
-            userdatas: result.userdatas,
+            **convert_for_json(result.user),
+            userdata: result.userdata,
+            userdata_list: result.userdata_list,
           })
         end
       end

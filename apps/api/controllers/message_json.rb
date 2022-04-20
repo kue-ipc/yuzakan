@@ -38,7 +38,11 @@ module Api
     end
 
     private def convert_entity(entity)
-      entity.to_h.except(:id, :created_at, :updated_at)
+      entity.to_h.except(
+        :id,
+        :provider_id,
+        :attr_id,
+        :created_at, :updated_at)
     end
 
     private def only_first_errors(errors)

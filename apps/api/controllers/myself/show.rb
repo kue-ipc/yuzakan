@@ -11,14 +11,16 @@ module Api
         end
 
         def call(params) # rubocop:disable Lint/UnusedMethodArgument
-          read_user = ReadUser.new(provider_repository: @provider_repository)
-          result = read_user.call(username: current_user.name)
-
+          sync_user = SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
+          result = sync_user.call({username: current_user.name})
           halt_json 500, erros: result.errors if result.failure?
 
+          halt_json 404 unless result.user
+
           self.body = generate_json({
-            **convert_for_json(current_user),
-            userdatas: result.userdatas,
+            **convert_for_json(result.user),
+            userdata: result.userdata,
+            userdata_list: result.userdata_list,
           })
         end
       end

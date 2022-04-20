@@ -21,6 +21,8 @@ class SyncUser
   end
 
   expose :user
+  expose :userdata
+  expose :userdata_list
 
   def call(params)
     read_user = ReadUser.new(provider_repository: @provider_repository)
@@ -30,15 +32,32 @@ class SyncUser
       fail!
     end
 
-    register_user = RegisterUser.new(user_repository: @user_repository)
-    register_user_result = register_user.call(read_user_result.userdata.slice(:name, :display_name, :email))
+    @userdata = read_user_result.userdata
+    @userdata_list = read_user_result.userdata_list
 
-    if register_user_result.failure?
-      register_user_result.errors.each { |msg| error(msg) }
-      fail!
+    if @userdata[:name] != params[:username]
+      error!('ユーザー名が一致しません。')
     end
 
-    @user = register_user_result.user
+    if !@userdata_list.empty?
+      register_user = RegisterUser.new(user_repository: @user_repository)
+      register_user_result = register_user.call(@userdata.slice(:name, :display_name, :email))
+      if register_user_result.failure?
+        register_user_result.errors.each { |msg| error(msg) }
+        fail!
+      end
+
+      @user = register_user_result.user
+    else
+      unregister_user = UnregisterUser.new(user_repository: @user_repository)
+      nuregister_user_result = unregister_user.call(@userdata.slice(:name))
+      if nuregister_user_result.failure?
+        nuregister_user_result.errors.each { |msg| error(msg) }
+        fail!
+      end
+
+      @user = nil
+    end
   end
 
   private def valid?(params)

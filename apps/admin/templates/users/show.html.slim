@@ -48,7 +48,7 @@ table.table
         td = label
         td = userdata.dig(key)
         - providers.each do |provider|
-          - value = provider_userdatas.dig(provider.name, key)
+          - value = provider_userdata_list.dig(provider.name, key)
           td
             - if value.nil?
               span.text-muted N/A
@@ -70,7 +70,7 @@ table.table
         td = attr.label
         td = userdata.dig(:attrs, attr.name)
         - providers.each do |provider|
-          - value = provider_userdatas.dig(provider.name, :attrs, attr.name)
+          - value = provider_userdata_list.dig(provider.name, :attrs, attr.name)
           td
             - if value.nil?
               span.text-muted N/A
