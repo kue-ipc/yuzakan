@@ -78,21 +78,11 @@ module Api
 
           user = @user_repository.find_by_name(params[:username])
           if user.nil?
-            read_user = ReadUser.new(provider_repository: @provider_repository)
-            read_user_result = read_user.call({username: params[:username]})
+            sync_user = SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
+            sync_user_result = sync_user.call({username: params[:username]})
+            halt_json 500, errors: sync_user_result.errors if sync_user_result.failure?
 
-            halt_json 500, errors: read_user_result.errors if read_user_result.failure?
-
-            userdata = read_user_result.userdatas
-              .map { |data| data[:userdata] }
-              .inject({}) { |result, item| item.merge(result) }
-              .slice(:name, :display_name, :email)
-
-            register_user = RegisterUser.new(user_repository: @user_repository)
-            register_user_result = register_user.call(userdata)
-            halt_json 500, errors: register_user_result.errors if register_user_result.failure?
-
-            user = register_user_result.user
+            user = sync_user_result.user
           end
 
           # セッション情報を保存
@@ -109,20 +99,6 @@ module Api
             deleted_at: current_time + current_config.session_timeout,
           })
         end
-
-        # private def create_or_upadte_user(userdata)
-        #   name = userdata[:name]
-        #   display_name = userdata[:display_name] || userdata[:name]
-        #   email = userdata[:email]
-        #   user = @user_repository.find_by_name(name)
-        #   if user.nil?
-        #     @user_repository.create(name: name, display_name: display_name, email: email)
-        #   elsif user.display_name != display_name || user.email != email
-        #     @user_repository.update(user.id, display_name: display_name, email: email)
-        #   else
-        #     user
-        #   end
-        # end
       end
     end
   end
