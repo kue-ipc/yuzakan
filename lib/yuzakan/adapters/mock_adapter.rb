@@ -130,8 +130,8 @@ module Yuzakan
       end
 
       def auth(username, password)
-        @users[username] if @passwords[username]&.==(password) &&
-                            [:locked, :disabled].none? { |flag| @users.dig(username, flag) }
+        @passwords[username]&.==(password) &&
+          [:locked, :disabled].none? { |flag| @users.dig(username, flag) }
       end
 
       def change_password(username, password)

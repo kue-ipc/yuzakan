@@ -11,7 +11,7 @@ class SyncUser
     messages :i18n
 
     validations do
-      required(:name).filled(:str?, :name?, max_size?: 255)
+      required(:username).filled(:str?, :name?, max_size?: 255)
     end
   end
 
@@ -31,7 +31,7 @@ class SyncUser
     end
 
     register_user = RegisterUser.new(user_repository: @user_repository)
-    register_user_result = register_user.call(read_user_result.userdata.sliec(:name, :display_name, :email))
+    register_user_result = register_user.call(read_user_result.userdata.slice(:name, :display_name, :email))
 
     if register_user_result.failure?
       register_user_result.errors.each { |msg| error(msg) }

@@ -187,8 +187,7 @@ class Provider < Hanami::Entity
     need_adapter!
     need_mappings!
 
-    raw_userdata = @adapter.auth(username, password)
-    @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
+    @adapter.auth(username, password)
   end
 
   def change_password(username, password)

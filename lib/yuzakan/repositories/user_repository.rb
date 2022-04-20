@@ -24,48 +24,4 @@ class UserRepository < Hanami::Repository
   def count(_)
     users.count
   end
-
-  def auth(name, password)
-    providers = ProviderRepository.new.ordered_all_with_adapter_by_operation(:auth)
-    result = nil
-    providers.each do |provider|
-      result = provider.auth(name, password)
-      break if result
-    end
-
-    return unless result
-
-    display_name = result[:display_name] || result[:name]
-    user = by_name(name)
-    if user
-      update(user.id, display_name: display_name) if user.display_name != display_name
-      update(user.id, email: result[:email]) if user.email != result[:email]
-      find(user.id)
-    else
-      create(name: name, display_name: display_name, email: result[:email])
-    end
-  end
-
-  def sync(name)
-    providers = ProviderRepository.new.ordered_all_with_adapter_by_operation(:read)
-    result = nil
-    providers.each do |provider|
-      result = provider.read(name)
-      break if result
-    end
-
-    return unless result
-
-    display_name = result[:display_name] || result[:name]
-    email = result[:email]
-    user = by_name(name).one
-
-    return create(name: name, display_name: display_name, email: email) unless user
-
-    if user.display_name != display_name || user.email != email
-      return update(user.id, {display_name: display_name, email: email})
-    end
-
-    user
-  end
 end

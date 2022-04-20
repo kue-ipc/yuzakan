@@ -3,7 +3,6 @@ require_relative 'abstract_adapter'
 module Yuzakan
   module Adapters
     class LocalAdapter < AbstractAdapter
-
       self.name = 'local'
       self.label = 'ローカル'
       self.version = '0.0.1'
@@ -53,9 +52,9 @@ module Yuzakan
 
       def auth(username, password)
         user = @repository.find_by_name(username)
-        user2userdata(user) if user &&
-                               !user.hashed_password.start_with?('!') &&
-                               user.verify_password(password)
+        user &&
+          !user.hashed_password.start_with?('!') &&
+          user.verify_password(password)
       end
 
       def change_password(username, password)
@@ -64,7 +63,7 @@ module Yuzakan
 
         hashed_password = LocalUser.create_hashed_password(password)
         hashed_password = LocalUser.lock_password(hashed_password) if user.locked?
-    
+
         @repository.update(user.id, hashed_password: hashed_password)
       end
 

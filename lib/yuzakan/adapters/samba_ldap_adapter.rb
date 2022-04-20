@@ -54,9 +54,9 @@ module Yuzakan
 
       def auth(username, password)
         user = read(username)
-        user if user &&
-                ['D', 'L'].none? { |c| user.dig(:attrs, :sambaacctflags)&.include?(c) } &&
-                user['sambantpassword'] == generate_nt_password(password)
+        user &&
+          ['D', 'L'].none? { |c| user.dig(:attrs, :sambaacctflags)&.include?(c) } &&
+          user['sambantpassword'] == generate_nt_password(password)
       end
 
       private def change_password_operations(password)

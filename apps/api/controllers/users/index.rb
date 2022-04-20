@@ -53,6 +53,7 @@ module Api
           page_list = all_list[item_offset, per_page] || []
 
           users_data = @user_repository.by_name(page_list).to_a.to_h { |user| [user.name, user] }
+
           @users = page_list.map do |name|
             users_data[name] || create_user(name)
           end
@@ -83,18 +84,12 @@ module Api
           self.body = generate_json(data)
         end
 
-        private def create_user(name)
-          userdata = nil
-          @providers.each do |provider|
-            userdata = provider.read(name)
-            break if userdata
-          end
+        private def create_user(username)
+          @sync_user ||= SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
+          sync_user_result = @sync_user.call({username: username})
+          halt_json 500, errors: sync_user_result.errors if sync_user_result.failure?
 
-          name = userdata[:name]
-          display_name = userdata[:display_name] || userdata[:name]
-          email = userdata[:email]
-
-          @user_repository.create(name: name, display_name: display_name, email: email)
+          sync_user_result.user
         end
       end
     end

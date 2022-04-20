@@ -167,7 +167,7 @@ module Yuzakan
       def read(username)
         opts = search_user_opts(username)
         result = ldap.search(opts)
-        entry2userdata(result.first) if result
+        entry2userdata(entry) if result && !result.empty?
       end
 
       def udpate(username, **attrs)
@@ -181,8 +181,7 @@ module Yuzakan
       def auth(username, password)
         opts = search_user_opts(username).merge(password: password)
         # bind_as is re bind, so DON'T USE `ldap`
-        result = generate_ldap.bind_as(opts)
-        entry2userdata(result.first) if result
+        generate_ldap.bind_as(opts)
       end
 
       def change_password(username, password)
