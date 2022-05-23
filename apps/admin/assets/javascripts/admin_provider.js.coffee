@@ -58,8 +58,6 @@ destroyWebData = new WebData {
   ]
 }
 
-parentNames = ['provider']
-
 providerParamAction = (state, {name, value}) ->
   {state..., provider: {state.provider..., params: {state.provider.params..., [name]: value}}}
 
