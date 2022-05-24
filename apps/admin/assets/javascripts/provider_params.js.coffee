@@ -84,7 +84,7 @@ inputList = (props) ->
     html.label {class: 'form-label', for: id}, text props.label
     html.select {
       id: id
-      class: 'form-control'
+      class: 'form-select'
       name: fieldName(props.name, parentNames)
       'aria-describedby': describeId
       oninput: (state, event) -> [props.action, {name: props.name, value: event.target.value}]

@@ -206,7 +206,7 @@ view = ({name, provider, adapters}) ->
     html.div {class: 'mb-3'}, [
       html.label {class: 'form-label', for: 'provider-adapter_name'}, text 'アダプター'
       html.select {
-        id: 'provider-adapter_name', class: 'form-control'
+        id: 'provider-adapter_name', class: 'form-select'
         oninput: (state, event) -> [providerAction, {provider: {adapter_name: event.target.value}}]
       },
         if provider.adapter_name?

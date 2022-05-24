@@ -57,7 +57,7 @@ attrMappingTd = ({attr, provider}) ->
         ]
     }
     html.select {
-      class: 'form-control'
+      class: 'form-select'
       oninput: (state, event) ->
         [
           attrMappingAction
@@ -102,7 +102,7 @@ attrTr = ({attr, index, providers}) ->
     ]
     html.td {class: 'table-primary'}, [
       html.select {
-        class: 'form-control'
+        class: 'form-select'
         onchange: (state, event) -> [attrAction, {name: attr.name, attr: {type: event.target.value}}]
       }, attrTypes.map (attrType) ->
         html.option {
