@@ -25,6 +25,7 @@ class UpdateAttr
         optional(:conversion).maybe(:str?)
       } } } }
       # rubocop:enable all
+      optional(:code).maybe(:str?, max_size?: 1024)
     end
   end
 

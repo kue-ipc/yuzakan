@@ -3,6 +3,7 @@ import * as html from '../hyperapp-html.js'
 import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '../fetch_json.js'
 import csrf from '../csrf.js'
 import ConfirmDialog from '../confirm_dialog.js'
+import InputTextDialog from '../input_text_dialog.js'
 
 attrTypes = [
   {name: 'string', value: 'string', label: '文字列'}
@@ -32,6 +33,12 @@ deleteConfirm = new ConfirmDialog {
     color: 'danger'
     label: '削除'
   }
+}
+
+inputCode = new InputTextDialog {
+  id: 'admin_attrs_input_code'
+  title: 'コードの入力'
+  size: 1024
 }
 
 providerTh = ({provider}) ->
@@ -102,19 +109,36 @@ attrTr = ({attr, index, providers}) ->
     ]
     html.td {class: 'table-primary'}, [
       html.select {
-        class: 'form-select'
+        class: 'form-select mb-1'
         onchange: (state, event) -> [attrAction, {name: attr.name, attr: {type: event.target.value}}]
       }, attrTypes.map (attrType) ->
         html.option {
           value: attrType.value
           selected: attrType.value == attr.type
         }, text attrType.label
+
       html.input {
+        id: "#{attr.name}-hidden-check"
         type: 'checkbox'
-        class: 'form-check-input'
+        class: 'btn-check'
+        autocomplete: 'off'
         checked: attr.hidden
         onchange: (state, event) -> [attrAction, {name: attr.name, attr: {hidden: !attr.hidden}}]
       }
+      html.label {
+        class:
+          if attr.hidden
+            'btn btn-secondary'
+          else
+            'btn btn-outline-secondary'
+        for: "#{attr.name}-hidden-check"
+      }, text '隠し'
+      html.button {
+        class: if attr.code? then 'btn btn-primary ms-1' else 'btn btn-outline-primary ms-1'
+        onclick: (state) -> [state, [inputCodeRunner, {attr}]]
+      },
+        text 'コード'
+
     ]
     html.td {},
       if attr.order
@@ -185,6 +209,17 @@ attrMappingAction = (state, {name, attr_mapping}) ->
       state...
       newAttr: {state.newAttr..., attr_mappings: replaceAttrMapping(state.newAttr.mappings, attr_mapping)}
     }
+
+inputCodeRunner = (dispatch, {attr}) ->
+  code = await inputCode.inputPromise {
+    messages: ["#{attr.name} のJavaScriptのコードを入力してください。"]
+    value: attr.value ? ''
+  }
+  if code?
+    if code
+      dispatch(attrAction, {name: attr.name, code})
+    else
+      dispatch(attrAction, {name: attr.name, code: null})
 
 createAttrRunner = (dispatch, {attr}) ->
   {name, newName, attr...} = attr
