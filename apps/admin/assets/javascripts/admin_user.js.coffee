@@ -296,10 +296,43 @@ view = ({mode, name, user, providers, attrs}) ->
             )...
           ]
     ]
+    html.div {class: 'mb-1'},
+      if name?
+        [
+          html.div {class: 'form-check form-switch'}, [
+            html.input {
+              id: 'user-mode-edit'
+              class: 'form-check-input'
+              type: 'checkbox'
+              role: 'switch'
+              checked: mode != 'show'
+              onchange: (state, event) -> {state..., mode: if mode == 'show' then 'edit' else 'show'}
+            }
+            html.label {
+              class: 'form-check-lable'
+              for: 'user-mode-edit'
+            }, text '編集モード'
+          ]
+          if mode != 'show'
+            html.div {}, [
+              html.button {
+                class: 'btn btn-warning'
+                onclick: (state) -> [state, [updateUserRunner, {name, user}]]
+              }, text '更新'
+              html.button {
+                class: 'ms-1 btn btn-danger'
+                onclick: (state) -> [state, [destroyUserRunner, {name}]]
+              }, text '削除'
+            ]
+        ]
+      else
+        [
+          html.button {
+            class: 'btn btn-primary'
+            onclick: (state) -> [state, [createUserRunner, {user}]]
+          }, text '作成'
+        ]
   ]
-
-
-
 
 
 node = document.getElementById('admin_user')
