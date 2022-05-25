@@ -167,7 +167,7 @@ class Provider < Hanami::Entity
 
     @cache_store.fetch(user_key(username)) do
       raw_userdata = @adapter.read(username)
-      @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
+      @cache_store[user_key(username)] = raw_userdata || convert_userdata(raw_userdata)
     end
   end
 
@@ -176,10 +176,7 @@ class Provider < Hanami::Entity
     need_mappings!
 
     raw_userdata = @adapter.update(username, **map_userdata(userdata))
-    return if raw_userdata.nil?
-
-    clear_user_list_cache
-    @cache_store[user_key(username)] = convert_userdata(raw_userdata)
+    @cache_store[user_key(username)] = raw_userdata || convert_userdata(raw_userdata)
   end
 
   def delete(username)
@@ -187,10 +184,11 @@ class Provider < Hanami::Entity
     need_mappings!
 
     raw_userdata = @adapter.delete(username)
+    @cache_store[user_key(username)] = nil
     return if raw_userdata.nil?
 
     clear_user_list_cache
-    @cache_store.delete(user_key(username)) || convert_userdata(raw_userdata)
+    convert_userdata(raw_userdata)
   end
 
   def auth(username, password)
