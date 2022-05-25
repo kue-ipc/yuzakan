@@ -212,14 +212,14 @@ attrMappingAction = (state, {name, attr_mapping}) ->
 
 inputCodeRunner = (dispatch, {attr}) ->
   code = await inputCode.inputPromise {
-    messages: ["#{attr.name} のJavaScriptのコードを入力してください。"]
-    value: attr.value ? ''
+    messages: ["#{attr.name} のデフォルト値を生成するJavaScriptのコードを入力してください。"]
+    value: attr.code ? ''
   }
   if code?
     if code
-      dispatch(attrAction, {name: attr.name, code})
+      dispatch(attrAction, {name: attr.name, attr: {code}})
     else
-      dispatch(attrAction, {name: attr.name, code: null})
+      dispatch(attrAction, {name: attr.name, attr: {code: null}})
 
 createAttrRunner = (dispatch, {attr}) ->
   {name, newName, attr...} = attr
@@ -261,7 +261,7 @@ upAttrAction = (state, {name}) ->
         state.attrs[attrIndex - 1].order - state.attrs[attrIndex - 2].order
 
   if diffOrder == 1
-    console.log '隙間がありません。'
+    console.warn '隙間がありません。'
     return state
  
   newAttr = {state.attrs[attrIndex]..., order: state.attrs[attrIndex - 1].order - Math.floor(diffOrder / 2)}
@@ -288,7 +288,7 @@ downAttrAction = (state, {name}) ->
         diffOreder = state.attrs[attrIndex + 2].order - state.attrs[attrIndex + 1].order
 
   if diffOrder == 1
-    console.log '隙間がありません。'
+    console.warn '隙間がありません。'
     return state
  
   newAttr = {

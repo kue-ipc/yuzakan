@@ -57,7 +57,7 @@ export default class InputTextDialog
       ]
     }
 
-  modalView: ({title, messages, value, size, action, close}) =>
+  modalView: ({title, messages, value, size, action, close, shown}) =>
     modalDialog {
       id: @id,
       size: 'lg'
@@ -70,22 +70,26 @@ export default class InputTextDialog
           onclick: (state) =>
             @result = value
             @modal.hide()
-            state
+            {state..., value: '', shown: false}
         }
       close: @close
-    }, @modalBody {messages, value, size}
+    }, @modalBody {messages, value, size, shown}
 
-  modalBody: ({messages, value, size}) ->
-    html.div {}, [
-      (html.p({}, text message) for message in messages)...
-      html.textarea {
-        id: "#{@id}-input-textarea"
-        class: 'form-control'
-        maxlength: size
-        rows: 10
-        oninput: (state, event) -> {state..., value: event.target.value}
-      }, text value
-    ]
+  modalBody: ({messages, value, size, shown}) ->
+    html.div {},
+      if shown
+        [
+          (html.p({}, text message) for message in messages)...
+          html.textarea {
+            id: "#{@id}-input-textarea"
+            class: 'form-control'
+            maxlength: size
+            rows: 10
+            oninput: (state, event) -> {state..., value: event.target.value}
+          }, text value
+        ]
+      else
+        html.p {}, text '...'
 
   fireModalMessage: (state) ->
     event = new CustomEvent(InputTextDialog.MESSAGE_EVENT, {detail: state})
@@ -102,7 +106,7 @@ export default class InputTextDialog
     [{state..., params...}, focus("#{@id}-input-textarea")]
 
   inputPromise: ({messages, value}) ->
-    @fireModalMessage({messages, value})
+    @fireModalMessage({messages, value, shown: true})
     @result = null
     @modal.show()
 
