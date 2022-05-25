@@ -59,7 +59,7 @@ destroyWebData = new WebData {
 }
 
 getAttrDefaultValue = ({userdata, attr}) ->
-  return unless attr.code?
+  return unless attr.code
 
   code =
     if /\breturn\b/.test(attr.code)
@@ -246,7 +246,7 @@ view = ({mode, name, user, providers, attrs}) ->
       html.thead {},
         html.tr {}, [
           html.th {}, text '名前'
-          html.th {}, text '値/操作'
+          html.th {}, text '値'
           (html.th({}, text provider.label) for provider in providers)...
         ]
       html.tbody {},
@@ -265,10 +265,12 @@ view = ({mode, name, user, providers, attrs}) ->
             (
               for userdata in provider_userdatas
                 html.td {},
-                  if userdata?[name]
-                    text userdata?[name]
-                  else
+                  if not userdata?[name]
                     html.span {class: 'text-muted'}, text 'N/A'
+                  else if user[name] == userdata[name]
+                    html.span {class: 'text-success'}, text userdata?[name]
+                  else
+                    html.span {class: 'text-danger'}, text userdata?[name]
             )...
           ]
     ]
@@ -292,7 +294,7 @@ view = ({mode, name, user, providers, attrs}) ->
             html.td {}, text attr.label
             html.td {}, text defaultValue ? ''
             html.td {},
-              if !defaultValue?
+              if not defaultValue?
                 html.span {}, text value ? ''
               else if defaultValue != value
                 html.span {class: 'text-danger'}, text value ? ''
@@ -301,10 +303,12 @@ view = ({mode, name, user, providers, attrs}) ->
             (
               for userdata in provider_userdatas
                 html.td {},
-                  if userdata?.attrs?[attr.name]
-                    text userdata?.attrs?[attr.name]
-                  else
+                  if not userdata?.attrs?[attr.name]
                     html.span {class: 'text-muted'}, text 'N/A'
+                  else if value == userdata.attrs[attr.name]
+                    html.span {class: 'text-success'}, text userdata.attrs[attr.name]
+                  else
+                    html.span {class: 'text-danger'}, text userdata.attrs[attr.name]
             )...
           ]
     ]
@@ -321,7 +325,7 @@ view = ({mode, name, user, providers, attrs}) ->
               onchange: (state, event) -> {state..., mode: if mode == 'show' then 'edit' else 'show'}
             }
             html.label {
-              class: 'form-check-lable'
+              class: 'form-check-label'
               for: 'user-mode-edit'
             }, text '編集モード'
           ]
