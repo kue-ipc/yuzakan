@@ -18,3 +18,4 @@ resources :users, only: [:index, :show] do
 end
 
 resources :groups, only: [:index]
+get '/groups/:id', to: 'groups#show'

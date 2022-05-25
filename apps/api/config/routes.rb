@@ -25,3 +25,4 @@ resources :users, only: [:index, :show, :create, :update, :destroy] do
 end
 
 resources :groups, only: [:index]
+get '/groups/:id', to: 'groups#show'
