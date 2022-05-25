@@ -17,5 +17,4 @@ resources :users, only: [:index, :show] do
   resource :password, only: [:create]
 end
 
-resources :groups, only: [:index]
-get '/groups/:id', to: 'groups#show'
+resources :groups, only: [:index, :show]

@@ -38,6 +38,7 @@ class ReadUser
     rescue => e
       Hanami.logger.error e
       error("ユーザー情報の読み込み時にエラーが発生しました。(#{provider.label}")
+      raise if Hanami.env == 'development'
     end
   end
 
