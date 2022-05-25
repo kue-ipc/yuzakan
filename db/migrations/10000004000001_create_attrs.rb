@@ -11,6 +11,8 @@ Hanami::Model.migration do
       column :order, Integer, null: false
       column :hidden, TrueClass, null: false, default: false
 
+      column :code, String, size: 4096, null: false, default: ''
+
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
 

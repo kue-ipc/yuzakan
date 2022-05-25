@@ -87,7 +87,7 @@ attrs:
   type: string
   order: 4
   hidden: false
-  code: 
+  code: ''
   attr_mappings:
   - provider:
       name: ldap

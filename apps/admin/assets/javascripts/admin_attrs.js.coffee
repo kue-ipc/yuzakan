@@ -38,7 +38,7 @@ deleteConfirm = new ConfirmDialog {
 inputCode = new InputTextDialog {
   id: 'admin_attrs_input_code'
   title: 'コードの入力'
-  size: 1024
+  size: 4096
 }
 
 providerTh = ({provider}) ->
@@ -134,7 +134,7 @@ attrTr = ({attr, index, providers}) ->
         for: "#{attr.name}-hidden-check"
       }, text '隠し'
       html.button {
-        class: if attr.code? then 'btn btn-primary ms-1' else 'btn btn-outline-primary ms-1'
+        class: if attr.code then 'btn btn-primary ms-1' else 'btn btn-outline-primary ms-1'
         onclick: (state) -> [state, [inputCodeRunner, {attr}]]
       },
         text 'コード'
