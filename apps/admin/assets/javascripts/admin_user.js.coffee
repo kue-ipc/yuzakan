@@ -4,7 +4,6 @@ import {text, app} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
 import {fetchJsonGet} from '../fetch_json.js'
 import {fieldName, fieldId} from '../form_helper.js'
-import providerParams from './provider_params.js'
 import WebData from '../web_data.js'
 import ConfirmDialog from '../confirm_dialog.js'
 import csrf from '../csrf.js'
@@ -59,9 +58,37 @@ destroyWebData = new WebData {
   ]
 }
 
-# userParamAction = (state, {name, value}) ->
-#   {state..., user: {state.user..., params: {state.user.params..., [name]: value}}}
+getAttrDefaultValue = ({userdata, attr}) ->
+  return unless attr.code?
 
+  code =
+    if /\breturn\b/.test(attr.code)
+      attr.code
+    else
+      "return #{attr.code};"
+
+
+  func = new Function(
+    '{name, display_name, email, attrs}',
+    """
+      var username = name;
+      #{code}
+    """
+  )
+  try
+    result = func {
+      name: userdata.name
+      display_name: userdata.display_name
+      email: userdata.email
+      attrs: {userdata.attrs...}
+    }
+  catch error
+    console.warn(error)
+    return
+
+  result
+
+# TODO: まだ何も変えていない
 userAction = (state, {name, user}) ->
   newState = {
     state...
@@ -77,28 +104,7 @@ userAction = (state, {name, user}) ->
     return newState if provider.param_types?
     break
 
-  [
-    newState
-    [showProviderRunner, {name: user.provider_name}]
-  ]
-
-providerAction = (state, {name, provider}) ->
-  name ?= provider.name
-  providers = for current in state.providers
-    if current.name == provider.name
-      {current..., provider...}
-    else
-      current
-  {state..., providers}
-
-showProviderRunner = (dispatch, {name}) ->
-  return unless name?
-
-  response = await fetchJsonGet({url: "/api/providers/#{name}"})
-  if response.ok
-    dispatch(providerAction, {name: name, provider: response.data})
-  else
-    console.log respons
+  newState
 
 createUserRunner = (dispatch, {user}) ->
   response = await createWebData.submitPromise {data: {csrf()..., user...}}
@@ -107,7 +113,6 @@ createUserRunner = (dispatch, {user}) ->
     dispatch(userAction, {name: user.name, user})
   else
     console.error response
-
 
 updateUserRunner = (dispatch, {name, user}) ->
   response = await updateWebData.submitPromise {url: "/api/users/#{name}", data: {csrf()..., user...}}
@@ -133,7 +138,7 @@ showUserRunner = (dispatch, {name}) ->
   if response.ok
     dispatch(userAction, {user: response.data})
   else
-    console.log respons
+    console.error respons
 
 initAllProvidersAction = (state, {providers}) ->
   {state..., providers}
@@ -174,12 +179,9 @@ init = [
 ]
 
 view = ({mode, name, user, providers, attrs}) ->
-  console.log {mode, name, user, providers, attrs}
-
   provider_userdatas =
     for provider in providers
       (user.userdata_list.find (data) -> data.provider.name == provider.name)?.userdata
-  console.log provider_userdatas
 
   html.div {}, [
     html.h4 {}, text '基本情報'
@@ -277,15 +279,25 @@ view = ({mode, name, user, providers, attrs}) ->
       html.thead {},
         html.tr {}, [
           html.th {}, text '属性名'
-          html.th {}, text '値'
+          html.th {}, text 'デフォルト値'
+          html.th {}, text '設定値'
           (html.th({}, text provider.label) for provider in providers)...
         ]
       html.tbody {},
         for attr in attrs
-          console.log attr
+          defaultValue = getAttrDefaultValue({userdata: user.userdata, attr})
+          value = user.userdata.attrs[attr.name]
+
           html.tr {}, [
             html.td {}, text attr.label
-            html.td {}, text user.userdata.attrs[attr.name] ? ''
+            html.td {}, text defaultValue ? ''
+            html.td {},
+              if !defaultValue?
+                html.span {}, text value ? ''
+              else if defaultValue != value
+                html.span {class: 'text-danger'}, text value ? ''
+              else
+                html.span {class: 'text-success'}, text value ? ''
             (
               for userdata in provider_userdatas
                 html.td {},
