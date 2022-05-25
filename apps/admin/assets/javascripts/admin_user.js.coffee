@@ -88,23 +88,14 @@ getAttrDefaultValue = ({userdata, attr}) ->
 
   result
 
-# TODO: まだ何も変えていない
 userAction = (state, {name, user}) ->
-  newState = {
+  history.pushState(null, null, "/admin/users/#{name}") if name? && name != state.name
+
+  {
     state...
     name: name ? state.name
     user: {state.user..., user...}
   }
-
-  history.pushState(null, null, "/admin/users/#{name}") if name? && name != state.name
-
-  return newState unless user.provider_name?
-
-  for provider in state.providers when provider.name == user.provider_name
-    return newState if provider.param_types?
-    break
-
-  newState
 
 createUserRunner = (dispatch, {user}) ->
   response = await createWebData.submitPromise {data: {csrf()..., user...}}

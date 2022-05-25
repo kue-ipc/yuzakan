@@ -62,13 +62,13 @@ providerParamAction = (state, {name, value}) ->
   {state..., provider: {state.provider..., params: {state.provider.params..., [name]: value}}}
 
 providerAction = (state, {name, provider}) ->
+  history.pushState(null, null, "/admin/providers/#{name}") if name? && name != state.name
+
   newState = {
     state...
     name: name ? state.name
     provider: {state.provider..., provider...}
   }
-
-  history.pushState(null, null, "/admin/providers/#{name}") if name? && name != state.name
 
   return newState unless provider.adapter_name?
 
