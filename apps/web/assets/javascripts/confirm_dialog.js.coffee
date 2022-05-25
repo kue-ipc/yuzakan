@@ -36,7 +36,7 @@ export default class ConfirmDialog
 
     modalDialogNode = document.createElement('div')
     modalDialogNode.id = "#{@id}-modal-dialog"
-    modalDialogNode.classList.add('modal-dialog', 'modal-dialog-centered')
+    modalDialogNode.classList.add('modal-dialog')
 
     @modalNode.appendChild(modalDialogNode)
     document.body.appendChild(@modalNode)
@@ -62,6 +62,7 @@ export default class ConfirmDialog
   modalView: ({status, title, action, close, agreement_required, agreed, ...props}) =>
     modalDialog {
       id: @id,
+      centered: true
       status
       title
       closable: true
