@@ -35,7 +35,7 @@ module Api
           query = params[:query]
           query = nil if query&.empty?
           page = params[:page] || 1
-          per_page = params[:per_mage] || 20
+          per_page = params[:per_mage] || 50
 
           @providers = @provider_repository.ordered_all_with_adapter_by_operation(:read)
 
@@ -87,8 +87,10 @@ module Api
         private def create_user(username)
           @sync_user ||= SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
           sync_user_result = @sync_user.call({username: username})
-          halt_json 500, errors: sync_user_result.errors if sync_user_result.failure?
-
+          if sync_user_result.failure?
+            Hanami.logger.error "failed sync user: #{username} - #{sync_user_result.errors}"
+            halt_json 500, errors: sync_user_result.errors
+          end
           sync_user_result.user
         end
       end

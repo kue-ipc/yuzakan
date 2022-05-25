@@ -78,7 +78,7 @@ module Yuzakan
 
       def group_list
         generate_ldap.search(search_group_opts('*')).map do |group|
-          group[@params[:group_name_attr]].first
+          group[@params[:group_name_attr]].first.downcase
         end
       end
 
@@ -91,7 +91,7 @@ module Yuzakan
 
       private def entry2groupdata(entry)
         {
-          name: entry.first(@params[:group_name_attr]),
+          name: entry.first(@params[:group_name_attr]).downcase,
           display_name: entry.first(@params[:group_display_name_attr]),
         }
       end

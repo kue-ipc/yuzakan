@@ -78,7 +78,7 @@ module Yuzakan
                        '指定しない場合はユーザー検索のベースに作成します。',
           type: :string,
           required: false,
-          placeholder: 'ou=Users',
+          placeholder: 'ou=Users,dc=example,dc=jp',
         }, {
           name: :user_name_attr,
           label: 'ユーザー名の属性',
@@ -103,7 +103,7 @@ module Yuzakan
                        '指定しない場合はLDAPサーバーのベースから検索します。',
           type: :string,
           required: false,
-          placeholder: 'ou=Users',
+          placeholder: 'ou=Users,dc=example,dc=jp',
         }, {
           name: :user_search_scope,
           label: 'ユーザー検索のスコープ',
@@ -198,7 +198,7 @@ module Yuzakan
 
       def list
         generate_ldap.search(search_user_opts('*')).map do |user|
-          user[@params[:user_name_attr]].first
+          user[@params[:user_name_attr]].first.downcase
         end
       end
 
@@ -322,9 +322,9 @@ module Yuzakan
         end
 
         {
-          name: entry.first(@params[:user_name_attr]),
+          name: entry.first(@params[:user_name_attr]).downcase,
           display_name: entry.first(@params[:user_display_name_attr]),
-          email: entry.first(@params[:user_email_attr]),
+          email: entry.first(@params[:user_email_attr])&.downcase,
           attrs: attrs,
         }
       end

@@ -39,6 +39,10 @@ module Yuzakan
             default: 'sAMAccountName',
             fixed: true,
           }, {
+            name: :user_display_name_attr,
+            default: 'displayName',
+            placeholder: 'displayName',
+          }, {
             name: :user_search_filter,
             default: '(objectclass=user)',
             description:

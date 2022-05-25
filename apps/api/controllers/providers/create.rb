@@ -62,7 +62,8 @@ module Api
               value = param_type.convert_value(provider_params_params[param_type.name])
               next if value.nil?
 
-              @provider_repository.add_param({name: param_type.name.to_s, value: param_type.dump_value(value)})
+              data = {name: param_type.name.to_s, value: param_type.dump_value(value)}
+              @provider_repository.add_param(provider, data)
             end
           end
 
