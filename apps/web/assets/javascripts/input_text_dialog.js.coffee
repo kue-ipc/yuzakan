@@ -34,7 +34,7 @@ export default class InputTextDialog
 
     modalDialogNode = document.createElement('div')
     modalDialogNode.id = "#{@id}-modal-dialog"
-    modalDialogNode.classList.add('modal-dialog', 'modal-dialog-centered')
+    modalDialogNode.classList.add('modal-dialog')
 
     @modalNode.appendChild(modalDialogNode)
     document.body.appendChild(@modalNode)
@@ -60,6 +60,8 @@ export default class InputTextDialog
   modalView: ({title, messages, value, size, action, close}) =>
     modalDialog {
       id: @id,
+      size: 'lg'
+      centered: true
       title
       closable: true
       action:
@@ -78,7 +80,9 @@ export default class InputTextDialog
       (html.p({}, text message) for message in messages)...
       html.textarea {
         id: "#{@id}-input-textarea"
+        class: 'form-control'
         maxlength: size
+        rows: 10
         oninput: (state, event) -> {state..., value: event.target.value}
       }, text value
     ]
