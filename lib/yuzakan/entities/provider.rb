@@ -16,6 +16,12 @@ class Provider < Hanami::Entity
     end
   end
 
+  class NoGroupError < StandardError
+    def initialize(msg = 'Cannot manage group.')
+      super
+    end
+  end
+
   def initialize(attributes = nil)
     return super if attributes.nil? || attributes[:adapter_name].nil? # rubocop:disable Lint/ReturnInVoidContext
 
@@ -137,6 +143,10 @@ class Provider < Hanami::Entity
     raise NoMappingsError unless attr_mappings
   end
 
+  def need_group!
+    raise NoGroupError unless group
+  end
+
   def check
     need_adapter!
     @adapter.check
@@ -247,6 +257,23 @@ class Provider < Hanami::Entity
     need_adapter!
     @cache_store.fetch(user_search_key(query)) do
       @cache_store[user_search_key(query)] = @adapter.search(query)
+    end
+  end
+
+  def group_read(groupname)
+    need_adapter!
+    need_group!
+    @cache_store.fetch(group_key(groupname)) do
+      groupdata = @adapter.group_read(groupname)
+      @cache_store[group_key(groupname)] = groupdata
+    end
+  end
+
+  def group_list
+    need_adapter!
+    need_group!
+    @cache_store.fetch(group_list_key) do
+      @cache_store[group_list_key] = @adapter.group_list
     end
   end
 end

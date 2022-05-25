@@ -207,6 +207,9 @@ module Yuzakan
           Net::LDAP::Filter.eq(@params[:user_name_attr], query) |
           Net::LDAP::Filter.eq(@params[:user_display_name_attr], query) |
           Net::LDAP::Filter.eq(@params[:user_email_attr], query)
+
+        filter &= Net::LDAP::Filter.construct(@params[:user_search_filter]) if @params[:user_search_filter]
+
         generate_ldap.search(search_user_opts('*', filter: filter)).map do |user|
           user[@params[:user_name_attr]].first
         end
@@ -271,8 +274,10 @@ module Yuzakan
         Net::LDAP.new(opts)
       end
 
-      private def search_user_opts(name, base: @params[:user_searh_base_dn] || @params[:base_dn],
-                                   scope: @params[:user_search_scope], filter: @params[:user_search_filter])
+      private def search_opts(key, value,
+                              base: @params[:base_dn],
+                              scope: 'sub',
+                              filter: nil)
         opts = {}
 
         opts[:base] = base
@@ -291,9 +296,16 @@ module Yuzakan
           when String then Net::LDAP::Filter.construct(filter)
           when nil then Net::LDAP::Filter.pres('objectClass')
           else raise 'Invalid filter'
-          end & Net::LDAP::Filter.eq(@params[:user_name_attr], name)
+          end & Net::LDAP::Filter.eq(key, value)
 
         opts
+      end
+
+      private def search_user_opts(name, filter: @params[:user_search_filter])
+        search_opts(@params[:user_name_attr], name,
+                    base: @params[:user_searh_base_dn] || @params[:base_dn],
+                    scope: @params[:user_search_scope],
+                    filter: filter)
       end
 
       private def entry2userdata(entry)

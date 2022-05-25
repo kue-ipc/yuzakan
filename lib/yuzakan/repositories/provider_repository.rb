@@ -94,6 +94,10 @@ class ProviderRepository < Hanami::Repository
         {password_changeable: true, individual_password: false}
       when :lock, :unlock
         {lockable: true}
+      when :group_read, :group_list, :member_list
+        {group: true, readable: true}
+      when :member_add, :member_delete
+        {group: true, writable: true}
       else
         raise "不明な操作です。#{operation}"
       end

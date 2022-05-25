@@ -42,10 +42,10 @@
 #   unmanageable: ?bool
 #   attrs: Hash = {key: value, ...}
 #
-# group_create(groupname, **groupdata) -> groupdata or nil [writable]
+# - group_create(groupname, **groupdata) -> groupdata or nil [writable]
 # group_read(groupname) -> groupdata or nil [readable]
-# group_update(groupname, **groupdata) -> groupdata or nil [writeable]
-# group_delete(groupname) -> groupdata or nil [writable]
+# - group_update(groupname, **groupdata) -> groupdata or nil [writeable]
+# - group_delete(groupname) -> groupdata or nil [writable]
 # group_list -> groupnames
 #
 # member_list(groupname) -> usernames

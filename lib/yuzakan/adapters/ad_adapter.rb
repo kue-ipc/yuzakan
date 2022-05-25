@@ -6,44 +6,47 @@ module Yuzakan
       self.name = 'ad'
       self.label = 'Active Directory'
       self.version = '0.0.1'
-      self.params = ha_merge(*LdapBaseAdapter.params, {
-        name: :host,
-        label: 'ドメインコントローラーのホスト名/IPアドレス',
-        description:
-              'LDAPサーバーになっているドメインコントローラーのホスト名またはIPアドレスを指定します。' \
-              'ドメインコントローラーでLDAPサーバー機能を有効にしておく必要があります。' \
-              'ドメイン名(FQDN)を指定することもできますが、その場合は証明書のCNまたはDNSエントリにドメイン名が含まれている必要があります。',
-        placeholder: 'dc.example.jp',
-      }, {
-        name: :port,
-        default: 636,
-        fixed: true,
-      }, {
-        name: :protocol,
-        default: 'ldaps',
-        fixed: true,
-      }, {
-        name: :certificate_check,
-        description: 'サーバー証明書のチェックを行います。ドメインコントローラーには正式証明書が必要になります。',
-      }, {
-        name: :bind_username,
-        placeholder: 'Administrator@example.jp',
-      }, {
-        name: :user_dn_attr,
-        default: 'cn',
-        fixed: true,
-      }, {
-        name: :user_name_attr,
-        default: 'sAMAccountName',
-        fixed: true,
-      }, {
-        name: :user_search_filter,
-        default: '(objectclass=user)',
-        description:
+      self.params = ha_merge(
+        LdapBaseAdapter.params + [
+          {
+            name: :host,
+            label: 'ドメインコントローラーのホスト名/IPアドレス',
+            description:
+                'LDAPサーバーになっているドメインコントローラーのホスト名またはIPアドレスを指定します。' \
+                'ドメインコントローラーでLDAPサーバー機能を有効にしておく必要があります。' \
+                'ドメイン名(FQDN)を指定することもできますが、その場合は証明書のCNまたはDNSエントリにドメイン名が含まれている必要があります。',
+            placeholder: 'dc.example.jp',
+          }, {
+            name: :port,
+            default: 636,
+            fixed: true,
+          }, {
+            name: :protocol,
+            default: 'ldaps',
+            fixed: true,
+          }, {
+            name: :certificate_check,
+            description: 'サーバー証明書のチェックを行います。ドメインコントローラーには正式証明書が必要になります。',
+          }, {
+            name: :bind_username,
+            placeholder: 'Administrator@example.jp',
+          }, {
+            name: :user_dn_attr,
+            default: 'cn',
+            fixed: true,
+          }, {
+            name: :user_name_attr,
+            default: 'sAMAccountName',
+            fixed: true,
+          }, {
+            name: :user_search_filter,
+            default: '(objectclass=user)',
+            description:
           'ユーザー検索を行うときのフィルターです。' \
           'LDAPの形式で指定します。' \
           '何も指定しない場合は(objectclass=user)になります。',
-      }, key: :name)
+          },
+        ], key: :name)
       self.multi_attrs = LdapBaseAdapter.multi_attrs
       self.hide_attrs = LdapBaseAdapter.hide_attrs
 
