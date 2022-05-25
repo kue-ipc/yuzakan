@@ -69,6 +69,7 @@ module Admin
               type
               order
               hidden
+              code
             ].each do |key|
               attr_data[key] = attr.__send__(key)
             end
