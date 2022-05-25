@@ -30,6 +30,12 @@ module Admin
               description: 'ユーザーの一覧です。',
               color: 'primary',
             },
+            {
+              name: 'グループ一覧',
+              url: routes.path(:groups),
+              description: 'グループの一覧です。',
+              color: 'primary',
+            },
           ]
         end
       end
