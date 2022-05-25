@@ -23,6 +23,7 @@ module Api
             optional(:lockable).maybe(:bool?)
             optional(:individual_password).maybe(:bool?)
             optional(:self_management).maybe(:bool?)
+            optional(:group).maybe(:bool?)
             optional(:params) { hash? }
           end
         end

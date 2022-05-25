@@ -203,6 +203,15 @@ view = ({name, provider, adapters}) ->
       html.label {class: 'form-check-label', for: "provider-self_management"}, text '自己管理可能'
       html.span {class: 'ms-1 form-text'}, text 'ユーザー自身が登録やパスワードリセット等ができるようになります。'
     ]
+    html.div {class: 'form-check'}, [
+      html.input {
+        id: "provider-group", class: 'form-check-input', type: 'checkbox'
+        checked: provider.group
+        onchange: (state, event) -> [providerAction, {provider: {group: !provider.group}}]
+      }
+      html.label {class: 'form-check-label', for: "provider-group"}, text 'グループ'
+      html.span {class: 'ms-1 form-text'}, text 'グループの取得やメンバーの変更ができるようになります。(アダプターによっては対応していません。)'
+    ]
     html.div {class: 'mb-3'}, [
       html.label {class: 'form-label', for: 'provider-adapter_name'}, text 'アダプター'
       html.select {

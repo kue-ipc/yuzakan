@@ -47,6 +47,7 @@ module Admin
               lockable
               individual_password
               self_management
+              group
             ].each do |key|
               provider_data[key] = provider.__send__(key)
             end

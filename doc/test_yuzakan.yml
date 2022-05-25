@@ -26,6 +26,7 @@ providers:
   lockable: true
   individual_password: false
   self_management: false
+  group: true
   params:
     host: localhost
     port: 0
