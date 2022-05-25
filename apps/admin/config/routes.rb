@@ -13,10 +13,8 @@ resources :providers, only: [:index, :show]
 
 resources :attrs, only: [:index]
 
-resources :users do
-  collection do
-    get 'search'
-    get 'sync'
-  end
+resources :users, only: [:index, :show] do
   resource :password, only: [:create]
 end
+
+resources :groups, only: [:index]

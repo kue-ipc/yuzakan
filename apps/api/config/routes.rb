@@ -23,3 +23,5 @@ resources :users, only: [:index, :show, :create, :update, :destroy] do
   resource :password, only: [:create]
   resource :lock, only: [:create, :destroy]
 end
+
+resources :groups, only: [:index]
