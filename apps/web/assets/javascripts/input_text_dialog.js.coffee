@@ -54,6 +54,8 @@ export default class InputTextDialog
       node: modalDialogNode
       subscriptions: (state) => [
         @messageSub @messageAction, {node: @modalNode}
+        @shownSub (state) -> {state..., shown: true}
+        @hiddenSub (state) -> {state..., shown: false}
       ]
     }
 
@@ -70,7 +72,7 @@ export default class InputTextDialog
           onclick: (state) =>
             @result = value
             @modal.hide()
-            {state..., value: '', shown: false}
+            {state..., value: ''}
         }
       close: @close
     }, @modalBody {messages, value, size, shown}
@@ -105,8 +107,22 @@ export default class InputTextDialog
   messageAction: (state, params) =>
     [{state..., params...}, focus("#{@id}-input-textarea")]
 
+  shownRunner: (dispatch, {action}) =>
+    func = -> dispatch(action)
+    @modalNode.addEventListener('shown.bs.modal', func)
+    => @modalNode.removeEventListener('shown.bs.modal', func)
+
+  shownSub: (action) => [@shownRunner, {action}]
+
+  hiddenRunner: (dispatch, {action}) =>
+    func = -> dispatch(action)
+    @modalNode.addEventListener('hidden.bs.modal', func)
+    => @modalNode.removeEventListener('hidden.bs.modal', func)
+
+  hiddenSub: (action) => [@hiddenRunner, {action}]
+
   inputPromise: ({messages, value}) ->
-    @fireModalMessage({messages, value, shown: true})
+    @fireModalMessage({messages, value})
     @result = null
     @modal.show()
 
