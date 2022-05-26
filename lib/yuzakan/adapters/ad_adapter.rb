@@ -31,24 +31,21 @@ module Yuzakan
             name: :bind_username,
             placeholder: 'Administrator@example.jp',
           }, {
-            name: :user_dn_attr,
-            default: 'cn',
-            fixed: true,
-          }, {
             name: :user_name_attr,
             default: 'sAMAccountName',
             fixed: true,
           }, {
-            name: :user_display_name_attr,
-            default: 'displayName',
-            placeholder: 'displayName',
-          }, {
             name: :user_search_filter,
             default: '(objectclass=user)',
-            description:
-          'ユーザー検索を行うときのフィルターです。' \
-          'LDAPの形式で指定します。' \
-          '何も指定しない場合は(objectclass=user)になります。',
+            description: 'ユーザー検索を行うときのフィルターです。' \
+                         'LDAPの形式で指定します。' \
+                         '何も指定しない場合は(objectclass=user)になります。',
+          }, {
+            name: :group_search_filter,
+            description: 'ユーザー検索を行うときのフィルターです。' \
+                         'LDAPの形式で指定します。' \
+                         '何も指定しない場合は(objectclass=group)になります。',
+            default: '(objectclass=group)',
           },
         ], key: :name)
       self.multi_attrs = LdapBaseAdapter.multi_attrs
