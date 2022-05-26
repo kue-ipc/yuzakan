@@ -53,6 +53,8 @@
 # member_delete(groupname, username)
 #
 
+require 'logger'
+
 require_relative 'error'
 require_relative 'param_type'
 require_relative '../utils/hash_array'
@@ -98,8 +100,9 @@ module Yuzakan
 
       self.abstract_adapter = true
 
-      def initialize(params)
+      def initialize(params, logger: Logger.new(STDERR))
         @params = params
+        @logger = logger
       end
 
       def check

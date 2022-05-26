@@ -66,7 +66,7 @@ module Yuzakan
         },
       ]
 
-      def initialize(params)
+      def initialize(params, **opts)
         super
         @json_key_io = StringIO.new(@params[:json_key]) if @params[:json_key]
       end

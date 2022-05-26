@@ -45,7 +45,7 @@ class Provider < Hanami::Entity
       [param[:name].intern, param[:value]]
     end
     @params = @adapter_class.normalize_params(provider_params_hash)
-    @adapter = @adapter_class.new(@params)
+    @adapter = @adapter_class.new(@params, logger: Hanami.logger)
     super
   end
 

@@ -137,9 +137,13 @@ module Yuzakan
       self.hide_attrs = []
 
       def check
-        base = ldap.search(
+        opts = {
           base: @params[:base_dn],
-          scope: Net::LDAP::SearchScope_BaseObject)&.first
+          scope: Net::LDAP::SearchScope_BaseObject,
+        }
+        @logger.debug "ldap search: #{opts}"
+        base = ldap.search(opts)&.first
+
         if base
           true
         else
@@ -157,6 +161,7 @@ module Yuzakan
 
         dn = "#{@params[:user_dn_attr]}=#{ldap_attrs[@params[:user_dn_attr].intern]},#{@params[:user_base]}"
 
+        @logger.debug "ldap add: #{dn}"
         raise ldap.get_operation_result.error_message unless ldap.add(dn: dn, attributes: user_data)
 
         change_password(username, password) if password
@@ -166,6 +171,7 @@ module Yuzakan
 
       def read(username)
         opts = search_user_opts(username)
+        @logger.debug "ldap search: #{opts}"
         result = ldap.search(opts)
         entry2userdata(result.first) if result && !result.empty?
       end
@@ -180,24 +186,30 @@ module Yuzakan
 
       def auth(username, password)
         opts = search_user_opts(username).merge(password: password)
+        opts_with_password = search_user_opts(username).merge(password: password)
+        @logger.debug "ldap auth: #{opts}"
         # bind_as is re bind, so DON'T USE `ldap`
-        generate_ldap.bind_as(opts)
+        generate_ldap.bind_as(opts_with_password)
       end
 
       def change_password(username, password)
         user_attrs = read(username)
         return nil unless user_attrs
 
+        dn = user_attrs['dn']
         operations = change_password_operations(password)
 
-        modify_result = ldap.modify(dn: user_attrs['dn'], operations: operations)
+        @logger.debug "ldap modify: #{user_attrs['dn']}"
+        modify_result = ldap.modify(dn: dn, operations: operations)
         raise ldap.get_operation_result.error_message unless modify_result
 
         user_attrs
       end
 
       def list
-        generate_ldap.search(search_user_opts('*')).map do |user|
+        opts = search_user_opts('*')
+        @logger.debug "ldap search: #{opts}"
+        generate_ldap.search(opts).map do |user|
           user[@params[:user_name_attr]].first.downcase
         end
       end
@@ -210,7 +222,9 @@ module Yuzakan
 
         filter &= Net::LDAP::Filter.construct(@params[:user_search_filter]) if @params[:user_search_filter]
 
-        generate_ldap.search(search_user_opts('*', filter: filter)).map do |user|
+        opts = search_user_opts('*', filter: filter)
+        @logger.debug "ldap search: #{opts}"
+        generate_ldap.search(opts).map do |user|
           user[@params[:user_name_attr]].first
         end
       end
