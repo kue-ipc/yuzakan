@@ -120,6 +120,11 @@ module Yuzakan
           default: 'cn',
           placeholder: 'cn',
         }, {
+          name: :group_name_suffix,
+          label: 'グループ名のサフィックス',
+          description: 'グループ名にサフィックスがある場合は自動的に追加・除去をします。',
+          type: :string,
+        }, {
           name: :group_display_name_attr,
           label: 'グループ表示名の属性',
           type: :string,
@@ -237,9 +242,8 @@ module Yuzakan
       def list
         opts = search_user_opts('*')
         @logger.debug "ldap search: #{opts}"
-        generate_ldap.search(opts).map do |user|
-          user[@params[:user_name_attr]].first.downcase
-        end
+        generate_ldap.search(opts)
+          .map { |user| user[@params[:user_name_attr]].first.downcase }
       end
 
       def search(query)
@@ -252,21 +256,36 @@ module Yuzakan
 
         opts = search_user_opts('*', filter: filter)
         @logger.debug "ldap search: #{opts}"
-        generate_ldap.search(opts).map do |user|
-          user[@params[:user_name_attr]].first
-        end
+        generate_ldap.search(opts)
+          .map { |user| user[@params[:user_name_attr]].first.downcase }
       end
 
       def group_read(groupname)
+        groupname += @params[:group_name_suffix] if @params[:group_name_suffix]&.size&.positive?
+
         opts = search_group_opts(groupname)
+        @logger.debug "ldap search: #{opts}"
         result = ldap.search(opts)
         entry2groupdata(result.first) if result && !result.empty?
       end
 
       def group_list
-        generate_ldap.search(search_group_opts('*')).map do |group|
-          group[@params[:group_name_attr]].first.downcase
+        opts = search_group_opts('*')
+        @logger.debug "ldap search: #{opts}"
+        list = generate_ldap.search(opts)
+          .map { |group| group[@params[:group_name_attr]].first.downcase }
+        if @params[:group_name_suffix]&.size&.positive?
+          suffix = @params[:group_name_suffix].downcase
+          list.select! do |groupname|
+            if groupname.delete_suffix!(suffix)
+              true
+            else
+              @logger.info "skip no suffix group name: #{groupname}"
+              false
+            end
+          end
         end
+        list
       end
 
       private def change_password_operations(_password)
@@ -391,8 +410,13 @@ module Yuzakan
       end
 
       private def entry2groupdata(entry)
+        name = entry.first(@params[:group_name_attr]).downcase
+        if @params[:group_name_suffix]&.size&.positive? &&
+           name.delete_suffix!(@params[:group_name_suffix].downcase).nil?
+          @logger.warn "no suffix group name: #{name}"
+        end
         {
-          name: entry.first(@params[:group_name_attr]).downcase,
+          name: name,
           display_name: entry.first(@params[:group_display_name_attr]),
         }
       end
