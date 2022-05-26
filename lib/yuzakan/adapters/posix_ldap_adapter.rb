@@ -84,7 +84,7 @@ module Yuzakan
 
       private def search_group_opts(name, filter: @params[:group_search_filter])
         search_opts(@params[:group_name_attr], name,
-                    base: @params[:group_searh_base_dn] || @params[:base_dn],
+                    base: @params[:group_search_base_dn] || @params[:base_dn],
                     scope: @params[:group_search_scope],
                     filter: filter)
       end

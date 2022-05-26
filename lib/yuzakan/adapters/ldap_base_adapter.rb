@@ -317,7 +317,7 @@ module Yuzakan
 
       private def search_user_opts(name, filter: @params[:user_search_filter])
         search_opts(@params[:user_name_attr], name,
-                    base: @params[:user_searh_base_dn] || @params[:base_dn],
+                    base: @params[:user_search_base_dn] || @params[:base_dn],
                     scope: @params[:user_search_scope],
                     filter: filter)
       end

@@ -110,7 +110,7 @@ inputParam = (props) ->
     when 'file' then 'file'
 
   switch inputType
-    when 'text', 'password', 'email', 'searh', 'tel', 'url', \
+    when 'text', 'password', 'email', 'search', 'tel', 'url', \
           'number', 'range', 'color', \
           'date', 'time', 'datetime-local', 'month', 'week'
       inputControl {props..., inputType}
