@@ -48,8 +48,63 @@ module Yuzakan
             default: '(objectclass=group)',
           },
         ], key: :name)
-      self.multi_attrs = LdapBaseAdapter.multi_attrs
+      self.multi_attrs = LdapBaseAdapter.multi_attrs + %w[member memberOf].map(&:downcase)
       self.hide_attrs = LdapBaseAdapter.hide_attrs
+
+      def member_list(groupname)
+        group = read_group(groupname)
+        return if gorup.nil?
+
+        filter = Net::LDAP::Filter.eq('memberOf', group[:attrs]['dn'])
+        filter &= Net::LDAP::Filter.construct(@params[:user_search_filter]) if @params[:user_search_filter]
+
+        user_opts = search_user_opts('*', filter: filter)
+        @logger.debug "ldap search: #{user_opts}"
+        generate_ldap.search(user_opts)
+          .map { |user| user[@params[:user_name_attr]].first.downcase }
+      end
+
+      def member_add(groupname, username)
+        group = read_group(groupname)
+        return if gorup.nil?
+
+        user = read_user(user)
+        return if user.nil?
+
+        group_dn = group[:attrs]['dn']
+        user_dn = user[:attrs]['dn']
+
+        return true if user[:attrs]['memberof'].include?(group_dn)
+
+        operations = [generate_operation_add(:memberOf, gorup_dn)]
+
+        @logger.debug "ldap modify: #{user_dn}"
+        modify_result = ldap.modify(dn: user_dn, operations: operations)
+        raise ldap.get_operation_result.error_message unless modify_result
+
+        true
+      end
+
+      def member_delete(groupname, username)
+        group = read_group(groupname)
+        return if gorup.nil?
+
+        user = read_user(user)
+        return if user.nil?
+
+        group_dn = group[:attrs]['dn']
+        user_dn = user[:attrs]['dn']
+
+        return true if user[:attrs]['memberof'].exclude?(group_dn)
+
+        operations = [generate_operation_delete(:memberOf, gorup_dn)]
+
+        @logger.debug "ldap modify: #{user_dn}"
+        modify_result = ldap.modify(dn: user_dn, operations: operations)
+        raise ldap.get_operation_result.error_message unless modify_result
+
+        true
+      end
 
       # ADではunicodePwdに平文パスワードを設定することで変更できる。
       private def change_password_operations(password)

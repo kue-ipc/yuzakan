@@ -1,13 +1,6 @@
-require 'securerandom'
+require 'set'
+
 require 'net/ldap'
-
-require 'base64'
-require 'digest'
-
-# パスワード変更について
-# userPassword は {crypt}$1$%.8s をデフォルトする。
-# sambaLMPassword はデフォルト無効とし、設定済みは削除する。
-# sambaNTPassword はデフォルト有効とし、設定する。
 
 require_relative 'abstract_adapter'
 
@@ -166,8 +159,8 @@ module Yuzakan
         attr_accessor :multi_attrs, :hide_attrs
       end
 
-      self.multi_attrs = %w[objectClass]
-      self.hide_attrs = []
+      self.multi_attrs = Set.new + %w[objectClass].map(&:downcase)
+      self.hide_attrs = Set.new
 
       def check
         opts = {
@@ -390,15 +383,16 @@ module Yuzakan
 
       private def entry2userdata(entry)
         attrs = {}
-        entry.each do |name, value|
-          cmp_name = name.to_s.method(:casecmp?)
-          next if self.class.hide_attrs.any?(&cmp_name)
+        entry.each do |key, value|
+          key = key.downcase.to_s
+          next if self.class.hide_attrs.include?(key)
 
-          attrs[name.to_s] = if self.class.multi_attrs.any?(&cmp_name)
-                               value.to_a
-                             else
-                               value.first
-                             end
+          attrs[key] =
+            if self.class.multi_attrs.include?(key)
+              value.to_a
+            else
+              value.first
+            end
         end
 
         {
@@ -415,9 +409,24 @@ module Yuzakan
            name.delete_suffix!(@params[:group_name_suffix].downcase).nil?
           @logger.warn "no suffix group name: #{name}"
         end
+
+        attrs = {}
+        entry.each do |key, value|
+          key = key.downcase.to_s
+          next if self.class.hide_attrs.include?(key)
+
+          attrs[key] =
+            if self.class.multi_attrs.include?(key)
+              value.to_a
+            else
+              value.first
+            end
+        end
+
         {
           name: name,
           display_name: entry.first(@params[:group_display_name_attr]),
+          attrs: attrs,
         }
       end
 

@@ -54,7 +54,7 @@ module Yuzakan
           },
         ], key: :name)
       self.multi_attrs = LdapBaseAdapter.multi_attrs
-      self.hide_attrs = LdapBaseAdapter.hide_attrs + %w[userPassword]
+      self.hide_attrs = LdapBaseAdapter.hide_attrs + %w[userPassword].map(&:downcase)
 
       private def change_password_operations(password)
         [generate_operation_replace(:userPassword, generate_password(password))]
