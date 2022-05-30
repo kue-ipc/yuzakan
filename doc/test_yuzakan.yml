@@ -15,7 +15,7 @@ config:
   contact_phone: ''
 providers:
 - name: ldap
-  label: ldap
+  label: PosixのLDAP
   adapter_name: posix_ldap
   order: 1
   immutable: false
@@ -35,15 +35,54 @@ providers:
     base_dn: dc=example,dc=jp
     bind_username: cn=admin,dc=example,dc=jp
     bind_password: admin_password
-    user_dn_attr: uid
-    user_ou_dn: ou=Users
     user_name_attr: uid
     user_display_name_attr: displayName;lang-ja
     user_email_attr: mail
-    user_search_base_dn: ou=Users
+    user_search_base_dn: ou=people,dc=example,dc=jp
     user_search_scope: sub
     user_search_filter: "(objectclass=*)"
+    group_name_attr: cn
+    group_name_suffix: 
+    group_display_name_attr: description
+    group_search_base_dn: ou=groups,dc=example,dc=jp
+    group_search_scope: sub
+    group_search_filter: "(objectclass=posixGroup)"
     password_scheme: "{CRYPT}"
+    crypt_salt_format: "$6$%.16s"
+- name: person
+  label: PersonなLDAP
+  adapter_name: person_ldap
+  order: 9
+  immutable: false
+  readable: true
+  writable: true
+  authenticatable: true
+  password_changeable: true
+  lockable: true
+  individual_password: false
+  self_management: false
+  group: true
+  params:
+    host: localhost
+    port: 
+    protocol: ldap
+    certificate_check: true
+    base_dn: dc=example,dc=jp
+    bind_username: cn=admin,dc=example,dc=jp
+    bind_password: admin_password
+    user_name_attr: cn
+    user_display_name_attr: displayName;lang-ja
+    user_email_attr: mail
+    user_search_base_dn: ou=User,dc=example,dc=jp
+    user_search_scope: sub
+    user_search_filter: "(objectclass=*)"
+    group_name_attr: cn
+    group_name_suffix: 
+    group_display_name_attr: description
+    group_search_base_dn: ou=Group,dc=example,dc=jp
+    group_search_scope: sub
+    group_search_filter: "(objectclass=*)"
+    password_scheme: "{SSHA512}"
     crypt_salt_format: "$6$%.16s"
 attrs:
 - name: ja_display_name
@@ -55,6 +94,10 @@ attrs:
   attr_mappings:
   - provider:
       name: ldap
+    name: displayName;lang-ja
+    conversion: 
+  - provider:
+      name: person
     name: displayName;lang-ja
     conversion: 
 - name: ja_family_name
@@ -70,6 +113,10 @@ attrs:
       name: ldap
     name: sn;lang-ja
     conversion: 
+  - provider:
+      name: person
+    name: sn;lang-ja
+    conversion: 
 - name: ja_given_name
   label: 名(日本語)
   type: string
@@ -83,6 +130,10 @@ attrs:
       name: ldap
     name: givenName;lang-ja
     conversion: 
+  - provider:
+      name: person
+    name: givenName;lang-ja
+    conversion: 
 - name: display_name
   label: 表示名(ローマ字)
   type: string
@@ -92,6 +143,10 @@ attrs:
   attr_mappings:
   - provider:
       name: ldap
+    name: displayName
+    conversion: 
+  - provider:
+      name: person
     name: displayName
     conversion: 
 - name: family_name
@@ -107,6 +162,10 @@ attrs:
       name: ldap
     name: sn
     conversion: 
+  - provider:
+      name: person
+    name: sn
+    conversion: 
 - name: given_name
   label: 名(ローマ字)
   type: string
@@ -118,5 +177,9 @@ attrs:
   attr_mappings:
   - provider:
       name: ldap
+    name: givenName
+    conversion: 
+  - provider:
+      name: person
     name: givenName
     conversion: 
