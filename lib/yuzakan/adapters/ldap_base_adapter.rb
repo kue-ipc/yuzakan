@@ -1,6 +1,7 @@
 require 'set'
 
 require 'net/ldap'
+require 'net/ldap/dn'
 
 require_relative 'abstract_adapter'
 
@@ -194,7 +195,9 @@ module Yuzakan
             attrs[:email]
         end
 
-        dn = "#{@params[:user_dn_attr]}=#{ldap_attrs[@params[:user_dn_attr].intern]},#{@params[:user_base]}"
+        dn = @params[:user_dn_attr] + '=' +
+             ldap_attrs[@params[:user_dn_attr].intern] + ',' +
+             @params[:user_base]
 
         @logger.debug "ldap add: #{dn}"
         unless ldap.add(dn: dn, attributes: user_data)
@@ -296,15 +299,20 @@ module Yuzakan
         list
       end
 
+      def user_group_list(username)
+        user = read_user(username)
+        return if user.nil?
+
+        user.memberof&.map do |_gorup_dn|
+          get_group_dn(group_dn)
+        end&.compacte || []
+      end
+
       def member_list(groupname)
         group = read_group(groupname)
         return if gorup.nil?
 
         filter = Net::LDAP::Filter.eq('memberOf', group[:attrs]['dn'])
-        if @params[:user_search_filter]
-          filter &= Net::LDAP::Filter.construct(@params[:user_search_filter])
-        end
-
         user_opts = search_user_opts('*', filter: filter)
         @logger.debug "ldap search: #{user_opts}"
         generate_ldap.search(user_opts)
@@ -415,45 +423,128 @@ module Yuzakan
         Net::LDAP.new(opts)
       end
 
-      private def search_opts(key, value,
-                              base: @params[:base_dn],
-                              scope: 'sub',
-                              filter: nil)
-        opts = {}
+      private def scope_in?(dn, base:, scope:)
+        dn_arr = dn.to_a.map(&:downcase)
+        base_arr = dn.to_a.map(&:downcase)
+        return false unless dn_arr[-base_arr.size, base_arr.size] == base_arr
 
-        opts[:base] = base
-
-        opts[:scope] =
-          case scope
-          when 'base' then Net::LDAP::SearchScope_BaseObject
-          when 'one' then Net::LDAP::SearchScope_SingleLevel
-          when 'sub' then Net::LDAP::SearchScope_WholeSubtree
-          else raise 'Invalid scope'
-          end
-
-        opts[:filter] =
-          case filter
-          when Net::LDAP::Filter then filter
-          when String then Net::LDAP::Filter.construct(filter)
-          when nil then Net::LDAP::Filter.pres('objectClass')
-          else raise 'Invalid filter'
-          end & Net::LDAP::Filter.eq(key, value)
-
-        opts
+        case scope
+        when Net::LDAP::SearchScope_BaseObject
+          dn_arr.size == base_arr.size
+        when Net::LDAP::SearchScope_SingleLevel
+          dn_arr.size == base_aget_dnuserrr.size + 2
+        when Net::LDAP::SearchScope_WholeSubtree
+          true
+        end
       end
 
-      private def search_user_opts(name, filter: @params[:user_search_filter])
-        search_opts(@params[:user_name_attr], name,
-                    base: @params[:user_search_base_dn] || @params[:base_dn],
-                    scope: @params[:user_search_scope],
-                    filter: filter)
+      private def get_user_dn(user_dn)
+        user_dn = Net::LDAP::DN.new(user_dn) if user_dn.is_a?(String)
+        unless scope_in?(user_dn, base: user_search_base_dn,
+                                  scope: user_search_scope)
+          return nil
+        end
+
+        opts = search_user_opts('*', base: user_dn,
+                                     scope: Net::LDAP::SearchScope_BaseObject)
+        @logger.degbu "ldap search: #{opts}"
+        ldap.search(opts)&.first
       end
 
-      private def search_group_opts(name, filter: @params[:group_search_filter])
-        search_opts(@params[:group_name_attr], name,
-                    base: @params[:group_search_base_dn] || @params[:base_dn],
-                    scope: @params[:group_search_scope],
-                    filter: filter)
+      private def get_group_dn(group_dn)
+        group_dn = Net::LDAP::DN.new(group_dn) if group_dn.is_a?(String)
+        unless scope_in?(group_dn, base: group_search_base_dn,
+                                  scope: group_search_scope)
+          return nil
+        end
+
+        opts = search_group_opts('*', base: group_dn,
+                                     scope: Net::LDAP::SearchScope_BaseObject)
+        @logger.degbu "ldap search: #{opts}"
+        ldap.search(opts)&.first
+      end
+
+      private def generate_filter(filter)
+        if filter&.size&.positive?
+          Net::LDAP::Filter.construct(filter)
+        else
+          Net::LDAP::Filter.pres('objectClass')
+        end
+      end
+
+      private def generate_scope(scope)
+        case scope
+        when 'base' then Net::LDAP::SearchScope_BaseObject
+        when 'one' then Net::LDAP::SearchScope_SingleLevel
+        when 'sub' then Net::LDAP::SearchScope_WholeSubtree
+        else raise 'Invalid scope'
+        end
+      end
+
+      private def user_search_filter
+        @user_search_filter ||= generate_filter(@params[:user_search_filter])
+      end
+
+      private def group_search_filter
+        @group_search_filter ||= generate_filter(@params[:group_search_filter])
+      end
+
+      private def user_search_scope
+        @user_search_scope ||= generate_scope(@params[:user_search_scope])
+      end
+
+      private def group_search_scope
+        @group_search_scope ||= generate_scope(@params[:group_search_scope])
+      end
+
+      private def user_search_base_dn
+        @user_search_base_dn ||=
+          Net::LDAP::DN.new(@params[:user_search_base_dn] || @params[:base_dn])
+      end
+
+      private def group_search_base_dn
+        @group_search_base_dn ||=
+          Net::LDAP::DN.new(@params[:group_search_base_dn] || @params[:base_dn])
+      end
+
+      private def search_user_opts(name,
+                                   base: user_search_base_dn,
+                                   scope: user_search_scope,
+                                   filter: nil)
+        filter = Net::LDAP::Filter.construct(filter) if filter.is_a?(String)
+
+        if filter
+          filter &= user_search_filter
+        else
+          filter = user_search_filter
+        end
+
+        {
+          base: base,
+          scope: scope,
+          filter: filter &
+                  Net::LDAP::Filter.eq(@params[:user_name_attr], name),
+        }
+      end
+
+      private def search_group_opts(name,
+                                    base: group_search_base_dn,
+                                    scope: user_search_scope,
+                                    filter: nil)
+        filter = Net::LDAP::Filter.construct(filter) if filter.is_a?(String)
+
+        if filter
+          filter &= group_search_filter
+        else
+          filter = group_search_filter
+        end
+
+        {
+          base: base,
+          scope: scope,
+          filter: filter &
+                  Net::LDAP::Filter.eq(@params[:group_name_attr], name),
+        }
       end
 
       private def entry2userdata(entry)
