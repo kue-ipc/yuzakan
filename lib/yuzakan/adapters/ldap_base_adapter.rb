@@ -31,7 +31,8 @@ module Yuzakan
           default: 'ldaps',
           list: [
             {name: :ldap, label: 'LDAP(平文)', value: 'ldap', deprecated: true},
-            {name: :ldap_starttls, label: 'LDAP+STARTTLS(暗合)', value: 'ldap_starttls'},
+            {name: :ldap_starttls, label: 'LDAP+STARTTLS(暗合)',
+             value: 'ldap_starttls',},
             {name: :ldaps, label: 'LDAPS(暗合)', value: 'ldaps'},
           ],
           input: 'radio',
@@ -180,15 +181,25 @@ module Yuzakan
       def create(username, password = nil, **attrs)
         return nil if read(username)
 
-        user_data = attrs.filter { |key, _| key.is_a?(String) }.transform_keys { |key| attribute_name(key) }
+        user_data = attrs.filter do |key, _|
+                      key.is_a?(String)
+                    end.transform_keys { |key| attribute_name(key) }
         user_data[attribute_name(@params[:user_name_attr])] = attrs[:username]
-        user_data[attribute_name(@params[:user_display_name_attr])] = attrs[:display_name] if attrs[:display_name]
-        user_data[attribute_name(@params[:user_email_attr])] = attrs[:email] if attrs[:email]
+        if attrs[:display_name]
+          user_data[attribute_name(@params[:user_display_name_attr])] =
+            attrs[:display_name]
+        end
+        if attrs[:email]
+          user_data[attribute_name(@params[:user_email_attr])] =
+            attrs[:email]
+        end
 
         dn = "#{@params[:user_dn_attr]}=#{ldap_attrs[@params[:user_dn_attr].intern]},#{@params[:user_base]}"
 
         @logger.debug "ldap add: #{dn}"
-        raise ldap.get_operation_result.error_message unless ldap.add(dn: dn, attributes: user_data)
+        unless ldap.add(dn: dn, attributes: user_data)
+          raise ldap.get_operation_result.error_message
+        end
 
         change_password(username, password) if password
 
@@ -245,7 +256,9 @@ module Yuzakan
           Net::LDAP::Filter.eq(@params[:user_display_name_attr], query) |
           Net::LDAP::Filter.eq(@params[:user_email_attr], query)
 
-        filter &= Net::LDAP::Filter.construct(@params[:user_search_filter]) if @params[:user_search_filter]
+        if @params[:user_search_filter]
+          filter &= Net::LDAP::Filter.construct(@params[:user_search_filter])
+        end
 
         opts = search_user_opts('*', filter: filter)
         @logger.debug "ldap search: #{opts}"
@@ -254,7 +267,9 @@ module Yuzakan
       end
 
       def group_read(groupname)
-        groupname += @params[:group_name_suffix] if @params[:group_name_suffix]&.size&.positive?
+        if @params[:group_name_suffix]&.size&.positive?
+          groupname += @params[:group_name_suffix]
+        end
 
         opts = search_group_opts(groupname)
         @logger.debug "ldap search: #{opts}"
@@ -281,12 +296,71 @@ module Yuzakan
         list
       end
 
+      def member_list(groupname)
+        group = read_group(groupname)
+        return if gorup.nil?
+
+        filter = Net::LDAP::Filter.eq('memberOf', group[:attrs]['dn'])
+        if @params[:user_search_filter]
+          filter &= Net::LDAP::Filter.construct(@params[:user_search_filter])
+        end
+
+        user_opts = search_user_opts('*', filter: filter)
+        @logger.debug "ldap search: #{user_opts}"
+        generate_ldap.search(user_opts)
+          .map { |user| user[@params[:user_name_attr]].first.downcase }
+      end
+
+      def member_add(groupname, _username)
+        group = read_group(groupname)
+        return if gorup.nil?
+
+        user = read_user(user)
+        return if user.nil?
+
+        group_dn = group[:attrs]['dn']
+        user_dn = user[:attrs]['dn']
+
+        return true if user[:attrs]['memberof'].exclude?(group_dn)
+
+        operations = [generate_operation_add(:member, user_dn)]
+
+        @logger.debug "ldap modify: #{group_dn}"
+        modify_result = ldap.modify(dn: group_dn, operations: operations)
+        raise ldap.get_operation_result.error_message unless modify_result
+
+        true
+      end
+
+      def member_delete(groupname, _username)
+        group = read_group(groupname)
+        return if gorup.nil?
+
+        user = read_user(user)
+        return if user.nil?
+
+        group_dn = group[:attrs]['dn']
+        user_dn = user[:attrs]['dn']
+
+        return true if user[:attrs]['memberof'].exclude?(group_dn)
+
+        operations = [generate_operation_delete(:member, user_dn)]
+
+        @logger.debug "ldap modify: #{group_dn}"
+        modify_result = ldap.modify(dn: group_dn, operations: operations)
+        raise ldap.get_operation_result.error_message unless modify_result
+
+        true
+      end
+
       private def change_password_operations(_password)
         raise NotImplementedError
       end
 
       private def generate_operation(operator, name, value = nil)
-        raise "invalid operator: #{operator}" unless [:add, :replace, :delete].include?(operator)
+        unless [:add, :replace, :delete].include?(operator)
+          raise "invalid operator: #{operator}"
+        end
 
         [operator, name, value]
       end
@@ -334,7 +408,8 @@ module Yuzakan
         end
 
         if opts[:encryption] && !@params[:certificate_check]
-          opts[:encryption][:tls_options] = {verify_mode: OpenSSL::SSL::VERIFY_NONE}
+          opts[:encryption][:tls_options] =
+            {verify_mode: OpenSSL::SSL::VERIFY_NONE}
         end
 
         Net::LDAP.new(opts)

@@ -4,29 +4,28 @@ require 'smbhash'
 # sambaLMPassword はデフォルト無効とし、設定済みは削除する。
 # sambaNTPassword はデフォルト有効とし、設定する。
 
-require_relative 'ldap_base_adapter'
+require_relative 'posix_ldap_adapter'
 
 module Yuzakan
   module Adapters
-    class SambaLdapAdapter < LdapBaseAdapter
+    class SambaLdapAdapter < PosixLdapAdapter
       self.name = 'samba_ldap'
       self.label = 'Samba LDAP'
       self.version = '0.0.1'
       self.params = ha_merge(
-        LdapBaseAdapter.params + [
+        PosixLdapAdapter.params + [
           {
-            name: :user_name_attr,
-            default: 'uid',
-            fixed: true,
-          }, {
             name: :user_esarch_filter,
             default: '(objectClass=sambaSamAccount)',
           }, {
             name: :samba_domain_sid,
             label: 'Samba ドメインSID',
-            description: 'ユーザーのプリフィックスに使用するSambaドメインのSID',
+            description:
+             'ユーザーのプリフィックスに使用するSambaドメインのSIDです。' \
+            '"S-1-5-21-(0..4294967295)-(0..4294967295)-(0..4294967295)"の形式で、ランダムな数を割り当ててください。',
             type: :string,
-            default: 'S-1-5-21-0-0-0',
+            placeholder: 'S-1-5-21-x-y-z',
+            required: true,
           }, {
             name: :samba_nt_password,
             label: 'Samba NT パスワード設定',
@@ -38,7 +37,8 @@ module Yuzakan
             name: :samba_lm_password,
             label: 'Samba Lanman パスワード設定',
             description:
-      'パスワード設定時にSamba LM パスワード(sambaLMPassword)も設定します。LM パスワードは14文字までしか有効ではないため、使用を推奨しません。',
+      'パスワード設定時にSamba LM パスワード(sambaLMPassword)も設定します。' \
+      'LM パスワードは14文字までしか有効ではないため、使用を推奨しません。',
             type: :boolean,
             default: false,
           },
