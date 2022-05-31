@@ -1,9 +1,24 @@
 {
   "extends": "stylelint-config-standard",
-  "customSyntax": "postcss-sass",
-  "rules": {
-    "block-opening-brace-space-before": null,
-    "block-closing-brace-newline-before": null,
-    "declaration-block-trailing-semicolon": null
-  }
+  "overrides": [
+    {
+      "files": [
+        "*.scss",
+        "**/*.scss"
+      ],
+      "extends": "stylelint-config-standard-sass"
+    },
+    {
+      "files": [
+        "*.sass",
+        "**/*.sass"
+      ],
+      "customSyntax": "postcss-sass",
+      "rules": {
+        "block-opening-brace-space-before": null,
+        "block-closing-brace-newline-before": null,
+        "declaration-block-trailing-semicolon": null
+      }
+    }
+  ]
 }
