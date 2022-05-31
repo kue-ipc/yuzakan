@@ -12,7 +12,7 @@ class ChangePassword
   def call(params)
     @userdata_list = {}
     @providers.each do |provider|
-      userdata = provider.change_password(params[:username], params[:password])
+      userdata = provider.user_change_password(params[:username], params[:password])
       @userdata_list[provider.name] = userdata if userdata
     rescue => e
       Hanami.logger.error e

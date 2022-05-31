@@ -26,7 +26,9 @@ class Provider < Hanami::Entity
     return super if attributes.nil? || attributes[:adapter_name].nil? # rubocop:disable Lint/ReturnInVoidContext
 
     @adapter_class = ADAPTERS_MANAGER.by_name(attributes[:adapter_name])
-    raise NoAdapterError, "Not found adapter: #{attributes[:adapter_name]}" unless @adapter_class
+    unless @adapter_class
+      raise NoAdapterError, "Not found adapter: #{attributes[:adapter_name]}"
+    end
 
     return super if attributes[:provider_params].nil? # rubocop:disable Lint/ReturnInVoidContext
 
@@ -38,8 +40,8 @@ class Provider < Hanami::Entity
                  end
     namespace = ['yuzakan', 'provider', attributes[:name]].join(':')
     redis_url = ENV.fetch('REDIS_URL', 'redis://127.0.0.1:6379/0')
-    @cache_store =
-      Yuzakan::Utils::CacheStore.create_store(expires_in: expires_in, namespace: namespace, redis_url: redis_url)
+    @cache_store = Yuzakan::Utils::CacheStore.create_store(
+      expires_in: expires_in, namespace: namespace, redis_url: redis_url)
 
     provider_params_hash = attributes[:provider_params].to_h do |param|
       [param[:name].intern, param[:value]]
@@ -125,7 +127,8 @@ class Provider < Hanami::Entity
     return {} if raw_attrs.nil?
 
     attr_mappings.to_h do |mapping|
-      [mapping.attr_name, mapping.map_value(raw_attrs[mapping.name] || raw_attrs[mapping.name.downcase])]
+      raw_value = raw_attrs[mapping.name] || raw_attrs[mapping.name.downcase]
+      [mapping.attr_name, mapping.map_value(raw_value)]
     end.compact
   end
 
@@ -152,38 +155,41 @@ class Provider < Hanami::Entity
     @adapter.check
   end
 
-  def create(username, password = nil, **userdata)
+  def user_create(username, password = nil, **userdata)
     need_adapter!
     need_mappings!
 
-    raw_userdata = @adapter.create(username, password, **map_userdata(userdata))
+    raw_userdata =
+      @adapter.user_create(username, password, **map_userdata(userdata))
     clear_user_list_cache
     @cache_store[user_key(username)] = convert_userdata(raw_userdata)
   end
 
-  def read(username)
+  def user_read(username)
     need_adapter!
     need_mappings!
 
     @cache_store.fetch(user_key(username)) do
-      raw_userdata = @adapter.read(username)
-      @cache_store[user_key(username)] = raw_userdata && convert_userdata(raw_userdata)
+      raw_userdata = @adapter.user_read(username)
+      @cache_store[user_key(username)] =
+        raw_userdata && convert_userdata(raw_userdata)
     end
   end
 
-  def udpate(username, **userdata)
+  def user_udpate(username, **userdata)
     need_adapter!
     need_mappings!
 
-    raw_userdata = @adapter.update(username, **map_userdata(userdata))
-    @cache_store[user_key(username)] = raw_userdata && convert_userdata(raw_userdata)
+    raw_userdata = @adapter.user_update(username, **map_userdata(userdata))
+    @cache_store[user_key(username)] =
+      raw_userdata && convert_userdata(raw_userdata)
   end
 
-  def delete(username)
+  def user_delete(username)
     need_adapter!
     need_mappings!
 
-    raw_userdata = @adapter.delete(username)
+    raw_userdata = @adapter.user_delete(username)
     @cache_store[user_key(username)] = nil
     return if raw_userdata.nil?
 
@@ -191,70 +197,78 @@ class Provider < Hanami::Entity
     convert_userdata(raw_userdata)
   end
 
-  def auth(username, password)
+  def user_auth(username, password)
     need_adapter!
     need_mappings!
 
-    @adapter.auth(username, password)
+    @adapter.user_auth(username, password)
   end
 
-  def change_password(username, password)
+  def user_change_password(username, password)
     need_adapter!
     need_mappings!
 
-    raw_userdata = @adapter.change_password(username, password)
-    @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
-  end
-
-  def generate_code(username)
-    need_adapter!
-
-    @adapter.generate_code(username)
-  end
-
-  def lock(username)
-    need_adapter!
-    need_mappings!
-
-    raw_userdata = @adapter.lock(username)
-    @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
-  end
-
-  def unlock(username, password = nil)
-    need_adapter!
-    need_mappings!
-
-    raw_userdata = @adapter.unlock(username, password)
-    @cache_store[user_key(username)] = convert_userdata(raw_userdata) if raw_userdata
-  end
-
-  def enabled?(username)
-    !read(username)[:disabled]
-  end
-
-  def locked?(username)
-    nil | read(username)[:locked]
-  end
-
-  def disabled?(username)
-    nil | read(username)[:disabled]
-  end
-
-  def unmanageable?(username)
-    nil | read(username)[:unmanageable]
-  end
-
-  def list
-    need_adapter!
-    @cache_store.fetch(user_list_key) do
-      @cache_store[user_list_key] = @adapter.list
+    raw_userdata = @adapter.user_change_password(username, password)
+    if raw_userdata
+      @cache_store[user_key(username)] = convert_userdata(raw_userdata)
     end
   end
 
-  def search(query)
+  def user_generate_code(username)
+    need_adapter!
+
+    @adapter.user_generate_code(username)
+  end
+
+  def user_lock(username)
+    need_adapter!
+    need_mappings!
+
+    raw_userdata = @adapter.user_lock(username)
+    if raw_userdata
+      @cache_store[user_key(username)] =
+        convert_userdata(raw_userdata)
+    end
+  end
+
+  def user_unlock(username, password = nil)
+    need_adapter!
+    need_mappings!
+
+    raw_userdata = @adapter.user_unlock(username, password)
+    if raw_userdata
+      @cache_store[user_key(username)] =
+        convert_userdata(raw_userdata)
+    end
+  end
+
+  def user_enabled?(username)
+    !read(username)[:disabled]
+  end
+
+  def user_locked?(username)
+    nil | read(username)[:locked]
+  end
+
+  def user_disabled?(username)
+    nil | read(username)[:disabled]
+  end
+
+  def user_unmanageable?(username)
+    nil | read(username)[:unmanageable]
+  end
+
+  def user_list
+    need_adapter!
+    @cache_store.fetch(user_list_key) do
+      @cache_store[user_list_key] = @adapter.user_list
+    end
+  end
+
+  def user_search(query)
     need_adapter!
     @cache_store.fetch(user_search_key(query)) do
-      @cache_store[user_search_key(query)] = @adapter.search(query)
+      @cache_store[user_search_key(query)] = @adapter.user_search(query)
     end
   end
 

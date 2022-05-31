@@ -17,7 +17,7 @@ class UserAttrs
 
   def call(params)
     @providers_attrs = @readable_providers.each.map do |provider|
-      provider.read(params[:username])&.[](:attrs)
+      provider.user_read(params[:username])&.[](:attrs)
     end
     # 最初の方を優先する。
     @attrs = @providers_attrs.compact.inject({}) do |result, data|

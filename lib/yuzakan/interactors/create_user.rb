@@ -77,9 +77,9 @@ class CreateUser
 
     @providers.each do |provider|
       # すでに作成済みの場合は何もしない
-      next if provider.read(@username)
+      next if provider.user_read(@username)
 
-      user_data = provider.create(@username, @password, **attrs)
+      user_data = provider.user_create(@username, @password, **attrs)
       @user_datas[provider.name] = user_data if user_data
     rescue => e
       Hanami.logger.error e
