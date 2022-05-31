@@ -30,46 +30,51 @@ module Yuzakan
       self.hide_attrs = LdapPasswordAdapter.hide_attrs
 
       private def get_memberof_groups(user_entry)
-        pg_filter = Net::LDAP::Filter.eq('gidNumber', user_entry.gidNumber.first)
-        pg_opts = search_group_opts('*', filter: pg_filter)
-        @logger.debug "ldap search: #{pg_opts}"
-        primary_groups = ldap.search(pg_opts).to_a
+        (get_gidnumber_groups(user_entry) + get_memberuid_groups(user_entry)).compact.uniq
+      end
 
+      private def get_gidnumber_groups(user_entry)
+        filter = Net::LDAP::Filter.eq('gidNumber', user_entry.gidNumber.first)
+        opts = search_group_opts('*', filter: filter)
+        ldap_search(opts).to_a
+      end
+
+      private def get_memberuid_groups(user_entry)
         filter = Net::LDAP::Filter.eq('memberUid', user_entry.uid.first)
         opts = search_group_opts('*', filter: filter)
-        @logger.debug "ldap search: #{opts}"
-        primary_groups + ldap.search(opts).to_a
+        ldap_search(opts).to_a
       end
 
       private def get_member_users(group_entry)
-        filter = Net::LDAP::Filter.eq('memberOf', group_entry.dn)
+        (get_gidnumber_users(gorup_entry) + get_memberuid_users(group_entry)).uniq
+      end
+
+      private def get_gidnumber_users(gorup_entry)
+        filter = Net::LDAP::Filter.eq('gidNumber', group_entry.gidNumber.first)
         opts = search_user_opts('*', filter: filter)
-        @logger.debug "ldap search: #{opts}"
-        ldap.search(opts).to_a
+        ldap_search(opts).to_a
+      end
+
+      private def get_memberuid_users(group_entry)
+        group_entry.memberuid.map do |uid|
+          filter = Net::LDAP::Filter.eq('uid', uid)
+          opts = search_user_opts('*', filter: filter)
+          ldap_search(opts).first
+        end.compact
       end
 
       private def add_member(group_entry, user_entry)
-        return false if user_entry.memberof.include?(group_entry.dn)
+        return false if group_entry.memberuid.include?(user_entry.uid.first)
 
-        operations = [generate_operation_add(:member, user_entry.dn)]
-
-        @logger.debug "ldap modify: #{group_entry.dn}"
-        result = ldap.modify(dn: group_entry.dn, operations: operations)
-        raise Error, ldap.get_operation_result.error_message unless result
-
-        result
+        operations = [generate_operation_add(:memberuid, user_entry.uid.first)]
+        ldap_modify(group_entry.dn, operations)
       end
 
       private def remove_member(group_entry, user_entry)
-        return false if user_entry.memberof.exclude?(group_entry.dn)
+        return false if group_entry.memberuid.exclude?(user_entry.uid.first)
 
-        operations = [generate_operation_delete(:member, user_entry.dn)]
-
-        @logger.debug "ldap modify: #{group_entry.dn}"
-        result = ldap.modify(dn: group_entry.dn, operations: operations)
-        raise Error, ldap.get_operation_result.error_message unless result
-
-        result
+        operations = [generate_operation_delete(:memberuid, user_entry.uid.first)]
+        ldap_modify(group_entry.dn, operations)
       end
     end
   end

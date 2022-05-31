@@ -610,6 +610,49 @@ module Yuzakan
 
         result
       end
+
+      private def ldap_search(opts)
+        @logger.debug "LDAP search: #{opts}"
+        result = ldap.search(primary_opts)
+        if result.nil?
+          @logger.error "LDAP search error: #{ldap.get_operation_result.error_message}"
+          raise Error, ldap.get_operation_result.error_message
+        end
+        result
+      end
+
+      private def ldap_add(dn, attributes)
+        @logger.debug "LDAP add: #{dn}"
+        result = ldap.add({dn: dn, attributes: attributes})
+        unless result
+          @logger.error "LDAP add error: #{ldap.get_operation_result.error_message}"
+          raise Error, ldap.get_operation_result.error_message
+        end
+
+        result
+      end
+
+      private def ldap_modify(dn, operations)
+        @logger.debug "LDAP modify: #{dn}"
+        result = ldap.modify({dn: dn, operations: operations})
+        unless result
+          @logger.error "LDAP modify error: #{ldap.get_operation_result.error_message}"
+          raise Error, ldap.get_operation_result.error_message
+        end
+
+        result
+      end
+
+      private def ldap_delete(dn)
+        @logger.debug "LDAP delete: #{dn}"
+        result = ldap.delete({dn: dn})
+        unless result
+          @logger.error "LDAP delete error: #{ldap.get_operation_result.error_message}"
+          raise Error, ldap.get_operation_result.error_message
+        end
+
+        result
+      end
     end
   end
 end
