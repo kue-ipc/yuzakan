@@ -84,25 +84,29 @@ class ProviderRepository < Hanami::Repository
   def ordered_all_with_adapter_by_operation(operation)
     operation_ability =
       case operation
-      when :create, :update, :delete
+      when :user_create, :user_update, :user_delete
         {writable: true}
-      when :read, :list, :seacrh
+      when :user_read, :user_list, :user_seacrh
         {readable: true}
-      when :auth
+      when :user_auth
         {authenticatable: true}
-      when :change_password, :generate_code
+      when :user_change_password, :user_generate_code
         {password_changeable: true, individual_password: false}
-      when :lock, :unlock
+      when :user_lock, :user_unlock
         {lockable: true}
       when :group_read, :group_list, :member_list
         {group: true, readable: true}
-      when :member_add, :member_delete
+      when :member_add, :member_remove
         {group: true, writable: true}
       else
         raise "不明な操作です。#{operation}"
       end
 
-    aggregate(:provider_params, attr_mappings: :attr).where(operation_ability).order(:order).map_to(Provider).to_a
+    ordered_all_with_adapter_by_ability(operation_ability)
+  end
+
+  def ordered_all_with_adapter_by_ability(ability)
+    aggregate(:provider_params, attr_mappings: :attr).where(ability).order(:order).map_to(Provider).to_a
   end
 
   def first_google

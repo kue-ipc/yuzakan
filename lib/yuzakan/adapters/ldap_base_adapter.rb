@@ -9,6 +9,9 @@ require_relative '../utils/ignore_case_string_set'
 module Yuzakan
   module Adapters
     class LdapBaseAdapter < AbstractAdapter
+      class Error < StandardError
+      end
+
       self.abstract_adapter = true
       self.params = [
         {
@@ -209,10 +212,8 @@ module Yuzakan
       end
 
       def user_read(username)
-        opts = search_user_opts(username)
-        @logger.debug "ldap search: #{opts}"
-        result = ldap.search(opts)
-        entry2userdata(result.first) if result && !result.empty?
+        entry = get_user_entry(username)
+        entry && entry2userdata(entry)
       end
 
       def user_update(username, **attrs)
@@ -248,8 +249,7 @@ module Yuzakan
       def user_list
         opts = search_user_opts('*')
         @logger.debug "ldap search: #{opts}"
-        generate_ldap.search(opts)
-          .map { |user| user[@params[:user_name_attr]].first.downcase }
+        ldap.search(opts).map { |user| get_user_name(user) }
       end
 
       def user_search(query)
@@ -262,102 +262,45 @@ module Yuzakan
 
         opts = search_user_opts('*', filter: filter)
         @logger.debug "ldap search: #{opts}"
-        generate_ldap.search(opts)
-          .map { |user| user[@params[:user_name_attr]].first.downcase }
+        ldap.search(opts).map { |user| get_user_name(user) }
       end
 
       def group_read(groupname)
-        groupname += @params[:group_name_suffix] if @params[:group_name_suffix]&.size&.positive?
-
-        opts = search_group_opts(groupname)
-        @logger.debug "ldap search: #{opts}"
-        result = ldap.search(opts)
-        entry2groupdata(result.first) if result && !result.empty?
+        entry = get_group_entry(groupname)
+        entry && entry2groupdata(entry)
       end
 
       def group_list
         opts = search_group_opts('*')
         @logger.debug "ldap search: #{opts}"
-        list = generate_ldap.search(opts)
-          .map { |group| group[@params[:group_name_attr]].first.downcase }
-        if @params[:group_name_suffix]&.size&.positive?
-          suffix = @params[:group_name_suffix].downcase
-          list.select! do |groupname|
-            if groupname.delete_suffix!(suffix)
-              true
-            else
-              @logger.info "skip no suffix group name: #{groupname}"
-              false
-            end
-          end
-        end
-        list
-      end
-
-      def user_group_list(username)
-        user = read_user(username)
-        return if user.nil?
-
-        filter = Net::LDAP::Filter.eq('member', user[:attrs]['dn'])
-        opts = search_group_opts('*', filter: filter)
-        @logger.debug "ldap search: #{opts}"
-        ldap.search(opts).map do |group|
-          group[@params[:group_name_attr]].first.downcase
-        end
+        ldap.search(opts).map { |group| get_group_name(group) }
       end
 
       def member_list(groupname)
-        group = read_group(groupname)
-        return if gorup.nil?
+        group = get_group_entry(groupname)
+        return if group.nil?
 
-        filter = Net::LDAP::Filter.eq('memberOf', group[:attrs]['dn'])
-        opts = search_user_opts('*', filter: filter)
-        @logger.debug "ldap search: #{opts}"
-        ldap.search(opts).map do |user|
-          user[@params[:user_name_attr]].first.downcase
-        end
+        get_member_users(group).map { |user| get_user_name(user) }
       end
 
       def member_add(groupname, _username)
-        group = read_group(groupname)
+        group = get_group_entry(groupname)
         return if gorup.nil?
 
-        user = read_user(user)
+        user = get_user_entry(user)
         return if user.nil?
 
-        group_dn = group[:attrs]['dn']
-        user_dn = user[:attrs]['dn']
-
-        return true if user[:attrs]['memberof'].exclude?(group_dn)
-
-        operations = [generate_operation_add(:member, user_dn)]
-
-        @logger.debug "ldap modify: #{group_dn}"
-        modify_result = ldap.modify(dn: group_dn, operations: operations)
-        raise ldap.get_operation_result.error_message unless modify_result
-
-        true
+        add_member(group, user)
       end
 
-      def member_delete(groupname, _username)
-        group = read_group(groupname)
+      def member_remove(groupname, _username)
+        group = get_group_entry(groupname)
         return if gorup.nil?
 
-        user = read_user(user)
+        user = get_user_entry(user)
         return if user.nil?
 
-        group_dn = group[:attrs]['dn']
-        user_dn = user[:attrs]['dn']
-
-        return true if user[:attrs]['memberof'].exclude?(group_dn)
-
-        operations = [generate_operation_delete(:member, user_dn)]
-
-        @logger.debug "ldap modify: #{group_dn}"
-        modify_result = ldap.modify(dn: group_dn, operations: operations)
-        raise ldap.get_operation_result.error_message unless modify_result
-
-        true
+        remove_member(group, user)
       end
 
       private def change_password_operations(_password)
@@ -545,6 +488,8 @@ module Yuzakan
       end
 
       private def entry2userdata(entry)
+        name = get_user_name(entry)
+
         attrs = {}
         entry.each do |key, value|
           key = key.downcase.to_s
@@ -558,20 +503,19 @@ module Yuzakan
             end
         end
 
+        groups = get_memberof_groups(entry).map { |group| get_group_name(group) }
+
         {
-          name: entry.first(@params[:user_name_attr]).downcase,
+          name: name,
           display_name: entry.first(@params[:user_display_name_attr]),
           email: entry.first(@params[:user_email_attr])&.downcase,
           attrs: attrs,
+          groups: groups,
         }
       end
 
       private def entry2groupdata(entry)
-        name = entry.first(@params[:group_name_attr]).downcase
-        if @params[:group_name_suffix]&.size&.positive? &&
-           name.delete_suffix!(@params[:group_name_suffix].downcase).nil?
-          @logger.warn "no suffix group name: #{name}"
-        end
+        name = get_group_name(entry)
 
         attrs = {}
         entry.each do |key, value|
@@ -595,6 +539,76 @@ module Yuzakan
 
       private def attribute_name(name)
         Net::LDAP::Entry.attribute_name(name)
+      end
+
+      private def get_user_entry(username)
+        opts = search_user_opts(username)
+        @logger.debug "ldap search: #{opts}"
+        result = ldap.search(opts)
+        raise Error, ldap.get_operation_result.error_message if result.nil?
+
+        result.frist
+      end
+
+      private def get_group_entry(groupname)
+        groupname += @params[:group_name_suffix] if @params[:group_name_suffix]&.size&.positive?
+        opts = search_group_opts(groupname)
+        @logger.debug "ldap search: #{opts}"
+        result = ldap.search(opts)
+        raise Error, ldap.get_operation_result.error_message if result.nil?
+
+        result.frist
+      end
+
+      private def get_user_name(user_entry)
+        user_entry.first(@params[:user_name_attr]).downcase
+      end
+
+      private def get_group_name(group_entry)
+        name = group_entry.first(@params[:group_name_attr]).downcase
+        if @params[:group_name_suffix]&.size&.positive? &&
+           name.delete_suffix!(@params[:group_name_suffix].downcase).nil?
+          @logger.warn "no suffix group name: #{name}"
+        end
+        name
+      end
+
+      private def get_memberof_groups(user_entry)
+        filter = Net::LDAP::Filter.eq('member', user_entry.dn)
+        opts = search_group_opts('*', filter: filter)
+        @logger.debug "ldap search: #{opts}"
+        ldap.search(opts).to_a
+      end
+
+      private def get_member_users(group_entry)
+        filter = Net::LDAP::Filter.eq('memberOf', group_entry.dn)
+        opts = search_user_opts('*', filter: filter)
+        @logger.debug "ldap search: #{opts}"
+        ldap.search(opts).to_a
+      end
+
+      private def add_member(group_entry, user_entry)
+        return false if user_entry.memberof.include?(group_entry.dn)
+
+        operations = [generate_operation_add(:member, user_entry.dn)]
+
+        @logger.debug "ldap modify: #{group_entry.dn}"
+        result = ldap.modify(dn: group_entry.dn, operations: operations)
+        raise Error, ldap.get_operation_result.error_message unless result
+
+        result
+      end
+
+      private def remove_member(group_entry, user_entry)
+        return false if user_entry.memberof.exclude?(group_entry.dn)
+
+        operations = [generate_operation_delete(:member, user_entry.dn)]
+
+        @logger.debug "ldap modify: #{group_entry.dn}"
+        result = ldap.modify(dn: group_entry.dn, operations: operations)
+        raise Error, ldap.get_operation_result.error_message unless result
+
+        result
       end
     end
   end

@@ -31,8 +31,6 @@
 # user_lock(username) -> userdata or nil [lockable]
 # user_unlock(username, password = nil) -> userdata or nil [lockable]
 #
-# user_group_list(username) -> groupnames
-#
 # user_list -> usernames [readable]
 # user_search(query) -> usernames [readable]
 #
@@ -51,7 +49,7 @@
 #
 # member_list(groupname) -> usernames
 # member_add(groupname, username)
-# member_delete(groupname, username)
+# member_remove(groupname, username)
 #
 
 require 'logger'
