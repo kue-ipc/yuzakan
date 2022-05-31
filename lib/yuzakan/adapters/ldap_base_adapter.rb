@@ -4,6 +4,7 @@ require 'net/ldap'
 require 'net/ldap/dn'
 
 require_relative 'abstract_adapter'
+require_relative '../utils/ignore_case_string_set'
 
 module Yuzakan
   module Adapters
@@ -161,8 +162,8 @@ module Yuzakan
         attr_accessor :multi_attrs, :hide_attrs
       end
 
-      self.multi_attrs = Set.new + %w[objectClass].map(&:downcase)
-      self.hide_attrs = Set.new
+      self.multi_attrs = Yuzakan::Utils::IgnoreCaseStringSet.new(%w[objectClass member memberOf])
+      self.hide_attrs = Yuzakan::Utils::IgnoreCaseStringSet.new
 
       def check
         opts = {
@@ -200,9 +201,7 @@ module Yuzakan
              @params[:user_base]
 
         @logger.debug "ldap add: #{dn}"
-        unless ldap.add(dn: dn, attributes: user_data)
-          raise ldap.get_operation_result.error_message
-        end
+        raise ldap.get_operation_result.error_message unless ldap.add(dn: dn, attributes: user_data)
 
         user_change_password(username, password) if password
 
@@ -259,9 +258,7 @@ module Yuzakan
           Net::LDAP::Filter.eq(@params[:user_display_name_attr], query) |
           Net::LDAP::Filter.eq(@params[:user_email_attr], query)
 
-        if @params[:user_search_filter]
-          filter &= Net::LDAP::Filter.construct(@params[:user_search_filter])
-        end
+        filter &= Net::LDAP::Filter.construct(@params[:user_search_filter]) if @params[:user_search_filter]
 
         opts = search_user_opts('*', filter: filter)
         @logger.debug "ldap search: #{opts}"
@@ -270,9 +267,7 @@ module Yuzakan
       end
 
       def group_read(groupname)
-        if @params[:group_name_suffix]&.size&.positive?
-          groupname += @params[:group_name_suffix]
-        end
+        groupname += @params[:group_name_suffix] if @params[:group_name_suffix]&.size&.positive?
 
         opts = search_group_opts(groupname)
         @logger.debug "ldap search: #{opts}"
@@ -370,9 +365,7 @@ module Yuzakan
       end
 
       private def generate_operation(operator, name, value = nil)
-        unless [:add, :replace, :delete].include?(operator)
-          raise "invalid operator: #{operator}"
-        end
+        raise "invalid operator: #{operator}" unless [:add, :replace, :delete].include?(operator)
 
         [operator, name, value]
       end
