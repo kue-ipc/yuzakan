@@ -18,22 +18,23 @@
 #   dislay_name: String = display name
 #
 # -- CRUD --
-# create(username, password = nil, **userdata) -> userdata [writable]
-# read(username) -> userdata or nil [readable]
-# update(username, **userdata) -> userdata or nil [writeable]
-# delete(username) -> userdata or nil [writable]
+# user_create(username, password = nil, **userdata) -> userdata [writable]
+# user_read(username) -> userdata or nil [readable]
+# user_update(username, **userdata) -> userdata or nil [writeable]
+# user_delete(username) -> userdata or nil [writable]
 #
-# auth(username, password) -> bool [authenticatable]
+# user_auth(username, password) -> bool [authenticatable]
 #
-# change_password(username, password) -> userdata or nil [password_changeable]
-# generate_code(username) -> codes or nil [password_changeable]
+# user_change_password(username, password) -> userdata or nil [password_changeable]
+# user_generate_code(username) -> codes or nil [password_changeable]
 #
-# lock(username) -> userdata or nil [lockable]
-# unlock(username, password = nil) -> userdata or nil [lockable]
+# user_lock(username) -> userdata or nil [lockable]
+# user_unlock(username, password = nil) -> userdata or nil [lockable]
 #
-# list -> usernames [readable]
+# user_group_list(username) -> groupnames
 #
-# search(query) -> usernames [readable]
+# user_list -> usernames [readable]
+# user_search(query) -> usernames [readable]
 #
 # groupdate:
 #   name: String = groupname
@@ -42,10 +43,10 @@
 #   unmanageable: ?bool
 #   attrs: Hash = {key: value, ...}
 #
-# - group_create(groupname, **groupdata) -> groupdata or nil [writable]
+# x group_create(groupname, **groupdata) -> groupdata or nil [writable]
 # group_read(groupname) -> groupdata or nil [readable]
-# - group_update(groupname, **groupdata) -> groupdata or nil [writeable]
-# - group_delete(groupname) -> groupdata or nil [writable]
+# x group_update(groupname, **groupdata) -> groupdata or nil [writeable]
+# x group_delete(groupname) -> groupdata or nil [writable]
 # group_list -> groupnames
 #
 # member_list(groupname) -> usernames
@@ -109,43 +110,43 @@ module Yuzakan
         raise NotImplementedError
       end
 
-      def create(_username, _password = nil, **_userdata)
+      def user_create(_username, _password = nil, **_userdata)
         raise NotImplementedError
       end
 
-      def read(_username)
+      def user_read(_username)
         raise NotImplementedError
       end
 
-      def udpate(_username, **_userdata)
+      def user_update(_username, **_userdata)
         raise NotImplementedError
       end
 
-      def delete(_username)
+      def user_delete(_username)
         raise NotImplementedError
       end
 
-      def auth(_username, _password)
+      def user_auth(_username, _password)
         raise NotImplementedError
       end
 
-      def change_password(_username, _password)
+      def user_change_password(_username, _password)
         raise NotImplementedError
       end
 
-      def generate_code(_username)
+      def user_generate_code(_username)
         raise NotImplementedError
       end
 
-      def lock(_username)
+      def user_lock(_username)
         raise NotImplementedError
       end
 
-      def unlock(_username, _password = nil)
+      def user_unlock(_username, _password = nil)
         raise NotImplementedError
       end
 
-      def list
+      def user_list
         raise NotImplementedError
       end
     end

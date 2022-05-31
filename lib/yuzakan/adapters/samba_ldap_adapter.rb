@@ -48,15 +48,15 @@ module Yuzakan
 
       @@no_password = -'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX' # rubocop:disable Style/ClassVars
 
-      def create(username, _password = nil, **attrs)
-        user_attrs = read(username)
+      def user_create(username, _password = nil, **attrs)
+        user_attrs = user_read(username)
 
         user_attrs[:classobject].include?('sambaSamAccount')
         user_attrs.merge(attrs)
       end
 
-      def auth(username, password)
-        user = read(username)
+      def user_auth(username, password)
+        user = user_read(username)
         user &&
           ['D', 'L'].none? { |c| user.dig(:attrs, :sambaacctflags)&.include?(c) } &&
           user['sambantpassword'] == generate_nt_password(password)

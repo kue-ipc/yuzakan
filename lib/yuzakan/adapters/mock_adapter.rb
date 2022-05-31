@@ -105,11 +105,11 @@ module Yuzakan
         }
       end
 
-      def read(username)
+      def user_read(username)
         @users[username]
       end
 
-      def udpate(username, **userdata)
+      def user_update(username, **userdata)
         return nil unless @users.key?(username)
         raise Error, '管理不可ユーザーであるため、更新できません。' if @users.dig(username, :unmanageable)
 
@@ -122,19 +122,19 @@ module Yuzakan
         end
       end
 
-      def delete(username)
+      def user_delete(username)
         return nil unless @users.key?(username)
         raise Error, '管理不可ユーザーであるため、削除できません。' if @users.dig(username, :unmanageable)
 
         @users[username]
       end
 
-      def auth(username, password)
+      def user_auth(username, password)
         @passwords[username]&.==(password) &&
           [:locked, :disabled].none? { |flag| @users.dig(username, flag) }
       end
 
-      def change_password(username, password)
+      def user_change_password(username, password)
         return nil unless @users.key?(username)
         raise Error, '管理不可ユーザーであるため、パスワードを変更できません。' if @users.dig(username, :unmanageable)
 
@@ -142,14 +142,14 @@ module Yuzakan
         @users[username]
       end
 
-      def generate_code(username)
+      def user_generate_code(username)
         return nil unless @users.key?(username)
         raise Error, '管理不可ユーザーであるため、バックアップコードを生成できません。' if @users.dig(username, :unmanageable)
 
         10.times.map { SecureRandom.alphanumeric }
       end
 
-      def lock(username)
+      def user_lock(username)
         return nil unless @users.key?(username)
         raise Error, '管理不可ユーザーであるため、ロックできません。' if @users.dig(username, :unmanageable)
 
@@ -157,17 +157,17 @@ module Yuzakan
         @users[username]
       end
 
-      def unlock(username, password = nil)
+      def user_unlock(username, password = nil)
         return nil unless @users.key?(username)
         raise Error, '管理不可ユーザーであるため、アンロックできません。' if @users.dig(username, :unmanageable)
 
-        change_password(usename, password) if password
+        user_change_password(usename, password) if password
 
         @users[username][:locked] = false
         @users[username]
       end
 
-      def list
+      def user_list
         @users.keys
       end
     end

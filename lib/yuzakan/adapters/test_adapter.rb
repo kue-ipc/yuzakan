@@ -67,43 +67,43 @@ module Yuzakan
         true
       end
 
-      def create(username, _password = nil, **userdata)
+      def user_create(username, _password = nil, **userdata)
         {**userdata, name: username}
       end
 
-      def read(_username)
+      def user_read(_username)
         nil
       end
 
-      def udpate(_username, **_userdata)
+      def user_update(_username, **_userdata)
         nil
       end
 
-      def delete(_username)
+      def user_delete(_username)
         nil
       end
 
-      def auth(_username, _password)
+      def user_auth(_username, _password)
         false
       end
 
-      def change_password(_username, _password)
+      def user_change_password(_username, _password)
         nil
       end
 
-      def generate_code(_username)
+      def user_generate_code(_username)
         []
       end
 
-      def lock(_username)
+      def user_lock(_username)
         nil
       end
 
-      def unlock(_username, _password = nil)
+      def user_unlock(_username, _password = nil)
         nil
       end
 
-      def list
+      def user_list
         []
       end
     end

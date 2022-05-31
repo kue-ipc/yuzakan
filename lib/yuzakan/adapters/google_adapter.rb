@@ -1,19 +1,4 @@
 # Google Workspace Adapter
-#
-# CRUD
-# create(username, **attrs) -> user or nil [writable]
-# read(username) -> user or nil [readable]
-# update(username, attrs) -> user or nil [writeable]
-# delete(username) -> user or nil [writable]
-#
-# auth(username, password) -> user or nil [authenticatable]
-# change_password(username, password) -> user ro nil [password_changeable]
-#
-# lock(username) -> locked?(username) [lockable]
-# unlock(username) -> locked?(username) [lockable]
-# locked?(username) -> true or false [lockable]
-#
-# list -> usernames [readable]
 
 require 'stringio'
 require 'securerandom'
@@ -77,7 +62,7 @@ module Yuzakan
         response.users.size == 1
       end
 
-      def create(username, password = nil, **attrs)
+      def user_create(username, password = nil, **attrs)
         user = specialize_user(attrs.merge(name: username))
         # set a password
         set_password(user, password)
@@ -89,7 +74,7 @@ module Yuzakan
         normalize_user(response)
       end
 
-      def read(username)
+      def user_read(username)
         email = "#{username}@#{@params[:domain]}"
         user = service.get_user(email)
         normalize_user(user)
@@ -98,11 +83,11 @@ module Yuzakan
         nil
       end
 
-      def udpate(_username, **_attrs)
+      def user_update(_username, **_attrs)
         raise NotImplementedError
       end
 
-      def delete(username)
+      def user_delete(username)
         email = "#{username}@#{@params[:domain]}"
         user = service.get_user(email)
         raise 'ユーザーが存在しません。' if user.nil?
@@ -112,11 +97,11 @@ module Yuzakan
         # service.delete_user(email)
       end
 
-      def auth(_username, _password)
+      def user_auth(_username, _password)
         raise NotImplementedError
       end
 
-      def change_password(username, password)
+      def user_change_password(username, password)
         email = "#{username}@#{@params[:domain]}"
         user = service.get_user(email)
         raise 'ユーザーが存在しません。' if user.nil?
@@ -129,11 +114,11 @@ module Yuzakan
         normalize_user(user)
       end
 
-      def lock(_username)
+      def user_lock(_username)
         raise NotImplementedError
       end
 
-      def unlock(username, password = nil)
+      def user_unlock(username, password = nil)
         email = "#{username}@#{@params[:domain]}"
         user = service.get_user(email)
         raise 'ユーザーが存在しません。' if user.nil?
@@ -152,11 +137,7 @@ module Yuzakan
         normalize_user(user)
       end
 
-      def locked?(_username)
-        raise NotImplementedError
-      end
-
-      def list
+      def user_list
         users = []
         next_page_token = nil
         # 最大でも20回で10,000ユーザーしか取得できない
@@ -175,7 +156,7 @@ module Yuzakan
         users
       end
 
-      def search(query)
+      def user_search(query)
         query_str = query.dup
         query_str.delete!('*?')
         query_str.gsub!("'", "\\'")
@@ -200,8 +181,8 @@ module Yuzakan
         users
       end
 
-      def generate_code(username)
-        user = read(username)
+      def user_generate_code(username)
+        user = user_read(username)
         unless user[:mfa]
           # 2段階認証が有効でないユーザー
           return

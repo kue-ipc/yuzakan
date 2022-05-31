@@ -179,8 +179,8 @@ module Yuzakan
         end
       end
 
-      def create(username, password = nil, **attrs)
-        return nil if read(username)
+      def user_create(username, password = nil, **attrs)
+        return nil if user_read(username)
 
         user_data = attrs.filter do |key, _|
                       key.is_a?(String)
@@ -204,27 +204,27 @@ module Yuzakan
           raise ldap.get_operation_result.error_message
         end
 
-        change_password(username, password) if password
+        user_change_password(username, password) if password
 
-        read(username)
+        user_read(username)
       end
 
-      def read(username)
+      def user_read(username)
         opts = search_user_opts(username)
         @logger.debug "ldap search: #{opts}"
         result = ldap.search(opts)
         entry2userdata(result.first) if result && !result.empty?
       end
 
-      def udpate(username, **attrs)
+      def user_update(username, **attrs)
         raise NotImplementedError
       end
 
-      def delete(username)
+      def user_delete(username)
         raise NotImplementedError
       end
 
-      def auth(username, password)
+      def user_auth(username, password)
         opts = search_user_opts(username).merge(password: password)
         opts_with_password = search_user_opts(username).merge(password: password)
         @logger.debug "ldap auth: #{opts}"
@@ -232,8 +232,8 @@ module Yuzakan
         generate_ldap.bind_as(opts_with_password)
       end
 
-      def change_password(username, password)
-        user_attrs = read(username)
+      def user_change_password(username, password)
+        user_attrs = user_read(username)
         return nil unless user_attrs
 
         dn = user_attrs['dn']
@@ -246,14 +246,14 @@ module Yuzakan
         user_attrs
       end
 
-      def list
+      def user_list
         opts = search_user_opts('*')
         @logger.debug "ldap search: #{opts}"
         generate_ldap.search(opts)
           .map { |user| user[@params[:user_name_attr]].first.downcase }
       end
 
-      def search(query)
+      def user_search(query)
         filter =
           Net::LDAP::Filter.eq(@params[:user_name_attr], query) |
           Net::LDAP::Filter.eq(@params[:user_display_name_attr], query) |
