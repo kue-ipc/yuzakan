@@ -303,9 +303,12 @@ module Yuzakan
         user = read_user(username)
         return if user.nil?
 
-        user.memberof&.map do |_gorup_dn|
-          get_group_dn(group_dn)
-        end&.compacte || []
+        filter = Net::LDAP::Filter.eq('member', user[:attrs]['dn'])
+        opts = search_group_opts('*', filter: filter)
+        @logger.debug "ldap search: #{opts}"
+        ldap.search(opts).map do |group|
+          group[@params[:group_name_attr]].first.downcase
+        end
       end
 
       def member_list(groupname)
@@ -313,10 +316,11 @@ module Yuzakan
         return if gorup.nil?
 
         filter = Net::LDAP::Filter.eq('memberOf', group[:attrs]['dn'])
-        user_opts = search_user_opts('*', filter: filter)
-        @logger.debug "ldap search: #{user_opts}"
-        generate_ldap.search(user_opts)
-          .map { |user| user[@params[:user_name_attr]].first.downcase }
+        opts = search_user_opts('*', filter: filter)
+        @logger.debug "ldap search: #{opts}"
+        ldap.search(opts).map do |user|
+          user[@params[:user_name_attr]].first.downcase
+        end
       end
 
       def member_add(groupname, _username)
@@ -454,12 +458,12 @@ module Yuzakan
       private def get_group_dn(group_dn)
         group_dn = Net::LDAP::DN.new(group_dn) if group_dn.is_a?(String)
         unless scope_in?(group_dn, base: group_search_base_dn,
-                                  scope: group_search_scope)
+                                   scope: group_search_scope)
           return nil
         end
 
         opts = search_group_opts('*', base: group_dn,
-                                     scope: Net::LDAP::SearchScope_BaseObject)
+                                      scope: Net::LDAP::SearchScope_BaseObject)
         @logger.degbu "ldap search: #{opts}"
         ldap.search(opts)&.first
       end
