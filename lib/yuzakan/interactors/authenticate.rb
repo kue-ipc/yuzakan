@@ -27,7 +27,7 @@ class Authenticate
 
     @provider = nil
     providers.each do |provider|
-      if provider.auth(params[:username], params[:password])
+      if provider.user_auth(params[:username], params[:password])
         @provider = provider
         break
       end
