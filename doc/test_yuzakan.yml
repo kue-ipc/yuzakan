@@ -14,9 +14,9 @@ config:
   contact_email: ''
   contact_phone: ''
 providers:
-- name: ldap
-  label: PosixのLDAP
-  adapter_name: posix_ldap
+- name: posix_samba
+  label: PosixとSamba
+  adapter_name: samba_ldap
   order: 1
   immutable: false
   readable: true
@@ -49,9 +49,14 @@ providers:
     group_search_filter: "(objectclass=posixGroup)"
     password_scheme: "{CRYPT}"
     crypt_salt_format: "$6$%.16s"
-- name: person
-  label: PersonなLDAP
-  adapter_name: person_ldap
+    user_esarch_filter: "(objectClass=sambaSamAccount)"
+    samba_domain_sid: S-1-5-21-4294967295-4294967295-4294967295
+    samba_nt_password: true
+    samba_lm_password: false
+    auth_nt_password: false
+- name: ldap
+  label: 普通のLDAP
+  adapter_name: ldap
   order: 9
   immutable: false
   readable: true
@@ -93,11 +98,11 @@ attrs:
   code: display_name
   attr_mappings:
   - provider:
-      name: ldap
+      name: posix_samba
     name: displayName;lang-ja
     conversion: 
   - provider:
-      name: person
+      name: ldap
     name: displayName;lang-ja
     conversion: 
 - name: ja_family_name
@@ -110,11 +115,11 @@ attrs:
     return names[0];
   attr_mappings:
   - provider:
-      name: ldap
+      name: posix_samba
     name: sn;lang-ja
     conversion: 
   - provider:
-      name: person
+      name: ldap
     name: sn;lang-ja
     conversion: 
 - name: ja_given_name
@@ -127,11 +132,11 @@ attrs:
     return names[1];
   attr_mappings:
   - provider:
-      name: ldap
+      name: posix_samba
     name: givenName;lang-ja
     conversion: 
   - provider:
-      name: person
+      name: ldap
     name: givenName;lang-ja
     conversion: 
 - name: display_name
@@ -142,11 +147,11 @@ attrs:
   code: ''
   attr_mappings:
   - provider:
-      name: ldap
+      name: posix_samba
     name: displayName
     conversion: 
   - provider:
-      name: person
+      name: ldap
     name: displayName
     conversion: 
 - name: family_name
@@ -159,11 +164,11 @@ attrs:
     return names[0];
   attr_mappings:
   - provider:
-      name: ldap
+      name: posix_samba
     name: sn
     conversion: 
   - provider:
-      name: person
+      name: ldap
     name: sn
     conversion: 
 - name: given_name
@@ -176,10 +181,10 @@ attrs:
     return names[1];
   attr_mappings:
   - provider:
-      name: ldap
+      name: posix_samba
     name: givenName
     conversion: 
   - provider:
-      name: person
+      name: ldap
     name: givenName
     conversion: 
