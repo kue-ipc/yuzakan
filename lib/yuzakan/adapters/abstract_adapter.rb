@@ -19,20 +19,22 @@
 #
 # -- CRUD --
 # user_create(username, password = nil, **userdata) -> userdata [writable]
-# user_read(username) -> userdata or nil [readable]
-# user_update(username, **userdata) -> userdata or nil [writeable]
-# user_delete(username) -> userdata or nil [writable]
+# user_read(username) -> userdata? [readable]
+# user_update(username, **userdata) -> userdata? [writeable]
+# user_delete(username) -> userdata? [writable]
 #
 # user_auth(username, password) -> bool [authenticatable]
 #
-# user_change_password(username, password) -> userdata or nil [password_changeable]
-# user_generate_code(username) -> codes or nil [password_changeable]
+# user_change_password(username, password) -> bool [password_changeable]
+# user_generate_code(username) -> codes? [password_changeable]
 #
-# user_lock(username) -> userdata or nil [lockable]
-# user_unlock(username, password = nil) -> userdata or nil [lockable]
+# user_lock(username) -> bool [lockable]
+# user_unlock(username, password = nil) -> bool [lockable]
 #
-# user_list -> usernames [readable]
-# user_search(query) -> usernames [readable]
+# user_list -> Array[username] [readable]
+# user_search(query) -> Array[username] [readable]
+#
+# user_group_list(username) -> Array[groupname] [readable, group]
 #
 # groupdate:
 #   name: String = groupname
@@ -41,15 +43,15 @@
 #   unmanageable: ?bool
 #   attrs: Hash = {key: value, ...}
 #
-# x group_create(groupname, **groupdata) -> groupdata or nil [writable]
-# group_read(groupname) -> groupdata or nil [readable]
-# x group_update(groupname, **groupdata) -> groupdata or nil [writeable]
-# x group_delete(groupname) -> groupdata or nil [writable]
-# group_list -> groupnames
+# x group_create(groupname, **groupdata) -> groupdata [writable]
+# group_read(groupname) -> groupdata? [readable]
+# x group_update(groupname, **groupdata) -> groupdata? [writeable]
+# x group_delete(groupname) -> groupdata? [writable]
+# group_list -> Array[groupname]
 #
-# member_list(groupname) -> usernames
-# member_add(groupname, username)
-# member_remove(groupname, username)
+# member_list(groupname) -> Array[usernames]
+# member_add(groupname, username) -> bool
+# member_remove(groupname, username) -> bool
 #
 
 require 'logger'
@@ -145,6 +147,34 @@ module Yuzakan
       end
 
       def user_list
+        raise NotImplementedError
+      end
+
+      def user_search(query)
+        raise NotImplementedError
+      end
+
+      def user_group_list(username)
+        raise NotImplementedError
+      end
+
+      def group_create(groupname, **groupdata)
+        raise NotImplementedError
+      end
+
+      def group_list
+        raise NotImplementedError
+      end
+
+      def member_list(groupname)
+        raise NotImplementedError
+      end
+
+      def member_add(groupname, username)
+        raise NotImplementedError
+      end
+
+      def member_remove(groupname, username)
         raise NotImplementedError
       end
     end

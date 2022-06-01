@@ -49,7 +49,7 @@ module Yuzakan
         (get_gidnumber_users(gorup_entry) + get_memberuid_users(group_entry)).uniq
       end
 
-      private def get_gidnumber_users(gorup_entry)
+      private def get_gidnumber_users(group_entry)
         filter = Net::LDAP::Filter.eq('gidNumber', group_entry.gidNumber.first)
         opts = search_user_opts('*', filter: filter)
         ldap_search(opts).to_a

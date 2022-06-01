@@ -173,14 +173,14 @@ module Yuzakan
           base: @params[:base_dn],
           scope: Net::LDAP::SearchScope_BaseObject,
         }
-        @logger.debug "ldap search: #{opts}"
-        base = ldap.search(opts)&.first
-
-        if base
+        if ldap_search(opts).first
           true
         else
           false
         end
+      rescue Error
+        @logger.warn 'LDAP check failed due to an error'
+        false
       end
 
       def user_create(username, password = nil, **attrs)
@@ -203,8 +203,7 @@ module Yuzakan
              ldap_attrs[@params[:user_dn_attr].intern] + ',' +
              @params[:user_base]
 
-        @logger.debug "ldap add: #{dn}"
-        raise ldap.get_operation_result.error_message unless ldap.add(dn: dn, attributes: user_data)
+        ldap_add({dn: dn, attributes: user_data})
 
         user_change_password(username, password) if password
 
@@ -225,31 +224,23 @@ module Yuzakan
       end
 
       def user_auth(username, password)
-        opts = search_user_opts(username).merge(password: password)
         opts_with_password = search_user_opts(username).merge(password: password)
-        @logger.debug "ldap auth: #{opts}"
+        @logger.debug "ldap auth: #{opts_with_password}"
         # bind_as is re bind, so DON'T USE `ldap`
         generate_ldap.bind_as(opts_with_password)
       end
 
       def user_change_password(username, password)
-        user_attrs = user_read(username)
-        return nil unless user_attrs
+        user = get_user_entry(username)
+        return nil unless user
 
-        dn = user_attrs['dn']
         operations = change_password_operations(password)
-
-        @logger.debug "ldap modify: #{user_attrs['dn']}"
-        modify_result = ldap.modify(dn: dn, operations: operations)
-        raise ldap.get_operation_result.error_message unless modify_result
-
-        user_attrs
+        ldap_modify(dn: user.dn, operations: operations)
       end
 
       def user_list
         opts = search_user_opts('*')
-        @logger.debug "ldap search: #{opts}"
-        ldap.search(opts).map { |user| get_user_name(user) }
+        ldap_search(opts).map { |user| get_user_name(user) }
       end
 
       def user_search(query)
@@ -261,26 +252,29 @@ module Yuzakan
         filter &= Net::LDAP::Filter.construct(@params[:user_search_filter]) if @params[:user_search_filter]
 
         opts = search_user_opts('*', filter: filter)
-        @logger.debug "ldap search: #{opts}"
-        ldap.search(opts).map { |user| get_user_name(user) }
+        ldap_search(opts).map { |user| get_user_name(user) }
+      end
+
+      def user_gorup_list(username)
+        user = get_user_entry(username)
+        get_memberof_groups(user).map { |group| get_group_name(group) }
       end
 
       def group_read(groupname)
-        entry = get_group_entry(groupname)
-        entry && entry2groupdata(entry)
+        gorup = get_group_entry(groupname)
+        gorup && entry2groupdata(gorup)
       end
 
       def group_list
         opts = search_group_opts('*')
-        @logger.debug "ldap search: #{opts}"
-        ldap.search(opts).map { |group| get_group_name(group) }
+        ldap_search(opts).map { |group| get_group_name(group) }
       end
 
       def member_list(groupname)
-        group = get_group_entry(groupname)
-        return if group.nil?
+        gorup = get_group_entry(groupname)
+        return if entry.nil?
 
-        get_member_users(group).map { |user| get_user_name(user) }
+        get_member_users(gorup).map { |user| get_user_name(user) }
       end
 
       def member_add(groupname, _username)
@@ -387,8 +381,7 @@ module Yuzakan
 
         opts = search_user_opts('*', base: user_dn,
                                      scope: Net::LDAP::SearchScope_BaseObject)
-        @logger.degbu "ldap search: #{opts}"
-        ldap.search(opts)&.first
+        ldap_search(opts).first
       end
 
       private def get_group_dn(group_dn)
@@ -401,7 +394,7 @@ module Yuzakan
         opts = search_group_opts('*', base: group_dn,
                                       scope: Net::LDAP::SearchScope_BaseObject)
         @logger.degbu "ldap search: #{opts}"
-        ldap.search(opts)&.first
+        ldap_search(opts).first
       end
 
       private def generate_filter(filter)
@@ -503,8 +496,6 @@ module Yuzakan
             end
         end
 
-        groups = get_memberof_groups(entry).map { |group| get_group_name(group) }
-
         {
           name: name,
           display_name: entry.first(@params[:user_display_name_attr]),
@@ -543,21 +534,13 @@ module Yuzakan
 
       private def get_user_entry(username)
         opts = search_user_opts(username)
-        @logger.debug "ldap search: #{opts}"
-        result = ldap.search(opts)
-        raise Error, ldap.get_operation_result.error_message if result.nil?
-
-        result.frist
+        ldap_search(opts).first
       end
 
       private def get_group_entry(groupname)
         groupname += @params[:group_name_suffix] if @params[:group_name_suffix]&.size&.positive?
         opts = search_group_opts(groupname)
-        @logger.debug "ldap search: #{opts}"
-        result = ldap.search(opts)
-        raise Error, ldap.get_operation_result.error_message if result.nil?
-
-        result.frist
+        ldap_searh(opts).first
       end
 
       private def get_user_name(user_entry)
@@ -576,39 +559,27 @@ module Yuzakan
       private def get_memberof_groups(user_entry)
         filter = Net::LDAP::Filter.eq('member', user_entry.dn)
         opts = search_group_opts('*', filter: filter)
-        @logger.debug "ldap search: #{opts}"
-        ldap.search(opts).to_a
+        ldap_search(opts).to_a
       end
 
       private def get_member_users(group_entry)
         filter = Net::LDAP::Filter.eq('memberOf', group_entry.dn)
         opts = search_user_opts('*', filter: filter)
-        @logger.debug "ldap search: #{opts}"
-        ldap.search(opts).to_a
+        ldapSsearch(opts).to_a
       end
 
       private def add_member(group_entry, user_entry)
         return false if user_entry.memberof.include?(group_entry.dn)
 
         operations = [generate_operation_add(:member, user_entry.dn)]
-
-        @logger.debug "ldap modify: #{group_entry.dn}"
-        result = ldap.modify(dn: group_entry.dn, operations: operations)
-        raise Error, ldap.get_operation_result.error_message unless result
-
-        result
+        ldap_modify(dn: group_entry.dn, operations: operations)
       end
 
       private def remove_member(group_entry, user_entry)
         return false if user_entry.memberof.exclude?(group_entry.dn)
 
         operations = [generate_operation_delete(:member, user_entry.dn)]
-
-        @logger.debug "ldap modify: #{group_entry.dn}"
-        result = ldap.modify(dn: group_entry.dn, operations: operations)
-        raise Error, ldap.get_operation_result.error_message unless result
-
-        result
+        ldap_modify(dn: group_entry.dn, operations: operations)
       end
 
       private def ldap_search(opts)

@@ -20,25 +20,30 @@ module Yuzakan
           }, {
             name: :samba_domain_sid,
             label: 'Samba ドメインSID',
-            description:
-             'ユーザーのプリフィックスに使用するSambaドメインのSIDです。' \
-            '"S-1-5-21-(0..4294967295)-(0..4294967295)-(0..4294967295)"の形式で、ランダムな数を割り当ててください。',
+            description: 'ユーザーのプリフィックスに使用するSambaドメインのSIDです。' \
+                         '"S-1-5-21-(0..4294967295)-(0..4294967295)-(0..4294967295)"の形式で、' \
+                         'ランダムな数を割り当ててください。',
             type: :string,
             placeholder: 'S-1-5-21-x-y-z',
             required: true,
           }, {
             name: :samba_nt_password,
             label: 'Samba NT パスワード設定',
-            description:
-      'パスワード設定時にSamba NT パスワード(sambaNTPassword)を設定します。',
+            description: 'パスワード設定時にSamba NT パスワード(sambaNTPassword)を設定します。',
             type: :boolean,
             default: true,
           }, {
             name: :samba_lm_password,
             label: 'Samba Lanman パスワード設定',
             description:
-      'パスワード設定時にSamba LM パスワード(sambaLMPassword)も設定します。' \
-      'LM パスワードは14文字までしか有効ではないため、使用を推奨しません。',
+              'パスワード設定時にSamba LM パスワード(sambaLMPassword)も設定します。' \
+              'LM パスワードは14文字までしか有効ではないため、使用を推奨しません。',
+            type: :boolean,
+            default: false,
+          }, {
+            name: :auth_nt_password,
+            label: 'Samba NT パスワード認証',
+            description: 'NT パスワードでも認証を行います。',
             type: :boolean,
             default: false,
           },
@@ -56,13 +61,17 @@ module Yuzakan
       end
 
       def user_auth(username, password)
-        user = user_read(username)
+        return true if super
+        return false unless @params[:auth_nt_password]
+
+        user = get_user_entry(username)
         user &&
-          ['D', 'L'].none? { |c| user.dig(:attrs, :sambaacctflags)&.include?(c) } &&
-          user['sambantpassword'] == generate_nt_password(password)
+          ['D', 'L'].none? { |c| user['sambaAcctFlags']&.first&.include?(c) } &&
+          user['sambaNTPassword'] == generate_nt_password(password)
       end
 
       private def change_password_operations(password)
+        super_operations = super
         nt_password =
           if @params[:samba_nt_password]
             generate_nt_password(password)
@@ -77,9 +86,9 @@ module Yuzakan
             @@no_password
           end
 
-        [
-          generate_operation_replace(:sambantpassword, nt_password),
-          generate_operation_replace(:sambalmpassword, lm_password),
+        super_operations + [
+          generate_operation_replace('sambaNTPAssword', nt_password),
+          generate_operation_replace('sambaLMPassword', lm_password),
         ]
       end
 
@@ -96,8 +105,8 @@ module Yuzakan
         "[#{flags_str}#{' ' * (11 - flags_str.size)}]"
       end
 
-      private def generate_user_sid(user)
-        user_id = (user[:uidnumber].first * 2) + 1000
+      private def generate_user_sid(uid_number)
+        user_id = (uid_number * 2) + 1000
         "#{@params[:samba_domain_sid]}-#{user_id}"
       end
 
