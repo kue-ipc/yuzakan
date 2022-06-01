@@ -16,7 +16,7 @@ module Web
         def call(params) # rubocop:disable Lint/UnusedMethodArgument
           @user = current_user
 
-          providers = ProviderRepository.new.ordered_all_with_adapter_by_operation(:read)
+          providers = ProviderRepository.new.ordered_all_with_adapter_by_operation(:user_read)
           provider_datas = providers.each.map do |provider|
             provider.read(@user.name)&.[](:attrs)
           end

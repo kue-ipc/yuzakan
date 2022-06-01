@@ -1,13 +1,13 @@
-require_relative 'ldap_base_adapter'
+require_relative 'ldap_adapter'
 
 module Yuzakan
   module Adapters
-    class AdAdapter < LdapBaseAdapter
+    class AdAdapter < LdapAdapter
       self.name = 'ad'
       self.label = 'Active Directory'
       self.version = '0.0.1'
       self.params = ha_merge(
-        LdapBaseAdapter.params + [
+        LdapAdapter.params + [
           {
             name: :host,
             label: 'ドメインコントローラーのホスト名/IPアドレス',
@@ -46,14 +46,21 @@ module Yuzakan
                          'LDAPの形式で指定します。' \
                          '何も指定しない場合は(objectclass=group)になります。',
             default: '(objectclass=group)',
+          }, {
+            name: :password_scheme,
+            delete: true,
+          }, {
+            name: :crypt_salt_format,
+            delete: true,
           },
         ], key: :name)
-      self.multi_attrs = LdapBaseAdapter.multi_attrs + %w[member memberOf].map(&:downcase)
-      self.hide_attrs = LdapBaseAdapter.hide_attrs
+      self.multi_attrs = LdapAdapter.multi_attrs
+      self.hide_attrs = LdapAdapter.hide_attrs
 
       # ADではunicodePwdに平文パスワードを設定することで変更できる。
-      private def change_password_operations(password)
-        [generate_operation_replace(:unicodePwd, generate_unicode_password(password))]
+      # 古いパスワードはわからないため、常にreplaceで行うこと。
+      private def change_password_operations(_user, password)
+        [operation_replace('unicodePwd', generate_unicode_password(password))]
       end
 
       # ダブルコーテーションで囲ってUTF-16LEに変更する。

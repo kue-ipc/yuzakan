@@ -88,7 +88,7 @@ class UnlockUser
     result = :success
 
     (@providers ||
-      @provider_repository.ordered_all_with_adapter_by_operation(:unlock)
+      @provider_repository.ordered_all_with_adapter_by_operation(:user_unlock)
     ).each do |provider|
       user_data = provider.unlock(@username, @password)
       @user_datas[provider.name] = user_data if user_data

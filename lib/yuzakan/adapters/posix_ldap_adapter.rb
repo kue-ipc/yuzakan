@@ -1,13 +1,13 @@
-require_relative 'ldap_password_adapter'
+require_relative 'ldap_adapter'
 
 module Yuzakan
   module Adapters
-    class PosixLdapAdapter < LdapPasswordAdapter
+    class PosixLdapAdapter < LdapAdapter
       self.name = 'posix_ldap'
       self.label = 'Posix LDAP'
       self.version = '0.0.1'
       self.params = ha_merge(
-        LdapPasswordAdapter.params + [
+        LdapAdapter.params + [
           {
             name: :user_name_attr,
             default: 'uid',
@@ -26,8 +26,8 @@ module Yuzakan
             default: '(objectclass=posixGroup)',
           },
         ], key: :name)
-      self.multi_attrs = LdapPasswordAdapter.multi_attrs
-      self.hide_attrs = LdapPasswordAdapter.hide_attrs
+      self.multi_attrs = LdapAdapter.multi_attrs
+      self.hide_attrs = LdapAdapter.hide_attrs
 
       private def get_memberof_groups(user_entry)
         (get_gidnumber_groups(user_entry) + get_memberuid_groups(user_entry)).compact.uniq
@@ -66,14 +66,14 @@ module Yuzakan
       private def add_member(group_entry, user_entry)
         return false if group_entry.memberuid.include?(user_entry.uid.first)
 
-        operations = [generate_operation_add(:memberuid, user_entry.uid.first)]
+        operations = [operation_add(:memberuid, user_entry.uid.first)]
         ldap_modify(group_entry.dn, operations)
       end
 
       private def remove_member(group_entry, user_entry)
         return false if group_entry.memberuid.exclude?(user_entry.uid.first)
 
-        operations = [generate_operation_delete(:memberuid, user_entry.uid.first)]
+        operations = [operation_delete(:memberuid, user_entry.uid.first)]
         ldap_modify(group_entry.dn, operations)
       end
     end

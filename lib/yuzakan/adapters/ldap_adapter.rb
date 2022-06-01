@@ -1,4 +1,6 @@
-require 'set'
+require 'securerandom'
+require 'base64'
+require 'digest'
 
 require 'net/ldap'
 require 'net/ldap/dn'
@@ -6,13 +8,18 @@ require 'net/ldap/dn'
 require_relative 'abstract_adapter'
 require_relative '../utils/ignore_case_string_set'
 
+# パスワード変更について
+# userPassword は {CRYPT}$6$%.16s をデフォルトする。
+
 module Yuzakan
   module Adapters
     class LdapAdapter < AbstractAdapter
       class Error < StandardError
       end
 
-      self.abstract_adapter = true
+      self.name = 'ldap'
+      self.label = 'LDAP'
+      self.version = '0.0.1'
       self.params = [
         {
           name: :host,
@@ -158,6 +165,44 @@ module Yuzakan
           type: :string,
           default: '(objectclass=*)',
           required: false,
+        }, {
+          name: :password_scheme,
+          label: 'パスワードのスキーム',
+          description: 'パスワード設定時に使うスキームです。' \
+                       '{CRYPT}はソルトフォーマットも選択してください。' \
+                       '対応するスキームはLDAPサーバーの実装によります。',
+          type: :string,
+          required: true,
+          default: '{CRYPT}',
+          list: [
+            {name: :cleartext, label: '{CLEARTEXT} 平文', value: '{CLEARTEXT}', deprecated: true},
+            {name: :crypt, label: '{CRYPT} CRYPT', value: '{CRYPT}'},
+            {name: :md5, label: '{MD5} MD5', value: '{MD5}', deprecated: true},
+            {name: :sha, label: '{SHA} SHA-1', value: '{SHA}', deprecated: true},
+            {name: :sha256, label: '{SHA256} SHA-256', value: '{SHA256}', deprecated: true},
+            {name: :sha512, label: '{SHA512} SHA-512', value: '{SHA512}', deprecated: true},
+            {name: :smd5, label: '{SMD5} ソルト付MD5', value: '{SMD5}', deprecated: true},
+            {name: :ssha, label: '{SSHA} ソルト付SHA-1', value: '{SSHA}', deprecated: true},
+            {name: :ssha256, label: '{SSHA256} ソルト付-SHA256', value: '{SSHA256}'},
+            {name: :ssha512, label: '{SSHA512} ソルト付SHA-512', value: '{SSHA512}'},
+            {name: :pbkdf2_sha1, label: '{PBKDF2-SHA1} PBKDF2 SHA-1', value: '{PBKDF2-SHA1}', deprecated: true},
+            {name: :pbkdf2_sha256, label: '{PBKDF2-SHA256} PBKDF2 SHA256', value: '{PBKDF2-SHA256}'},
+            {name: :pbkdf2_sha512, label: '{PBKDF2-SHA512} PBKDF2 SHA256', value: '{PBKDF2-SHA512}'},
+          ],
+        }, {
+          name: :crypt_salt_format,
+          label: 'CRYPTのソルトフォーマット',
+          description: 'パスワードのスキームに{CRYPT}を使用している場合は、' \
+                       '記載のフォーマットでソルト値が作成されます。' \
+                       '対応する形式はサーバーのcryptの実装によります。',
+          type: :string,
+          default: '$6$%.16s',
+          list: [
+            {name: :des, label: 'DES', value: '%.2s', deprecated: true},
+            {name: :md5, label: 'MD5', value: '$1$%.8s', deprecated: true},
+            {name: :sha256, label: 'SHA256', value: '$5$%.16s'},
+            {name: :sha512, label: 'SHA512', value: '$6$%.16s'},
+          ],
         },
       ]
 
@@ -166,7 +211,7 @@ module Yuzakan
       end
 
       self.multi_attrs = Yuzakan::Utils::IgnoreCaseStringSet.new(%w[objectClass member memberOf])
-      self.hide_attrs = Yuzakan::Utils::IgnoreCaseStringSet.new
+      self.hide_attrs = Yuzakan::Utils::IgnoreCaseStringSet.new(%w[userPassword])
 
       def check
         opts = {
@@ -234,7 +279,23 @@ module Yuzakan
         user = get_user_entry(username)
         return nil unless user
 
-        operations = change_password_operations(password)
+        operations = change_password_operations(user, password)
+        ldap_modify(dn: user.dn, operations: operations)
+      end
+
+      def user_lock(username, _password)
+        user = get_user_entry(username)
+        return nil unless user
+
+        operations = lock_operations(user)
+        ldap_modify(dn: user.dn, operations: operations)
+      end
+
+      def user_unlock(username, _password)
+        user = get_user_entry(username)
+        return nil unless user
+
+        operations = unlock_operations(user)
         ldap_modify(dn: user.dn, operations: operations)
       end
 
@@ -297,26 +358,22 @@ module Yuzakan
         remove_member(group, user)
       end
 
-      private def change_password_operations(_password)
-        raise NotImplementedError
-      end
-
       private def generate_operation(operator, name, value = nil)
         raise "invalid operator: #{operator}" unless [:add, :replace, :delete].include?(operator)
 
         [operator, name, value]
       end
 
-      private def generate_operation_add(name, value)
+      private def operation_add(name, value)
         generate_operation(:add, name, value)
       end
 
-      private def generate_operation_replace(name, value)
+      private def operation_replace(name, value)
         generate_operation(:replace, name, value)
       end
 
-      private def generate_operation_delete(name)
-        generate_operation(:delete, name, nil)
+      private def operation_delete(name, value = nil)
+        generate_operation(:delete, name, value)
       end
 
       private def ldap
@@ -543,12 +600,12 @@ module Yuzakan
         ldap_searh(opts).first
       end
 
-      private def get_user_name(user_entry)
-        user_entry.first(@params[:user_name_attr]).downcase
+      private def get_user_name(user)
+        user.first(@params[:user_name_attr]).downcase
       end
 
-      private def get_group_name(group_entry)
-        name = group_entry.first(@params[:group_name_attr]).downcase
+      private def get_group_name(group)
+        name = group.first(@params[:group_name_attr]).downcase
         if @params[:group_name_suffix]&.size&.positive? &&
            name.delete_suffix!(@params[:group_name_suffix].downcase).nil?
           @logger.warn "no suffix group name: #{name}"
@@ -556,35 +613,35 @@ module Yuzakan
         name
       end
 
-      private def get_memberof_groups(user_entry)
-        filter = Net::LDAP::Filter.eq('member', user_entry.dn)
+      private def get_memberof_groups(user)
+        filter = Net::LDAP::Filter.eq('member', user.dn)
         opts = search_group_opts('*', filter: filter)
         ldap_search(opts).to_a
       end
 
-      private def get_member_users(group_entry)
-        filter = Net::LDAP::Filter.eq('memberOf', group_entry.dn)
+      private def get_member_users(group)
+        filter = Net::LDAP::Filter.eq('memberOf', group.dn)
         opts = search_user_opts('*', filter: filter)
         ldapSsearch(opts).to_a
       end
 
-      private def add_member(group_entry, user_entry)
-        return false if user_entry.memberof.include?(group_entry.dn)
+      private def add_member(group, user)
+        return false if user.memberof.include?(group.dn)
 
-        operations = [generate_operation_add(:member, user_entry.dn)]
-        ldap_modify(dn: group_entry.dn, operations: operations)
+        operations = [operation_add(:member, user.dn)]
+        ldap_modify(dn: group.dn, operations: operations)
       end
 
-      private def remove_member(group_entry, user_entry)
-        return false if user_entry.memberof.exclude?(group_entry.dn)
+      private def remove_member(group, user)
+        return false if user.memberof.exclude?(group.dn)
 
-        operations = [generate_operation_delete(:member, user_entry.dn)]
-        ldap_modify(dn: group_entry.dn, operations: operations)
+        operations = [operation_delete(:member, user.dn)]
+        ldap_modify(dn: group.dn, operations: operations)
       end
 
       private def ldap_search(opts)
         @logger.debug "LDAP search: #{opts}"
-        result = ldap.search(primary_opts)
+        result = ldap.search(opts)
         if result.nil?
           @logger.error "LDAP search error: #{ldap.get_operation_result.error_message}"
           raise Error, ldap.get_operation_result.error_message
@@ -623,6 +680,93 @@ module Yuzakan
         end
 
         result
+      end
+
+      private def change_password_operations(user, password)
+        operations = []
+        operations << operation_del('userPassword') if user['userPassword']&.first
+        operations << operation_add('userPassword', generate_password(password))
+        operations
+      end
+
+      # https://trac.tools.ietf.org/id/draft-stroeder-hashed-userpassword-values-00.html
+      private def generate_password(password)
+        case @params[:password_scheme].upcase
+        when '{CLEARTEXT}'
+          password
+        when '{CRYPT}'
+          "{CRYPT}#{generate_crypt_password(password)}"
+        when '{MD5}'
+          "{MD5}#{Base64.strict_encode64(Digest::MD5.digest(password))}"
+        when '{SHA}'
+          "{SHA}#{Base64.strict_encode64(Digest::SHA1.digest(password))}"
+        when '{SHA256}'
+          "{SHA256}#{Base64.strict_encode64(Digest::SHA256.digest(password))}"
+        when '{SHA512}'
+          "{SHA512}#{Base64.strict_encode64(Digest::SHA512.digest(password))}"
+        when '{SMD5}'
+          salt = SecureRandom.random_bytes(8)
+          "{SMD5}#{Base64.strict_encode64(Digest::MD5.digest(password + salt), salt)}"
+        when '{SSHA}'
+          salt = SecureRandom.random_bytes(8)
+          "{SSHA}#{Base64.strict_encode64(Digest::SHA1.digest(password + salt), salt)}"
+        when '{SSHA256}'
+          salt = SecureRandom.random_bytes(8)
+          "{SSHA256}#{Base64.strict_encode64(Digest::SHA256.digest(password + salt), salt)}"
+        when '{SSHA512}'
+          salt = SecureRandom.random_bytes(8)
+          "{SSHA512}#{Base64.strict_encode64(Digest::SHA512.digest(password + salt), salt)}"
+        else
+          # TODO: PBKDF2
+          raise NotImplementedError
+        end
+      end
+
+      private def generate_crypt_password(password, format: @params[:crypt_salt_format])
+        # 16 [./0-9A-Za-z] chars
+        salt = SecureRandom.base64(12).tr('+', '.')
+        password.crypt(format % salt)
+      end
+
+      private def locked_user?(user)
+        password = user['userPassword']&.first
+        return true unless password
+
+        password.start_with?(/\{[\w-]+\}!/)
+      end
+
+      private def lock_operations(user)
+        old_password = user['userPassword']&.first
+        return nil unless old_password
+
+        operations = []
+        operations << operation_del('userPassword')
+        new_password = lock_password(old_password)
+        operations << operation_replace('userPassword', new_password) if new_password
+        operations
+      end
+
+      private def unlock_operations(user)
+        old_password = user['userPassword']&.first
+        return nil unless old_password
+
+        operations = []
+        operations << operation_del('userPassword')
+        new_password = unlock_password(old_password)
+        operations << operation_replace('userPassword', new_password) if new_password
+        operations
+      end
+
+      private def lock_password(str)
+        if (m = /\A(\{[\w-]+\})(.*)\z/.match(str))
+          m[1] + '!!' + m[2]
+        end
+      end
+
+      private def unlock_password(str)
+        if (m = /\A({[\w-]+})!+(.*)\z/.match(str))
+          m[1] + m[2]
+        end
       end
     end
   end

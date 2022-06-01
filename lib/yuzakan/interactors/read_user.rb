@@ -26,7 +26,7 @@ class ReadUser
     @userdata = {name: params[:username], attrs: {}}
     @userdata_list = []
 
-    providers = @provider_repository.ordered_all_with_adapter_by_operation(:read)
+    providers = @provider_repository.ordered_all_with_adapter_by_operation(:user_read)
     providers.each do |provider|
       userdata = provider.user_read(params[:username])
       if userdata

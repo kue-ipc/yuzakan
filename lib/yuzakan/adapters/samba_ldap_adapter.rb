@@ -48,8 +48,8 @@ module Yuzakan
             default: false,
           },
         ], key: :name)
-      self.multi_attrs = LdapBaseAdapter.multi_attrs
-      self.hide_attrs = LdapBaseAdapter.hide_attrs + %w[sambaNTPassword sambaLMPassword].map(&:downcase)
+      self.multi_attrs = PosixLdapAdapter.multi_attrs
+      self.hide_attrs = PosixLdapAdapter.hide_attrs + %w[sambaNTPassword sambaLMPassword].map(&:downcase)
 
       @@no_password = -'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX' # rubocop:disable Style/ClassVars
 
@@ -65,31 +65,25 @@ module Yuzakan
         return false unless @params[:auth_nt_password]
 
         user = get_user_entry(username)
-        user &&
-          ['D', 'L'].none? { |c| user['sambaAcctFlags']&.first&.include?(c) } &&
-          user['sambaNTPassword'] == generate_nt_password(password)
+        return false unless user
+
+        acct_flags = user['sambaAcctFlags']&.first
+        return false if acct_flags && ['D', 'L'].any? { |c| acct_flags.include?(c) }
+
+        user['sambaNTPassword'] == generate_nt_password(password)
       end
 
-      private def change_password_operations(password)
-        super_operations = super
-        nt_password =
-          if @params[:samba_nt_password]
-            generate_nt_password(password)
-          else
-            @@no_password
-          end
-
-        lm_password =
-          if @params[:samba_lm_password]
-            generate_lm_password(password)
-          else
-            @@no_password
-          end
-
-        super_operations + [
-          generate_operation_replace('sambaNTPAssword', nt_password),
-          generate_operation_replace('sambaLMPassword', lm_password),
-        ]
+      private def change_password_operations(user, password)
+        operations = super
+        operations << operation_delete('sambaNTPAssword') if user['sambaNTPAssword']&.first
+        operations << operation_delete('sambaLMPAssword') if user['sambaLMPAssword']&.first
+        operations << operation_add(
+          'sambaNTPAssword',
+          if @params[:samba_nt_password] then generate_nt_password(password) else @@no_password end)
+        operations << operation_add(
+          'sambaLMPassword',
+          if @params[:samba_lm_password] then generate_lm_password(password) else @@no_password end)
+        operations
       end
 
       private def generate_account_flags(no_password: false, disabled: false, home_required: false, auto_lock: false,

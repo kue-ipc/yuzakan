@@ -23,7 +23,7 @@ class Authenticate
   end
 
   def call(params)
-    providers = @provider_repository.ordered_all_with_adapter_by_operation(:auth)
+    providers = @provider_repository.ordered_all_with_adapter_by_operation(:user_auth)
 
     @provider = nil
     providers.each do |provider|

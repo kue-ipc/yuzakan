@@ -6,6 +6,16 @@ Layout/LineLength:
   Max: 120
   Exclude:
     - spec/**/*_spec.rb
+Layout/EndOfLine:
+  EnforcedStyle: lf
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+Layout/MultilineMethodCallBraceLayout:
+  EnforcedStyle: same_line
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
 
 # double size metrics
 Metrics/AbcSize:
@@ -29,16 +39,21 @@ Metrics/ParameterLists:
 Metrics/PerceivedComplexity:
   Max: 14
 
-Layout/EndOfLine:
-  EnforcedStyle: lf
-Layout/FirstHashElementIndentation:
-  EnforcedStyle: consistent
-Layout/MultilineMethodCallIndentation:
-  EnforcedStyle: indented
-Layout/MultilineMethodCallBraceLayout:
-  EnforcedStyle: same_line
-Layout/SpaceInsideHashLiteralBraces:
-  EnforcedStyle: no_space
+Naming/MethodParameterName:
+  AllowedNames:
+    - at
+    - by
+    - db
+    - id
+    - in
+    - io
+    - ip
+    - of
+    - 'on'
+    - os
+    - pp
+    - to
+    - dn
 
 Style/AccessModifierDeclarations:
   EnforcedStyle: inline
@@ -79,3 +94,4 @@ Style/WordArray:
 
 Bundler/OrderedGems:
   Enabled: false
+
