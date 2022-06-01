@@ -8,7 +8,7 @@ require_relative '../utils/ignore_case_string_set'
 
 module Yuzakan
   module Adapters
-    class LdapBaseAdapter < AbstractAdapter
+    class LdapAdapter < AbstractAdapter
       class Error < StandardError
       end
 
