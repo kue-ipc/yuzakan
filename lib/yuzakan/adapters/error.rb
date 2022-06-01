@@ -1,6 +1,6 @@
 module Yuzakan
   module Adapters
-    class Error < RuntimeError
+    class Error < StandardError
     end
   end
 end

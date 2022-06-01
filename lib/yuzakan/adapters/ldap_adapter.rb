@@ -5,6 +5,7 @@ require 'digest'
 require 'net/ldap'
 require 'net/ldap/dn'
 
+require_relative 'error'
 require_relative 'abstract_adapter'
 require_relative '../utils/ignore_case_string_set'
 
@@ -14,7 +15,7 @@ require_relative '../utils/ignore_case_string_set'
 module Yuzakan
   module Adapters
     class LdapAdapter < AbstractAdapter
-      class Error < StandardError
+      class Error < Yuzakan::Adapters::Error
       end
 
       self.name = 'ldap'
