@@ -334,7 +334,7 @@ module Yuzakan
 
       def member_list(groupname)
         gorup = get_group_entry(groupname)
-        return if entry.nil?
+        return if gorup.nil?
 
         get_member_users(gorup).map { |user| get_user_name(user) }
       end
@@ -623,7 +623,7 @@ module Yuzakan
       private def get_member_users(group)
         filter = Net::LDAP::Filter.eq('memberOf', group.dn)
         opts = search_user_opts('*', filter: filter)
-        ldapSsearch(opts).to_a
+        ldap_search(opts).to_a
       end
 
       private def add_member(group, user)

@@ -15,6 +15,7 @@ module Api
           params do
             optional(:page).filled(:int?, gteq?: 1, lteq?: 10000)
             optional(:per_page).filled(:int?, gteq?: 10, lteq?: 100)
+            optional(:sync).maybe(:bool?)
           end
         end
 
@@ -31,24 +32,37 @@ module Api
         def call(params)
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
+          @sync = params[:sync]
+
           @providers = @provider_repository.ordered_all_with_adapter_by_operation(:group_read)
-          providers_list = @providers.to_h { |provider| [provider.name, Set.new(provider.group_list)] }
-          all_items = providers_list.values.sum(Set.new).to_a.sort
+          providers_items = @providers.to_h { |provider| [provider.name, Set.new(provider.group_list)] }
+          all_items = providers_items.values.sum(Set.new).to_a.sort
 
-          pager = Yuzakan::Utils::Pager.new(routes, :groups, params, all_items)
+          @pager = Yuzakan::Utils::Pager.new(routes, :groups, params, all_items)
 
-          groups_data = @group_repository.by_name(pager.page_items).to_a.to_h { |group| [group.name, group] }
-          data = pager.page_items.map do |name|
-            group = groups_data[name] || create_group(name)
+          @groups = get_groups(@pager.page_items).map do |group|
             {
               **convert_for_json(group),
-              providers: providers_list.filter { |_, v| v.include?(group.name) }.keys,
+              providers: providers_items.filter { |_, v| v.include?(group.name) }.keys,
             }
           end
 
           self.status = 200
-          headers.merge!(pager.headers)
-          self.body = generate_json(data)
+          headers.merge!(@pager.headers)
+          self.body = generate_json(@groups)
+        end
+
+        private def get_groups(names)
+          group_entities = @group_repository.by_name(names).to_a.to_h { |group| [group.name, group] }
+          names.map do |name|
+            if group_entities.key?(name)
+              group_entities[name]
+            elsif @sync
+              create_gorup(name)
+            else
+              Group.new({name: name})
+            end
+          end
         end
 
         private def create_group(groupname)

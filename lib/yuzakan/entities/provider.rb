@@ -82,8 +82,8 @@ class Provider < Hanami::Entity
     key('group', groupname)
   end
 
-  def list_key(name)
-    key('list', name)
+  def list_key(name, *others)
+    key('list', name, *others)
   end
 
   def user_list_key
@@ -92,6 +92,10 @@ class Provider < Hanami::Entity
 
   def group_list_key
     list_key('group')
+  end
+
+  def member_list_key(groupname)
+    list_key('member', groupname)
   end
 
   def user_search_key_raw(name)
@@ -286,6 +290,14 @@ class Provider < Hanami::Entity
     need_group!
     @cache_store.fetch(group_list_key) do
       @cache_store[group_list_key] = @adapter.group_list
+    end
+  end
+
+  def member_list(groupname)
+    need_adapter!
+    need_group!
+    @cache_store.fetch(member_list_key(groupname)) do
+      @cache_store[member_list_key(groupname)] = @adapter.member_list(groupname)
     end
   end
 end

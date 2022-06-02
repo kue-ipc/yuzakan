@@ -46,7 +46,7 @@ module Yuzakan
       end
 
       private def get_member_users(group_entry)
-        (get_gidnumber_users(gorup_entry) + get_memberuid_users(group_entry)).uniq
+        (get_gidnumber_users(group_entry) + get_memberuid_users(group_entry)).uniq
       end
 
       private def get_gidnumber_users(group_entry)
@@ -56,7 +56,7 @@ module Yuzakan
       end
 
       private def get_memberuid_users(group_entry)
-        group_entry.memberuid.map do |uid|
+        group_entry['memberUid'].map do |uid|
           filter = Net::LDAP::Filter.eq('uid', uid)
           opts = search_user_opts('*', filter: filter)
           ldap_search(opts).first
