@@ -598,7 +598,7 @@ module Yuzakan
       private def get_group_entry(groupname)
         groupname += @params[:group_name_suffix] if @params[:group_name_suffix]&.size&.positive?
         opts = search_group_opts(groupname)
-        ldap_searh(opts).first
+        ldap_search(opts).first
       end
 
       private def get_user_name(user)
