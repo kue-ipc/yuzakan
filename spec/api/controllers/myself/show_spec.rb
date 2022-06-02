@@ -51,6 +51,7 @@ describe Api::Controllers::Myself::Show do
         display_name: 'ユーザー',
         email: 'user@example.jp',
         attrs: {ja_display_name: '表示ユーザー'},
+        groups: [],
       },
       userdata_list: [{
         provider: {
