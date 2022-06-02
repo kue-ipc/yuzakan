@@ -41,9 +41,9 @@ module Api
 
           providers_list =
             if query
-              @providers.to_h { |provider| [provider.name, Set.new(provider.search("*#{query}*"))] }
+              @providers.to_h { |provider| [provider.name, Set.new(provider.user_search("*#{query}*"))] }
             else
-              @providers.to_h { |provider| [provider.name, Set.new(provider.list)] }
+              @providers.to_h { |provider| [provider.name, Set.new(provider.user_list)] }
             end
 
           all_list = providers_list.values.sum(Set.new).to_a.sort

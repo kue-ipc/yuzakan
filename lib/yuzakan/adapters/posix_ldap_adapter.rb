@@ -29,52 +29,52 @@ module Yuzakan
       self.multi_attrs = LdapAdapter.multi_attrs
       self.hide_attrs = LdapAdapter.hide_attrs
 
-      private def get_memberof_groups(user_entry)
-        (get_gidnumber_groups(user_entry) + get_memberuid_groups(user_entry)).compact.uniq
+      private def get_memberof_groups(user)
+        (get_gidnumber_groups(user) + get_memberuid_groups(user)).compact.uniq
       end
 
-      private def get_gidnumber_groups(user_entry)
-        filter = Net::LDAP::Filter.eq('gidNumber', user_entry.gidNumber.first)
+      private def get_gidnumber_groups(user)
+        filter = Net::LDAP::Filter.eq('gidNumber', user.gidNumber.first)
         opts = search_group_opts('*', filter: filter)
         ldap_search(opts).to_a
       end
 
-      private def get_memberuid_groups(user_entry)
-        filter = Net::LDAP::Filter.eq('memberUid', user_entry.uid.first)
+      private def get_memberuid_groups(user)
+        filter = Net::LDAP::Filter.eq('memberUid', user.uid.first)
         opts = search_group_opts('*', filter: filter)
         ldap_search(opts).to_a
       end
 
-      private def get_member_users(group_entry)
-        (get_gidnumber_users(group_entry) + get_memberuid_users(group_entry)).uniq
+      private def get_member_users(group)
+        (get_gidnumber_users(group) + get_memberuid_users(group)).uniq
       end
 
-      private def get_gidnumber_users(group_entry)
-        filter = Net::LDAP::Filter.eq('gidNumber', group_entry.gidNumber.first)
+      private def get_gidnumber_users(group)
+        filter = Net::LDAP::Filter.eq('gidNumber', group.gidNumber.first)
         opts = search_user_opts('*', filter: filter)
         ldap_search(opts).to_a
       end
 
-      private def get_memberuid_users(group_entry)
-        group_entry['memberUid'].map do |uid|
+      private def get_memberuid_users(group)
+        group['memberUid'].map do |uid|
           filter = Net::LDAP::Filter.eq('uid', uid)
           opts = search_user_opts('*', filter: filter)
           ldap_search(opts).first
         end.compact
       end
 
-      private def add_member(group_entry, user_entry)
-        return false if group_entry.memberuid.include?(user_entry.uid.first)
+      private def add_member(group, user)
+        return false if group.memberuid.include?(user.uid.first)
 
-        operations = [operation_add(:memberuid, user_entry.uid.first)]
-        ldap_modify(group_entry.dn, operations)
+        operations = [operation_add(:memberuid, user.uid.first)]
+        ldap_modify(group.dn, operations)
       end
 
-      private def remove_member(group_entry, user_entry)
-        return false if group_entry.memberuid.exclude?(user_entry.uid.first)
+      private def remove_member(group, user)
+        return false if group.memberuid.exclude?(user.uid.first)
 
-        operations = [operation_delete(:memberuid, user_entry.uid.first)]
-        ldap_modify(group_entry.dn, operations)
+        operations = [operation_delete(:memberuid, user.uid.first)]
+        ldap_modify(group.dn, operations)
       end
     end
   end

@@ -58,7 +58,7 @@ module Api
             if group_entities.key?(name)
               group_entities[name]
             elsif @sync
-              create_gorup(name)
+              create_group(name)
             else
               Group.new({name: name})
             end

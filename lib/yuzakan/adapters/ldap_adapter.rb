@@ -258,7 +258,7 @@ module Yuzakan
 
       def user_read(username)
         entry = get_user_entry(username)
-        entry && entry2userdata(entry)
+        entry && user_entry_to_data(entry)
       end
 
       def user_update(username, **attrs)
@@ -317,14 +317,14 @@ module Yuzakan
         ldap_search(opts).map { |user| get_user_name(user) }
       end
 
-      def user_gorup_list(username)
+      def user_group_list(username)
         user = get_user_entry(username)
         get_memberof_groups(user).map { |group| get_group_name(group) }
       end
 
       def group_read(groupname)
-        gorup = get_group_entry(groupname)
-        gorup && entry2groupdata(gorup)
+        group = get_group_entry(groupname)
+        group && group_entry_to_data(group)
       end
 
       def group_list
@@ -333,15 +333,15 @@ module Yuzakan
       end
 
       def member_list(groupname)
-        gorup = get_group_entry(groupname)
-        return if gorup.nil?
+        group = get_group_entry(groupname)
+        return if group.nil?
 
-        get_member_users(gorup).map { |user| get_user_name(user) }
+        get_member_users(group).map { |user| get_user_name(user) }
       end
 
       def member_add(groupname, _username)
         group = get_group_entry(groupname)
-        return if gorup.nil?
+        return if group.nil?
 
         user = get_user_entry(user)
         return if user.nil?
@@ -351,7 +351,7 @@ module Yuzakan
 
       def member_remove(groupname, _username)
         group = get_group_entry(groupname)
-        return if gorup.nil?
+        return if group.nil?
 
         user = get_user_entry(user)
         return if user.nil?
@@ -538,11 +538,11 @@ module Yuzakan
         }
       end
 
-      private def entry2userdata(entry)
-        name = get_user_name(entry)
+      private def user_entry_to_data(user)
+        name = get_user_name(user)
 
         attrs = {}
-        entry.each do |key, value|
+        user.each do |key, value|
           key = key.downcase.to_s
           next if self.class.hide_attrs.include?(key)
 
@@ -554,20 +554,22 @@ module Yuzakan
             end
         end
 
+        groups = get_memberof_groups(user).map { |group| get_group_name(group) }
+
         {
           name: name,
-          display_name: entry.first(@params[:user_display_name_attr]),
-          email: entry.first(@params[:user_email_attr])&.downcase,
+          display_name: user.first(@params[:user_display_name_attr]),
+          email: user.first(@params[:user_email_attr])&.downcase,
           attrs: attrs,
           groups: groups,
         }
       end
 
-      private def entry2groupdata(entry)
-        name = get_group_name(entry)
+      private def group_entry_to_data(group)
+        name = get_group_name(group)
 
         attrs = {}
-        entry.each do |key, value|
+        group.each do |key, value|
           key = key.downcase.to_s
           next if self.class.hide_attrs.include?(key)
 
@@ -581,7 +583,7 @@ module Yuzakan
 
         {
           name: name,
-          display_name: entry.first(@params[:group_display_name_attr]),
+          display_name: group.first(@params[:group_display_name_attr]),
           attrs: attrs,
         }
       end

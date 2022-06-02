@@ -26,9 +26,7 @@ class Provider < Hanami::Entity
     return super if attributes.nil? || attributes[:adapter_name].nil? # rubocop:disable Lint/ReturnInVoidContext
 
     @adapter_class = ADAPTERS_MANAGER.by_name(attributes[:adapter_name])
-    unless @adapter_class
-      raise NoAdapterError, "Not found adapter: #{attributes[:adapter_name]}"
-    end
+    raise NoAdapterError, "Not found adapter: #{attributes[:adapter_name]}" unless @adapter_class
 
     return super if attributes[:provider_params].nil? # rubocop:disable Lint/ReturnInVoidContext
 
@@ -139,7 +137,17 @@ class Provider < Hanami::Entity
   def convert_userdata(raw_userdata)
     return if raw_userdata.nil?
 
-    {**raw_userdata, attrs: convert_attrs(raw_userdata[:attrs])}
+    if group
+      {
+        **raw_userdata,
+        attrs: convert_attrs(raw_userdata[:attrs]),
+      }
+    else
+      {
+        **raw_userdata.reject { |k, _v| k == :groups },
+        attrs: convert_attrs(raw_userdata[:attrs]),
+      }
+    end
   end
 
   def need_adapter!
@@ -175,8 +183,7 @@ class Provider < Hanami::Entity
 
     @cache_store.fetch(user_key(username)) do
       raw_userdata = @adapter.user_read(username)
-      @cache_store[user_key(username)] =
-        raw_userdata && convert_userdata(raw_userdata)
+      @cache_store[user_key(username)] = raw_userdata && convert_userdata(raw_userdata)
     end
   end
 
@@ -185,8 +192,7 @@ class Provider < Hanami::Entity
     need_mappings!
 
     raw_userdata = @adapter.user_update(username, **map_userdata(userdata))
-    @cache_store[user_key(username)] =
-      raw_userdata && convert_userdata(raw_userdata)
+    @cache_store[user_key(username)] = raw_userdata && convert_userdata(raw_userdata)
   end
 
   def user_delete(username)
@@ -194,28 +200,23 @@ class Provider < Hanami::Entity
     need_mappings!
 
     raw_userdata = @adapter.user_delete(username)
-    @cache_store[user_key(username)] = nil
     return if raw_userdata.nil?
 
+    @cache_store[user_key(username)] = nil
     clear_user_list_cache
     convert_userdata(raw_userdata)
   end
 
   def user_auth(username, password)
     need_adapter!
-    need_mappings!
 
     @adapter.user_auth(username, password)
   end
 
   def user_change_password(username, password)
     need_adapter!
-    need_mappings!
 
-    raw_userdata = @adapter.user_change_password(username, password)
-    if raw_userdata
-      @cache_store[user_key(username)] = convert_userdata(raw_userdata)
-    end
+    @adapter.user_change_password(username, password)
   end
 
   def user_generate_code(username)
@@ -228,21 +229,16 @@ class Provider < Hanami::Entity
     need_adapter!
     need_mappings!
 
-    raw_userdata = @adapter.user_lock(username)
-    if raw_userdata
-      @cache_store[user_key(username)] =
-        convert_userdata(raw_userdata)
+    @adapter.user_lock(username).tap do |result|
+      @cache_store.delete(user_key(username)) if result
     end
   end
 
   def user_unlock(username, password = nil)
     need_adapter!
-    need_mappings!
 
-    raw_userdata = @adapter.user_unlock(username, password)
-    if raw_userdata
-      @cache_store[user_key(username)] =
-        convert_userdata(raw_userdata)
+    @adapter.user_unlock(username, password).tap do |result|
+      @cache_store.delete(user_key(username)) if result
     end
   end
 

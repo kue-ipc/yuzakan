@@ -12,6 +12,7 @@
 #   unmanageable: ?bool
 #   mfa: ?bool
 #   attrs: Hash = {key: value, ...}
+#   grops: Array[String]
 #
 # groupdate:
 #   name: String = groupname

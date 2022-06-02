@@ -23,7 +23,7 @@ class ReadUser
   end
 
   def call(params)
-    @userdata = {name: params[:username], attrs: {}}
+    @userdata = {name: params[:username], attrs: {}, groups: []}
     @userdata_list = []
 
     providers = @provider_repository.ordered_all_with_adapter_by_operation(:user_read)
@@ -34,6 +34,7 @@ class ReadUser
         @userdata[:display_name] ||= userdata[:display_name]
         @userdata[:email] ||= userdata[:email]
         @userdata[:attrs] = userdata[:attrs].merge(@userdata[:attrs])
+        @userdata[:groups] |= userdata[:groups] if userdata[:groups]
       end
     rescue => e
       Hanami.logger.error e
