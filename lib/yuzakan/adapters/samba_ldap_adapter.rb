@@ -15,8 +15,8 @@ module Yuzakan
       self.params = ha_merge(
         PosixLdapAdapter.params + [
           {
-            name: :user_esarch_filter,
-            default: '(objectClass=sambaSamAccount)',
+            name: :user_search_filter,
+            default: '(&(objectclass=posixAccount)(objectClass=sambaSamAccount))',
           }, {
             name: :samba_domain_sid,
             label: 'Samba ドメインSID',
