@@ -16,3 +16,30 @@ export fieldName = (name, parents = []) ->
 
 export fieldId = (name, parents = []) ->
   listToKebab(parents..., name)
+
+export formDataToObj = (formData) ->
+  obj = {}
+  for [key, value] from formData
+    names = filedToList(key)
+    curObj = obj
+    for name in names[0..-2]
+      curObj[name] ?= {}
+      curObj = curObj[name]
+    curObj[names[-1]] = value
+
+export formDataToJson = (formData) ->
+  JSON.stringify(formDataToObj(formData))
+
+export formDataToUrlencoded = (formData) ->
+  throw new Error('Not implument')
+
+export objToUrlencoded = (obj) ->
+  objToUrlencodedParams(obj).join('&')
+
+export objToUrlencodedParams = (obj, parents = []) ->
+  [for own key, value of obj
+    if typeof value == 'object'
+      objToUrlencodedParams(value, [parents..., key])
+    else
+      "#{encodeURIComponent(fieldName(key, parents))}=#{encodeURIComponent(value)}"
+  ].flat()

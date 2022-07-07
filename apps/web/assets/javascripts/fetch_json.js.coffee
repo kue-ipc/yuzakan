@@ -1,4 +1,8 @@
-import {filedToList, fieldName} from './form_helper.js'
+import {
+  filedToList, fieldName,
+  formDataToObj, formDataToJson, formDataToUrlencoded,
+  objToUrlencoded
+} from './form_helper.js'
 import HttpLinkHeader from './http-link-header.js'
 
 DEFAULT_PAGE = 1
@@ -121,30 +125,3 @@ export fetchJsonPatch = (params) ->
 
 export fetchJsonDelete = (params) ->
   await fetchJson({method: 'DELETE', params...})
-
-formDataToObj = (formData) ->
-  obj = {}
-  for [key, value] from formData
-    names = filedToList(key)
-    curObj = obj
-    for name in names[0..-2]
-      curObj[name] ?= {}
-      curObj = curObj[name]
-    curObj[names[-1]] = value
-
-formDataToJson = (formData) ->
-  JSON.stringify(formDataToObj(formData))
-
-formDataToUrlencoded = (formData) ->
-  throw new Error('Not implument')
-
-objToUrlencoded = (obj) ->
-  objToUrlencodedParams(obj).join('&')
-
-objToUrlencodedParams = (obj, parents = []) ->
-  [for own key, value of obj
-    if typeof value == 'object'
-      objToUrlencodedParams(value, [parents..., key])
-    else
-      "#{encodeURIComponent(fieldName(key, parents))}=#{encodeURIComponent(value)}"
-  ].flat()

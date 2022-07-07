@@ -2,6 +2,8 @@ import {text, app} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
 import {fetchJsonGet} from '../fetch_json.js'
 import BsIcon from '../bs_icon.js'
+import {objToUrlencoded} from '../form_helper.js'
+
 
 searchAction = (state, {query}) ->
   return state if state.query == query
@@ -123,7 +125,10 @@ initAllUsersAction = (state, {users, total}) ->
   {state..., users, total}
 
 indexAllUsersRunner = (dispatch, {page, per_page, query}) ->
-  response = await fetchJsonGet({url: '/api/users', data: {page, per_page, query}})
+  data = {page, per_page, query}
+  history.pushState(data, 'users', "/admin/users?#{objToUrlencoded(data)}")
+
+  response = await fetchJsonGet({url: '/api/users', data})
   if response.ok
     dispatch(initAllUsersAction, {
       users: response.data
