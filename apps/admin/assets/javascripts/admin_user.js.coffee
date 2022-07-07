@@ -8,6 +8,9 @@ import WebData from '../web_data.js'
 import ConfirmDialog from '../confirm_dialog.js'
 import csrf from '../csrf.js'
 
+import {toRomaji, toKatakana, toHiragana} from '../ja_conv.js'
+import {capitalize} from '../string_utils.js'
+
 clearanceLevels = [
   {name: 'supervisor', value: 5, label: '特権管理者'}
   {name: 'administrator', value: 4, label: '管理者'}
@@ -67,22 +70,18 @@ getAttrDefaultValue = ({userdata, attr}) ->
     else
       "return #{attr.code};"
 
-
-  func = new Function(
-    '{name, display_name, email, attrs}',
-    """
-      var username = name;
-      #{code}
-    """
-  )
+  func = new Function('{name, display_name, email, attrs, tools}', code)
   try
     result = func {
       name: userdata.name
+      username: userdata.name
       display_name: userdata.display_name
       email: userdata.email
       attrs: {userdata.attrs...}
+      tools: {toRomaji, toKatakana, toHiragana, capitalize}
     }
   catch error
+    console.warn(func)
     console.warn(error)
     return
 

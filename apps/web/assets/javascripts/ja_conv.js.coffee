@@ -1,0 +1,89 @@
+# 日本語変換
+
+# https://www.ezairyu.mofa.go.jp/passport/hebon.html
+# ただし、va vi vu ve vo は使用可とする。
+
+ROMAJI_MAP = {
+  'ア': 'a',   'イ': 'i',   'ウ': 'u',   'エ': 'e',   'オ': 'o',
+  'カ': 'ka',  'キ': 'ki',  'ク': 'ku',  'ケ': 'ke',  'コ': 'ko',
+  'サ': 'sa',  'シ': 'shi', 'ス': 'su',  'セ': 'se',  'ソ': 'so',
+  'タ': 'ta',  'チ': 'chi', 'ツ': 'tsu', 'テ': 'te',  'ト': 'to',
+  'ナ': 'na',  'ニ': 'ni',  'ヌ': 'nu',  'ネ': 'ne',  'ノ': 'no',
+  'ハ': 'ha',  'ヒ': 'hi',  'フ': 'fu',  'ヘ': 'he',  'ホ': 'ho',
+  'マ': 'ma',  'ミ': 'mi',  'ム': 'mu',  'メ': 'me',  'モ': 'mo',
+  'ヤ': 'ya',               'ユ': 'yu',               'ヨ': 'yo',
+  'ラ': 'ra',  'リ': 'ri',  'ル': 'ru',  'レ': 're',  'ロ': 'ro',
+  'ワ': 'wa',  'ヰ': 'i',                'ヱ': 'e',   'ヲ': 'o',
+  'ン': 'n',
+
+  'ガ': 'ga',  'ギ': 'gi',  'グ': 'gu',  'ゲ': 'ge',  'ゴ': 'go',
+  'ザ': 'za',  'ジ': 'ji',  'ズ': 'zu',  'ゼ': 'ze',  'ゾ': 'zo',
+  'ダ': 'da',  'ヂ': 'ji',  'ヅ': 'zu',  'デ': 'de',  'ド': 'do',
+  'バ': 'ba',  'ビ': 'bi',  'ブ': 'bu',  'ベ': 'be',  'ボ': 'bo',
+  'パ': 'pa',  'ピ': 'pi',  'プ': 'pu',  'ペ': 'pe',  'ポ': 'po',
+
+  'ヷ': 'va',  'ヸ': 'vi',  'ヴ': 'vu',  'ヹ': 've',  'ヺ': 'vo',
+
+  'キャ': 'kya',  'キュ': 'kyu',  'キョ': 'kyo',
+  'シャ': 'sha',  'シュ': 'shu',  'ショ': 'sho',
+  'チャ': 'cha',  'チュ': 'chu',  'チョ': 'cho',
+  'ニャ': 'nya',  'ニュ': 'nyu',  'ニョ': 'nyo',
+  'ヒャ': 'hya',  'ヒュ': 'hyu',  'ヒョ': 'hyo',
+  'ミャ': 'mya',  'ミュ': 'myu',  'ミョ': 'myo',
+  'リャ': 'rya',  'リュ': 'ryu',  'リョ': 'ryo',
+  'ギャ': 'gya',  'ギュ': 'gyu',  'ギョ': 'gyo',
+  'ジャ': 'ja',   'ジュ': 'ju',   'ジョ': 'jo',
+  'ヂャ': 'ja',   'ヂュ': 'ju',   'ヂョ': 'jo',
+  'ビャ': 'bya',  'ビュ': 'byu',  'ビョ': 'byo',
+  'ピャ': 'pya',  'ピュ': 'pyu',  'ピョ': 'pyo',
+
+  'シェ': 'shie',
+  'チェ': 'chie', 'ティ': 'tei',
+  'ニィ':	'nii',  'ニェ': 'nie',
+  'ファ': 'fua',  'フィ': 'fui',  'フェ': 'fue',  'フォ': 'fuo',
+  'ジェ': 'jie',
+  'ディ': 'dei',  'デュ': 'deyu',
+  'ウィ': 'ui',   'ウェ': 'ue',   'ウォ': 'uo',
+  'ヴァ': 'va',   'ヴィ': 'vi',   'ヴェ': 've',   'ヴォ': 'vo',
+  'クヮ': 'kwa',
+  'グヮ': 'gwa',
+
+  'ヵ': 'ka',  'ヶ': 'ke',
+  'ッ': '*',
+  'ー': '',
+}
+
+# 平仮名や片仮名をローマ字にする
+export toRomaji = (str) ->
+  str = toKatakana(str)
+  str = str.replace /(.)[ヽヾ]/g, '$1$1'
+  str = str.replace /[^ァィゥェォャュョヮ][ァィゥェォャュョヮ]?/g, (m) ->
+    ROMAJI_MAP[m] ? m
+  str = str.replace /n([bmp])/g, 'm$1'
+  str = str.replace /\*(.)/g, (m, p1) ->
+    if p1 == 'c'
+      'tc'
+    else
+      "#{p1}#{p1}"
+  str = str.replace /uu/g, 'u'
+  str = str.replace /ou/g, 'o'
+  str = str.replace /oo(?!$)/g, 'o'
+  str
+
+# 正規化後に平仮名を片仮名にする
+export toKatakana = (str) ->
+  str = str.normalize 'NFKC'
+  str = str.replace /[\u3041-\u3096\u309d\u309e]/g, (m) ->
+    String.fromCodePoint(m.codePointAt(0) + 0x60)
+  str
+
+# 正規化後に片仮名を平仮名にする
+export toHiragana = (str) ->
+  str = str.normalize 'NFKC'
+  str = str.replace /[\u30a1-\u30f6\u30fd\u30fe]/g, (m) ->
+    String.fromCodePoint(m.codePointAt(0) - 0x60)
+  str = str.replace /ヷ/g, 'わ゙'
+  str = str.replace /ヸ/g, 'ゐ゙'
+  str = str.replace /ヹ/g, 'ゑ゙'
+  str = str.replace /ヺ/g, 'を゙'
+  str
