@@ -142,7 +142,7 @@ indexAllProvidersRunner = (dispatch) ->
   else
     console.error response
 
-initState = {users: [], providers: [], page: 1, per_page: 20, total: 0, query: ''}
+initState = {users: [], providers: [], page: 1, per_page: 50, total: 0, query: ''}
 
 init = [
   initState

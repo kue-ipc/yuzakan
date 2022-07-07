@@ -35,7 +35,7 @@ module Api
           query = params[:query]
           query = nil if query&.empty?
           page = params[:page] || 1
-          per_page = params[:per_mage] || 50
+          per_page = params[:per_page] || 50
 
           @providers = @provider_repository.ordered_all_with_adapter_by_operation(:user_read)
 
