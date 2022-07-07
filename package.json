@@ -13,6 +13,7 @@
     "hyperapp": "^2.0.22",
     "pluralize": "^8.0.0",
     "source-code-pro": "^2.38.0",
+    "xxhashjs": "^0.2.2",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {

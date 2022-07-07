@@ -10,6 +10,7 @@ import csrf from '../csrf.js'
 
 import {toRomaji, toKatakana, toHiragana} from '../ja_conv.js'
 import {capitalize} from '../string_utils.js'
+import {xxh32, xxh64} from '../hash.js'
 
 clearanceLevels = [
   {name: 'supervisor', value: 5, label: '特権管理者'}
@@ -70,7 +71,7 @@ getAttrDefaultValue = ({userdata, attr}) ->
     else
       "return #{attr.code};"
 
-  func = new Function('{name, display_name, email, attrs, tools}', code)
+  func = new Function('{name, username, display_name, email, attrs, tools}', code)
   try
     result = func {
       name: userdata.name
@@ -78,11 +79,10 @@ getAttrDefaultValue = ({userdata, attr}) ->
       display_name: userdata.display_name
       email: userdata.email
       attrs: {userdata.attrs...}
-      tools: {toRomaji, toKatakana, toHiragana, capitalize}
+      tools: {toRomaji, toKatakana, toHiragana, capitalize, xxh32, xxh64}
     }
   catch error
-    console.warn(func)
-    console.warn(error)
+    console.warn({msg: 'Failed to getAttrDefaultValue', code: code, error: error})
     return
 
   result
@@ -230,7 +230,7 @@ view = ({mode, name, user, providers, attrs}) ->
       html.div {}, text '削除'
     ]
 
-    html.h4 {}, text '登録状況'
+    html.h4 {}, text '内容'
 
     html.table {class: 'table'}, [
       html.thead {},
@@ -244,6 +244,7 @@ view = ({mode, name, user, providers, attrs}) ->
           {name: 'name', label: 'ユーザー名'}
           {name: 'display_name', label: '表示名'}
           {name: 'email', label: 'メールアドレス'}
+          {name: 'groups', label: 'グループ'}
           {name: 'locked', label: 'ロック'}
           {name: 'disabled', label: '無効'}
           {name: 'unmanageable', label: '管理不可'}
@@ -251,7 +252,7 @@ view = ({mode, name, user, providers, attrs}) ->
         ]
           html.tr {}, [
             html.td {}, text label
-            html.td {}, text user[name] ? ''
+            html.td {}, text user.userdata[name] ? ''
             (
               for userdata in provider_userdatas
                 html.td {},

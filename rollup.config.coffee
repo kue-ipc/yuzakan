@@ -18,6 +18,7 @@ targets = [
   {name: 'hyperapp-events', ext: 'coffee'}
   {name: 'hyperapp-time', ext: 'coffee'}
   {name: 'pluralize', ext: 'coffee'}
+  {name: 'xxhashjs', ext: 'coffee'}
   {name: 'zxcvbn', ext: 'coffee'}
 ]
 

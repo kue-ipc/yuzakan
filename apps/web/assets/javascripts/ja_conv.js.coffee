@@ -55,6 +55,8 @@ ROMAJI_MAP = {
 
 # 平仮名や片仮名をローマ字にする
 export toRomaji = (str) ->
+  return str unless str
+
   str = toKatakana(str)
   str = str.replace /(.)[ヽヾ]/g, '$1$1'
   str = str.replace /[^ァィゥェォャュョヮ][ァィゥェォャュョヮ]?/g, (m) ->
@@ -72,6 +74,8 @@ export toRomaji = (str) ->
 
 # 正規化後に平仮名を片仮名にする
 export toKatakana = (str) ->
+  return str unless str
+
   str = str.normalize 'NFKC'
   str = str.replace /[\u3041-\u3096\u309d\u309e]/g, (m) ->
     String.fromCodePoint(m.codePointAt(0) + 0x60)
@@ -79,6 +83,8 @@ export toKatakana = (str) ->
 
 # 正規化後に片仮名を平仮名にする
 export toHiragana = (str) ->
+  return str unless str
+
   str = str.normalize 'NFKC'
   str = str.replace /[\u30a1-\u30f6\u30fd\u30fe]/g, (m) ->
     String.fromCodePoint(m.codePointAt(0) - 0x60)
