@@ -568,23 +568,24 @@ module Yuzakan
       private def group_entry_to_data(group)
         name = get_group_name(group)
 
-        attrs = {}
-        group.each do |key, value|
-          key = key.downcase.to_s
-          next if self.class.hide_attrs.include?(key)
+        # 属性は渡さない
+        # attrs = {}
+        # group.each do |key, value|
+        #   key = key.downcase.to_s
+        #   next if self.class.hide_attrs.include?(key)
 
-          attrs[key] =
-            if self.class.multi_attrs.include?(key)
-              value.to_a
-            else
-              value.first
-            end
-        end
+        #   attrs[key] =
+        #     if self.class.multi_attrs.include?(key)
+        #       value.to_a
+        #     else
+        #       value.first
+        #     end
+        # end
 
         {
           name: name,
           display_name: group.first(@params[:group_display_name_attr]),
-          attrs: attrs,
+          # attrs: attrs,
         }
       end
 
