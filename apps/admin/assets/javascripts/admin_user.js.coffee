@@ -7,7 +7,7 @@ import {fieldName, fieldId} from '../form_helper.js'
 import WebData from '../web_data.js'
 import ConfirmDialog from '../confirm_dialog.js'
 import csrf from '../csrf.js'
-
+import BsIcon from '../bs_icon.js'
 import {toRomaji, toKatakana, toHiragana} from '../ja_conv.js'
 import {capitalize} from '../string_utils.js'
 import {xxh32, xxh64} from '../hash.js'
@@ -86,6 +86,180 @@ getAttrDefaultValue = ({userdata, attr}) ->
     return
 
   result
+
+providerCheck = ({provider_name, checked, edit = false}) ->
+  if edit
+    html.div {class: 'form-check'},
+      html.input {
+        id: "provider-#{provider_name}"
+        class: 'form-check-input'
+        type: 'checkbox'
+        checked
+        onchange:
+          if checked
+            [userRemoveProviderAction, {provider_name}]
+          else
+            [userAddProviderAction, {provider_name}]
+      }
+  else
+    if checked
+      html.span {class: "text-success"},
+        BsIcon({name: 'check-square'})
+    else
+      html.span {class: "text-muted"},
+        BsIcon({name: 'square'})
+
+
+valueNode = ({value, name = null, type = 'string', edit = false, color = 'body'}) ->
+  return html.span {class: 'text-muted'}, text 'N/A' unless value? || edit
+
+  switch type
+    when 'string'
+      if edit
+        html.input {
+          id: "value-#{name}"
+          class: 'form-control'
+          teype: 'text'
+          value
+          oninput: (state, event) -> [userValueAction, {name, value: event.target.value}]
+        }
+      else
+        html.span {class: "text-#{color}"}, text value
+    when 'boolean'
+      if edit
+        html.div {class: 'form-check'},
+          html.input {
+            id: "value-#{name}"
+            class: 'form-check-input'
+            type: 'checkbox'
+            checked: value
+            onchange: (state, event) -> [userValueAction, {name, value: !value}]
+          }
+      else
+        html.span {class: "text-#{color}"},
+          if value
+            BsIcon({name: 'check-square'})
+          else
+            BsIcon({name: 'square'})
+    when 'integer'
+      if edit
+        html.input {
+          id: "value-#{name}"
+          class: 'form-control'
+          teype: 'number'
+          value
+          oninput: (state, event) -> [userValueAction, {name, value: parseInt(event.target.value)}]
+        }
+      else
+        html.span {class: "text-#{color}"}, text value
+    when 'float'
+      if edit
+        html.input {
+          id: "value-#{name}"
+          class: 'form-control'
+          teype: 'number'
+          value
+          step: '0.001'
+          oninput: (state, event) -> [userValueAction, {name, value: Number(event.target.value)}]
+        }
+      else
+        html.span {class: "text-#{color}"}, text value
+    when 'datetime'
+      if edit
+        html.input {
+          id: "value-#{name}"
+          class: 'form-control'
+          teype: 'datetime'
+          value
+          oninput: (state, event) -> [userValueAction, {name, value: Date(event.target.value)}]
+        }
+      else
+        html.span {class: "text-#{color}"}, text value
+    when 'date'
+      if edit
+        html.input {
+          id: "value-#{name}"
+          class: 'form-control'
+          teype: 'date'
+          value
+          oninput: (state, event) -> [userValueAction, {name, value: Date(event.target.value)}]
+        }
+      else
+        html.span {class: "text-#{color}"}, text value
+    when 'time'
+      if edit
+        html.input {
+          id: "value-#{name}"
+          class: 'form-control'
+          teype: 'time'
+          value
+          oninput: (state, event) -> [userValueAction, {name, value: Date(event.target.value)}]
+        }
+      else
+        html.span {class: "text-#{color}"}, text value
+
+userValueAction = (state, {name, value}) ->
+  throw new Error('No name value aciton') unless name?
+
+  names = name.split('.')
+  if names.length = 1
+    {
+      state...
+      user: {
+        state.user...
+        [names[0]]: value
+      }
+    }
+  else if names.length = 2
+    {
+      state...
+      user: {
+        state.user...
+        [names[0]]: {
+          state.user[names[0]]...
+          [names[1]]: value
+        }
+      }
+    }
+  else if names.length = 2
+    {
+      state...
+      user: {
+        state.user...
+        [names[0]]: {
+          state.user[names[0]]...
+          [names[1]]: {
+            state.user[names[0]][names[1]]...
+            [names[2]]: value
+          }
+        }
+      }
+    }
+  else
+    throw new Error("Deep name: #{name}")
+
+userAddProviderAction = (state, {provider_name}) ->
+  if state.user.userdata_list.some (data) -> data.provider.name == provider_name
+    state
+  else
+    {
+      state...
+      user: {
+        state.user...
+        userdata_list: [state.user.userdata_list..., {provider: {name: provider_name}}]
+      }
+    }
+
+userRemoveProviderAction = (state, {provider_name}) ->
+  console.log provider_name
+  {
+    state...
+    user: {
+      state.user...
+      userdata_list: state.user.userdata_list.filter (data) -> data.provider.name != provider_name
+    }
+  }
+
 
 userAction = (state, {name, user}) ->
   history.pushState(null, null, "/admin/users/#{name}") if name? && name != state.name
@@ -168,7 +342,7 @@ init = [
   [showUserRunner, {name}]
 ]
 
-view = ({mode, name, user, providers, attrs}) ->
+view = ({mode, name, user, providers, attrs, edit}) ->
   provider_userdatas =
     for provider in providers
       (user.userdata_list.find (data) -> data.provider.name == provider.name)?.userdata
@@ -179,17 +353,26 @@ view = ({mode, name, user, providers, attrs}) ->
       html.dt {class: 'col-sm-4 col-md-3 col-lg-2'},
         html.label {class: 'form-label', for: 'user-name'}, text 'ユーザー名'
       html.dd {class: 'col-sm-8 col-md-9 col-lg-10'},
-        if mode == 'show'
-          text user.name
-        else
-          html.input {
-            id: 'user-name'
-            class: if mode == 'show' then 'form-control-plaintext' else 'form-control'
-            type: 'text'
-            required: true
-            value: user.name
-            oninput: (state, event) -> [userAction, {user: {name: event.target.value}}]
-          }
+        switch mode
+          when 'new'
+            html.input {
+              id: 'user-name'
+              class: 'form-control'
+              type: 'text'
+              required: true
+              value: user.name
+              oninput: (state, event) -> [userAction, {user: {name: event.target.value}}]
+            }
+          when 'edit'
+            html.input {
+              id: 'user-name'
+              class: 'form-control-plaintext'
+              readonly: true
+              type: 'text'
+              value: user.name
+            }
+          when 'show'
+            text user.name
       html.dt {class: 'col-sm-4 col-md-3 col-lg-2'},
         text '表示名'
       html.dd {class: 'col-sm-8 col-md-9 col-lg-10'},
@@ -226,8 +409,6 @@ view = ({mode, name, user, providers, attrs}) ->
     html.div {}, [
       html.div {}, text 'パスワードリセット'
       html.div {}, text 'ロック'
-      html.div {}, text '更新'
-      html.div {}, text '削除'
     ]
 
     html.h4 {}, text '内容'
@@ -239,31 +420,53 @@ view = ({mode, name, user, providers, attrs}) ->
           html.th {}, text '値'
           (html.th({}, text provider.label) for provider in providers)...
         ]
-      html.tbody {},
-        for {name, label} in [
-          {name: 'name', label: 'ユーザー名'}
-          {name: 'display_name', label: '表示名'}
-          {name: 'email', label: 'メールアドレス'}
-          {name: 'groups', label: 'グループ'}
-          {name: 'locked', label: 'ロック'}
-          {name: 'disabled', label: '無効'}
-          {name: 'unmanageable', label: '管理不可'}
-          {name: 'mfa', label: '多要素'}
+      html.tbody {}, [
+        html.tr {}, [
+          html.td {}, text 'プロバイダー'
+          html.td {}, text ''
+          (
+            for provider in providers
+              found_provider = (user.userdata_list.find (data) -> data.provider.name == provider.name)
+              html.td {},
+                providerCheck {provider_name: provider.name, checked: found_provider?, edit: mode != 'show'}
+          )...
         ]
-          html.tr {}, [
-            html.td {}, text label
-            html.td {}, text user.userdata[name] ? ''
-            (
-              for userdata in provider_userdatas
-                html.td {},
-                  if not userdata?[name]
-                    html.span {class: 'text-muted'}, text 'N/A'
-                  else if user[name] == userdata[name]
-                    html.span {class: 'text-success'}, text userdata?[name]
-                  else
-                    html.span {class: 'text-danger'}, text userdata?[name]
-            )...
+        (
+          for {name, label, type} in [
+            {name: 'name', label: 'ユーザー名', type: 'string'}
+            {name: 'display_name', label: '表示名', type: 'string'}
+            {name: 'email', label: 'メールアドレス', type: 'string'}
+            {name: 'groups', label: 'グループ', type: 'list'}
+            {name: 'locked', label: 'ロック', type: 'boolean'}
+            {name: 'disabled', label: '無効', type: 'boolean'}
+            {name: 'unmanageable', label: '管理不可', type: 'boolean'}
+            {name: 'mfa', label: '多要素', type: 'boolean'}
           ]
+            html.tr {}, [
+              html.td {}, text label
+              html.td {},
+                valueNode {
+                  value: user.userdata[name]
+                  type
+                }
+              (
+                for userdata in provider_userdatas
+                  html.td {},
+                    valueNode {
+                      value: userdata?[name]
+                      type
+                      color:
+                        if type == 'list'
+                          'body'
+                        else if user.userdata[name] == userdata?[name]
+                          'success'
+                        else
+                          'danger'
+                    }
+              )...
+            ]
+        )...
+      ]
     ]
 
     html.h4 {}, text '属性'
@@ -283,23 +486,35 @@ view = ({mode, name, user, providers, attrs}) ->
 
           html.tr {}, [
             html.td {}, text attr.label
-            html.td {}, text defaultValue ? ''
             html.td {},
-              if not defaultValue?
-                html.span {}, text value ? ''
-              else if defaultValue != value
-                html.span {class: 'text-danger'}, text value ? ''
-              else
-                html.span {class: 'text-success'}, text value ? ''
+              valueNode {value: defaultValue, type: attr.type}
+
+            html.td {},
+              valueNode {
+                value: value
+                type: attr.type
+                edit: mode != 'show'
+                color:
+                  if not defaultValue?
+                    'default'
+                  else if defaultValue == value
+                    'success'
+                  else
+                    'danger'
+              }
+
             (
               for userdata in provider_userdatas
                 html.td {},
-                  if not userdata?.attrs?[attr.name]
-                    html.span {class: 'text-muted'}, text 'N/A'
-                  else if value == userdata.attrs[attr.name]
-                    html.span {class: 'text-success'}, text userdata.attrs[attr.name]
-                  else
-                    html.span {class: 'text-danger'}, text userdata.attrs[attr.name]
+                  valueNode {
+                    value: userdata?.attrs?[attr.name]
+                    type: attr.type
+                    color:
+                      if value == userdata?.attrs?[attr.name]
+                        'success'
+                      else
+                        'danger'
+                  }
             )...
           ]
     ]

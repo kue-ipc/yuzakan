@@ -57,19 +57,17 @@ attrMappingTd = ({attr, provider}) ->
       class: 'form-control mb-1'
       type: 'text'
       value: mapping.name
-      oninput: (state, event) ->
-        [
-          attrMappingAction
-          {name: attr.name, attr_mapping: {name: event.target.value, provider: {name: provider.name}}}
-        ]
+      oninput: (state, event) -> [
+        attrMappingAction
+        {name: attr.name, attr_mapping: {name: event.target.value, provider: {name: provider.name}}}
+      ]
     }
     html.select {
       class: 'form-select'
-      oninput: (state, event) ->
-        [
-          attrMappingAction
-          {name: attr.name, attr_mapping: {conversion: event.target.value, provider: {name: provider.name}}}
-        ]
+      oninput: (state, event) -> [
+        attrMappingAction
+        {name: attr.name, attr_mapping: {conversion: event.target.value, provider: {name: provider.name}}}
+      ]
       }, mappingConversions.map (conversion) ->
         html.option {
           value: conversion.value
@@ -119,8 +117,8 @@ attrTr = ({attr, index, providers}) ->
 
       html.input {
         id: "#{attr.name}-hidden-check"
-        type: 'checkbox'
         class: 'btn-check'
+        type: 'checkbox'
         autocomplete: 'off'
         checked: attr.hidden
         onchange: (state, event) -> [attrAction, {name: attr.name, attr: {hidden: !attr.hidden}}]
