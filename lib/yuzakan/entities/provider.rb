@@ -114,7 +114,7 @@ class Provider < Hanami::Entity
     return {} if attrs.nil?
 
     attr_mappings.to_h do |mapping|
-      [mapping.name, mapping.convert_value(attrs[mapping.attr_name])]
+      [mapping.name, mapping.map_value(attrs[mapping.attr_name])]
     end.compact
   end
 
@@ -130,7 +130,7 @@ class Provider < Hanami::Entity
 
     attr_mappings.to_h do |mapping|
       raw_value = raw_attrs[mapping.name] || raw_attrs[mapping.name.downcase]
-      [mapping.attr_name, mapping.map_value(raw_value)]
+      [mapping.attr_name, mapping.convert_value(raw_value)]
     end.compact
   end
 
