@@ -80,6 +80,111 @@ getAttrDefaultValue = ({userdata, attr}) ->
 
   result
 
+basicInfo = ({mode, user}) ->
+  html.div {}, [
+    html.h4 {}, text '基本情報'
+    html.dl {class: DL_CLASSES}, [
+      html.dt {class: DT_CLASSES},
+        html.label {class: 'form-label', for: 'user-name'}, text 'ユーザー名'
+      html.dd {class: DD_CLASSES},
+        switch mode
+          when 'new'
+            html.input {
+              id: 'user-name'
+              class: 'form-control'
+              type: 'text'
+              required: true
+              value: user.name
+              oninput: (state, event) -> [userAction, {user: {name: event.target.value}}]
+            }
+          when 'edit'
+            html.input {
+              id: 'user-name'
+              class: 'form-control-plaintext'
+              readonly: true
+              type: 'text'
+              value: user.name
+            }
+          when 'show'
+            text user.name
+      html.dt {class: DT_CLASSES},
+        text '表示名'
+      html.dd {class: DD_CLASSES},
+        if mode == 'new'
+          html.span {class: 'text-muted'}, text '(属性値にて設定)'
+        else
+          text user.display_name ? ''
+      html.dt {class: DT_CLASSES},
+        text 'メールアドレス'
+      html.dd {class: DD_CLASSES},
+        if mode == 'new'
+          html.span {class: 'text-muted'}, text '(属性値にて設定)'
+        else
+          text user.email ? ''
+      html.dt {class: DT_CLASSES},
+        text '権限レベル'
+      html.dd {class: DD_CLASSES},
+        if mode == 'show'
+          text (CLEARANCE_LEVELS.find (level) -> level.value == user.clearance_level).label
+        else
+          html.select {
+            class: 'form-select'
+            oninput: (state, event) ->
+              [userAction, {user: {clearance_level: parseInt(event.target.value, 10)}}]
+          },
+            for level in CLEARANCE_LEVELS
+              html.option {
+                value: level.value
+                selected: level.value == user.clearance_level
+              }, text level.label
+    ]
+  ]
+
+changeMode = (state, mode) -> {state..., mode}
+
+operationMenu = ({mode}) ->
+  html.div {}, [
+    html.h4 {}, text '操作メニュー'
+    html.div {class: 'form-check form-switch'}, [
+      html.input {
+        id: 'user-mode-edit'
+        class: 'form-check-input'
+        type: 'checkbox'
+        role: 'switch'
+        checked: mode != 'show'
+        disaled: mode == 'new'
+        onchange: [changeMode, if mode == 'show' then 'edit' else 'show']
+      }
+      html.label {
+        class: 'form-check-label'
+        for: 'user-mode-edit'
+      }, text '編集モード'
+    ]
+    switch mode
+      when 'new'
+        html.div {},
+          html.button {
+            class: 'btn btn-primary'
+            onclick: createUserAction
+          }, text '作成'
+      when 'edit'
+        html.div {}, [
+          html.button {
+            class: 'btn btn-warning'
+            onclick: updateUserAction
+          }, text '更新'
+          html.button {
+            class: 'ms-1 btn btn-danger'
+            onclick: destroyUserAction
+          }, text '削除'
+        ]
+      when 'show'
+        html.div {}, [
+          html.div {}, text 'パスワードリセット'
+          html.div {}, text 'ロック'
+        ]
+  ]
+
 providerCheck = ({provider_name, checked, edit = false}) ->
   if edit
     html.div {class: 'form-check'},
@@ -273,6 +378,8 @@ createUserRunner = (dispatch, {user}) ->
   else
     console.error response
 
+createUserAction = (state) -> [state, [createUserRunner, {user: state.user}]]
+
 updateUserRunner = (dispatch, {name, user}) ->
   response = await updateWebData.submitPromise {url: "/api/users/#{name}", data: {csrf()..., user...}}
   if response.ok
@@ -281,14 +388,18 @@ updateUserRunner = (dispatch, {name, user}) ->
   else
     console.error response
 
+updateUserAction = (state) -> [state, [updateUserRunner, {name: state.name, user: state.user}]]
+
 destroyUserRunner = (dispatch, {name}) ->
-  confirm = await destroyConfirm.confirmPromise({message: "属性「#{name}」を削除してもよろしいですか？"})
+  confirm = await destroyConfirm.confirmPromise({message: "ユーザー「#{name}」を削除してもよろしいですか？"})
   if confirm
     response = await destroyWebData.submitPromise {url: "/api/users/#{name}", data: csrf()}
     if response.ok
       # redirect...
     else
       console.error response
+
+destroyUserAction = (state) -> [state, [destroyUserRunner, {name: state.name}]]
 
 showUserRunner = (dispatch, {name}) ->
   return unless name?
@@ -337,74 +448,14 @@ init = [
   [showUserRunner, {name}]
 ]
 
-view = ({mode, name, user, providers, attrs, edit}) ->
+view = ({mode, name, user, providers, attrs}) ->
   provider_userdatas =
     for provider in providers
       (user.userdata_list.find (data) -> data.provider.name == provider.name)?.userdata
 
   html.div {}, [
-    html.h4 {}, text '基本情報'
-    html.dl {class: DL_CLASSES}, [
-      html.dt {class: DT_CLASSES},
-        html.label {class: 'form-label', for: 'user-name'}, text 'ユーザー名'
-      html.dd {class: DD_CLASSES},
-        switch mode
-          when 'new'
-            html.input {
-              id: 'user-name'
-              class: 'form-control'
-              type: 'text'
-              required: true
-              value: user.name
-              oninput: (state, event) -> [userAction, {user: {name: event.target.value}}]
-            }
-          when 'edit'
-            html.input {
-              id: 'user-name'
-              class: 'form-control-plaintext'
-              readonly: true
-              type: 'text'
-              value: user.name
-            }
-          when 'show'
-            text user.name
-      html.dt {class: DT_CLASSES},
-        text '表示名'
-      html.dd {class: DD_CLASSES},
-        if mode == 'new'
-          html.span {class: 'text-muted'}, text '(属性値にて設定)'
-        else
-          text user.display_name ? ''
-      html.dt {class: DT_CLASSES},
-        text 'メールアドレス'
-      html.dd {class: DD_CLASSES},
-        if mode == 'new'
-          html.span {class: 'text-muted'}, text '(属性値にて設定)'
-        else
-          text user.email ? ''
-      html.dt {class: DT_CLASSES},
-        text '権限レベル'
-      html.dd {class: DD_CLASSES},
-        if mode == 'show'
-          text (CLEARANCE_LEVELS.find (level) -> level.value == user.clearance_level).label
-        else
-          html.select {
-            class: 'form-select'
-            oninput: (state, event) ->
-              [userAction, {user: {clearance_level: parseInt(event.target.value, 10)}}]
-          },
-            for level in CLEARANCE_LEVELS
-              html.option {
-                value: level.value
-                selected: level.value == user.clearance_level
-              }, text level.label
-    ]
-
-    html.h4 {}, text '操作メニュー'
-    html.div {}, [
-      html.div {}, text 'パスワードリセット'
-      html.div {}, text 'ロック'
-    ]
+    basicInfo {mode, user}
+    operationMenu {mode, user}
 
     html.h4 {}, text '内容'
 
@@ -488,7 +539,7 @@ view = ({mode, name, user, providers, attrs, edit}) ->
               valueNode {
                 value: value
                 type: attr.type
-                edit: mode != 'show'
+                edit: mode != 'show' && !attr.readonly
                 color:
                   if not defaultValue?
                     'default'
@@ -513,42 +564,6 @@ view = ({mode, name, user, providers, attrs, edit}) ->
             )...
           ]
     ]
-    html.div {class: 'mb-1'},
-      if name?
-        [
-          html.div {class: 'form-check form-switch'}, [
-            html.input {
-              id: 'user-mode-edit'
-              class: 'form-check-input'
-              type: 'checkbox'
-              role: 'switch'
-              checked: mode != 'show'
-              onchange: (state, event) -> {state..., mode: if mode == 'show' then 'edit' else 'show'}
-            }
-            html.label {
-              class: 'form-check-label'
-              for: 'user-mode-edit'
-            }, text '編集モード'
-          ]
-          if mode != 'show'
-            html.div {}, [
-              html.button {
-                class: 'btn btn-warning'
-                onclick: (state) -> [state, [updateUserRunner, {name, user}]]
-              }, text '更新'
-              html.button {
-                class: 'ms-1 btn btn-danger'
-                onclick: (state) -> [state, [destroyUserRunner, {name}]]
-              }, text '削除'
-            ]
-        ]
-      else
-        [
-          html.button {
-            class: 'btn btn-primary'
-            onclick: (state) -> [state, [createUserRunner, {user}]]
-          }, text '作成'
-        ]
   ]
 
 
