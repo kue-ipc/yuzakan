@@ -10,6 +10,7 @@ Hanami::Model.migration do
 
       column :order, Integer, null: false
       column :hidden, TrueClass, null: false, default: false
+      column :readonly, TrueClass, null: false, default: false
 
       column :code, String, size: 4096, null: false, default: ''
 

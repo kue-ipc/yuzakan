@@ -49,7 +49,6 @@ providers:
     group_search_filter: "(objectclass=posixGroup)"
     password_scheme: "{CRYPT}"
     crypt_salt_format: "$6$%.16s"
-    user_esarch_filter: "(objectClass=sambaSamAccount)"
     samba_domain_sid: S-1-5-21-4294967295-4294967295-4294967295
     samba_nt_password: true
     samba_lm_password: false
@@ -57,7 +56,7 @@ providers:
 - name: ldap
   label: 普通のLDAP
   adapter_name: ldap
-  order: 9
+  order: 2
   immutable: false
   readable: true
   writable: true
@@ -95,6 +94,7 @@ attrs:
   type: string
   order: 1
   hidden: false
+  readonly: false
   code: display_name
   attr_mappings:
   - provider:
@@ -110,14 +110,9 @@ attrs:
   type: string
   order: 2
   hidden: false
-  code: |-
-    names = display_name.split(/\s/);
-    return names[0];
+  readonly: false
+  code: "(attrs.diplay_name || display_name)?.split(/\\s/)?.at(0)"
   attr_mappings:
-  - provider:
-      name: posix_samba
-    name: sn;lang-ja
-    conversion: 
   - provider:
       name: ldap
     name: sn;lang-ja
@@ -127,14 +122,9 @@ attrs:
   type: string
   order: 3
   hidden: false
-  code: |-
-    names = display_name.split(/\s/);
-    return names[1];
+  readonly: false
+  code: "(attrs.diplay_name || display_name)?.split(/\\s/)?.at(1)"
   attr_mappings:
-  - provider:
-      name: posix_samba
-    name: givenName;lang-ja
-    conversion: 
   - provider:
       name: ldap
     name: givenName;lang-ja
@@ -144,6 +134,7 @@ attrs:
   type: string
   order: 4
   hidden: false
+  readonly: false
   code: ''
   attr_mappings:
   - provider:
@@ -159,14 +150,9 @@ attrs:
   type: string
   order: 5
   hidden: false
-  code: |-
-    names = attrs.display_name.split(/\s/);
-    return names[0];
+  readonly: false
+  code: attrs.display_name?.split(/\s/)?.at(0)
   attr_mappings:
-  - provider:
-      name: posix_samba
-    name: sn
-    conversion: 
   - provider:
       name: ldap
     name: sn
@@ -176,15 +162,50 @@ attrs:
   type: string
   order: 6
   hidden: false
-  code: |-
-    names = attrs.display_name.split(/\s/);
-    return names[1];
+  readonly: false
+  code: attrs.display_name?.split(/\s/)?.at(1)
   attr_mappings:
-  - provider:
-      name: posix_samba
-    name: givenName
-    conversion: 
   - provider:
       name: ldap
     name: givenName
+    conversion: 
+- name: uid
+  label: ユーザーID
+  type: integer
+  order: 14
+  hidden: false
+  readonly: true
+  code: ''
+  attr_mappings:
+  - provider:
+      name: posix_samba
+    name: uidNumber
+    conversion: 
+- name: cn
+  label: キャラクター名
+  type: string
+  order: 22
+  hidden: false
+  readonly: false
+  code: username
+  attr_mappings:
+  - provider:
+      name: posix_samba
+    name: cn
+    conversion: 
+  - provider:
+      name: ldap
+    name: cn
+    conversion: 
+- name: samba_sid
+  label: Samba SID
+  type: string
+  order: 30
+  hidden: false
+  readonly: true
+  code: ''
+  attr_mappings:
+  - provider:
+      name: posix_samba
+    name: sambaSID
     conversion: 

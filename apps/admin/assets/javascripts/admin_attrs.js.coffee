@@ -115,28 +115,47 @@ attrTr = ({attr, index, providers}) ->
           selected: attrType.value == attr.type
         }, text attrType.label
 
-      html.input {
-        id: "#{attr.name}-hidden-check"
-        class: 'btn-check'
-        type: 'checkbox'
-        autocomplete: 'off'
-        checked: attr.hidden
-        onchange: (state, event) -> [attrAction, {name: attr.name, attr: {hidden: !attr.hidden}}]
-      }
-      html.label {
-        class:
-          if attr.hidden
-            'btn btn-secondary'
-          else
-            'btn btn-outline-secondary'
-        for: "#{attr.name}-hidden-check"
-      }, text '隠し'
-      html.button {
-        class: if attr.code then 'btn btn-primary ms-1' else 'btn btn-outline-primary ms-1'
-        onclick: (state) -> [state, [inputCodeRunner, {attr}]]
-      },
-        text 'コード'
+      html.div {class: 'btn-group', role: 'group'}, [
+        html.input {
+          id: "#{attr.name}-hidden-check"
+          class: 'btn-check'
+          type: 'checkbox'
+          autocomplete: 'off'
+          checked: attr.hidden
+          onchange: (state, event) -> [attrAction, {name: attr.name, attr: {hidden: !attr.hidden}}]
+        }
+        html.label {
+          class:
+            if attr.hidden
+              'btn btn-primary'
+            else
+              'btn btn-outline-primary'
+          for: "#{attr.name}-hidden-check"
+        }, text '隠し'
 
+        html.input {
+          id: "#{attr.name}-readonly-check"
+          class: 'btn-check'
+          type: 'checkbox'
+          autocomplete: 'off'
+          checked: attr.readonly
+          onchange: (state, event) -> [attrAction, {name: attr.name, attr: {readonly: !attr.readonly}}]
+        }
+        html.label {
+          class:
+            if attr.readonly
+              'btn btn-primary'
+            else
+              'btn btn-outline-primary'
+          for: "#{attr.name}-readonly-check"
+        }, text '読取専用'
+
+        html.button {
+          class: if attr.code then 'btn btn-primary' else 'btn btn-outline-primary'
+          onclick: (state) -> [state, [inputCodeRunner, {attr}]]
+        },
+          text 'コード'
+      ]
     ]
     html.td {},
       if attr.order

@@ -15,6 +15,7 @@ class UpdateAttr
       optional(:type).filled(:str?, max_size?: 255)
       optional(:order).maybe(:int?, gt?: 0)
       optional(:hidden).maybe(:bool?)
+      optional(:readonly).maybe(:bool?)
       # rubocop:disable all
       optional(:attr_mappings) { array? { each { schema {
         required(:provider).schema {
@@ -43,6 +44,7 @@ class UpdateAttr
 
   def call(params)
     params = params.to_h.dup
+    pp params
 
     if params[:attr_mappings]
       params[:attr_mappings] = params[:attr_mappings].map do |am_params|
