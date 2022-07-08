@@ -5,6 +5,7 @@ import * as html from '../hyperapp-html.js'
 import {fetchJsonGet} from '../fetch_json.js'
 import {fieldName, fieldId} from '../form_helper.js'
 import csrf from '../csrf.js'
+import {DL_CLASSES, DT_CLASSES, DD_CLASSES} from '../dl_horizontal.js'
 
 parentNames = ['group']
 
@@ -61,13 +62,13 @@ view = ({mode, name, group, providers}) ->
   html.div {}, [
     html.h4 {}, text '基本情報'
     html.dl {class: 'row'}, [
-      html.dt {class: 'col-sm-4 col-md-3 col-lg-2'},
+      html.dt {class: DT_CLASSES},
         text 'グループ名'
-      html.dd {class: 'col-sm-8 col-md-9 col-lg-10'},
+      html.dd {class: DD_CLASSES},
         text group.name
-      html.dt {class: 'col-sm-4 col-md-3 col-lg-2'},
+      html.dt {class: DT_CLASSES},
         text '表示名'
-      html.dd {class: 'col-sm-8 col-md-9 col-lg-10'},
+      html.dd {class: DD_CLASSES},
         text group.display_name ? ''
     ]
 

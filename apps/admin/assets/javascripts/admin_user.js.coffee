@@ -12,6 +12,7 @@ import {toRomaji, toKatakana, toHiragana} from '../ja_conv.js'
 import {capitalize} from '../string_utils.js'
 import {xxh32, xxh64} from '../hash.js'
 import {CLEARANCE_LEVELS} from '../definition.js'
+import {DL_CLASSES, DT_CLASSES, DD_CLASSES} from '../dl_horizontal.js'
 
 parentNames = ['user']
 
@@ -343,10 +344,10 @@ view = ({mode, name, user, providers, attrs, edit}) ->
 
   html.div {}, [
     html.h4 {}, text '基本情報'
-    html.dl {class: 'row'}, [
-      html.dt {class: 'col-sm-4 col-md-3 col-lg-2'},
+    html.dl {class: DL_CLASSES}, [
+      html.dt {class: DT_CLASSES},
         html.label {class: 'form-label', for: 'user-name'}, text 'ユーザー名'
-      html.dd {class: 'col-sm-8 col-md-9 col-lg-10'},
+      html.dd {class: DD_CLASSES},
         switch mode
           when 'new'
             html.input {
@@ -367,23 +368,23 @@ view = ({mode, name, user, providers, attrs, edit}) ->
             }
           when 'show'
             text user.name
-      html.dt {class: 'col-sm-4 col-md-3 col-lg-2'},
+      html.dt {class: DT_CLASSES},
         text '表示名'
-      html.dd {class: 'col-sm-8 col-md-9 col-lg-10'},
+      html.dd {class: DD_CLASSES},
         if mode == 'new'
           html.span {class: 'text-muted'}, text '(属性値にて設定)'
         else
           text user.display_name ? ''
-      html.dt {class: 'col-sm-4 col-md-3 col-lg-2'},
+      html.dt {class: DT_CLASSES},
         text 'メールアドレス'
-      html.dd {class: 'col-sm-8 col-md-9 col-lg-10'},
+      html.dd {class: DD_CLASSES},
         if mode == 'new'
           html.span {class: 'text-muted'}, text '(属性値にて設定)'
         else
           text user.email ? ''
-      html.dt {class: 'col-sm-4 col-md-3 col-lg-2'},
+      html.dt {class: DT_CLASSES},
         text '権限レベル'
-      html.dd {class: 'col-sm-8 col-md-9 col-lg-10'},
+      html.dd {class: DD_CLASSES},
         if mode == 'show'
           text (CLEARANCE_LEVELS.find (level) -> level.value == user.clearance_level).label
         else
