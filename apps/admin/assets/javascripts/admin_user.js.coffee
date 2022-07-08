@@ -197,6 +197,8 @@ valueNode = ({value, name = null, type = 'string', edit = false, color = 'body'}
         }
       else
         html.span {class: "text-#{color}"}, text value
+    when 'list'
+      html.span {class: "text-#{color}"}, text value.join(' ')
 
 userValueAction = (state, {name, value}) ->
   throw new Error('No name value aciton') unless name?
