@@ -46,8 +46,8 @@ search = ({query}) ->
       }
   ]
 
-pageAction = (state, {page}) ->
-  newState = {state..., page}
+pageAction = (state, props) ->
+  newState = {state..., props...}
   [
     newState
     [indexAllUsersRunner, newState]
@@ -126,7 +126,9 @@ initAllUsersAction = (state, {users, total}) ->
 
 indexAllUsersRunner = (dispatch, {page, per_page, query}) ->
   data = {page, per_page, query}
-  history.pushState(data, 'users', "/admin/users?#{objToUrlencoded(data)}")
+  query = "?#{objToUrlencoded(data)}"
+  if (query != location.search)
+    history.pushState(data, 'users', "/admin/users?#{objToUrlencoded(data)}")
 
   response = await fetchJsonGet({url: '/api/users', data})
   if response.ok
@@ -147,7 +149,16 @@ indexAllProvidersRunner = (dispatch) ->
   else
     console.error response
 
-initState = {users: [], providers: [], page: 1, per_page: 50, total: 0, query: ''}
+params = new URLSearchParams(location.search)
+
+initState = {
+  users: []
+  providers: []
+  total: 0
+  page: parseInt(params.get('page') || '1')
+  per_page: parseInt(params.get('per_page') || '50') || 50
+  query: params.get('query') || ''
+}
 
 init = [
   initState
@@ -177,4 +188,15 @@ view = ({users, providers, page, per_page, total, query}) ->
 
 node = document.getElementById('admin_users')
 
-app {init, view, node}
+onPopstateSubscriber = (dispatch) ->
+  window.addEventListener 'popstate', (event) ->
+    dispatch(pageAction, event.state)
+
+onPopstate = ->
+  [onPopstateSubscriber]
+
+subscriptions = (state) -> [
+  onPopstate()
+]
+
+app {init, view, node, subscriptions}
