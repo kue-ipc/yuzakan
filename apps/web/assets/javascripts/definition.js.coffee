@@ -9,13 +9,14 @@ deepFreeze = (obj) ->
 
 export ATTR_TYPES = deepFreeze [
   {name: 'string', value: 'string', label: '文字列'}
-  {name: 'boolean', value: 'boolean', label: '真偽'}
+  {name: 'boolean', value: 'boolean', label: '真偽値'}
   {name: 'integer', value: 'integer', label: '整数'}
   {name: 'float', value: 'float', label: '小数点数'}
   {name: 'datetime', value: 'datetime', label: '日時'}
   {name: 'date', value: 'date', label: '日付'}
   {name: 'time', value: 'time', label: '時刻'}
   {name: 'list', value: 'list', label: 'リスト'}
+  {name: 'text', value: 'text', label: '文章'}
 ]
 
 export MAPPING_CONVERSIONS = deepFreeze [
