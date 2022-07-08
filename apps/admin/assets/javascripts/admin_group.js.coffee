@@ -61,7 +61,7 @@ view = ({mode, name, group, providers}) ->
 
   html.div {}, [
     html.h4 {}, text '基本情報'
-    html.dl {class: 'row'}, [
+    html.dl {class: DL_CLASSES}, [
       html.dt {class: DT_CLASSES},
         text 'グループ名'
       html.dd {class: DD_CLASSES},
