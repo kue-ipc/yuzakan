@@ -1,4 +1,4 @@
-# ユーザー
+# /admin/user/*
 
 import {text, app} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
@@ -11,15 +11,7 @@ import BsIcon from '../bs_icon.js'
 import {toRomaji, toKatakana, toHiragana} from '../ja_conv.js'
 import {capitalize} from '../string_utils.js'
 import {xxh32, xxh64} from '../hash.js'
-
-clearanceLevels = [
-  {name: 'supervisor', value: 5, label: '特権管理者'}
-  {name: 'administrator', value: 4, label: '管理者'}
-  {name: 'operator', value: 3, label: '操作者'}
-  {name: 'monitor', value: 2, label: '監視者'}
-  {name: 'user', value: 1, label: '一般ユーザー'}
-  {name: 'guest', value: 0, label: 'ゲスト'}
-]
+import {CLEARANCE_LEVELS} from '../definition.js'
 
 parentNames = ['user']
 
@@ -393,14 +385,14 @@ view = ({mode, name, user, providers, attrs, edit}) ->
         text '権限レベル'
       html.dd {class: 'col-sm-8 col-md-9 col-lg-10'},
         if mode == 'show'
-          text (clearanceLevels.find (level) -> level.value == user.clearance_level).label
+          text (CLEARANCE_LEVELS.find (level) -> level.value == user.clearance_level).label
         else
           html.select {
             class: 'form-select'
             oninput: (state, event) ->
               [userAction, {user: {clearance_level: parseInt(event.target.value, 10)}}]
           },
-            for level in clearanceLevels
+            for level in CLEARANCE_LEVELS
               html.option {
                 value: level.value
                 selected: level.value == user.clearance_level

@@ -4,25 +4,7 @@ import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '../f
 import csrf from '../csrf.js'
 import ConfirmDialog from '../confirm_dialog.js'
 import InputTextDialog from '../input_text_dialog.js'
-
-attrTypes = [
-  {name: 'string', value: 'string', label: '文字列'}
-  {name: 'boolean', value: 'boolean', label: '真偽'}
-  {name: 'integer', value: 'integer', label: '整数'}
-  {name: 'float', value: 'float', label: '小数点数'}
-  {name: 'datetime', value: 'datetime', label: '日時'}
-  {name: 'date', value: 'date', label: '日付'}
-  {name: 'time', value: 'time', label: '時刻'}
-]
-
-mappingConversions = [
-  {name: '', value: null, label: '変換無し'}
-  {name: 'posix_time', value: 'posix_time', label: 'POSIX時間'}
-  {name: 'posix_date', value: 'posix_date', label: 'POSIX日付'}
-  {name: 'path', value: 'path', label: 'PATH(パス)'}
-  {name: 'e2j', value: 'e2j', label: '英日'}
-  {name: 'j2e', value: 'j2e', label: '日英'}
-]
+import {ATTR_TYPES, MAPPING_CONVERSIONS} from '../definition.js'
 
 deleteConfirm = new ConfirmDialog {
   id: 'admin_attrs_confirm'
@@ -68,7 +50,7 @@ attrMappingTd = ({attr, provider}) ->
         attrMappingAction
         {name: attr.name, attr_mapping: {conversion: event.target.value, provider: {name: provider.name}}}
       ]
-      }, mappingConversions.map (conversion) ->
+      }, MAPPING_CONVERSIONS.map (conversion) ->
         html.option {
           value: conversion.value
           selected: conversion.value == mapping.conversion
@@ -109,7 +91,7 @@ attrTr = ({attr, index, providers}) ->
       html.select {
         class: 'form-select mb-1'
         onchange: (state, event) -> [attrAction, {name: attr.name, attr: {type: event.target.value}}]
-      }, attrTypes.map (attrType) ->
+      }, ATTR_TYPES.map (attrType) ->
         html.option {
           value: attrType.value
           selected: attrType.value == attr.type
