@@ -3,6 +3,15 @@ import * as html from '../hyperapp-html.js'
 
 import {DL_CLASSES, DT_CLASSES, DD_CLASSES} from '../dl_horizontal.js'
 import {CLEARANCE_LEVELS} from '../definition.js'
+import {createEventValueAction} from '../input_event.js'
+
+import {CalcUserAttrs} from './admin_user_attrs.js'
+
+SetUserName = (state, name) -> [CalcUserAttrs, {user: {state.user..., name}}]
+SetUserNameByEvent = createEventValueAction(SetUserName)
+
+SetUserClearanceLevel = (state, clearance_level) -> {state..., user: {state.user..., clearance_level}}
+SetUserClearanceLevelByEvent = createEventValueAction(SetUserClearanceLevel, {type: 'integer'})
 
 export default basicInfo = ({mode, user}) ->
   html.div {}, [
@@ -19,7 +28,7 @@ export default basicInfo = ({mode, user}) ->
               type: 'text'
               required: true
               value: user.name
-              oninput: (state, event) -> [userAction, {user: {name: event.target.value}}]
+              oninput: SetUserNameByEvent
             }
           when 'edit'
             html.input {
@@ -53,8 +62,7 @@ export default basicInfo = ({mode, user}) ->
         else
           html.select {
             class: 'form-select'
-            oninput: (state, event) ->
-              [userAction, {user: {clearance_level: parseInt(event.target.value, 10)}}]
+            oninput: SetUserClearanceLevelByEvent
           },
             for level in CLEARANCE_LEVELS
               html.option {

@@ -27,7 +27,6 @@ userAddProviderAction = (state, {provider_name}) ->
     }
 
 userRemoveProviderAction = (state, {provider_name}) ->
-  console.log provider_name
   {
     state...
     user: {

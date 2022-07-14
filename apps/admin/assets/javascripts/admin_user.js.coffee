@@ -17,11 +17,11 @@ ChangeUserName = (state, {name}) ->
   history.pushState(null, null, "/admin/users/#{name}") if name? && name != state.name
   {state..., name}
 
-SetUser = (state, {user}) -> [CalcUserAttrs, {user, attrs: state.attrs}]
+SetUser = (state, {user}) -> [CalcUserAttrs, {user}]
 
 SetAllProviders = (state, {providers}) -> {state..., providers}
 
-SetAllAttrs = (state, {attrs}) -> [CalcUserAttrs, {user: state.user, attrs}]
+SetAllAttrs = (state, {attrs}) -> [CalcUserAttrs, {attrs}]
 
 runGetUser = (dispatch, {name}) ->
   return unless name?

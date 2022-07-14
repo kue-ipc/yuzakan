@@ -84,8 +84,6 @@ export default attrList = ({mode, user, providers, attrs}) ->
   for provider in providers
     (user.userdata_list.find (data) -> data.provider.name == provider.name)?.userdata
 
-  console.log user
-
   html.div {}, [
     html.h4 {}, text '属性一覧'
 

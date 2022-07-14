@@ -37,7 +37,7 @@ checkProviderRunner = (dispatch, {provider}) ->
   if response.ok
     dispatch(providerAction, {name: provider.name, provider: response.data})
   else
-    console.log respons
+    console.error respons
 
 indexAllProvidersRunner = (dispatch) ->
   response = await fetchJsonGet({url: '/api/providers'})

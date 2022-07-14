@@ -25,6 +25,8 @@ export getAttrDefaultValue = ({username, attrs, code}) ->
   result
 
 export CalcUserAttrs = (state, {user, attrs}) ->
+  user ?= state.user
+  attrs ?= state.attrs
   if attrs.length == 0
     return {state..., user, attrs}
 
@@ -32,7 +34,7 @@ export CalcUserAttrs = (state, {user, attrs}) ->
   if checked
     userAttrs = user.attrs
     attrValues = {}
-    for own name, value of usnerAttrs
+    for own name, value of userAttrs
       attrValues[name] = value.value
   else
     userAttrs = {}
