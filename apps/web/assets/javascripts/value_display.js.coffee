@@ -1,6 +1,8 @@
 import {text} from './hyperapp.js'
 import * as html from './hyperapp-html.js'
 
+import BsIcon from './bs_icon.js'
+
 export default valueDisplay = ({value, type = 'string', color = 'body', na = true}) ->
   unless value?
     return html.span {class: 'text-muted'}, text if na then'N/A' else ''

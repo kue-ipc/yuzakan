@@ -3,30 +3,15 @@ import * as html from '../hyperapp-html.js'
 
 import valueDisplay from '../value_display.js'
 
-getAttrDefaultValue = ({userdata, attr}) ->
-  return unless attr.code
+pointMerge = (obj, names, value) ->
+  {
+    obj...
+    [names[0]]: if names.length == 1 then value else pointMerge(obj[names[0]], names.slice(1), value)
+  }
 
-  code =
-    if /\breturn\b/.test(attr.code)
-      attr.code
-    else
-      "return #{attr.code};"
-
-  func = new Function('{name, username, display_name, email, attrs, tools}', code)
-  try
-    result = func {
-      name: userdata.name
-      username: userdata.name
-      display_name: userdata.display_name
-      email: userdata.email
-      attrs: {userdata.attrs...}
-      tools: {toRomaji, toKatakana, toHiragana, capitalize, xxh32, xxh64}
-    }
-  catch error
-    console.warn({msg: 'Failed to getAttrDefaultValue', code: code, error: error})
-    return
-
-  result
+userValueAction = (state, {name, value}) ->
+  throw new Error('No name value aciton') unless name?
+  pointMerge(state, ['user', name.split('.')...], value)
 
 attrValue = ({value, name = null, type = 'string', edit = false, color = 'body'}) ->
   if edit
@@ -94,10 +79,12 @@ attrValue = ({value, name = null, type = 'string', edit = false, color = 'body'}
   else
     valueDisplay {value, type, color}
 
-export default attrList = ({mode, user, providers, attrs, defaultAttrs}) ->
+export default attrList = ({mode, user, providers, attrs}) ->
   provider_userdatas =
   for provider in providers
     (user.userdata_list.find (data) -> data.provider.name == provider.name)?.userdata
+
+  console.log user
 
   html.div {}, [
     html.h4 {}, text '属性一覧'
@@ -107,18 +94,28 @@ export default attrList = ({mode, user, providers, attrs, defaultAttrs}) ->
         html.tr {}, [
           html.th {}, text '属性名'
           html.th {}, text 'デフォルト値'
+          html.th {}, text 'デファルト'
           html.th {}, text '設定値'
           (html.th({}, text provider.label) for provider in providers)...
         ]
       html.tbody {},
         for attr in attrs
-          defaultValue = getAttrDefaultValue({userdata: user.userdata, attr})
-          value = user.userdata.attrs[attr.name]
+          defaultValue = user.attrs?[attr.name]?.default
+          value = user.attrs?[attr.name]?.value
 
           html.tr {}, [
             html.td {}, text attr.label
             html.td {},
               attrValue {value: defaultValue, type: attr.type}
+
+            html.td {},
+              switch user.attrs?[attr.name]?.setting
+                when 'default'
+                  valueDisplay({value: true, type: 'boolean'})
+                when 'custom'
+                  valueDisplay({value: false, type: 'boolean'})
+                else
+                  []
 
             html.td {},
               attrValue {

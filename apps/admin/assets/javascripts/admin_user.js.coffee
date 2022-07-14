@@ -4,9 +4,6 @@ import {text, app} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
 
 import {fetchJsonGet} from '../fetch_json.js'
-import {toRomaji, toKatakana, toHiragana} from '../ja_conv.js'
-import {capitalize} from '../string_utils.js'
-import {xxh32, xxh64} from '../hash.js'
 
 import basicInfo from './admin_user_basic_info.js'
 import operationMenu from './admin_user_operation_menu.js'
@@ -14,54 +11,38 @@ import groupMembership from './admin_user_group_membership.js'
 import providerReg from './admin_user_provider_reg.js'
 import attrList from './admin_user_attr_list.js'
 
+import {CalcUserAttrs} from './admin_user_attrs.js'
 
-
-pointMerge = (obj, names, value) ->
-  {
-    obj...
-    [names[0]]: if names.length == 1 then value else pointMerge(obj[names[0]], names.slice(1), value)
-  }
-
-userValueAction = (state, {name, value}) ->
-  throw new Error('No name value aciton') unless name?
-  pointMerge(state, ['user', name.split('.')...], value)
-
-userAction = (state, {name, user}) ->
+ChangeUserName = (state, {name}) ->
   history.pushState(null, null, "/admin/users/#{name}") if name? && name != state.name
+  {state..., name}
 
-  {
-    state...
-    name: name ? state.name
-    user: {state.user..., user...}
-  }
+SetUser = (state, {user}) -> [CalcUserAttrs, {user, attrs: state.attrs}]
 
+SetAllProviders = (state, {providers}) -> {state..., providers}
 
-showUserRunner = (dispatch, {name}) ->
+SetAllAttrs = (state, {attrs}) -> [CalcUserAttrs, {user: state.user, attrs}]
+
+runGetUser = (dispatch, {name}) ->
   return unless name?
 
   response = await fetchJsonGet({url: "/api/users/#{name}"})
   if response.ok
-    dispatch(userAction, {user: response.data})
+    dispatch(SetUser, {user: response.data})
   else
     console.error respons
 
-initAllProvidersAction = (state, {providers}) ->
-  {state..., providers}
-
-indexAllProvidersRunner = (dispatch) ->
+runGetAllProviders = (dispatch) ->
   response = await fetchJsonGet({url: '/api/providers'})
   if response.ok
-    dispatch(initAllProvidersAction, {providers: response.data})
+    dispatch(SetAllProviders, {providers: response.data})
   else
     console.error response
 
-initAllAttrsAction = (state, {attrs}) ->
-  {state..., attrs}
-
-indexAllAttrsRunner = (dispatch) ->
+runGetAllAttrs = (dispatch) ->
   response = await fetchJsonGet({url: '/api/attrs'})
   if response.ok
-    dispatch(initAllAttrsAction, {attrs: response.data})
+    dispatch(SetAllAttrs, {attrs: response.data})
   else
     console.error response
 
@@ -77,19 +58,19 @@ initUser = {
 }
 
 init = [
-  {mode, name, user: initUser, providers: [], attrs: [], defaultAttrs: {}}
-  [indexAllProvidersRunner]
-  [indexAllAttrsRunner]
-  [showUserRunner, {name}]
+  {mode, name, user: initUser, providers: [], attrs: []}
+  [runGetAllProviders]
+  [runGetAllAttrs]
+  [runGetUser, {name}]
 ]
 
-view = ({mode, name, user, providers, attrs, defaultAttrs}) ->
+view = ({mode, name, user, providers, attrs}) ->
   html.div {}, [
     basicInfo {mode, user}
     operationMenu {mode, user}
     groupMembership {}
     providerReg {mode, user, providers}
-    attrList {mode, user, providers, attrs, defaultAttrs}
+    attrList {mode, user, providers, attrs}
   ]
 
 
