@@ -4,7 +4,6 @@ import {text, app} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
 
 import {fetchJsonGet} from '../fetch_json.js'
-import BsIcon from '../bs_icon.js'
 import {toRomaji, toKatakana, toHiragana} from '../ja_conv.js'
 import {capitalize} from '../string_utils.js'
 import {xxh32, xxh64} from '../hash.js'
@@ -85,10 +84,6 @@ init = [
 ]
 
 view = ({mode, name, user, providers, attrs, defaultAttrs}) ->
-  provider_userdatas =
-    for provider in providers
-      (user.userdata_list.find (data) -> data.provider.name == provider.name)?.userdata
-
   html.div {}, [
     basicInfo {mode, user}
     operationMenu {mode, user}

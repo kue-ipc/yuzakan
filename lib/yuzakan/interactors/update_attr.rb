@@ -44,7 +44,6 @@ class UpdateAttr
 
   def call(params)
     params = params.to_h.dup
-    pp params
 
     if params[:attr_mappings]
       params[:attr_mappings] = params[:attr_mappings].map do |am_params|
