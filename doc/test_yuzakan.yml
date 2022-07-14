@@ -111,7 +111,7 @@ attrs:
   order: 2
   hidden: false
   readonly: false
-  code: "(attrs.diplay_name || display_name)?.split(/\\s/)?.at(0)"
+  code: attrs.diplay_name?.split(/\s/)?.at(0)
   attr_mappings:
   - provider:
       name: ldap
@@ -123,7 +123,7 @@ attrs:
   order: 3
   hidden: false
   readonly: false
-  code: "(attrs.diplay_name || display_name)?.split(/\\s/)?.at(1)"
+  code: attrs.diplay_name?.split(/\s/)?.at(1)
   attr_mappings:
   - provider:
       name: ldap
