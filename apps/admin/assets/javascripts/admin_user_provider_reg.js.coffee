@@ -58,23 +58,22 @@ providerCheck = ({provider_name, checked, edit = false}) ->
         BsIcon({name: 'square'})
 
 providerRegProviderTd = ({user, provider, name, type}) ->
-  if user.providers.includes(provider.name)
-    provider_userdata = (user.provider_userdatas.find (data) -> data.provider.name == provider.name)
+  return html.td {} unless user.providers.includes(provider.name)
 
-    html.td {},
-      valueDisplay {
-        value: provider_userdata?.userdata?[name]
-        type
-        color:
-          if type == 'list'
-            'body'
-          else if user.userdata[name] == provider_userdata?.userdata?[name]
-            'success'
-          else
-            'danger'
-      }
-  else
-    html.td {}
+  provider_userdata = (user.provider_userdatas.find (data) -> data.provider.name == provider.name)
+
+  html.td {},
+    valueDisplay {
+      value: provider_userdata?.userdata?[name]
+      type
+      color:
+        if type == 'list'
+          'body'
+        else if user.userdata[name] == provider_userdata?.userdata?[name]
+          'success'
+        else
+          'danger'
+    }
 
 providerRegTr = ({user, providers, name, label, type}) ->
   html.tr {}, [

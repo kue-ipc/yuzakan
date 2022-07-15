@@ -2,19 +2,14 @@ import {text} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
 
 import valueDisplay from '../value_display.js'
+
 import {CalcUserAttrs} from './admin_user_attrs.js'
 
-pointMerge = (obj, names, value) ->
-  {
-    obj...
-    [names[0]]: if names.length == 1 then value else pointMerge(obj[names[0]], names.slice(1), value)
-  }
+SetUserAttr = (state, {attr_name, value}) ->
+  user = {state.user..., attrs: {state.user.attrs..., [attr_name]: value}}
+  [CalcUserAttrs, {user}]
 
-userValueAction = (state, {name, value}) ->
-  throw new Error('No name value aciton') unless name?
-  pointMerge(state, ['user', name.split('.')...], value)
-
-attrValue = ({value, name = null, type = 'string', edit = false, color = 'body'}) ->
+attrValue = ({attr_name, value, type = 'string', edit = false, color = 'body'}) ->
   if edit
     switch type
       when 'string'
@@ -23,7 +18,7 @@ attrValue = ({value, name = null, type = 'string', edit = false, color = 'body'}
           class: 'form-control'
           teype: 'text'
           value
-          oninput: (state, event) -> [userValueAction, {name, value: event.target.value}]
+          oninput: (state, event) -> [SetUserAttr, {attr_name, value: event.target.value}]
         }
       when 'boolean'
         html.div {class: 'form-check'},
@@ -32,7 +27,7 @@ attrValue = ({value, name = null, type = 'string', edit = false, color = 'body'}
             class: 'form-check-input'
             type: 'checkbox'
             checked: value
-            onchange: (state, event) -> [userValueAction, {name, value: !value}]
+            onchange: (state, event) -> [SetUserAttr, {attr_name, value: event.target.checked}]
           }
       when 'integer'
         html.input {
@@ -40,7 +35,7 @@ attrValue = ({value, name = null, type = 'string', edit = false, color = 'body'}
           class: 'form-control'
           teype: 'number'
           value
-          oninput: (state, event) -> [userValueAction, {name, value: parseInt(event.target.value)}]
+          oninput: (state, event) -> [SetUserAttr, {attr_name, value: parseInt(event.target.value)}]
         }
       when 'float'
         html.input {
@@ -49,15 +44,15 @@ attrValue = ({value, name = null, type = 'string', edit = false, color = 'body'}
           teype: 'number'
           value
           step: '0.001'
-          oninput: (state, event) -> [userValueAction, {name, value: Number(event.target.value)}]
+          oninput: (state, event) -> [SetUserAttr, {attr_name, value: Number(event.target.value)}]
         }
       when 'datetime'
         html.input {
           id: "value-#{name}"
           class: 'form-control'
-          teype: 'datetime'
+          teype: 'datetime-local'
           value
-          oninput: (state, event) -> [userValueAction, {name, value: Date(event.target.value)}]
+          oninput: (state, event) -> [SetUserAttr, {attr_name, value: event.target.value}]
         }
       when 'date'
         html.input {
@@ -65,7 +60,7 @@ attrValue = ({value, name = null, type = 'string', edit = false, color = 'body'}
           class: 'form-control'
           teype: 'date'
           value
-          oninput: (state, event) -> [userValueAction, {name, value: Date(event.target.value)}]
+          oninput: (state, event) -> [SetUserAttr, {attr_name, value: event.target.value}]
         }
       when 'time'
         html.input {
@@ -73,7 +68,7 @@ attrValue = ({value, name = null, type = 'string', edit = false, color = 'body'}
           class: 'form-control'
           teype: 'time'
           value
-          oninput: (state, event) -> [userValueAction, {name, value: Date(event.target.value)}]
+          oninput: (state, event) -> [SetUserAttr, {attr_name, value: event.target.value}]
         }
       else
         throw new Error("not implemented: #{type}")
@@ -86,6 +81,67 @@ ChangeAttrSetting = (state, {attr_name, setting}) ->
     attrSettings: {state.user.attrSettings..., [attr_name]: setting}
   }
   [CalcUserAttrs, {user}]
+
+
+attrSetting = ({attr_name, checked, edit}) ->
+  if edit
+    html.div {class: 'form-check'},
+      html.input {
+        id: "value-#{name}"
+        class: 'form-check-input'
+        type: 'checkbox'
+        checked: checked
+        onchange: [ChangeAttrSetting, {attr_name, setting: if checked then 'custom' else 'default'}]
+      }
+  else
+    valueDisplay({value: checked, type: 'boolean'})
+
+attrSettingTd = ({mode, user, attr}) ->
+  html.td {},
+    switch user.attrSettings?[attr.name]
+      when 'default'
+        attrSetting {attr_name: attr.name, checked: true, edit: mode != 'show'}
+      when 'custom'
+        attrSetting {attr_name: attr.name, checked: false, edit: mode != 'show'}
+      else
+        []
+
+attrDefaultTd = ({user, attr}) ->
+  html.td {},
+    valueDisplay {value: user.attrDefaults[attr.name], type: attr.type}
+
+attrValueTd = ({mode, user, attr}) ->
+  defaultValue = user.attrDefaults[attr.name]
+  value = user.attrs[attr.name]
+  html.td {},
+    attrValue {
+      attr_name: attr.name
+      value: value
+      type: attr.type
+      edit: mode != 'show' && user.attrSettings[attr.name] != 'default' && !attr.readonly
+      color:
+        if !defaultValue?
+          'body'
+        else if defaultValue == value
+          'success'
+        else
+          'danger'
+    }
+
+providerTd = ({user, attr, provider}) ->
+  return html.td {} unless user.providers.includes(provider.name)
+
+  provider_userdata = (user.provider_userdatas.find (data) -> data.provider.name == provider.name)
+  return html.td {} unless provider_userdata?
+
+  provider_value = provider_userdata.userdata.attrs[attr.name]
+
+  html.td {},
+    valueDisplay {
+      value: provider_userdata.userdata.attrs[attr.name]
+      type: attr.type
+      color: if provider_value == user.attrs[attr.name] then 'success' else 'danger'
+    }
 
 export default attrList = ({mode, user, providers, attrs}) ->
   provider_userdatas =
@@ -106,73 +162,12 @@ export default attrList = ({mode, user, providers, attrs}) ->
         ]
       html.tbody {},
         for attr in attrs
-          defaultValue = user.attrDefaults?[attr.name]
-          value = user.attrs?[attr.name]
-
           html.tr {}, [
             html.td {}, text attr.label
-            html.td {},
-              attrValue {value: defaultValue, type: attr.type}
-
-            html.td {},
-              if mode == 'show'
-                switch user.attrSettings?[attr.name]
-                  when 'default'
-                    valueDisplay({value: true, type: 'boolean'})
-                  when 'custom'
-                    valueDisplay({value: false, type: 'boolean'})
-                  else
-                    []
-              else
-                switch user.attrSettings?[attr.name]
-                  when 'default'
-                    html.div {class: 'form-check'},
-                      html.input {
-                        id: "value-#{name}"
-                        class: 'form-check-input'
-                        type: 'checkbox'
-                        checked: true
-                        onchange: [ChangeAttrSetting, {attr_name: attr.name, setting: 'custom'}]
-                      }
-                  when 'custom'
-                    html.div {class: 'form-check'},
-                      html.input {
-                        id: "value-#{name}"
-                        class: 'form-check-input'
-                        type: 'checkbox'
-                        checked: false
-                        onchange: [ChangeAttrSetting, {attr_name: attr.name, setting: 'default'}]
-                      }
-                  else
-                    []
-            html.td {},
-              attrValue {
-                name: "userdata.attrs.#{attr.name}"
-                value: value
-                type: attr.type
-                edit: mode != 'show' && !attr.readonly
-                color:
-                  if not defaultValue?
-                    'body'
-                  else if defaultValue == value
-                    'success'
-                  else
-                    'danger'
-              }
-
-            (
-              for userdata in provider_userdatas
-                html.td {},
-                  attrValue {
-                    value: userdata?.attrs?[attr.name]
-                    type: attr.type
-                    color:
-                      if value == userdata?.attrs?[attr.name]
-                        'success'
-                      else
-                        'danger'
-                  }
-            )...
+            attrDefaultTd {user, attr}
+            attrSettingTd {mode, user, attr}
+            attrValueTd {mode, user, attr}
+            (providerTd {user, attr, provider} for provider in providers)...
           ]
     ]
   ]
