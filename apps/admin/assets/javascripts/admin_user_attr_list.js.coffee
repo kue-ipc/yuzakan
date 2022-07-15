@@ -2,6 +2,7 @@ import {text} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
 
 import valueDisplay from '../value_display.js'
+import {CalcUserAttrs} from './admin_user_attrs.js'
 
 pointMerge = (obj, names, value) ->
   {
@@ -79,6 +80,13 @@ attrValue = ({value, name = null, type = 'string', edit = false, color = 'body'}
   else
     valueDisplay {value, type, color}
 
+ChangeAttrSetting = (state, {attr_name, setting}) ->
+  user = {
+    state.user...
+    attrSettings: {state.user.attrSettings..., [attr_name]: setting}
+  }
+  [CalcUserAttrs, {user}]
+
 export default attrList = ({mode, user, providers, attrs}) ->
   provider_userdatas =
   for provider in providers
@@ -98,8 +106,8 @@ export default attrList = ({mode, user, providers, attrs}) ->
         ]
       html.tbody {},
         for attr in attrs
-          defaultValue = user.attrs?[attr.name]?.default
-          value = user.attrs?[attr.name]?.value
+          defaultValue = user.attrDefaults?[attr.name]
+          value = user.attrs?[attr.name]
 
           html.tr {}, [
             html.td {}, text attr.label
@@ -107,14 +115,36 @@ export default attrList = ({mode, user, providers, attrs}) ->
               attrValue {value: defaultValue, type: attr.type}
 
             html.td {},
-              switch user.attrs?[attr.name]?.setting
-                when 'default'
-                  valueDisplay({value: true, type: 'boolean'})
-                when 'custom'
-                  valueDisplay({value: false, type: 'boolean'})
-                else
-                  []
-
+              if mode == 'show'
+                switch user.attrSettings?[attr.name]
+                  when 'default'
+                    valueDisplay({value: true, type: 'boolean'})
+                  when 'custom'
+                    valueDisplay({value: false, type: 'boolean'})
+                  else
+                    []
+              else
+                switch user.attrSettings?[attr.name]
+                  when 'default'
+                    html.div {class: 'form-check'},
+                      html.input {
+                        id: "value-#{name}"
+                        class: 'form-check-input'
+                        type: 'checkbox'
+                        checked: true
+                        onchange: [ChangeAttrSetting, {attr_name: attr.name, setting: 'custom'}]
+                      }
+                  when 'custom'
+                    html.div {class: 'form-check'},
+                      html.input {
+                        id: "value-#{name}"
+                        class: 'form-check-input'
+                        type: 'checkbox'
+                        checked: false
+                        onchange: [ChangeAttrSetting, {attr_name: attr.name, setting: 'default'}]
+                      }
+                  else
+                    []
             html.td {},
               attrValue {
                 name: "userdata.attrs.#{attr.name}"

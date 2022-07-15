@@ -27,36 +27,42 @@ export getAttrDefaultValue = ({username, attrs, code}) ->
 export CalcUserAttrs = (state, {user, attrs}) ->
   user ?= state.user
   attrs ?= state.attrs
-  if attrs.length == 0
-    return {state..., user, attrs}
 
-  checked = user.attrs?
-  if checked
-    userAttrs = user.attrs
-    attrValues = {}
-    for own name, value of userAttrs
-      attrValues[name] = value.value
-  else
-    userAttrs = {}
-    for own name, value of user.userdata.attrs
-      userAttrs[name] = {value, setting: 'input'}
-    user = {user..., attrs: userAttrs}
-    attrValues = user.userdata.attrs
+  attrValues = {user.attrs...}
+  attrDefaults = {}
 
   for attr in attrs when attr.code
-    defaultValue = getAttrDefaultValue({username: user.name, attrs: attrValues, code: attr.code})
-    newAttr =
-      if checked
-        if userAttrs[attr.name].setting == 'default'
-          {userAttrs[attr.name]..., value: defaultValue, default: defaultValue}
-        else
-          {userAttrs[attr.name]..., default: defaultValue}
-      else if state.mode == 'new'
-        {userAttrs[attr.name]..., value: defaultValue, default: defaultValue, setting: 'default'}
-      else if defaultValue == userAttrs[attr.name]?.value || !userAttrs[attr.name]?
-        {userAttrs[attr.name]..., default: defaultValue, setting: 'default'}
-      else
-        {userAttrs[attr.name]..., default: defaultValue, setting: 'custom'}
-    userAttrs = {userAttrs..., [attr.name]: newAttr}
+    attrDefaults[attr.name] = getAttrDefaultValue({username: user.name, attrs: user.attrs, code: attr.code})
+    if user.attrSettings[attr.name] == 'default'
+      attrValues[attr.name] = attrDefaults[attr.name]
 
-  {state..., user: {user..., attrs: userAttrs}, attrs: attrs}
+  {state..., user: {user..., attrs: attrValues, attrDefaults}, attrs}
+
+export InitUserAttrs = (state, {user, attrs}) ->
+  user ?= state.user
+  attrs ?= state.attrs
+  return {state..., user, attrs} if attrs.length == 0
+  return {state..., user, attrs} if state.mode != 'new' && user.name == ''
+
+  attrValues = {}
+  attrDefaults = {}
+  attrSettings = {}
+
+  for attr in attrs
+    unless attr.code
+      attrValues[attr.name] = user.userdata.attrs[attr.name]
+      attrSettings[attr.name] = 'input'
+      continue
+
+    attrDefaults[attr.name] = getAttrDefaultValue({username: user.name, attrs: user.userdata.attrs, code: attr.code})
+
+    if state.mode == 'new' ||
+        !user.userdata.attrs[attr.name]? ||
+        user.userdata.attrs[attr.name] == attrDefaults[attr.name]
+      attrSettings[attr.name] = 'default'
+      attrValues[attr.name] = attrDefaults[attr.name]
+    else
+      attrSettings[attr.name] = 'custom'
+      attrValues[attr.name] = user.userdata.attrs[attr.name]
+
+  {state..., user: {user..., attrs: attrValues, attrSettings, attrDefaults}, attrs}

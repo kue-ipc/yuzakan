@@ -67,12 +67,11 @@ providerRegProviderTd = ({user, provider, name, type}) ->
       color:
         if type == 'list'
           'body'
-        else if user.userdata[name] == provider_userdata?[name]
+        else if user.userdata[name] == provider_userdata?.userdata?[name]
           'success'
         else
           'danger'
     }
-
 
 providerRegTr = ({user, providers, name, label, type}) ->
   html.tr {}, [
@@ -102,7 +101,7 @@ export default providerReg = ({mode, user, providers}) ->
                 providerCheck {provider_name: provider.name, checked: found_provider?, edit: mode != 'show'}
           )...
         ]
-        (providerRegTr {user, providers, item...} for item in PROVIDER_REG_ITEMS)...
+        (if mode != 'new' then (providerRegTr {user, providers, item...} for item in PROVIDER_REG_ITEMS) else [])...
       ]
     ]
   ]

@@ -11,17 +11,19 @@ import groupMembership from './admin_user_group_membership.js'
 import providerReg from './admin_user_provider_reg.js'
 import attrList from './admin_user_attr_list.js'
 
-import {CalcUserAttrs} from './admin_user_attrs.js'
+import {InitUserAttrs} from './admin_user_attrs.js'
 
 ChangeUserName = (state, {name}) ->
   history.pushState(null, null, "/admin/users/#{name}") if name? && name != state.name
   {state..., name}
 
-SetUser = (state, {user}) -> [CalcUserAttrs, {user}]
+SetUser = (state, {user}) ->
+  providers = (provider_userdata.provider.name for provider_userdata in user.provider_userdatas)
+  [InitUserAttrs, {user: {user..., providers}}]
 
 SetAllProviders = (state, {providers}) -> {state..., providers}
 
-SetAllAttrs = (state, {attrs}) -> [CalcUserAttrs, {attrs}]
+SetAllAttrs = (state, {attrs}) -> [InitUserAttrs, {attrs}]
 
 runGetUser = (dispatch, {name}) ->
   return unless name?
@@ -65,6 +67,7 @@ init = [
 ]
 
 view = ({mode, name, user, providers, attrs}) ->
+  console.log user
   html.div {}, [
     basicInfo {mode, user}
     operationMenu {mode, user}
