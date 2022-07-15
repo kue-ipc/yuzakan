@@ -16,7 +16,7 @@ class ReadUser
   end
 
   expose :userdata
-  expose :userdata_list
+  expose :provider_userdatas
 
   def initialize(provider_repository: ProviderRepository.new)
     @provider_repository = provider_repository
@@ -24,13 +24,13 @@ class ReadUser
 
   def call(params)
     @userdata = {name: params[:username], attrs: {}, groups: []}
-    @userdata_list = []
+    @provider_userdatas = []
 
     providers = @provider_repository.ordered_all_with_adapter_by_operation(:user_read)
     providers.each do |provider|
       userdata = provider.user_read(params[:username])
       if userdata
-        @userdata_list << {provider: provider, userdata: userdata} 
+        @provider_userdatas << {provider: provider, userdata: userdata} 
         @userdata[:display_name] ||= userdata[:display_name]
         @userdata[:email] ||= userdata[:email]
         @userdata[:attrs] = userdata[:attrs].merge(@userdata[:attrs])

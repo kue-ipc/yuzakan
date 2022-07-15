@@ -54,7 +54,7 @@ initUser = {
   name: ''
   clearance_level: 1
   userdata: {attrs: {}}
-  userdata_list: []
+  provider_userdatas: []
 }
 
 init = [

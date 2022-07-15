@@ -22,7 +22,7 @@ class SyncUser
 
   expose :user
   expose :userdata
-  expose :userdata_list
+  expose :provider_userdatas
 
   def call(params)
     read_user = ReadUser.new(provider_repository: @provider_repository)
@@ -33,13 +33,13 @@ class SyncUser
     end
 
     @userdata = read_user_result.userdata
-    @userdata_list = read_user_result.userdata_list
+    @provider_userdatas = read_user_result.provider_userdatas
 
     if @userdata[:name] != params[:username]
       error!('ユーザー名が一致しません。')
     end
 
-    if !@userdata_list.empty?
+    if !@provider_userdatas.empty?
       register_user = RegisterUser.new(user_repository: @user_repository)
       register_user_result = register_user.call(@userdata.slice(:name, :display_name, :email))
       if register_user_result.failure?

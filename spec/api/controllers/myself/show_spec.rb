@@ -53,7 +53,7 @@ describe Api::Controllers::Myself::Show do
         attrs: {ja_display_name: '表示ユーザー'},
         groups: [],
       },
-      userdata_list: [{
+      provider_userdatas: [{
         provider: {
           name: 'provider',
           adapter_name: 'mock',

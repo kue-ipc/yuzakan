@@ -39,7 +39,7 @@ module Api
           self.body = generate_json({
             **convert_for_json(result.user),
             userdata: result.userdata,
-            userdata_list: result.userdata_list,
+            provider_userdatas: result.provider_userdatas,
           })
         end
       end

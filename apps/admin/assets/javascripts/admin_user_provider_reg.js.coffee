@@ -15,14 +15,14 @@ PROVIDER_REG_ITEMS = [
 ]
 
 userAddProviderAction = (state, {provider_name}) ->
-  if state.user.userdata_list.some (data) -> data.provider.name == provider_name
+  if state.user.provider_userdatas.some (data) -> data.provider.name == provider_name
     state
   else
     {
       state...
       user: {
         state.user...
-        userdata_list: [state.user.userdata_list..., {provider: {name: provider_name}}]
+        provider_userdatas: [state.user.provider_userdatas..., {provider: {name: provider_name}}]
       }
     }
 
@@ -31,7 +31,7 @@ userRemoveProviderAction = (state, {provider_name}) ->
     state...
     user: {
       state.user...
-      userdata_list: state.user.userdata_list.filter (data) -> data.provider.name != provider_name
+      provider_userdatas: state.user.provider_userdatas.filter (data) -> data.provider.name != provider_name
     }
   }
 
@@ -58,7 +58,7 @@ providerCheck = ({provider_name, checked, edit = false}) ->
         BsIcon({name: 'square'})
 
 providerRegProviderTd = ({user, provider, name, type}) ->
-  provider_userdata = (user.userdata_list.find (data) -> data.provider.name == provider.name)
+  provider_userdata = (user.provider_userdatas.find (data) -> data.provider.name == provider.name)
 
   html.td {},
     valueDisplay {
@@ -97,7 +97,7 @@ export default providerReg = ({mode, user, providers}) ->
           html.td {}, text ''
           (
             for provider in providers
-              found_provider = (user.userdata_list.find (data) -> data.provider.name == provider.name)
+              found_provider = (user.provider_userdatas.find (data) -> data.provider.name == provider.name)
               html.td {},
                 providerCheck {provider_name: provider.name, checked: found_provider?, edit: mode != 'show'}
           )...
