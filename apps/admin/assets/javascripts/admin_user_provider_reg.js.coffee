@@ -15,14 +15,14 @@ PROVIDER_REG_ITEMS = [
 ]
 
 userAddProviderAction = (state, {provider_name}) ->
-  if state.user.provider_userdatas.some (data) -> data.provider.name == provider_name
+  if state.user.providers.includes(provider_name)
     state
   else
     {
       state...
       user: {
         state.user...
-        provider_userdatas: [state.user.provider_userdatas..., {provider: {name: provider_name}}]
+        providers: [state.user.providers..., provider_name]
       }
     }
 
@@ -31,7 +31,7 @@ userRemoveProviderAction = (state, {provider_name}) ->
     state...
     user: {
       state.user...
-      provider_userdatas: state.user.provider_userdatas.filter (data) -> data.provider.name != provider_name
+      providers: state.user.providers.filter (item) -> item != provider_name
     }
   }
 
@@ -58,20 +58,23 @@ providerCheck = ({provider_name, checked, edit = false}) ->
         BsIcon({name: 'square'})
 
 providerRegProviderTd = ({user, provider, name, type}) ->
-  provider_userdata = (user.provider_userdatas.find (data) -> data.provider.name == provider.name)
+  if user.providers.includes(provider.name)
+    provider_userdata = (user.provider_userdatas.find (data) -> data.provider.name == provider.name)
 
-  html.td {},
-    valueDisplay {
-      value: provider_userdata?.userdata?[name]
-      type
-      color:
-        if type == 'list'
-          'body'
-        else if user.userdata[name] == provider_userdata?.userdata?[name]
-          'success'
-        else
-          'danger'
-    }
+    html.td {},
+      valueDisplay {
+        value: provider_userdata?.userdata?[name]
+        type
+        color:
+          if type == 'list'
+            'body'
+          else if user.userdata[name] == provider_userdata?.userdata?[name]
+            'success'
+          else
+            'danger'
+      }
+  else
+    html.td {}
 
 providerRegTr = ({user, providers, name, label, type}) ->
   html.tr {}, [
@@ -79,6 +82,14 @@ providerRegTr = ({user, providers, name, label, type}) ->
     html.td {}, valueDisplay {value: user.userdata[name], type}
     (providerRegProviderTd {user, provider, name, type} for provider in providers)...
   ]
+
+providerCheckTd = ({mode, user, provider}) ->
+  html.td {},
+    providerCheck {
+      provider_name: provider.name
+      checked: user.providers.includes(provider.name)
+      edit: mode != 'show'
+    }
 
 export default providerReg = ({mode, user, providers}) ->
   html.div {}, [
@@ -94,12 +105,7 @@ export default providerReg = ({mode, user, providers}) ->
         html.tr {}, [
           html.td {}, text 'プロバイダー'
           html.td {}, text ''
-          (
-            for provider in providers
-              found_provider = (user.provider_userdatas.find (data) -> data.provider.name == provider.name)
-              html.td {},
-                providerCheck {provider_name: provider.name, checked: found_provider?, edit: mode != 'show'}
-          )...
+          (providerCheckTd({mode, user, provider}) for provider in providers)...
         ]
         (if mode != 'new' then (providerRegTr {user, providers, item...} for item in PROVIDER_REG_ITEMS) else [])...
       ]

@@ -41,8 +41,7 @@ export CalcUserAttrs = (state, {user, attrs}) ->
 export InitUserAttrs = (state, {user, attrs}) ->
   user ?= state.user
   attrs ?= state.attrs
-  return {state..., user, attrs} if attrs.length == 0
-  return {state..., user, attrs} if state.mode != 'new' && user.name == ''
+  return {state..., user, attrs} unless user? && attrs?
 
   attrValues = {}
   attrDefaults = {}

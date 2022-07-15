@@ -106,9 +106,9 @@ module Yuzakan
           locked: user.locked?,
           disabled: user.disabled?,
           attrs: {
-            name: user.name,
-            display_name: user.display_name,
-            email: user.email,
+            'name' => user.name,
+            'display_name' => user.display_name,
+            'email' => user.email,
           }
         }
       end

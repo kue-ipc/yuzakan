@@ -25,14 +25,22 @@ SetAllProviders = (state, {providers}) -> {state..., providers}
 
 SetAllAttrs = (state, {attrs}) -> [InitUserAttrs, {attrs}]
 
-runGetUser = (dispatch, {name}) ->
-  return unless name?
+newUser = {
+  name: ''
+  clearance_level: 1
+  userdata: {attrs: {}}
+  provider_userdatas: []
+}
 
-  response = await fetchJsonGet({url: "/api/users/#{name}"})
-  if response.ok
-    dispatch(SetUser, {user: response.data})
+runGetUser = (dispatch, {name}) ->
+  if name?
+    response = await fetchJsonGet({url: "/api/users/#{name}"})
+    if response.ok
+      dispatch(SetUser, {user: response.data})
+    else
+      console.error respons
   else
-    console.error respons
+    dispatch(SetUser, {user: newUser})
 
 runGetAllProviders = (dispatch) ->
   response = await fetchJsonGet({url: '/api/providers'})
@@ -52,15 +60,8 @@ name = location.pathname.split('/').at(-1)
 name = undefined if name == '*'
 mode = if name? then 'show' else 'new'
 
-initUser = {
-  name: ''
-  clearance_level: 1
-  userdata: {attrs: {}}
-  provider_userdatas: []
-}
-
 init = [
-  {mode, name, user: initUser, providers: [], attrs: []}
+  {mode, name, user: null, providers: null, attrs: null}
   [runGetAllProviders]
   [runGetAllAttrs]
   [runGetUser, {name}]
@@ -68,6 +69,9 @@ init = [
 
 view = ({mode, name, user, providers, attrs}) ->
   console.log user
+  unless user? && providers? && attrs?
+    return html.div {}, text '読み込み中...'
+
   html.div {}, [
     basicInfo {mode, user}
     operationMenu {mode, user}
