@@ -25,11 +25,11 @@ module Yuzakan
           email: userdata[:email],
           hashed_password: hashed_password,
         })
-        user2userdata(user)
+        user_entity_to_data(user)
       end
 
       def user_read(username)
-        user2userdata(@repository.find_by_name(username))
+        user_entity_to_data(@repository.find_by_name(username))
       end
 
       def user_update(username, **userdata)
@@ -40,7 +40,7 @@ module Yuzakan
         %i[display_name email].each do |key|
           data[key] = userdata[key] if userdata[key]
         end
-        user2userdata(@repository.update(user.id, data))
+        user_entity_to_data(@repository.update(user.id, data))
       end
 
       def user_delete(username)
@@ -96,7 +96,7 @@ module Yuzakan
         @repository.ilike(pattern).map { |data| data[:name] }
       end
 
-      private def user2userdata(user)
+      private def user_entity_to_data(user)
         return if user.nil?
 
         {
@@ -105,6 +105,11 @@ module Yuzakan
           email: user.email,
           locked: user.locked?,
           disabled: user.disabled?,
+          attrs: {
+            name: user.name,
+            display_name: user.display_name,
+            email: user.email,
+          }
         }
       end
     end

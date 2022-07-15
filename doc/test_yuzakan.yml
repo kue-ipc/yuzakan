@@ -17,7 +17,7 @@ providers:
 - name: posix_samba
   label: PosixとSamba
   adapter_name: samba_ldap
-  order: 1
+  order: 8
   immutable: false
   readable: true
   writable: true
@@ -56,7 +56,7 @@ providers:
 - name: ldap
   label: 普通のLDAP
   adapter_name: ldap
-  order: 2
+  order: 16
   immutable: false
   readable: true
   writable: true
@@ -89,81 +89,93 @@ providers:
     password_scheme: "{SSHA512}"
     crypt_salt_format: "$6$%.16s"
 attrs:
-- name: ja_display_name
-  label: 表示名(日本語)
+- name: email
+  label: メールアドレス
   type: string
-  order: 1
+  order: 8
   hidden: false
   readonly: false
-  code: display_name
+  code: "`${username}@example.jp`"
   attr_mappings:
   - provider:
-      name: posix_samba
-    name: displayName;lang-ja
+      name: local
+    name: email
     conversion: 
   - provider:
       name: ldap
-    name: displayName;lang-ja
-    conversion: 
-- name: ja_family_name
-  label: 姓(日本語)
-  type: string
-  order: 2
-  hidden: false
-  readonly: false
-  code: attrs.diplay_name?.split(/\s/)?.at(0)
-  attr_mappings:
-  - provider:
-      name: ldap
-    name: sn;lang-ja
-    conversion: 
-- name: ja_given_name
-  label: 名(日本語)
-  type: string
-  order: 3
-  hidden: false
-  readonly: false
-  code: attrs.diplay_name?.split(/\s/)?.at(1)
-  attr_mappings:
-  - provider:
-      name: ldap
-    name: givenName;lang-ja
+    name: mail
     conversion: 
 - name: display_name
-  label: 表示名(ローマ字)
+  label: 表示名(日本語)
   type: string
-  order: 4
+  order: 16
   hidden: false
   readonly: false
-  code: ''
+  code: 
   attr_mappings:
   - provider:
-      name: posix_samba
-    name: displayName
+      name: ldap
+    name: displayName;lang-ja
     conversion: 
   - provider:
-      name: ldap
-    name: displayName
+      name: local
+    name: display_name
     conversion: 
 - name: family_name
-  label: 姓(ローマ字)
+  label: 姓(日本語)
   type: string
-  order: 5
+  order: 24
   hidden: false
   readonly: false
   code: attrs.display_name?.split(/\s/)?.at(0)
   attr_mappings:
   - provider:
       name: ldap
-    name: sn
+    name: sn;lang-ja
     conversion: 
 - name: given_name
-  label: 名(ローマ字)
+  label: 名(日本語)
   type: string
-  order: 6
+  order: 32
   hidden: false
   readonly: false
   code: attrs.display_name?.split(/\s/)?.at(1)
+  attr_mappings:
+  - provider:
+      name: ldap
+    name: givenName;lang-ja
+    conversion: 
+- name: display_name_latin
+  label: 表示名(ローマ字)
+  type: string
+  order: 40
+  hidden: false
+  readonly: false
+  code: ''
+  attr_mappings:
+  - provider:
+      name: ldap
+    name: displayName
+    conversion: 
+- name: family_name_latin
+  label: 姓(ローマ字)
+  type: string
+  order: 48
+  hidden: false
+  readonly: false
+  code: attrs.display_name_latin?.split(/\s/)?.at(0)
+  attr_mappings:
+  - provider:
+      name: ldap
+    name: sn
+    conversion: 
+- name: given_name_latin
+  label: 名(ローマ字)
+  type: string
+  order: 56
+  hidden: false
+  readonly: false
+  code: attrs.display_name_latin?.split(/\s/)?.at(1)
   attr_mappings:
   - provider:
       name: ldap
@@ -172,7 +184,7 @@ attrs:
 - name: uid
   label: ユーザーID
   type: integer
-  order: 14
+  order: 64
   hidden: false
   readonly: true
   code: ''
@@ -184,7 +196,7 @@ attrs:
 - name: cn
   label: キャラクター名
   type: string
-  order: 22
+  order: 72
   hidden: false
   readonly: false
   code: username
@@ -200,7 +212,7 @@ attrs:
 - name: samba_sid
   label: Samba SID
   type: string
-  order: 30
+  order: 80
   hidden: false
   readonly: true
   code: ''
