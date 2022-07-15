@@ -16,7 +16,7 @@ class ReadGroup
   end
 
   expose :groupdata
-  expose :groupdata_list
+  expose :provider_groupdatas
 
   def initialize(provider_repository: ProviderRepository.new)
     @provider_repository = provider_repository
@@ -24,13 +24,13 @@ class ReadGroup
 
   def call(params)
     @groupdata = {name: params[:groupname], attrs: {}}
-    @groupdata_list = []
+    @provider_groupdatas = []
 
     providers = @provider_repository.ordered_all_with_adapter_by_operation(:group_read)
     providers.each do |provider|
       groupdata = provider.group_read(params[:groupname])
       if groupdata
-        @groupdata_list << {provider: provider, groupdata: groupdata}
+        @provider_groupdatas << {provider: provider, groupdata: groupdata}
         @groupdata[:display_name] ||= groupdata[:display_name]
       end
     rescue => e

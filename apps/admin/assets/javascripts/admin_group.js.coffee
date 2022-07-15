@@ -45,7 +45,7 @@ mode = if name? then 'show' else 'new'
 initGroup = {
   name: ''
   groupdata: {}
-  groupdata_list: []
+  provider_groupdatas: []
 }
 
 init = [
@@ -57,7 +57,7 @@ init = [
 view = ({mode, name, group, providers}) ->
   provider_groupdatas =
     for provider in providers
-      (group.groupdata_list.find (data) -> data.provider.name == provider.name)?.groupdata
+      (group.provider_groupdatas.find (data) -> data.provider.name == provider.name)?.groupdata
 
   html.div {}, [
     html.h4 {}, text '基本情報'

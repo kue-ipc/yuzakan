@@ -39,7 +39,7 @@ module Api
           self.body = generate_json({
             **convert_for_json(result.group),
             groupdata: result.groupdata,
-            groupdata_list: result.groupdata_list,
+            provider_groupdatas: result.provider_groupdatas,
           })
         end
       end

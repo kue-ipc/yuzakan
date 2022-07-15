@@ -22,7 +22,7 @@ class SyncGroup
 
   expose :group
   expose :groupdata
-  expose :groupdata_list
+  expose :provider_groupdatas
 
   def call(params)
     read_group = ReadGroup.new(provider_repository: @provider_repository)
@@ -33,11 +33,11 @@ class SyncGroup
     end
 
     @groupdata = read_group_result.groupdata
-    @groupdata_list = read_group_result.groupdata_list
+    @provider_groupdatas = read_group_result.provider_groupdatas
 
     error!('グループ名が一致しません。') if @groupdata[:name] != params[:groupname]
 
-    if @groupdata_list.empty?
+    if @provider_groupdatas.empty?
       unregister_group = UnregisterGroup.new(group_repository: @group_repository)
       nuregister_group_result = unregister_group.call(@groupdata.slice(:name))
       if nuregister_group_result.failure?
