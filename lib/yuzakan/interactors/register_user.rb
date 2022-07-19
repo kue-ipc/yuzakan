@@ -1,3 +1,5 @@
+# Userレポジトリへの登録または更新
+
 require 'hanami/interactor'
 require 'hanami/validations'
 require_relative '../predicates/name_predicates'

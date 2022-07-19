@@ -6,81 +6,46 @@ class CreateUser
 
   class Validations
     include Hanami::Validations::Form
-    messages_path 'config/messages.yml'
+    predicates NamePredicates
+    messages :i18n
 
     validations do
-      optional(:username) { filled? & str? }
+      required(:username).filled(:str?, :name?, max_size?: 255)
+      optional(:clearance_level).maybe(:int?)
+      required(:primary_group).filled(:str?, :name?, max_size?: 255)
+      required(:providers) { array? { each { str? & name? & max_size?(255) } } }
       optional(:attrs) { hash? }
     end
   end
 
-  expose :username
+  expose :user
   expose :password
-  expose :user_datas
 
-  def initialize(
-    user:,
-    client:,
-    providers:,
-    config: ConfigRepostitory.new.current,
-    activity_repository: ActivityRepository.new,
-    attr_mapping_repository: AttrMappingRepository.new,
-    generate_password: GeneratePassword.new,
-    mailer: Mailers::UserNotify
-  )
-    @user = user
-    @client = client
-    @config = config
-    @providers = providers
-    @activity_repository = activity_repository
-    @attr_mapping_repository = attr_mapping_repository
+  def initialize(provider_repository: ProviderRepository.new,
+                 user_repository: UserRepository.new,
+                 generate_password: GeneratePassword.new)
+    @provider_repository = provider_repository
+    @user_repository = user_repository
     @generate_password = generate_password
-    @mailer = mailer
   end
 
   def call(params)
-    @username = params&.[](:username) || @user.name
-    attrs = params&.[](:attrs) || UserAttrs.new.call(username: @username).attrs
+    username = params[:username]
 
     gp_result = @generate_password.call
     error!('パスワード生成に失敗しました。') if gp_result.failure?
     @password = gp_result.password
 
-    activity_params = {
-      user_id: @user.id,
-      client: @client,
-      type: 'user',
-      target: @username,
-      action: 'create_user',
+    userdata = {
+      primary_group: params[:primary_group],
+      attrs: params[:attrs],
     }
 
-    by_user =
-      if @username == @user.name
-        :self
-      else
-        :admin
-      end
+    params[:providers].each do |provider_name|
+      provider = @provider_repository.find_with_adapter_by_name(provider_name)
+      raise 'プロバイダーが見つかりません。' unless provider
 
-    mailer_params = {
-      user: @user,
-      config: @config,
-      by_user: by_user,
-      action: 'アカウント作成',
-      description: 'アカウントを作成しました。',
-    }
-
-    activity_params[:action] += ":#{@providers.map(&:name).join(',')}"
-    mailer_params[:providers] = @providers
-
-    @user_datas = {}
-    result = :success
-
-    @providers.each do |provider|
-      # すでに作成済みの場合は何もしない
-      next if provider.user_read(@username)
-
-      user_data = provider.user_create(@username, @password, **attrs)
-      @user_datas[provider.name] = user_data if user_data
+      provider.user_create(username, @password, userdata)
     rescue => e
       Hanami.logger.error e
       unless @user_datas.empty?
@@ -91,44 +56,44 @@ class CreateUser
           再度アカウント作成を実行してください。
         ERROR_MESSAGE
       end
-      error("アカウント作成時にエラーが発生しました。: #{e.message}")
-      result = :error
+      error!("アカウント作成時にエラーが発生しました。: #{e.message}")
     end
 
-    if @user_datas.empty?
-      error('どのシステムでもアカウントは作成されませんでした。')
-      result = :failure
+    sync_user = SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
+    result = sync_user.call({username: username})
+    error!(result.errors) if result.failure?
+
+    @user = result.user
+
+    unless @user
+      error!('ユーザーが作成されていません。')
     end
 
-    @activity_repository.create(**activity_params, result: result.to_s)
-    @mailer&.deliver(**mailer_params, result: result)
+    if @user.clearance_level != params[:clearance_level]
+      @user = @user_repositary.update(@user.id, clearance_level: params[:clearance_level])
+    end
   end
 
   private def valid?(params)
-    ok = true
     validation = Validations.new(params).validate
     if validation.failure?
       error(validation.messages)
-      ok = false
+      return false
     end
 
-    return ok if @user.clearance_level >= 4
+    read_user = ReadUser.new(provider_repository: @provider_repository)
+    read_user_result = read_user.call(username: params[:username])
 
-    unless @providers&.all?(&:self_management)
-      error('自己管理可能なシステム以外でアカウントを作成することはできません。')
-      ok = false
+    if read_user_result.failure?
+      error(read_user_result.errors)
+      return false
     end
 
-    if params&.key?(:username) && params[:username] != @user.name
-      error(username: '自分自身以外のアカウントの作成することはできません。')
-      ok = false
+    unless read_user_result.provider_userdatas.empty?
+      error('ユーザーは既に存在します。')
+      return false
     end
 
-    if params&.key?(:attrs)
-      error(attrs: '属性を指定することはできません。')
-      ok = false
-    end
-
-    ok
+    true
   end
 end
