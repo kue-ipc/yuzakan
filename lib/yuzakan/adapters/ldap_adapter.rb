@@ -554,6 +554,7 @@ module Yuzakan
             end
         end
 
+        primary_group = get_primary_group(user)&.then { |group| get_group_name(group) }
         groups = get_memberof_groups(user).map { |group| get_group_name(group) }
 
         {
@@ -561,6 +562,7 @@ module Yuzakan
           display_name: user.first(@params[:user_display_name_attr]),
           email: user.first(@params[:user_email_attr])&.downcase,
           attrs: attrs,
+          primary_group: primary_group,
           groups: groups,
         }
       end
@@ -615,6 +617,10 @@ module Yuzakan
           @logger.warn "no suffix group name: #{name}"
         end
         name
+      end
+
+      private def get_primary_group(_user)
+        nil
       end
 
       private def get_memberof_groups(user)

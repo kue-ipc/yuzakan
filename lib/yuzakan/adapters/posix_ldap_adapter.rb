@@ -29,6 +29,10 @@ module Yuzakan
       self.multi_attrs = LdapAdapter.multi_attrs
       self.hide_attrs = LdapAdapter.hide_attrs
 
+      private def get_primary_group(user)
+        get_gidnumber_groups(user).first
+      end
+
       private def get_memberof_groups(user)
         (get_gidnumber_groups(user) + get_memberuid_groups(user)).compact.uniq
       end

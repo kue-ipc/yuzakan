@@ -34,6 +34,7 @@ class ReadUser
         @userdata[:display_name] ||= userdata[:display_name]
         @userdata[:email] ||= userdata[:email]
         @userdata[:attrs] = userdata[:attrs].merge(@userdata[:attrs])
+        @userdata[:primary_group] ||= userdata[:primary_group] if userdata[:primary_group]
         @userdata[:groups] |= userdata[:groups] if userdata[:groups]
       end
     rescue => e
