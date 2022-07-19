@@ -24,17 +24,24 @@ module Admin
               description: '各プロバイダーからのユーザー属性の紐付けを行います。',
               color: 'danger',
             },
+            {},
+            {
+              name: 'ユーザー登録',
+              url: routes.path(:user, '*'),
+              description: 'ユーザーを登録します。',
+              color: 'primary',
+            },
             {
               name: 'ユーザー一覧',
               url: routes.path(:users),
               description: 'ユーザーの一覧です。',
-              color: 'primary',
+              color: 'secondary',
             },
             {
               name: 'グループ一覧',
               url: routes.path(:groups),
               description: 'グループの一覧です。',
-              color: 'primary',
+              color: 'seconadry',
             },
           ]
         end

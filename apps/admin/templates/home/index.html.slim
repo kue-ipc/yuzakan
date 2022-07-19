@@ -3,25 +3,4 @@
     h3 管理者用メニュー
 .menu.row
   - menu_items.each do |item|
-    = menu_link(item)
-hr
-  h4 ユーザーの表示
-  #user_link
-  = javascript 'user_link', defer: true, type: 'module'
-
-hr
-  h4 設定のインポート・エクスポート
-  p
-    | エクスポートされる設定にはサーバーのパスワード等が含まれていますが、暗号化されていません。
-    | 一時的な利用以外は推奨しません。
-    strong 長期保存する場合は、別途暗号化を行ってください。
-
-  .mb-3
-    = link_to '設定のエクスポート', routes.path(:export_config),
-      class: 'btn btn-primary',
-      download: "yuzakan_#{Time.now.strftime('%Y%m%d-%H%M%S')}.yml"
-
-  = form_for :config, routes.path(:import_config), enctype: 'multipart/form-data' do
-    - div class: 'input-group' do
-      - file_field :file, class: 'form-control'
-      - submit '設定のインポート', class: 'btn btn-danger'
+    = menu_link(**item)
