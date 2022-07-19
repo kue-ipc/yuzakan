@@ -26,9 +26,9 @@ module Admin
             },
             {},
             {
-              name: 'ユーザー登録',
+              name: 'ユーザー作成',
               url: routes.path(:user, '*'),
-              description: 'ユーザーを登録します。',
+              description: 'ユーザーを新規作成します。',
               color: 'primary',
             },
             {
