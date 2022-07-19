@@ -55,7 +55,14 @@ destroyWebData = new WebData {
 # Effects
 
 createUserRunner = (dispatch, {user}) ->
-  response = await createWebData.submitPromise {data: {csrf()..., user...}}
+  response = await createWebData.submitPromise {data: {
+    csrf()...
+    name: user.name
+    clearance_level: user.clearance_level
+    attrs: user.attrs
+    providers: user.providers
+    grops: user.groups
+  }}
   if response.ok
     user = response.data
     dispatch(userAction, {name: user.name, user})

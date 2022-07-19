@@ -19,11 +19,14 @@ ChangeUserName = (state, {name}) ->
 
 SetUser = (state, {user}) ->
   providers = (provider_userdata.provider.name for provider_userdata in user.provider_userdatas)
-  [InitUserAttrs, {user: {user..., providers}}]
+  groups = user.userdata.groups || []
+  [InitUserAttrs, {user: {user..., providers, groups}}]
 
 SetAllProviders = (state, {providers}) -> {state..., providers}
 
 SetAllAttrs = (state, {attrs}) -> [InitUserAttrs, {attrs}]
+
+SetAllGroups = (state, {groups}) -> {state..., groups}
 
 newUser = {
   name: ''
@@ -56,26 +59,41 @@ runGetAllAttrs = (dispatch) ->
   else
     console.error response
 
+runGetAllGroups = (dispatch) ->
+  groups = []
+
+  for page in [1..10000]
+    response = await fetchJsonGet({url: '/api/groups', data: {page, per_page: 100}})
+    if response.ok
+      groups = [groups, response.data...]
+      break if groups.length >= response.total
+    else
+      console.error response
+      return
+
+  dispatch(SetAllGroups, {groups})
+
 name = location.pathname.split('/').at(-1)
 name = undefined if name == '*'
 mode = if name? then 'show' else 'new'
 
 init = [
-  {mode, name, user: null, providers: null, attrs: null}
+  {mode, name, user: null, providers: null, attrs: null, groups: null}
   [runGetAllProviders]
   [runGetAllAttrs]
+  [runGetAllGroups]
   [runGetUser, {name}]
 ]
 
-view = ({mode, name, user, providers, attrs}) ->
+view = ({mode, name, user, providers, attrs, groups}) ->
   console.log user
-  unless user? && providers? && attrs?
+  unless user? && providers? && attrs? && groups?
     return html.div {}, text '読み込み中...'
 
   html.div {}, [
     basicInfo {mode, user}
     operationMenu {mode, user}
-    groupMembership {}
+    groupMembership {mode, user, groups}
     providerReg {mode, user, providers}
     attrList {mode, user, providers, attrs}
   ]
