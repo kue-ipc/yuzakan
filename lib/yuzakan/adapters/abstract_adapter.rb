@@ -18,6 +18,9 @@
 # groupdate:
 #   name: String = groupname
 #   dislay_name: String = display name
+#   x disabled: ?bool
+#   x unmanageable: ?bool
+#   x attrs: Hash = {key: value, ...}
 #
 # -- CRUD --
 # user_create(username, password = nil, **userdata) -> userdata [writable]
@@ -37,13 +40,6 @@
 # user_search(query) -> Array[username] [readable]
 #
 # user_group_list(username) -> Array[groupname] [readable, group]
-#
-# groupdate:
-#   name: String = groupname
-#   display_name: String = display name
-#   disabled: ?bool
-#   unmanageable: ?bool
-#   attrs: Hash = {key: value, ...}
 #
 # x group_create(groupname, **groupdata) -> groupdata [writable]
 # group_read(groupname) -> groupdata? [readable]

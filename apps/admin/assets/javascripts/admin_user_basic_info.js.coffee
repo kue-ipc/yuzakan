@@ -76,8 +76,11 @@ export default basicInfo = ({mode, user, groups}) ->
         text 'プライマリーグループ'
       html.dd {class: DD_CLASSES},
         if mode == 'show'
-          primary_group = groups.find (group) -> group.name == user.primary_group
-          text "#{primary_group.display_name} (#{primary_group.name})"
+          if user.primary_group
+            primary_group = groups.find (group) -> group.name == user.primary_group
+            text "#{primary_group.display_name} (#{primary_group.name})"
+          else
+            text "(無し)"
         else
           html.select {
             class: 'form-select'
