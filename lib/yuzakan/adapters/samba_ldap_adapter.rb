@@ -53,7 +53,7 @@ module Yuzakan
 
       @@no_password = -'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX' # rubocop:disable Style/ClassVars
 
-      def user_create(username, _password = nil, **attrs)
+      def user_create(username, _password = nil, **userdata)
         super
 
         # user_attrs = user_read(username)

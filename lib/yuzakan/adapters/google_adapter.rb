@@ -62,8 +62,8 @@ module Yuzakan
         response.users.size == 1
       end
 
-      def user_create(username, password = nil, **attrs)
-        user = specialize_user(attrs.merge(name: username))
+      def user_create(username, password = nil, **userdata)
+        user = specialize_user(userdata.merge(name: username))
         # set a password
         set_password(user, password)
         response = service.insert_user(user)
@@ -83,7 +83,7 @@ module Yuzakan
         nil
       end
 
-      def user_update(_username, **_attrs)
+      def user_update(_username, **_userdata)
         raise NotImplementedError
       end
 

@@ -229,31 +229,31 @@ module Yuzakan
         false
       end
 
-      def user_create(username, password = nil, **attrs)
+      def user_create(username, password = nil, **_userdata)
         return nil if user_read(username)
 
-        user_data = attrs.filter do |key, _|
-                      key.is_a?(String)
-                    end.transform_keys { |key| attribute_name(key) }
-        user_data[attribute_name(@params[:user_name_attr])] = attrs[:username]
-        if attrs[:display_name]
-          user_data[attribute_name(@params[:user_display_name_attr])] =
-            attrs[:display_name]
-        end
-        if attrs[:email]
-          user_data[attribute_name(@params[:user_email_attr])] =
-            attrs[:email]
-        end
+        attributes = create_user_attributes
+        dn = "#{@params[:user_dn_attr]}=#{attributes[@params[:user_dn_attr]]},#{@params[:user_base]}"
 
-        dn = @params[:user_dn_attr] + '=' +
-             ldap_attrs[@params[:user_dn_attr].intern] + ',' +
-             @params[:user_base]
-
-        ldap_add({dn: dn, attributes: user_data})
+        ldap_add({dn: dn, attributes: attributes})
 
         user_change_password(username, password) if password
 
         user_read(username)
+      end
+
+      private def create_attributse(username, **userdata)
+        attributes = userdata.attrs.transform_keys { |key| attribute_name(key) }
+
+        attributes[attribute_name(@params[:user_name_attr])] = username
+        attributes[attribute_name(@params[:user_dn_attr])] = username
+
+        if userdata[:display_name]
+          attributes[attribute_name(@params[:user_display_name_attr])] = userdata[:display_name]
+        end
+        attributes[attribute_name(@params[:user_email_attr])] = userdata[:email] if userdata[:email]
+
+        attributes
       end
 
       def user_read(username)
@@ -261,7 +261,7 @@ module Yuzakan
         entry && user_entry_to_data(entry)
       end
 
-      def user_update(username, **attrs)
+      def user_update(username, **userdata)
         raise NotImplementedError
       end
 
