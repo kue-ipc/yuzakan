@@ -59,7 +59,7 @@ initAllGroupsAction = (state, {groups, total}) ->
   {state..., groups, total}
 
 indexAllGroupsRunner = (dispatch, {page, per_page, query}) ->
-  response = await fetchJsonGet({url: '/api/groups', data: {page, per_page, query, sync: true}})
+  response = await fetchJsonGet({url: '/api/groups', data: {page, per_page, query}})
   if response.ok
     dispatch(initAllGroupsAction, {
       groups: response.data

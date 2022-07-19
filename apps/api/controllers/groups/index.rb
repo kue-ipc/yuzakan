@@ -15,7 +15,6 @@ module Api
           params do
             optional(:page).filled(:int?, gteq?: 1, lteq?: 10000)
             optional(:per_page).filled(:int?, gteq?: 10, lteq?: 100)
-            optional(:sync).maybe(:bool?)
           end
         end
 
@@ -31,8 +30,6 @@ module Api
 
         def call(params)
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
-
-          @sync = params[:sync]
 
           @providers = @provider_repository.ordered_all_with_adapter_by_operation(:group_read)
           providers_items = @providers.to_h { |provider| [provider.name, Set.new(provider.group_list)] }
@@ -57,10 +54,8 @@ module Api
           names.map do |name|
             if group_entities.key?(name)
               group_entities[name]
-            elsif @sync
-              create_group(name)
             else
-              Group.new({name: name})
+              create_group(name)
             end
           end
         end
