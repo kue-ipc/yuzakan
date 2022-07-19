@@ -33,7 +33,6 @@ export default groupMembership = ({mode, user, groups}) ->
     else
       html.ul {class: 'list-inline'},
         for group_name in user.groups
-          groupLi({group_name, groups, removable: mode != 'show'})
-    if mode != 'show'
-      html.button {}, text '追加'
+          groupLi({group_name, groups, removable: group_name != user.primary_group})
+    html.button {class: 'btn btn-primary'}, text '追加'
   ]

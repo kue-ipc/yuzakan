@@ -13,7 +13,10 @@ SetUserNameByEvent = createEventValueAction(SetUserName)
 SetUserClearanceLevel = (state, clearance_level) -> {state..., user: {state.user..., clearance_level}}
 SetUserClearanceLevelByEvent = createEventValueAction(SetUserClearanceLevel, {type: 'integer'})
 
-export default basicInfo = ({mode, user}) ->
+SetUserPrimaryGroup = (state, primary_group) -> {state..., user: {state.user..., primary_group}}
+SetUserPrimaryGroupByEvent = createEventValueAction(SetUserPrimaryGroup, {type: 'string'})
+
+export default basicInfo = ({mode, user, groups}) ->
   html.div {}, [
     html.h4 {}, text '基本情報'
     html.dl {class: DL_CLASSES}, [
@@ -69,5 +72,28 @@ export default basicInfo = ({mode, user}) ->
                 value: level.value
                 selected: level.value == user.clearance_level
               }, text level.label
-    ]
+      html.dt {class: DT_CLASSES},
+        text 'プライマリーグループ'
+      html.dd {class: DD_CLASSES},
+        if mode == 'show'
+          primary_group = groups.find (group) -> group.name == user.primary_group
+          text "#{primary_group.display_name} (#{primary_group.name})"
+        else
+          html.select {
+            class: 'form-select'
+            oninput: SetUserPrimaryGroupByEvent
+          }, [
+            if mode == 'new'
+              html.option {
+                selected: !user.primary_group?
+              }, text "選択してください。"
+            (
+              for group in groups
+                html.option {
+                  value: group.name
+                  selected: group.name == user.primary_group
+                }, text "#{group.display_name} (#{group.name})"
+            )...
+          ]
+       ]
   ]

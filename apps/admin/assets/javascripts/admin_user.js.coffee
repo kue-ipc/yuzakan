@@ -19,8 +19,9 @@ ChangeUserName = (state, {name}) ->
 
 SetUser = (state, {user}) ->
   providers = (provider_userdata.provider.name for provider_userdata in user.provider_userdatas)
+  primary_group = user.userdata.primary_group
   groups = user.userdata.groups || []
-  [InitUserAttrs, {user: {user..., providers, groups}}]
+  [InitUserAttrs, {user: {user..., providers, primary_group, groups}}]
 
 SetAllProviders = (state, {providers}) -> {state..., providers}
 
@@ -65,7 +66,7 @@ runGetAllGroups = (dispatch) ->
   for page in [1..10000]
     response = await fetchJsonGet({url: '/api/groups', data: {page, per_page: 100}})
     if response.ok
-      groups = [groups, response.data...]
+      groups = [groups..., response.data...]
       break if groups.length >= response.total
     else
       console.error response
@@ -91,13 +92,12 @@ view = ({mode, name, user, providers, attrs, groups}) ->
     return html.div {}, text '読み込み中...'
 
   html.div {}, [
-    basicInfo {mode, user}
+    basicInfo {mode, user, groups}
     operationMenu {mode, user}
-    groupMembership {mode, user, groups}
+    # groupMembership {mode, user, groups}
     providerReg {mode, user, providers}
     attrList {mode, user, providers, attrs}
   ]
-
 
 node = document.getElementById('admin_user')
 

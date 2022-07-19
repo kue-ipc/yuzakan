@@ -59,9 +59,9 @@ createUserRunner = (dispatch, {user}) ->
     csrf()...
     name: user.name
     clearance_level: user.clearance_level
+    primary_group: user.primary_group
     attrs: user.attrs
     providers: user.providers
-    grops: user.groups
   }}
   if response.ok
     user = response.data
