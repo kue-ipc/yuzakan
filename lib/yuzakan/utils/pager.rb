@@ -1,3 +1,5 @@
+# Yuzakan::Utils::Pager
+
 module Yuzakan
   module Utils
     class Pager
@@ -12,7 +14,7 @@ module Yuzakan
         @all_items = all_items
 
         @page = params[:page] || 1
-        @per_page = params[:per_mage] || DEFAULT_PER_PAGE
+        @per_page = params[:per_page] || DEFAULT_PER_PAGE
 
         @item_offset = (@page - 1) * @per_page
         @page_items =  @all_items[@item_offset, @per_page] || []
@@ -53,7 +55,7 @@ module Yuzakan
 
       def link_item(uri, **params)
         list = ["<#{uri}>"]
-        list += params.map { |_key, value| "{key}=\"#{value}\"" }
+        list += params.map { |key, value| "#{key}=\"#{value}\"" }
         list.join('; ')
       end
     end
