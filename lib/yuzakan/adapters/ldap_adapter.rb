@@ -204,6 +204,25 @@ module Yuzakan
             {name: :sha256, label: 'SHA256', value: '$5$%.16s'},
             {name: :sha512, label: 'SHA512', value: '$6$%.16s'},
           ],
+        }, {
+          name: :create_user_dn_attr,
+          label: 'ユーザー作成時のDNの属性',
+          type: :string,
+          default: 'cn',
+          placeholder: 'cn',
+        }, {
+          name: :create_user_ou_dn,
+          label: 'ユーザー作成時のOUのDN',
+          type: :string,
+          default: 'ou=Users,dc=example,dc=jp',
+          placeholder: 'ou=Users,dc=example,dc=jp',
+        }, {
+          name: :create_user_object_classes,
+          label: 'ユーザー作成時のオブジェクトクラス',
+          description: 'オブジェクトクラスをカンマ区切りで入力してください。',
+          type: :string,
+          default: 'inetOrgPerson,nsMemberOf',
+          placeholder: 'inetOrgPerson,nsMemberOf',
         },
       ]
 
@@ -229,31 +248,18 @@ module Yuzakan
         false
       end
 
-      def user_create(username, password = nil, **_userdata)
+      def user_create(username, password = nil, **userdata)
         return nil if user_read(username)
 
-        attributes = create_user_attributes
-        dn = "#{@params[:user_dn_attr]}=#{attributes[@params[:user_dn_attr]]},#{@params[:user_base]}"
+        attributes = create_user_attributes(username, **userdata)
+        dn = "#{@params[:create_user_dn_attr]}=#{attributes[@params[:create_user_dn_attr]]},#{@params[:create_user_ou_dn]}"
 
         ldap_add({dn: dn, attributes: attributes})
 
         user_change_password(username, password) if password
+        member_add(userdata[:primary_group], username) if userdata[:primary_group]
 
         user_read(username)
-      end
-
-      private def create_attributse(username, **userdata)
-        attributes = userdata.attrs.transform_keys { |key| attribute_name(key) }
-
-        attributes[attribute_name(@params[:user_name_attr])] = username
-        attributes[attribute_name(@params[:user_dn_attr])] = username
-
-        if userdata[:display_name]
-          attributes[attribute_name(@params[:user_display_name_attr])] = userdata[:display_name]
-        end
-        attributes[attribute_name(@params[:user_email_attr])] = userdata[:email] if userdata[:email]
-
-        attributes
       end
 
       def user_read(username)
@@ -339,24 +345,40 @@ module Yuzakan
         get_member_users(group).map { |user| get_user_name(user) }
       end
 
-      def member_add(groupname, _username)
+      def member_add(groupname, username)
         group = get_group_entry(groupname)
         return if group.nil?
 
-        user = get_user_entry(user)
+        user = get_user_entry(username)
         return if user.nil?
 
         add_member(group, user)
       end
 
-      def member_remove(groupname, _username)
+      def member_remove(groupname, username)
         group = get_group_entry(groupname)
         return if group.nil?
 
-        user = get_user_entry(user)
+        user = get_user_entry(username)
         return if user.nil?
 
         remove_member(group, user)
+      end
+
+      private def create_user_attributes(username, **userdata)
+        attributes = userdata.attrs.transform_keys { |key| attribute_name(key) }
+
+        attributes[attribute_name('objectClass')] = @params[:create_user_object_classes].split(',').map(&:strip)
+
+        attributes[attribute_name(@params[:user_name_attr])] = username
+        attributes[attribute_name(@params[:create_user_dn_attr])] = username
+
+        if userdata[:display_name]
+          attributes[attribute_name(@params[:user_display_name_attr])] = userdata[:display_name]
+        end
+        attributes[attribute_name(@params[:user_email_attr])] = userdata[:email] if userdata[:email]
+
+        attributes
       end
 
       private def generate_operation(operator, name, value = nil)

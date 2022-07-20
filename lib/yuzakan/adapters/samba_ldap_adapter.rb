@@ -18,6 +18,10 @@ module Yuzakan
             name: :user_search_filter,
             default: '(&(objectclass=posixAccount)(objectClass=sambaSamAccount))',
           }, {
+            name: :create_user_object_classes,
+            description: 'オブジェクトクラスをカンマ区切りで入力してください。' \
+                         'posixAccount と sambaSamAccount は自動的に追加されます。',
+          }, {
             name: :samba_domain_sid,
             label: 'Samba ドメインSID',
             description: 'ユーザーのプリフィックスに使用するSambaドメインのSIDです。' \
@@ -52,15 +56,6 @@ module Yuzakan
       self.hide_attrs = PosixLdapAdapter.hide_attrs + %w[sambaNTPassword sambaLMPassword].map(&:downcase)
 
       @@no_password = -'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX' # rubocop:disable Style/ClassVars
-
-      def user_create(username, _password = nil, **userdata)
-        super
-
-        # user_attrs = user_read(username)
-
-        # user_attrs[:classobject].include?('sambaSamAccount')
-        # user_attrs.merge(attrs)
-      end
 
       def user_auth(username, password)
         return true if super
@@ -101,7 +96,19 @@ module Yuzakan
         "[#{flags_str}#{' ' * (11 - flags_str.size)}]"
       end
 
-      private def generate_user_sid(uid_number)
+      private def create_user_attributes(username, **userdata)
+        attributes = super
+
+        # object class
+        attributes[attribute_name('objectClass')] << 'sambaSamAccount'
+
+        # smaba SID
+        attributes[attribute_name('sambaSID')] = generate_samba_sid(attributes[attribute_name('uidNumber')])
+
+        attributes
+      end
+
+      private def generate_samba_sid(uid_number)
         user_id = (uid_number * 2) + 1000
         "#{@params[:samba_domain_sid]}-#{user_id}"
       end

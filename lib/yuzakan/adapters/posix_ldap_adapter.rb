@@ -24,10 +24,113 @@ module Yuzakan
                          'LDAPの形式で指定します。' \
                          '何も指定しない場合は(objectclass=posixGroup)になります。',
             default: '(objectclass=posixGroup)',
+          }, {
+            name: :create_user_object_classes,
+            description: 'オブジェクトクラスをカンマ区切りで入力してください。' \
+                         'posixAccount は自動的に追加されます。',
+            default: 'account',
+            placeholder: 'account',
+          }, {
+            name: :uid_min,
+            label: 'UID番号の最小値',
+            description: 'UID番号の最小値です。',
+            type: :integer,
+            default: 1000,
+          }, {
+            name: :uid_max,
+            label: 'UID番号の最大値',
+            description: 'UID番号の最大値です。',
+            type: :integer,
+            default: 60000,
+          }, {
+            name: :search_free_uid,
+            label: 'UID番号の探索アルゴリズム',
+            description: '空いているUID番号を探すアルゴリズムです。',
+            type: :string,
+            default: 'next',
+            list: [
+              {name: :random, label: '最小', value: 'min'},
+              {name: :random, label: '次', value: 'next'},
+              {name: :random, label: 'ランダム', value: 'random'},
+            ],
+          }, {
+            name: :user_gid_nuber,
+            label: 'ユーザーのGID番号',
+            description: 'プライマリーグループが指定されなかった場合に設定されるユーザーのGID番号です。',
+            type: :integer,
+            default: 100,
           },
         ], key: :name)
       self.multi_attrs = LdapAdapter.multi_attrs
       self.hide_attrs = LdapAdapter.hide_attrs
+
+      private def create_user_attributes(username, **userdata)
+        attributes = super
+
+        # object class
+        attributes[attribute_name('objectClass')] << 'posixAccount'
+
+        # uid number
+        attributes[attribute_name('uidNumber')] = search_free_uid
+
+        # gid number
+        attributes[attribute_name('gidNumber')] =
+          if userdata[:primary_group]
+            get_gidnumber(userdata[:primary_group])
+          else
+            @params[:user_gid_number]
+          end
+
+        attributes
+      end
+
+      # 空いているUID番号を探して返す。
+      private def search_free_uid
+        case @params[:search_free_uid]
+        when 'min'
+          searhc_free_uid_min
+        when 'next'
+          searhc_free_uid_next
+        when 'random'
+          searhc_free_uid_random
+        else
+          @logger.error "invalid search free id algoripthm: #{@params[:search_free_uid]}"
+          raise 'UID検索アルゴリズムが不正です。'
+        end
+      end
+
+      private def searhc_free_uid_random
+        (@params[:uid_min]..@params[:uid_max]).to_a.shuffle.each do |num|
+          return num unless posix_passwd_byuid_map.key?(num)
+        end
+        @logger.error 'There is no free UID numebr'
+        raise '空いているUID番号がありません。'
+      end
+
+      private def searhc_free_uid_next
+        next_num = posix_passwd_byuid_map.keys.max.succ
+        if next_num > @params[:uid_max]
+          @logger.warn 'UID numebr has reached max.'
+          return searhc_free_uid_min
+        elsif next_num < @params[:uid_min]
+          @logger.warn 'UID numebr does not reach min.'
+          next_num = @params[:uid_min]
+        end
+        next_num
+      end
+
+      private def searhc_free_uid_min
+        (@params[:uid_min]..@params[:uid_max]).each do |num|
+          return num unless posix_passwd_byuid_map.key?(num)
+        end
+        @logger.error 'There is no free UID numebr'
+        raise '空いているUID番号がありません。'
+      end
+
+      private def get_gidnumber(groupname)
+        group = get_group_entry(groupname)
+        group['gidNumber']
+      end
 
       private def get_primary_group(user)
         get_gidnumber_groups(user).first
@@ -79,6 +182,48 @@ module Yuzakan
 
         operations = [operation_delete(:memberuid, user.uid.first)]
         ldap_modify(group.dn, operations)
+      end
+
+      # NIS互換
+      private def posix_passwds
+        @posix_passwds ||= ldap_search(search_user_opts('*')).map do |user|
+          {
+            name: user['uid'].first,
+            passwd: 'x',
+            uid: user['uidNumebr'].first.to_i,
+            gid: user['gidNumebr'].first.to_i,
+            gecos: user['gecos']&.first || '',
+            dir: user['homeDirectory']&.first || '',
+            shell: user['loginShell']&.first || '',
+          }
+        end
+      end
+
+      private def posix_groups
+        @posix_groups ||= ldap_search(search_group_opts('*')).map do |group|
+          {
+            name: group['cn'].first,
+            passwd: 'x',
+            gid: group['gidNumebr'].first.to_i,
+            mem: group['memberUid']&.to_a || [],
+          }
+        end
+      end
+
+      private def posix_passwd_byuid_map
+        @posix_passwd_byuid_map ||= posix_passwds.to_h { |pw| [pw[:uid], pw] }
+      end
+
+      private def posix_passwd_byname_map
+        @posix_passwd_byname_map ||= posix_passwds.to_h { |pw| [pw[:name], pw] }
+      end
+
+      private def posix_group_bygid_map
+        @posix_group_bygid_map ||= postix_groups.to_h { |gr| [gr[:gid], gr] }
+      end
+
+      private def posix_group_byname_map
+        @posix_group_byname_map ||= postix_groups.to_h { |gr| [gr[:name], gr] }
       end
     end
   end
