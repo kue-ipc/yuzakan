@@ -1,3 +1,5 @@
+import {dl, dt, dd} as html from './hyperapp-html.js'
+
 cols = {
   xs: 12
   sm: 4
@@ -38,3 +40,10 @@ export DL_CLASSES = Object.freeze ['row']
 export DT_CLASSES = Object.freeze calcDtClasses()
 export DD_CLASSES = Object.freeze calcDdClasses()
 export DD_SUB_CLASSES = Object.freeze calcDdSubClasses()
+
+export dl = (props) ->
+  if !props.class?
+    []
+  html.dl {
+
+  }
