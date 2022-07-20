@@ -24,8 +24,10 @@ module Api
 
           self.status = 201
           headers['Location'] = routes.user_path(result.user.id)
-          self.body = generate_json(result.user)
-          self.body = 'OK'
+          self.body = generate_json({
+            **convert_for_json(result.user),
+            password: result.password,
+          })
         end
       end
     end

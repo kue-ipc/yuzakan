@@ -21,8 +21,8 @@ module Yuzakan
         hashed_password = LocalUser.create_hashed_password(password)
         user = @repository.create({
           name: username,
-          display_name: userdata[:attrs][:display_name],
-          email: userdata[:attrs][:email],
+          display_name: userdata[:attrs]['display_name'],
+          email: userdata[:attrs]['email'],
           hashed_password: hashed_password,
         })
         user_entity_to_data(user)
