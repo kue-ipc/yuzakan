@@ -129,7 +129,7 @@ module Yuzakan
 
       private def get_gidnumber(groupname)
         group = get_group_entry(groupname)
-        group['gidNumber']
+        group['gidNumber']&.first&.to_i
       end
 
       private def get_primary_group(user)

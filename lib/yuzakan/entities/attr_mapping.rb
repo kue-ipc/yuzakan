@@ -22,7 +22,7 @@ class AttrMapping < Hanami::Entity
       when 'time'
         value.to_time
       when 'datetime'
-        value.to_datetime
+        value.to_time
       else
         value
       end

@@ -252,9 +252,13 @@ module Yuzakan
         return nil if user_read(username)
 
         attributes = create_user_attributes(username, **userdata)
-        dn = "#{@params[:create_user_dn_attr]}=#{attributes[@params[:create_user_dn_attr]]},#{@params[:create_user_ou_dn]}"
+        dn =
+          [
+            "#{@params[:create_user_dn_attr]}=#{attributes[@params[:create_user_dn_attr].intern]}",
+            @params[:create_user_ou_dn],
+          ].join(',')
 
-        ldap_add({dn: dn, attributes: attributes})
+        ldap_add(dn, attributes)
 
         user_change_password(username, password) if password
         member_add(userdata[:primary_group], username) if userdata[:primary_group]
@@ -287,7 +291,7 @@ module Yuzakan
         return nil unless user
 
         operations = change_password_operations(user, password)
-        ldap_modify(dn: user.dn, operations: operations)
+        ldap_modify(user.dn, operations)
       end
 
       def user_lock(username, _password)
@@ -295,7 +299,7 @@ module Yuzakan
         return nil unless user
 
         operations = lock_operations(user)
-        ldap_modify(dn: user.dn, operations: operations)
+        ldap_modify(user.dn, operations)
       end
 
       def user_unlock(username, _password)
@@ -303,7 +307,7 @@ module Yuzakan
         return nil unless user
 
         operations = unlock_operations(user)
-        ldap_modify(dn: user.dn, operations: operations)
+        ldap_modify(user.dn, operations)
       end
 
       def user_list
@@ -366,23 +370,22 @@ module Yuzakan
       end
 
       private def create_user_attributes(username, **userdata)
-        attributes = userdata.attrs.transform_keys { |key| attribute_name(key) }
+        attributes = userdata[:attrs].transform_keys { |key| attribute_name(key) }
 
         attributes[attribute_name('objectClass')] = @params[:create_user_object_classes].split(',').map(&:strip)
 
         attributes[attribute_name(@params[:user_name_attr])] = username
         attributes[attribute_name(@params[:create_user_dn_attr])] = username
 
-        if userdata[:display_name]
-          attributes[attribute_name(@params[:user_display_name_attr])] = userdata[:display_name]
+        [:display_name, :email].each do |name|
+          attributes[attribute_name(@params["user_#{name}_attr".intern])] = userdata[name] if userdata[name]
         end
-        attributes[attribute_name(@params[:user_email_attr])] = userdata[:email] if userdata[:email]
 
         attributes
       end
 
       private def generate_operation(operator, name, value = nil)
-        raise "invalid operator: #{operator}" unless [:add, :replace, :delete].include?(operator)
+        raise Error, "invalid operator: #{operator}" unless [:add, :replace, :delete].include?(operator)
 
         [operator, name, value]
       end
@@ -426,7 +429,7 @@ module Yuzakan
           opts[:port] = port || 636
           opts[:encryption] = {method: :simple_tls}
         else
-          raise "invalid protcol: #{@params[:protocol]}"
+          raise Error, "invalid protcol: #{@params[:protocol]}"
         end
 
         if opts[:encryption] && !@params[:certificate_check]
@@ -490,7 +493,7 @@ module Yuzakan
         when 'base' then Net::LDAP::SearchScope_BaseObject
         when 'one' then Net::LDAP::SearchScope_SingleLevel
         when 'sub' then Net::LDAP::SearchScope_WholeSubtree
-        else raise 'Invalid scope'
+        else raise Error, 'Invalid scope'
         end
       end
 
@@ -658,17 +661,39 @@ module Yuzakan
       end
 
       private def add_member(group, user)
-        return false if user.memberof.include?(group.dn)
+        return false if user['memberOf'].include?(group.dn)
 
         operations = [operation_add(:member, user.dn)]
-        ldap_modify(dn: group.dn, operations: operations)
+        ldap_modify(group.dn, operations)
       end
 
       private def remove_member(group, user)
         return false if user.memberof.exclude?(group.dn)
 
         operations = [operation_delete(:member, user.dn)]
-        ldap_modify(dn: group.dn, operations: operations)
+        ldap_modify(group.dn, operations)
+      end
+
+      private def value_to_str(value)
+        case value
+        when String
+          value
+        when true
+          'TRUE'
+        when false
+          'FALSE'
+        when nil
+          ''
+        when Integer
+          value.to_s
+        when Time
+          value.utc.strftime('%Y%m%d%H%M%SZ')
+        when Array
+          value.map { |v| value_to_str(v) }
+        else
+          @logger.warn "Unknown value type: #{value.class.name}"
+          value.to_s
+        end
       end
 
       private def ldap_search(opts)
@@ -683,7 +708,8 @@ module Yuzakan
 
       private def ldap_add(dn, attributes)
         @logger.debug "LDAP add: #{dn}"
-        result = ldap.add({dn: dn, attributes: attributes})
+        str_attrs = attributes.transform_values { |value| value_to_str(value) }
+        result = ldap.add({dn: dn, attributes: str_attrs})
         unless result
           @logger.error "LDAP add error: #{ldap.get_operation_result.error_message}"
           raise Error, ldap.get_operation_result.error_message
@@ -738,16 +764,16 @@ module Yuzakan
           "{SHA512}#{Base64.strict_encode64(Digest::SHA512.digest(password))}"
         when '{SMD5}'
           salt = SecureRandom.random_bytes(8)
-          "{SMD5}#{Base64.strict_encode64(Digest::MD5.digest(password + salt), salt)}"
+          "{SMD5}#{Base64.strict_encode64(Digest::MD5.digest(password + salt) + salt)}"
         when '{SSHA}'
           salt = SecureRandom.random_bytes(8)
-          "{SSHA}#{Base64.strict_encode64(Digest::SHA1.digest(password + salt), salt)}"
+          "{SSHA}#{Base64.strict_encode64(Digest::SHA1.digest(password + salt) + salt)}"
         when '{SSHA256}'
           salt = SecureRandom.random_bytes(8)
-          "{SSHA256}#{Base64.strict_encode64(Digest::SHA256.digest(password + salt), salt)}"
+          "{SSHA256}#{Base64.strict_encode64(Digest::SHA256.digest(password + salt) + salt)}"
         when '{SSHA512}'
           salt = SecureRandom.random_bytes(8)
-          "{SSHA512}#{Base64.strict_encode64(Digest::SHA512.digest(password + salt), salt)}"
+          "{SSHA512}#{Base64.strict_encode64(Digest::SHA512.digest(password + salt) + salt)}"
         else
           # TODO: PBKDF2
           raise NotImplementedError

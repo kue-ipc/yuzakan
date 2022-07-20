@@ -113,8 +113,13 @@ class Provider < Hanami::Entity
   def map_attrs(attrs)
     return {} if attrs.nil?
 
+    # 読み取り専用の属性は除外する
     attr_mappings.to_h do |mapping|
-      [mapping.name, mapping.map_value(attrs[mapping.attr_name])]
+      if mapping.attr.readonly
+        [mapping.name, nil]
+      else
+        [mapping.name, mapping.map_value(attrs[mapping.attr_name.intern])]
+      end
     end.compact
   end
 
