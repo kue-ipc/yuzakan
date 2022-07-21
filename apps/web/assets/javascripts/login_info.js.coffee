@@ -1,7 +1,7 @@
 import {app, text} from './hyperapp.js'
 import * as html from './hyperapp-html.js'
 
-import {DL_CLASSES, DT_CLASSES, DD_CLASSES} from './dl_horizontal.js'
+import {dlClasses, dtClasses, ddClasses} from './dl_horizontal.js'
 
 loginInof = () ->
   html.div {}, [

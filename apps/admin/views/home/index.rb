@@ -41,7 +41,7 @@ module Admin
               name: 'グループ一覧',
               url: routes.path(:groups),
               description: 'グループの一覧です。',
-              color: 'seconadry',
+              color: 'secondary',
             },
           ]
         end

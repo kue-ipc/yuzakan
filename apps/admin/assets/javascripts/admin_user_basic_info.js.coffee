@@ -1,7 +1,7 @@
 import {text} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
 
-import {DL_CLASSES, DT_CLASSES, DD_CLASSES} from '../dl_horizontal.js'
+import * as dlh from '../dl_horizontal.js'
 import {CLEARANCE_LEVELS} from '../definition.js'
 import {createEventValueAction} from '../input_event.js'
 
@@ -19,10 +19,10 @@ SetUserPrimaryGroupByEvent = createEventValueAction(SetUserPrimaryGroup, {type: 
 export default basicInfo = ({mode, user, groups}) ->
   html.div {}, [
     html.h4 {}, text '基本情報'
-    html.dl {class: DL_CLASSES}, [
-      html.dt {class: DT_CLASSES},
+    dlh.dl {}, [
+      dlh.dt {},
         html.label {class: 'form-label', for: 'user-name'}, text 'ユーザー名'
-      html.dd {class: DD_CLASSES},
+      dlh.dd {},
         switch mode
           when 'new'
             html.input {
@@ -43,23 +43,23 @@ export default basicInfo = ({mode, user, groups}) ->
             }
           when 'show'
             text user.name
-      html.dt {class: DT_CLASSES},
+      dlh.dt {},
         text '表示名'
-      html.dd {class: DD_CLASSES},
+      dlh.dd {},
         if mode == 'new'
           html.span {class: 'text-muted'}, text '(属性値にて設定)'
         else
           text user.display_name ? ''
-      html.dt {class: DT_CLASSES},
+      dlh.dt {},
         text 'メールアドレス'
-      html.dd {class: DD_CLASSES},
+      dlh.dd {},
         if mode == 'new'
           html.span {class: 'text-muted'}, text '(属性値にて設定)'
         else
           text user.email ? ''
-      html.dt {class: DT_CLASSES},
+      dlh.dt {},
         text '権限レベル'
-      html.dd {class: DD_CLASSES},
+      dlh.dd {},
         if mode == 'show'
           text (CLEARANCE_LEVELS.find (level) -> level.value == user.clearance_level).label
         else
@@ -72,9 +72,9 @@ export default basicInfo = ({mode, user, groups}) ->
                 value: level.value
                 selected: level.value == user.clearance_level
               }, text level.label
-      html.dt {class: DT_CLASSES},
+      dlh.dt {},
         text 'プライマリーグループ'
-      html.dd {class: DD_CLASSES},
+      dlh.dd {},
         if mode == 'show'
           if user.primary_group
             primary_group = groups.find (group) -> group.name == user.primary_group
