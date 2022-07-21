@@ -49,12 +49,17 @@ export modalContent = ({id, title, status, closable, action, close}, children) -
     modalFooter {id, closable, action, close} if closable || action?
   ]
 
-export modalDialog = ({id, size, scrollable, centered, props...}, children) ->
+export modalDialog = ({id, scrollable, centered, size, fullscreen, props...}, children) ->
   dialogClasses = [
     'modal-dialog'
     'modal-dialog-scrollable' if scrollable
     'modal-dialog-centered' if centered
     "modal-#{size}" if size
+    if fullscreen
+      if typeof fullscreen == 'string'
+        "modal-fullscreen-#{fullscreen}-down"
+      else
+        'modal-fullscreen'
   ].filter (v) -> v?
 
   html.div {id: "#{id}-modal-dialog", class: dialogClasses},
