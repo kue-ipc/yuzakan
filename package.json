@@ -11,6 +11,7 @@
     "bootstrap-icons": "^1.9.1",
     "http-link-header": "^1.0.5",
     "hyperapp": "^2.0.22",
+    "luxon": "^3.0.1",
     "pluralize": "^8.0.0",
     "source-code-pro": "^2.38.0",
     "xxhashjs": "^0.2.2",

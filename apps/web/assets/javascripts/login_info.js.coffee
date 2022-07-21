@@ -1,85 +1,141 @@
 import {app, text} from './hyperapp.js'
 import * as html from './hyperapp-html.js'
+import {DateTime} from './luxon.js'
+import BsIcon from './bs_icon.js'
 
-import {dlClasses, dtClasses, ddClasses} from './dl_horizontal.js'
+import * as dlh from './dl_horizontal.js'
 
-loginInof = () ->
+loginInfo = ({user, dateTime, about, service = {}}) ->
+  site = switch service.name
+    when 'google'
+      {name: 'Google アカウント', url: 'https://accounts.google.com/'}
+    when 'microsoft'
+      {name: 'Microsoft アカウント', url: 'https://myaccount.microsoft.com/'}
+    else
+      {name: about.name, url: about.url}
+
   html.div {}, [
-    html.h3 {}, text 'アカウント ログイン情報 通知書'
-    html.div {class: 'row.my-3'}
-    .
-      div class=col_name
-        | アカウント名:
-      div class=col_value
-        code.login-info
-          = user.name
+    html.h3 {}, text "#{system.name} ログイン情報 通知"
 
-    .row.my-3
-      div class=col_name
-        | 初回パスワード:
-      div class=col_value
-        code.login-info
-          = password
+    dlh.dl {}, [
+      dlh.dt {}, text 'アカウント名'
+      dlh.dd {},
+        html.code {class: 'login-info' },
+          text user.name
 
-    .row.my-3
-      div class=col_name
-        | アカウント管理サイト:
-      div class=col_value
-        = link_to Web.routes.url(:root), Web.routes.url(:root), target: '_blank'
+      dlh.dt {}, text 'パスワード'
+      dlh.dd {},
+        html.code {class: 'login-info' },
+          text user.password
 
-    .row.my-3
-      div class=col_name
-        | 発行日時:
-      div class=col_value
-        = Time.now.strftime('%Y年%m月%d日 %H時%M分%S秒')
+      dlh.dt {}, text 'ログインサイト'
+      dlh.dd {},
+        html.a {
+          target: '_blank'
+          href: text site.url
+        }, [
+          text site.name
+          BsIcon {name: 'box-arrow-up-right', class: 'd-print-none'}
+          span {class: 'd-none d-print-inline ms-1'}, text site.url
+        ]
 
-    .d-print-none
-      p
-        | 上記の初回パスワードは
-        strong 現在の画面にのみ
-        | 表示され、どこにも保存されていません。
-        | このページを印刷して、利用者に渡してください。
+      dlh.dt {}, text '発行日時'
+      dlh.dd {}, text dateTime.toLocaleString(DateTime.DATETIME_FULL)
+    ]
 
-      = link_to 'ユーザーの画面に戻る', routes.path(:user, user.name)
+    html.div {class: 'd-none d-print-block'}, [
+      html.p {}, [
+        text '文字のサンプル'
+        html.br {}
+        html.code {class: 'login-info'}, [
+          text ['0'..'9'].join(' ')
+          html.br {}
+          text ['A'..'Z'].to_a.join(' ')
+          html.br {}
+          text ['a'..'z'].to_a.join(' ')
+          html.br {}
+          text [['!'..'/'], [':'..'@'], ['['..'`'], ['{'..'~']].flat().join(' ')
+        ]
+      ]
+    ]
 
-    .d-none.d-print-block
-      p
-        strong この通知書を受け取ったら、必ずパスワード変更を実施してください。
+    html.div {class: 'd-print-none'}, [
+      html.p {}, [
+        text '上記の初回パスワードは'
+        html.strong {}, text '現在の画面にのみ'
+        text '表示され、どこにも保存されていません。'
+        text '今すぐログインするか、このページを印刷してください。'
+      ]
+    ]
 
-      p 上記アカウント管理サイトにアクセスし、「ログイン」ボタンから初回パスワードでログインを実施してください。ログイン後、「パスワード変更」からパスワードを変更してください。
+    html.h4 'ログインとパスワード'
+    html.p {}, [
+      html.strong 'パスワードを変更する必要があります。'
+      text '上記ログインサイトにアクセス'
+      html.span 'd-print-none', text '(新しいタブで開きます)'
+      text 'し、アカウント名とパスワードでログインを実施してください。'
+      if service.required_new_password
+        text '''
+          初回ログイン時に、パスワード変更が求められます。
+          メッセージに従って、パスワードを変更してください。
+        '''
+      else
+        switch service
+          when 'google'
+            text '''
+              ログイン後、「セキュリティ」の「Google へのログイン」にある「パスワード」から
+              パスワードを変更してください。
+            '''
+          when 'microsoft'
+            text '''
+              ログイン後、「パスワード」にある「パスワードの変更」からパスワードを変更してください。'
+            '''
+          else
+            text 'ログイン後、「パスワード変更」からパスワードを変更してください。'
 
-      p この用紙はアカウント発行の承認書ではありません。パスワード変更後は直ちに破棄してください。
+      if service.mfa
+        html.p {}, [
+          text '''
+            2段階認証の設定が必須です。必ず設定してください。
+            設定しなかった場合、ログインできなくなります。
+          '''
+        ]
+      if service.lock_days
+        text """
+          #{sevrice.lock_days}日以内にログイン及びパスワード変更を実施しなかった場合、
+          アカウントがロックされる場合があります。
+        """
+    ]
 
-      p
-        | 文字のサンプル
-        br
-        code.login-info
-          = ('0'..'9').to_a.join(' ')
-          br
-          = ('A'..'Z').to_a.join(' ')
-          br
-          = ('a'..'z').to_a.join(' ')
-          br
-          = (('!'..'/').to_a + (':'..'@').to_a + ('['..'`').to_a + ('{'..'~').to_a).join(' ')
+    html.h4 'トラブルシューティング'
+    switch service
+      when 'google'
+        html.p {}, strong 'ログイン画面が表示されない場合'
+        html.p {},
+          text '''
+            すでに個人または他組織のGoogle アカウントでログインしている場合は、
+            右上のアバターアイコン(デフォルトは名前一文字)をクリックし、
+            「別のアカウントを追加」を押して、ログイン画面を表示してください。
+          '''
+      when 'microsoft'
+        html.p {}, strong 'ログイン画面が表示されない場合'
+        html.p {},
+          text '''
+            すでに他組織のMicrosoft アカウントでログインしている場合は、
+            右上のアバターアイコン(デフォルトは名札に丸)をクリックし、
+            「別のアカウントでサインインする」を押して、ログイン画面を表示してください。
+          '''
 
-      hr
-
-      - if current_config&.contact_name&.size&.positive?
-        h5 管理者の連絡先
-        .row.my-1
-          div class=col_name
-            | 管理者:
-          div class=col_value
-            = current_config&.contact_name
-        - if current_config&.contact_email&.size&.positive?
-          .row.my-1
-            div class=col_name
-              | メールアドレス:
-            div class=col_value
-              = link_to current_config&.contact_email, "mailto:#{current_config&.contact_email}"
-        - if current_config&.contact_phone&.size&.positive?
-          .row.my-1
-            div class=col_name
-              | 電話番号:
-            div class=col_value
-              = current_config&.contact_phone
+    html.div {class: 'd-none d-print-block'}, [
+      html.p {}, text 'この用紙はアカウント発行の承認書ではありません。パスワード変更後は直ちに破棄してください。'
+      html.h4 {}, text '管理者の連絡先'
+      dlh.dl {}, [
+        dlh.dt {}, text '管理者'
+        dlh.dd {}, text abount.contact_name
+        dlh.dt {}, text 'メールアドレス'
+        dlh.dd {}, text abount.contact_email
+        dlh.dt {}, text '電話番号'
+        dlh.dd {}, text abount.contact_phone
+      ]
+    ]
+  ]
