@@ -125,4 +125,12 @@ class ProviderRepository < Hanami::Repository
       .map_to(Provider)
       .first
   end
+
+  def ordered_all_with_adapter_self_management
+    aggregate(:provider_params, attr_mappings: :attr).where(self_management: true).order(:order).map_to(Provider).to_a
+  end
+
+  def ordered_all_self_management
+    providers.where(self_management: true).order(:order).to_a
+  end
 end

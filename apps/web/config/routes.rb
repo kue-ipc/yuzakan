@@ -12,3 +12,5 @@ resource 'google', only: [:show, :create, :destroy] do
   resource 'password', only: [:create]
   resource 'lock', only: [:destroy]
 end
+resources 'providers', only: [:show]
+resource 'password', only: [:edit]

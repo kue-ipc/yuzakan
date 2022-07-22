@@ -29,3 +29,5 @@ resources :groups, only: [:index, :show] do
 end
 
 resource :system, only: [:show]
+
+resources :menus, only: [:index]
