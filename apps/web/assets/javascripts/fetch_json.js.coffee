@@ -8,7 +8,7 @@ import HttpLinkHeader from './http-link-header.js'
 DEFAULT_PAGE = 1
 DEFAULT_PER_PAGE = 20
 
-export fetchJson = ({url, method, data = null, type = 'json'}) ->
+export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
   method = method.toUpperCase()
   unless ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'].includes(method)
     throw new Error("Unknown or unsupported method: #{method}")
@@ -17,6 +17,7 @@ export fetchJson = ({url, method, data = null, type = 'json'}) ->
     method: method
     mode: 'same-origin'
     credentials: 'same-origin'
+    params...
   }
 
   headers = new Headers {
