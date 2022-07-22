@@ -240,7 +240,7 @@ updateAttrRunner = (dispatch, {attr}) ->
     console.error response
 
 destroyAttrRunner = (dispatch, {attr}) ->
-  confirm = await deleteConfirm.confirmPromise({message: "属性「#{attr.name}」を削除してもよろしいですか？"})
+  confirm = await deleteConfirm.showPromise({messages: ["属性「#{attr.name}」を削除してもよろしいですか？"]})
   if confirm
     response = await fetchJsonDelete({url: "/api/attrs/#{attr.name}", data: csrf()})
     if response.ok

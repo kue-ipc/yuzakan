@@ -1,36 +1,52 @@
-import {Modal} from './bootstrap.js'
+# ModaleDialog
+# モーダルダイアログを表示するベースクラス
+# 拡張して使用する
+
 import {app, text} from './hyperapp.js'
 import * as html from './hyperapp-html.js'
+import {focus} from './hyperapp-dom.js'
+
+import {Modal} from './bootstrap.js'
+
 import {modalDialog} from './modal.js'
 
 export default class ModalDialog
   MESSAGE_EVENT = 'modaldialog.message'
+
+  DEFAULT_ACTION = Object.freeze {
+    color: 'primary'
+    label: 'OK'
+    side: 'right'
+  }
+
+  DEFAULT_CLOSE = Object.freeze {
+    color: 'secondary'
+    label: '閉じる'
+  }
 
   constructor: ({
     @id
     @fade = true
     @scrollable = false
     @centered = false
-    @size = undefined
-    @fullscreen = undefined
+    @size # 'sm', 'lg', 'xl'
+    @fullscreen # true, 'sm-down', 'md-down', 'lg-down', 'xl-down', 'xxl-down'
     @title
-    @status = 'info'
+    @status # see status.js
     @closable = true
     action = {}
     close = {}
+    @messages = []
+    @value
   }) ->
-    @action = {
-      color: 'primary'
-      label: 'OK'
-      side: 'right'
-      action...
-    }
-    @close = {
-      color: 'secondary'
-      label: 'キャンセル'
-      close...
-    }
+    @action = if action then {ModalDialog.DEFAULT_ACTION..., action...} else null
+    @close = if close then {ModalDialog.DEFAULT_CLOSE..., close...} else null
+    @result = undefined
 
+    @initNode()
+
+  # モーダルウィンドウのノードを作成し、初期化する。
+  initNode: ->
     @modalNode = document.createElement('div')
     @modalNode.id = "#{@id}-modal"
     @modalNode.classList.add('modal')
@@ -48,83 +64,103 @@ export default class ModalDialog
     @modal = new Modal(@modalNode)
 
     app {
-      init: {
-        title: @title
-        messages: @messages
-        value: ''
-      }
+      init: {}
       view: @modalView
       node: modalDialogNode
       subscriptions: (state) => [
-        @messageSub @messageAction, {node: @modalNode}
-        @shownSub (state) -> {state..., shown: true}
-        @hiddenSub (state) -> {state..., shown: false}
+        ModalDialog.onMessage @modalNode, @receiveModalMessage
+        ModalDialog.onShown @modalNode, (state) -> [{state..., shown: true}, focus(state.focus)]
+        ModalDialog.onHidden @modalNode, (state) -> {state..., shown: false}
       ]
     }
 
-  modalView: ({action, modal = {}, ...props}) =>
+  modalView: ({title, status, closable, action, close, props...}) =>
     modalDialog {
       id: @id
       scrollable: @scrollable
       centered: @centered
       size: @size
       fullscreen: @fullscreen
-      title: @title
-      status: @status
-      closable: @closable
-      action: {
-        @action...
-        modal.action...
-        onclick: action
-      }
-      close: @close
-      modal...
-    }, @modalBody props
+      title
+      status
+      closable
+      action
+      close
+    }, @modalBody {props...}
+
+  modalAction: (state) =>
+    @result = state.value
+    [state, @hideModal]
+
+  hideModal: (_dispatch) => @modal.hide()
 
   # overwrite
-  modalBody: (props) ->
-    throw new Error('Not implemented')
+  modalBody: ({messages}) ->
+    html.p {}, text message for message in messages ? []
 
-  fireModalMessage: (state) ->
-    event = new CustomEvent(ModalDialog.MESSAGE_EVENT, {detail: state})
+  # fire event
+  fireModalMessage: (props) ->
+    event = new CustomEvent(ModalDialog.MESSAGE_EVENT, {detail: props})
     @modalNode.dispatchEvent(event)
 
-  messageRunner: (dispatch, {action, node}) ->
-    func = (e) -> dispatch(action, e.detail)
-    node.addEventListener(ModalDialog.MESSAGE_EVENT, func)
-    -> node.removeEventListener(ModalDialog.MESSAGE_EVENT, func)
+  # Actions
+  receiveModalMessage: (state, props) ->
+    {state..., props...}
 
-  messageSub: (action, {node}) => [@messageRunner, {action, node}]
+  initState: (state = {}) -> {
+    title: @title
+    status: @status
+    closable: @closable
+    action: if @action then {@action..., onclick: @modalAction} else null
+    close: @close
+    messages: @messages
+    value: @value
+    shwon: false
+    focus: "#{@id}-modal-close-button"
+    state...
+  }
 
-  messageAction: (state, params) =>
-    [{state..., params...}, focus("#{@id}-input-textarea")]
-
-  shownRunner: (dispatch, {action}) =>
-    func = -> dispatch(action)
-    @modalNode.addEventListener('shown.bs.modal', func)
-    => @modalNode.removeEventListener('shown.bs.modal', func)
-
-  shownSub: (action) => [@shownRunner, {action}]
-
-  hiddenRunner: (dispatch, {action}) =>
-    func = -> dispatch(action)
-    @modalNode.addEventListener('hidden.bs.modal', func)
-    => @modalNode.removeEventListener('hidden.bs.modal', func)
-
-  hiddenSub: (action) => [@hiddenRunner, {action}]
-
-  promise: (props)
-  inputPromise: ({messages, value}) ->
-    @fireModalMessage({messages, value})
-    @result = null
+  showPromise: (state = {}) ->
+    state = @initState(state)
+    @fireModalMessage(state)
+    @result = undefined
+    waitModalClose = @waitModalClosePromise()
+    # hack modal config
+    # https://github.com/twbs/bootstrap/issues/35664
+    if state.closable
+      @modal._config.backdrop = true
+      @modal._config.keyboard = true
+    else
+      @modal._config.backdrop = 'static'
+      @modal._config.keyboard = false
     @modal.show()
 
-    await @waitModalClose()
+    await waitModalClose
 
     return @result
 
-  waitModalClose: =>
+  waitModalClosePromise: ->
     new Promise (resolve, reject) =>
       @modalNode.addEventListener 'hidden.bs.modal', ->
         resolve()
       , {once: true}
+
+  # Static Methods
+  # Create Subscription
+  @onMessage: (node, action) => [@listenMessage, {node, action}]
+  @onShown: (node, action) => [@listenShown, {node, action}]
+  @onHidden: (node, action) => [@listenHidden, {node, action}]
+
+  # SubscriberFn
+  @listenMessage: (dispatch, {node, action}) =>
+    func = (e) -> dispatch(action, e.detail)
+    node.addEventListener(@MESSAGE_EVENT, func)
+    -> node.removeEventListener(@MESSAGE_EVENT, func)
+  @listenShown: (dispatch, {node, action}) ->
+    func = -> dispatch(action)
+    node.addEventListener('shown.bs.modal', func)
+    -> node.removeEventListener('shown.bs.modal', func)
+  @listenHidden: (dispatch, {node, action}) ->
+    func = -> dispatch(action)
+    node.addEventListener('hidden.bs.modal', func)
+    -> node.removeEventListener('hidden.bs.modal', func)

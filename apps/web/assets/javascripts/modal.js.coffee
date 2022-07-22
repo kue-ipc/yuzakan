@@ -57,10 +57,10 @@ export modalDialog = ({id, scrollable, centered, size, fullscreen, props...}, ch
     "modal-#{size}" if size
     if fullscreen
       if typeof fullscreen == 'string'
-        "modal-fullscreen-#{fullscreen}-down"
+        "modal-fullscreen-#{fullscreen}"
       else
         'modal-fullscreen'
-  ].filter (v) -> v?
+  ]
 
   html.div {id: "#{id}-modal-dialog", class: dialogClasses},
     modalContent {id, props...}, children

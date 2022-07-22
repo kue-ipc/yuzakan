@@ -1,86 +1,24 @@
-import {Modal} from './bootstrap.js'
-import {app, text} from './hyperapp.js'
+# import {Modal} from './bootstrap.js'
+import {text} from './hyperapp.js'
 import * as html from './hyperapp-html.js'
-import {modalDialog} from './modal.js'
+# import {modalDialog} from './modal.js'
 
-export default class ConfirmDialog
-  MESSAGE_EVENT = 'confirmdialog.message'
+import ModalDialog from './modal_dialog.js'
 
+export default class ConfirmDialog extends ModalDialog
   constructor: ({
-    @id
-    @status = 'info'
-    @title
-    @message
     @confirmations = null
     @agreement_required = false
-    action = {}
-    close = {}
+    ...props
   }) ->
-    @action = {
-      color: 'primary'
-      label: 'OK'
-      side: 'right'
-      action...
-    }
-    @close = {
-      color: 'secondary'
-      label: 'キャンセル'
-      close...
-    }
+    super props
+    @value = true
 
-    @modalNode = document.createElement('div')
-    @modalNode.id = "#{@id}-modal"
-    @modalNode.classList.add('modal', 'fade')
-    @modalNode.setAttribute('tabindex', -1)
-    @modalNode.setAttribute('aria-hidden', 'true')
 
-    modalDialogNode = document.createElement('div')
-    modalDialogNode.id = "#{@id}-modal-dialog"
-    modalDialogNode.classList.add('modal-dialog')
-
-    @modalNode.appendChild(modalDialogNode)
-    document.body.appendChild(@modalNode)
-
-    @modal = new Modal(@modalNode)
-
-    app {
-      init: {
-        status: 'unknown'
-        title: 'no title'
-        messages: 'n/a'
-        closable: true
-        link: null
-        reload: false
-      }
-      view: @modalView
-      node: modalDialogNode
-      subscriptions: (state) => [
-        @messageSub @messageAction, {node: @modalNode}
-      ]
-    }
-
-  modalView: ({status, title, action, close, agreement_required, agreed, ...props}) =>
-    modalDialog {
-      id: @id,
-      centered: true
-      status
-      title
-      closable: true
-      action:
-        {
-          action...
-          disbaled: agreement_required && !agreed
-          onclick: (state) =>
-            @result = true
-            @modal.hide()
-            state
-        }
-      close: @close
-    }, @modalBody {agreement_required, agreed, props...}
-
-  modalBody: ({message, confirmations, agreement_required, agreed}) ->
-    html.div {}, [
-      html.p {}, text message
+  # overwrite
+  modalBody: ({messages, confirmations, agreement_required, agreed}) ->
+    [
+      super({messages})
       if confirmations?
         [
           html.hr {}
@@ -98,7 +36,7 @@ export default class ConfirmDialog
             input {
               class: 'form-check-input', type: 'checkbox'
               value: agreed
-              onchange: (state, event) -> {state..., agreed: event.target.value}
+              onchange: [changeAgree, !agreed]
             }
             label {class: 'form-check-label'},
               text '私は、上記全てについて同意します。'
@@ -106,49 +44,14 @@ export default class ConfirmDialog
         ]
     ].flat()
 
-  modalMessage: (state) ->
-    event = new CustomEvent(ConfirmDialog.MESSAGE_EVENT, {detail: state})
-    @modalNode.dispatchEvent(event)
+  changeAgree: (state, agreed) -> {state..., agreed}
 
-  messageRunner: (dispatch, {action, node}) ->
-    func = (e) -> dispatch(action, e.detail)
-    node.addEventListener(ConfirmDialog.MESSAGE_EVENT, func)
-    -> node.removeEventListener(ConfirmDialog.MESSAGE_EVENT, func)
+  initState: (state = {}) -> {
+    confirmations: @confirmations
+    agreement_required: @agreement_required
+    agreed: false
+    super(state)...
+  }
 
-  messageSub: (action, {node}) => [@messageRunner, {action, node}]
-
-  messageAction: (state, params) =>
-    newState = {state..., params...}
-    [newState, focus("#{@id}-modal-close-button")]
-
-  confirmPromise: ({
-    status = @status
-    title = @title
-    message = @message
-    confirmations = @confirmations
-    agreement_required = @agreement_required
-    action = @action
-    close = @close
-  } = {}) ->
-    @modalMessage({
-      status
-      title
-      message
-      confirmations
-      agreement_required
-      action
-      close
-      agreed: false
-    })
-    @result = false
-    @modal.show()
-
-    await @waitModalClose()
-
-    return @result
-
-  waitModalClose: =>
-    new Promise (resolve, reject) =>
-      @modalNode.addEventListener 'hidden.bs.modal', ->
-        resolve()
-      , {once: true}
+  confirmPromise: (state) ->
+    @showPromise(state)
