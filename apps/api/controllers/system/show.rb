@@ -1,7 +1,7 @@
 module Api
   module Controllers
-    module About
-      class Index
+    module System
+      class Show
         include Api::Action
 
         security_level 0
@@ -9,11 +9,11 @@ module Api
         def call(params) # rubocop:disable Lint/UnusedMethodArgument
           self.body = generate_json({
             url: Web.routes.url(:root),
-            config: {
-              title: current_config&.title,
-              contact_name: current_config&.contact_name,
-              contact_email: current_config&.contact_email,
-              contact_phone: current_config&.contact_phone,
+            title: current_config&.title,
+            contact: {
+              name: current_config&.contact_name,
+              email: current_config&.contact_email,
+              phone: current_config&.contact_phone,
             },
             app: {
               name: Yuzakan.name,

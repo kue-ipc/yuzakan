@@ -28,4 +28,4 @@ resources :groups, only: [:index, :show] do
   resources :members, only: [:index, :update, :destroy]
 end
 
-get '/about', to: 'about#index', as: :abount
+resource :system, only: [:show]
