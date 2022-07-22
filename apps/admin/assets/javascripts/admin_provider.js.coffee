@@ -117,7 +117,7 @@ updateProviderRunner = (dispatch, {name, provider}) ->
     console.error response
 
 destroyProviderRunner = (dispatch, {name}) ->
-  confirm = await destroyConfirm.confirmPromise({message: "属性「#{name}」を削除してもよろしいですか？"})
+  confirm = await destroyConfirm.showPromise({message: "属性「#{name}」を削除してもよろしいですか？"})
   if confirm
     response = await destroyWebData.submitPromise {url: "/api/providers/#{name}", data: csrf()}
     if response.ok

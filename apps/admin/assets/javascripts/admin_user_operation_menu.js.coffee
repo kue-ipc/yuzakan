@@ -1,10 +1,12 @@
 import {text} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
+import {DateTime} from '../luxon.js'
 
 import {fieldName, fieldId} from '../form_helper.js'
 import csrf from '../csrf.js'
 import WebData from '../web_data.js'
 import ConfirmDialog from '../confirm_dialog.js'
+import LoginInfo from '../login_info.js'
 
 parentNames = ['user']
 
@@ -51,10 +53,10 @@ destroyWebData = new WebData {
   ]
 }
 
+loginInfo = new LoginInfo {}
 
-# Effects
-
-createUserRunner = (dispatch, {user}) ->
+# Effecters
+runCreateUser = (dispatch, {user}) ->
   response = await createWebData.submitPromise {data: {
     csrf()...
     name: user.name
@@ -64,21 +66,25 @@ createUserRunner = (dispatch, {user}) ->
     providers: user.providers
   }}
   if response.ok
-    user = response.data
-    dispatch(userAction, {name: user.name, user})
+    dispatch (state) ->
+      state = ChangeUserName(state, user.name)
+      state = ChangeMode(state, 'show')
+      [state, [runShowLoginInfo, {
+        user: response.data
+        dateTime: response.dateTime ? DateTime.now()
+      }]]
   else
     console.error response
 
-updateUserRunner = (dispatch, {name, user}) ->
+runUpdateUser = (dispatch, {name, user}) ->
   response = await updateWebData.submitPromise {url: "/api/users/#{name}", data: {csrf()..., user...}}
   if response.ok
-    user = response.data
-    dispatch(userAction, {name: user.name, user})
+    dispatch(ChangeMode, 'show')
   else
     console.error response
 
-destroyUserRunner = (dispatch, {name}) ->
-  confirm = await destroyConfirm.confirmPromise({message: "ユーザー「#{name}」を削除してもよろしいですか？"})
+runDestroyUser = (dispatch, {name}) ->
+  confirm = await destroyConfirm.showPromise({message: "ユーザー「#{name}」を削除してもよろしいですか？"})
   if confirm
     response = await destroyWebData.submitPromise {url: "/api/users/#{name}", data: csrf()}
     if response.ok
@@ -86,15 +92,38 @@ destroyUserRunner = (dispatch, {name}) ->
     else
       console.error response
 
+runResetPasswordUser = (dispatch, {name}) ->
+  confirm = await resetPasswordConfirm.showPromise({message: "ユーザー「#{name}」のパスワードをリセットしてもよろしいですか？"})
+  if confirm
+    response = await resetPasswordWebData.submitPromise {url: "/api/users/#{name}/password", data: csrf()}
+    if response.ok
+      # redirect...
+    else
+      console.error response
+
+runShowLoginInfo = (_dispatch, {user, dateTime}) ->
+  await loginInfo.showPromise {
+    user
+    dateTime
+    site: {}
+  }
+
 # Actions
 
-destroyUserAction = (state) -> [state, [destroyUserRunner, {name: state.name}]]
+CreateUser = (state) -> [state, [runCreateUser, {user: state.user}]]
 
-createUserAction = (state) -> [state, [createUserRunner, {user: state.user}]]
+UreateUser = (state) -> [state, [runUpdateUser, {name: state.name, user: state.user}]]
 
-updateUserAction = (state) -> [state, [updateUserRunner, {name: state.name, user: state.user}]]
+DestroyUser = (state) -> [state, [runDestroyUser, {name: state.name}]]
 
-changeMode = (state, mode) -> {state..., mode}
+ResetPasswordUser = (state) -> [state, [runResetPasswordUser, {name: state.name}]]
+
+ChangeMode = (state, mode) -> {state..., mode}
+
+ChangeUserName = (state, name) ->
+  history.pushState(null, null, "/admin/users/#{name}") if name? && name != state.name
+  {state..., name}
+
 
 export default operationMenu = ({mode}) ->
   html.div {}, [
@@ -107,7 +136,7 @@ export default operationMenu = ({mode}) ->
         role: 'switch'
         checked: mode != 'show'
         disabled: mode == 'new'
-        onchange: [changeMode, if mode == 'show' then 'edit' else 'show']
+        onchange: [ChangeMode, if mode == 'show' then 'edit' else 'show']
       }
       html.label {
         class: 'form-check-label'
@@ -119,17 +148,17 @@ export default operationMenu = ({mode}) ->
         html.div {},
           html.button {
             class: 'btn btn-primary'
-            onclick: createUserAction
+            onclick: CreateUser
           }, text '作成'
       when 'edit'
         html.div {}, [
           html.button {
             class: 'btn btn-warning'
-            onclick: updateUserAction
+            onclick: UreateUser
           }, text '更新'
           html.button {
             class: 'ms-1 btn btn-danger'
-            onclick: destroyUserAction
+            onclick: DestroyUser
           }, text '削除'
         ]
       when 'show'

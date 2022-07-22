@@ -27,7 +27,7 @@ export default class ModalDialog
   constructor: ({
     @id
     @fade = true
-    @scrollable = false
+    @scrollable = true
     @centered = false
     @size # 'sm', 'lg', 'xl'
     @fullscreen # true, 'sm-down', 'md-down', 'lg-down', 'xl-down', 'xxl-down'
@@ -94,7 +94,6 @@ export default class ModalDialog
 
   hideModal: (_dispatch) => @modal.hide()
 
-  # overwrite
   modalBody: ({messages}) ->
     html.p {}, text message for message in messages ? []
 
@@ -138,6 +137,9 @@ export default class ModalDialog
     await waitModalClose
 
     return @result
+  
+  hide: ->
+    @modal.hide()
 
   waitModalClosePromise: ->
     new Promise (resolve, reject) =>

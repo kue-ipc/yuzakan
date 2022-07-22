@@ -13,10 +13,6 @@ import attrList from './admin_user_attr_list.js'
 
 import {InitUserAttrs} from './admin_user_attrs.js'
 
-ChangeUserName = (state, {name}) ->
-  history.pushState(null, null, "/admin/users/#{name}") if name? && name != state.name
-  {state..., name}
-
 SetUser = (state, {user}) ->
   providers = (provider_userdata.provider.name for provider_userdata in user.provider_userdatas)
   primary_group = user.userdata.primary_group
@@ -87,7 +83,6 @@ init = [
 ]
 
 view = ({mode, name, user, providers, attrs, groups}) ->
-  console.log user
   unless user? && providers? && attrs? && groups?
     return html.div {}, text '読み込み中...'
 
