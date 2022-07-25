@@ -11,9 +11,9 @@ class CreateUser
 
     validations do
       required(:username).filled(:str?, :name?, max_size?: 255)
+      required(:providers) { array? { each { str? & name? & max_size?(255) } } }
       optional(:clearance_level).maybe(:int?)
       required(:primary_group).filled(:str?, :name?, max_size?: 255)
-      required(:providers) { array? { each { str? & name? & max_size?(255) } } }
       optional(:attrs) { hash? }
     end
   end

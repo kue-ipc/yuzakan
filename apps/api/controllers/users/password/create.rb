@@ -5,9 +5,44 @@ module Api
         class Create
           include Api::Action
 
-          def call(params)
-            self.body = 'OK'
+          security_level 3
+
+          def initialize(provider_repository: ProviderRepository.new,
+            user_repositary: UserRepository.new,
+            **opts)
+            super
+            @provider_repository ||= provider_repository
+            @user_repositary ||= user_repositary
           end
+
+        def call(params)
+          reset_password = ResetPassword.new(
+            user_repository: @user_repository,
+            provider_repository: @provider_repository)
+          result = reset_password.call({username: params[:name]})
+
+          halt_json(422, errors: merge_errors(result.errors)) if result.failure?
+
+          @mailer&.deliver(**mailer_params, result: result)
+
+
+          mailer_params = {
+            user: mail_user,
+            config: @config,
+            by_user: by_user,
+            action: 'パスワードリセット',
+            description: 'パスワードをリセットしました。',
+          }
+
+          
+          self.status = 201
+          headers['Location'] = routes.user_path(result.user.id)
+          self.body = generate_json({
+            name: palams[:name],
+            password: relust.password,
+          })
+          end
+
         end
       end
     end
