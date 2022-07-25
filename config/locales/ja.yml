@@ -69,3 +69,24 @@ ja:
         しばらく待ってから再度ログインを試してください。
       incorrect: "ユーザー名またはパスワードが違います。"
       deny_network: "現在のネットワークからのログインは許可されていません。"
+  interactor:
+    errors:
+      at: "{%action}時にエラーが発生しました。"
+      run_on_no: "どのシステムでも%{action}は実行されませんでした。" 
+      run_on_some: >-
+        一部のシステムについては%{action}が実行されましたが、
+        別のシステムでは%{action}時にエラーが発生し、処理が中断されました。
+        実行されていあにシステムが存在する可能性があるため、
+        再度%{action}を実行してください。
+    actions:
+      reset_password: パスワードリセット
+      create_user: ユーザー作成
+      read_user: ユーザー取得
+      update_user: ユーザー更新
+      destroy_user: ユーザー削除
+      sync_user: ユーザー同期
+      register_user: ユーザー登録
+      unregister_user: ユーザー解除
+      lock_user: ユーザーロック
+      unlock_user: ユーザーアンロック
+      create_attr: 属性作成
