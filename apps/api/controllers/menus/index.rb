@@ -57,58 +57,66 @@ module Api
                 category: 'top',
               },
               {
-                name: '全体設定',
-                url: routes.path(:edit_config),
-                description: 'サイト名やパスワードの条件等の設定はこちらから変更できます。',
-                color: 'danger',
-              },
-              {
-                name: 'プロバイダー',
-                url: routes.path(:providers),
-                description: '連携するシステムはプロバイダーとして登録します。連携システムの追加や変更が可能です。',
-                color: 'danger',
-              },
-              {
-                name: 'ユーザー属性情報',
-                url: routes.path(:attrs),
-                description: '各プロバイダーからのユーザー属性の紐付けを行います。',
-                color: 'danger',
-              },
-              {},
-              {
-                name: 'ユーザー作成',
-                url: routes.path(:user, '*'),
-                description: 'ユーザーを新規作成します。',
-                color: 'primary',
-              },
-              {
                 name: 'ユーザー一覧',
                 url: routes.path(:users),
                 description: 'ユーザーの一覧です。',
                 color: 'secondary',
+                icon: 'person',
+                category: 'admin',
               },
               {
                 name: 'グループ一覧',
                 url: routes.path(:groups),
                 description: 'グループの一覧です。',
                 color: 'secondary',
+                icon: 'people',
+                category: 'admin',
               },
             ]
           end
 
-          # USER_MENU = {path: '/', name: '利用者メニュー'}
-          # ADMIN_MENU = {path: '/admin', name: '管理者メニュー'}
+          menu.concat [] if current_level >= 3
 
-          # USER_MENU_LIST = [
-          #   {path: '/user/password/edit', name: 'パスワード変更'}
-          # ]
+          if current_level >= 4
+            menu.concat [
+              {
+                name: 'ユーザー作成',
+                url: routes.path(:user, '*'),
+                description: 'ユーザーを新規作成します。',
+                color: 'primary',
+                icon: 'person-plus',
+                category: 'admin',
+              },
+            ]
+          end
 
-          # ADMIN_MENU_LIST = [
-          #   {path: '/admin/users/*', name: 'ユーザー作成'}
-          #   {path: '/admin/users', name: 'ユーザー一覧'}
-          #   {path: '/admin/groups', name: 'グループ一覧'}
-          # ]
-
+          if current_level >= 5
+            menu.concat [
+              {
+                name: '全体設定',
+                url: routes.path(:edit_config),
+                description: 'サイト名やパスワードの条件等の設定はこちらから変更できます。',
+                color: 'danger',
+                icon: 'gear',
+                category: 'admin',
+              },
+              {
+                name: 'プロバイダー',
+                url: routes.path(:providers),
+                description: '連携するシステムはプロバイダーとして登録します。連携システムの追加や変更が可能です。',
+                color: 'danger',
+                icon: 'hhd-stack',
+                category: 'admin',
+              },
+              {
+                name: 'ユーザー属性情報',
+                url: routes.path(:attrs),
+                description: '各プロバイダーからのユーザー属性の紐付けを行います。',
+                color: 'danger',
+                category: 'admin',
+              },
+            ]
+          end
           self.body = generate_json(menus)
         end
 
@@ -124,7 +132,7 @@ module Api
           when 'ad'
             'windows'
           when /ldap/
-            'hdd-stack'
+            'diagram-3'
           else
             'server'
           end
