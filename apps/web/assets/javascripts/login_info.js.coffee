@@ -6,6 +6,8 @@ import ModalDialog from './modal_dialog.js'
 import BsIcon from './bs_icon.js'
 import * as dlh from './dl_horizontal.js'
 
+import {runGetSystem} from './get_system.js'
+
 export default class LoginInfo extends ModalDialog
   constructor: ({
     fullscreen = true
@@ -16,10 +18,13 @@ export default class LoginInfo extends ModalDialog
     }
     ...props
   }) ->
-    super {props..., fullscreen} 
+    super {props..., fullscreen}
 
   # overwrite
-  modalAction: (state) =>
+  appInit: => [@initState({}), runGetSystem]
+
+  # overwrite
+  modalAction: (state) ->
     window.print()
     state
 
@@ -35,11 +40,11 @@ export default class LoginInfo extends ModalDialog
   loginInfo: ({user, dateTime, site, service = {}}) ->
     site = switch service.name
       when 'google'
-        {site..., name: 'Google アカウント', url: 'https://accounts.google.com/'}
+        {name: 'Google アカウント', url: 'https://accounts.google.com/'}
       when 'microsoft'
-        {site..., name: 'Microsoft アカウント', url: 'https://myaccount.microsoft.com/'}
+        {name: 'Microsoft アカウント', url: 'https://myaccount.microsoft.com/'}
       else
-        site
+        {name: system.name, url: system.url}
 
     html.div {}, [
       html.h3 {}, text "#{site.name} ログイン情報 通知"
@@ -47,12 +52,12 @@ export default class LoginInfo extends ModalDialog
       dlh.dl {}, [
         dlh.dt {}, text 'アカウント名'
         dlh.dd {},
-          html.code {class: 'login-info' },
+          html.code {class: 'login-info'},
             text user.name
 
         dlh.dt {}, text 'パスワード'
         dlh.dd {},
-          html.code {class: 'login-info' },
+          html.code {class: 'login-info'},
             text user.password
 
         dlh.dt {}, text 'ログインサイト'
@@ -155,14 +160,15 @@ export default class LoginInfo extends ModalDialog
 
       html.div {class: 'd-none d-print-block'}, [
         html.p {}, text 'この用紙はアカウント発行の承認書ではありません。パスワード変更後は直ちに破棄してください。'
+        html.p {}, text 'この用紙は拾得した場合は、下記連絡先に連絡をお願いします。'
         html.h4 {}, text '管理者の連絡先'
         dlh.dl {}, [
           dlh.dt {}, text '管理者'
-          dlh.dd {}, text site.contact_name
+          dlh.dd {}, text system.contact_name
           dlh.dt {}, text 'メールアドレス'
-          dlh.dd {}, text site.contact_email
+          dlh.dd {}, text system.contact_email
           dlh.dt {}, text '電話番号'
-          dlh.dd {}, text site.contact_phone
+          dlh.dd {}, text system.contact_phone
         ]
       ]
     ]

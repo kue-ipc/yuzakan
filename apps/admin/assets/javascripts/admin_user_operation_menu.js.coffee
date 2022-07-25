@@ -16,10 +16,19 @@ destroyConfirm = new ConfirmDialog {
   id: fieldId('destroy', ['modal', 'confirm', parentNames...])
   status: 'alert'
   title: 'ユーザーの削除'
-  message: 'ユーザーを削除してもよろしいですか？'
   action: {
     color: 'danger'
     label: '削除'
+  }
+}
+
+createPasswordConfirm = new ConfirmDialog {
+  id: fieldId('creaet', ['modal', 'confirm', parentNames..., 'password'])
+  status: 'warn'
+  title: 'パスワードのリセット'
+  action: {
+    color: 'warning'
+    label: 'パスワードリセット'
   }
 }
 
@@ -53,26 +62,34 @@ destroyWebData = new WebData {
   ]
 }
 
+createPasswordWebData = new WebData {
+  id: fieldId('create', ['modal', 'web', parentNames..., 'password'])
+  title: 'パスワードのリセット'
+  method: 'POST'
+  codeActions: new Map [
+    [201, {status: 'success', message: 'パスワードをリセットしました。'}]
+  ]
+}
+
 loginInfo = new LoginInfo {}
 
 # Effecters
 runCreateUser = (dispatch, {user}) ->
-  response = await createWebData.submitPromise {data: {
-    csrf()...
-    name: user.name
-    clearance_level: user.clearance_level
-    primary_group: user.primary_group
-    attrs: user.attrs
-    providers: user.providers
-  }}
+  response = await createWebData.submitPromise {
+    data: {
+      csrf()...
+      name: user.name
+      clearance_level: user.clearance_level
+      primary_group: user.primary_group
+      attrs: user.attrs
+      providers: user.providers
+    }
+  }
   if response.ok
     dispatch (state) ->
       state = ChangeUserName(state, user.name)
       state = ChangeMode(state, 'show')
-      [state, [runShowLoginInfo, {
-        user: response.data
-        dateTime: response.dateTime ? DateTime.now()
-      }]]
+      [state, [runShowLoginInfo, {user: response.data, dateTime: response.dateTime ? DateTime.now()}]]
   else
     console.error response
 
@@ -84,7 +101,9 @@ runUpdateUser = (dispatch, {name, user}) ->
     console.error response
 
 runDestroyUser = (dispatch, {name}) ->
-  confirm = await destroyConfirm.showPromise({message: "ユーザー「#{name}」を削除してもよろしいですか？"})
+  confirm = await destroyConfirm.showPromise({
+    messages: ["ユーザー「#{name}」を削除してもよろしいですか？"]
+  })
   if confirm
     response = await destroyWebData.submitPromise {url: "/api/users/#{name}", data: csrf()}
     if response.ok
@@ -92,21 +111,20 @@ runDestroyUser = (dispatch, {name}) ->
     else
       console.error response
 
-runResetPasswordUser = (dispatch, {name}) ->
-  confirm = await resetPasswordConfirm.showPromise({message: "ユーザー「#{name}」のパスワードをリセットしてもよろしいですか？"})
+runCreatePasswordUser = (dispatch, {name}) ->
+  confirm = await createPasswordConfirm.showPromise({
+    messages: ["ユーザー「#{name}」のパスワードをリセットしてもよろしいですか？"]
+  })
   if confirm
-    response = await resetPasswordWebData.submitPromise {url: "/api/users/#{name}/password", data: csrf()}
+    response = await createPasswordWebData.submitPromise {url: "/api/users/#{name}/password", data: csrf()}
     if response.ok
-      # redirect...
+      dispatch (state) ->
+        [state, [runShowLoginInfo, {user: response.data, dateTime: response.dateTime ? DateTime.now()}]]
     else
       console.error response
 
 runShowLoginInfo = (_dispatch, {user, dateTime}) ->
-  await loginInfo.showPromise {
-    user
-    dateTime
-    site: {}
-  }
+  loginInfo.showPromise {user, dateTime, site: {}}
 
 # Actions
 
@@ -116,7 +134,10 @@ UreateUser = (state) -> [state, [runUpdateUser, {name: state.name, user: state.u
 
 DestroyUser = (state) -> [state, [runDestroyUser, {name: state.name}]]
 
-ResetPasswordUser = (state) -> [state, [runResetPasswordUser, {name: state.name}]]
+CreatPasswordUser = (state) -> [state, [runCreatePasswordUser, {name: state.name}]]
+
+CreatLockUser = (state) -> state
+DeleteLockUser = (state) -> state
 
 ChangeMode = (state, mode) -> {state..., mode}
 
@@ -163,7 +184,17 @@ export default operationMenu = ({mode}) ->
         ]
       when 'show'
         html.div {}, [
-          html.div {}, text 'パスワードリセット'
-          html.div {}, text 'ロック'
+          html.button {
+            class: 'btn btn-warning'
+            onclick: CreatPasswordUser
+          }, text 'パスワードリセット'
+          html.button {
+            class: 'btn btn-primary ms-2'
+            onclick: CreatLockUser
+          }, text 'ロック'
+          html.button {
+            class: 'btn btn-secondary ms-2'
+            onclick: DeleteLockUser
+          }, text 'アンロック'
         ]
   ]

@@ -64,7 +64,7 @@ export default class ModalDialog
     @modal = new Modal(@modalNode)
 
     app {
-      init: {}
+      init: @appInit()
       view: @modalView
       node: modalDialogNode
       subscriptions: (state) => [
@@ -73,6 +73,8 @@ export default class ModalDialog
         ModalDialog.onHidden @modalNode, (state) -> {state..., shown: false}
       ]
     }
+
+  appInit: => @initState
 
   modalView: ({title, status, closable, action, close, props...}) =>
     modalDialog {
@@ -106,7 +108,7 @@ export default class ModalDialog
   receiveModalMessage: (state, props) ->
     {state..., props...}
 
-  initState: (state = {}) -> {
+  initState: (state) => {
     title: @title
     status: @status
     closable: @closable
@@ -119,6 +121,7 @@ export default class ModalDialog
     state...
   }
 
+  # show
   showPromise: (state = {}) ->
     state = @initState(state)
     @fireModalMessage(state)
