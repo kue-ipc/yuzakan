@@ -242,7 +242,7 @@ view = ({name, provider, adapters}) ->
             onclick: (state) -> [state, [createProviderRunner, {provider}]]
           }, text '作成'
         ]
-      else if provider.immutable == false
+      else
         [
           html.button {
             class: 'btn btn-warning'

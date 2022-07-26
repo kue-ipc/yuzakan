@@ -31,8 +31,6 @@ module Admin
                 attr_repository = AttrRepository.new
                 # 削除
                 provider_repository.all.each do |provider|
-                  next if provider.immutable
-
                   provider_repository.delete(provider.id)
                 end
                 attr_repository.clear

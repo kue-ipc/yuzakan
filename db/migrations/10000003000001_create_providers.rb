@@ -8,7 +8,6 @@ Hanami::Model.migration do
 
       column :adapter_name, String, null: false
       column :order, Integer, null: false
-      column :immutable, TrueClass, null: false, default: false # 不変フラグ
 
       column :readable, TrueClass, null: false, default: false
       column :writable, TrueClass, null: false, default: false

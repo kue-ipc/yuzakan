@@ -6,21 +6,30 @@ class InitialSetup
 
   class Validations
     include Hanami::Validations
-    messages_path 'config/messages.yml'
+    predicates NamePredicates
+    messages :i18n
 
     validations do
       required(:config).schema do
         required(:title) { filled? }
       end
       required(:admin_user).schema do
-        required(:username) { filled? }
+        required(:username).filled(:str?, :name?, max_size?: 255)
         required(:password).filled.confirmation
       end
     end
   end
 
-  def initialize
-    @config_repostiory = ConfigRepository.new
+  def initialize(
+    config_repostiory: ConfigRepository.new,
+    network_repository: NetworkRepository.new,
+    provider_repository: ProviderRepository.new,
+    user_repository: UserRepository.new
+  )
+    @config_repostiory = config_repostiory
+    @network_repostiory = network_repository
+    @provider_repostiory = provider_repository
+    @user_repository = user_repository
   end
 
   def call(params)
@@ -51,10 +60,9 @@ class InitialSetup
   end
 
   private def setup_local_provider(username, password)
-    ProviderRepository.new.create({
+    @provider_repostiory.create({
       name: 'local',
       label: 'ローカル',
-      immutable: true,
       order: '0',
       adapter_name: 'local',
       readable: true,
@@ -63,7 +71,7 @@ class InitialSetup
       password_changeable: true,
       lockable: true,
     })
-    local_provider = ProviderRepository.new.find_with_adapter_by_name('local')
+    local_provider = @provider_repostiory.find_with_adapter_by_name('local')
     local_provider.user_create(username, password, display_name: 'ローカル管理者')
   end
 

@@ -7,7 +7,6 @@ describe Provider do
       dispaly_name: 'テスト',
       adapter_name: 'test',
       order: 0,
-      immutable: false,
       readable: true,
       writable: true,
       authenticatable: true,

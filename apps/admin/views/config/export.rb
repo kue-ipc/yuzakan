@@ -31,21 +31,18 @@ module Admin
           provider_ids = {}
           providers.each do |provider|
             provider_ids[provider.id] = provider
-            next if provider.immutable
-
             provider_data = {}
             %w[
               name
               label
               adapter_name
               order
-              immutable
               readable
               writable
               authenticatable
               password_changeable
-              lockable
               individual_password
+              lockable
               self_management
               group
             ].each do |key|
