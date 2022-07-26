@@ -21,7 +21,7 @@ class UnlockUser
   def initialize(
     user:,
     client:,
-    config: ConfigRepostitory.new.current,
+    config: ConfigRepository.new.current,
     providers: nil,
     provider_repository: ProviderRepository.new,
     activity_repository: ActivityRepository.new,

@@ -20,7 +20,7 @@ class GenerateVerificationCode
     user:,
     client:,
     providers:,
-    config: ConfigRepostitory.new.current,
+    config: ConfigRepository.new.current,
     activity_repository: ActivityRepository.new,
     mailer: Mailers::UserNotify
   )

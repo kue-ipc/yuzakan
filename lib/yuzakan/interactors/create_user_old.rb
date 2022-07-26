@@ -22,7 +22,7 @@ class CreateUserOld
     user:,
     client:,
     providers:,
-    config: ConfigRepostitory.new.current,
+    config: ConfigRepository.new.current,
     activity_repository: ActivityRepository.new,
     attr_mapping_repository: AttrMappingRepository.new,
     generate_password: GeneratePassword.new,

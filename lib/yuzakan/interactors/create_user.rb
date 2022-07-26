@@ -11,9 +11,10 @@ class CreateUser
 
     validations do
       required(:username).filled(:str?, :name?, max_size?: 255)
+      optional(:password).filled(:str?, max_size?: 255)
       optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
       optional(:clearance_level).filled(:int?)
-      required(:primary_group).filled(:str?, :name?, max_size?: 255)
+      optional(:primary_group).filled(:str?, :name?, max_size?: 255)
       optional(:attrs) { hash? }
     end
   end
@@ -23,22 +24,28 @@ class CreateUser
 
   def initialize(provider_repository: ProviderRepository.new,
                  user_repository: UserRepository.new,
-                 generate_password: GeneratePassword.new)
+                 config_repository: CnofigRepository.new)
     @provider_repository = provider_repository
     @user_repository = user_repository
-    @generate_password = generate_password
+    @config_repository = config_repository
   end
 
   def call(params)
     username = params[:username]
 
-    gp_result = @generate_password.call
-    error!('パスワード生成に失敗しました。') if gp_result.failure?
-    @password = gp_result.password
+    @password =
+      if params[:password]
+        params[:password]
+      else
+        generate_password = GeneratePassword.new
+        gp_result = generate_password.call
+        error!('パスワード生成に失敗しました。') if gp_result.failure?
+        gp_result.password
+      end
 
     userdata = {
       primary_group: params[:primary_group],
-      attrs: params[:attrs],
+      attrs: params[:attrs] || {},
     }
 
     params[:providers].each do |provider_name|
@@ -57,12 +64,10 @@ class CreateUser
 
     @user = result.user
 
-    unless @user
-      error!('ユーザーが作成されていません。')
-    end
+    error!('ユーザーが作成されていません。') unless @user
 
     if @user.clearance_level && @user.clearance_level != params[:clearance_level]
-      @user = @user_repositary.update(@user.id, clearance_level: params[:clearance_level])
+      @user = @user_repository.update(@user.id, clearance_level: params[:clearance_level])
     end
   end
 

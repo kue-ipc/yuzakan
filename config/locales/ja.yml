@@ -1,73 +1,74 @@
 ja:
   errors:
-    or: "または"
-    array?: "配列を入力してください。"
-    empty?: "空を入力してください。"
-    excludes?: "%{value}を含んではいけません。"
+    or: 'または'
+    array?: '配列を入力してください。'
+    empty?: '空を入力してください。'
+    excludes?: '%{value}を含んではいけません。'
     excluded_from?:
       arg:
-        default: "%{list}を一つも含んではいけません。"
-        range: "%{list_left}〜%{list_right}の範囲内にあってはいけません。"
-    exclusion?: "%{list}を一つむ含んではいけません。"
-    eql?: "%{left}と値が一致しません。"
-    not_eql?: "%{left}とは異なる値にしてください。"
-    filled?: "入力が必須です。"
-    format?: "形式が間違っています。"
-    number?: "数を入力してください。"
-    odd?: "奇数を入力してください。"
-    even?: "偶数を入力してください。"
-    gt?: "%{num}より大きくしてください。"
-    gteq?: "%{num}以上にしてください。"
-    hash?: "連想配列を入力してください。"
+        default: '%{list}を一つも含んではいけません。'
+        range: '%{list_left}〜%{list_right}の範囲内にあってはいけません。'
+    exclusion?: '%{list}を一つむ含んではいけません。'
+    eql?: '%{left}と値が一致しません。'
+    not_eql?: '%{left}とは異なる値にしてください。'
+    filled?: '入力が必須です。'
+    format?: '形式が間違っています。'
+    number?: '数を入力してください。'
+    odd?: '奇数を入力してください。'
+    even?: '偶数を入力してください。'
+    gt?: '%{num}より大きくしてください。'
+    gteq?: '%{num}以上にしてください。'
+    hash?: '連想配列を入力してください。'
     included_in?:
       arg:
-        default: "%{list}のうち一つを含んでください。"
-        range: "%{list_left} - %{list_right}の範囲内にしてください。"
-    inclusion?: "%{list}のうち一つを含んでください。"
-    includes?: "%{value}を含んでください。"
-    bool?: "真偽値を入力してください。"
-    true?: "真を入力してください。"
-    false?: "偽を入力してください。"
-    int?: "整数を入力してください。"
-    float?: "小数点数を入力してください。"
-    decimal?: "十進数を入力してください。"
-    date?: "日付を入力してください。"
-    date_time?: "日時を入力してください。"
-    time?: "時刻を入力してください。"
-    key?: "存在しません。"
-    attr?: "存在しません。"
-    lt?: "%{num}より小さくしてください。"
-    lteq?: "%{num}以下にししてください。"
-    max_size?: "サイズが%{num}を超えてはいけません。"
-    min_size?: "サイズが%{num}より小さくてはいけません。"
-    none?: "定義しないでください。"
-    str?: "文字列を入力してください。"
-    type?: "%{type}を入力してください。"
+        default: '%{list}のうち一つを含んでください。'
+        range: '%{list_left} - %{list_right}の範囲内にしてください。'
+    inclusion?: '%{list}のうち一つを含んでください。'
+    includes?: '%{value}を含んでください。'
+    bool?: '真偽値を入力してください。'
+    true?: '真を入力してください。'
+    false?: '偽を入力してください。'
+    int?: '整数を入力してください。'
+    float?: '小数点数を入力してください。'
+    decimal?: '十進数を入力してください。'
+    date?: '日付を入力してください。'
+    date_time?: '日時を入力してください。'
+    time?: '時刻を入力してください。'
+    key?: '存在しません。'
+    attr?: '存在しません。'
+    lt?: '%{num}より小さくしてください。'
+    lteq?: '%{num}以下にししてください。'
+    max_size?: 'サイズが%{num}を超えてはいけません。'
+    min_size?: 'サイズが%{num}より小さくてはいけません。'
+    none?: '定義しないでください。'
+    str?: '文字列を入力してください。'
+    type?: '%{type}を入力してください。'
     size?:
       arg:
-        default: "サイズは%{size}にしてください。"
-        range: "サイズは%{size_left}〜%{size_right}の範囲内にしてください。"
+        default: 'サイズは%{size}にしてください。'
+        range: 'サイズは%{size_left}〜%{size_right}の範囲内にしてください。'
       value:
         string:
           arg:
-            default: "長さは%{size}にしてください。"
-            range: "長さは%{size_left}〜%{size_right}の範囲内にしてください。"
+            default: '長さは%{size}にしてください。'
+            range: '長さは%{size_left}〜%{size_right}の範囲内にしてください。'
     # orginal messages
-    uniq?: "重複しています。"
-    exist?: "存在しません。"
-    found?: "見つかりません。"
-    name?: "名前付けの規則に違反しています。"
-    name_or_star?: "名前付けの規則に違反しています。"
-    email?: "不正なメールアドレスです。"
-    valid_chars?: "使用できない文字が含まれています。"
-    min_types?: "文字種は%{num}種類以上でなければなりません。"
-    strong_password?: "パスワードが弱すぎます。"
+    uniq?: '重複しています。'
+    exist?: '存在しません。'
+    found?: '見つかりません。'
+    name?: '名前付けの規則に違反しています。'
+    name_or_star?: '名前付けの規則に違反しています。'
+    email?: '不正なメールアドレスです。'
+    valid_chars?: '使用できない文字が含まれています。'
+    min_types?: '文字種は%{num}種類以上でなければなりません。'
+    strong_password?: 'パスワードが弱すぎます。'
     # messages
-    not_found: "%{name}が見つかりません。"
+    not_found: '%{name}が見つかりません。'
+    already_initialized: 既に初期化済みです。
     action:
-      fail: "%{action}に失敗しました。"
-      error: "%{target}に対して%{action}時にエラーが発生しました。"
-      not_run: "どの%{target}に対しても%{action}は実行されませんでした。" 
+      fail: '%{action}に失敗しました。'
+      error: '%{target}に対して%{action}時にエラーが発生しました。'
+      not_run: 'どの%{target}に対しても%{action}は実行されませんでした。'
       stopped_after_some: >-
         一部の%{target}については%{action}が実行されましたが、
         別の%{target}では%{action}時にエラーが発生し、処理が中断されました。
@@ -98,5 +99,5 @@ ja:
       too_many_failure: >-
         時間あたりのログイン試行が規定の回数を超えたため、現在ログインが禁止されています。
         しばらく待ってから再度ログインを試してください。
-      incorrect: "ユーザー名またはパスワードが違います。"
-      deny_network: "現在のネットワークからのログインは許可されていません。"
+      incorrect: 'ユーザー名またはパスワードが違います。'
+      deny_network: '現在のネットワークからのログインは許可されていません。'

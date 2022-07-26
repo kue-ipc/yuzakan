@@ -8,11 +8,11 @@ module Api
           security_level 3
 
           def initialize(provider_repository: ProviderRepository.new,
-                         user_repositary: UserRepository.new,
+                         user_repository: UserRepository.new,
                          **opts)
             super
             @provider_repository ||= provider_repository
-            @user_repositary ||= user_repositary
+            @user_repository ||= user_repository
           end
 
           def call(params)
