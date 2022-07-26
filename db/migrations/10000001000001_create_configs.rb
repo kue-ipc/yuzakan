@@ -15,9 +15,9 @@ Hanami::Model.migration do
       column :password_unusable_chars, String, null: false, default: ''
       column :password_extra_dict, String, size: 4096, null: false, default: ''
 
-      # at most 30 neworks
-      column :admin_networks, String, size: 1024, null: false, default: ''
-      column :user_networks, String, size: 1024, null: false, default: ''
+      column :generate_password_size, Integer, null: false, default: 24
+      column :generate_password_type, String, null: false, default: 'ascii'
+      column :generate_password_chars, String, null: false, default: ' '
 
       # contact
       column :contact_name, String
