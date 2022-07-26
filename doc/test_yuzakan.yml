@@ -10,9 +10,9 @@ config:
   password_extra_dict: ''
   admin_networks: ''
   user_networks: ''
-  contact_name: ''
-  contact_email: ''
-  contact_phone: ''
+  contact_name: アカウント管理センター
+  contact_email: admin@example.jp
+  contact_phone: 00-0000-0000
 providers:
 - name: posix_samba
   label: PosixとSamba
@@ -49,6 +49,13 @@ providers:
     group_search_filter: "(objectclass=posixGroup)"
     password_scheme: "{CRYPT}"
     crypt_salt_format: "$6$%.16s"
+    create_user_dn_attr: cn
+    create_user_ou_dn: ou=people,dc=example,dc=jp
+    create_user_object_classes: account
+    uid_min: 1000
+    uid_max: 60000
+    search_free_uid: next
+    user_gid_nuber: 100
     samba_domain_sid: S-1-5-21-4294967295-4294967295-4294967295
     samba_nt_password: true
     samba_lm_password: false
@@ -88,6 +95,9 @@ providers:
     group_search_filter: "(objectclass=*)"
     password_scheme: "{SSHA512}"
     crypt_salt_format: "$6$%.16s"
+    create_user_dn_attr: cn
+    create_user_ou_dn: ou=User,dc=example,dc=jp
+    create_user_object_classes: inetOrgPerson,nsMemberOf
 attrs:
 - name: email
   label: メールアドレス
@@ -220,4 +230,16 @@ attrs:
   - provider:
       name: posix_samba
     name: sambaSID
+    conversion: 
+- name: home
+  label: ホームディレクトリ
+  type: string
+  order: 88
+  hidden: false
+  readonly: false
+  code: "`/home/${username}`"
+  attr_mappings:
+  - provider:
+      name: posix_samba
+    name: homeDirectory
     conversion: 
