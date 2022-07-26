@@ -1,8 +1,10 @@
+require 'ipaddr'
+
 class NetworkRepository < Hanami::Repository
   private :create, :update, :delete
 
   def create_by_address(address, data)
-    create({address: address, **data})
+    create({**data, address: normalize_address(address)})
   end
 
   def update_by_address(address, data)
@@ -18,6 +20,17 @@ class NetworkRepository < Hanami::Repository
   end
 
   def by_address(address)
-    networsk.by_address
+    networsk.by_address(normalize_address(address))
+  end
+
+  private def normalize_address(address)
+    ipaddr = IPAddr.new(address)
+    prefix = ipaddr.prefix
+    if (prefix == 32 && ipaddr.ipv4?) ||
+      (prefix == 128 && ipaddr.ipv6?)
+      ipaddr.to_s
+    else
+      "#{ipaddr}/#{ipaddr.prefix}"
+    end
   end
 end

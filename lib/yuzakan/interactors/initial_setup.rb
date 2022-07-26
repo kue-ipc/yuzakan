@@ -37,6 +37,7 @@ class InitialSetup
     admin_user = params[:admin_user]
 
     setup_config(config)
+    setup_network
     setup_local_provider
     setup_admin(admin_user)
   end
@@ -62,6 +63,18 @@ class InitialSetup
       **config,
       maintenace: false,
     })
+  end
+
+  private def setup_network
+    ['127.0.0.0/8',
+     '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16',
+     '::1',
+     'fc00::/7',].each do |address|
+      @network_repository.create_by_address(address, {clearance_level: 5, trusted: true})
+    end
+    ['0.0.0.0/0', '::/0'].each do |address|
+      @network_repository.create_by_address(address, {clearance_level: 1, trusted: false})
+    end
   end
 
   private def setup_local_provider
