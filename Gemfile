@@ -30,9 +30,6 @@ gem 'i18n'
 gem 'redis-rack'
 gem 'readthis'
 
-# default gem
-gem 'ipaddr'
-
 # LDAP
 gem 'net-ldap'
 gem 'smbhash'
