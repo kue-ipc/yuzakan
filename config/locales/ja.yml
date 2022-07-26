@@ -62,6 +62,37 @@ ja:
     valid_chars?: "使用できない文字が含まれています。"
     min_types?: "文字種は%{num}種類以上でなければなりません。"
     strong_password?: "パスワードが弱すぎます。"
+    # messages
+    not_found: "%{name}が見つかりません。"
+    action:
+      fail: "%{action}に失敗しました。"
+      error: "%{target}に対して%{action}時にエラーが発生しました。"
+      not_run: "どの%{target}に対しても%{action}は実行されませんでした。" 
+      stopped_after_some: >-
+        一部の%{target}については%{action}が実行されましたが、
+        別の%{target}では%{action}時にエラーが発生し、処理が中断されました。
+        実行されていない%{target}が存在する可能性があるため、
+        再度%{action}を実行してください。
+  interactors:
+    reset_password: パスワードリセット
+    create_user: ユーザー作成
+    read_user: ユーザー取得
+    update_user: ユーザー更新
+    destroy_user: ユーザー削除
+    sync_user: ユーザー同期
+    register_user: ユーザー登録
+    unregister_user: ユーザー解除
+    lock_user: ユーザーロック
+    unlock_user: ユーザーアンロック
+    create_attr: 属性作成
+    generate_password: 'パスワード生成'
+  entities:
+    user: ユーザー
+    group: グループ
+    provider: プロバイダー
+    adapter: アダプター
+    attr: 属性
+    member: メンバー
   session:
     errors:
       too_many_failure: >-
@@ -69,24 +100,3 @@ ja:
         しばらく待ってから再度ログインを試してください。
       incorrect: "ユーザー名またはパスワードが違います。"
       deny_network: "現在のネットワークからのログインは許可されていません。"
-  interactor:
-    errors:
-      at: "{%action}時にエラーが発生しました。"
-      run_on_no: "どのシステムでも%{action}は実行されませんでした。" 
-      run_on_some: >-
-        一部のシステムについては%{action}が実行されましたが、
-        別のシステムでは%{action}時にエラーが発生し、処理が中断されました。
-        実行されていあにシステムが存在する可能性があるため、
-        再度%{action}を実行してください。
-    actions:
-      reset_password: パスワードリセット
-      create_user: ユーザー作成
-      read_user: ユーザー取得
-      update_user: ユーザー更新
-      destroy_user: ユーザー削除
-      sync_user: ユーザー同期
-      register_user: ユーザー登録
-      unregister_user: ユーザー解除
-      lock_user: ユーザーロック
-      unlock_user: ユーザーアンロック
-      create_attr: 属性作成

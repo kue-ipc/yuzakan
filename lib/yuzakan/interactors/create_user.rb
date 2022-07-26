@@ -11,8 +11,8 @@ class CreateUser
 
     validations do
       required(:username).filled(:str?, :name?, max_size?: 255)
-      required(:providers) { array? { each { str? & name? & max_size?(255) } } }
-      optional(:clearance_level).maybe(:int?)
+      optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
+      optional(:clearance_level).filled(:int?)
       required(:primary_group).filled(:str?, :name?, max_size?: 255)
       optional(:attrs) { hash? }
     end
@@ -61,7 +61,7 @@ class CreateUser
       error!('ユーザーが作成されていません。')
     end
 
-    if @user.clearance_level != params[:clearance_level]
+    if @user.clearance_level && @user.clearance_level != params[:clearance_level]
       @user = @user_repositary.update(@user.id, clearance_level: params[:clearance_level])
     end
   end

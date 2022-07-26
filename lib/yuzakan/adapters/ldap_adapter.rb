@@ -288,7 +288,7 @@ module Yuzakan
 
       def user_change_password(username, password)
         user = get_user_entry(username)
-        return nil unless user
+        return if user.nil?
 
         operations = change_password_operations(user, password)
         ldap_modify(user.dn, operations)
@@ -296,7 +296,7 @@ module Yuzakan
 
       def user_lock(username, _password)
         user = get_user_entry(username)
-        return nil unless user
+        return if user.nil?
 
         operations = lock_operations(user)
         ldap_modify(user.dn, operations)
@@ -304,7 +304,7 @@ module Yuzakan
 
       def user_unlock(username, _password)
         user = get_user_entry(username)
-        return nil unless user
+        return if user.nil?
 
         operations = unlock_operations(user)
         ldap_modify(user.dn, operations)

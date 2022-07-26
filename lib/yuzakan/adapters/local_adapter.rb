@@ -59,7 +59,7 @@ module Yuzakan
 
       def user_change_password(username, password)
         user = @repository.find_by_name(username)
-        raise "user not found: #{username}" if user.nil?
+        return false if user.nil?
 
         hashed_password = LocalUser.create_hashed_password(password)
         hashed_password = LocalUser.lock_password(hashed_password) if user.locked?
@@ -69,7 +69,7 @@ module Yuzakan
 
       def user_lock(username)
         user = @repository.find_by_name(username)
-        raise "user not found: #{username}" if user.nil?
+        return if user.nil?
         return if user.locked?
 
         @repository.update(user.id, hashed_password: LocalUser.lock_password(user.hashed_password))
@@ -77,7 +77,7 @@ module Yuzakan
 
       def user_unlock(username, _password = nil)
         user = @repository.find_by_name(username)
-        raise "user not found: #{username}" if user.nil?
+        return if user.nil?
         return unless user.locked?
 
         @repository.update(user.id, hashed_password: LocalUser.unlock(user.hashed_password))

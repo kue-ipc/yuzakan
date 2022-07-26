@@ -6,24 +6,26 @@ class GeneratePassword
   expose :password
 
   def initialize(size: 16,
-                 chars: :alphanumeric)
+                 chars: :alphanumeric,
+                 exclude: [])
     @size = size
-    @chars = chars
+    exclude = exclude.chars if exclude.is_a?(String)
+    @chars =
+      case chars
+      when :alphanumeric
+        ['0'..'9', 'A'..'Z', 'a'..'z'].flat_map(&:to_a)
+      when :ascii
+        ("\x20".."\x7e").to_a
+      when String
+        chars.chars
+      else
+        chars
+      end.-(exclude).uniq
   end
 
-  def call(_params = {})
-    @password =
-      if @chars == :alphanumeric
-        SecureRandom.alphanumeric(@size)
-      elsif @chars == :ascii
-        chars = ("\x20".."\x7e").to_a
-        @password = @size.times.map do
-          chars[SecureRandom.random_number(chars.size)]
-        end.join
-      else
-        @password = @size.times.map do
-          @chars[SecureRandom.random_number(@chars.size)]
-        end.join
-      end
+  def call(params = {}) # rubocop:disable Lint/UnusedMethodArgument
+    @password = @size.times.map do
+      @chars[SecureRandom.random_number(@chars.size)]
+    end.join
   end
 end

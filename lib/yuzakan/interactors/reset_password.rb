@@ -11,7 +11,7 @@ class ResetPassword
 
     validations do
       required(:username).filled(:str?, :name?, max_size?: 255)
-      required(:providers) { array? { each { str? & name? & max_size?(255) } } }
+      optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
     end
   end
 
@@ -21,7 +21,8 @@ class ResetPassword
 
   def initialize(
     provider_repository: ProviderRepository.new,
-    generate_password: GeneratePassword.new)
+    generate_password: GeneratePassword.new
+  )
     @provider_repository = provider_repository
     @generate_password = generate_password
   end
@@ -30,31 +31,45 @@ class ResetPassword
     @username = params[:username]
 
     gp_result = @generate_password.call
-    error!('パスワード生成に失敗しました。') if gp_result.failure?
+    error!(I18n.t('errors.action.failed', action: I18n.t('interactors.generate_password'))) if gp_result.failure?
     @password = gp_result.password
 
     @count = 0
 
-    params[:providers].each do |provider_name|
-      provider = @provider_repository.find_with_adapter_by_name(provider_name)
-      raise 'プロバイダーが見つかりません。' unless provider
+    providers =
+      if params[:providers]
+        params[:providers].map do |provider_name|
+          provider = @provider_repository.find_with_adapter_by_name(provider_name)
+          unless provider
+            Hanami.logger.warn "Not found: #{provider_name}"
+            error!(I18n.t('errors.not_found', name: I18n.t('entities.provider')))
+          end
 
+          provider
+        end
+      else
+        @provider_repository.ordered_all_with_adapter_by_operation(:user_change_password)
+      end
+
+    providers.each do |provider|
       @count += 1 if provider.user_change_password(@username, @password)
     rescue => e
+      Hanami.logger.error "Failed to restet_password on #{provider.name}"
       Hanami.logger.error e
+      error(I18n.t('errors.action.error', action: I18n.t('interactors.reset_password'), target: provider.label))
       if @count.positive?
-        error <<~'ERROR_MESSAGE'
-          一部のシステムについてはパスワードがリセットされましたが、
-          別のシステムでのパスワードリセット時にエラーが発生し、処理が中断されました。
-          リセットされていないシステムが存在する可能性があるため、
-          再度パスワードリセットを実行してください。
-        ERROR_MESSAGE
+        error(I18n.t('errors.action.stopped_after_some',
+                     action: I18n.t('interactors.reset_password'),
+                     target: I18n.t('entities.provider')))
       end
-      error!("パスワードリセット時にエラーが発生しました。: #{e.message}")
+      error!(e.message)
     end
 
     if @count.zero?
-      error!('どのシステムでもパスワードはリセットされませんでした。')
+      Hanami.logger.warn "No provider reset_password"
+      error!(I18n.t('errors.action.not_run',
+                    action: I18n.t('interactors.reset_password'),
+                    target: I18n.t('entities.provider')))
     end
   end
 
@@ -62,7 +77,15 @@ class ResetPassword
     validation = Validations.new(params).validate
     if validation.failure?
       error(validation.messages)
-      return false
+      false
     end
+
+    true
+  end
+
+  private def generate_password
+    gp_result = @generate_password.call
+    error!(I18n.t('errors.action.failed', action: I18n.t('interactors.generate_password'))) if gp_result.failure?
+    gp_result.password
   end
 end
