@@ -25,7 +25,7 @@ module Yuzakan
           'Total-Count' => header_total_count,
           'Link' => header_link,
           'Content-Range' => header_content_range,
-        }
+        }.compact
       end
 
       def header_total_count
