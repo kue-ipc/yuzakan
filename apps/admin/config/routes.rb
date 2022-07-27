@@ -13,8 +13,6 @@ resources :providers, only: [:index, :show]
 
 resources :attrs, only: [:index]
 
-resources :users, only: [:index, :show] do
-  resource :password, only: [:create]
-end
+resources :users, only: [:index, :show]
 
 resources :groups, only: [:index, :show]
