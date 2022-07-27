@@ -2,7 +2,7 @@
 
 import {text, app} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
-import {fetchJsonGet} from '../fetch_json.js'
+import {fetchJsonGet} from '../api/fetch_json.js'
 import {fieldName, fieldId} from '../form_helper.js'
 import providerParams from './provider_params.js'
 import WebData from '../web_data.js'

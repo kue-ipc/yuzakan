@@ -6,7 +6,7 @@ import * as html from './hyperapp-html.js'
 import {focus} from './hyperapp-dom.js'
 import {Modal} from './bootstrap.js'
 import {StatusIcon, statusInfo} from './status.js'
-import {fetchJson} from './fetch_json.js'
+import {fetchJson} from './api/fetch_json.js'
 import {modalDialog} from './modal.js'
 
 export default class WebData

@@ -1,6 +1,6 @@
 import {text, app} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
-import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '../fetch_json.js'
+import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '../api/fetch_json.js'
 import csrf from '../csrf.js'
 import ConfirmDialog from '../confirm_dialog.js'
 import InputTextDialog from '../input_text_dialog.js'

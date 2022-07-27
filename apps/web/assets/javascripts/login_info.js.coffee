@@ -6,7 +6,7 @@ import ModalDialog from './modal_dialog.js'
 import BsIcon from './bs_icon.js'
 import * as dlh from './dl_horizontal.js'
 
-import {runGetSystem} from './get_system.js'
+import {runGetSystem} from './api/get_system.js'
 
 export default class LoginInfo extends ModalDialog
   constructor: ({

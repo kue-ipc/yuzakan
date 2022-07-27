@@ -2,7 +2,7 @@
 
 import {text, app} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
-import {fetchJsonGet} from '../fetch_json.js'
+import {fetchJsonGet} from '../api/fetch_json.js'
 import {fieldName, fieldId} from '../form_helper.js'
 import csrf from '../csrf.js'
 import {dlClasses, dtClasses, ddClasses} from '../dl_horizontal.js'

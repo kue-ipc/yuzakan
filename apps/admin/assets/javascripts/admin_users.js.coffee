@@ -1,6 +1,6 @@
 import {text, app} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
-import {fetchJsonGet} from '../fetch_json.js'
+import {fetchJsonGet} from '../api/fetch_json.js'
 import BsIcon from '../bs_icon.js'
 import {objToUrlencoded} from '../form_helper.js'
 
