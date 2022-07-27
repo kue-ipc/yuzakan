@@ -24,7 +24,6 @@ class UnlockUser
     config: ConfigRepository.new.current,
     providers: nil,
     provider_repository: ProviderRepository.new,
-    activity_repository: ActivityRepository.new,
     generate_password: GeneratePassword.new,
     mailer: Mailers::UserNotify
   )
@@ -33,7 +32,6 @@ class UnlockUser
     @config = config
     @providers = providers
     @provider_repository = provider_repository
-    @activity_repository = activity_repository
     @generate_password = generate_password
     @mailer = mailer
   end

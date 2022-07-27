@@ -1,4 +1,9 @@
 class LocalUserRepository < Hanami::Repository
+  associations do
+    has_many :local_members
+    has_many :local_groups, through: :local_members
+  end
+
   def by_name(name)
     local_users.where(name: name)
   end

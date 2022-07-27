@@ -3,7 +3,7 @@ Hanami::Model.migration do
     create_table :local_users do
       primary_key :id
 
-      column :name, String, null: false
+      column :username, String, null: false
       column :hashed_password, String, null: false
       column :display_name, String
       column :email, String
@@ -11,7 +11,7 @@ Hanami::Model.migration do
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
 
-      index :name, unique: true
+      index :username, unique: true
     end
   end
 end

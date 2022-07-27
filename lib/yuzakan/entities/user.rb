@@ -7,15 +7,20 @@
 # 0: guest
 
 class User < Hanami::Entity
+  def name
+    Hanami.logger.warn('call User#name')
+    username
+  end
+
   def label_name
     if display_name
-      "#{display_name} (#{name})"
+      "#{display_name} (#{username})"
     else
-      name
+      username
     end
   end
 
   def to_s
-    name
+    username
   end
 end

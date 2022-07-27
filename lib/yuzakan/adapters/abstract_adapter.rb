@@ -4,7 +4,7 @@
 # check -> true or false
 #
 # userdata:
-#   name: String = username
+#   usnername: String = username
 #   display_name: String = display name
 #   email: String = mail address
 #   locked: ?bool
@@ -16,7 +16,7 @@
 #   grops: Array[String]
 #
 # groupdate:
-#   name: String = groupname
+#   groupname: String = groupname
 #   dislay_name: String = display name
 #   x disabled: ?bool
 #   x unmanageable: ?bool

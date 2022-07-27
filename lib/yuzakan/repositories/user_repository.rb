@@ -2,7 +2,6 @@ class UserRepository < Hanami::Repository
   associations do
     has_many :members
     has_many :groups, through: :members
-    has_many :activities
   end
 
   def by_name(name)

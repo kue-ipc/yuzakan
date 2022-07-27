@@ -28,12 +28,12 @@ describe Api::Controllers::Myself::Show do
     _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
     _(json).must_equal({
-      name: 'user',
+      username: 'user',
       display_name: 'ユーザー',
       email: 'user@example.jp',
       clearance_level: 1,
       userdata: {
-        name: 'user',
+        username: 'user',
         display_name: 'ユーザー',
         email: 'user@example.jp',
         attrs: {ja_display_name: '表示ユーザー'},
@@ -45,7 +45,7 @@ describe Api::Controllers::Myself::Show do
           adapter_name: 'mock',
         },
         userdata: {
-          name: 'user',
+          username: 'user',
           display_name: 'ユーザー',
           email: 'user@example.jp',
           locked: false,

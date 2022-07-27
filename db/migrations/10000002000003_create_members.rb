@@ -5,7 +5,7 @@ Hanami::Model.migration do
 
       foreign_key :user_id,  :users,  on_delete: :cascade, null: false
       foreign_key :group_id, :groups, on_delete: :cascade, null: false
-      column :primary, TrueClass, null: false
+      column :primary, TrueClass, null: false, default: false
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

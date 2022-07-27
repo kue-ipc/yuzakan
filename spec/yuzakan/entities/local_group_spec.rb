@@ -1,5 +1,5 @@
 require_relative '../../spec_helper'
 
-describe ActivityRepository do
+describe LocalGroup do
   # place your tests here
 end

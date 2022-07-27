@@ -17,6 +17,11 @@ class LocalUser < Hanami::Entity
     end
   end
 
+  def name
+    Hanami.logger.warn('call LocalUser#name')
+    username
+  end
+
   def verify_password(password)
     bcrypt_password == password
   end

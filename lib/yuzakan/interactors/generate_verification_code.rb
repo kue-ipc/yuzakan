@@ -21,14 +21,12 @@ class GenerateVerificationCode
     client:,
     providers:,
     config: ConfigRepository.new.current,
-    activity_repository: ActivityRepository.new,
     mailer: Mailers::UserNotify
   )
     @user = user
     @client = client
     @config = config
     @providers = providers
-    @activity_repository = activity_repository
     @mailer = mailer
   end
 

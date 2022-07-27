@@ -3,7 +3,7 @@ Hanami::Model.migration do
     create_table :users do
       primary_key :id
 
-      column :name, String, null: false
+      column :username, String, null: false
       column :display_name, String, null: true
       column :email, String, null: true
 
@@ -12,7 +12,7 @@ Hanami::Model.migration do
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
 
-      index :name, unique: true
+      index :username, unique: true
       index :email
     end
   end

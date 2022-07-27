@@ -63,7 +63,7 @@ module Yuzakan
       end
 
       def user_create(username, password = nil, **userdata)
-        user = specialize_user(userdata.merge(name: username))
+        user = specialize_user(userdata.merge(username: username))
         # set a password
         set_password(user, password)
         response = service.insert_user(user)
@@ -225,7 +225,7 @@ module Yuzakan
         return if user.nil?
 
         data = {
-          name: user.primary_email.split('@').first,
+          username: user.primary_email.split('@').first,
           display_name: user.name.full_name,
           email: user.primary_email,
         }

@@ -583,7 +583,7 @@ module Yuzakan
         groups = get_memberof_groups(user).map { |group| get_group_name(group) }
 
         {
-          name: name,
+          username: name,
           display_name: user.first(@params[:user_display_name_attr]),
           email: user.first(@params[:user_email_attr])&.downcase,
           attrs: attrs,
@@ -610,7 +610,7 @@ module Yuzakan
         # end
 
         {
-          name: name,
+          groupname: name,
           display_name: group.first(@params[:group_display_name_attr]),
           # attrs: attrs,
         }

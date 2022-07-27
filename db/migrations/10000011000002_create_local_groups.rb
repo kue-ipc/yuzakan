@@ -1,6 +1,6 @@
 Hanami::Model.migration do
   change do
-    create_table :groups do
+    create_table :local_groups do
       primary_key :id
 
       column :groupname, String, null: false
