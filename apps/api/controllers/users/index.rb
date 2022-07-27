@@ -52,7 +52,7 @@ module Api
 
           page_list = all_list[item_offset, per_page] || []
 
-          users_data = @user_repository.by_name(page_list).to_a.to_h { |user| [user.username, user] }
+          users_data = @user_repository.by_username(page_list).to_a.to_h { |user| [user.username, user] }
 
           @users = page_list.map do |username|
             users_data[username] || create_user(username)
