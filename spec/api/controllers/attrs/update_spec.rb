@@ -2,9 +2,9 @@ require_relative '../../../spec_helper'
 
 describe Api::Controllers::Attrs::Update do
   let(:action) {
-    Api::Controllers::Attrs::Destroy.new(**action_opts, attr_repository: attr_repository,
-                                                        attr_mapping_repository: attr_mapping_repository,
-                                                        provider_repository: provider_repository)
+    Api::Controllers::Attrs::Update.new(**action_opts, attr_repository: attr_repository,
+                                                       attr_mapping_repository: attr_mapping_repository,
+                                                       provider_repository: provider_repository)
   }
   eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }

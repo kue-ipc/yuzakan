@@ -2,9 +2,7 @@ require_relative '../../../spec_helper'
 require 'yaml'
 
 describe Api::Controllers::Myself::Show do
-  let(:action) {
-    Api::Controllers::Myself::Password::Update.new(**action_opts, provider_repository: provider_repository)
-  }
+  let(:action) { Api::Controllers::Myself::Show.new(**action_opts, provider_repository: provider_repository) }
   eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
 

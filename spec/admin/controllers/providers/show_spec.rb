@@ -4,7 +4,7 @@ describe Admin::Controllers::Providers::Show do
   let(:action) { Admin::Controllers::Providers::Show.new(**action_opts, provider_repository: provider_repository) }
   eval(init_let_script) # rubocop:disable Security/Eval
 
-  let(:params) { {**env, id: 'provider1'} }
+  let(:action_params) { {id: 'provider1'} }
   let(:provider_repository) {
     ProviderRepository.new.tap { |obj| stub(obj).exist_by_name?('provider1') { true } }
   }

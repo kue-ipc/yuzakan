@@ -4,9 +4,8 @@ describe Admin::Controllers::Setup::Create do
   let(:action) { Admin::Controllers::Setup::Create.new(**action_opts) }
   eval(init_let_script) # rubocop:disable Security/Eval
 
-  let(:params) {
+  let(:action_params) {
     {
-      **env,
       setup: {
         config: {title: 'テスト'},
         admin_user: {username: 'admin', password: 'pass', password_confirmation: 'pass'},

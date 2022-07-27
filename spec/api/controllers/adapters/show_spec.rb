@@ -4,6 +4,7 @@ describe Api::Controllers::Adapters::Show do
   let(:action) { Api::Controllers::Adapters::Show.new(**action_opts) }
   eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
+  let(:action_params) { {id: 'dummy'} }
 
   it 'is successful' do
     response = action.call(params)

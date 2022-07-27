@@ -5,7 +5,7 @@ describe Api::Controllers::Providers::Show do
   eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
 
-  let(:params) { {**env, id: 'provider1'} } # overwrite
+  let(:action_params) { {id: 'provider1'} }
   let(:provider_params) {
     {
       name: 'provider1', label: 'プロバイダー①',
