@@ -23,7 +23,7 @@ class ReadUser
   end
 
   def call(params)
-    @userdata = {name: params[:username], attrs: {}, groups: []}
+    @userdata = {username: params[:username], attrs: {}, groups: []}
     @provider_userdatas = []
 
     providers = @provider_repository.ordered_all_with_adapter_by_operation(:user_read)
@@ -31,6 +31,7 @@ class ReadUser
       userdata = provider.user_read(params[:username])
       if userdata
         @provider_userdatas << {provider: provider, userdata: userdata} 
+        @userdata[:username] ||= userdata[:username]
         @userdata[:display_name] ||= userdata[:display_name]
         @userdata[:email] ||= userdata[:email]
         @userdata[:attrs] = userdata[:attrs].merge(@userdata[:attrs])

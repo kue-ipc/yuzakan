@@ -5,16 +5,19 @@ class CreateUser
   include Hanami::Interactor
 
   class Validations
-    include Hanami::Validations::Form
+    include Hanami::Validations
     predicates NamePredicates
     messages :i18n
 
     validations do
       required(:username).filled(:str?, :name?, max_size?: 255)
       optional(:password).filled(:str?, max_size?: 255)
-      optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
+      optional(:display_name).filled(:str?, max_size?: 255)
+      optional(:email).filled(:str?, :email?, max_size?: 255)
       optional(:clearance_level).filled(:int?)
       optional(:primary_group).filled(:str?, :name?, max_size?: 255)
+
+      optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
       optional(:attrs) { hash? }
     end
   end

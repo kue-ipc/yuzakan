@@ -36,10 +36,10 @@ class InitialSetup
     config = params[:config]
     admin_user = params[:admin_user]
 
-    setup_config(config)
     setup_network
     setup_local_provider
     setup_admin(admin_user)
+    setup_config(config)
   end
 
   private def valid?(params)
@@ -70,25 +70,37 @@ class InitialSetup
      '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16',
      '::1',
      'fc00::/7',].each do |address|
-      @network_repository.create_by_address(address, {clearance_level: 5, trusted: true})
+      @network_repository.create_or_update_by_address(address, {clearance_level: 5, trusted: true})
     end
     ['0.0.0.0/0', '::/0'].each do |address|
-      @network_repository.create_by_address(address, {clearance_level: 1, trusted: false})
+      @network_repository.create_or_update_by_address(address, {clearance_level: 1, trusted: false})
     end
   end
 
   private def setup_local_provider
-    @provider_repository.create({
-      name: 'local',
-      label: 'ローカル',
-      order: '0',
-      adapter_name: 'local',
-      readable: true,
-      writable: true,
-      authenticatable: true,
-      password_changeable: true,
-      lockable: true,
-    })
+    if (local_provider = @provider_repository.find_by_name('local'))
+      @provider_repository.update(local_provider.id, {
+        order: '0',
+        adapter_name: 'local',
+        readable: true,
+        writable: true,
+        authenticatable: true,
+        password_changeable: true,
+        lockable: true,
+      })
+    else
+      @provider_repository.create({
+        name: 'local',
+        label: 'ローカル',
+        order: '0',
+        adapter_name: 'local',
+        readable: true,
+        writable: true,
+        authenticatable: true,
+        password_changeable: true,
+        lockable: true,
+      })
+    end
   end
 
   private def setup_admin(admin_user)

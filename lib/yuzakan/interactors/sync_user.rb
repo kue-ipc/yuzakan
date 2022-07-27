@@ -35,7 +35,7 @@ class SyncUser
     @userdata = read_user_result.userdata
     @provider_userdatas = read_user_result.provider_userdatas
 
-    error!('ユーザー名が一致しません。') if @userdata[:username] != params[:username]
+    error!(I18n.t('errors.eql?', left: I18n.t('attributes.user.username'))) if @userdata[:username] != params[:username]
 
     if @provider_userdatas.empty?
       unregister_user = UnregisterUser.new(user_repository: @user_repository)
