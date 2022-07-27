@@ -36,7 +36,7 @@ module Api
             halt_json 400, errors: [params.errors] unless params.valid?
 
             groupname = params[:group_id]
-            group = @group_repository.find_by_name(groupname)
+            group = @group_repository.find_by_groupname(groupname)
             halt 404 unless group
 
             @providers = @provider_repository.ordered_all_with_adapter_by_operation(:member_list)
@@ -53,7 +53,7 @@ module Api
             @members = get_members(@pager.page_items).map do |member|
               {
                 **convert_for_json(member),
-                providers: providers_items.filter { |_, v| v.include?(member.name) }.keys,
+                providers: providers_items.filter { |_, v| v.include?(member.username) }.keys,
               }
             end
 

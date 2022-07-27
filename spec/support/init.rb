@@ -16,7 +16,7 @@ def init_let_script
     let(:client) { '192.0.2.1' }
     let(:uuid) { 'ffffffff-ffff-4fff-bfff-ffffffffffff' }
     let(:user) {
-      User.new(id: 42, name: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1)
+      User.new(id: 42, username: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1)
     }
     let(:session) { {uuid: uuid, user_id: user.id, created_at: Time.now - 600, updated_at: Time.now - 60} }
     let(:format) { 'text/html' }

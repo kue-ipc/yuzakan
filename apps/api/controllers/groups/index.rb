@@ -40,7 +40,7 @@ module Api
           @groups = get_groups(@pager.page_items).map do |group|
             {
               **convert_for_json(group),
-              providers: providers_items.filter { |_, v| v.include?(group.name) }.keys,
+              providers: providers_items.filter { |_, v| v.include?(group.groupname) }.keys,
             }
           end
 
@@ -55,7 +55,7 @@ module Api
             if group_entities.key?(groupname)
               group_entities[groupname]
             else
-              create_group(name)
+              create_group(groupname)
             end
           end
         end

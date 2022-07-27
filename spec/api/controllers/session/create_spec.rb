@@ -13,7 +13,7 @@ describe Api::Controllers::Session::Create do
   let(:user_repository) {
     UserRepository.new.tap do |obj|
       stub(obj).find { user }
-      stub(obj).find_by_name { user }
+      stub(obj).find_by_username { user }
       stub(obj).update { user }
     end
   }

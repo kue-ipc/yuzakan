@@ -52,10 +52,10 @@ module Api
 
           page_list = all_list[item_offset, per_page] || []
 
-          users_data = @user_repository.by_name(page_list).to_a.to_h { |user| [user.name, user] }
+          users_data = @user_repository.by_name(page_list).to_a.to_h { |user| [user.username, user] }
 
-          @users = page_list.map do |name|
-            users_data[name] || create_user(name)
+          @users = page_list.map do |username|
+            users_data[username] || create_user(username)
           end
 
           first_page = 1
@@ -68,7 +68,7 @@ module Api
           data = @users.map do |user|
             {
               **convert_for_json(user),
-              providers: providers_list.filter { |_, v| v.include?(user.name) }.keys,
+              providers: providers_list.filter { |_, v| v.include?(user.username) }.keys,
             }
           end
 

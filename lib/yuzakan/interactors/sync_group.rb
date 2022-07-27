@@ -35,11 +35,11 @@ class SyncGroup
     @groupdata = read_group_result.groupdata
     @provider_groupdatas = read_group_result.provider_groupdatas
 
-    error!('グループ名が一致しません。') if @groupdata[:name] != params[:groupname]
+    error!('グループ名が一致しません。') if @groupdata[:groupname] != params[:groupname]
 
     if @provider_groupdatas.empty?
       unregister_group = UnregisterGroup.new(group_repository: @group_repository)
-      nuregister_group_result = unregister_group.call(@groupdata.slice(:name))
+      nuregister_group_result = unregister_group.call(@groupdata.slice(:groupname))
       if nuregister_group_result.failure?
         nuregister_group_result.errors.each { |msg| error(msg) }
         fail!

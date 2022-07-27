@@ -18,7 +18,7 @@ module Api
           create_user = CreateUser.new(
             user_repository: @user_repository,
             provider_repository: @provider_repository)
-          result = create_user.call({username: params[:name], **params.to_h.except(:name)})
+          result = create_user.call(params)
 
           halt_json(422, errors: merge_errors(result.errors)) if result.failure?
 

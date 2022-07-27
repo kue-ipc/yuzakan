@@ -18,7 +18,7 @@ module Api
           def call(params)
             reset_password = ResetPassword.new(
               provider_repository: @provider_repository)
-            result = reset_password.call({username: params[:name], **params.to_h.except(:name)})
+            result = reset_password.call(params)
 
             halt_json(422, errors: merge_errors(result.errors)) if result.failure?
 
@@ -35,8 +35,8 @@ module Api
             self.status = 201
             headers['Location'] = routes.user_path(result.user.id)
             self.body = generate_json({
-              name: result.username,
-              password: relust.password,
+              username: result.username,
+              password: result.password,
             })
           end
         end

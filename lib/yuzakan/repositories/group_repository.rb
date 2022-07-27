@@ -4,11 +4,11 @@ class GroupRepository < Hanami::Repository
     has_many :users, through: :members
   end
 
-  def by_name(name)
-    groups.where(name: name)
+  def by_groupname(groupname)
+    groups.where(groupname: groupname)
   end
 
-  def find_by_name(name)
-    by_name(name).one
+  def find_by_groupname(groupname)
+    by_groupname(groupname).one
   end
 end

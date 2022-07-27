@@ -11,7 +11,7 @@ class UnregisterGroup
     messages :i18n
 
     validations do
-      required(:name).filled(:str?, :name?, max_size?: 255)
+      required(:groupname).filled(:str?, :name?, max_size?: 255)
     end
   end
 
@@ -20,7 +20,7 @@ class UnregisterGroup
   end
 
   def call(params)
-    group = @group_repository.find_by_name(params[:name])
+    group = @group_repository.find_by_groupname(params[:groupname])
     @group_repository.delete(group.id) if group
   end
 

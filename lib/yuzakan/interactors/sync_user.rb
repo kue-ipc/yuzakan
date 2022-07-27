@@ -35,11 +35,11 @@ class SyncUser
     @userdata = read_user_result.userdata
     @provider_userdatas = read_user_result.provider_userdatas
 
-    error!('ユーザー名が一致しません。') if @userdata[:name] != params[:username]
+    error!('ユーザー名が一致しません。') if @userdata[:username] != params[:username]
 
     if @provider_userdatas.empty?
       unregister_user = UnregisterUser.new(user_repository: @user_repository)
-      unregister_user_result = unregister_user.call(@userdata.slice(:name))
+      unregister_user_result = unregister_user.call(@userdata.slice(:username))
       if unregister_user_result.failure?
         unregister_user_result.errors.each { |msg| error(msg) }
         fail!
@@ -48,7 +48,7 @@ class SyncUser
       @user = nil
     else
       register_user = RegisterUser.new(user_repository: @user_repository)
-      register_user_result = register_user.call(@userdata.slice(:name, :display_name, :email))
+      register_user_result = register_user.call(@userdata.slice(:username, :display_name, :email))
       if register_user_result.failure?
         register_user_result.errors.each { |msg| error(msg) }
         fail!

@@ -13,7 +13,7 @@ class RegisterUser
     messages :i18n
 
     validations do
-      required(:name).filled(:str?, :name?, max_size?: 255)
+      required(:username).filled(:str?, :name?, max_size?: 255)
       optional(:display_name).maybe(:str?, max_size?: 255)
       optional(:email).maybe(:str?, :email?, max_size?: 255)
     end
@@ -26,14 +26,14 @@ class RegisterUser
   expose :user
 
   def call(params)
-    name = params[:name]
-    display_name = params[:display_name] || params[:name]
+    username = params[:username]
+    display_name = params[:display_name] || params[:username]
     email = params[:email]
 
-    user = @user_repository.find_by_name(name)
+    user = @user_repository.find_by_username(username)
     @user =
       if user.nil?
-        @user_repository.create(name: name, display_name: display_name, email: email)
+        @user_repository.create(username: username, display_name: display_name, email: email)
       elsif user.display_name != display_name || user.email != email
         @user_repository.update(user.id, display_name: display_name, email: email)
       else

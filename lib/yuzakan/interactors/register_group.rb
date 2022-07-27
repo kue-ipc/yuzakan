@@ -11,7 +11,7 @@ class RegisterGroup
     messages :i18n
 
     validations do
-      required(:name).filled(:str?, :name?, max_size?: 255)
+      required(:groupname).filled(:str?, :name?, max_size?: 255)
       optional(:display_name).maybe(:str?, max_size?: 255)
     end
   end
@@ -23,13 +23,13 @@ class RegisterGroup
   expose :group
 
   def call(params)
-    name = params[:name]
-    display_name = params[:display_name] || params[:name]
+    groupname = params[:groupname]
+    display_name = params[:display_name] || params[:groupname]
 
-    group = @group_repository.find_by_name(name)
+    group = @group_repository.find_by_groupname(groupname)
     @group =
       if group.nil?
-        @group_repository.create(name: name, display_name: display_name)
+        @group_repository.create(groupname: namgroupnamee, display_name: display_name)
       elsif group.display_name != display_name
         @group_repository.update(group.id, display_name: display_name)
       else

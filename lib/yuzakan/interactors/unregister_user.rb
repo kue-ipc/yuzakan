@@ -11,7 +11,7 @@ class UnregisterUser
     messages :i18n
 
     validations do
-      required(:name).filled(:str?, :name?, max_size?: 255)
+      required(:username).filled(:str?, :name?, max_size?: 255)
     end
   end
 
@@ -20,7 +20,7 @@ class UnregisterUser
   end
 
   def call(params)
-    user = @user_repository.find_by_name(params[:name])
+    user = @user_repository.find_by_username(params[:username])
     @user_repository.delete(user.id) if user
   end
 
