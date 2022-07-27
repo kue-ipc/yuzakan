@@ -4,16 +4,16 @@ class UserRepository < Hanami::Repository
     has_many :groups, through: :members
   end
 
-  def by_name(name)
-    users.where(name: name)
+  def by_username(username)
+    users.where(username: username)
   end
 
-  def find_by_name(name)
-    by_name(name).one
+  def find_by_username(username)
+    by_username(username).one
   end
 
-  def find_by_name_or_sync(name)
-    find_by_name(name) || sync(name)
+  def find_by_username_or_sync(username)
+    find_by_username(username) || sync(username)
   end
 
   def offset(offset)

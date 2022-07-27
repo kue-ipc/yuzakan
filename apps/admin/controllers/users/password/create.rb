@@ -20,7 +20,7 @@ module Admin
             result = ResetPassword.new(user: current_user,
                                        client: client,
                                        config: current_config)
-              .call(username: @user.name)
+              .call(username: @user.username)
 
             if result.failure?
               flash[:errors] = result.errors

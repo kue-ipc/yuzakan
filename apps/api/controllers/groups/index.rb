@@ -49,11 +49,11 @@ module Api
           self.body = generate_json(@groups)
         end
 
-        private def get_groups(names)
-          group_entities = @group_repository.by_name(names).to_a.to_h { |group| [group.name, group] }
-          names.map do |name|
-            if group_entities.key?(name)
-              group_entities[name]
+        private def get_groups(groupnames)
+          group_entities = @group_repository.by_groupname(groupnames).to_a.to_h { |group| [group.groupname, group] }
+          groupnames.map do |groupname|
+            if group_entities.key?(groupname)
+              group_entities[groupname]
             else
               create_group(name)
             end

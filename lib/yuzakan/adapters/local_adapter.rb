@@ -20,7 +20,7 @@ module Yuzakan
       def user_create(username, password = nil, **userdata)
         hashed_password = LocalUser.create_hashed_password(password)
         user = @repository.create({
-          name: username,
+          username: username,
           display_name: userdata[:attrs]['display_name'],
           email: userdata[:attrs]['email'],
           hashed_password: hashed_password,
@@ -29,11 +29,11 @@ module Yuzakan
       end
 
       def user_read(username)
-        user_entity_to_data(@repository.find_by_name(username))
+        user_entity_to_data(@repository.find_by_username(username))
       end
 
       def user_update(username, **userdata)
-        user = @repository.find_by_name(username)
+        user = @repository.find_by_username(username)
         raise "user not found: #{username}" if user.nil?
 
         data = {}
@@ -44,21 +44,21 @@ module Yuzakan
       end
 
       def user_delete(username)
-        user = @repository.find_by_name(username)
+        user = @repository.find_by_username(username)
         raise "user not found: #{username}" if user.nil?
 
         @repository.delete(user.id)
       end
 
       def user_auth(username, password)
-        user = @repository.find_by_name(username)
+        user = @repository.find_by_username(username)
         user &&
           !user.hashed_password.start_with?('!') &&
           user.verify_password(password)
       end
 
       def user_change_password(username, password)
-        user = @repository.find_by_name(username)
+        user = @repository.find_by_username(username)
         return false if user.nil?
 
         hashed_password = LocalUser.create_hashed_password(password)
@@ -68,7 +68,7 @@ module Yuzakan
       end
 
       def user_lock(username)
-        user = @repository.find_by_name(username)
+        user = @repository.find_by_username(username)
         return if user.nil?
         return if user.locked?
 
@@ -76,7 +76,7 @@ module Yuzakan
       end
 
       def user_unlock(username, _password = nil)
-        user = @repository.find_by_name(username)
+        user = @repository.find_by_username(username)
         return if user.nil?
         return unless user.locked?
 
@@ -84,7 +84,7 @@ module Yuzakan
       end
 
       def user_list
-        @repository.all.map(&:name)
+        @repository.all.map(&:username)
       end
 
       def user_search(query)
@@ -93,20 +93,20 @@ module Yuzakan
         pattern.gsub!('%', '\\%')
         pattern.gsub!('_', '\\_')
         pattern.tr!('*?', '%_')
-        @repository.ilike(pattern).map { |data| data[:name] }
+        @repository.ilike(pattern).map { |data| data[:username] }
       end
 
       private def user_entity_to_data(user)
         return if user.nil?
 
         {
-          name: user.name,
+          username: user.username,
           display_name: user.display_name,
           email: user.email,
           locked: user.locked?,
           disabled: user.disabled?,
           attrs: {
-            'name' => user.name,
+            'username' => user.username,
             'display_name' => user.display_name,
             'email' => user.email,
           }

@@ -62,13 +62,13 @@ module Api
             self.body = generate_json(@members)
           end
 
-          private def get_members(names)
-            user_entities = @user_repository.by_name(names).to_a.to_h { |user| [user.name, user] }
-            names.map do |name|
-              if user_entities.key?(name)
-                user_entities[name]
+          private def get_members(usernames)
+            user_entities = @user_repository.by_username(usernames).to_a.to_h { |user| [user.username, user] }
+            usernames.map do |username|
+              if user_entities.key?(username)
+                user_entities[username]
               else
-                User.new({name: name})
+                User.new({username: username})
               end
             end
           end

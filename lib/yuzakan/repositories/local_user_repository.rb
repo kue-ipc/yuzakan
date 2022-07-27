@@ -4,46 +4,15 @@ class LocalUserRepository < Hanami::Repository
     has_many :local_groups, through: :local_members
   end
 
-  def by_name(name)
-    local_users.where(name: name)
+  def by_username(username)
+    local_users.where(username: username)
   end
 
-  def find_by_name(name)
-    by_name(name).first
+  def find_by_username(username)
+    by_username(username).first
   end
-
-  # def create_with_password(data)
-  #   hashed_password = LocalUser.create_hashed_password(data[:password])
-  #   create(data.merge(hashed_password: hashed_password))
-  # end
-
-  # def lock(id)
-  #   user = find(id)
-  #   return if user.nil?
-  #   return if user.locked?
-
-  #   update(id, hashed_password: LocalUser.lock_password(user.hashed_password))
-  # end
-
-  # def unlock(id)
-  #   user = find(id)
-  #   return if user.nil?
-  #   return unless user.locked?
-
-  #   update(id, hashed_password: LocalUser.unlock(user.hashed_password))
-  # end
-
-  # def change_password(id, password)
-  #   user = find(id)
-  #   return if user.nil?
-
-  #   hashed_password = LocalUser.create_hashed_password(password)
-  #   hashed_password = LocalUser.lock_password(hashed_password) if user.locked?
-
-  #   update(id, hashed_password: hashed_password)
-  # end
 
   def ilike(pattern)
-    local_users.where { name.ilike(pattern) | display_name.ilike(pattern) | email.ilike(pattern) }
+    local_users.where { username.ilike(pattern) | display_name.ilike(pattern) | email.ilike(pattern) }
   end
 end
