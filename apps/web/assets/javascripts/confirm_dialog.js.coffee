@@ -14,7 +14,7 @@ export default class ConfirmDialog extends ModalDialog
     super props
     @value = true
 
-  # overwrite
+  # override
   modalBody: ({messages, confirmations, agreement_required, agreed}) ->
     [
       super({messages})
@@ -45,7 +45,7 @@ export default class ConfirmDialog extends ModalDialog
 
   changeAgree: (state, agreed) -> {state..., agreed}
 
-  # overwrite
+  # override
   initState: (state = {}) -> {
     confirmations: @confirmations
     agreement_required: @agreement_required

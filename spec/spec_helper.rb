@@ -12,5 +12,6 @@ extend RR # rubocop:disable Style/MixinUsage
 
 require_relative 'support/db'
 require_relative 'support/mock'
+require_relative 'support/init'
 
 Hanami.boot

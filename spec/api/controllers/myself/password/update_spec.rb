@@ -2,24 +2,12 @@ require_relative '../../../../spec_helper'
 
 describe Api::Controllers::Myself::Password::Update do
   let(:action) {
-    Api::Controllers::Myself::Password::Update.new(activity_log_repository: activity_log_repository,
-                                                        config_repository: config_repository,
-                                                        user_repository: user_repository,
-                                                        provider_repository: provider_repository,
-                                                        user_notify: user_notify)
+    Api::Controllers::Myself::Password::Update.new(**action_opts, provider_repository: provider_repository,
+                                                                  user_notify: user_notify)
   }
-  let(:params) { {current_password: 'pass', password: 'word', password_confirmation: 'word', **env} }
-
-  let(:env) { {'REMOTE_ADDR' => client, 'rack.session' => session, 'HTTP_ACCEPT' => format} }
-  let(:client) { '192.0.2.1' }
-  let(:uuid) { 'ffffffff-ffff-4fff-bfff-ffffffffffff' }
-  let(:user) { User.new(id: 42, name: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1) }
-  let(:session) { {uuid: uuid, user_id: user.id, created_at: Time.now - 600, updated_at: Time.now - 60} }
+  eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
-  let(:config) { Config.new(title: 'title', session_timeout: 3600) }
-  let(:activity_log_repository) { ActivityLogRepository.new.tap { |obj| stub(obj).create } }
-  let(:config_repository) { ConfigRepository.new.tap { |obj| stub(obj).current { config } } }
-  let(:user_repository) { UserRepository.new.tap { |obj| stub(obj).find { user } } }
+  let(:action_params) { {current_password: 'pass', password: 'word', password_confirmation: 'word'} }
 
   let(:providers) { [create_mock_provider(params: {username: 'user', password: 'pass'})] }
   let(:provider_repository) {

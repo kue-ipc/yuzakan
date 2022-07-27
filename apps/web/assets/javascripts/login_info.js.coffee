@@ -20,15 +20,15 @@ export default class LoginInfo extends ModalDialog
   }) ->
     super {props..., fullscreen}
 
-  # overwrite
+  # override
   appInit: => [@initState({}), runGetSystem]
 
-  # overwrite
+  # override
   modalAction: (state) ->
     window.print()
     state
 
-  # overwrite
+  # override
   modalBody: ({messages, props...}) ->
     [
       super({messages})...

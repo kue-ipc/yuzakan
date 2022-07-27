@@ -18,8 +18,6 @@ module Admin
             password_min_score
             password_unusable_chars
             password_extra_dict
-            admin_networks
-            user_networks
             contact_name
             contact_email
             contact_phone

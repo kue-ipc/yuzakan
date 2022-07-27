@@ -15,6 +15,12 @@ class Network < Hanami::Entity
   end
 
   def to_s
-    "#{@ipaddr}/#{@ipaddr.prefix}"
+    prefix = @ipaddr.prefix
+    if (prefix == 32 && @ipaddr.ipv4?) ||
+       (prefix == 128 && @ipaddr.ipv6?)
+      @ipaddr.to_s
+    else
+      "#{@ipaddr}/#{@ipaddr.prefix}"
+    end
   end
 end

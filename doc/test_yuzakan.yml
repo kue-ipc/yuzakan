@@ -8,8 +8,6 @@ config:
   password_min_score: 0
   password_unusable_chars: ''
   password_extra_dict: ''
-  admin_networks: ''
-  user_networks: ''
   contact_name: アカウント管理センター
   contact_email: admin@example.jp
   contact_phone: 00-0000-0000
