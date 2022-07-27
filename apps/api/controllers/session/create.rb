@@ -33,7 +33,7 @@ module Api
         def call(params)
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
-          halt_json 403, errors: [I18n.t('session.errors.deny_network')] unless allowed_user_networks?
+          halt_json 403, errors: [I18n.t('session.errors.deny_network')] unless current_network.trusted
 
           redirect_to_json routes.path(:session), status: 303 if current_user
 

@@ -29,10 +29,12 @@ module Web
     # その他のオプションはここで捨てる。
     def initialize(activity_log_repository: ActivityLogRepository.new,
                    config_repository: ConfigRepository.new,
+                   network_repository: NetworkRepository.new,
                    user_repository: UserRepository.new,
                    **_opts)
       @activity_log_repository = activity_log_repository
       @config_repository = config_repository
+      @network_repository = network_repository
       @user_repository = user_repository
     end
 
@@ -70,23 +72,15 @@ module Web
       @current_user ||= (session[:user_id] && @user_repository.find(session[:user_id]))
     end
 
+    private def current_network
+      @current_network ||= FindNetwork.new(network_repository: @network_repository).call({ip: client}).network
+    end
+
     private def current_level
-      return @current_level if @current_level
-
-      @current_level = current_user&.clearance_level || 0
-      @current_level = 1 if @current_level >= 2 && !allowed_admin_networks?
-      @current_level = 0 if @current_level >= 1 && !allowed_user_networks?
-      @current_level
-    end
-
-    private def allowed_admin_networks?
-      !current_config&.admin_networks&.size&.positive? ||
-      CheckIp.new(allowed_networks: current_config.admin_networks).call(ip: client).successful?
-    end
-
-    private def allowed_user_networks?
-      !current_config&.user_networks&.size&.positive? ||
-      CheckIp.new(allowed_networks: current_config.user_networks).call(ip: client).successful?
+      @current_level ||= [
+        current_user&.clearance_level || 0,
+        current_network&.clearance_level || 0,
+      ].min
     end
 
     private def current_time

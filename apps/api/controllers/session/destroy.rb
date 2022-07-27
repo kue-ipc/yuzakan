@@ -9,8 +9,6 @@ module Api
         def call(params) # rubocop:disable Lint/UnusedMethodArgument
           halt_json 410 unless current_user
 
-          halt_json 403, errors: ['現在のネットワークからのログアウトは許可されていません。'] unless allowed_user_networks?
-
           self.status = 200
           self.body = generate_json({
             uuid: session[:uuid],
