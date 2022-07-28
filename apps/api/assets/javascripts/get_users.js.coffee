@@ -10,6 +10,10 @@ export createRunGetUsers = (action = SetUsers) -> createRunGetWithPagination(act
 
 export runGetUsers = createRunGetUsers()
 
-export createRunPageUsers = (action = SetUsers) -> createRunPage(action, API_USERS)
+export GetUsers = (state) -> [state, [runGetUsers, state]]
+
+export createRunPageUsers = (action = SetUsers) -> createRunPage(action, API_USERS, ['query'])
 
 export runPageUsers = createRunPageUsers()
+
+export PageUsers = (state) -> [state, [runPageUsers, state]]

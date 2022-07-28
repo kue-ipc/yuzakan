@@ -18,24 +18,36 @@ export createJsonPageAction = (action) -> (state, response) ->
     [effecter, response.data]
   ]
 
-export createRunJson = (action, url) ->
-  (dispatch, data = null) ->
+dataFilter = (obj, keys) ->
+  return if keys.length == 0
+
+  data = {}
+  for key in keys
+    data[key] = obj[key] if obj[key]?
+  return if Object.keys(data).length == 0
+
+  data
+
+export createRunJson = (action, url, allowKeys = []) ->
+  (dispatch, props = {}) ->
+    data = dataFilter(props, allowKeys)
     response = await fetchJsonGet({url, data})
     if response.ok
       dispatch(action, response)
     else
       console.error response
 
-export createRunGet = (action, url) ->
+export createRunGet = (action, url, allowKeys = []) ->
   responseAction = createJsonGetAction(action)
-  createRunJson(responseAction, url)
+  createRunJson(responseAction, url, allowKeys)
 
-export createRunPage = (action, url) ->
+export createRunPage = (action, url, allowKeys = []) ->
   responseAction = createJsonPageAction(action)
-  createRunJson(responseAction, url)
+  createRunJson(responseAction, url, [allowKeys..., 'page', 'per_page'])
 
-export createRunGetWithPagination = (action, url) ->
-  (dispatch, data = null) ->
+export createRunGetWithPagination = (action, url, allowKeys = []) ->
+  (dispatch, data) ->
+    data = dataFilter(props, allowKeys)
     items = []
     for page in [MIN_PAGE..MAX_PAGE]
       response = await fetchJsonGet({url, data: {data..., page, per_page: MAX_PER_PAGE, no_sync: true}})

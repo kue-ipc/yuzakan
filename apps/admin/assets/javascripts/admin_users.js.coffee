@@ -2,7 +2,7 @@ import {text, app} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
 
 import {fetchJsonGet} from '../api/fetch_json.js'
-import {runPageUsers} from '../api/get_users.js'
+import {PageUsers} from '../api/get_users.js'
 import {runGetProviders} from '../api/get_providers.js'
 
 import BsIcon from '../bs_icon.js'
@@ -15,7 +15,7 @@ searchAction = (state, {query}) ->
   newState = {state..., page: 1, query}
   [
     newState
-    [indexAllUsersRunner, newState]
+    [runPageUsersHistory, newState]
   ]
 
 search = ({query}) ->
@@ -53,7 +53,7 @@ pageAction = (state, props) ->
   newState = {state..., props...}
   [
     newState
-    [indexAllUsersRunner, newState]
+    [runPageUsersHistory, newState]
   ]
 
 pageItem = ({content, page, active = false, disabled = false}) ->
@@ -124,33 +124,12 @@ userTr = ({user, providers}) ->
     (userProviderTd({user, provider}) for provider in providers)...
   ]
 
-initAllUsersAction = (state, {users, total}) ->
-  {state..., users, total}
-
-indexAllUsersRunner = (dispatch, {page, per_page, query}) ->
+runPageUsersHistory = (dispatch, {page, per_page, query}) ->
   data = {page, per_page, query}
   query = "?#{objToUrlencoded(data)}"
   if (query != location.search)
     history.pushState(data, 'users', "/admin/users?#{objToUrlencoded(data)}")
-
-  response = await fetchJsonGet({url: '/api/users', data})
-  if response.ok
-    dispatch(initAllUsersAction, {
-      users: response.data
-      total: response.total
-    })
-  else
-    console.error response
-
-initAllProvidersAction = (state, {providers}) ->
-  {state..., providers}
-
-indexAllProvidersRunner = (dispatch) ->
-  response = await fetchJsonGet({url: '/api/providers'})
-  if response.ok
-    dispatch(initAllProvidersAction, {providers: response.data})
-  else
-    console.error response
+  dispatch(PageUsers)
 
 params = new URLSearchParams(location.search)
 
@@ -166,7 +145,7 @@ initState = {
 init = [
   initState
   [runGetProviders]
-  [indexAllUsersRunner, initState]
+  [runPageUsersHistory, initState]
 ]
 
 view = ({users, providers, page, per_page, total, query}) ->
