@@ -189,10 +189,15 @@ export default class WebData
       link
       reload
     }
+
     if link?
       setTimeout ->
         location.href = link
       , reloadDelay
+    else if codeAction?.autoCloseTime
+      setTimeout =>
+        @modal.hide()
+      , codeAction.autoCloseTime * 1000
 
     await @waitModalClose()
 

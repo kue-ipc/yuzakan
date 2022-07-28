@@ -40,7 +40,7 @@ createWebData = new WebData {
   method: 'POST'
   url: '/api/users'
   codeActions: new Map [
-    [201, {status: 'success', message: 'ユーザーを作成しました。'}]
+    [201, {status: 'success', message: 'ユーザーを作成しました。'}, autoCloseTime: 1]
   ]
 }
 
@@ -67,7 +67,7 @@ createPasswordWebData = new WebData {
   title: 'パスワードのリセット'
   method: 'POST'
   codeActions: new Map [
-    [201, {status: 'success', message: 'パスワードをリセットしました。'}]
+    [201, {status: 'success', message: 'パスワードをリセットしました。', autoCloseTime: 1}]
   ]
 }
 
