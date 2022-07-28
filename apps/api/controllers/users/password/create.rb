@@ -7,18 +7,33 @@ module Api
 
           security_level 3
 
+          class Params < Hanami::Action::Params
+            predicates NamePredicates
+            messages :i18n
+
+            params do
+              required(:user_id).filled(:str?, :name?, max_size?: 255)
+            end
+          end
+
+          params Params
+
           def initialize(provider_repository: ProviderRepository.new,
                          user_repository: UserRepository.new,
+                         config_repository: ConfigRepository.new,
                          **opts)
             super
             @provider_repository ||= provider_repository
             @user_repository ||= user_repository
+            @config_repository ||= config_repository
           end
 
           def call(params)
-            reset_password = ResetPassword.new(
-              provider_repository: @provider_repository)
-            result = reset_password.call(params)
+            halt_json 400, errors: [params.errors] unless params.valid?
+
+            reset_password = ResetPassword.new(provider_repository: @provider_repository,
+                                               config_repository: @config_repository)
+            result = reset_password.call({username: params[:user_id]})
 
             halt_json(422, errors: merge_errors(result.errors)) if result.failure?
 
@@ -33,7 +48,7 @@ module Api
             # }
 
             self.status = 201
-            headers['Location'] = routes.user_path(result.user.id)
+            headers['Location'] = routes.user_password_path(result.username)
             self.body = generate_json({
               username: result.username,
               password: result.password,

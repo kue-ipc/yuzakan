@@ -742,7 +742,7 @@ module Yuzakan
 
       private def change_password_operations(user, password)
         operations = []
-        operations << operation_del('userPassword') if user['userPassword']&.first
+        operations << operation_delete('userPassword') if user['userPassword']&.first
         operations << operation_add('userPassword', generate_password(password))
         operations
       end
@@ -798,7 +798,7 @@ module Yuzakan
         return nil unless old_password
 
         operations = []
-        operations << operation_del('userPassword')
+        operations << operation_delete('userPassword')
         new_password = lock_password(old_password)
         operations << operation_replace('userPassword', new_password) if new_password
         operations
@@ -809,7 +809,7 @@ module Yuzakan
         return nil unless old_password
 
         operations = []
-        operations << operation_del('userPassword')
+        operations << operation_delete('userPassword')
         new_password = unlock_password(old_password)
         operations << operation_replace('userPassword', new_password) if new_password
         operations

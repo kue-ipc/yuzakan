@@ -1,6 +1,5 @@
 require 'hanami/interactor'
 require 'hanami/validations'
-require_relative '../predicates/name_predicates'
 
 class Authenticate
   include Hanami::Interactor
@@ -40,6 +39,7 @@ class Authenticate
   private def valid?(params)
     validation = Validations.new(params).validate
     if validation.failure?
+      Hanami.logger.error "[#{self.class.name}] Validation fails: #{validation.messages}"
       error(validation.messages)
       return false
     end

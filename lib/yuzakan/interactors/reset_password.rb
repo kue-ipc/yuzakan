@@ -1,11 +1,11 @@
 require 'hanami/interactor'
-require 'hanami/validations/form'
+require 'hanami/validations'
 
 class ResetPassword
   include Hanami::Interactor
 
   class Validations
-    include Hanami::Validations::Form
+    include Hanami::Validations
     predicates NamePredicates
     messages :i18n
 
@@ -17,75 +17,47 @@ class ResetPassword
 
   expose :username
   expose :password
-  expose :count
+  expose :providers
 
-  def initialize(
-    provider_repository: ProviderRepository.new,
-    generate_password: GeneratePassword.new
-  )
+  def initialize(provider_repository: ProviderRepository.new,
+                 config_repository: ConfigRepository.new)
     @provider_repository = provider_repository
-    @generate_password = generate_password
+    @config_repository = config_repository
   end
 
   def call(params)
     @username = params[:username]
+    @password = generate_password
 
-    gp_result = @generate_password.call
-    error!(I18n.t('errors.action.failed', action: I18n.t('interactors.generate_password'))) if gp_result.failure?
-    @password = gp_result.password
-
-    @count = 0
-
-    providers =
-      if params[:providers]
-        params[:providers].map do |provider_name|
-          provider = @provider_repository.find_with_adapter_by_name(provider_name)
-          unless provider
-            Hanami.logger.warn "Not found: #{provider_name}"
-            error!(I18n.t('errors.not_found', name: I18n.t('entities.provider')))
-          end
-
-          provider
-        end
-      else
-        @provider_repository.ordered_all_with_adapter_by_operation(:user_change_password)
-      end
-
-    providers.each do |provider|
-      @count += 1 if provider.user_change_password(@username, @password)
-    rescue => e
-      Hanami.logger.error "Failed to restet_password on #{provider.name}"
-      Hanami.logger.error e
-      error(I18n.t('errors.action.error', action: I18n.t('interactors.reset_password'), target: provider.label))
-      if @count.positive?
-        error(I18n.t('errors.action.stopped_after_some',
-                     action: I18n.t('interactors.reset_password'),
-                     target: I18n.t('entities.provider')))
-      end
-      error!(e.message)
+    change_password = ChangePassword.new(provider_repository: @provider_repository)
+    result = change_password.call({password: @password, **params})
+    if result.failure?
+      error(I18n.t('errors.action.fail', action: I18n.t('interactors.change_password')))
+      result.errors.each { |e| error(e) }
+      fail!
     end
 
-    if @count.zero?
-      Hanami.logger.warn "No provider reset_password"
-      error!(I18n.t('errors.action.not_run',
-                    action: I18n.t('interactors.reset_password'),
-                    target: I18n.t('entities.provider')))
-    end
+    @providers = result.providers
   end
 
   private def valid?(params)
     validation = Validations.new(params).validate
     if validation.failure?
+      Hanami.logger.error "[#{self.class.name}] Validation fails: #{validation.messages}"
       error(validation.messages)
-      false
+      return false
     end
 
     true
   end
 
   private def generate_password
-    gp_result = @generate_password.call
-    error!(I18n.t('errors.action.failed', action: I18n.t('interactors.generate_password'))) if gp_result.failure?
-    gp_result.password
+    result = GeneratePassword.new(config_repository: @config_repository).call({})
+    if result.failure?
+      error(I18n.t('errors.action.fail', action: I18n.t('interactors.change_password')))
+      result.errors.each { |e| error(e) }
+      fail!
+    end
+    result.password
   end
 end

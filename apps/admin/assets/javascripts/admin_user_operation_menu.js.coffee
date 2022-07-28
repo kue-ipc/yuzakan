@@ -78,7 +78,7 @@ runCreateUser = (dispatch, {user}) ->
   response = await createWebData.submitPromise {
     data: {
       csrf()...
-      name: user.name
+      username: user.username
       clearance_level: user.clearance_level
       primary_group: user.primary_group
       attrs: user.attrs
@@ -87,7 +87,7 @@ runCreateUser = (dispatch, {user}) ->
   }
   if response.ok
     dispatch (state) ->
-      state = ChangeUserName(state, user.name)
+      state = ChangeUserName(state, user.username)
       state = ChangeMode(state, 'show')
       [state, [runShowLoginInfo, {user: response.data, dateTime: response.dateTime ? DateTime.now()}]]
   else
