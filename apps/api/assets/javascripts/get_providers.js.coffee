@@ -1,12 +1,11 @@
-# /api/system
+# /api/providers
 
-import {fetchJsonGet} from './fetch_json.js'
+import {createRunGet} from './run_json.js'
+
+export API_USERS = '/api/providers'
 
 export SetProviders = (state, providers) -> {state..., providers}
 
-export runGetSystem = (dispatch, action = SetProviders) ->
-  response = await fetchJsonGet({url: '/api/providers'})
-  if response.ok
-    dispatch(action, response.data)
-  else
-    console.error response
+export createRunGetProviders = (action = SetProviders) -> createRunGet(action, API_USERS)
+
+export runGetProviders = createRunGetProviders()

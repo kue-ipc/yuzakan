@@ -6,8 +6,12 @@ import {
   objToUrlencoded
 } from '../form_helper.js'
 
-DEFAULT_PAGE = 1
-DEFAULT_PER_PAGE = 20
+export DEFAULT_PAGE = 1
+export DEFAULT_PER_PAGE = 50
+export MIN_PAGE = 1
+export MAX_PAGE = 10000
+export MIN_PER_PAGE = 10
+export MAX_PER_PAGE = 100
 
 export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
   method = method.toUpperCase()

@@ -1,22 +1,15 @@
 # /api/users
 
-import {fetchJsonGet} from './fetch_json.js'
+import {createRunPage, createRunGetWithPagination} from './run_json.js'
 
-MAX_PER_PAGE = 100
-MAX_PAGE = 10000
+export API_USERS = '/api/users'
 
 export SetUsers = (state, users) -> {state..., users}
 
-export runGetUsers = (dispatch, action = SetUsers) ->
-  users = []
+export createRunGetUsers = (action = SetUsers) -> createRunGetWithPagination(action, API_USERS)
 
-  for page in [1..MAX_PAGE]
-    response = await fetchJsonGet({url: '/api/users', data: {page, per_page: MAX_PER_PAGE, no_sync: true}})
-    if response.ok
-      users = [users..., response.data...]
-      break if users.length >= response.total
-    else
-      console.error response
-      return
+export runGetUsers = createRunGetUsers()
 
-  dispatch(SetAllGroups, users)
+export createRunPageUsers = (action = SetUsers) -> createRunPage(action, API_USERS)
+
+export runPageUsers = createRunPageUsers()

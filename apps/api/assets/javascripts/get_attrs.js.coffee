@@ -1,15 +1,11 @@
 # /api/attrs
 
-import {fetchJsonGet} from './fetch_json.js'
+import {createResponseDataAction, createRunGet} from './run_get.js'
 
 export SetAttrs = (state, attrs) -> {state..., attrs}
 
-export createRunGetSystem = (action = SetAttrs) ->
-  (dispatch) ->
-    response = await fetchJsonGet({url: '/api/attrs'})
-    if response.ok
-      dispatch(action, response.data)
-    else
-      console.error response
+export createRunGetAttrs = (action = SetAttrs) ->
+  responseAction = createResponseDataAction(action)
+  createRunGet(createResponseDataAction(action), 'api/attrs')
 
-export runGetSystem = createRunGetSystem()
+export runGetAttrs = createRunGetAttrs()
