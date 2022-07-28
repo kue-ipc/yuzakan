@@ -23,7 +23,7 @@ class ReadGroup
   end
 
   def call(params)
-    @groupdata = {name: params[:groupname], attrs: {}}
+    @groupdata = {}
     @provider_groupdatas = []
 
     providers = @provider_repository.ordered_all_with_adapter_by_operation(:group_read)
@@ -31,6 +31,7 @@ class ReadGroup
       groupdata = provider.group_read(params[:groupname])
       if groupdata
         @provider_groupdatas << {provider: provider, groupdata: groupdata}
+        @groupdata[:groupname] ||= groupdata[:groupname]
         @groupdata[:display_name] ||= groupdata[:display_name]
       end
     rescue => e

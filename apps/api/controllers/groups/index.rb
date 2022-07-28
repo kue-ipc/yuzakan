@@ -32,16 +32,21 @@ module Api
         def call(params)
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
-          @providers = @provider_repository.ordered_all_with_adapter_by_operation(:group_read)
-          providers_items = @providers.to_h { |provider| [provider.name, Set.new(provider.group_list)] }
-          all_items = providers_items.values.sum(Set.new).to_a.sort
+          group_provider_names = Hash.new { |hash, key| hash[key] = [] }
+          @provider_repository.ordered_all_with_adapter_by_operation(:group_read).each do |provider|
+            provider.group_list.each do |item|
+              group_provider_names[item] << provider.name
+            end
+          end
+          all_items = group_provider_names.keys.sort
 
           @pager = Yuzakan::Utils::Pager.new(routes, :groups, params, all_items)
 
           @groups = get_groups(@pager.page_items, no_sync: params[:no_sync]).map do |group|
             {
               **convert_for_json(group),
-              providers: providers_items.filter { |_, v| v.include?(group.groupname) }.keys,
+              synced_at: group.created_at,
+              providers: group_provider_names[group.groupname],
             }
           end
 
@@ -67,7 +72,7 @@ module Api
           @sync_group ||= SyncGroup.new(provider_repository: @provider_repository, group_repository: @group_repository)
           result = @sync_group.call({groupname: groupname})
           if result.failure?
-            Hanami.logger.error "failed sync group: #{groupname} - #{result.errors}"
+            Hanami.logger.error "[#{self.class.name}] Failed sync group: #{groupname} - #{result.errors}"
             halt_json 500, errors: result.errors
           end
           result.group

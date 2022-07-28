@@ -104,3 +104,5 @@ ja:
   attributes:
     user:
       username: ユーザー名
+    group:
+      groupname: グループ名

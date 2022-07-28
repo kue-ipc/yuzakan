@@ -65,7 +65,7 @@ view = ({mode, name, group, providers}) ->
       html.dt {class: dtClasses},
         text 'グループ名'
       html.dd {class: ddClasses},
-        text group.name
+        text group.groupname
       html.dt {class: dtClasses},
         text '表示名'
       html.dd {class: ddClasses},

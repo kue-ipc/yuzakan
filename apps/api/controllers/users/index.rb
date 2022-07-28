@@ -1,5 +1,3 @@
-require 'set'
-
 module Api
   module Controllers
     module Users
@@ -36,19 +34,22 @@ module Api
           query = params[:query]
           query = nil if query&.empty?
 
-          @providers = @provider_repository.ordered_all_with_adapter_by_operation(:user_read)
-          providers_items = @providers.to_h do |provider|
+          user_provider_names = Hash.new { |hash, key| hash[key] = [] }
+          @provider_repository.ordered_all_with_adapter_by_operation(:user_read).each do |provider|
             items = if query then provider.user_search("*#{query}*") else provider.user_list end
-            [provider.name, Set.new(items)]
+            items.each do |item|
+              user_provider_names[item] << provider.name
+            end
           end
-          all_items = providers_items.values.sum(Set.new).to_a.sort
+          all_items = user_provider_names.keys.sort
 
           @pager = Yuzakan::Utils::Pager.new(routes, :users, params, all_items)
 
           @users = get_users(@pager.page_items, no_sync: params[:no_sync]).map do |user|
             {
               **convert_for_json(user),
-              providers: providers_items.filter { |_, v| v.include?(user.username) }.keys,
+              synced_at: user.created_at,
+              provider_names: user_provider_names[user.username],
             }
           end
 

@@ -29,7 +29,7 @@ class RegisterGroup
     group = @group_repository.find_by_groupname(groupname)
     @group =
       if group.nil?
-        @group_repository.create(groupname: namgroupnamee, display_name: display_name)
+        @group_repository.create(groupname: groupname, display_name: display_name)
       elsif group.display_name != display_name
         @group_repository.update(group.id, display_name: display_name)
       else
@@ -40,6 +40,7 @@ class RegisterGroup
   private def valid?(params)
     validation = Validations.new(params).validate
     if validation.failure?
+      Hanami.logger.error "[#{self.class.name}] Validation fails: #{validation.messages}"
       error(validation.messages)
       return false
     end

@@ -93,9 +93,9 @@ export default basicInfo = ({mode, user, groups}) ->
             (
               for group in groups
                 html.option {
-                  value: group.name
-                  selected: group.name == user.primary_group
-                }, text "#{group.display_name} (#{group.name})"
+                  value: group.groupname
+                  selected: group.groupname == user.primary_group
+                }, text "#{group.display_name} (#{group.groupname})"
             )...
           ]
        ]

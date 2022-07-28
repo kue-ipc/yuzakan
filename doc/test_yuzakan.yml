@@ -12,6 +12,19 @@ config:
   contact_email: admin@example.jp
   contact_phone: 00-0000-0000
 providers:
+- name: local
+  label: ローカル
+  adapter_name: local
+  order: 0
+  readable: true
+  writable: true
+  authenticatable: true
+  password_changeable: true
+  individual_password: false
+  lockable: true
+  self_management: false
+  group: false
+  params: {}
 - name: posix_samba
   label: PosixとSamba
   adapter_name: samba_ldap

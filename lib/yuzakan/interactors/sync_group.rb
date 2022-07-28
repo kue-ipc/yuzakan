@@ -25,8 +25,10 @@ class SyncGroup
   expose :provider_groupdatas
 
   def call(params)
+    groupname = params[:groupname]
+
     read_group = ReadGroup.new(provider_repository: @provider_repository)
-    read_group_result = read_group.call({groupname: params[:groupname]})
+    read_group_result = read_group.call({groupname: groupname})
     if read_group_result.failure?
       read_group_result.errors.each { |msg| error(msg) }
       fail!
@@ -35,7 +37,10 @@ class SyncGroup
     @groupdata = read_group_result.groupdata
     @provider_groupdatas = read_group_result.provider_groupdatas
 
-    error!('グループ名が一致しません。') if @groupdata[:groupname] != params[:groupname]
+    if @groupdata[:groupname] != groupname
+      Hanami.logger.error "[#{self.class.name}] Do not match groupname: #{groupname}"
+      error!(I18n.t('errors.eql?', left: I18n.t('attributes.user.groupname')))
+    end
 
     if @provider_groupdatas.empty?
       unregister_group = UnregisterGroup.new(group_repository: @group_repository)
@@ -48,7 +53,7 @@ class SyncGroup
       @group = nil
     else
       register_group = RegisterGroup.new(group_repository: @group_repository)
-      register_group_result = register_group.call(@groupdata.slice(:name, :display_name))
+      register_group_result = register_group.call(@groupdata.slice(:groupname, :display_name))
       if register_group_result.failure?
         register_group_result.errors.each { |msg| error(msg) }
         fail!

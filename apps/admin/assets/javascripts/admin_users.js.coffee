@@ -1,8 +1,13 @@
 import {text, app} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
+
 import {fetchJsonGet} from '../api/fetch_json.js'
+import {runPageUsers} from '../api/page_users.js'
+
 import BsIcon from '../bs_icon.js'
 import {objToUrlencoded} from '../form_helper.js'
+
+
 
 
 searchAction = (state, {query}) ->
@@ -104,7 +109,7 @@ providerTh = ({provider}) ->
   html.th {}, text provider.label
 
 userProviderTd = ({user, provider}) ->
-  if user.providers.includes(provider.name)
+  if user.provider_names.includes(provider.name)
     html.td {class: 'text-success'},
       BsIcon({name: 'check-square'})
   else
@@ -114,7 +119,7 @@ userProviderTd = ({user, provider}) ->
 userTr = ({user, providers}) ->
   html.tr {}, [
     html.td {},
-      html.a {href: "/admin/users/#{user.name}"}, text user.name
+      html.a {href: "/admin/users/#{user.username}"}, text user.username
     html.td {}, text user.display_name
     html.td {}, text user.email ? ''
     html.td {}, text user.clearance_level
