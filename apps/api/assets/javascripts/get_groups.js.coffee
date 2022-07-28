@@ -1,22 +1,19 @@
 # /api/groups
 
-import {fetchJsonGet} from './fetch_json.js'
+import {createRunPage, createRunGetWithPagination} from './run_json.js'
 
-MAX_PER_PAGE = 100
-MAX_PAGE = 10000
+export API_GROUPS = '/api/groups'
 
 export SetGroups = (state, groups) -> {state..., groups}
 
-export runGetGroups = (dispatch, action = SetGroups) ->
-  groups = []
+export createRunGetGroups = (action = SetGroups) -> createRunGetWithPagination(action, API_GROUPS)
 
-  for page in [1..MAX_PAGE]
-    response = await fetchJsonGet({url: '/api/groups', data: {page, per_page: MAX_PER_PAGE, no_sync: true}})
-    if response.ok
-      groups = [groups..., response.data...]
-      break if groups.length >= response.total
-    else
-      console.error response
-      return
+export runGetGroups = createRunGetGroups()
 
-  dispatch(SetAllGroups, groups)
+export GetGroups = (state) -> [state, [runGetGroups, state]]
+
+export createRunPageGroups = (action = SetGroups) -> createRunPage(action, API_GROUPS, ['query'])
+
+export runPageGroups = createRunPageGroups()
+
+export PageGroups = (state) -> [state, [runPageGroups, state]]

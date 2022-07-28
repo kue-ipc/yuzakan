@@ -46,7 +46,7 @@ export createRunPage = (action, url, allowKeys = []) ->
   createRunJson(responseAction, url, [allowKeys..., 'page', 'per_page'])
 
 export createRunGetWithPagination = (action, url, allowKeys = []) ->
-  (dispatch, data) ->
+  (dispatch, props = {}) ->
     data = dataFilter(props, allowKeys)
     items = []
     for page in [MIN_PAGE..MAX_PAGE]

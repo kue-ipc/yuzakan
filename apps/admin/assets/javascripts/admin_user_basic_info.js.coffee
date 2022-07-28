@@ -7,7 +7,7 @@ import {createEventValueAction} from '../input_event.js'
 
 import {CalcUserAttrs} from './admin_user_attrs.js'
 
-SetUserName = (state, name) -> [CalcUserAttrs, {user: {state.user..., name}}]
+SetUserName = (state, username) -> [CalcUserAttrs, {user: {state.user..., username}}]
 SetUserNameByEvent = createEventValueAction(SetUserName)
 
 SetUserClearanceLevel = (state, clearance_level) -> {state..., user: {state.user..., clearance_level}}
@@ -21,28 +21,28 @@ export default basicInfo = ({mode, user, groups}) ->
     html.h4 {}, text '基本情報'
     dlh.dl {}, [
       dlh.dt {},
-        html.label {class: 'form-label', for: 'user-name'}, text 'ユーザー名'
+        html.label {class: 'form-label', for: 'user-username'}, text 'ユーザー名'
       dlh.dd {},
         switch mode
           when 'new'
             html.input {
-              id: 'user-name'
+              id: 'user-username'
               class: 'form-control'
               type: 'text'
               required: true
-              value: user.name
+              value: user.username
               oninput: SetUserNameByEvent
             }
           when 'edit'
             html.input {
-              id: 'user-name'
+              id: 'user-username'
               class: 'form-control-plaintext'
               readonly: true
               type: 'text'
-              value: user.name
+              value: user.username
             }
           when 'show'
-            text user.name
+            text user.username
       dlh.dt {},
         text '表示名'
       dlh.dd {},
@@ -77,8 +77,8 @@ export default basicInfo = ({mode, user, groups}) ->
       dlh.dd {},
         if mode == 'show'
           if user.primary_group
-            primary_group = groups.find (group) -> group.name == user.primary_group
-            text "#{primary_group.display_name} (#{primary_group.name})"
+            primary_group = groups.find (group) -> group.groupname == user.primary_group
+            text "#{primary_group.display_name} (#{primary_group.groupname})"
           else
             text "(無し)"
         else

@@ -1,7 +1,6 @@
 import {text, app} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
 
-import {fetchJsonGet} from '../api/fetch_json.js'
 import {PageUsers} from '../api/get_users.js'
 import {runGetProviders} from '../api/get_providers.js'
 
