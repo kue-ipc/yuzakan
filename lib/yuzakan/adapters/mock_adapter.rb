@@ -80,7 +80,7 @@ module Yuzakan
         super
         @passwords = {@params[:username] => BCrypt::Password.create(@params[:password])}
         @users = {@params[:username] => {
-          name: @params[:username],
+          username: @params[:username],
           display_name: @params[:display_name],
           email: @params[:email],
           locked: @params[:locked],
@@ -100,7 +100,7 @@ module Yuzakan
 
         @passwords[username] = BCrypt::Password.create(password) if password
         @users[username] = {
-          name: username,
+          username: username,
           **userdata,
         }
       end
