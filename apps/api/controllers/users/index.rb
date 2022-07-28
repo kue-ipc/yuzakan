@@ -16,6 +16,7 @@ module Api
             optional(:page).filled(:int?, gteq?: 1, lteq?: 10000)
             optional(:per_page).filled(:int?, gteq?: 10, lteq?: 100)
             optional(:query).maybe(:str?, max_size?: 255)
+            optional(:no_sync).maybe(:bool?)
           end
         end
 
@@ -34,64 +35,49 @@ module Api
 
           query = params[:query]
           query = nil if query&.empty?
-          page = params[:page] || 1
-          per_page = params[:per_page] || 50
 
           @providers = @provider_repository.ordered_all_with_adapter_by_operation(:user_read)
-
-          providers_list =
-            if query
-              @providers.to_h { |provider| [provider.name, Set.new(provider.user_search("*#{query}*"))] }
-            else
-              @providers.to_h { |provider| [provider.name, Set.new(provider.user_list)] }
-            end
-
-          all_list = providers_list.values.sum(Set.new).to_a.sort
-          total_count = all_list.size
-          item_offset = (page - 1) * per_page
-
-          page_list = all_list[item_offset, per_page] || []
-
-          users_data = @user_repository.by_username(page_list).to_a.to_h { |user| [user.username, user] }
-
-          @users = page_list.map do |username|
-            users_data[username] || create_user(username)
+          providers_items = @providers.to_h do |provider|
+            items = if query then provider.user_search("*#{query}*") else provider.user_list end
+            [provider.name, Set.new(items)]
           end
+          all_items = providers_items.values.sum(Set.new).to_a.sort
 
-          first_page = 1
-          last_page = ((total_count / per_page) + 1)
-          links = []
-          links << "<#{routes.users_url(page: first_page, query: query)}>; rel=\"first\""
-          links << "<#{routes.users_url(page: page - 1, query: query)}>; rel=\"prev\"" if page != first_page
-          links << "<#{routes.users_url(page: page + 1, query: query)}>; rel=\"next\"" if page != last_page
-          links << "<#{routes.users_url(page: last_page, query: query)}>; rel=\"last\""
-          data = @users.map do |user|
+          @pager = Yuzakan::Utils::Pager.new(routes, :users, params, all_items)
+
+          @users = get_users(@pager.page_items, no_sync: params[:no_sync]).map do |user|
             {
               **convert_for_json(user),
-              providers: providers_list.filter { |_, v| v.include?(user.username) }.keys,
+              providers: providers_items.filter { |_, v| v.include?(user.username) }.keys,
             }
           end
 
           self.status = 200
-          headers['Total-Count'] = total_count.to_s
-          headers['Link'] = links.join(', ')
-          headers['Content-Range'] =
-            if total_count.positive?
-              "items #{item_offset}-#{item_offset + data.size - 1}/#{total_count}"
-            else
-              'items 0-0/0'
-            end
-          self.body = generate_json(data)
+          headers.merge!(@pager.headers)
+          self.body = generate_json(@users)
         end
 
-        private def create_user(username)
-          @sync_user ||= SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
-          sync_user_result = @sync_user.call({username: username})
-          if sync_user_result.failure?
-            Hanami.logger.error "failed sync user: #{username} - #{sync_user_result.errors}"
-            halt_json 500, errors: sync_user_result.errors
+        private def get_users(usernames, no_sync: false)
+          user_entities = @user_repository.by_username(usernames).to_a.to_h { |user| [user.username, user] }
+          usernames.map do |username|
+            if user_entities.key?(username)
+              user_entities[username]
+            else
+              create_user(username, no_sync: no_sync)
+            end
           end
-          sync_user_result.user
+        end
+
+        private def create_user(username, no_sync: false)
+          return User.new({username: username}) if no_sync
+
+          @sync_user ||= SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
+          result = @sync_user.call({username: username})
+          if result.failure?
+            Hanami.logger.error "failed sync user: #{username} - #{result.errors}"
+            halt_json 500, errors: result.errors
+          end
+          result.user
         end
       end
     end

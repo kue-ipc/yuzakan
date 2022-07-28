@@ -15,6 +15,7 @@ module Api
           params do
             optional(:page).filled(:int?, gteq?: 1, lteq?: 10000)
             optional(:per_page).filled(:int?, gteq?: 10, lteq?: 100)
+            optional(:no_sync).maybe(:bool?)
           end
         end
 
@@ -37,7 +38,7 @@ module Api
 
           @pager = Yuzakan::Utils::Pager.new(routes, :groups, params, all_items)
 
-          @groups = get_groups(@pager.page_items).map do |group|
+          @groups = get_groups(@pager.page_items, no_sync: params[:no_sync]).map do |group|
             {
               **convert_for_json(group),
               providers: providers_items.filter { |_, v| v.include?(group.groupname) }.keys,
@@ -49,23 +50,27 @@ module Api
           self.body = generate_json(@groups)
         end
 
-        private def get_groups(groupnames)
+        private def get_groups(groupnames, no_sync: false)
           group_entities = @group_repository.by_groupname(groupnames).to_a.to_h { |group| [group.groupname, group] }
           groupnames.map do |groupname|
             if group_entities.key?(groupname)
               group_entities[groupname]
             else
-              create_group(groupname)
+              create_group(groupname, no_sync: no_sync)
             end
           end
         end
 
-        private def create_group(groupname)
-          @sync_group ||= SyncGroup.new(provider_repository: @provider_repository, group_repository: @group_repository)
-          sync_group_result = @sync_group.call({groupname: groupname})
-          halt_json 500, errors: sync_group_result.errors if sync_group_result.failure?
+        private def create_group(groupname, no_sync: false)
+          return Group.new({groupname: groupname}) if no_sync
 
-          sync_group_result.group
+          @sync_group ||= SyncGroup.new(provider_repository: @provider_repository, group_repository: @group_repository)
+          result = @sync_group.call({groupname: groupname})
+          if result.failure?
+            Hanami.logger.error "failed sync group: #{groupname} - #{result.errors}"
+            halt_json 500, errors: result.errors
+          end
+          result.group
         end
       end
     end
