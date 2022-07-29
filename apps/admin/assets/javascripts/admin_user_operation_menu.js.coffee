@@ -71,7 +71,9 @@ createPasswordWebData = new WebData {
   ]
 }
 
-loginInfo = new LoginInfo {}
+loginInfo = new LoginInfo {
+  id: fieldId('login_inof', ['modal', 'login_info', parentNames...])
+}
 
 # Effecters
 runCreateUser = (dispatch, {user}) ->

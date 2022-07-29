@@ -73,12 +73,12 @@ namespace :vendor do
     cp Dir.glob("#{bootstrap_icons_dir}/fonts/*.{woff,woff2}"), fonts_dir
 
     source_code_pro_dir = 'node_modules/source-code-pro'
-    Dir.glob("#{source_code_pro_dir}/WOFF2/TTF/*.ttf.woff2").each do |path|
-      cp path, "#{fonts_dir}/#{File.basename(path, '.ttf.woff2')}.woff2"
-    end
-    Dir.glob("#{source_code_pro_dir}/WOFF/OTF/*.otf.woff").each do |path|
-      cp path, "#{fonts_dir}/#{File.basename(path, '.otf.woff')}.woff"
-    end
+    cp Dir.glob("#{source_code_pro_dir}/WOFF/TTF/*.ttf.woff"), fonts_dir
+    cp Dir.glob("#{source_code_pro_dir}/WOFF2/TTF/*.ttf.woff2"), fonts_dir
+    cp Dir.glob("#{source_code_pro_dir}/WOFF/VAR/*.ttf.{woff,woff2}"), fonts_dir
+
+    typopro_web_iosevka_dir = 'node_modules/@typopro/web-iosevka'
+    cp Dir.glob("#{typopro_web_iosevka_dir}/*.woff"), fonts_dir
   end
 
   rule 'vendor/assets/images' do

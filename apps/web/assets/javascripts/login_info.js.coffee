@@ -12,9 +12,10 @@ export default class LoginInfo extends ModalDialog
   constructor: ({service = {}, props...}) ->
     super {
       title: 'ログイン情報'
-      fullscreen: true
+      fullscreen: 'xl-down'
+      size: 'xl'
       action: {
-        color: 'info'
+        color: 'success'
         label: '印刷'
         side: 'left'
       }
@@ -27,7 +28,19 @@ export default class LoginInfo extends ModalDialog
 
   # override
   modalAction: (state) ->
+    for tagName in ['header', 'main', 'footer']
+      for el in document.getElementsByTagName(tagName)
+        el.classList.add('d-print-none')
+    for className in ['modal-header', 'modal-footer']
+      for el in document.getElementsByClassName(className)
+        el.classList.add('d-print-none')
     window.print()
+    for tagName in ['header', 'main', 'footer']
+      for el in document.getElementsByTagName(tagName)
+        el.classList.remove('d-print-none')
+    for className in ['modal-header', 'modal-footer']
+      for el in document.getElementsByClassName(className)
+        el.classList.remove('d-print-none')
     state
 
   # override
@@ -55,12 +68,12 @@ export default class LoginInfo extends ModalDialog
         dlh.dt {}, text 'アカウント名'
         dlh.dd {},
           html.code {class: 'login-info'},
-            text user.username
+            text user.username.replace(/ /g, '\u2423')
 
         dlh.dt {}, text 'パスワード'
         dlh.dd {},
           html.code {class: 'login-info'},
-            text user.password
+            text user.password.replace(/ /g, '\u2423')
 
         dlh.dt {}, text 'ログインサイト'
         dlh.dd {},
@@ -77,37 +90,24 @@ export default class LoginInfo extends ModalDialog
         dlh.dd {}, text dateTime.toLocaleString(DateTime.DATETIME_FULL)
       ]
 
-      html.div {class: 'd-none d-print-block'}, [
-        html.p {}, [
-          text '文字のサンプル'
-          html.br {}
-          html.code {class: 'login-info'}, [
-            text ['0'..'9'].join(' ')
-            html.br {}
-            text ['A'..'Z'].join(' ')
-            html.br {}
-            text ['a'..'z'].join(' ')
-            html.br {}
-            text [['!'..'/'], [':'..'@'], ['['..'`'], ['{'..'~']].flat().join(' ')
-          ]
-        ]
-      ]
+      @displayChars()
 
       html.div {class: 'd-print-none'}, [
         html.p {}, [
           text '上記の初回パスワードは'
           html.strong {}, text '現在の画面にのみ'
           text '表示され、どこにも保存されていません。'
-          text '今すぐログインするか、このページを印刷してください。'
+          text '今すぐログインするか、下部の「印刷」ボタンからこのページを印刷してください。'
         ]
       ]
 
       html.h4 {}, text 'ログインとパスワード'
+      html.p {},
+        html.strong {}, text '必ずパスワードを変更してください。'
       html.p {}, [
-        html.strong {}, text 'パスワードを変更する必要があります。'
         text '上記ログインサイトにアクセス'
         html.span {class: 'd-print-none'}, text '(新しいタブで開きます)'
-        text 'し、アカウント名とパスワードでログインを実施してください。'
+        text 'し、アカウント名とパスワードでログインしてください。'
         if @service.required_new_password
           text '''
             初回ログイン時に、パスワード変更が求められます。
@@ -172,6 +172,23 @@ export default class LoginInfo extends ModalDialog
           dlh.dd {}, text system.contact_email
           dlh.dt {}, text '電話番号'
           dlh.dd {}, text system.contact_phone
+        ]
+      ]
+    ]
+
+  displayChars: ->
+    html.div {class: 'd-print-block'}, [
+      html.p {class: 'text-center'}, [
+        text '文字のサンプル'
+        html.br {}
+        html.code {class: 'login-info'}, [
+          text '0 1 2 3 4 5 6 7 8 9'
+          html.br {}
+          text 'A B C D E F G H I J K L M N O P Q R S T U V W X Y Z'
+          html.br {}
+          text 'a b c d e f g h i j k l m n o p q r s t u v w x y z'
+          html.br {}
+          text '\u2423 ! " # $ % & \' ( ) * + , - . / : ; < = > ? @ [ \\ ] ^ _ ` { | } ~'
         ]
       ]
     ]
