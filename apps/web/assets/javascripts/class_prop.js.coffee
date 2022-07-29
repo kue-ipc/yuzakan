@@ -4,7 +4,7 @@ export convertArray = (obj) ->
   if !obj?
     []
   else if typeof obj == 'string'
-    (item for itme in obj.split(/\s+/) when item)
+    (item for item in obj.split(/\s+/) when item)
   else if obj instanceof Array
     obj
   else if typeof obj[Symbol.iterator] == 'function'

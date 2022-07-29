@@ -9,6 +9,7 @@ cols = {
   xl: 2
   xll: 2
 }
+colPrint = 3
 
 calcDtClasses = ->
   list = []
@@ -17,6 +18,7 @@ calcDtClasses = ->
   for name in ['sm', 'md', 'lg', 'xl', 'xll']
     list.push "col-#{name}-#{cols[name]}" if cols[name] != pre
     pre = cols[name]
+  list.push "col-print-#{colPrint}"
   list
 
 calcDdClasses = ->
@@ -26,6 +28,7 @@ calcDdClasses = ->
   for name in ['sm', 'md', 'lg', 'xl', 'xll']
     list.push "col-#{name}-#{12 - cols[name]}" if cols[name] != pre
     pre = cols[name]
+  list.push "col-print-#{12 - colPrint}"
   list
 
 calcDdSubClasses = ->
@@ -36,6 +39,8 @@ calcDdSubClasses = ->
     list.push "offset-#{name}-#{cols[name]}" if cols[name] != pre
     list.push "col-#{name}-#{12 - cols[name]}" if cols[name] != pre
     pre = cols[name]
+  list.push "offset-print-#{colPrint}"
+  list.push "col-print-#{12 - colPrint}"
   list
 
 export dlClasses = Object.freeze ['row']

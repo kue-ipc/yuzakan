@@ -58,7 +58,13 @@ code
     font-size: 1.2rem
     font-variant-ligatures: none
     color: $black
+
+  &.sample
+    font-size: 0.9rem
+    font-variant-ligatures: none
+    color: $black
   
+
 @media print
   a, a:link, a:visited, a:hover, a:active
     color: $black
@@ -71,3 +77,17 @@ code
     right: 0
     height: 100%
     width: 100%
+
+  .col-print
+    flex: 1 0 0%
+
+  .col-print-auto
+    @include make-col-auto()
+
+  @if $grid-columns > 0
+    @for $i from 1 through $grid-columns
+      .col-print-#{$i}
+        @include make-col($i, $grid-columns)
+    @for $i from 0 through ($grid-columns - 1)
+      .offset-print-#{$i}
+        @include make-col-offset($i, $grid-columns)
