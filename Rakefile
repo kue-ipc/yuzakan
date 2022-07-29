@@ -77,6 +77,10 @@ namespace :vendor do
     cp Dir.glob("#{source_code_pro_dir}/WOFF2/TTF/*.ttf.woff2"), fonts_dir
     cp Dir.glob("#{source_code_pro_dir}/WOFF/VAR/*.ttf.{woff,woff2}"), fonts_dir
 
+    firacode_dir = 'node_modules/firacode'
+    cp Dir.glob("#{firacode_dir}/distr/woff/*.woff"), fonts_dir
+    cp Dir.glob("#{firacode_dir}/distr/woff2/*.woff2"), fonts_dir
+
     typopro_web_iosevka_dir = 'node_modules/@typopro/web-iosevka'
     cp Dir.glob("#{typopro_web_iosevka_dir}/*.woff"), fonts_dir
   end

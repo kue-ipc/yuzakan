@@ -1,5 +1,6 @@
 @charset "utf-8"
 @import "source-code-pro.scss"
+@import "firacode.scss"
 @import "typopro-iosevka.scss"
 @import "font"
 @import "colors"
@@ -50,11 +51,14 @@ a.link-user
 .text-serif
   font-family: $font-family-serif
 
-code.login-info
-  font-size: 1.2rem
-  font-family: $font-family-monospace
-  color: $black
+code
+  font-family: 'Fira Code', $font-family-monospace
 
+  &.login-info
+    font-size: 1.2rem
+    font-variant-ligatures: none
+    color: $black
+  
 @media print
   a, a:link, a:visited, a:hover, a:active
     color: $black

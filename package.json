@@ -9,6 +9,7 @@
     "@typopro/web-iosevka": "^3.7.5",
     "bootstrap": "^5.2.0",
     "bootstrap-icons": "^1.9.1",
+    "firacode": "^6.2.0",
     "http-link-header": "^1.0.5",
     "hyperapp": "^2.0.22",
     "luxon": "^3.0.1",

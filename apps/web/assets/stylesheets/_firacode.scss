@@ -1,0 +1,32 @@
+// Source Code Pro web fonts
+$fira-code-fonts: (
+  "Light":        ("weight": 300, "style": normal),
+  "Regular":      ("weight": 400, "style": normal),
+  "Medium":       ("weight": 500, "style": normal),
+  "SemiBold":     ("weight": 600, "style": normal),
+  "Bold":         ("weight": 700, "style": normal));
+  
+@each $name, $attr in $fira-code-fonts {
+  @font-face {
+    font-family: "Fira Code";
+    @each $key, $value in $attr {
+      font-#{$key}: $value;
+    }
+    src: url("./FiraCode-#{$name}.woff2") format("woff2"),
+         url("./FiraCode-#{$name}.woff") format("woff");
+  }
+}
+
+$fira-code-variable-fonts: (
+  "VF": ("weight": 300 700, "style": normal));
+
+@each $name, $attr in $source-code-variable-fonts {
+  @font-face {
+    font-family: "Fira Code VF";
+    @each $key, $value in $attr {
+      font-#{$key}: $value;
+    }
+    src: url("./FiraCode-#{$name}.woff2") format("woff2"),
+         url("./FiraCode-#{$name}.woff") format("woff");
+  }
+}

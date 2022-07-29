@@ -29,8 +29,7 @@ $source-code-pro-fonts: (
 
 $source-code-variable-fonts: (
   "Roman": ("weight": 200 900, "style": normal),
-  "Italic": ("weight": 200 900, "style": italic),
-);
+  "Italic": ("weight": 200 900, "style": italic));
 
 @each $name, $attr in $source-code-variable-fonts {
   @font-face {
