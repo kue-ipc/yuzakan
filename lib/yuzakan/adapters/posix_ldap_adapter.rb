@@ -171,14 +171,15 @@ module Yuzakan
       end
 
       private def add_member(group, user)
-        return false if group.memberuid.include?(user.uid.first)
+        return false if group['memberUid']&.include?(user.uid.first)
+        return false if user.gidNumber.first == group.gidNumber.first
 
         operations = [operation_add(:memberuid, user.uid.first)]
         ldap_modify(group.dn, operations)
       end
 
       private def remove_member(group, user)
-        return false if group.memberuid.exclude?(user.uid.first)
+        return false unless group['memberUid']&.incldue?(user.uid.first)
 
         operations = [operation_delete(:memberuid, user.uid.first)]
         ldap_modify(group.dn, operations)

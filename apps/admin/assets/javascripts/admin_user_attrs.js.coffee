@@ -2,7 +2,7 @@ import {toRomaji, toKatakana, toHiragana} from '../ja_conv.js'
 import {capitalize} from '../string_utils.js'
 import {xxh32, xxh64} from '../hash.js'
 
-export getAttrDefaultValue = ({username, attrs, code}) ->
+export getAttrDefaultValue = ({user, code}) ->
   return unless code
 
   code =
@@ -11,11 +11,14 @@ export getAttrDefaultValue = ({username, attrs, code}) ->
     else
       "return #{code};"
 
-  func = new Function('{username, attrs, tools}', code)
+  func = new Function('{username, display_name, email, primary_group, attrs, tools}', code)
   try
     result = func {
-      username
-      attrs
+      username: user.username
+      display_name: user.display_name
+      email: user.email
+      primary_group: user.primary_group
+      attrs: user.attrs
       tools: {toRomaji, toKatakana, toHiragana, capitalize, xxh32, xxh64}
     }
   catch error
@@ -32,7 +35,7 @@ export CalcUserAttrs = (state, {user, attrs}) ->
   attrDefaults = {}
 
   for attr in attrs when attr.code
-    attrDefaults[attr.name] = getAttrDefaultValue({username: user.name, attrs: user.attrs, code: attr.code})
+    attrDefaults[attr.name] = getAttrDefaultValue({user, code: attr.code})
     if user.attrSettings[attr.name] == 'default'
       attrValues[attr.name] = attrDefaults[attr.name]
 
@@ -53,7 +56,7 @@ export InitUserAttrs = (state, {user, attrs}) ->
       attrSettings[attr.name] = 'input'
       continue
 
-    attrDefaults[attr.name] = getAttrDefaultValue({username: user.name, attrs: user.userdata.attrs, code: attr.code})
+    attrDefaults[attr.name] = getAttrDefaultValue({user: {user..., attrs: user.userdata.attrs}, code: attr.code})
 
     if state.mode == 'new' ||
         !user.userdata.attrs[attr.name]? ||

@@ -27,7 +27,7 @@ class CreateUser
 
   def initialize(provider_repository: ProviderRepository.new,
                  user_repository: UserRepository.new,
-                 config_repository: CnofigRepository.new)
+                 config_repository: ConfigRepository.new)
     @provider_repository = provider_repository
     @user_repository = user_repository
     @config_repository = config_repository
@@ -35,16 +35,7 @@ class CreateUser
 
   def call(params)
     username = params[:username]
-
-    @password =
-      if params[:password]
-        params[:password]
-      else
-        generate_password = GeneratePassword.new
-        gp_result = generate_password.call
-        error!('パスワード生成に失敗しました。') if gp_result.failure?
-        gp_result.password
-      end
+    @password = params[:password] || generate_password
 
     userdata = {
       primary_group: params[:primary_group],
@@ -95,5 +86,15 @@ class CreateUser
     end
 
     true
+  end
+
+  private def generate_password
+    result = GeneratePassword.new(config_repository: @config_repository).call({})
+    if result.failure?
+      error(I18n.t('errors.action.fail', action: I18n.t('interactors.change_password')))
+      result.errors.each { |e| error(e) }
+      fail!
+    end
+    result.password
   end
 end

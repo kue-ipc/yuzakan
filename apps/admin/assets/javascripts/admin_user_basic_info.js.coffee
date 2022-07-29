@@ -7,14 +7,20 @@ import {createEventValueAction} from '../input_event.js'
 
 import {CalcUserAttrs} from './admin_user_attrs.js'
 
-SetUserName = (state, username) -> [CalcUserAttrs, {user: {state.user..., username}}]
-SetUserNameByEvent = createEventValueAction(SetUserName)
+SetUserUsername = (state, username) -> [CalcUserAttrs, {user: {state.user..., username}}]
+SetUserUsernameByEvent = createEventValueAction(SetUserUsername)
+
+SetUserDisplayName = (state, display_name) -> [CalcUserAttrs, {user: {state.user..., display_name}}]
+SetUserDisplayNameByEvent = createEventValueAction(SetUserDisplayName)
+
+SetUserEmail = (state, email) -> [CalcUserAttrs, {user: {state.user..., email}}]
+SetUserEmailByEvent = createEventValueAction(SetUserEmail)
 
 SetUserClearanceLevel = (state, clearance_level) -> {state..., user: {state.user..., clearance_level}}
 SetUserClearanceLevelByEvent = createEventValueAction(SetUserClearanceLevel, {type: 'integer'})
 
-SetUserPrimaryGroup = (state, primary_group) -> {state..., user: {state.user..., primary_group}}
-SetUserPrimaryGroupByEvent = createEventValueAction(SetUserPrimaryGroup, {type: 'string'})
+SetUserPrimaryGroup = (state, primary_group) -> [CalcUserAttrs, {user: {state.user..., primary_group}}]
+SetUserPrimaryGroupByEvent = createEventValueAction(SetUserPrimaryGroup)
 
 export default basicInfo = ({mode, user, groups}) ->
   html.div {}, [
@@ -30,8 +36,8 @@ export default basicInfo = ({mode, user, groups}) ->
               class: 'form-control'
               type: 'text'
               required: true
-              value: user.username
-              oninput: SetUserNameByEvent
+              value: user.username ? ''
+              oninput: SetUserUsernameByEvent
             }
           when 'edit'
             html.input {
@@ -39,24 +45,38 @@ export default basicInfo = ({mode, user, groups}) ->
               class: 'form-control-plaintext'
               readonly: true
               type: 'text'
-              value: user.username
+              value: user.username ? ''
             }
           when 'show'
             text user.username
       dlh.dt {},
         text '表示名'
       dlh.dd {},
-        if mode == 'new'
-          html.span {class: 'text-muted'}, text '(属性値にて設定)'
-        else
+        if mode == 'show'
           text user.display_name ? ''
+        else
+          html.input {
+            id: 'user-display_name'
+            class: 'form-control'
+            type: 'text'
+            required: true
+            value: user.display_name ? ''
+            oninput: SetUserDisplayNameByEvent
+          }
       dlh.dt {},
         text 'メールアドレス'
       dlh.dd {},
-        if mode == 'new'
-          html.span {class: 'text-muted'}, text '(属性値にて設定)'
-        else
+        if mode == 'show'
           text user.email ? ''
+        else
+          html.input {
+            id: 'user-display_name'
+            class: 'form-control'
+            type: 'text'
+            required: true
+            value: user.email ? ''
+            oninput: SetUserEmailByEvent
+          }
       dlh.dt {},
         text '権限レベル'
       dlh.dd {},
@@ -98,5 +118,5 @@ export default basicInfo = ({mode, user, groups}) ->
                 }, text "#{group.display_name} (#{group.groupname})"
             )...
           ]
-       ]
+    ]
   ]
