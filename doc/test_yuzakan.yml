@@ -1,6 +1,7 @@
 ---
 config:
   title: テストサイト
+  domain: example.jp
   session_timeout: 3600
   password_min_size: 8
   password_max_size: 64
@@ -8,6 +9,9 @@ config:
   password_min_score: 0
   password_unusable_chars: ''
   password_extra_dict: ''
+  generate_password_size: 16
+  generate_password_type: alphanumeric
+  generate_password_chars: ''
   contact_name: アカウント管理センター
   contact_email: admin@example.jp
   contact_phone: 00-0000-0000
@@ -15,7 +19,7 @@ providers:
 - name: local
   label: ローカル
   adapter_name: local
-  order: 0
+  order: 1
   readable: true
   writable: true
   authenticatable: true
@@ -28,13 +32,13 @@ providers:
 - name: posix_samba
   label: PosixとSamba
   adapter_name: samba_ldap
-  order: 8
+  order: 2
   readable: true
   writable: true
   authenticatable: true
   password_changeable: true
-  lockable: true
   individual_password: false
+  lockable: true
   self_management: false
   group: true
   params:
@@ -73,13 +77,13 @@ providers:
 - name: ldap
   label: 普通のLDAP
   adapter_name: ldap
-  order: 16
+  order: 3
   readable: true
   writable: true
   authenticatable: true
   password_changeable: true
-  lockable: true
   individual_password: false
+  lockable: true
   self_management: false
   group: true
   params:

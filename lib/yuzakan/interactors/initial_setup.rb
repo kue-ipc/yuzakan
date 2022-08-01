@@ -11,7 +11,8 @@ class InitialSetup
 
     validations do
       required(:config).schema do
-        required(:title) { filled? }
+        required(:title).filled(:str?, max_size?: 255)
+        optional(:domain).maybe(:str?, max_size?: 255)
       end
       required(:admin_user).schema do
         required(:username).filled(:str?, :name?, max_size?: 255)

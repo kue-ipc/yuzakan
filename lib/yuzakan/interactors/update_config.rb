@@ -6,18 +6,22 @@ class UpdateConfig
 
   class Validations
     include Hanami::Validations::Form
-    messages_path 'config/messages.yml'
+    messages :i18n
 
     validations do
-      optional(:title) { str? & max_size?(255) }
-
+      optional(:title).filled(:str?, max_size?: 255)
+      optional(:domain).filled(:str?, max_size?: 255)
       optional(:session_timeout) { int? & gteq?(0) & lteq?(24 * 60 * 60) }
 
       optional(:password_min_size) { int? & gteq?(1) & lteq?(255) }
       optional(:password_max_size) { int? & gteq?(1) & lteq?(255) }
       optional(:password_min_score) { int? & gteq?(0) & lteq?(4) }
-      optional(:password_unusable_chars) { str? & max_size?(255) }
+      optional(:password_unusable_chars) { str? & max_size?(128) }
       optional(:password_extra_dict) { str? & max_size?(4096) }
+
+      optional(:generate_password_size) { int? & gteq?(1) & lteq?(255) }
+      optional(:generate_password_type) { int? & gteq?(0) & lteq?(4) }
+      optional(:generate_password_chars) { str? & max_size?(128) }
 
       optional(:contact_name) { none? | (str? & max_size?(1024)) }
       optional(:contact_email) { none? | (str? & max_size?(1024)) }

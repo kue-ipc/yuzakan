@@ -23,6 +23,14 @@ module Admin
             '4 (解読推定数 ≧ 10^10) とても安全' => 4,
           }
         end
+
+        def generate_password_types
+          {
+            '英数字' => 'alphanumeric',
+            'ASCII' => 'ascii',
+            'カスタム' => 'custom',
+          }
+        end
       end
     end
   end

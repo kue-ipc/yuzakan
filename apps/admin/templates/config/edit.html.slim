@@ -28,6 +28,10 @@ h4 個別設定
     - text_field :title, class: 'form-control'
 
   - div class: 'mb-3' do
+    - label 'ドメイン', class: 'form-label', for: :domain
+    - text_field :domain, class: 'form-control'
+
+  - div class: 'mb-3' do
     - label 'セッションタイムアウト', class: 'form-label', for: :session_timeout
     - div class: 'input-group' do
       - number_field :session_timeout, class: 'form-control', min: 0
@@ -71,6 +75,24 @@ h4 個別設定
     - text_area :password_extra_dict, class: 'form-control', rows: 3
     - small class: 'form-text' do
       - '複雑度を計算する際に、外部辞書として使用されます。'
+
+
+  - div class: 'mb-3' do
+    - label 'パスワード生成時のサイズ', class: 'form-label', for: :generate_password_size
+    - div class: 'input-group' do
+      - number_field :generate_password_size, class: 'form-control', min: 1, max: 255
+      - span '文字', class: 'input-group-text'
+
+  - div class: 'mb-3' do
+    - label 'パスワード生成時の文字種', class: 'form-label', for: :generate_password_type
+    - select :generate_password_type, generate_password_types, class: 'form-control', size: generate_password_types.size
+
+  - div class: 'mb-3' do
+    - label 'パスワード生成時に指定する文字', class: 'form-label', for: :generate_password_chars
+    - text_field :generate_password_chars, class: 'form-control', max: 128
+    - small class: 'form-text' do
+      - 'パスワード生成時の文字種が「英数字」または「ASCII」の場合、ここに指定された文字が除外されます。'
+      - 'パスワード生成時の文字種が「カスタム」の場合、ここに指定された文字が使用されます。'
 
   - div class: 'mb-3' do
     - label '連絡先名前', class: 'form-label', for: :contact_name

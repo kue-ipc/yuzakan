@@ -2,8 +2,11 @@ h2 初期セットアップ
 = form_for :setup, routes.path(:setup) do
   - fields_for :config do
     - div class: 'mb-3' do
-      - label 'サイト題名', class: 'form-label', for: :username
+      - label 'サイト名', class: 'form-label', for: :title
       - text_field :title, class: 'form-control', required: true
+    - div class: 'mb-3' do
+      - label 'ドメイン', class: 'form-label', for: :domain
+      - text_field :domain, class: 'form-control'
   - fields_for :admin_user do
     - p 'ローカル管理者のユーザー名とパスワードを入力してください。'
     - div class: 'mb-3' do

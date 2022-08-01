@@ -11,6 +11,7 @@ module Admin
           data['config'] = {}
           %w[
             title
+            domain
             session_timeout
             password_min_size
             password_max_size
@@ -18,6 +19,9 @@ module Admin
             password_min_score
             password_unusable_chars
             password_extra_dict
+            generate_password_size
+            generate_password_type
+            generate_password_chars
             contact_name
             contact_email
             contact_phone
