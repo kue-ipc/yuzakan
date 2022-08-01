@@ -3,6 +3,8 @@ Hanami::Model.migration do
     create_table :users do
       primary_key :id
 
+      foreign_key :primary_group_id, :groups, on_delete: :set_null, null: true
+ 
       column :username, String, null: false
       column :display_name, String, null: true
       column :email, String, null: true
