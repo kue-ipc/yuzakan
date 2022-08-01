@@ -6,7 +6,7 @@ Hanami::Model.migration do
       foreign_key :user_template_id, :user_templates, on_delete: :cascade, null: false
       foreign_key :attr_id, :attrs, on_delete: :cascade, null: false
 
-      column :code, String, size: 4096, null: true
+      column :code, String, size: 4096
       column :required, TrueClass, null: false, default: false
 
       column :created_at, DateTime, null: false

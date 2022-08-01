@@ -14,7 +14,7 @@ module Api
             optional(:page).filled(:int?, gteq?: 1, lteq?: 10000)
             optional(:per_page).filled(:int?, gteq?: 10, lteq?: 100)
             optional(:query).maybe(:str?, max_size?: 255)
-            optional(:no_sync).maybe(:bool?)
+            optional(:sync).maybe(:str?, included_in?: ['default', 'forced', 'no'])
           end
         end
 
@@ -31,8 +31,14 @@ module Api
         def call(params)
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
-          query = params[:query]
-          query = nil if query&.empty?
+          query = (params[:query] if params[:query]&.size&.positive?)
+
+          sync =
+            if params[:sync]&.size&.positive?
+              params[:sync].intern
+            else
+              :default
+            end
 
           user_provider_names = Hash.new { |hash, key| hash[key] = [] }
           @provider_repository.ordered_all_with_adapter_by_operation(:user_read).each do |provider|
@@ -45,7 +51,7 @@ module Api
 
           @pager = Yuzakan::Utils::Pager.new(routes, :users, params, all_items)
 
-          @users = get_users(@pager.page_items, no_sync: params[:no_sync]).map do |user|
+          @users = get_users(@pager.page_items, sync: sync).map do |user|
             {
               **convert_for_json(user),
               synced_at: user.created_at,
@@ -58,20 +64,35 @@ module Api
           self.body = generate_json(@users)
         end
 
-        private def get_users(usernames, no_sync: false)
-          user_entities = @user_repository.by_username(usernames).to_a.to_h { |user| [user.username, user] }
-          usernames.map do |username|
-            if user_entities.key?(username)
-              user_entities[username]
-            else
-              create_user(username, no_sync: no_sync)
+        private def get_users(usernames, sync: :default)
+          case sync
+          when :dafult
+            # DBに存在しない場合のみ同期する
+            user_entities = get_user_entities(usernames)
+            usernames.map do |username|
+              user_entities[username] || get_sync_user(username)
             end
+          when :forced
+            # DBに存在しても同期する
+            usernames.map do |username|
+              get_sync_user(username)
+            end
+          when :no
+            # DBに存在しない場合でも同期しない
+            user_entities = get_user_entities(usernames)
+            usernames.map do |username|
+              user_entities[username] || User.new({username: username})
+            end
+          else
+            raise "Unknown sync: #{sync}"
           end
         end
 
-        private def create_user(username, no_sync: false)
-          return User.new({username: username}) if no_sync
+        private def get_user_entities(usernames)
+          @user_repository.by_username(usernames).to_a.to_h { |user| [user.username, user] }
+        end
 
+        private def get_sync_user(username)
           @sync_user ||= SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
           result = @sync_user.call({username: username})
           if result.failure?

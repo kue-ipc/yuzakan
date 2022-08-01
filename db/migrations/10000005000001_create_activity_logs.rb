@@ -5,7 +5,7 @@ Hanami::Model.migration do
 
       column :uuid, String, null: false
       column :client, String, null: false
-      column :username, String, null: true
+      column :username, String
 
       column :action, String, null: false
       column :method, String, null: false
