@@ -3,14 +3,15 @@ Hanami::Model.migration do
     create_table :user_templates do
       primary_key :id
 
-      foreign_key :user_id,  :users,  on_delete: :cascade, null: false
-      foreign_key :group_id, :groups, on_delete: :cascade, null: false
+      foreign_key :primary_group_id, :groups, on_delete: :set_null, null: true
 
       column :name, String, null: false
       column :label, String, null: false
       column :order, Integer, null: false
 
-      column :domain, String
+      column :domain, String, null: true
+
+      column :description, String, size: 4096, null: true
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

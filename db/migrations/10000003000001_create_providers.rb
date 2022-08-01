@@ -22,6 +22,8 @@ Hanami::Model.migration do
 
       column :group, TrueClass, null: false, default: false
 
+      column :description, String, size: 4096, null: true
+
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
 
