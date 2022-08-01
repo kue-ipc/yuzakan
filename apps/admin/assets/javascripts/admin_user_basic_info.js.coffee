@@ -7,7 +7,17 @@ import {createEventValueAction} from '../input_event.js'
 
 import {CalcUserAttrs} from './admin_user_attrs.js'
 
-SetUserUsername = (state, username) -> [CalcUserAttrs, {user: {state.user..., username}}]
+SetUserUsername = (state, username) ->
+  email =
+    if !state.user.email || state.user.email == "#{state.user.username}@#{state.system.domain}"
+      if username
+        "#{username}@#{state.system.domain}"
+      else
+        ''
+    else
+      state.user.email
+
+  [CalcUserAttrs, {user: {state.user..., username, email}}]
 SetUserUsernameByEvent = createEventValueAction(SetUserUsername)
 
 SetUserDisplayName = (state, display_name) -> [CalcUserAttrs, {user: {state.user..., display_name}}]
@@ -98,7 +108,10 @@ export default basicInfo = ({mode, user, groups}) ->
         if mode == 'show'
           if user.primary_group
             primary_group = groups.find (group) -> group.groupname == user.primary_group
-            text "#{primary_group.display_name} (#{primary_group.groupname})"
+            text if primary_group.display_name
+              "#{primary_group.display_name} (#{primary_group.groupname})"
+            else
+              primary_group.groupname
           else
             text "(無し)"
         else
@@ -115,7 +128,7 @@ export default basicInfo = ({mode, user, groups}) ->
                 html.option {
                   value: group.groupname
                   selected: group.groupname == user.primary_group
-                }, text "#{group.display_name} (#{group.groupname})"
+                }, text if group.display_name then "#{group.display_name} (#{group.groupname})" else group.groupname
             )...
           ]
     ]

@@ -49,6 +49,14 @@ class Provider < Hanami::Entity
     super
   end
 
+  def label_name
+    if display_name
+      "#{display_name} (#{name})"
+    else
+      name
+    end
+  end
+
   def to_h
     super.except(:provider_params, :attr_mappings)
   end

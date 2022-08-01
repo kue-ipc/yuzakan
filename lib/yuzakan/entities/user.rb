@@ -20,6 +20,14 @@ class User < Hanami::Entity
     end
   end
 
+  def label
+    if display_name
+      display_name
+    else
+      username
+    end
+  end
+
   def to_s
     username
   end

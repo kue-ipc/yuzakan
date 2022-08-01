@@ -5,6 +5,7 @@ import * as html from '../hyperapp-html.js'
 
 import {fetchJsonGet} from '../api/fetch_json.js'
 
+import {runGetSystem} from '../api/get_system.js'
 import {createRunGetAttrs} from '../api/get_attrs.js'
 import {runGetProviders} from '../api/get_providers.js'
 import {runGetGroups} from '../api/get_groups.js'
@@ -50,14 +51,15 @@ mode = if name? then 'show' else 'new'
 
 init = [
   {mode, name, user: null, providers: null, attrs: null, groups: null}
+  [runGetSystem]
   [runGetProviders]
   [runGetAttrsWithInit]
   [runGetGroups]
   [runGetUser, {name}]
 ]
 
-view = ({mode, name, user, providers, attrs, groups}) ->
-  unless user? && providers? && attrs? && groups?
+view = ({mode, name, user, providers, attrs, groups, system}) ->
+  unless user? && providers? && attrs? && groups? && system?
     return html.div {}, text '読み込み中...'
 
   html.div {}, [
