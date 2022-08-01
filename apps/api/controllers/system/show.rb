@@ -10,6 +10,7 @@ module Api
           self.body = generate_json({
             url: Web.routes.url(:root),
             title: current_config&.title,
+            domain: current_config&.domain,
             contact: {
               name: current_config&.contact_name,
               email: current_config&.contact_email,
