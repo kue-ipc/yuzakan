@@ -13,6 +13,7 @@ describe Api::Controllers::System::Show do
     _(json).must_equal({
       url: 'http://0.0.0.0:2300/',
       title: 'title',
+      domain: 'kyokyo-u.ac.jp',
       contact: {name: nil, email: nil, phone: nil},
       app: {name: 'Yuzakan', version: '0.6.0',
             license: File.read(File.join(__dir__, '../../../../LICENSE')),},
@@ -22,7 +23,7 @@ describe Api::Controllers::System::Show do
   describe 'other config' do
     let(:config) {
       Config.new(title: 'title2', session_timeout: 3600, contact_name: 'admin', contact_email: 'admin@examle.jp',
-                 contact_phone: '00-0000-0000')
+                 contact_phone: '00-0000-0000', domain: 'kyokyo-u.ac.jp')
     }
 
     it 'is successful' do
@@ -33,6 +34,7 @@ describe Api::Controllers::System::Show do
       _(json).must_equal({
         url: 'http://0.0.0.0:2300/',
         title: 'title2',
+        domain: 'kyokyo-u.ac.jp',
         contact: {name: 'admin', email: 'admin@examle.jp', phone: '00-0000-0000'},
         app: {name: 'Yuzakan', version: '0.6.0',
               license: File.read(File.join(__dir__, '../../../../LICENSE')),},
@@ -51,6 +53,7 @@ describe Api::Controllers::System::Show do
       _(json).must_equal({
         url: 'http://0.0.0.0:2300/',
         title: 'title',
+        domain: 'kyokyo-u.ac.jp',
         contact: {name: nil, email: nil, phone: nil},
         app: {name: 'Yuzakan', version: '0.6.0',
               license: File.read(File.join(__dir__, '../../../../LICENSE')),},
