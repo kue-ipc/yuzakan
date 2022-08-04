@@ -25,7 +25,7 @@
     "@rollup/plugin-node-resolve": "^13.3.0",
     "coffeescript": "^2.7.0",
     "postcss-sass": "^0.5.0",
-    "rollup": "^2.77.0",
+    "rollup": "^2.77.2",
     "rollup-plugin-coffee-script": "^2.0.0",
     "stylelint": "^14.9.1",
     "stylelint-config-standard": "^26.0.0",
