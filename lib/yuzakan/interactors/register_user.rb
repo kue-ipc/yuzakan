@@ -14,13 +14,19 @@ class RegisterUser
 
     validations do
       required(:username).filled(:str?, :name?, max_size?: 255)
-      optional(:display_name).maybe(:str?, max_size?: 255)
-      optional(:email).maybe(:str?, :email?, max_size?: 255)
+      optional(:display_name).filled(:str?, max_size?: 255)
+      optional(:email).filled(:str?, :email?, max_size?: 255)
+      optional(:primary_group).filled(:str?, :name?, max_size?: 255)
+      optional(:groups).each(:str?, :name?, max_size?: 255)
     end
   end
 
-  def initialize(user_repository: UserRepository.new)
+  def initialize(user_repository: UserRepository.new,
+                 group_repository: GroupRepository.new,
+                 member_repository: MemberRepository.new)
     @user_repository = user_repository
+    @gorup_repository = group_repository
+    @member_repository = member_repository
   end
 
   expose :user
@@ -30,14 +36,16 @@ class RegisterUser
     display_name = params[:display_name] || params[:username]
     email = params[:email]
 
-    user = @user_repository.find_by_username(username)
+    primary_group = get_group(params[:primary_group])
+    groups = params[:groups]&.map { |groupname| get_group(groupname) } || []
+
+    data = {username: username, display_name: display_name, email: email, primary_group_id: primary_group&.id}
+    user_id = @user_repository.find_by_username(username)&.id
     @user =
-      if user.nil?
-        @user_repository.create(username: username, display_name: display_name, email: email)
-      elsif user.display_name != display_name || user.email != email
-        @user_repository.update(user.id, display_name: display_name, email: email)
+      if user_id
+        @user_repository.update(user_id, data)
       else
-        user
+        @user_repository.create(data)
       end
   end
 
@@ -49,5 +57,12 @@ class RegisterUser
     end
 
     true
+  end
+
+  private def get_group(groupname)
+    return if groupname.nil?
+
+    @groups ||= {}
+    @groups[groupname] ||= @group_repository.find_or_create_by_groupname(groupname)
   end
 end

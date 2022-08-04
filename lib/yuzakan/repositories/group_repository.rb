@@ -11,4 +11,8 @@ class GroupRepository < Hanami::Repository
   def find_by_groupname(groupname)
     by_groupname(groupname).one
   end
+
+  def find_or_create_by_groupname(groupname)
+    find_by_groupname(groupname) || create({groupname: groupname})
+  end
 end
