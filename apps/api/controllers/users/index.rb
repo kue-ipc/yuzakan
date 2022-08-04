@@ -66,7 +66,7 @@ module Api
 
         private def get_users(usernames, sync: :default)
           case sync
-          when :dafult
+          when :default
             # DBに存在しない場合のみ同期する
             user_entities = get_user_entities(usernames)
             usernames.map do |username|

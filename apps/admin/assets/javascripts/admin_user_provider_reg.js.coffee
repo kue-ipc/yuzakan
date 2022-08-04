@@ -5,7 +5,7 @@ import BsIcon from '../bs_icon.js'
 import valueDisplay from '../value_display.js'
 
 PROVIDER_REG_ITEMS = [
-  {name: 'name', label: 'ユーザー名', type: 'string'}
+  {name: 'username', label: 'ユーザー名', type: 'string'}
   {name: 'display_name', label: '表示名', type: 'string'}
   {name: 'email', label: 'メールアドレス', type: 'string'}
   {name: 'locked', label: 'ロック', type: 'boolean'}

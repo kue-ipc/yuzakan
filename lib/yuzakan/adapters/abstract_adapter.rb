@@ -11,9 +11,9 @@
 #   disabled: ?bool
 #   unmanageable: ?bool
 #   mfa: ?bool
-#   attrs: Hash = {key: value, ...}
 #   primary_group: ?String
-#   grops: Array[String]
+#   groups: Array[String]
+#   attrs: Hash = {key: value, ...}
 #
 # groupdate:
 #   groupname: String = groupname

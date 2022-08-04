@@ -12,7 +12,7 @@ class ChangePassword
     validations do
       required(:username).filled(:str?, :name?, max_size?: 255)
       required(:password).filled(:str?, max_size?: 255)
-      optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
+      optional(:providers).each(:str?, :name?, max_size?: 255)
     end
   end
 
@@ -28,28 +28,21 @@ class ChangePassword
     @username = params[:username]
     @password = params[:password]
 
-    @providers = []
+    @providers = {}
 
     get_providers(params[:providers]).each do |provider|
-      @providers << provider.name if provider.user_change_password(@username, @password)
+      @providers[provider.name] = provider.user_change_password(@username, @password)
     rescue => e
-      Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name}"
+      Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{@username}"
       Hanami.logger.error e
       error(I18n.t('errors.action.error', action: I18n.t('interactors.change_password'), target: provider.label))
-      unless @providers.empty?
+      if @providers.valuse.any?
         error(I18n.t('errors.action.stopped_after_some',
                      action: I18n.t('interactors.change_password'),
                      target: I18n.t('entities.provider')))
       end
       error(e.message)
       fail!
-    end
-
-    if @providers.empty? # rubocop:disable Style/GuardClause
-      Hanami.logger.warn "[#{self.class.name}] Not run an any provider"
-      error!(I18n.t('errors.action.not_run',
-                    action: I18n.t('interactors.change_password'),
-                    target: I18n.t('entities.provider')))
     end
   end
 

@@ -16,7 +16,6 @@ class CreateUser
       optional(:email).filled(:str?, :email?, max_size?: 255)
       optional(:clearance_level).filled(:int?)
       optional(:primary_group).filled(:str?, :name?, max_size?: 255)
-
       optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
       optional(:attrs) { hash? }
     end

@@ -11,7 +11,7 @@ class ResetPassword
 
     validations do
       required(:username).filled(:str?, :name?, max_size?: 255)
-      optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
+      optional(:providers).each(:str?, :name?, max_size?: 255)
     end
   end
 
