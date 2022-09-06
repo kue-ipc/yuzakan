@@ -13,6 +13,6 @@ class GroupRepository < Hanami::Repository
   end
 
   def find_or_create_by_groupname(groupname)
-    find_by_groupname(groupname) || create({groupname: groupname})
+    find_by_groupname(groupname) || create({groupname: groupname, display_name: groupname})
   end
 end

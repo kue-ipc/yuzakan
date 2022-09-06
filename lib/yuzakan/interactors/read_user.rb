@@ -30,9 +30,9 @@ class ReadUser
 
     get_providers(params[:providers]).each do |provider|
       userdata = provider.user_read(params[:username])
-      @providers[pravider.name] = userdata
+      @providers[provider.name] = userdata
       if userdata
-        %i[useername display_name email locked disabled unmangeable mfa].each do |name|
+        %i[username display_name email locked disabled unmangeable mfa].each do |name|
           @userdata[name] ||= userdata[name] unless userdata[name].nil?
         end
         @userdata[:primary_group] ||= userdata[:primary_group] unless userdata[:primary_group].nil?

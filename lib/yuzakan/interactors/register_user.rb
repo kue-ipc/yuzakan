@@ -25,13 +25,14 @@ class RegisterUser
                  group_repository: GroupRepository.new,
                  member_repository: MemberRepository.new)
     @user_repository = user_repository
-    @gorup_repository = group_repository
+    @group_repository = group_repository
     @member_repository = member_repository
   end
 
   expose :user
 
   def call(params)
+    pp params
     username = params[:username]
     display_name = params[:display_name] || params[:username]
     email = params[:email]
