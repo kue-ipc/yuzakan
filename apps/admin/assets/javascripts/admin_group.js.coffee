@@ -25,7 +25,7 @@ showGroupRunner = (dispatch, {name}) ->
   if response.ok
     dispatch(groupAction, {group: response.data})
   else
-    console.error respons
+    console.error response
 
 initAllProvidersAction = (state, {providers}) ->
   # providers group only

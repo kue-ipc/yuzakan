@@ -77,20 +77,23 @@ module Yuzakan
           name: :user_name_attr,
           label: 'ユーザー名の属性',
           type: :string,
-          default: 'cn',
-          placeholder: 'cn',
+          required: true,
+          placeholder: 'cn, uid, name, etc...',
+          description: 'ユーザーの検索時に使用されます。',
         }, {
           name: :user_display_name_attr,
           label: 'ユーザー表示名の属性',
           type: :string,
-          default: 'displayName',
-          placeholder: 'displayName',
+          required: false,
+          placeholder: 'displayName, displayName;lang-ja, etc...',
+          description: '設定しない場合は使われません。',
         }, {
           name: :user_email_attr,
           label: 'ユーザーメールの属性',
           type: :string,
-          default: 'mail',
-          placeholder: 'mail',
+          required: false,
+          placeholder: 'mail, email, maildrop, etc...',
+          description: '設定しない場合は使われません。',
         }, {
           name: :user_search_base_dn,
           label: 'ユーザー検索のベースDN',
@@ -252,11 +255,8 @@ module Yuzakan
         return nil if user_read(username)
 
         attributes = create_user_attributes(username, **userdata)
-        dn =
-          [
-            "#{@params[:create_user_dn_attr]}=#{attributes[@params[:create_user_dn_attr].intern]}",
-            @params[:create_user_ou_dn],
-          ].join(',')
+        dn_attr = @params[:create_user_dn_attr]
+        dn = "#{dn_attr}=#{attributes[dn_attr.intern]},#{@params[:create_user_ou_dn]}"
 
         ldap_add(dn, attributes)
 
@@ -267,8 +267,10 @@ module Yuzakan
       end
 
       def user_read(username)
-        entry = get_user_entry(username)
-        entry && user_entry_to_data(entry)
+        user = get_user_entry(username)
+        return if user.nil?
+
+        user_entry_to_data(user)
       end
 
       def user_update(username, **userdata)
@@ -276,7 +278,11 @@ module Yuzakan
       end
 
       def user_delete(username)
-        raise NotImplementedError
+        user = get_user_entry(username)
+        return if user.nil?
+
+        ldap_delete(user.dn)
+        user_entry_to_data(user)
       end
 
       def user_auth(username, password)
@@ -316,10 +322,12 @@ module Yuzakan
       end
 
       def user_search(query)
-        filter =
-          Net::LDAP::Filter.eq(@params[:user_name_attr], query) |
-          Net::LDAP::Filter.eq(@params[:user_display_name_attr], query) |
-          Net::LDAP::Filter.eq(@params[:user_email_attr], query)
+        filter = Net::LDAP::Filter.eq(@params[:user_name_attr], query)
+
+        [:display_name, :email].each do |name|
+          attr_name = @params["user_#{name}_attr".intern]
+          filter |= Net::LDAP::Filter.eq(attr_name, query) if attr_name && attr_name.emtpy?
+        end
 
         filter &= Net::LDAP::Filter.construct(@params[:user_search_filter]) if @params[:user_search_filter]
 
@@ -378,7 +386,10 @@ module Yuzakan
         attributes[attribute_name(@params[:create_user_dn_attr])] = username
 
         [:display_name, :email].each do |name|
-          attributes[attribute_name(@params["user_#{name}_attr".intern])] = userdata[name] if userdata[name]
+          attr_name = @params["user_#{name}_attr".intern]
+          if attr_name && !attr_name.empty? && (userdata[name])
+            attributes[attribute_name(@params["user_#{name}_attr".intern])] = userdata[name]
+          end
         end
 
         attributes
@@ -584,8 +595,8 @@ module Yuzakan
 
         {
           username: name,
-          display_name: user.first(@params[:user_display_name_attr]),
-          email: user.first(@params[:user_email_attr])&.downcase,
+          display_name: @params[:user_display_name_attr] && user.first(@params[:user_display_name_attr]),
+          email: @params[:user_email_attr] && user.first(@params[:user_email_attr])&.downcase,
           attrs: attrs,
           primary_group: primary_group,
           groups: groups,

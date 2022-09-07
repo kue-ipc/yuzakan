@@ -37,6 +37,9 @@ class CreateUser
     @password = params[:password] || generate_password
 
     userdata = {
+      username: params[:username],
+      display_name: params[:display_name],
+      email: params[:email],
       primary_group: params[:primary_group],
       attrs: params[:attrs] || {},
     }
@@ -71,18 +74,7 @@ class CreateUser
       return false
     end
 
-    read_user = ReadUser.new(provider_repository: @provider_repository)
-    read_user_result = read_user.call(username: params[:username])
-
-    if read_user_result.failure?
-      error(read_user_result.errors)
-      return false
-    end
-
-    unless read_user_result.provider_userdatas.empty?
-      error('ユーザーは既に存在します。')
-      return false
-    end
+    # ユーザーの存在チェックはしない。
 
     true
   end

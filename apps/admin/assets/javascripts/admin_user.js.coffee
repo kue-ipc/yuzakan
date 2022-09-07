@@ -33,13 +33,17 @@ SetUserWithInit = (state, {user}) ->
 
 SetAttrsWithInit = (state, attrs) -> [InitUserAttrs, {attrs}]
 
+SetMode = (state, mode) -> {state..., mode}
+
 runGetUser = (dispatch, {name}) ->
   if name?
     response = await fetchJsonGet({url: "/api/users/#{name}"})
     if response.ok
       dispatch(SetUserWithInit, {user: response.data})
+    else if response.code == 404
+      dispatch(SetMode, 'none')
     else
-      console.error respons
+      console.error response
   else
     dispatch(SetUserWithInit, {user: newUser})
 
@@ -59,6 +63,10 @@ init = [
 ]
 
 view = ({mode, name, user, providers, attrs, groups, system}) ->
+  if mode == 'none'
+    return html.div {},
+      html.strong {}, text 'ユーザーが見つかりませんでした。'
+
   unless user? && providers? && attrs? && groups? && system?
     return html.div {}, text '読み込み中...'
 

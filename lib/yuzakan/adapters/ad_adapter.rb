@@ -35,6 +35,14 @@ module Yuzakan
             default: 'sAMAccountName',
             fixed: true,
           }, {
+            name: :user_display_name_attr,
+            default: 'displayName',
+            description: 'AD標準はdisplayNameです。',
+          }, {
+            name: :user_email_attr,
+            default: 'mail',
+            description: 'AD標準はmailです。',
+          }, {
             name: :user_search_filter,
             default: '(objectclass=user)',
             description: 'ユーザー検索を行うときのフィルターです。' \

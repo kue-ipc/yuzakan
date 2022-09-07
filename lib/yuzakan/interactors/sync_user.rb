@@ -15,6 +15,7 @@ class SyncUser
     end
   end
 
+  expose :username
   expose :user
   expose :userdata
   expose :providers
@@ -26,10 +27,13 @@ class SyncUser
   end
 
   def call(params)
+    @username = params[:username]
+
     read_user = ReadUser.new(provider_repository: @provider_repository)
-    result = read_user.call({username: params[:username]})
+    result = read_user.call({username: @username})
     if result.failure?
       Hanami.logger.error "[#{self.class.name}] Failed to call ReadUser"
+      Hanami.logger.error result.errors
       error(I18n.t('errors.action.fail', action: I18n.t('interactors.read_user')))
       result.errors.each { |msg| error(msg) }
       fail!
@@ -38,14 +42,14 @@ class SyncUser
     @userdata = result.userdata
     @providers = result.providers
 
-    if @userdata[:username] != params[:username]
-      Hanami.logger.error "[#{self.class.name}] Usernames not equal: #{@userdata[:username]}, #{params[:username]}"
-      error!(I18n.t('errors.eql?', left: I18n.t('attributes.user.username'))) 
-    end
-
     if @providers.values.any?
-      register_user_result = RegisterUser.new(user_repository: @user_repository).call(
-        @userdata.slice(:username, :display_name, :email, :primary_group, :groups))
+      if @userdata[:username] != @username
+        Hanami.logger.error "[#{self.class.name}] Usernames not equal: #{@userdata[:username]}"
+        error!(I18n.t('errors.eql?', left: I18n.t('attributes.user.username')))
+      end
+
+      register_user_result = RegisterUser.new(user_repository: @user_repository)
+        .call(@userdata.slice(:username, :display_name, :email, :primary_group, :groups))
       if register_user_result.failure?
         Hanami.logger.error "[#{self.class.name}] Failed to call RegisterUser"
         error(I18n.t('errors.action.fail', action: I18n.t('interactors.register_user')))
@@ -54,8 +58,7 @@ class SyncUser
       end
       @user = register_user_result.user
     else
-      unregister_user_result = UnregisterUser.new(user_repository: @user_repository).call(
-        @userdata.slice(:username))
+      unregister_user_result = UnregisterUser.new(user_repository: @user_repository).call(username: @username)
       if unregister_user_result.failure?
         Hanami.logger.error "[#{self.class.name}] Failed to call UnregisterUser"
         error(I18n.t('errors.action.fail', action: I18n.t('interactors.unregister_user')))

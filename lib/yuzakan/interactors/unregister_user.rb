@@ -23,7 +23,7 @@ class UnregisterUser
 
   def call(params)
     @user = @user_repository.find_by_username(params[:username])
-    @user_repository.delete(user.id) if @user
+    @user_repository.delete(@user.id) if @user
   end
 
   private def valid?(params)

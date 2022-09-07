@@ -21,8 +21,8 @@ module Yuzakan
         hashed_password = LocalUser.create_hashed_password(password)
         user = @repository.create({
           username: username,
-          display_name: userdata[:attrs]['display_name'],
-          email: userdata[:attrs]['email'],
+          display_name: userdata[:display_name],
+          email: userdata[:email],
           hashed_password: hashed_password,
         })
         user_entity_to_data(user)
@@ -34,7 +34,7 @@ module Yuzakan
 
       def user_update(username, **userdata)
         user = @repository.find_by_username(username)
-        raise "user not found: #{username}" if user.nil?
+        return if user.nil?
 
         data = {}
         %i[display_name email].each do |key|
@@ -45,16 +45,18 @@ module Yuzakan
 
       def user_delete(username)
         user = @repository.find_by_username(username)
-        raise "user not found: #{username}" if user.nil?
+        return if user.nil?
 
         @repository.delete(user.id)
       end
 
       def user_auth(username, password)
         user = @repository.find_by_username(username)
-        user &&
-          !user.hashed_password.start_with?('!') &&
-          user.verify_password(password)
+        return false if user.nil?
+        return false if user.locked?
+        return false if user.disabled?
+
+        user.verify_password(password)
       end
 
       def user_change_password(username, password)
@@ -69,16 +71,16 @@ module Yuzakan
 
       def user_lock(username)
         user = @repository.find_by_username(username)
-        return if user.nil?
-        return if user.locked?
+        return false if user.nil?
+        return false if user.locked?
 
         @repository.update(user.id, hashed_password: LocalUser.lock_password(user.hashed_password))
       end
 
       def user_unlock(username, _password = nil)
         user = @repository.find_by_username(username)
-        return if user.nil?
-        return unless user.locked?
+        return false if user.nil?
+        return false unless user.locked?
 
         @repository.update(user.id, hashed_password: LocalUser.unlock(user.hashed_password))
       end
@@ -105,11 +107,7 @@ module Yuzakan
           email: user.email,
           locked: user.locked?,
           disabled: user.disabled?,
-          attrs: {
-            'username' => user.username,
-            'display_name' => user.display_name,
-            'email' => user.email,
-          }
+          attrs: {},
         }
       end
     end

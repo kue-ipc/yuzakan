@@ -78,7 +78,7 @@ ja:
     change_password: パスワード変更
     create_attr: 属性作成
     create_user: ユーザー作成
-    destroy_user: ユーザー削除
+    delete_user: ユーザー削除
     generate_password: 'パスワード生成'
     lock_user: ユーザーロック
     read_user: ユーザー取得

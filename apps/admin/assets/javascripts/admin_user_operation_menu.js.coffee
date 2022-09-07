@@ -40,7 +40,7 @@ createWebData = new WebData {
   method: 'POST'
   url: '/api/users'
   codeActions: new Map [
-    [201, {status: 'success', message: 'ユーザーを作成しました。'}, autoCloseTime: 1]
+    [201, {status: 'success', message: 'ユーザーを作成しました。', autoCloseTime: 1}]
   ]
 }
 
@@ -81,6 +81,8 @@ runCreateUser = (dispatch, {user}) ->
     data: {
       csrf()...
       username: user.username
+      display_name: user.display_name
+      email: user.email
       clearance_level: user.clearance_level
       primary_group: user.primary_group
       attrs: user.attrs

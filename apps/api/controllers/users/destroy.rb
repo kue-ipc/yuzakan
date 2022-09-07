@@ -25,7 +25,6 @@ module Api
           @user_repository ||= user_repository
         end
 
-
         def call(params)
           halt_json 400, errors: [params.errors] unless params.valid?
 
@@ -34,14 +33,15 @@ module Api
           sync_user = SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
           result = sync_user.call({username: username})
           halt_json 500, erros: result.errors if result.failure?
-          user = result.user
 
           halt_json 404 unless result.user
 
           delete_user = DeleteUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
-          result = delete_user.call({username: username, providers: user})
+          result = delete_user.call({username: username})
+          halt_json 500, erros: result.errors if result.failure?
 
-          self.body = 'OK'
+          self.status = 200
+          self.body = generate_json(result.user || {})
         end
       end
     end
