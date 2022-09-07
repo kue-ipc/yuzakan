@@ -29,7 +29,10 @@ module Yuzakan
       end
 
       def user_read(username)
-        user_entity_to_data(@repository.find_by_username(username))
+        user = @repository.find_by_username(username)
+        return if user.nil?
+
+        user_entity_to_data(user)
       end
 
       def user_update(username, **userdata)
@@ -47,7 +50,7 @@ module Yuzakan
         user = @repository.find_by_username(username)
         return if user.nil?
 
-        @repository.delete(user.id)
+        user_entity_to_data(@repository.delete(user.id))
       end
 
       def user_auth(username, password)
