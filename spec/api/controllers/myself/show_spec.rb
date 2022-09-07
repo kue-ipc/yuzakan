@@ -38,11 +38,13 @@ describe Api::Controllers::Myself::Show do
         email: 'user@example.jp',
         attrs: {ja_display_name: '表示ユーザー'},
         groups: [],
+        locked: false,
+        disabled: false,
+        mfa: false,
       },
       provider_userdatas: [{
         provider: {
           name: 'provider',
-          adapter_name: 'mock',
         },
         userdata: {
           username: 'user',

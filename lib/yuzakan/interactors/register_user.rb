@@ -32,7 +32,6 @@ class RegisterUser
   expose :user
 
   def call(params)
-    pp params
     username = params[:username]
     display_name = params[:display_name] || params[:username]
     email = params[:email]
