@@ -98,7 +98,19 @@ runCreateUser = (dispatch, {user}) ->
     console.error response
 
 runUpdateUser = (dispatch, {name, user}) ->
-  response = await updateWebData.submitPromise {url: "/api/users/#{name}", data: {csrf()..., user...}}
+  response = await updateWebData.submitPromise {
+    url: "/api/users/#{name}"
+    data: {
+      csrf()...
+      username: user.username
+      display_name: user.display_name
+      email: user.email
+      clearance_level: user.clearance_level
+      primary_group: user.primary_group
+      attrs: user.attrs
+      providers: user.providers
+    }
+  }
   if response.ok
     dispatch(ChangeMode, 'show')
   else
