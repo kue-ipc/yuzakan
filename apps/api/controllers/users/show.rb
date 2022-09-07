@@ -39,7 +39,7 @@ module Api
           self.body = generate_json({
             **convert_for_json(result.user),
             userdata: result.userdata,
-            provider_userdatas: result.providers.map { |k, v| {provider: k, userdata: v} },
+            provider_userdatas: result.providers.compact.map { |k, v| {provider: {name: k}, userdata: v} },
           })
         end
       end
