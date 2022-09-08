@@ -36,8 +36,7 @@ module Api
           mod_providers = params[:providers] & current_providers
 
           create_user = CreateUser.new(user_repository: @user_repository,
-                                       provider_repository: @provider_repository,
-                                       config_repository: @config_repository)
+                                       provider_repository: @provider_repository)
           result = create_user.call({**params, providers: add_providers})
           halt_json 500, erros: result.errors if result.failure?
 
@@ -45,10 +44,10 @@ module Api
           result = delete_user.call({username: @user.username, providers: del_providers})
           halt_json 500, erros: result.errors if result.failure?
 
-          update_user = UpdateUser.new(user_repository: @user_repository,
-                                       provider_repository: @provider_repository)
-          result = update_user.call({**params, providers: mod_providers})
-          halt_json 500, erros: result.errors if result.failure?
+          # update_user = UpdateUser.new(user_repository: @user_repository,
+          #                              provider_repository: @provider_repository)
+          # result = update_user.call({**params, providers: mod_providers})
+          # halt_json 500, erros: result.errors if result.failure?
 
           set_user
           self.body = user_json
