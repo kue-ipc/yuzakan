@@ -1,7 +1,7 @@
 require 'hanami/interactor'
 require 'hanami/validations/form'
 
-class DeleteUser
+class UpdateUser
   include Hanami::Interactor
 
   class Validations
@@ -11,12 +11,16 @@ class DeleteUser
 
     validations do
       required(:username).filled(:str?, :name?, max_size?: 255)
+      optional(:display_name).filled(:str?, max_size?: 255)
+      optional(:email).filled(:str?, :email?, max_size?: 255)
+      optional(:clearance_level).filled(:int?)
+      optional(:primary_group).filled(:str?, :name?, max_size?: 255)
+      optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
+      optional(:attrs) { hash? }
     end
   end
 
-  expose :username
-  expose :user
-  expose :providers
+  expose :userdatas
 
   def initialize(provider_repository: ProviderRepository.new,
                  user_repository: UserRepository.new)
@@ -25,32 +29,26 @@ class DeleteUser
   end
 
   def call(params)
-    @username = params[:username]
-    @providers = {}
+    username = params[:username]
+    @userdatas = {}
+
+    userdata = {
+      username: params[:username],
+      display_name: params[:display_name],
+      email: params[:email],
+      primary_group: params[:primary_group],
+      attrs: params[:attrs] || {},
+    }
 
     get_providers(params[:providers]).each do |provider|
-      @providers[provider.name] = provider.user_delete(@username)
+      @userdatas[provider.name] = provider.user_update(username, **userdata)
     rescue => e
-      Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{@username}"
+      Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
       Hanami.logger.error e
-      error(I18n.t('errors.action.error', action: I18n.t('interactors.delete_user'), target: provider.label))
+      error(I18n.t('errors.action.error', action: I18n.t('interactors.update_user'), target: provider.label))
       error(e.message)
       fail!
     end
-
-    # 同期を行い、すべてのプロバイダーから削除されていれば、DBからも削除される。
-    sync_user = SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
-    result = sync_user.call({username: @username})
-    if result.failure?
-      Hanami.logger.error "[#{self.class.name}] Failed to call SyncUser"
-      Hanami.logger.error result.errors
-      error(I18n.t('errors.action.fail', action: I18n.t('interactors.sync_user')))
-      result.errors.each { |msg| error(msg) }
-      fail!
-    end
-
-    # すべてのプロバイダーから削除されていればnilになる。
-    @user = result.user
   end
 
   private def valid?(params)
@@ -60,7 +58,7 @@ class DeleteUser
       return false
     end
 
-    # ユーザーの存在チェックは行わない
+    # ユーザーの存在チェックはしない。
 
     true
   end
@@ -77,7 +75,7 @@ class DeleteUser
         provider
       end
     else
-      @provider_repository.ordered_all_with_adapter_by_operation(:user_delete)
+      @provider_repository.ordered_all_with_adapter_by_operation(:user_update)
     end
   end
 end

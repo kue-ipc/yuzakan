@@ -20,7 +20,7 @@ module Api
             optional(:email).filled(:str?, :email?, max_size?: 255)
             optional(:clearance_level).filled(:int?)
             optional(:primary_group).filled(:str?, :name?, max_size?: 255)
-            optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
+            optional(:providers) { array? { min_size?(1) & each { str? & name? & max_size?(255) } } }
             optional(:attrs) { hash? }
           end
         end
@@ -31,12 +31,17 @@ module Api
           halt_json 422, errors: {username: 'ユーザー名は変更できません。'} if @user.username != params[:username]
 
           current_providers = @providers.compact.keys
-          add_providers = params[:providers] - current_providers
-          del_providers = current_providers - params[:providers]
-          mod_providers = params[:providers] & current_providers
+          if params[:providers]
+            add_providers = params[:providers] - current_providers
+            del_providers = current_providers - params[:providers]
+            mod_providers = params[:providers] & current_providers
+          else
+            add_providers = []
+            del_providers = []
+            mod_providers = current_providers
+          end
 
-          create_user = CreateUser.new(user_repository: @user_repository,
-                                       provider_repository: @provider_repository)
+          create_user = CreateUser.new(user_repository: @user_repository, provider_repository: @provider_repository)
           result = create_user.call({**params, providers: add_providers})
           halt_json 500, erros: result.errors if result.failure?
 
@@ -44,11 +49,14 @@ module Api
           result = delete_user.call({username: @user.username, providers: del_providers})
           halt_json 500, erros: result.errors if result.failure?
 
-          # update_user = UpdateUser.new(user_repository: @user_repository,
-          #                              provider_repository: @provider_repository)
-          # result = update_user.call({**params, providers: mod_providers})
-          # halt_json 500, erros: result.errors if result.failure?
+          update_user = UpdateUser.new(user_repository: @user_repository, provider_repository: @provider_repository)
+          result = update_user.call({**params, providers: mod_providers})
+          halt_json 500, erros: result.errors if result.failure?
 
+          if @user.clearance_level && @user.clearance_level != params[:clearance_level]
+            @user = @user_repository.update(@user.id, clearance_level: params[:clearance_level])
+          end
+      
           set_user
           self.body = user_json
         end
