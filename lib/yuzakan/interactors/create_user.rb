@@ -22,19 +22,18 @@ class CreateUser
   end
 
   expose :user
-  expose :password
+  expose :userdata
+  expose :providers
 
   def initialize(provider_repository: ProviderRepository.new,
-                 user_repository: UserRepository.new,
-                 config_repository: ConfigRepository.new)
+                 user_repository: UserRepository.new)
     @provider_repository = provider_repository
     @user_repository = user_repository
-    @config_repository = config_repository
   end
 
   def call(params)
     username = params[:username]
-    @password = params[:password] || generate_password
+    password = params[:password]
 
     userdata = {
       username: params[:username],
@@ -48,7 +47,7 @@ class CreateUser
       provider = @provider_repository.find_with_adapter_by_name(provider_name)
       raise 'プロバイダーが見つかりません。' unless provider
 
-      provider.user_create(username, @password, userdata)
+      provider.user_create(username, password, userdata)
     rescue => e
       Hanami.logger.error e
       error!("アカウント作成時にエラーが発生しました。: #{e.message}")
@@ -65,6 +64,9 @@ class CreateUser
     if @user.clearance_level && @user.clearance_level != params[:clearance_level]
       @user = @user_repository.update(@user.id, clearance_level: params[:clearance_level])
     end
+
+    @userdata = result.userdata
+    @providers = result.providers
   end
 
   private def valid?(params)
@@ -77,15 +79,5 @@ class CreateUser
     # ユーザーの存在チェックはしない。
 
     true
-  end
-
-  private def generate_password
-    result = GeneratePassword.new(config_repository: @config_repository).call({})
-    if result.failure?
-      error(I18n.t('errors.action.fail', action: I18n.t('interactors.change_password')))
-      result.errors.each { |e| error(e) }
-      fail!
-    end
-    result.password
   end
 end

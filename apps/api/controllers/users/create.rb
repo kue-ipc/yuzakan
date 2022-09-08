@@ -47,18 +47,27 @@ module Api
 
           halt_json(422, errors: [param_errors]) unless param_errors.empty?
 
+          password = params[:password] || generate_password
+
           create_user = CreateUser.new(user_repository: @user_repository,
-                                       provider_repository: @provider_repository,
-                                       config_repository: @config_repository)
-          result = create_user.call(params)
+                                       provider_repository: @provider_repository)
+          result = create_user.call({**params.to_h, password: password})
           halt_json 500, erros: result.errors if result.failure?
 
           self.status = 201
           headers['Location'] = routes.user_path(result.user.username)
           self.body = generate_json({
             **convert_for_json(result.user),
-            password: result.password,
+            password: password,
+            userdata: result.userdata,
+            provider_userdatas: result.providers.compact.map { |k, v| {provider: {name: k}, userdata: v} },
           })
+        end
+
+        private def generate_password
+          result = GeneratePassword.new(config_repository: @config_repository).call({})
+          halt_json 500, erros: result.errors if result.failure?
+          result.password
         end
       end
     end
