@@ -200,7 +200,7 @@ class Provider < Hanami::Entity
     end
   end
 
-  def user_udpate(username, **userdata)
+  def user_update(username, **userdata)
     need_adapter!
     need_mappings!
 

@@ -58,8 +58,6 @@ class UpdateUser
       return false
     end
 
-    # ユーザーの存在チェックはしない。
-
     true
   end
 

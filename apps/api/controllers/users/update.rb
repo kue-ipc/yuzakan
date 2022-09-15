@@ -56,7 +56,7 @@ module Api
           if @user.clearance_level && @user.clearance_level != params[:clearance_level]
             @user = @user_repository.update(@user.id, clearance_level: params[:clearance_level])
           end
-      
+
           set_user
           self.body = user_json
         end
