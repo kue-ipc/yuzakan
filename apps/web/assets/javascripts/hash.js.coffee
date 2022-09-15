@@ -1,7 +1,10 @@
 import XXH from './xxhashjs.js'
 
+zeroPadding = (str, size) ->
+  ('0'.repeat(size) + str).slice(-size)
+
 export xxh32 = (str) ->
-  XXH.h32(str, 0).toString(16)
+  zeroPadding(XXH.h32(str, 0).toString(16), 8)
 
 export xxh64 = (str) ->
-  XXH.h64(str, 0).toString(16)
+  zeroPadding(XXH.h64(str, 0).toString(16), 16)
