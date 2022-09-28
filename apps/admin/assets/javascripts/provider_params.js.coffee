@@ -90,7 +90,7 @@ inputList = (props) ->
       oninput: (state, event) -> [props.action, {name: props.name, value: event.target.value}]
     },
       for item in props.list
-        html.option {value: item.value, selected: selected == item.value}, text item.name
+        html.option {value: item.value, selected: selected == item.value}, text(item.label || item.name)
     if props.description? then html.small {id: describeId, class: 'form-text'}, text props.description
   ]
 

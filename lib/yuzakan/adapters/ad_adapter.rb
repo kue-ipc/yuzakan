@@ -55,6 +55,10 @@ module Yuzakan
                          '何も指定しない場合は(objectclass=group)になります。',
             default: '(objectclass=group)',
           }, {
+            name: :create_user_object_classes,
+            default: 'user',
+            fixed: true,
+          }, {
             name: :password_scheme,
             delete: true,
           }, {

@@ -49,8 +49,8 @@ module Yuzakan
             type: :string,
             default: 'next',
             list: [
-              {name: :random, label: '最小', value: 'min'},
-              {name: :random, label: '次', value: 'next'},
+              {name: :min, label: '最小', value: 'min'},
+              {name: :next, label: '次', value: 'next'},
               {name: :random, label: 'ランダム', value: 'random'},
             ],
           }, {

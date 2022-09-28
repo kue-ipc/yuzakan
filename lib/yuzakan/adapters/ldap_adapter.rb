@@ -38,15 +38,15 @@ module Yuzakan
           placeholder: '389 or 636',
         }, {
           name: :protocol,
-          label: 'プロトコル/暗合形式',
+          label: 'プロトコル/暗号化形式',
           description: 'LDAPサーバーにアクセスするプロトコルを指定します。',
           type: :string,
           default: 'ldaps',
           list: [
             {name: :ldap, label: 'LDAP(平文)', value: 'ldap', deprecated: true},
-            {name: :ldap_starttls, label: 'LDAP+STARTTLS(暗合)',
+            {name: :ldap_starttls, label: 'LDAP+STARTTLS(暗号化)',
              value: 'ldap_starttls',},
-            {name: :ldaps, label: 'LDAPS(暗合)', value: 'ldaps'},
+            {name: :ldaps, label: 'LDAPS(暗号化)', value: 'ldaps'},
           ],
           input: 'radio',
         }, {
