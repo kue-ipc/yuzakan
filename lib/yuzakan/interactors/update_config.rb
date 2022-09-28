@@ -16,12 +16,12 @@ class UpdateConfig
       optional(:password_min_size).filled(:int?, gteq?: 1, lteq?: 255)
       optional(:password_max_size).filled(:int?, gteq?: 1, lteq?: 255)
       optional(:password_min_score).filled(:int?, gteq?: 0, lteq?: 4)
-      optional(:password_unusable_chars).filled(:str?, max_size?: 128)
-      optional(:password_extra_dict).filled(:str?, max_size?: 4096)
+      optional(:password_unusable_chars).maybe(:str?, max_size?: 128)
+      optional(:password_extra_dict).maybe(:str?, max_size?: 4096)
 
       optional(:generate_password_size).filled(:int?, gteq?: 1, lteq?: 255)
       optional(:generate_password_type).filled(:str?)
-      optional(:generate_password_chars).filled(:str?, format?: /^[\x20-\x7e]*$/, max_size?: 128)
+      optional(:generate_password_chars).maybe(:str?, format?: /^[\x20-\x7e]*$/, max_size?: 128)
 
       optional(:contact_name).maybe(:str?, max_size?: 255)
       optional(:contact_email).maybe(:str?, max_size?: 255)

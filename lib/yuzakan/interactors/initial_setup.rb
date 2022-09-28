@@ -107,8 +107,7 @@ class InitialSetup
   private def setup_admin(admin_user)
     create_user = CreateUser.new(
       provider_repository: @provider_repository,
-      user_repository: @user_repository,
-      config_repository: @config_repository)
+      user_repository: @user_repository)
     result = create_user.call({
       **admin_user,
       providers: ['local'],
