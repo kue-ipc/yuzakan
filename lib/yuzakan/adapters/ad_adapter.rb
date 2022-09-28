@@ -64,7 +64,11 @@ module Yuzakan
           }, {
             name: :crypt_salt_format,
             delete: true,
+          }, {
+            name: :shadow_account,
+            delete: true,
           },
+
         ], key: :name)
       self.multi_attrs = LdapAdapter.multi_attrs
       self.hide_attrs = LdapAdapter.hide_attrs
