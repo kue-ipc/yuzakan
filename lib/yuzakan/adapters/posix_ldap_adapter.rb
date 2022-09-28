@@ -71,15 +71,32 @@ module Yuzakan
         attributes[attribute_name('objectClass')] << 'posixAccount'
 
         # uid number
-        attributes[attribute_name('uidNumber')] = search_free_uid
+        uid_number = search_free_uid
+        attributes[attribute_name('uidNumber')] = convert_ldap_value(uid_number)
 
         # gid number
-        attributes[attribute_name('gidNumber')] =
+        gid_number =
           if userdata[:primary_group]
             get_gidnumber(userdata[:primary_group])
           else
             @params[:user_gid_number]
           end
+        attributes[attribute_name('gidNumber')] = convert_ldap_value(gid_number)
+
+        attributes
+      end
+
+      private def update_user_attributes(**userdata)
+        attributes = super
+
+        # gid number
+        gid_number =
+          if userdata[:primary_group]
+            get_gidnumber(userdata[:primary_group])
+          else
+            @params[:user_gid_number]
+          end
+        attributes[attribute_name('gidNumber')] = convert_ldap_value(gid_number)
 
         attributes
       end

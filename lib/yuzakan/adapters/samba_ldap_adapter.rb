@@ -103,7 +103,8 @@ module Yuzakan
         attributes[attribute_name('objectClass')] << 'sambaSamAccount'
 
         # smaba SID
-        attributes[attribute_name('sambaSID')] = generate_samba_sid(attributes[attribute_name('uidNumber')])
+        samba_sid = generate_samba_sid(attributes[attribute_name('uidNumber')].first.to_i)
+        attributes[attribute_name('sambaSID')] = convert_ldap_value(samba_sid)
 
         attributes
       end

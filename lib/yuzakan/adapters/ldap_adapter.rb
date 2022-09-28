@@ -279,7 +279,13 @@ module Yuzakan
 
         attributes = update_user_attributes(**userdata)
         operations = update_operations(user, attributes)
+        puts '------------------------------'
+        pp [attributes, operations]
         ldap_modify(user.dn, operations) unless operations.empty?
+
+        # primary_group がある場合は追加する
+        member_add(userdata[:primary_group], username) if userdata[:primary_group]
+
         user_read(username)
       end
 
@@ -383,8 +389,31 @@ module Yuzakan
         remove_member(group, user)
       end
 
+      # 値をLDAP上の値に変換する
+      private def convert_ldap_value(value)
+        case value
+        when nil
+          nil
+        when true
+          'TRUE'
+        when false
+          'FALSE'
+        when String
+          value
+        when Integer
+          value.to_s
+        when Time
+          value.utc.strftime('%Y%m%d%H%M%S.%1NZ')
+        when Array
+          value.map { |v| convert_ldap_value(v) }
+        else
+          raise Error, "unsupported value type: #{value.class}"
+        end
+      end
+
       private def create_user_attributes(username, **userdata)
         attributes = userdata[:attrs].transform_keys { |key| attribute_name(key) }
+        attributes.transform_values! { |value| convert_ldap_value(value) }
 
         attributes[attribute_name('objectClass')] = @params[:create_user_object_classes].split(',').map(&:strip)
 
@@ -403,6 +432,7 @@ module Yuzakan
 
       private def update_user_attributes(**userdata)
         attributes = userdata[:attrs].transform_keys { |key| attribute_name(key) }
+        attributes.transform_values! { |value| convert_ldap_value(value) }
 
         [:display_name, :email].each do |name|
           attr_name = @params["user_#{name}_attr".intern]
@@ -429,16 +459,10 @@ module Yuzakan
           end
 
           value_same =
-            case value
-            when Array
-              # trueとfalseには未対応
-              entry_valuse.sort == value.map(&:to_s).sort
-            when true
-              entry_values == ['TRUE']
-            when false
-              entry_values == ['FALSE']
+            if value.is_a?(Array)
+              entry_values.sort == value.sort
             else
-              entry_values == [value.to_s]
+              entry_values == [value]
             end
           ops << operation_replace(name, value) unless value_same
         end
