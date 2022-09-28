@@ -50,7 +50,7 @@ groupProviderTd = ({group, provider}) ->
 groupTr = ({group, providers}) ->
   html.tr {}, [
     html.td {},
-      html.a {href: "/admin/groups/#{group.name}"}, text group.name
+      html.a {href: "/admin/groups/#{group.groupname}"}, text group.groupname
     html.td {}, text group.display_name
     (groupProviderTd({group, provider}) for provider in providers)...
   ]
