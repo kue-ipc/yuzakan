@@ -338,7 +338,7 @@ module Yuzakan
 
         [:display_name, :email].each do |name|
           attr_name = @params["user_#{name}_attr".intern]
-          filter |= Net::LDAP::Filter.eq(attr_name, query) if attr_name && attr_name.emtpy?
+          filter |= Net::LDAP::Filter.eq(attr_name, query) if attr_name && attr_name.empty?
         end
 
         filter &= Net::LDAP::Filter.construct(@params[:user_search_filter]) if @params[:user_search_filter]
