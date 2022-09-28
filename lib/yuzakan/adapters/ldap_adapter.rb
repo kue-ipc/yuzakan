@@ -274,7 +274,13 @@ module Yuzakan
       end
 
       def user_update(username, **userdata)
-        raise NotImplementedError
+        user = get_user_entry(username)
+        return if user.nil?
+
+        attributes = update_user_attributes(**userdata)
+        operations = update_operations(user, attributes)
+        ldap_modify(user.dn, operations) unless operations.empty?
+        user_read(username)
       end
 
       def user_delete(username)
@@ -393,6 +399,50 @@ module Yuzakan
         end
 
         attributes
+      end
+
+      private def update_user_attributes(**userdata)
+        attributes = userdata[:attrs].transform_keys { |key| attribute_name(key) }
+
+        [:display_name, :email].each do |name|
+          attr_name = @params["user_#{name}_attr".intern]
+          if attr_name && !attr_name.empty? && (userdata[name])
+            attributes[attribute_name(@params["user_#{name}_attr".intern])] = userdata[name]
+          end
+        end
+
+        attributes
+      end
+
+      private def update_operations(entry, attributes)
+        ops = []
+        attributes.each do |name, value|
+          entry_values = entry[name]
+          if entry_values.nil? || entry_values.empty?
+            ops << operation_add(name, value) if value
+            next
+          end
+
+          if value.nil?
+            ops << operation_delete(name)
+            next
+          end
+
+          value_same =
+            case value
+            when Array
+              # trueとfalseには未対応
+              entry_valuse.sort == value.map(&:to_s).sort
+            when true
+              entry_values == ['TRUE']
+            when false
+              entry_values == ['FALSE']
+            else
+              entry_values == [value.to_s]
+            end
+          ops << operation_replace(name, value) unless value_same
+        end
+        ops
       end
 
       private def generate_operation(operator, name, value = nil)
