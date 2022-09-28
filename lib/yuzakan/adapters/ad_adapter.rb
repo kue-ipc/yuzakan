@@ -69,6 +69,17 @@ module Yuzakan
       self.multi_attrs = LdapAdapter.multi_attrs
       self.hide_attrs = LdapAdapter.hide_attrs
 
+      private def create_user_attributes(username, **userdata)
+        attributes = super
+
+        # https://learn.microsoft.com/ja-jp/troubleshoot/windows-server/identity/useraccountcontrol-manipulate-account-properties
+        # userAccountControl: 0x10200
+        # NORMAL_ACCOUNT 0x200, DONT_EXPIRE_PASSWORD 0x10000
+        attributes[attribute_name('userAccountControl')] = 0x10200
+
+        attributes
+      end
+
       # ADではunicodePwdに平文パスワードを設定することで変更できる。
       # 古いパスワードはわからないため、常にreplaceで行うこと。
       private def change_password_operations(_user, password)
