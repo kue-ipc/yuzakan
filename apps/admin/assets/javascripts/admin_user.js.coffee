@@ -15,37 +15,11 @@ import operationMenu from './admin_user_operation_menu.js'
 import groupMembership from './admin_user_group_membership.js'
 import providerReg from './admin_user_provider_reg.js'
 import attrList from './admin_user_attr_list.js'
+import {runGetUserWithInit} from './admin_user_get_user.js'
 
 import {InitUserAttrs} from './admin_user_attrs.js'
 
-newUser = {
-  username: ''
-  clearance_level: 1
-  userdata: {attrs: {}}
-  provider_userdatas: []
-}
-
-SetUserWithInit = (state, {user}) ->
-  providers = (provider_userdata.provider.name for provider_userdata in user.provider_userdatas)
-  primary_group = user.userdata.primary_group
-  groups = user.userdata.groups || []
-  [InitUserAttrs, {user: {user..., providers, primary_group, groups}}]
-
 SetAttrsWithInit = (state, attrs) -> [InitUserAttrs, {attrs}]
-
-SetMode = (state, mode) -> {state..., mode}
-
-runGetUser = (dispatch, {name}) ->
-  if name?
-    response = await fetchJsonGet({url: "/api/users/#{name}"})
-    if response.ok
-      dispatch(SetUserWithInit, {user: response.data})
-    else if response.code == 404
-      dispatch(SetMode, 'none')
-    else
-      console.error response
-  else
-    dispatch(SetUserWithInit, {user: newUser})
 
 runGetAttrsWithInit = createRunGetAttrs(SetAttrsWithInit)
 
@@ -59,7 +33,7 @@ init = [
   [runGetProviders]
   [runGetAttrsWithInit]
   [runGetGroups]
-  [runGetUser, {name}]
+  [runGetUserWithInit, {name}]
 ]
 
 view = ({mode, name, user, providers, attrs, groups, system}) ->

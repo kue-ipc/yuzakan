@@ -5,8 +5,11 @@ module Api
         class Create
           include Api::Action
 
+          security_level 3
+
           def call(params)
-            self.body = 'OK'
+            self.status = 201
+            self.body = {}.to_json
           end
         end
       end

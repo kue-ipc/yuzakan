@@ -5,8 +5,10 @@ module Api
         class Destroy
           include Api::Action
 
+          security_level 3
+
           def call(params)
-            self.body = 'OK'
+            self.body = {}.to_json
           end
         end
       end

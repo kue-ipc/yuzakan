@@ -8,6 +8,8 @@ import WebData from '../web_data.js'
 import ConfirmDialog from '../confirm_dialog.js'
 import LoginInfo from '../login_info.js'
 
+import {runGetUserWithInit} from './admin_user_get_user.js'
+
 parentNames = ['user']
 
 # Confirm Dialog
@@ -23,12 +25,32 @@ destroyConfirm = new ConfirmDialog {
 }
 
 createPasswordConfirm = new ConfirmDialog {
-  id: fieldId('creaet', ['modal', 'confirm', parentNames..., 'password'])
+  id: fieldId('create', ['modal', 'confirm', parentNames..., 'password'])
   status: 'warn'
   title: 'パスワードのリセット'
   action: {
     color: 'warning'
     label: 'パスワードリセット'
+  }
+}
+
+createLockConfirm = new ConfirmDialog {
+  id: fieldId('create', ['modal', 'confirm', parentNames..., 'lock'])
+  status: 'info'
+  title: 'ユーザーのロック'
+  action: {
+    color: 'primary'
+    label: 'ユーザーロック'
+  }
+}
+
+destroyLockConfirm = new ConfirmDialog {
+  id: fieldId('destroy', ['modal', 'confirm', parentNames..., 'lock'])
+  status: 'info'
+  title: 'ユーザーのアンロック'
+  action: {
+    color: 'secondary'
+    label: 'ユーザーロック'
   }
 }
 
@@ -68,6 +90,24 @@ createPasswordWebData = new WebData {
   method: 'POST'
   codeActions: new Map [
     [201, {status: 'success', message: 'パスワードをリセットしました。', autoCloseTime: 1}]
+  ]
+}
+
+createLockWebData = new WebData {
+  id: fieldId('create', ['modal', 'web', parentNames..., 'lock'])
+  title: 'ユーザーのロック'
+  method: 'POST'
+  codeActions: new Map [
+    [201, {status: 'success', message: 'ユーザーをロックしました。'}]
+  ]
+}
+
+destroyLockWebData = new WebData {
+  id: fieldId('destroy', ['modal', 'web', parentNames..., 'lock'])
+  title: 'ユーザーのアンロック'
+  method: 'DELETE'
+  codeActions: new Map [
+    [200, {status: 'success', message: 'ユーザーをアンロックしました。'}]
   ]
 }
 
@@ -112,6 +152,7 @@ runUpdateUser = (dispatch, {name, user}) ->
     }
   }
   if response.ok
+    dispatch(ReadUser)
     dispatch(ChangeMode, 'show')
   else
     console.error response
@@ -139,10 +180,33 @@ runCreatePasswordUser = (dispatch, {name}) ->
     else
       console.error response
 
+runCreateLockUser = (dispatch, {name}) ->
+  confirm = await createLockConfirm.showPromise({
+    messages: ["ユーザー「#{name}」をロックしてもよろしいですか？"]
+  })
+  if confirm
+    response = await createLockWebData.submitPromise {url: "/api/users/#{name}/lock", data: csrf()}
+    if response.ok
+      dispatch(ReadUser)
+    else
+      console.error response
+
+runDestroyLockUser = (dispatch, {name}) ->
+  confirm = await destroyLockConfirm.showPromise({
+    messages: ["ユーザー「#{name}」をアンロックしてもよろしいですか？"]
+  })
+  if confirm
+    response = await destroyLockWebData.submitPromise {url: "/api/users/#{name}/lock", data: csrf()}
+    if response.ok
+      dispatch(ReadUser)
+    else
+      console.error response
+
 runShowLoginInfo = (_dispatch, {user, dateTime}) ->
   loginInfo.showPromise {user, dateTime, site: {}}
 
 # Actions
+ReadUser = (state) -> [state, [runGetUserWithInit, {name: state.name}]]
 
 CreateUser = (state) -> [state, [runCreateUser, {user: state.user}]]
 
@@ -152,8 +216,9 @@ DestroyUser = (state) -> [state, [runDestroyUser, {name: state.name}]]
 
 CreatPasswordUser = (state) -> [state, [runCreatePasswordUser, {name: state.name}]]
 
-CreatLockUser = (state) -> state
-DeleteLockUser = (state) -> state
+CreatLockUser = (state) -> [state, [runCreateLockUser, {name: state.name}]]
+
+DestroyLockUser = (state) -> [state, [runDestroyLockUser, {name: state.name}]]
 
 ChangeMode = (state, mode) -> {state..., mode}
 
@@ -210,7 +275,7 @@ export default operationMenu = ({mode}) ->
           }, text 'ロック'
           html.button {
             class: 'btn btn-secondary ms-2'
-            onclick: DeleteLockUser
+            onclick: DestroyLockUser
           }, text 'アンロック'
         ]
   ]
