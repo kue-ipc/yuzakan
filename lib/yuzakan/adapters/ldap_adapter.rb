@@ -281,6 +281,7 @@ module Yuzakan
       def user_update(username, **userdata)
         user = get_user_entry(username)
         return if user.nil?
+        return if user_entry_unmanageable?(user)
 
         attributes = update_user_attributes(**userdata)
         operations = update_operations(user, attributes)
@@ -297,6 +298,7 @@ module Yuzakan
       def user_delete(username)
         user = get_user_entry(username)
         return if user.nil?
+        return if user_entry_unmanageable?(user)
 
         ldap_delete(user.dn)
         user_entry_to_data(user)
@@ -311,26 +313,29 @@ module Yuzakan
 
       def user_change_password(username, password)
         user = get_user_entry(username)
-        return if user.nil?
+        return false if user.nil?
+        return false if user_entry_unmanageable?(user)
+        return false if user_entry_unmanageable?(user)
 
-        operations = change_password_operations(user, password)
-        ldap_modify(user.dn, operations)
+        ldap_modify(user.dn, change_password_operations(user, password))
       end
 
-      def user_lock(username, _password)
+      def user_lock(username)
         user = get_user_entry(username)
-        return if user.nil?
+        return false if user.nil?
+        return false if user_entry_unmanageable?(user)
+        return true if user_entry_locked?(user)
 
-        operations = lock_operations(user)
-        ldap_modify(user.dn, operations)
+        ldap_modify(user.dn, lock_operations(user))
       end
 
-      def user_unlock(username, _password)
+      def user_unlock(username, password = nil)
         user = get_user_entry(username)
-        return if user.nil?
+        return false if user.nil?
+        return false if user_entry_unmanageable?(user)
+        return true if user_entry_locked?(user) && password.nil?
 
-        operations = unlock_operations(user)
-        ldap_modify(user.dn, operations)
+        ldap_modify(user.dn, unlock_operations(user, password))
       end
 
       def user_list
@@ -677,10 +682,10 @@ module Yuzakan
           username: name,
           display_name: @params[:user_display_name_attr] && user.first(@params[:user_display_name_attr]),
           email: @params[:user_email_attr] && user.first(@params[:user_email_attr])&.downcase,
-          locked: locked_user?(user),
-          disabled: disbaled_user?(user),
-          unmanageable: unmanageable_user?(user),
-          mfa: mfa_user?(user),
+          locked: user_entry_locked?(user),
+          disabled: user_entry_disabled?(user),
+          unmanageable: user_entry_unmanageable?(user),
+          mfa: user_entry_mfa?(user),
           primary_group: primary_group,
           groups: groups,
           attrs: attrs,
@@ -835,16 +840,38 @@ module Yuzakan
         result
       end
 
+      private def user_entry_locked?(user)
+        password = user['userPassword']&.first
+        return true if password.nil?
+
+        password.start_with?(/\{[\w-]+\}!/)
+      end
+
+      private def user_entry_disabled?(_user)
+        false
+      end
+
+      private def user_entry_unmanageable?(_user)
+        false
+      end
+
+      private def user_entry_mfa?(_user)
+        false
+      end
+
       private def change_password_operations(user, password)
+        user_password = generate_password(password)
+        user_password = lock_password(user_password) if user_entry_locked?(user)
+
         operations = []
         operations << if user['userPassword']&.first
-                        operation_replace('userPassword', generate_password(password))
+                        operation_replace('userPassword', user_password)
                       else
-                        operation_add('userPassword', generate_password(password))
+                        operation_add('userPassword', user_password)
                       end
 
         if @params[:shadow_account] && user['objectClass'].include?('shadowAccount')
-          epoch_date = Time.now.utc.to_i / 24 / 60 / 60
+          epoch_date = Time.now.to_i / 24 / 60 / 60
           operations << if user['shadowLastChange']&.first
                           operation_replace('shadowLastChange', epoch_date.to_s)
                         else
@@ -853,6 +880,47 @@ module Yuzakan
         end
 
         operations
+      end
+
+      private def lock_operations(user)
+        old_password = user['userPassword']&.first
+        if old_password
+          new_password = lock_password(old_password)
+          [operation_replace('userPassword', new_password)]
+        else
+          # 何もしない
+          []
+        end
+      end
+
+      private def unlock_operations(user, password = nil)
+        if password
+          user_password = generate_password(password)
+          operations = []
+          operations << if user['userPassword']&.first
+                          operation_replace('userPassword', user_password)
+                        else
+                          operation_add('userPassword', user_password)
+                        end
+          if @params[:shadow_account] && user['objectClass'].include?('shadowAccount')
+            epoch_date = Time.now.to_i / 24 / 60 / 60
+            operations << if user['shadowLastChange']&.first
+                            operation_replace('shadowLastChange', epoch_date.to_s)
+                          else
+                            operation_add('shadowLastChange', epoch_date.to_s)
+                          end
+          end
+          operations
+        else
+          old_password = user['userPassword']&.first
+          if old_password
+            new_password = unlock_password(old_password)
+            [operation_replace('userPassword', new_password)]
+          else
+            # 何もしない
+            []
+          end
+        end
       end
 
       # https://trac.tools.ietf.org/id/draft-stroeder-hashed-userpassword-values-00.html
@@ -894,57 +962,32 @@ module Yuzakan
         password.crypt(format % salt)
       end
 
-      private def locked_user?(user)
-        password = user['userPassword']&.first
-        return true unless password
-
-        password.start_with?(/\{[\w-]+\}!/)
-      end
-
-      private def disbaled_user?(user)
-        false
-      end
-
-      private def unmanageable_user?(user)
-        false
-      end
-
-      private def mfa_user?(user)
-        false
-      end
-
-
-      private def lock_operations(user)
-        old_password = user['userPassword']&.first
-        return nil unless old_password
-
-        operations = []
-        operations << operation_delete('userPassword')
-        new_password = lock_password(old_password)
-        operations << operation_replace('userPassword', new_password) if new_password
-        operations
-      end
-
-      private def unlock_operations(user)
-        old_password = user['userPassword']&.first
-        return nil unless old_password
-
-        operations = []
-        operations << operation_delete('userPassword')
-        new_password = unlock_password(old_password)
-        operations << operation_replace('userPassword', new_password) if new_password
-        operations
-      end
-
       private def lock_password(str)
-        if (m = /\A(\{[\w-]+\})(.*)\z/.match(str))
-          m[1] + '!!' + m[2]
+        if /\A\{([\w-]+)\}(.*)\z/ =~ str
+          scheme = Regexp.last_math[0]
+          value = Regexp.last_math[1]
+          if value.start_with?('!')
+            str
+          else
+            "\{#{scheme}\}!#{value}"
+          end
+        else
+          # plain is dummy scheme
+          "\{\}!#{value}"
         end
       end
 
       private def unlock_password(str)
-        if (m = /\A({[\w-]+})!+(.*)\z/.match(str))
-          m[1] + m[2]
+        if /\A\{([\w-]+)\}!+(.*)\z/ =~ str
+          scheme = Regexp.last_math[0]
+          value = Regexp.last_math[1]
+          if scheme.empty?
+            value
+          else
+            "\{#{scheme}\}#{value}"
+          end
+        else
+          str
         end
       end
     end

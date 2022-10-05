@@ -84,6 +84,20 @@ module Yuzakan
         attributes
       end
 
+      private def user_entry_uac(user)
+        uac = user['userAccountControl']&.first&.to_i
+        unless uac
+          @logger.error 'No userAccountControl attribute.'
+          raise 'userAccountControl属性がありません。'
+        end
+        uac
+      end
+
+      private def user_entry_locked?(user)
+        # ACCOUNTDISABLE 0x0002
+        !(user_entry_uac(user) & 0x2).zero?
+      end
+
       # ADではunicodePwdに平文パスワードを設定することで変更できる。
       # 古いパスワードはわからないため、常にreplaceで行うこと。
       private def change_password_operations(_user, password)
@@ -93,6 +107,16 @@ module Yuzakan
       # ダブルコーテーションで囲ってUTF-16LEに変更する。
       private def generate_unicode_password(password)
         "\"#{password}\"".encode(Encoding::UTF_16LE).bytes.pack('c*')
+      end
+
+      private def lock_operations(user)
+        [operation_replace('userAccountControl', convert_ldap_value(user_entry_uac(user) | 0x2))]
+      end
+
+      private def unlock_operations(user, password = nil)
+        operations = [operation_replace('userAccountControl', convert_ldap_value(user_entry_uac(user) & ~0x2))]
+        operations.concat(change_password_operations(user, password)) if password
+        operations
       end
     end
   end
