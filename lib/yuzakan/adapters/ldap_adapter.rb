@@ -842,7 +842,7 @@ module Yuzakan
 
       private def user_entry_locked?(user)
         password = user['userPassword']&.first
-        return true if password.nil?
+        return false if password.nil?
 
         password.start_with?(/\{[\w-]+\}!/)
       end
@@ -963,9 +963,9 @@ module Yuzakan
       end
 
       private def lock_password(str)
-        if /\A\{([\w-]+)\}(.*)\z/ =~ str
-          scheme = Regexp.last_math[0]
-          value = Regexp.last_math[1]
+        if (m = /\A\{([\w-]+)\}(.*)\z/.match(str))
+          scheme = m[1]
+          value = m[2]
           if value.start_with?('!')
             str
           else
@@ -978,9 +978,9 @@ module Yuzakan
       end
 
       private def unlock_password(str)
-        if /\A\{([\w-]+)\}!+(.*)\z/ =~ str
-          scheme = Regexp.last_math[0]
-          value = Regexp.last_math[1]
+        if (m = /\A\{([\w-]+)\}!+(.*)\z/.match(str))
+          scheme = m[1]
+          value = m[2]
           if scheme.empty?
             value
           else
