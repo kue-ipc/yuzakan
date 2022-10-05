@@ -103,12 +103,12 @@ module Yuzakan
 
       # 空いているUID番号を探して返す。
       private def search_free_uid
-        case @params[:search_free_uid]
-        when 'min'
+        case @params[:search_free_uid].intern
+        when :min
           searhc_free_uid_min
-        when 'next'
+        when :next
           searhc_free_uid_next
-        when 'random'
+        when :random
           searhc_free_uid_random
         else
           @logger.error "invalid search free id algoripthm: #{@params[:search_free_uid]}"
@@ -127,10 +127,10 @@ module Yuzakan
       private def searhc_free_uid_next
         next_num = posix_passwd_byuid_map.keys.max.succ
         if next_num > @params[:uid_max]
-          @logger.warn 'UID numebr has reached max.'
+          @logger.warn 'The highest UID numebr has reached max.'
           return searhc_free_uid_min
         elsif next_num < @params[:uid_min]
-          @logger.warn 'UID numebr does not reach min.'
+          @logger.warn 'The highest UID numebr is less than min.'
           next_num = @params[:uid_min]
         end
         next_num
