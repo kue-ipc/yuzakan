@@ -50,8 +50,8 @@ providers:
     bind_username: cn=admin,dc=example,dc=jp
     bind_password: admin_password
     user_name_attr: uid
-    user_display_name_attr: displayName;lang-ja
-    user_email_attr: mail
+    user_display_name_attr: ''
+    user_email_attr: ''
     user_search_base_dn: ou=people,dc=example,dc=jp
     user_search_scope: sub
     user_search_filter: "(objectclass=*)"
@@ -66,6 +66,7 @@ providers:
     create_user_dn_attr: cn
     create_user_ou_dn: ou=people,dc=example,dc=jp
     create_user_object_classes: account
+    shadow_account: true
     uid_min: 1000
     uid_max: 60000
     search_free_uid: next
