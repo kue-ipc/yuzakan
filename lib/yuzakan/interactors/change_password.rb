@@ -36,7 +36,7 @@ class ChangePassword
       Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{@username}"
       Hanami.logger.error e
       error(I18n.t('errors.action.error', action: I18n.t('interactors.change_password'), target: provider.label))
-      if @providers.valuse.any?
+      if @providers.values.any?
         error(I18n.t('errors.action.stopped_after_some',
                      action: I18n.t('interactors.change_password'),
                      target: I18n.t('entities.provider')))
