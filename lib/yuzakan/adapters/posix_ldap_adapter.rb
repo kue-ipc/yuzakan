@@ -31,6 +31,12 @@ module Yuzakan
             default: 'account',
             placeholder: 'account',
           }, {
+            name: :shadow_account,
+            label: 'shadowAccountの有効化',
+            description: 'オブジェクトクラスにshadowAccountを追加し、最終変更日が記録するようにします。',
+            type: :boolean,
+            default: true,
+          }, {
             name: :uid_min,
             label: 'UID番号の最小値',
             description: 'UID番号の最小値です。',
@@ -69,6 +75,7 @@ module Yuzakan
 
         # object class
         attributes[attribute_name('objectClass')] << 'posixAccount'
+        attributes[attribute_name('objectClass')] << 'shadowAccount' if @params[:shadow_account]
 
         # uid number
         uid_number = search_free_uid
@@ -99,6 +106,19 @@ module Yuzakan
         attributes[attribute_name('gidNumber')] = convert_ldap_value(gid_number)
 
         attributes
+      end
+
+      private def change_password_operations(user, password, locked: false)
+        operations = super
+        if @params[:shadow_account] && user['objectClass'].include?('shadowAccount')
+          epoch_date = Time.now.to_i / 24 / 60 / 60
+          operations << if user['shadowLastChange']&.first
+                          operation_replace('shadowLastChange', epoch_date.to_s)
+                        else
+                          operation_add('shadowLastChange', epoch_date.to_s)
+                        end
+        end
+        operations
       end
 
       # 空いているUID番号を探して返す。

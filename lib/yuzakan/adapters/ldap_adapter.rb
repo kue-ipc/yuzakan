@@ -208,11 +208,6 @@ module Yuzakan
             {name: :sha512, label: 'SHA512', value: '$6$%.16s'},
           ],
         }, {
-          name: :shadow_account,
-          label: 'shadowAccountを有効にします',
-          type: :boolean,
-          default: true,
-        }, {
           name: :create_user_dn_attr,
           label: 'ユーザー作成時のDNの属性',
           type: :string,
@@ -317,7 +312,7 @@ module Yuzakan
         return false if user_entry_unmanageable?(user)
         return false if user_entry_unmanageable?(user)
 
-        ldap_modify(user.dn, change_password_operations(user, password))
+        ldap_modify(user.dn, change_password_operations(user, password, locked: user_entry_locked?(user)))
       end
 
       def user_lock(username)
@@ -426,7 +421,6 @@ module Yuzakan
         attributes.transform_values! { |value| convert_ldap_value(value) }
 
         attributes[attribute_name('objectClass')] = @params[:create_user_object_classes].split(',').map(&:strip)
-        attributes[attribute_name('objectClass')] << 'shadowAccount' if @params[:shadow_account]
 
         attributes[attribute_name(@params[:user_name_attr])] = username
         attributes[attribute_name(@params[:create_user_dn_attr])] = username
@@ -859,9 +853,9 @@ module Yuzakan
         false
       end
 
-      private def change_password_operations(user, password)
+      private def change_password_operations(user, password, locked: false)
         user_password = generate_password(password)
-        user_password = lock_password(user_password) if user_entry_locked?(user)
+        user_password = lock_password(user_password) if locked
 
         operations = []
         operations << if user['userPassword']&.first
@@ -869,16 +863,6 @@ module Yuzakan
                       else
                         operation_add('userPassword', user_password)
                       end
-
-        if @params[:shadow_account] && user['objectClass'].include?('shadowAccount')
-          epoch_date = Time.now.to_i / 24 / 60 / 60
-          operations << if user['shadowLastChange']&.first
-                          operation_replace('shadowLastChange', epoch_date.to_s)
-                        else
-                          operation_add('shadowLastChange', epoch_date.to_s)
-                        end
-        end
-
         operations
       end
 
@@ -895,22 +879,7 @@ module Yuzakan
 
       private def unlock_operations(user, password = nil)
         if password
-          user_password = generate_password(password)
-          operations = []
-          operations << if user['userPassword']&.first
-                          operation_replace('userPassword', user_password)
-                        else
-                          operation_add('userPassword', user_password)
-                        end
-          if @params[:shadow_account] && user['objectClass'].include?('shadowAccount')
-            epoch_date = Time.now.to_i / 24 / 60 / 60
-            operations << if user['shadowLastChange']&.first
-                            operation_replace('shadowLastChange', epoch_date.to_s)
-                          else
-                            operation_add('shadowLastChange', epoch_date.to_s)
-                          end
-          end
-          operations
+          change_password_operations(user, password)
         else
           old_password = user['userPassword']&.first
           if old_password

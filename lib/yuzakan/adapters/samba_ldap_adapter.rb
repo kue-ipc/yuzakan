@@ -70,7 +70,7 @@ module Yuzakan
         user['sambaNTPassword'] == generate_nt_password(password)
       end
 
-      private def change_password_operations(user, password)
+      private def change_password_operations(user, password, locked: false)
         operations = super
         operations << operation_delete('sambaNTPAssword') if user['sambaNTPAssword']&.first
         operations << operation_delete('sambaLMPAssword') if user['sambaLMPAssword']&.first

@@ -64,11 +64,7 @@ module Yuzakan
           }, {
             name: :crypt_salt_format,
             delete: true,
-          }, {
-            name: :shadow_account,
-            delete: true,
           },
-
         ], key: :name)
       self.multi_attrs = LdapAdapter.multi_attrs
       self.hide_attrs = LdapAdapter.hide_attrs
@@ -100,7 +96,7 @@ module Yuzakan
 
       # ADではunicodePwdに平文パスワードを設定することで変更できる。
       # 古いパスワードはわからないため、常にreplaceで行うこと。
-      private def change_password_operations(_user, password)
+      private def change_password_operations(_user, password, locked: false)
         [operation_replace('unicodePwd', generate_unicode_password(password))]
       end
 
