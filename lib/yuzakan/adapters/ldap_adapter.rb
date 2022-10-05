@@ -839,7 +839,7 @@ module Yuzakan
                         operation_add('userPassword', generate_password(password))
                       end
 
-        if @params[:shadow_account]
+        if @params[:shadow_account] && user['objectClass'].include?('shadowAccount')
           epoch_date = Time.now.utc.to_i / 24 / 60 / 60
           operations << if user['shadowLastChange']&.first
                           operation_replace('shadowLastChange', epoch_date.to_s)
