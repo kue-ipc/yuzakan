@@ -113,37 +113,17 @@ providers:
     create_user_ou_dn: ou=User,dc=example,dc=jp
     create_user_object_classes: inetOrgPerson,nsMemberOf
 attrs:
-- name: email
-  label: メールアドレス
+- name: display_name_latin
+  label: 表示名(ローマ字)
   type: string
-  order: 8
+  order: 12
   hidden: false
   readonly: false
-  code: "`${username}@example.jp`"
-  attr_mappings:
-  - provider:
-      name: local
-    name: email
-    conversion: 
-  - provider:
-      name: ldap
-    name: mail
-    conversion: 
-- name: display_name
-  label: 表示名(日本語)
-  type: string
-  order: 16
-  hidden: false
-  readonly: false
-  code: 
+  code: ''
   attr_mappings:
   - provider:
       name: ldap
-    name: displayName;lang-ja
-    conversion: 
-  - provider:
-      name: local
-    name: display_name
+    name: displayName
     conversion: 
 - name: family_name
   label: 姓(日本語)
@@ -151,7 +131,7 @@ attrs:
   order: 24
   hidden: false
   readonly: false
-  code: attrs.display_name?.split(/\s/)?.at(0)
+  code: display_name?.split(/\s/)?.at(0)
   attr_mappings:
   - provider:
       name: ldap
@@ -163,23 +143,11 @@ attrs:
   order: 32
   hidden: false
   readonly: false
-  code: attrs.display_name?.split(/\s/)?.at(1)
+  code: display_name?.split(/\s/)?.at(1)
   attr_mappings:
   - provider:
       name: ldap
     name: givenName;lang-ja
-    conversion: 
-- name: display_name_latin
-  label: 表示名(ローマ字)
-  type: string
-  order: 40
-  hidden: false
-  readonly: false
-  code: ''
-  attr_mappings:
-  - provider:
-      name: ldap
-    name: displayName
     conversion: 
 - name: family_name_latin
   label: 姓(ローマ字)
