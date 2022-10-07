@@ -38,9 +38,6 @@ describe Api::Controllers::Myself::Show do
         email: 'user@example.jp',
         attrs: {ja_display_name: '表示ユーザー'},
         groups: [],
-        locked: false,
-        unmanageable: false,
-        mfa: false,
       },
       provider_userdatas: [{
         provider: {
