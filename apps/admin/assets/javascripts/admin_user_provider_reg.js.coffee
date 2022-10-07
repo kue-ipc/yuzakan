@@ -66,18 +66,19 @@ providerRegProviderTd = ({user, provider, name, type}) ->
       value: provider_userdata?.userdata?[name]
       type
       color:
-        if type == 'list'
-          'body'
-        else if user.userdata[name] == provider_userdata?.userdata?[name]
-          'success'
+        if user[name]
+          if user[name] == provider_userdata?.userdata?[name]
+            'success'
+          else
+            'danger'
         else
-          'danger'
+          'body'
     }
 
 providerRegTr = ({user, providers, name, label, type}) ->
   html.tr {}, [
-    html.td {}, text label
-    html.td {}, valueDisplay {value: user.userdata[name], type}
+    html.th {}, text label
+    # html.td {}, valueDisplay {value: user.userdata[name], type}
     (providerRegProviderTd {user, provider, name, type} for provider in providers)...
   ]
 
@@ -95,14 +96,12 @@ export default providerReg = ({mode, user, providers}) ->
     html.table {class: 'table'}, [
       html.thead {},
         html.tr {}, [
-          html.th {}, text '名前'
-          html.th {}, text '値'
+          html.th {}, text ''
           (html.th({}, text provider.label) for provider in providers)...
         ]
       html.tbody {}, [
         html.tr {}, [
-          html.td {}, text 'プロバイダー'
-          html.td {}, text ''
+          html.th {}, text '登録'
           (providerCheckTd({mode, user, provider}) for provider in providers)...
         ]
         (if mode != 'new' then (providerRegTr {user, providers, item...} for item in PROVIDER_REG_ITEMS) else [])...

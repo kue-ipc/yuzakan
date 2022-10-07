@@ -32,7 +32,7 @@ class ReadUser
       userdata = provider.user_read(params[:username])
       @providers[provider.name] = userdata
       if userdata
-        %i[username display_name email locked unmanageable mfa].each do |name|
+        %i[username display_name email].each do |name|
           @userdata[name] ||= userdata[name] unless userdata[name].nil?
         end
         @userdata[:primary_group] ||= userdata[:primary_group] unless userdata[:primary_group].nil?
