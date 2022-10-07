@@ -69,13 +69,19 @@ module Yuzakan
       self.multi_attrs = LdapAdapter.multi_attrs
       self.hide_attrs = LdapAdapter.hide_attrs
 
-      private def create_user_attributes(username, **userdata)
-        attributes = super
-
+      private def run_after_user_create(username, password = nil, **userdata)
+        super
+        user = get_user_entry(username)
         # https://learn.microsoft.com/ja-jp/troubleshoot/windows-server/identity/useraccountcontrol-manipulate-account-properties
         # userAccountControl: 0x10200
         # NORMAL_ACCOUNT 0x200, DONT_EXPIRE_PASSWORD 0x10000
-        attributes[attribute_name('userAccountControl')] = 0x10200
+        operations = [operation_replace('userAccountControl', convert_ldap_value(0x10200))]
+        ldap_modify(user.dn, operations)
+      end
+
+      private def create_user_attributes(username, **userdata)
+        attributes = super
+
 
         attributes
       end

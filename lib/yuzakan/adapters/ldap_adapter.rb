@@ -259,11 +259,14 @@ module Yuzakan
         dn = "#{dn_attr}=#{attributes[dn_attr.intern]},#{@params[:create_user_ou_dn]}"
 
         ldap_add(dn, attributes)
-
-        user_change_password(username, password) if password
-        member_add(userdata[:primary_group], username) if userdata[:primary_group]
+        run_after_user_create(username, password, **userdata)
 
         user_read(username)
+      end
+
+      private def run_after_user_create(username, password = nil, **userdata)
+        user_change_password(username, password) if password
+        member_add(userdata[:primary_group], username) if userdata[:primary_group]
       end
 
       def user_read(username)
@@ -280,8 +283,6 @@ module Yuzakan
 
         attributes = update_user_attributes(**userdata)
         operations = update_operations(user, attributes)
-        puts '------------------------------'
-        pp [attributes, operations]
         ldap_modify(user.dn, operations) unless operations.empty?
 
         # primary_group がある場合は追加する
