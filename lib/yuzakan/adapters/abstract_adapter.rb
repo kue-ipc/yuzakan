@@ -8,7 +8,6 @@
 #   display_name: String = display name
 #   email: String = mail address
 #   locked: ?bool
-#   disabled: ?bool
 #   unmanageable: ?bool
 #   mfa: ?bool
 #   primary_group: ?String

@@ -50,12 +50,6 @@ module Yuzakan
           default: false,
         },
         {
-          name: :disabled,
-          label: '無効',
-          type: :boolean,
-          default: false,
-        },
-        {
           name: :unmanageable,
           label: '管理不可',
           type: :boolean,
@@ -84,7 +78,6 @@ module Yuzakan
           display_name: @params[:display_name],
           email: @params[:email],
           locked: @params[:locked],
-          disabled: @params[:disabled],
           unmanageable: @params[:unmanageable],
           mfa: @params[:mfa],
           attrs: YAML.safe_load(@params[:attrs]),
@@ -130,8 +123,11 @@ module Yuzakan
       end
 
       def user_auth(username, password)
-        @passwords[username]&.==(password) &&
-          [:locked, :disabled].none? { |flag| @users.dig(username, flag) }
+        user = @users[username]
+        return false if user.nil?
+        return false if user[:locked]
+
+        @passwords[username]&.==(password)
       end
 
       def user_change_password(username, password)

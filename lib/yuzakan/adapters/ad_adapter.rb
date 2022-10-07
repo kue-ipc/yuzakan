@@ -94,9 +94,14 @@ module Yuzakan
         !(user_entry_uac(user) & 0x2).zero?
       end
 
+      # userPrincipalName についてもチェックする
+      private def user_entry_unmanageable?(user)
+        super || @params[:bind_username].casecmp?(user['userPrincipalName']&.first.to_s)
+      end
+
       # ADではunicodePwdに平文パスワードを設定することで変更できる。
       # 古いパスワードはわからないため、常にreplaceで行うこと。
-      private def change_password_operations(_user, password, locked: false)
+      private def change_password_operations(user, password, locked: false) # rubocop:disable Lint/UnusedMethodArgument
         [operation_replace('unicodePwd', generate_unicode_password(password))]
       end
 

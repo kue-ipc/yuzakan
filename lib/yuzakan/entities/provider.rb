@@ -255,20 +255,12 @@ class Provider < Hanami::Entity
     end
   end
 
-  def user_enabled?(username)
-    !read(username)[:disabled]
-  end
-
   def user_locked?(username)
-    nil | read(username)[:locked]
-  end
-
-  def user_disabled?(username)
-    nil | read(username)[:disabled]
+    read(username)&.fetch(:locked, false)
   end
 
   def user_unmanageable?(username)
-    nil | read(username)[:unmanageable]
+    read(username)&.fetch(:unmanageable, false)
   end
 
   def user_list

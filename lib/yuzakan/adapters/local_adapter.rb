@@ -57,7 +57,6 @@ module Yuzakan
         user = @repository.find_by_username(username)
         return false if user.nil?
         return false if user.locked?
-        return false if user.disabled?
 
         user.verify_password(password)
       end
@@ -75,7 +74,7 @@ module Yuzakan
       def user_lock(username)
         user = @repository.find_by_username(username)
         return false if user.nil?
-        return false if user.locked?
+        return true if user.locked?
 
         @repository.update(user.id, hashed_password: LocalUser.lock_password(user.hashed_password))
       end
@@ -83,7 +82,7 @@ module Yuzakan
       def user_unlock(username, _password = nil)
         user = @repository.find_by_username(username)
         return false if user.nil?
-        return false unless user.locked?
+        return true unless user.locked?
 
         @repository.update(user.id, hashed_password: LocalUser.unlock(user.hashed_password))
       end
@@ -109,7 +108,10 @@ module Yuzakan
           display_name: user.display_name,
           email: user.email,
           locked: user.locked?,
-          disabled: user.disabled?,
+          unmanageable: false,
+          mfa: false,
+          primary_group: nil,
+          groups: [],
           attrs: {},
         }
       end

@@ -677,7 +677,6 @@ module Yuzakan
           display_name: @params[:user_display_name_attr] && user.first(@params[:user_display_name_attr]),
           email: @params[:user_email_attr] && user.first(@params[:user_email_attr])&.downcase,
           locked: user_entry_locked?(user),
-          disabled: user_entry_disabled?(user),
           unmanageable: user_entry_unmanageable?(user),
           mfa: user_entry_mfa?(user),
           primary_group: primary_group,
@@ -841,12 +840,8 @@ module Yuzakan
         password.start_with?(/\{[\w-]+\}!/)
       end
 
-      private def user_entry_disabled?(_user)
-        false
-      end
-
-      private def user_entry_unmanageable?(_user)
-        false
+      private def user_entry_unmanageable?(user)
+        @params[:bind_username].casecmp?(user.dn)
       end
 
       private def user_entry_mfa?(_user)

@@ -33,8 +33,4 @@ class LocalUser < Hanami::Entity
   def locked?
     hashed_password.start_with?('!!')
   end
-
-  def disabled?
-    hashed_password.start_with?('*', '!!*')
-  end
 end

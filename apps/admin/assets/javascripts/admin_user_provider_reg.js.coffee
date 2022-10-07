@@ -9,7 +9,6 @@ PROVIDER_REG_ITEMS = [
   {name: 'display_name', label: '表示名', type: 'string'}
   {name: 'email', label: 'メールアドレス', type: 'string'}
   {name: 'locked', label: 'ロック', type: 'boolean'}
-  {name: 'disabled', label: '無効', type: 'boolean'}
   {name: 'unmanageable', label: '管理不可', type: 'boolean'}
   {name: 'mfa', label: '多要素', type: 'boolean'}
 ]

@@ -118,6 +118,12 @@ module Yuzakan
         raise NotImplementedError
       end
 
+      # 停止中の理由は user.suspension_reason よりわかるが、ADMIN以外は解除不可
+      #   ADMIN: 管理者が停止
+      #   ABUSE: 不正行為により停止(利用も削除も不可)
+      #   UNDER13: 13歳未満のため
+      #   WEB_LOGIN_REQUIRED: ログイン前新規アカウント(使用され無い)
+      #   null: その他の自動停止中
       def user_unlock(username, password = nil)
         email = "#{username}@#{@params[:domain]}"
         user = service.get_user(email)
@@ -228,29 +234,10 @@ module Yuzakan
           username: user.primary_email.split('@').first,
           display_name: user.name.full_name,
           email: user.primary_email,
+          locked: user.suspended?,
+          unmanageable: !user.is_admin?,
+          mfa: user.is_enrolled_in2_sv?,
         }
-
-        if user.suspended?
-          # ADMIN: 管理者が停止
-          # ABUSE: 不正行為により停止(利用も削除も不可)
-          # UNDER13: 13歳未満のため
-          # WEB_LOGIN_REQUIRED: ログイン前新規アカウント(使用され無い)
-          # null: その他の自動停止中
-          if user.suspension_reason == 'ADMIN'
-            data[:locked] = true
-          else
-            data[:disabled] = true
-          end
-        end
-
-        data[:unmanageable] = true if user.is_admin?
-
-        data[:mfa] =
-          if user.is_enforced_in2_sv?
-            :enforced
-          elsif user.is_enrolled_in2_sv?
-            :enabled
-          end
 
         JSON.parse(user.to_json).each do |key, value|
           if key == 'name'
