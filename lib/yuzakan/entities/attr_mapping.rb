@@ -1,4 +1,16 @@
 class AttrMapping < Hanami::Entity
+  TRUE_STR_VALUES = %w[true yes on]
+  TRUE_VALUES = [true, 1] +
+                TRUE_STR_VALUES +
+                TRUE_STR_VALUES.map(&:upcase) +
+                TRUE_STR_VALUES.map(&:intern)
+
+  FALSE_STR_VALUES = %w[false no off]
+  FALSE_VALUES = [nil, false, 0] +
+                 FALSE_STR_VALUES +
+                 FALSE_STR_VALUES.map(&:upcase) +
+                 FALSE_STR_VALUES.map(&:intern)
+
   def attr_name
     attr.name
   end
@@ -10,7 +22,11 @@ class AttrMapping < Hanami::Entity
     if conversion.nil?
       case attr.type
       when 'boolean'
-        nil | value
+        if TRUE_VALUES.include?(value)
+          true
+        elsif FALSE_VALUES.include?(value)
+          false
+        end
       when 'string'
         value.to_s
       when 'integer'
@@ -19,9 +35,7 @@ class AttrMapping < Hanami::Entity
         value.to_f
       when 'date'
         value.to_date
-      when 'time'
-        value.to_time
-      when 'datetime'
+      when 'time', 'datetime'
         value.to_time
       else
         value
