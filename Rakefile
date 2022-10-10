@@ -73,9 +73,13 @@ namespace :vendor do
     cp Dir.glob("#{bootstrap_icons_dir}/fonts/*.{woff,woff2}"), fonts_dir
 
     source_code_pro_dir = 'node_modules/source-code-pro'
-    cp Dir.glob("#{source_code_pro_dir}/WOFF/TTF/*.ttf.woff"), fonts_dir
-    cp Dir.glob("#{source_code_pro_dir}/WOFF2/TTF/*.ttf.woff2"), fonts_dir
-    cp Dir.glob("#{source_code_pro_dir}/WOFF/VAR/*.ttf.{woff,woff2}"), fonts_dir
+    ['OTF', 'VAR'].each do |type|
+      ['woff', 'woff2'].each do |ext|
+        Dir.glob("#{source_code_pro_dir}/#{ext.upcase}/#{type}/*.otf.#{ext}").each do |path|
+          cp path, "#{fonts_dir}/#{File.basename(path, ".otf.#{ext}")}.#{ext}"
+        end
+      end
+    end
 
     firacode_dir = 'node_modules/firacode'
     cp Dir.glob("#{firacode_dir}/distr/woff/*.woff"), fonts_dir
