@@ -20,6 +20,7 @@ gem 'sassc'
 
 gem 'coffee-script'
 gem 'uglifier'
+gem 'terser'
 
 gem 'bcrypt'
 gem 'zxcvbn-js', require: 'zxcvbn'

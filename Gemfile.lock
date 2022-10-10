@@ -236,6 +236,8 @@ GEM
       tilt (>= 2.0.6, < 2.1)
     smbhash (1.1.0)
     temple (0.8.2)
+    terser (1.1.12)
+      execjs (>= 0.3.0, < 3)
     tilt (2.0.11)
     trailblazer-option (0.1.2)
     transproc (1.1.1)
@@ -280,6 +282,7 @@ DEPENDENCIES
   shotgun
   slim
   smbhash
+  terser
   uglifier
   xxhash
   zxcvbn-js
