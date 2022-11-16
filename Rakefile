@@ -6,9 +6,9 @@ require 'rake/clean'
 CLEAN << 'vendor/assets'
 CLEAN << 'public/assets'
 CLEAN << 'public/errors'
+CLEAN << 'rollup.config.mjs'
 
 CLOBBER << 'node_modules'
-CLOBBER << 'rollup.config.mjs'
 
 Rake::TestTask.new do |t|
   t.pattern = 'spec/**/*_spec.rb'
@@ -19,33 +19,44 @@ end
 task default: :test
 task spec: :test
 
+desc 'ファイル生成'
 task build: [:build_errors, 'vendor:build']
+
+desc 'エラーファイル生成'
+task build_errors: %w[
+  400 401 403 404 405 418
+  500 502 503 504
+].map { |code| "public/errors/#{code}.html" }
+
+rule %r{^public/errors/\d+\.html$} => ['apps/web/templates/%n.html.slim', 'public/errors'] do |t|
+  sh "bundle exec slimrb #{t.source} > #{t.name}"
+end
 
 rule 'public/errors' do
   mkdir_p 'public/errors'
 end
 
-task build_errors: 'public/errors' do
-  %w[
-    400 401 403 404 405 418
-    500 502 503 504
-  ].each do |code|
-    src = "apps/web/templates/#{code}.html.slim"
-    dst = "public/errors/#{code}.html"
-    sh "bundle exec slimrb #{src} > #{dst}"
-  end
-end
-
 namespace :vendor do
-  rule %r{^node_modules/.*$} do
-    sh 'npm install'
+  desc 'ベンダーファイル生成'
+  task build: [:build_js, :build_font, :build_image]
+
+  task build_js: [:build_js_rollup, :build_js_hyperapp]
+
+  task build_js_rollup: ['rollup.config.mjs', 'node_modules/.bin/rollup'] do
+    sh 'npx rollup -c'
   end
 
   rule '.mjs' => ['.coffee', 'node_modules/.bin/coffee'] do |t|
     sh "npx coffee -o #{t.name} -c #{t.source}"
   end
 
-  rule %r{^vendor/assets/javascripts/hyperapp-(.*).js$} => 'node_modules/@hyperapp/%{hyperapp-,}n/index.js' do |t|
+  rule %r{^node_modules/.*$} do
+    sh 'npm install'
+  end
+
+  task build_js_hyperapp: ['html', 'svg'].map { |name| "vendor/assets/javascripts/hyperapp-#{name}.js" }
+
+  rule %r{^vendor/assets/javascripts/hyperapp-.*\.js$} => 'node_modules/@hyperapp/%{hyperapp-,}n/index.js' do |t|
     js_data = File.read(t.source)
     [
       '(\b(?:im|ex)port\b[\s\w,*{}]*\bfrom\b\s*)"([^"]*)"',
@@ -56,18 +67,6 @@ namespace :vendor do
       js_data.gsub!(Regexp.compile(re_str.tr('"', "'")), '\1\'./\2.js\'\3')
     end
     File.write(t.name, js_data)
-  end
-
-  task build_js_rollup: ['rollup.config.mjs', 'node_modules/.bin/rollup'] do
-    sh 'npx rollup -c'
-  end
-
-  task build_js_hyperapp: ['html', 'svg'].map { |name| "vendor/assets/javascripts/hyperapp-#{name}.js" }
-
-  task build_js: [:build_js_rollup, :build_js_hyperapp]
-
-  rule 'vendor/assets/fonts' do
-    mkdir_p 'vendor/assets/fonts'
   end
 
   task build_font: ['vendor/assets/fonts'] do
@@ -92,8 +91,8 @@ namespace :vendor do
     cp Dir.glob("#{typopro_web_iosevka_dir}/*.woff"), fonts_dir
   end
 
-  rule 'vendor/assets/images' do
-    mkdir_p 'vendor/assets/images'
+  rule 'vendor/assets/fonts' do
+    mkdir_p 'vendor/assets/fonts'
   end
 
   task build_image: ['vendor/assets/images'] do
@@ -102,6 +101,7 @@ namespace :vendor do
     cp "#{bootstrap_icons_dir}/bootstrap-icons.svg", images_dir
   end
 
-  desc 'ベンダービルド'
-  task build: [:build_js, :build_font, :build_image]
+  rule 'vendor/assets/images' do
+    mkdir_p 'vendor/assets/images'
+  end
 end
