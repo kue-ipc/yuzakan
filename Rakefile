@@ -4,9 +4,11 @@ require 'rake/testtask'
 require 'rake/clean'
 
 CLEAN << 'vendor/assets'
+CLEAN << 'public/assets'
+CLEAN << 'public/errors'
 
 CLOBBER << 'node_modules'
-CLOBBER << 'rollup.config.js'
+CLOBBER << 'rollup.config.mjs'
 
 Rake::TestTask.new do |t|
   t.pattern = 'spec/**/*_spec.rb'
@@ -35,33 +37,34 @@ task build_errors: 'public/errors' do
 end
 
 namespace :vendor do
-  rule %r{^node_modules/.bin/.*$} do
+  rule %r{^node_modules/.*$} do
     sh 'npm install'
   end
 
-  rule '.mjs' => '.coffee' do |t|
-    sh "npx coffee -c #{t.source} -o #{t.name}"
+  rule '.mjs' => ['.coffee', 'node_modules/.bin/coffee'] do |t|
+    sh "npx coffee -o #{t.name} -c #{t.source}"
   end
 
-  task build_js: ['rollup.config.mjs'] do
-    sh 'npx rollup -c'
-
-    # hyperapp sub module
-    ['html', 'svg'].each do |name|
-      in_path = "node_modules/@hyperapp/#{name}/index.js"
-      out_path = "vendor/assets/javascripts/hyperapp-#{name}.js"
-      js_data = File.read(in_path)
-      [
-        '(\b(?:im|ex)port\b[\s\w,*{}]*\bfrom\b\s*)"([^"]*)"',
-        '(\bimport\b\s*)"([^"]*)"',
-        '(\bimport\b\s*\(\s*)"([^"]*)"(\s*\))',
-      ].each do |re_str|
-        js_data.gsub!(Regexp.compile(re_str), '\1"./\2.js"\3')
-        js_data.gsub!(Regexp.compile(re_str.tr('"', "'")), '\1\'./\2.js\'\3')
-      end
-      File.write(out_path, js_data)
+  rule %r{^vendor/assets/javascripts/hyperapp-(.*).js$} => 'node_modules/@hyperapp/%{hyperapp-,}n/index.js' do |t|
+    js_data = File.read(t.source)
+    [
+      '(\b(?:im|ex)port\b[\s\w,*{}]*\bfrom\b\s*)"([^"]*)"',
+      '(\bimport\b\s*)"([^"]*)"',
+      '(\bimport\b\s*\(\s*)"([^"]*)"(\s*\))',
+    ].each do |re_str|
+      js_data.gsub!(Regexp.compile(re_str), '\1"./\2.js"\3')
+      js_data.gsub!(Regexp.compile(re_str.tr('"', "'")), '\1\'./\2.js\'\3')
     end
+    File.write(t.name, js_data)
   end
+
+  task build_js_rollup: ['rollup.config.mjs', 'node_modules/.bin/rollup'] do
+    sh 'npx rollup -c'
+  end
+
+  task build_js_hyperapp: ['html', 'svg'].map { |name| "vendor/assets/javascripts/hyperapp-#{name}.js" }
+
+  task build_js: [:build_js_rollup, :build_js_hyperapp]
 
   rule 'vendor/assets/fonts' do
     mkdir_p 'vendor/assets/fonts'
