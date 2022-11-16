@@ -39,12 +39,12 @@ namespace :vendor do
     sh 'npm install'
   end
 
-  rule '.js' => ['.coffee', 'node_modules/.bin/coffee'] do |t|
-    sh "node_modules/.bin/coffee -c #{t.source}"
+  rule '.mjs' => '.coffee' do |t|
+    sh "npx coffee -c #{t.source} -o #{t.name}"
   end
 
-  task build_js: ['rollup.config.js', 'node_modules/.bin/rollup'] do
-    sh 'node_modules/.bin/rollup -c'
+  task build_js: ['rollup.config.mjs'] do
+    sh 'npx rollup -c'
 
     # hyperapp sub module
     ['html', 'svg'].each do |name|

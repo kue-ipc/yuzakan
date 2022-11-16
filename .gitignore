@@ -8,7 +8,7 @@
 /vendor/assets*
 /vendor/adapters/*
 
-/rollup.config.js
+/rollup.config.mjs
 /yarn-error.log
 /yarn.lock
 /log/*.log*
