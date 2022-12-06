@@ -790,47 +790,51 @@ module Yuzakan
         end
       end
 
+      # LDAPへのアクセス
+
+      # LDAP操作後のフック
+      private def after_ldap_action(action, result)
+        if result.nil?
+          ldap_error_message = ldap.get_operation_result.error_message
+          @logger.error "LDAP #{action} error: #{ldap_error_message}"
+          raise Error, ldap_error_message
+        end
+      end
+
       private def ldap_search(opts)
         @logger.debug "LDAP search: #{opts}"
         result = ldap.search(opts)
-        if result.nil?
-          @logger.error "LDAP search error: #{ldap.get_operation_result.error_message}"
-          raise Error, ldap.get_operation_result.error_message
-        end
+        after_ldap_action(:search, result)
         result
       end
+
 
       private def ldap_add(dn, attributes)
         @logger.debug "LDAP add: #{dn}"
         str_attrs = attributes.transform_values { |value| value_to_str(value) }
         result = ldap.add({dn: dn, attributes: str_attrs})
-        unless result
-          @logger.error "LDAP add error: #{ldap.get_operation_result.error_message}"
-          raise Error, ldap.get_operation_result.error_message
-        end
-
+        after_ldap_action(:add, result)
         result
       end
 
       private def ldap_modify(dn, operations)
         @logger.debug "LDAP modify: #{dn}"
         result = ldap.modify({dn: dn, operations: operations})
-        unless result
-          @logger.error "LDAP modify error: #{ldap.get_operation_result.error_message}"
-          raise Error, ldap.get_operation_result.error_message
-        end
-
+        after_ldap_action(:modify, result)
         result
       end
 
       private def ldap_delete(dn)
         @logger.debug "LDAP delete: #{dn}"
         result = ldap.delete({dn: dn})
-        unless result
-          @logger.error "LDAP delete error: #{ldap.get_operation_result.error_message}"
-          raise Error, ldap.get_operation_result.error_message
-        end
+        after_ldap_action(:delete, result)
+        result
+      end
 
+      private def ldap_rename(olddn, newrdn)
+        @logger.debug "LDAP rename: #{oldnd} -> #{newrdn}"
+        result = ldap.delete({olddn: olddn, newrdn: newrdn})
+        after_ldap_action(:rename, result)
         result
       end
 

@@ -1,3 +1,5 @@
+require 'etc'
+
 require_relative 'ldap_adapter'
 
 module Yuzakan
@@ -70,6 +72,7 @@ module Yuzakan
       self.multi_attrs = LdapAdapter.multi_attrs
       self.hide_attrs = LdapAdapter.hide_attrs
 
+      # override
       private def create_user_attributes(username, **userdata)
         attributes = super
 
@@ -93,6 +96,7 @@ module Yuzakan
         attributes
       end
 
+      # override
       private def update_user_attributes(**userdata)
         attributes = super
 
@@ -108,6 +112,7 @@ module Yuzakan
         attributes
       end
 
+      # override
       private def change_password_operations(user, password, locked: false)
         operations = super
         if @params[:shadow_account] && user['objectClass'].include?('shadowAccount')
@@ -121,8 +126,53 @@ module Yuzakan
         operations
       end
 
+      # override
+      private def get_primary_group(user)
+        get_gidnumber_groups(user).first
+      end
+
+      # override
+      private def get_memberof_groups(user)
+        (get_gidnumber_groups(user) + get_memberuid_groups(user)).compact.uniq
+      end
+
+      # override
+      private def get_member_users(group)
+        (get_gidnumber_users(group) + get_memberuid_users(group)).uniq
+      end
+
+      # override
+      private def add_member(group, user)
+        return false if group['memberUid']&.include?(user.uid.first)
+        return false if user.gidNumber.first == group.gidNumber.first
+
+        operations = [operation_add(:memberuid, user.uid.first)]
+        ldap_modify(group.dn, operations)
+      end
+
+      # override
+      private def remove_member(group, user)
+        return false unless group['memberUid']&.incldue?(user.uid.first)
+
+        operations = [operation_delete(:memberuid, user.uid.first)]
+        ldap_modify(group.dn, operations)
+      end
+
+      # override
+      private def after_ldap_action(action, result)
+        super
+        # search以外はキャッシュを削除する。
+        posix_cache_clear if action != :search
+      end
+
       # 空いているUID番号を探して返す。
       private def search_free_uid
+        pp @params
+        pp posix_passwds
+        pp posix_passwd_byuid_map
+        pp posix_passwd_byname_map
+        pp posix_group_bygid_map
+        pp posix_group_byname_map
         case @params[:search_free_uid].intern
         when :min
           searhc_free_uid_min
@@ -136,14 +186,17 @@ module Yuzakan
         end
       end
 
-      private def searhc_free_uid_random
-        (@params[:uid_min]..@params[:uid_max]).to_a.shuffle.each do |num|
+      # 空いているUID番号のうち、一番小さい番号を取り出します。
+      private def searhc_free_uid_min
+        (@params[:uid_min]..@params[:uid_max]).each do |num|
           return num unless posix_passwd_byuid_map.key?(num)
         end
         @logger.error 'There is no free UID numebr'
         raise '空いているUID番号がありません。'
       end
 
+      # 使用されている最大の番号の次の番号を取り出します。
+      # ただし、最大に達している場合は、一番小さい番号を取りします。
       private def searhc_free_uid_next
         next_num = posix_passwd_byuid_map.keys.max.succ
         if next_num > @params[:uid_max]
@@ -156,25 +209,25 @@ module Yuzakan
         next_num
       end
 
-      private def searhc_free_uid_min
-        (@params[:uid_min]..@params[:uid_max]).each do |num|
+      # ランダムに空いている番号を探します。
+      private def searhc_free_uid_random
+        (@params[:uid_min]..@params[:uid_max]).to_a.shuffle.each do |num|
           return num unless posix_passwd_byuid_map.key?(num)
         end
         @logger.error 'There is no free UID numebr'
         raise '空いているUID番号がありません。'
       end
 
+      # NIS互換属性からの各情報
+
+      private def get_uidnumber(username)
+        user = get_user_entry(username)
+        user.first('gidNumber')&.to_i
+      end
+
       private def get_gidnumber(groupname)
         group = get_group_entry(groupname)
         group['gidNumber']&.first&.to_i
-      end
-
-      private def get_primary_group(user)
-        get_gidnumber_groups(user).first
-      end
-
-      private def get_memberof_groups(user)
-        (get_gidnumber_groups(user) + get_memberuid_groups(user)).compact.uniq
       end
 
       private def get_gidnumber_groups(user)
@@ -187,10 +240,6 @@ module Yuzakan
         filter = Net::LDAP::Filter.eq('memberUid', user.uid.first)
         opts = search_group_opts('*', filter: filter)
         ldap_search(opts).to_a
-      end
-
-      private def get_member_users(group)
-        (get_gidnumber_users(group) + get_memberuid_users(group)).uniq
       end
 
       private def get_gidnumber_users(group)
@@ -207,61 +256,72 @@ module Yuzakan
         end.compact
       end
 
-      private def add_member(group, user)
-        return false if group['memberUid']&.include?(user.uid.first)
-        return false if user.gidNumber.first == group.gidNumber.first
-
-        operations = [operation_add(:memberuid, user.uid.first)]
-        ldap_modify(group.dn, operations)
+      # NIS互換属性からのetc情報
+      private def posix_cache_clear
+        @posix_passwds = nil
+        @posix_groups = nil
+        @posix_passwd_byuid_map = nil
+        @posix_passwd_byname_map = nil
+        @posix_group_bygid_map = nil
+        @posix_group_byname_map = nil
       end
 
-      private def remove_member(group, user)
-        return false unless group['memberUid']&.incldue?(user.uid.first)
-
-        operations = [operation_delete(:memberuid, user.uid.first)]
-        ldap_modify(group.dn, operations)
-      end
-
-      # NIS互換
       private def posix_passwds
         @posix_passwds ||= ldap_search(search_user_opts('*')).map do |user|
-          {
-            name: user['uid'].first,
-            passwd: 'x',
-            uid: user['uidNumebr'].first.to_i,
-            gid: user['gidNumebr'].first.to_i,
-            gecos: user['gecos']&.first || '',
-            dir: user['homeDirectory']&.first || '',
-            shell: user['loginShell']&.first || '',
-          }
+          passwd_args = Etc::Passwd.members.map do |name|
+            case name
+            when :name
+              user.first('uid')
+            when :passwd
+              'x'
+            when :uid
+              user.first('uidNumber').to_i
+            when :gid
+              user.first('gidNumber').to_i
+            when :gecos
+              user.first('gecos') || ''
+            when :dir
+              user.first('homeDirectory') || ''
+            when :shell
+              user.first('loginShell') || ''
+            end
+          end
+          Etc::Passwd.new(*passwd_args)
         end
       end
 
       private def posix_groups
         @posix_groups ||= ldap_search(search_group_opts('*')).map do |group|
-          {
-            name: group['cn'].first,
-            passwd: 'x',
-            gid: group['gidNumebr'].first.to_i,
-            mem: group['memberUid']&.to_a || [],
-          }
+          group_args = Etc::Group.members.map do |name|
+            case name
+            when :name
+              group.first('cn')
+            when :passwd
+              'x'
+            when :gid
+              group.first('gidNumber').to_i
+            when :mem
+              group['memberUid'].to_a || []
+            end
+          end
+          Etc::Group.new(*group_args)
         end
       end
 
       private def posix_passwd_byuid_map
-        @posix_passwd_byuid_map ||= posix_passwds.to_h { |pw| [pw[:uid], pw] }
+        @posix_passwd_byuid_map ||= posix_passwds.to_h { |pw| [pw.uid, pw] }
       end
 
       private def posix_passwd_byname_map
-        @posix_passwd_byname_map ||= posix_passwds.to_h { |pw| [pw[:name], pw] }
+        @posix_passwd_byname_map ||= posix_passwds.to_h { |pw| [pw.name, pw] }
       end
 
       private def posix_group_bygid_map
-        @posix_group_bygid_map ||= postix_groups.to_h { |gr| [gr[:gid], gr] }
+        @posix_group_bygid_map ||= posix_groups.to_h { |gr| [gr.gid, gr] }
       end
 
       private def posix_group_byname_map
-        @posix_group_byname_map ||= postix_groups.to_h { |gr| [gr[:name], gr] }
+        @posix_group_byname_map ||= posix_groups.to_h { |gr| [gr.name, gr] }
       end
     end
   end
