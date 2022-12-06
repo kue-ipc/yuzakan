@@ -80,10 +80,7 @@ module Yuzakan
       end
 
       private def create_user_attributes(username, **userdata)
-        attributes = super
-
-
-        attributes
+        super
       end
 
       private def user_entry_uac(user)
@@ -95,18 +92,21 @@ module Yuzakan
         uac
       end
 
+      # override
       private def user_entry_locked?(user)
         # ACCOUNTDISABLE 0x0002
         !(user_entry_uac(user) & 0x2).zero?
       end
 
       # userPrincipalName についてもチェックする
+      # override
       private def user_entry_unmanageable?(user)
         super || @params[:bind_username].casecmp?(user.first('userPrincipalName').to_s)
       end
 
       # ADではunicodePwdに平文パスワードを設定することで変更できる。
       # 古いパスワードはわからないため、常にreplaceで行うこと。
+      # override
       private def change_password_operations(user, password, locked: false) # rubocop:disable Lint/UnusedMethodArgument
         [operation_replace('unicodePwd', generate_unicode_password(password))]
       end
@@ -116,12 +116,16 @@ module Yuzakan
         "\"#{password}\"".encode(Encoding::UTF_16LE).bytes.pack('c*')
       end
 
+      # override
       private def lock_operations(user)
         [operation_replace('userAccountControl', convert_ldap_value(user_entry_uac(user) | 0x2))]
       end
 
+      # override
+      # remove ACCOUNTDISABLE and LOCKOUT
       private def unlock_operations(user, password = nil)
-        operations = [operation_replace('userAccountControl', convert_ldap_value(user_entry_uac(user) & ~0x2))]
+        operations = []
+        operations << operation_replace('userAccountControl', convert_ldap_value(user_entry_uac(user) & ~(0x2 | 0x10)))
         operations.concat(change_password_operations(user, password)) if password
         operations
       end

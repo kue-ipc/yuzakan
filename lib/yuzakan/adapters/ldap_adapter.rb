@@ -301,10 +301,13 @@ module Yuzakan
       end
 
       def user_auth(username, password)
-        opts_with_password = search_user_opts(username).merge(password: password)
-        @logger.debug "ldap auth: #{opts_with_password}"
-        # bind_as is re bind, so DON'T USE `ldap`
-        generate_ldap.bind_as(opts_with_password)
+        user = get_user_entry(username)
+        return false if user.nil?
+        return false if user_entry_locked?(user)
+
+        @logger.debug "LDAP bind: #{user.dn}"
+        # 認証のbindには別のLDAPインスタンスを使用します。
+        generate_ldap.bind(method: :simple, username: user.dn, password: password)
       end
 
       def user_change_password(username, password)
@@ -320,8 +323,8 @@ module Yuzakan
         user = get_user_entry(username)
         return false if user.nil?
         return false if user_entry_unmanageable?(user)
-        return true if user_entry_locked?(user)
 
+        # ロックが既にかかっていても変更を実施する
         ldap_modify(user.dn, lock_operations(user))
       end
 
@@ -331,6 +334,7 @@ module Yuzakan
         return false if user_entry_unmanageable?(user)
         return true if user_entry_locked?(user) && password.nil?
 
+        # ロックが既に外れていても変更を実施する
         ldap_modify(user.dn, unlock_operations(user, password))
       end
 
@@ -493,6 +497,14 @@ module Yuzakan
         generate_operation(:delete, name, value)
       end
 
+      private def operation_add_or_replace(name, value, entry)
+        if entry.first(name).nil?
+          operation_add(name, value)
+        else
+          operation_replace(name, value)
+        end
+      end
+
       private def ldap
         @ldap ||= generate_ldap
       end
@@ -567,7 +579,6 @@ module Yuzakan
 
         opts = search_group_opts('*', base: group_dn,
                                       scope: Net::LDAP::SearchScope_BaseObject)
-        @logger.degbu "ldap search: #{opts}"
         ldap_search(opts).first
       end
 
@@ -710,6 +721,7 @@ module Yuzakan
         }
       end
 
+      # 属性名を正規化する
       private def attribute_name(name)
         Net::LDAP::Entry.attribute_name(name)
       end
@@ -794,11 +806,11 @@ module Yuzakan
 
       # LDAP操作後のフック
       private def after_ldap_action(action, result)
-        if result.nil?
-          ldap_error_message = ldap.get_operation_result.error_message
-          @logger.error "LDAP #{action} error: #{ldap_error_message}"
-          raise Error, ldap_error_message
-        end
+        return unless result.nil?
+
+        ldap_error_message = ldap.get_operation_result.error_message
+        @logger.error "LDAP #{action} error: #{ldap_error_message}"
+        raise Error, ldap_error_message
       end
 
       private def ldap_search(opts)
@@ -807,7 +819,6 @@ module Yuzakan
         after_ldap_action(:search, result)
         result
       end
-
 
       private def ldap_add(dn, attributes)
         @logger.debug "LDAP add: #{dn}"
@@ -936,26 +947,30 @@ module Yuzakan
           scheme = m[1]
           value = m[2]
           if value.start_with?('!')
+            # 既にロックされているため変更しない
             str
           else
-            "\{#{scheme}\}!#{value}"
+            "{#{scheme}}!#{value}"
           end
         else
-          # plain is dummy scheme
-          "\{\}!#{value}"
+          @logger.warn('cleartext password')
+          # CLEARTEXT is dummy scheme
+          "{CLEARTEXT}!#{str}"
         end
       end
 
       private def unlock_password(str)
-        if (m = /\A\{([\w-]+)\}!+(.*)\z/.match(str))
+        if (m = /\A\{([\w-]+)\}!*([^!].*)\z/.match(str))
           scheme = m[1]
           value = m[2]
-          if scheme.empty?
+          if scheme.empty? || scheme == 'CLEARTEXT'
+            @logger.warn('cleartext password')
             value
           else
-            "\{#{scheme}\}#{value}"
+            "{#{scheme}}#{value}"
           end
         else
+          @logger.warn('cleartext password')
           str
         end
       end

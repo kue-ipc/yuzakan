@@ -81,17 +81,21 @@ module Yuzakan
         attributes[attribute_name('objectClass')] << 'shadowAccount' if @params[:shadow_account]
 
         # uid number
-        uid_number = search_free_uid
-        attributes[attribute_name('uidNumber')] = convert_ldap_value(uid_number)
+        unless attributes.key?(attribute_name('uidNumber'))
+          uid_number = search_free_uid
+          attributes[attribute_name('uidNumber')] = convert_ldap_value(uid_number)
+        end
 
         # gid number
-        gid_number =
-          if userdata[:primary_group]
-            get_gidnumber(userdata[:primary_group])
-          else
-            @params[:user_gid_number]
-          end
-        attributes[attribute_name('gidNumber')] = convert_ldap_value(gid_number)
+        unless attributes.key?(attribute_name('gidNumber'))
+          gid_number =
+            if userdata[:primary_group]
+              get_gidnumber(userdata[:primary_group])
+            else
+              @params[:user_gid_number]
+            end
+          attributes[attribute_name('gidNumber')] = convert_ldap_value(gid_number)
+        end
 
         attributes
       end
@@ -167,12 +171,6 @@ module Yuzakan
 
       # 空いているUID番号を探して返す。
       private def search_free_uid
-        pp @params
-        pp posix_passwds
-        pp posix_passwd_byuid_map
-        pp posix_passwd_byname_map
-        pp posix_group_bygid_map
-        pp posix_group_byname_map
         case @params[:search_free_uid].intern
         when :min
           searhc_free_uid_min
