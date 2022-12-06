@@ -64,7 +64,7 @@ module Yuzakan
         user = get_user_entry(username)
         return false unless user
 
-        acct_flags = user['sambaAcctFlags']&.first
+        acct_flags = user.first('sambaAcctFlags')
         return false if acct_flags && ['D', 'L'].any? { |c| acct_flags.include?(c) }
 
         user['sambaNTPassword'] == generate_nt_password(password)
@@ -72,8 +72,8 @@ module Yuzakan
 
       private def change_password_operations(user, password, locked: false)
         operations = super
-        operations << operation_delete('sambaNTPAssword') if user['sambaNTPAssword']&.first
-        operations << operation_delete('sambaLMPAssword') if user['sambaLMPAssword']&.first
+        operations << operation_delete('sambaNTPAssword') if user.first('sambaNTPAssword')
+        operations << operation_delete('sambaLMPAssword') if user.first('sambaLMPAssword')
         operations << operation_add(
           'sambaNTPAssword',
           if @params[:samba_nt_password] then generate_nt_password(password) else @@no_password end)

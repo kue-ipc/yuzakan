@@ -839,7 +839,7 @@ module Yuzakan
       end
 
       private def user_entry_locked?(user)
-        password = user['userPassword']&.first
+        password = user.first('userPassword')
         return false if password.nil?
 
         password.start_with?(/\{[\w-]+\}!/)
@@ -858,7 +858,7 @@ module Yuzakan
         user_password = lock_password(user_password) if locked
 
         operations = []
-        operations << if user['userPassword']&.first
+        operations << if user.first('userPassword')
                         operation_replace('userPassword', user_password)
                       else
                         operation_add('userPassword', user_password)
@@ -867,7 +867,7 @@ module Yuzakan
       end
 
       private def lock_operations(user)
-        old_password = user['userPassword']&.first
+        old_password = user.frist('userPassword')
         if old_password
           new_password = lock_password(old_password)
           [operation_replace('userPassword', new_password)]
@@ -881,7 +881,7 @@ module Yuzakan
         if password
           change_password_operations(user, password)
         else
-          old_password = user['userPassword']&.first
+          old_password = user.first('userPassword')
           if old_password
             new_password = unlock_password(old_password)
             [operation_replace('userPassword', new_password)]

@@ -117,7 +117,7 @@ module Yuzakan
         operations = super
         if @params[:shadow_account] && user['objectClass'].include?('shadowAccount')
           epoch_date = Time.now.to_i / 24 / 60 / 60
-          operations << if user['shadowLastChange']&.first
+          operations << if user.first('shadowLastChange')
                           operation_replace('shadowLastChange', epoch_date.to_s)
                         else
                           operation_add('shadowLastChange', epoch_date.to_s)
@@ -222,12 +222,12 @@ module Yuzakan
 
       private def get_uidnumber(username)
         user = get_user_entry(username)
-        user.first('gidNumber')&.to_i
+        user.first('uidNumber')&.to_i
       end
 
       private def get_gidnumber(groupname)
         group = get_group_entry(groupname)
-        group['gidNumber']&.first&.to_i
+        group.first('gidNumber')&.to_i
       end
 
       private def get_gidnumber_groups(user)

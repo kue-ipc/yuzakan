@@ -87,7 +87,7 @@ module Yuzakan
       end
 
       private def user_entry_uac(user)
-        uac = user['userAccountControl']&.first&.to_i
+        uac = user.first('userAccountControl')&.to_i
         unless uac
           @logger.error 'No userAccountControl attribute.'
           raise 'userAccountControl属性がありません。'
@@ -102,7 +102,7 @@ module Yuzakan
 
       # userPrincipalName についてもチェックする
       private def user_entry_unmanageable?(user)
-        super || @params[:bind_username].casecmp?(user['userPrincipalName']&.first.to_s)
+        super || @params[:bind_username].casecmp?(user.first('userPrincipalName').to_s)
       end
 
       # ADではunicodePwdに平文パスワードを設定することで変更できる。
