@@ -1,4 +1,5 @@
 require_relative 'ldap_adapter'
+require_relative '../utils/account_control'
 
 module Yuzakan
   module Adapters
