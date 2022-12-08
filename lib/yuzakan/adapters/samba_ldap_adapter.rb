@@ -18,6 +18,7 @@ require 'securerandom'
 require 'smbhash'
 
 require_relative 'posix_ldap_adapter'
+require_relative 'ad_adapter/account_control'
 
 module Yuzakan
   module Adapters

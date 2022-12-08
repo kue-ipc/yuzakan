@@ -1,13 +1,12 @@
-# AD and Samba Account Control
+# AD Account Control
 # https://learn.microsoft.com/ja-jp/troubleshoot/windows-server/identity/useraccountcontrol-manipulate-account-properties
-# http://www.samba.gr.jp/project/translation/Samba3-HOWTO/passdb.html#accountflags
 
 require_relative '../ldap_adapter'
 
 module Yuzakan
   module Adapters
     class AdAdapter < LdapAdapter
-      class AccountContorl
+      class AccountControl
         module Flag
           SCRIPT = 0x0001 # 1
           ACCOUNTDISABLE = 0x0002 # 2
@@ -33,43 +32,19 @@ module Yuzakan
           PARTIAL_SECRETS_ACCOUNT = 0x04000000 # 67108864
         end
         DEFAULT_USER_FLAGS = Flag::NORMAL_ACCOUNT | Flag::DONT_EXPIRE_PASSWORD
+        LOCKED_FLAGS = Flag::ACCOUNTDISABLE | Flag::LOCKOUT
 
-        SAMAB_FLAG_MAP = {
-          'D' => Flag::ACCOUNTDISABLE,
-          'H' => Flag::HOMEDIR_REQUIRED,
-          'L' => Flag::LOCKOUT,
-          'N' => Flag::PASSWD_NOTREQD,
-          'T' => Flag::TEMP_DUPLICATE_ACCOUNT,
-          'U' => Flag::NORMAL_ACCOUNT,
-          'I' => Flag::INTERDOMAIN_TRUST_ACCOUNT,
-          'W' => Flag::WORKSTATION_TRUST_ACCOUNT,
-          'S' => Flag::SERVER_TRUST_ACCOUNT,
-          'X' => Flag::DONT_EXPIRE_PASSWORD,
-          'M' => Flag::MNS_LOGON_ACCOUNT,
-        }
-        SAMAB_FLAG_MAP_INVERT = SAMAB_FLAG_MAP.invert
-
-        ATTRIBUTE_NAMES = {
-          ad: 'userAccountControl',
-          samba: 'sambaAcctFlags',
-        }
+        ATTRIBUTE_NAME = -'userAccountControl'
 
         include Enumerable
 
-        attr_reader :flags
-
-        def initialize(argv)
+        def initialize(argv = AccountControl::DEFAULT_USER_FLAGS)
           case argv
           when Integer
             @flags = argv
           when Array
             @flags = 0
             argv.each { |flag| @flags |= flag }
-          when String
-            @flags = 0
-            argv.upcase.each_char do |c|
-              @flags |= SAMAB_FLAG_MAP.fetch(c, 0)
-            end
           else
             raise ArgumentError, "Invalid flags: #{argv}"
           end
@@ -97,22 +72,31 @@ module Yuzakan
 
         def add(other)
           @flags |= other.to_i
+          self
         end
         alias << add
         alias merge add
 
         def delete(other)
           @flags &= ~other.to_i
+          self
         end
         alias subtract delete
 
         def replace(other)
           @flags = other.to_i
+          self
         end
 
         def clear
           @flags = 0
+          self
         end
+
+        def clone
+          new(@flags)
+        end
+        alias dup clone
 
         def ==(other)
           @flags == other.to_i
@@ -124,11 +108,6 @@ module Yuzakan
         alias member? include?
         alias === include?
         alias superset? include?
-
-        def clone
-          new(@flags)
-        end
-        alias dup clone
 
         def subset?(other)
           other.to_i.allbits?(@flags)
@@ -168,17 +147,23 @@ module Yuzakan
           end
         end
 
-        def samba
-          str = map { |flag| SAMAB_FLAG_MAP_INVERT[flag] }.compact.sort.join
-          '[%-11s]' % str
+        def to_i
+          @flags
+        end
+
+        def to_s
+          '0x%04X' % to_i
         end
 
         def inspect
-          "#{samba} 0x#{flags.to_(16)} "
+          "#<#{self.class.name}: #{self}>"
         end
 
-        alias to_i flags
-        alias to_s inspect
+        Flag.constants(false).each do |name|
+          AccountControl.define_method(name.downcase) do
+            Flag
+          end
+        end
       end
     end
   end

@@ -73,30 +73,20 @@ module Yuzakan
       private def run_after_user_create(username, password = nil, **userdata)
         super
         user = get_user_entry(username)
-        # https://learn.microsoft.com/ja-jp/troubleshoot/windows-server/identity/useraccountcontrol-manipulate-account-properties
-        # userAccountControl: 0x10200
-        # NORMAL_ACCOUNT 0x200, DONT_EXPIRE_PASSWORD 0x10000
-        operations = [operation_replace('userAccountControl', convert_ldap_value(0x10200))]
+        uac = user_entry_uac(user)
+        uac.add(AccountControl::DEFAULT_USER_FLAGS)
+        operations = [operation_replace('userAccountControl', convert_ldap_value(uac.flags))]
         ldap_modify(user.dn, operations)
       end
 
-      private def create_user_attributes(username, **userdata)
-        super
-      end
-
       private def user_entry_uac(user)
-        uac = user.first('userAccountControl')&.to_i
-        unless uac
-          @logger.error 'No userAccountControl attribute.'
-          raise 'userAccountControl属性がありません。'
-        end
-        uac
+        AccountControl.new(user.first('userAccountControl').to_i)
       end
 
+      # ACCOUNTDISABLED と LOCKOUT 両方をチェックする
       # override
       private def user_entry_locked?(user)
-        # ACCOUNTDISABLE 0x0002
-        !(user_entry_uac(user) & 0x2).zero?
+        user_entry_uac(user).intersect?(AccountControl::LOCKED_FLAGS)
       end
 
       # userPrincipalName についてもチェックする
@@ -117,16 +107,22 @@ module Yuzakan
         "\"#{password}\"".encode(Encoding::UTF_16LE).bytes.pack('c*')
       end
 
+      # ACCOUNTDISABLE のフラグを立てる
+      # LOCKOUTはそのまま
       # override
       private def lock_operations(user)
-        [operation_replace('userAccountControl', convert_ldap_value(user_entry_uac(user) | 0x2))]
+        uac = user_entry_uac(user)
+        uac.add(AccountControl::Flag::ACCOUNTDISABLE)
+        [operation_replace('userAccountControl', convert_ldap_value(uac.flags))]
       end
 
+      # ACCOUNTDISABLE のフラグを解除する
+      # LOCKOUTはそのまま
       # override
-      # remove ACCOUNTDISABLE and LOCKOUT
       private def unlock_operations(user, password = nil)
-        operations = []
-        operations << operation_replace('userAccountControl', convert_ldap_value(user_entry_uac(user) & ~(0x2 | 0x10)))
+        uac = user_entry_uac(user)
+        uac.delete(AccountControl::Flag::ACCOUNTDISABLE)
+        operations = [operation_replace('userAccountControl', convert_ldap_value(uac.flags))]
         operations.concat(change_password_operations(user, password)) if password
         operations
       end
