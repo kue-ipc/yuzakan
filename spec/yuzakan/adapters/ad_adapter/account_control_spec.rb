@@ -7,22 +7,28 @@ describe Yuzakan::Adapters::AdAdapter::AccountControl do
   it 'user flags' do
     # NORMAL_ACCOUNT (0x0200) | DONT_EXPIRE_PASSWORD (0x10000)
     _(ac.to_i).must_equal 0x10200
+    _(ac.accountdisable).must_equal false
+    _(ac.accountdisable?).must_equal false
     _(ac.intersect?(
         Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE |
         Yuzakan::Adapters::AdAdapter::AccountControl::Flag::LOCKOUT)).must_equal false
   end
 
-  let 'enable' do
-    ac.delete(Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE)
+  it 'enable' do
+    ac.accountdisable = false
     _(ac.to_i).must_equal 0x10200
+    _(ac.accountdisable).must_equal false
+    _(ac.accountdisable?).must_equal false
     _(ac.intersect?(
         Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE |
         Yuzakan::Adapters::AdAdapter::AccountControl::Flag::LOCKOUT)).must_equal false
   end
 
   it 'disable' do
-    ac << Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE
+    ac.accountdisable = true
     _(ac.to_i).must_equal 0x10202
+    _(ac.accountdisable).must_equal true
+    _(ac.accountdisable?).must_equal true
     _(ac.intersect?(
         Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE |
         Yuzakan::Adapters::AdAdapter::AccountControl::Flag::LOCKOUT)).must_equal true
@@ -36,6 +42,14 @@ describe Yuzakan::Adapters::AdAdapter::AccountControl do
     _(array_ac == ac).must_equal true
   end
 
+  it 'set PASSWORD_EXPIRED' do
+    _(ac.password_expired).must_equal false
+    ac.password_expired = true
+    _(ac.to_i).must_equal 0x810200
+    _(ac.password_expired).must_equal true
+    _(ac.password_expired?).must_equal true
+  end
+
   describe 'disbaled user' do
     # ACCOUNTDISABLE 0x0002
     let(:flags) {
@@ -43,25 +57,31 @@ describe Yuzakan::Adapters::AdAdapter::AccountControl do
         Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE
     }
 
-    let 'user flags' do
+    it 'user flags' do
       _(ac.to_i).must_equal 0x10202
-      _(ac.intersect?(
+      _(ac.accountdisable).must_equal true
+      _(ac.accountdisable?).must_equal true
+        _(ac.intersect?(
           Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE |
           Yuzakan::Adapters::AdAdapter::AccountControl::Flag::LOCKOUT)).must_equal true
     end
 
-    let 'enable' do
-      ac.delete(Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE)
+    it 'enable' do
+      ac.accountdisable = false
       _(ac.to_i).must_equal 0x10200
-      _(ac.intersect?(
+      _(ac.accountdisable).must_equal false
+      _(ac.accountdisable?).must_equal false
+        _(ac.intersect?(
           Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE |
           Yuzakan::Adapters::AdAdapter::AccountControl::Flag::LOCKOUT)).must_equal false
     end
 
     it 'disable' do
-      ac << Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE
+      ac.accountdisable = true
       _(ac.to_i).must_equal 0x10202
-      _(ac.intersect?(
+      _(ac.accountdisable).must_equal true
+      _(ac.accountdisable?).must_equal true
+        _(ac.intersect?(
           Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE |
           Yuzakan::Adapters::AdAdapter::AccountControl::Flag::LOCKOUT)).must_equal true
     end
@@ -73,25 +93,31 @@ describe Yuzakan::Adapters::AdAdapter::AccountControl do
         Yuzakan::Adapters::AdAdapter::AccountControl::Flag::LOCKOUT
     }
 
-    let 'user flags' do
-      _(ac.to_i).must_equal 0x10212
+    it 'user flags' do
+      _(ac.to_i).must_equal 0x10210
+      _(ac.accountdisable).must_equal false
+      _(ac.accountdisable?).must_equal false
       _(ac.intersect?(
           Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE |
           Yuzakan::Adapters::AdAdapter::AccountControl::Flag::LOCKOUT)).must_equal true
     end
 
-    let 'enable' do
-      ac.delete(Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE)
+    it 'enable' do
+      ac.accountdisable = false
       _(ac.to_i).must_equal 0x10210
+      _(ac.accountdisable).must_equal false
+      _(ac.accountdisable?).must_equal false
       _(ac.intersect?(
           Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE |
           Yuzakan::Adapters::AdAdapter::AccountControl::Flag::LOCKOUT)).must_equal true
     end
 
     it 'disable' do
-      ac << Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE
+      ac.accountdisable = true
       _(ac.to_i).must_equal 0x10212
-      _(ac.intersect?(
+      _(ac.accountdisable).must_equal true
+      _(ac.accountdisable?).must_equal true
+        _(ac.intersect?(
           Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE |
           Yuzakan::Adapters::AdAdapter::AccountControl::Flag::LOCKOUT)).must_equal true
     end
@@ -104,25 +130,31 @@ describe Yuzakan::Adapters::AdAdapter::AccountControl do
         Yuzakan::Adapters::AdAdapter::AccountControl::Flag::LOCKOUT
     }
 
-    let 'user flags' do
+    it 'user flags' do
       _(ac.to_i).must_equal 0x10212
-      _(ac.intersect?(
+      _(ac.accountdisable).must_equal true
+      _(ac.accountdisable?).must_equal true
+        _(ac.intersect?(
           Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE |
           Yuzakan::Adapters::AdAdapter::AccountControl::Flag::LOCKOUT)).must_equal true
     end
 
-    let 'enable' do
-      ac.delete(Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE)
+    it 'enable' do
+      ac.accountdisable = false
       _(ac.to_i).must_equal 0x10210
+      _(ac.accountdisable).must_equal false
+      _(ac.accountdisable?).must_equal false
       _(ac.intersect?(
           Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE |
           Yuzakan::Adapters::AdAdapter::AccountControl::Flag::LOCKOUT)).must_equal true
     end
 
     it 'disable' do
-      ac << Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE
+      ac.accountdisable = true
       _(ac.to_i).must_equal 0x10212
-      _(ac.intersect?(
+      _(ac.accountdisable).must_equal true
+      _(ac.accountdisable?).must_equal true
+        _(ac.intersect?(
           Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE |
           Yuzakan::Adapters::AdAdapter::AccountControl::Flag::LOCKOUT)).must_equal true
     end

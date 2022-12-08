@@ -6,34 +6,27 @@ describe Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl do
 
   it 'user flags' do
     # NORMAL_ACCOUNT (0x0200) | DONT_EXPIRE_PASSWORD (0x10000)
-    _(ac.to_i).must_equal 0x10200
     _(ac.to_s).must_equal '[UX         ]'
-    _(ac.intersect?(
-        Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE |
-        Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::LOCKOUT)).must_equal false
   end
 
-  let 'enable' do
-    ac.delete(Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE)
-    _(ac.to_i).must_equal 0x10200
+  it 'enable' do
+    ac.accountdisable = false
     _(ac.to_s).must_equal '[UX         ]'
-    _(ac.intersect?(
-        Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE |
-        Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::LOCKOUT)).must_equal false
   end
 
   it 'disable' do
-    ac << Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE
-    _(ac.to_i).must_equal 0x10202
+    ac.accountdisable = true
     _(ac.to_s).must_equal '[DUX        ]'
-    _(ac.intersect?(
-        Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE |
-        Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::LOCKOUT)).must_equal true
   end
 
   it 'new string' do
     new_ac = Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl.new('[UX         ]')
     _(new_ac == ac).must_equal true
+  end
+
+  it 'set PASSWORD_EXPIRED' do
+    ac.password_expired = true
+    _(ac.to_s).must_equal '[UX         ]' # no change
   end
 
   describe 'disbaled user' do
@@ -43,30 +36,18 @@ describe Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl do
         Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE
     }
 
-    let 'user flags' do
-      _(ac.to_i).must_equal 0x10202
+    it 'user flags' do
       _(ac.to_s).must_equal '[DUX        ]'
-      _(ac.intersect?(
-          Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE |
-          Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::LOCKOUT)).must_equal true
     end
 
-    let 'enable' do
-      ac.delete(Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE)
-      _(ac.to_i).must_equal 0x10200
+    it 'enable' do
+      ac.accountdisable = false
       _(ac.to_s).must_equal '[UX         ]'
-      _(ac.intersect?(
-          Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE |
-          Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::LOCKOUT)).must_equal false
     end
 
     it 'disable' do
-      ac << Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE
-      _(ac.to_i).must_equal 0x10202
+      ac.accountdisable = true
       _(ac.to_s).must_equal '[DUX        ]'
-      _(ac.intersect?(
-          Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE |
-          Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::LOCKOUT)).must_equal true
     end
 
     it 'new string' do
@@ -81,30 +62,18 @@ describe Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl do
         Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::LOCKOUT
     }
 
-    let 'user flags' do
-      _(ac.to_i).must_equal 0x10212
+    it 'user flags' do
       _(ac.to_s).must_equal '[LUX        ]'
-      _(ac.intersect?(
-          Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE |
-          Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::LOCKOUT)).must_equal true
     end
 
-    let 'enable' do
-      ac.delete(Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE)
-      _(ac.to_i).must_equal 0x10210
+    it 'enable' do
+      ac.accountdisable = false
       _(ac.to_s).must_equal '[LUX        ]'
-      _(ac.intersect?(
-          Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE |
-          Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::LOCKOUT)).must_equal true
     end
 
     it 'disable' do
-      ac << Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE
-      _(ac.to_i).must_equal 0x10212
+      ac.accountdisable = true
       _(ac.to_s).must_equal '[DLUX       ]'
-      _(ac.intersect?(
-          Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE |
-          Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::LOCKOUT)).must_equal true
     end
 
     it 'new string' do
@@ -120,30 +89,18 @@ describe Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl do
         Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::LOCKOUT
     }
 
-    let 'user flags' do
-      _(ac.to_i).must_equal 0x10212
+    it 'user flags' do
       _(ac.to_s).must_equal '[DLUX       ]'
-      _(ac.intersect?(
-          Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE |
-          Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::LOCKOUT)).must_equal true
     end
 
-    let 'enable' do
-      ac.delete(Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE)
-      _(ac.to_i).must_equal 0x10210
+    it 'enable' do
+      ac.accountdisable = false
       _(ac.to_s).must_equal '[LUX        ]'
-      _(ac.intersect?(
-          Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE |
-          Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::LOCKOUT)).must_equal true
     end
 
     it 'disable' do
-      ac << Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE
-      _(ac.to_i).must_equal 0x10212
+      ac.accountdisable = true
       _(ac.to_s).must_equal '[DLUX       ]'
-      _(ac.intersect?(
-          Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::ACCOUNTDISABLE |
-          Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl::Flag::LOCKOUT)).must_equal true
     end
   end
 end

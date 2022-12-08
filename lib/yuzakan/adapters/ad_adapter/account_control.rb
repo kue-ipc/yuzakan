@@ -160,8 +160,18 @@ module Yuzakan
         end
 
         Flag.constants(false).each do |name|
-          AccountControl.define_method(name.downcase) do
-            Flag
+          flag = Flag.const_get(name)
+          method_name = name.downcase
+          define_method(method_name) do
+            include?(flag)
+          end
+          alias_method("#{method_name}?", method_name)
+          define_method("#{method_name}=") do |bool|
+            if bool
+              add(flag)
+            else
+              delete(flag)
+            end
           end
         end
       end
