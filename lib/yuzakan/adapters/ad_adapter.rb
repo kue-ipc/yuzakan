@@ -75,12 +75,12 @@ module Yuzakan
         user = get_user_entry(username)
         uac = user_entry_uac(user)
         uac.add(AccountControl::DEFAULT_USER_FLAGS)
-        operations = [operation_replace('userAccountControl', convert_ldap_value(uac.flags))]
+        operations = [operation_replace(AccountControl::ATTRIBUTE_NAME, convert_ldap_value(uac.flags))]
         ldap_modify(user.dn, operations)
       end
 
       private def user_entry_uac(user)
-        AccountControl.new(user.first('userAccountControl').to_i)
+        AccountControl.new(user.first(AccountControl::ATTRIBUTE_NAME).to_i)
       end
 
       # ACCOUNTDISABLED と LOCKOUT 両方をチェックする
@@ -112,7 +112,7 @@ module Yuzakan
       # override
       private def lock_operations(user)
         uac = user_entry_uac(user)
-        uac.add(AccountControl::Flag::ACCOUNTDISABLE)
+        uac.accountdisable = true
         [operation_replace('userAccountControl', convert_ldap_value(uac.flags))]
       end
 
@@ -121,7 +121,7 @@ module Yuzakan
       # override
       private def unlock_operations(user, password = nil)
         uac = user_entry_uac(user)
-        uac.delete(AccountControl::Flag::ACCOUNTDISABLE)
+        uac.accountdisable = false
         operations = [operation_replace('userAccountControl', convert_ldap_value(uac.flags))]
         operations.concat(change_password_operations(user, password)) if password
         operations

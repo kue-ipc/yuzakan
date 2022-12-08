@@ -20,13 +20,13 @@ module Yuzakan
           'S' => Flag::SERVER_TRUST_ACCOUNT,
           'X' => Flag::DONT_EXPIRE_PASSWORD,
           'M' => Flag::MNS_LOGON_ACCOUNT,
-        }
-        SAMAB_FLAG_MAP_INVERT = SAMAB_FLAG_MAP.invert
+        }.freeze
+        SAMAB_FLAG_MAP_INVERT = SAMAB_FLAG_MAP.invert.freeze
 
         ATTRIBUTE_NAME = -'sambaAcctFlags'
 
         # override
-        def initialize(argv = AccountControl::DEFAULT_USER_FLAGS)
+        def initialize(argv = DEFAULT_USER_FLAGS)
           if argv.is_a?(String)
             @flags = 0
             argv.upcase.each_char do |c|

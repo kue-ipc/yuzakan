@@ -38,7 +38,7 @@ module Yuzakan
 
         include Enumerable
 
-        def initialize(argv = AccountControl::DEFAULT_USER_FLAGS)
+        def initialize(argv = DEFAULT_USER_FLAGS)
           case argv
           when Integer
             @flags = argv

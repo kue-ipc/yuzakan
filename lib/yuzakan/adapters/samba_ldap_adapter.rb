@@ -69,33 +69,31 @@ module Yuzakan
       self.multi_attrs = PosixLdapAdapter.multi_attrs
       self.hide_attrs = PosixLdapAdapter.hide_attrs + %w[sambaNTPassword sambaLMPassword].map(&:downcase)
 
-      # rubocop:disable Style/ClassVars
-      @@no_password = -'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
-      @@account_control_description = {
-        N: 'No password required',
-        D: 'Account disabled',
-        H: 'Home directory required',
-        T: 'Temporary duplicate of other account',
-        U: 'Regular user account',
-        M: 'MNS logon user account',
-        W: 'Workstation Trust Account',
-        S: 'Server Trust Account',
-        L: 'Automatic Locking',
-        X: 'Password does not expire',
-        I: 'Domain Trust Account',
-      }
-      @@account_control_flags = @@account_control_description.keys
-      @@default_user_acct_flags = [:U, :X]
-      # rubocop:enable Style/ClassVars
-
-      # override
+      #
+      # @@no_password = -'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
+      # @@account_control_description = {
+      #   N: 'No password required',
+      #   D: 'Account disabled',
+      #   H: 'Home directory required',
+      #   T: 'Temporary duplicate of other account',
+      #   U: 'Regular user account',
+      #   M: 'MNS logon user account',
+      #   W: 'Workstation Trust Account',
+      #   S: 'Server Trust Account',
+      #   L: 'Automatic Locking',
+      #   X: 'Password does not expire',
+      #   I: 'Domain Trust Account',
+      # }
+      # @@account_control_flags = @@account_control_description.keys
+      # @@default_user_acct_flags = [:U, :X]
+      #       # override
       def user_auth(username, password)
         return true if super
         return false unless @params[:auth_nt_password]
 
         user = get_user_entry(username)
         return false if user.nil?
-        return false if user_entry_locked?(user)
+        return false if user_entry_sac(user).intersect?(SambaAccountControl::LOCKED_FLAGS)
 
         user.first('sambaNTPassword') == generate_nt_password(password)
       end
@@ -114,7 +112,8 @@ module Yuzakan
           attributes[attribute_name('sambaSID')] = convert_ldap_value(samba_sid)
         end
 
-        attributes[attribute_name('sambaAcctFlags')] = generate_samba_acct_flags(@@default_user_acct_flags)
+        attributes[attribute_name(SambaAccountControl::ATTRIBUTE_NAME)] =
+          convert_ldap_value(SambaAccountControl.new.to_s)
 
         attributes
       end
@@ -138,53 +137,31 @@ module Yuzakan
         # ロックがかかっていないのであればかかっていない
         return false unless super
 
-        acct_flags = read_samba_acct_flags(user.first('sambaAcctFlags'))
-        return false unless acct_flags
-
-        [:D, :L].any? { |f| acct_flags.include?(f) }
+        user_entry_sac(user).intersect?(SambaAccountControl::LOCKED_FLAGS)
       end
 
       # override
       private def lock_operations(user)
         operations = super
-        operations << operation_samba_acct_flags(user, add: [:D])
+        sac = user_entry_sac(user)
+        sac.accountdisable = true
+        operations << operation_add_or_replace(SmabaAccountControl::ATTRIBUTE_NAME, sac.to_s, user)
         operations
       end
 
       # override
       private def unlock_operations(user, password = nil)
         operations = super
-        operations << operation_samba_acct_flags(user, delete: [:D, :L])
+        sac = user_entry_sac(user)
+        sac.accountdisable = false
+        operations << operation_add_or_replace(SmabaAccountControl::ATTRIBUTE_NAME, sac.to_s, user)
         operations
       end
 
       # Samba
-      private def generate_samba_acct_flags(flags)
-        flags = flags.map { |f| f.chr.upcase.intern } & @@account_control_flags
-        "[#{flags.to_a.join}#{' ' * (11 - flags.size)}]"
-      end
-
-      private def read_samba_acct_flags(str)
-        return unless str
-
-        m = /^\[([\w\s]*)\]$/.match(str)
-        unless m
-          @logger.warn("invalid sambaAcctFlags: #{str}")
-          return
-        end
-
-        m[1].each_char.map { |c| c.upcase.intern } & @@account_control_flags
-      end
-
-      private def operation_samba_acct_flags(user, add: [], delete: [])
-        acct_flags = user.first('sambaAcctFlags')
-        if acct_flags
-          operation_replace('sambaAcctFlags',
-                            generate_samba_acct_flags((acct_flags | add) - delete))
-        else
-          operation_add('sambaAcctFlags',
-                        generate_samba_acct_flags((@@default_user_acct_flags | add) - delete))
-        end
+      private def user_entry_sac(user)
+        SambaAccountControl.new(
+          user.first(SmabaAccountControl::ATTRIBUTE_NAME) || SmabaAccountControl::DEFAULT_USER_FLAGS)
       end
 
       private def generate_samba_sid(uid_number)
