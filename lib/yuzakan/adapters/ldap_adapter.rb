@@ -5,8 +5,8 @@ require 'digest'
 require 'net/ldap'
 require 'net/ldap/dn'
 
-require_relative 'error'
 require_relative 'abstract_adapter'
+require_relative 'abstract_adapter/adapter_error'
 require_relative '../utils/ignore_case_string_set'
 
 # パスワード変更について
@@ -15,7 +15,7 @@ require_relative '../utils/ignore_case_string_set'
 module Yuzakan
   module Adapters
     class LdapAdapter < AbstractAdapter
-      class Error < Yuzakan::Adapters::Error
+      class LdapAdapterError < Yuzakan::Adapters::AbstractAdapter::AdapterError
       end
 
       self.name = 'ldap'
@@ -246,7 +246,7 @@ module Yuzakan
         else
           false
         end
-      rescue Error
+      rescue LdapAdatpterError
         @logger.warn 'LDAP check failed due to an error'
         false
       end
@@ -417,7 +417,7 @@ module Yuzakan
         when Array
           value.map { |v| convert_ldap_value(v) }
         else
-          raise Error, "unsupported value type: #{value.class}"
+          raise LdapAdatperError, "unsupported value type: #{value.class}"
         end
       end
 
@@ -480,7 +480,7 @@ module Yuzakan
       end
 
       private def generate_operation(operator, name, value = nil)
-        raise Error, "invalid operator: #{operator}" unless [:add, :replace, :delete].include?(operator)
+        raise LdapAdatperError, "invalid operator: #{operator}" unless [:add, :replace, :delete].include?(operator)
 
         [operator, name, value]
       end
@@ -532,7 +532,7 @@ module Yuzakan
           opts[:port] = port || 636
           opts[:encryption] = {method: :simple_tls}
         else
-          raise Error, "invalid protcol: #{@params[:protocol]}"
+          raise LdapAdatperError, "invalid protcol: #{@params[:protocol]}"
         end
 
         if opts[:encryption] && !@params[:certificate_check]
@@ -595,7 +595,7 @@ module Yuzakan
         when 'base' then Net::LDAP::SearchScope_BaseObject
         when 'one' then Net::LDAP::SearchScope_SingleLevel
         when 'sub' then Net::LDAP::SearchScope_WholeSubtree
-        else raise Error, 'Invalid scope'
+        else raise LdapAdapterError, 'Invalid scope'
         end
       end
 
@@ -810,7 +810,7 @@ module Yuzakan
 
         ldap_error_message = ldap.get_operation_result.error_message
         @logger.error "LDAP #{action} error: #{ldap_error_message}"
-        raise Error, ldap_error_message
+        raise LdapAdapterError, ldap_error_message
       end
 
       private def ldap_search(opts)

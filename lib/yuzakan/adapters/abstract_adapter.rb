@@ -53,8 +53,7 @@
 
 require 'logger'
 
-require_relative 'error'
-require_relative 'param_type'
+require_relative 'abstract_adapter/param_type'
 require_relative '../utils/hash_array'
 
 module Yuzakan
