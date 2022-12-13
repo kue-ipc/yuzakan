@@ -3,19 +3,19 @@ require_relative 'yuzakan/helpers'
 require_relative 'yuzakan/suppression'
 
 module Yuzakan
-  @@name = -'Yuzakan'   # rubocop:disable Style/ClassVars
-  @@version = -'0.6.0' # rubocop:disable Style/ClassVars
-  @@license = -File.read(File.join(__dir__, '..', 'LICENSE')) # rubocop:disable Style/ClassVars
+  NAME = -'Yuzakan'
+  VERSION = -'0.6.0'
+  LICENSE = -File.read(File.join(__dir__, '..', 'LICENSE'))
 
   def self.name
-    @@name
+    NAME
   end
 
   def self.version
-    @@version
+    VERSION
   end
 
   def self.license
-    @@license
+    LICENSE
   end
 end

@@ -17,16 +17,14 @@ require 'base64'
 module Yuzakan
   module Utils
     class PbCrypt
-      # rubocop:disable Style/ClassVars
-      @@default_algorithm = 'aes-256-cbc'
-      @@default_iteration = 10_000
-      @@default_salt_size = 8
-      # rubocop:enable Style/ClassVars
+      DEFAULT_ALGORITHM = 'aes-256-cbc'
+      DEFAULT_ITERATION = 10_000
+      DEFAULT_SALT_SIZE = 8
 
       def initialize(password,
-                     algorithm: @@default_algorithm,
-                     iteration: @@default_iteration,
-                     salt_size: @@default_salt_size)
+                     algorithm: DEFAULT_ALGORITHM,
+                     iteration: DEFAULT_ITERATION,
+                     salt_size: DEFAULT_SALT_SIZE)
         @password = password
         @algorithm = algorithm
         @iteration = iteration

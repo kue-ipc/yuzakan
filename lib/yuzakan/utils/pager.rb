@@ -3,7 +3,7 @@
 module Yuzakan
   module Utils
     class Pager
-      @@deafult_per_page = 20 # rubocop:disable Style/ClassVars
+      DEFAULT_PER_PAGE = 20
 
       attr_reader :total_count, :page_items
 
@@ -14,7 +14,7 @@ module Yuzakan
         @all_items = all_items
 
         @page = params[:page] || 1
-        @per_page = params[:per_page] || @@deafult_per_page
+        @per_page = params[:per_page] || DEFAULT_PER_PAGE
 
         @item_offset = (@page - 1) * @per_page
         @page_items =  @all_items[@item_offset, @per_page] || []

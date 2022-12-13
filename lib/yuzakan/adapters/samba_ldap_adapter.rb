@@ -69,24 +69,7 @@ module Yuzakan
       self.multi_attrs = PosixLdapAdapter.multi_attrs
       self.hide_attrs = PosixLdapAdapter.hide_attrs + %w[sambaNTPassword sambaLMPassword].map(&:downcase)
 
-      #
-      # @@no_password = -'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
-      # @@account_control_description = {
-      #   N: 'No password required',
-      #   D: 'Account disabled',
-      #   H: 'Home directory required',
-      #   T: 'Temporary duplicate of other account',
-      #   U: 'Regular user account',
-      #   M: 'MNS logon user account',
-      #   W: 'Workstation Trust Account',
-      #   S: 'Server Trust Account',
-      #   L: 'Automatic Locking',
-      #   X: 'Password does not expire',
-      #   I: 'Domain Trust Account',
-      # }
-      # @@account_control_flags = @@account_control_description.keys
-      # @@default_user_acct_flags = [:U, :X]
-      #       # override
+      # override
       def user_auth(username, password)
         return true if super
         return false unless @params[:auth_nt_password]
@@ -121,14 +104,20 @@ module Yuzakan
       # override
       private def change_password_operations(user, password, locked: false)
         operations = super
-        operations << operation_delete('sambaNTPAssword') if user.first('sambaNTPAssword')
-        operations << operation_delete('sambaLMPAssword') if user.first('sambaLMPAssword')
-        operations << operation_add(
-          'sambaNTPAssword',
-          if @params[:samba_nt_password] then generate_nt_password(password) else @@no_password end)
-        operations << operation_add(
-          'sambaLMPassword',
-          if @params[:samba_lm_password] then generate_lm_password(password) else @@no_password end)
+        nt_password =
+          if @params[:samba_nt_password]
+            generate_nt_password(password)
+          else
+            'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
+          end
+        operations << operation_add_or_replace('sambaNTPAssword', nt_password)
+        lm_password =
+          if @params[:samba_lm_password]
+            generate_lm_password(password)
+          else
+            'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
+          end
+        operations << operation_add_or_replace('sambaLMPAssword', lm_password)
         operations
       end
 

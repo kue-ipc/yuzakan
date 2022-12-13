@@ -2,7 +2,7 @@ module Yuzakan
   module Helpers
     module AlertHelper
       # Bootstrapでの色とアイコン
-      @@levels = {  # rubocop:disable Style/ClassVars
+      LEVELS = {
         success: {
           color: 'success',
           icon: 'check-circle-fill',
@@ -35,10 +35,10 @@ module Yuzakan
           color: 'primary',
           icon: 'question-diamond-fill',
         },
-      }
+      }.freeze
 
       private def levels
-        @@levels
+        LEVELS
       end
 
       private def alert(level, msg)

@@ -27,12 +27,12 @@ module Yuzakan
   module Adapters
     class AbstractAdapter
       class ParamType
-        @@type_inputs = { # rubocop:disable Style/ClassVars
+        TYPE_INPUTS = {
           boolean: 'checkbox',
           string: 'text',
           text: 'textarea',
           integer: 'number',
-        }
+        }.freeze
 
         attr_reader :name, :label, :description,
                     :type, :default, :fixed, :encrypted,
@@ -54,7 +54,7 @@ module Yuzakan
           @fixed = fixed
           @encrypted = encrypted
 
-          @input = input || @@type_inputs.fetch(type)
+          @input = input || TYPE_INPUTS.fetch(type)
           @list = list&.map do |item|
             if item.is_a?(ParamType::ListItem)
               item
