@@ -6,6 +6,10 @@ Hanami::Model.migration do
       column :groupname, String, null: false
       column :display_name, String, null: false
 
+      column :primary, TrueClass, null: false, default: false
+      column :reserved, TrueClass, null: false, dafault: false
+      column :obsoleted, TrueClass, null: false, default: false
+
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
 

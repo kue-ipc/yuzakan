@@ -9,6 +9,11 @@ Hanami::Model.migration do
       column :display_name, String
       column :email, String
 
+      column :reserved, TrueClass, null: false, dafault: false
+
+      column :deleted, TrueClass, null: false, default: false
+      column :deleted_at, DateTime
+
       column :clearance_level, Integer, null: false, default: 1
 
       column :created_at, DateTime, null: false
