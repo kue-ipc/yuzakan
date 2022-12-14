@@ -8,6 +8,8 @@ Hanami::Model.migration do
       column :display_name, String
       column :email, String
 
+      column :locked, TrueClass, null: false, default: false
+
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
 
