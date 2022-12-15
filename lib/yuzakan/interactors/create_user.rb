@@ -21,13 +21,10 @@ class CreateUser
     end
   end
 
-  expose :user
   expose :providers
 
-  def initialize(provider_repository: ProviderRepository.new,
-                 user_repository: UserRepository.new)
+  def initialize(provider_repository: ProviderRepository.new)
     @provider_repository = provider_repository
-    @user_repository = user_repository
   end
 
   def call(params)

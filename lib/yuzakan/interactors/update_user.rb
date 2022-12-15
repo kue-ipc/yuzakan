@@ -13,22 +13,16 @@ class UpdateUser
       required(:username).filled(:str?, :name?, max_size?: 255)
       optional(:display_name).filled(:str?, max_size?: 255)
       optional(:email).filled(:str?, :email?, max_size?: 255)
-      optional(:clearance_level).filled(:int?)
       optional(:primary_group).filled(:str?, :name?, max_size?: 255)
       optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
       optional(:attrs) { hash? }
-      optional(:reserved).maybe(:bool?)
-      optional(:note).maybe(:str?, max_size?: 4096)
     end
   end
 
-  expose :user
   expose :providers
 
-  def initialize(provider_repository: ProviderRepository.new,
-                 user_repository: UserRepository.new)
+  def initialize(provider_repository: ProviderRepository.new)
     @provider_repository = provider_repository
-    @user_repository = user_repository
   end
 
   def call(params)
@@ -47,13 +41,6 @@ class UpdateUser
       error(I18n.t('errors.action.error', action: I18n.t('interactors.update_user'), target: provider.label))
       error(e.message)
       fail!
-    end
-
-
-    sync_user = SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
-
-    if [:clearance_level, :reserved, :note].any? { |name| params[name] }
-      @user = @user_repository.update(@user.id, params.slice(:clearance_level, :reserved, :note))
     end
   end
 

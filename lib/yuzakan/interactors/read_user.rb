@@ -15,7 +15,6 @@ class ReadUser
     end
   end
 
-  expose :username
   expose :userdata
   expose :providers
 
@@ -24,12 +23,12 @@ class ReadUser
   end
 
   def call(params)
-    @username = params[:username]
+    username = params[:username]
     @userdata = {attrs: {}, groups: []}
     @providers = {}
 
     get_providers(params[:providers]).each do |provider|
-      userdata = provider.user_read(params[:username])
+      userdata = provider.user_read(username)
       @providers[provider.name] = userdata
       if userdata
         %i[username display_name email primary_group].each do |name|
@@ -39,7 +38,7 @@ class ReadUser
         @userdata[:attrs] = userdata[:attrs].merge(@userdata[:attrs]) unless userdata[:attrs].nil?
       end
     rescue => e
-      Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{@username}"
+      Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
       Hanami.logger.error e
       error(I18n.t('errors.action.error', action: I18n.t('interactors.read_user'), target: provider.label))
       error(e.message)

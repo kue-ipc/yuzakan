@@ -55,6 +55,16 @@ module Api
           result = delete_user.call({username: @user.username, providers: del_providers})
           halt_json 500, errors: result.errors if result.failure?
 
+
+
+
+          sync_user = SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
+
+          if [:clearance_level, :reserved, :note].any? { |name| params[name] }
+            @user = @user_repository.update(@user.id, params.slice(:clearance_level, :reserved, :note))
+          end
+      
+
           if @user.clearance_level && @user.clearance_level != params[:clearance_level]
             @user = @user_repository.update(@user.id, clearance_level: params[:clearance_level])
           end

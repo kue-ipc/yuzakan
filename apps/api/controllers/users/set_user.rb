@@ -1,4 +1,4 @@
-require_relative './set_user'
+require_relative './user_intercator'
 
 module Api
   module Controllers
@@ -39,9 +39,25 @@ module Api
           halt_json 400, errors: [params.errors] unless params.valid?
 
           @username = params[:id]
+
           syne_user!
           halt_json 404 if @user.nil?
         end
+
+
+        # プロバイダーと同期をとり、ユーザーをセットする。
+        private def sync_user!
+          @sync_user ||= SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
+          result = @sync_user.call({username: @username})
+          halt_json 500, errors: result.errors if result.failure?
+
+          @user = result.user
+          @userdata = result.userdata
+          @providers = result.providers
+        end
+
+
+
       end
     end
   end

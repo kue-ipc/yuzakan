@@ -70,6 +70,7 @@ class ChangePassword
       end
     else
       @provider_repository.ordered_all_with_adapter_by_operation(:user_change_password)
+        .reject(&:individual_password)
     end
   end
 end

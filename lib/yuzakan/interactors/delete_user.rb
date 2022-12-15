@@ -14,14 +14,10 @@ class DeleteUser
     end
   end
 
-  expose :username
-  expose :user
   expose :providers
 
-  def initialize(provider_repository: ProviderRepository.new,
-                 user_repository: UserRepository.new)
+  def initialize(provider_repository: ProviderRepository.new)
     @provider_repository = provider_repository
-    @user_repository = user_repository
   end
 
   def call(params)
@@ -37,20 +33,6 @@ class DeleteUser
       error(e.message)
       fail!
     end
-
-    # 同期を行い、すべてのプロバイダーから削除されていれば、DBからも削除される。
-    sync_user = SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
-    result = sync_user.call({username: @username})
-    if result.failure?
-      Hanami.logger.error "[#{self.class.name}] Failed to call SyncUser"
-      Hanami.logger.error result.errors
-      error(I18n.t('errors.action.fail', action: I18n.t('interactors.sync_user')))
-      result.errors.each { |msg| error(msg) }
-      fail!
-    end
-
-    # すべてのプロバイダーから削除されていればnilになる。
-    @user = result.user
   end
 
   private def valid?(params)
