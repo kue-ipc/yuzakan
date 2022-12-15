@@ -45,15 +45,15 @@ module Api
 
           create_user = CreateUser.new(user_repository: @user_repository, provider_repository: @provider_repository)
           result = create_user.call({**params, providers: add_providers})
-          halt_json 500, erros: result.errors if result.failure?
+          halt_json 500, errors: result.errors if result.failure?
 
           update_user = UpdateUser.new(user_repository: @user_repository, provider_repository: @provider_repository)
           result = update_user.call({**params, providers: mod_providers})
-          halt_json 500, erros: result.errors if result.failure?
+          halt_json 500, errors: result.errors if result.failure?
 
           delete_user = DeleteUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
           result = delete_user.call({username: @user.username, providers: del_providers})
-          halt_json 500, erros: result.errors if result.failure?
+          halt_json 500, errors: result.errors if result.failure?
 
           if @user.clearance_level && @user.clearance_level != params[:clearance_level]
             @user = @user_repository.update(@user.id, clearance_level: params[:clearance_level])

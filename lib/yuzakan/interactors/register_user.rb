@@ -13,12 +13,14 @@ class RegisterUser
 
     validations do
       required(:username).filled(:str?, :name?, max_size?: 255)
-      optional(:display_name).filled(:str?, max_size?: 255)
-      optional(:email).filled(:str?, :email?, max_size?: 255)
-      optional(:primary_group).filled(:str?, :name?, max_size?: 255)
+      optional(:display_name).maybe(:str?, max_size?: 255)
+      optional(:email).maybe(:str?, :email?, max_size?: 255)
+      optional(:primary_group).maybe(:str?, :name?, max_size?: 255)
       optional(:groups).each(:str?, :name?, max_size?: 255)
     end
   end
+
+  expose :user
 
   def initialize(user_repository: UserRepository.new,
                  group_repository: GroupRepository.new,
@@ -28,13 +30,9 @@ class RegisterUser
     @member_repository = member_repository
   end
 
-  expose :user
-
   def call(params)
     username = params[:username]
-    groups = params[:groups]&.map { |groupname| get_group(groupname) } || []
     data = params.slice(:username, :display_name, :email).merge({
-      primary_group_id: get_group(params[:primary_group])&.id,
       deleted: false,
       deleted_at: nil,
     })
@@ -46,7 +44,26 @@ class RegisterUser
       else
         @user_repository.create(data)
       end
-    # TODO: グループの登録
+
+    @user_repository.set_primary_group(@user, get_group(params[:primary_group])) if params.key?(:primary_group)
+
+    if params[:groups]
+      current_groups = find_with_groups(@user.id).groups
+      groups = params[:groups].map { |groupname| get_group(groupname) }
+
+      groups.each do |group|
+        if current_groups.none? { |current_group| current_group.gorupname == group.groupname }
+          @user_repository.add_group(@user, group)
+        end
+      end
+      current_groups.groups.each do |current_group|
+        if groups.none? { |group| group.groupname == current_group.groupname }
+          @user_repository.remove_group(user, group)
+        end
+      end
+    end
+
+    @user = find_with_primary_group_and_groups(@user.id)
   end
 
   private def valid?(params)
@@ -61,7 +78,7 @@ class RegisterUser
   end
 
   private def get_group(groupname)
-    return if groupname.nil?
+    return unless groupname
 
     @groups ||= {}
     @groups[groupname] ||= @group_repository.find_or_create_by_groupname(groupname)

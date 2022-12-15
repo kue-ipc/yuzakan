@@ -28,6 +28,14 @@ class User < Hanami::Entity
     end
   end
 
+  def deleted?
+    deleted
+  end
+
+  def reseverd?
+    reserved
+  end
+
   def to_s
     username
   end

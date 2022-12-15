@@ -32,7 +32,7 @@ module Api
 
           sync_group = SyncGroup.new(provider_repository: @provider_repository, group_repository: @group_repository)
           result = sync_group.call({groupname: groupname})
-          halt_json 500, erros: result.errors if result.failure?
+          halt_json 500, errors: result.errors if result.failure?
 
           halt_json 404 unless result.group
 

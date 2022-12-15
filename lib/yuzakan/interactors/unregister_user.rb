@@ -18,13 +18,28 @@ class UnregisterUser
 
   expose :user
 
-  def initialize(user_repository: UserRepository.new)
+  def initialize(user_repository: UserRepository.new,
+                 group_repository: GroupRepository.new,
+                 member_repository: MemberRepository.new)
     @user_repository = user_repository
+    @group_repository = group_repository
+    @member_repository = member_repository
   end
 
   def call(params)
     @user = @user_repository.find_by_username(params[:username])
-    @user_repository.update(@user.id, deleted: true, deleted_at: Time.now) if @user
+    if @user
+      @user_repository.update(@user.id, 
+      deleted: true, 
+      deleted_at: Time.now)
+    end
+    @user_repository.set_primary_group(@user, nil)
+    current_groups = @user_repository.find_with_groups(@user.id).groups
+    current_groups.groups.each do |current_group|
+      if groups.none? { |group| group.groupname == current_group.groupname }
+        @user_repository.remove_group(user, group)
+      end
+    end
   end
 
   private def valid?(params)

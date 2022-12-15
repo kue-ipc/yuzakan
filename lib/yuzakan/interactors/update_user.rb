@@ -23,7 +23,7 @@ class UpdateUser
   end
 
   expose :user
-  expose :userdatas
+  expose :providers
 
   def initialize(provider_repository: ProviderRepository.new,
                  user_repository: UserRepository.new)
@@ -33,18 +33,14 @@ class UpdateUser
 
   def call(params)
     username = params[:username]
-    @userdatas = {}
+    @providers = {}
 
-    userdata = {
-      username: params[:username],
-      display_name: params[:display_name],
-      email: params[:email],
-      primary_group: params[:primary_group],
+    userdata = params.slice(:username, :display_name, :email, :primary_group).merge({
       attrs: params[:attrs] || {},
-    }
+    })
 
     get_providers(params[:providers]).each do |provider|
-      @userdatas[provider.name] = provider.user_update(username, **userdata)
+      @providers[provider.name] = provider.user_update(username, **userdata)
     rescue => e
       Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
       Hanami.logger.error e
@@ -52,6 +48,9 @@ class UpdateUser
       error(e.message)
       fail!
     end
+
+
+    sync_user = SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
 
     if [:clearance_level, :reserved, :note].any? { |name| params[name] }
       @user = @user_repository.update(@user.id, params.slice(:clearance_level, :reserved, :note))

@@ -13,6 +13,24 @@ class GroupRepository < Hanami::Repository
   end
 
   def find_or_create_by_groupname(groupname)
-    find_by_groupname(groupname) || create({groupname: groupname, display_name: groupname})
+    find_by_groupname(groupname) || create({groupname: groupname})
+  end
+
+  def add_user(group, user)
+    member = member_for(group, user).one
+    return if member
+
+    assoc(:members, group).add(user_id: user.id)
+  end
+
+  def remove_user(group, user)
+    member = member_for(group, user).one
+    return unless member
+
+    assoc(:members, group).remove(member.id)
+  end
+
+  private def member_for(group, user)
+    assoc(:members, group).where(user_id: user.id)
   end
 end
