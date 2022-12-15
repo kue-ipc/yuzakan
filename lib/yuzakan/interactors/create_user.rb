@@ -18,6 +18,8 @@ class CreateUser
       optional(:primary_group).filled(:str?, :name?, max_size?: 255)
       optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
       optional(:attrs) { hash? }
+      optional(:reserved).maybe(:bool?)
+      optional(:note).maybe(:str?, max_size?: 4096)
     end
   end
 
@@ -61,8 +63,8 @@ class CreateUser
 
     error!('ユーザーが作成されていません。') unless @user
 
-    if @user.clearance_level && @user.clearance_level != params[:clearance_level]
-      @user = @user_repository.update(@user.id, clearance_level: params[:clearance_level])
+    if [:clearance_level, :reserved, :note].any? { |name| params[name] }
+      @user = @user_repository.update(@user.id, params.slice(:clearance_level, :reserved, :note))
     end
 
     @userdata = result.userdata
@@ -72,12 +74,27 @@ class CreateUser
   private def valid?(params)
     validation = Validations.new(params).validate
     if validation.failure?
+      Hanami.logger.error "[#{self.class.name}] Validation fails: #{validation.messages}"
       error(validation.messages)
       return false
     end
 
-    # ユーザーの存在チェックはしない。
-
     true
+  end
+
+  private def get_providers(providers = nil)
+    if providers
+      providers.map do |provider_name|
+        provider = @provider_repository.find_with_adapter_by_name(provider_name)
+        unless provider
+          Hanami.logger.warn "[#{self.class.name}] Not found: #{provider_name}"
+          error!(I18n.t('errors.not_found', name: I18n.t('entities.provider')))
+        end
+
+        provider
+      end
+    else
+      @provider_repository.ordered_all_with_adapter_by_operation(:user_update)
+    end
   end
 end

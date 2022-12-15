@@ -19,6 +19,8 @@ module Api
             optional(:primary_group).filled(:str?, :name?, max_size?: 255)
             optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
             optional(:attrs) { hash? }
+            optional(:reserved).maybe(:bool?)
+            optional(:note).maybe(:str?, max_size?: 4096)
           end
         end
 

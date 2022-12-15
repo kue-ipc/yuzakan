@@ -17,9 +17,12 @@ class UpdateUser
       optional(:primary_group).filled(:str?, :name?, max_size?: 255)
       optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
       optional(:attrs) { hash? }
+      optional(:reserved).maybe(:bool?)
+      optional(:note).maybe(:str?, max_size?: 4096)
     end
   end
 
+  expose :user
   expose :userdatas
 
   def initialize(provider_repository: ProviderRepository.new,
@@ -49,11 +52,16 @@ class UpdateUser
       error(e.message)
       fail!
     end
+
+    if [:clearance_level, :reserved, :note].any? { |name| params[name] }
+      @user = @user_repository.update(@user.id, params.slice(:clearance_level, :reserved, :note))
+    end
   end
 
   private def valid?(params)
     validation = Validations.new(params).validate
     if validation.failure?
+      Hanami.logger.error "[#{self.class.name}] Validation fails: #{validation.messages}"
       error(validation.messages)
       return false
     end
