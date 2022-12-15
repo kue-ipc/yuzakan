@@ -2,8 +2,8 @@ require 'hanami/interactor'
 require 'hanami/validations'
 require_relative '../predicates/name_predicates'
 
-# Userレポジトリからの解除
-class UnregisterUser
+# Userレポジトリから抹消
+class EraseUser
   include Hanami::Interactor
 
   class Validations
@@ -24,7 +24,7 @@ class UnregisterUser
 
   def call(params)
     @user = @user_repository.find_by_username(params[:username])
-    @user_repository.update(@user.id, deleted: true, deleted_at: Time.now) if @user
+    @user_repository.delete(@user.id) if @user
   end
 
   private def valid?(params)

@@ -1,9 +1,8 @@
-# Userレポジトリへの登録または更新
-
 require 'hanami/interactor'
 require 'hanami/validations'
 require_relative '../predicates/name_predicates'
 
+# Userレポジトリへの登録または更新
 class RegisterUser
   include Hanami::Interactor
 
@@ -33,20 +32,21 @@ class RegisterUser
 
   def call(params)
     username = params[:username]
-    display_name = params[:display_name] || params[:username]
-    email = params[:email]
-
-    primary_group = get_group(params[:primary_group])
     groups = params[:groups]&.map { |groupname| get_group(groupname) } || []
-
-    data = {username: username, display_name: display_name, email: email, primary_group_id: primary_group&.id}
+    data = params.slice(:username, :display_name, :email).merge({
+      primary_group_id: get_group(params[:primary_group])&.id,
+      deleted: false,
+      deleted_at: nil,
+    })
     user_id = @user_repository.find_by_username(username)&.id
+
     @user =
       if user_id
         @user_repository.update(user_id, data)
       else
         @user_repository.create(data)
       end
+    # TODO: グループの登録
   end
 
   private def valid?(params)

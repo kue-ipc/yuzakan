@@ -32,10 +32,9 @@ class ReadUser
       userdata = provider.user_read(params[:username])
       @providers[provider.name] = userdata
       if userdata
-        %i[username display_name email].each do |name|
+        %i[username display_name email primary_group].each do |name|
           @userdata[name] ||= userdata[name] unless userdata[name].nil?
         end
-        @userdata[:primary_group] ||= userdata[:primary_group] unless userdata[:primary_group].nil?
         @userdata[:groups] |= userdata[:groups] unless userdata[:groups].nil?
         @userdata[:attrs] = userdata[:attrs].merge(@userdata[:attrs]) unless userdata[:attrs].nil?
       end

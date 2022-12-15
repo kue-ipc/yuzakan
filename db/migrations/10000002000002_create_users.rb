@@ -8,6 +8,7 @@ Hanami::Model.migration do
       column :username, String, null: false
       column :display_name, String
       column :email, String
+      column :note, String, size: 4096
 
       column :reserved, TrueClass, null: false, default: false
 

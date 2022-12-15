@@ -2,8 +2,8 @@ require 'hanami/interactor'
 require 'hanami/validations'
 require_relative '../predicates/name_predicates'
 
-# Userレポジトリからの解除
-class UnregisterUser
+# Groupレポジトリから抹消
+class EraseGroup
   include Hanami::Interactor
 
   class Validations
@@ -12,19 +12,19 @@ class UnregisterUser
     messages :i18n
 
     validations do
-      required(:username).filled(:str?, :name?, max_size?: 255)
+      required(:groupname).filled(:str?, :name?, max_size?: 255)
     end
   end
 
-  expose :user
+  expose :group
 
-  def initialize(user_repository: UserRepository.new)
-    @user_repository = user_repository
+  def initialize(group_repository: GroupRepository.new)
+    @group_repository = group_repository
   end
 
   def call(params)
-    @user = @user_repository.find_by_username(params[:username])
-    @user_repository.update(@user.id, deleted: true, deleted_at: Time.now) if @user
+    group = @group_repository.find_by_groupname(params[:groupname])
+    @group_repository.delete(group.id) if group
   end
 
   private def valid?(params)

@@ -12,42 +12,64 @@ class ReadGroup
 
     validations do
       required(:groupname).filled(:str?, :name?, max_size?: 255)
+      optional(:providers).each(:str?, :name?, max_size?: 255)
     end
   end
 
+  expose :groupname
   expose :groupdata
-  expose :provider_groupdatas
+  expose :providers
 
   def initialize(provider_repository: ProviderRepository.new)
     @provider_repository = provider_repository
   end
 
   def call(params)
-    @groupdata = {}
-    @provider_groupdatas = []
+    @gorupname = params[:groupname]
+    @groupdata = {primary: false}
+    @providers = {}
 
-    providers = @provider_repository.ordered_all_with_adapter_by_operation(:group_read)
-    providers.each do |provider|
+    get_providers(params[:providers]).each do |provider|
       groupdata = provider.group_read(params[:groupname])
+      @providers[provider.name] = groupdata
       if groupdata
-        @provider_groupdatas << {provider: provider, groupdata: groupdata}
-        @groupdata[:groupname] ||= groupdata[:groupname]
-        @groupdata[:display_name] ||= groupdata[:display_name]
+        %i[groupname display_name].each do |name|
+          @groupdata[name] ||= groupdata[name] unless groupdata[name].nil?
+        end
+        @gorupdata[:primary] = true if groupdata[:primary]
       end
     rescue => e
+      Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{@groupname}"
       Hanami.logger.error e
-      error("グループ情報の読み込み時にエラーが発生しました。(#{provider.label}")
-      raise if Hanami.env == 'development'
+      error(I18n.t('errors.action.error', action: I18n.t('interactors.read_group'), target: provider.label))
+      error(e.message)
+      fail!
     end
   end
 
   private def valid?(params)
     validation = Validations.new(params).validate
     if validation.failure?
+      Hanami.logger.error "[#{self.class.name}] Validation fails: #{validation.messages}"
       error(validation.messages)
       return false
     end
 
     true
+  end
+
+  private def get_providers(providers = nil)
+    if providers
+      providers.map do |provider_name|
+        @provider_repository.find_with_adapter_by_name(provider_name).tap do |provider|
+          unless provider
+            Hanami.logger.warn "[#{self.class.name}] Not found: #{provider_name}"
+            error!(I18n.t('errors.not_found', name: I18n.t('entities.provider')))
+          end
+        end
+      end
+    else
+      @provider_repository.ordered_all_with_adapter_by_operation(:group_read)
+    end
   end
 end

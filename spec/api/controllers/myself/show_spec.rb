@@ -31,6 +31,7 @@ describe Api::Controllers::Myself::Show do
       username: 'user',
       display_name: 'ユーザー',
       email: 'user@example.jp',
+      note: nil,
       reserved: false,
       deleted: false,
       deleted_at: nil,
