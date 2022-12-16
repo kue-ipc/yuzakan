@@ -6,4 +6,8 @@ class Attr < Hanami::Entity
       name
     end
   end
+
+  def label
+    display_name || name
+  end
 end

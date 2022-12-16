@@ -4,7 +4,7 @@ Hanami::Model.migration do
       primary_key :id
 
       column :name, String, null: false
-      column :label, String, null: false
+      column :display_name, String
 
       column :adapter_name, String, null: false
       column :order, Integer, null: false
@@ -14,13 +14,12 @@ Hanami::Model.migration do
 
       column :authenticatable, TrueClass, null: false, default: false
       column :password_changeable, TrueClass, null: false, default: false
-      column :individual_password, TrueClass, null: false, default: false
-
       column :lockable, TrueClass, null: false, default: false
 
-      column :self_management, TrueClass, null: false, default: false
-
       column :group, TrueClass, null: false, default: false
+
+      column :individual_password, TrueClass, null: false, default: false
+      column :self_management, TrueClass, null: false, default: false
 
       column :description, String, size: 4096
 

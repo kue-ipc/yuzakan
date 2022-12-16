@@ -57,6 +57,10 @@ class Provider < Hanami::Entity
     end
   end
 
+  def label
+    display_name || name
+  end
+
   def to_h
     super.except(:provider_params, :attr_mappings)
   end

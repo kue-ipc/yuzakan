@@ -4,7 +4,7 @@ Hanami::Model.migration do
       primary_key :id
 
       column :name, String, null: false
-      column :label, String, null: false
+      column :display_name, String
 
       column :type, String, null: false
 
