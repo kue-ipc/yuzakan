@@ -31,8 +31,3 @@ end
 resource :system, only: [:show]
 
 resources :menus, only: [:index]
-get '/user_templates', to: 'user_templates#index'
-get '/user_templates/:id', to: 'user_templates#show'
-post '/user_templates', to: 'user_templates#create'
-patch '/user_templates/:id', to: 'user_templates#update'
-delete '/user_templates/:id', to: 'user_templates#destroy'
