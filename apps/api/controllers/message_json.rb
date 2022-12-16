@@ -42,8 +42,9 @@ module Api
         :id,
         :provider_id,
         :attr_id,
-        :primary_group_id,
-        :created_at, :updated_at)
+        :members,
+        :created_at,
+        :updated_at)
     end
 
     private def only_first_errors(errors)

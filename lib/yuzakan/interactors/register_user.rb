@@ -48,7 +48,7 @@ class RegisterUser
     @user_repository.set_primary_group(@user, get_group(params[:primary_group])) if params.key?(:primary_group)
 
     if params[:groups]
-      current_groups = find_with_groups(@user.id).groups
+      current_groups = @user_repository.find_with_groups(@user.id).groups
       groups = params[:groups].map { |groupname| get_group(groupname) }
 
       groups.each do |group|
@@ -56,14 +56,14 @@ class RegisterUser
           @user_repository.add_group(@user, group)
         end
       end
-      current_groups.groups.each do |current_group|
+      current_groups.each do |current_group|
         if groups.none? { |group| group.groupname == current_group.groupname }
           @user_repository.remove_group(user, group)
         end
       end
     end
 
-    @user = find_with_primary_group_and_groups(@user.id)
+    @user = @user_repository.find_with_groups(@user.id)
   end
 
   private def valid?(params)

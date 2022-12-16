@@ -36,6 +36,8 @@ describe Api::Controllers::Myself::Show do
       deleted: false,
       deleted_at: nil,
       clearance_level: 1,
+      primary_group: nil,
+      groups: [],
       userdata: {
         username: 'user',
         display_name: 'ユーザー',

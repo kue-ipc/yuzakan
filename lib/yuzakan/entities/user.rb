@@ -35,4 +35,12 @@ class User < Hanami::Entity
   def to_s
     username
   end
+
+  def primary_group
+    members.find(&:primry)&.group
+  end
+
+  def groups
+    members.map(&:group)
+  end
 end
