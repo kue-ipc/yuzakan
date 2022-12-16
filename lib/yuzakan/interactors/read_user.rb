@@ -24,6 +24,7 @@ class ReadUser
 
   def call(params)
     username = params[:username]
+
     @userdata = {attrs: {}, groups: []}
     @providers = {}
 
@@ -41,7 +42,6 @@ class ReadUser
       Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
       Hanami.logger.error e
       error(I18n.t('errors.action.error', action: I18n.t('interactors.read_user'), target: provider.label))
-      error(e.message)
       fail!
     end
   end
@@ -57,19 +57,25 @@ class ReadUser
     true
   end
 
-  private def get_providers(providers = nil)
-    if providers
-      providers.map do |provider_name|
+  private def get_providers(provider_names = nil)
+    operation = :user_read
+    if provider_names
+      provider_names.map do |provider_name|
         provider = @provider_repository.find_with_adapter_by_name(provider_name)
         unless provider
           Hanami.logger.warn "[#{self.class.name}] Not found: #{provider_name}"
           error!(I18n.t('errors.not_found', name: I18n.t('entities.provider')))
         end
 
+        unless provider.can_do?(:user_change_password)
+          Hanami.logger.warn "[#{self.class.name}] No ability: #{provider.name}, #{operation}"
+          error!(I18n.t('errors.no_ability', name: provider.label, action: I18n.t(operation, scope: 'operations')))
+        end
+
         provider
       end
     else
-      @provider_repository.ordered_all_with_adapter_by_operation(:user_read)
+      @provider_repository.ordered_all_with_adapter_by_operation(operation)
     end
   end
 end
