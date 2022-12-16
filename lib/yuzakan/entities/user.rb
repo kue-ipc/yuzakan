@@ -21,11 +21,7 @@ class User < Hanami::Entity
   end
 
   def label
-    if display_name
-      display_name
-    else
-      username
-    end
+    display_name || username
   end
 
   def deleted?
