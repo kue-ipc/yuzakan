@@ -12,7 +12,9 @@ Hanami::Model.migration do
       column :hidden, TrueClass, null: false, default: false
       column :readonly, TrueClass, null: false, default: false
 
-      column :code, String, size: 4096, null: true
+      column :code, String, size: 4096
+
+      column :description, String, size: 4096
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

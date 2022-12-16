@@ -10,7 +10,7 @@ class UpdateProvider
 
     validations do
       required(:name) { str? }
-      required(:label) { str? }
+      required(:display_name) { str? }
       required(:adapter_name) { str? }
 
       optional(:readable) { bool? }
@@ -81,12 +81,6 @@ class UpdateProvider
         error({adapter_name: ['アダプターは変更できません。']})
         result = false
       end
-
-      if params[:label] != @provider.label &&
-         @provider_repository.find_by_label(params[:label])
-        error({label: ['そのプロバイダー名は既に存在します。']})
-        result = false
-      end
     else
       # create
       if @provider_repository.find_by_name(params[:name])
@@ -96,11 +90,6 @@ class UpdateProvider
 
       unless ADAPTERS_MANAGER.by_name(params[:adapter_name])
         error({adapter_name: ['指定のアダプターはありません。']})
-        result = false
-      end
-
-      if @provider_repository.find_by_label(params[:label])
-        error({label: ['そのプロバイダー名は既に存在します。']})
         result = false
       end
     end

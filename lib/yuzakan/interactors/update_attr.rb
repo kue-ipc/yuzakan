@@ -11,7 +11,7 @@ class UpdateAttr
 
     validations do
       optional(:name).filled(:str?, :name?, max_size?: 255)
-      optional(:label).filled(:str?, max_size?: 255)
+      optional(:display_name).filled(:str?, max_size?: 255)
       optional(:type).filled(:str?, max_size?: 255)
       optional(:order).maybe(:int?, gt?: 0)
       optional(:hidden).maybe(:bool?)
@@ -87,11 +87,6 @@ class UpdateAttr
 
     if params[:name] && @attr.name != params[:name] && @attr_repository.exist_by_name?(params[:name])
       error({name: [I18n.t('errors.uniq?')]})
-      result = false
-    end
-
-    if params[:label] && @attr.label != params[:label] && @attr_repository.exist_by_label?(params[:label])
-      error({label: [I18n.t('errors.uniq?')]})
       result = false
     end
 
