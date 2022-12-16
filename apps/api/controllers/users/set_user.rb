@@ -1,10 +1,10 @@
-require_relative './user_intercator'
+require_relative './user_interactor'
 
 module Api
   module Controllers
     module Users
       module SetUser
-        include SyncUser
+        include UserInteractor
 
         class Params < Hanami::Action::Params
           predicates NamePredicates
@@ -22,42 +22,13 @@ module Api
           end
         end
 
-        def initialize(provider_repository: ProviderRepository.new,
-                       user_repository: UserRepository.new,
-                       **opts)
-          super
-          @provider_repository ||= provider_repository
-          @user_repository ||= user_repository
-        end
-
-        # 下記のインスタンス変数を設定する。
-        # - @username
-        # - @user
-        # - @userdata
-        # - @providers
         private def set_user
           halt_json 400, errors: [params.errors] unless params.valid?
 
-          @username = params[:id]
+          set_sync_user
 
-          syne_user!
           halt_json 404 if @user.nil?
         end
-
-
-        # プロバイダーと同期をとり、ユーザーをセットする。
-        private def sync_user!
-          @sync_user ||= SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
-          result = @sync_user.call({username: @username})
-          halt_json 500, errors: result.errors if result.failure?
-
-          @user = result.user
-          @userdata = result.userdata
-          @providers = result.providers
-        end
-
-
-
       end
     end
   end

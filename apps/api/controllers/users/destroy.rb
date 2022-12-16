@@ -21,28 +21,18 @@ module Api
 
         params Params
 
-        def initialize(provider_repository: ProviderRepository.new,
-                       user_repository: UserRepository.new,
+        def initialize(user_repository: UserRepository.new,
                        **opts)
           super
-          @provider_repository ||= provider_repository
           @user_repository ||= user_repository
         end
 
         def call(params)
-          unless @user.deleted?
-            delete_user = DeleteUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
-            result = delete_user.call({username: @username})
-            halt_json 500, errors: result.errors if result.failure?
-          end
+          delete_user({username: @username}) unless @user.deleted?
 
-          if params[:erase]
-            erase_user = EraceUser.new(user_repository: @user_repository)
-            result = erase_user.call({usarname: @username})
-            halt_json 500, errors: result.errors if result.failure?
-          end
+          set_sync_user
 
-          sync_user!
+          @user_repository.delete(@user.id) if params[:erase] && @user.deleted?
 
           self.body = user_json
         end
