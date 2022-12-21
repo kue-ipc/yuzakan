@@ -2,18 +2,9 @@ module Api
   module Controllers
     module Providers
       module SetProvider
-        class Params < Hanami::Action::Params
-          predicates NamePredicates
-          messages :i18n
-
-          params do
-            required(:id).filled(:str?, :name?, max_size?: 255)
-          end
-        end
-
         def self.included(action)
           action.class_eval do
-            params Params
+            params IdParams
             before :set_provider
           end
         end

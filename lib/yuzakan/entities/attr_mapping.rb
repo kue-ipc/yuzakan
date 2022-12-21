@@ -1,4 +1,12 @@
 class AttrMapping < Hanami::Entity
+  CONVERSIONS = %w[
+    posix_time
+    posix_date
+    path
+    e2j
+    j2e
+  ].freeze
+
   TRUE_STR_VALUES = %w[true yes on]
   TRUE_VALUES = [true, 1] +
                 TRUE_STR_VALUES +
@@ -10,6 +18,17 @@ class AttrMapping < Hanami::Entity
                  FALSE_STR_VALUES +
                  FALSE_STR_VALUES.map(&:upcase) +
                  FALSE_STR_VALUES.map(&:intern)
+
+  E2J_LIST = [
+    ['student', '学生'],
+    ['faculty', '教員'],
+    ['staff', '職員'],
+    ['member', '構成員'],
+    ['guest', 'ゲスト'],
+    ['organization', '組織'],
+  ].freeze
+  E2J_DICT = E2J_LIST.to_h
+  J2E_DICT = E2J_LIST.map(&:reverse).to_h
 
   def attr_name
     attr.name
@@ -81,17 +100,6 @@ class AttrMapping < Hanami::Entity
     end
   end
   alias reverse_convert map_value
-
-  E2J_LIST = [
-    ['student', '学生'],
-    ['faculty', '教員'],
-    ['staff', '職員'],
-    ['member', '構成員'],
-    ['guest', 'ゲスト'],
-    ['organization', '組織'],
-  ].freeze
-  E2J_DICT = E2J_LIST.to_h
-  J2E_DICT = E2J_LIST.map(&:reverse).to_h
 
   def translate_e2j(value)
     E2J_DICT[value] || value
