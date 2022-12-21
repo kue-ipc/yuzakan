@@ -15,14 +15,14 @@ module Api
 
           params do
             required(:username).filled(:str?, :name?, max_size?: 255)
-            optional(:password).filled(:str?, max_size?: 255)
-            optional(:display_name).filled(:str?, max_size?: 255)
-            optional(:email).filled(:str?, :email?, max_size?: 255)
-            optional(:primary_group).filled(:str?, :name?, max_size?: 255)
+            optional(:password).maybe(:str?, max_size?: 255)
+            optional(:display_name).maybe(:str?, max_size?: 255)
+            optional(:email).maybe(:str?, :email?, max_size?: 255)
+            optional(:primary_group).maybe(:str?, :name?, max_size?: 255)
             optional(:attrs) { hash? }
             optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
             optional(:clearance_level).filled(:int?)
-            optional(:reserved).maybe(:bool?)
+            optional(:reserved).filled(:bool?)
             optional(:note).maybe(:str?, max_size?: 4096)
           end
         end
@@ -40,7 +40,7 @@ module Api
 
           @username = params[:username]
           set_sync_user
-          halt_json 422, {username: [I18n.t('errors.uniq?')]} if @user
+          halt_json 422, errors: {username: [I18n.t('errors.uniq?')]} if @user
 
           password = params[:password] || generate_password.password
 

@@ -13,32 +13,12 @@ class ProviderRepository < Hanami::Repository
     providers.where(name: name)
   end
 
-  private def by_label(label)
-    providers.where(label: label)
-  end
-
-  private def by_order(order)
-    providers.where(order: order)
-  end
-
   def find_by_name(name)
     by_name(name).one
   end
 
-  def find_by_label(label)
-    by_label(label).one
-  end
-
   def exist_by_name?(name)
     by_name(name).exist?
-  end
-
-  def exist_by_label?(label)
-    by_label(label).exist?
-  end
-
-  def exist_by_order?(order)
-    by_order(order).exist?
   end
 
   def all_individual_password

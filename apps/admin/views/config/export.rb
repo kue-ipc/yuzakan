@@ -36,7 +36,7 @@ module Admin
             provider_data = {}
             %w[
               name
-              label
+              display_name
               adapter_name
               order
               readable
@@ -65,7 +65,7 @@ module Admin
             attr_data = {}
             %w[
               name
-              label
+              display_name
               type
               order
               hidden

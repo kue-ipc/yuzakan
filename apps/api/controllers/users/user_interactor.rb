@@ -74,10 +74,9 @@ module Api
 
         private def user_json(**data)
           generate_json({
-            **convert_for_json(@user),
-            primary_group: @user.primary_group,
+            **convert_for_json(@user, assoc: true),
             userdata: @userdata,
-            provider_userdatas: @providers.compact.map { |k, v| {provider: {name: k}, userdata: v} },
+            provider_userdatas: @providers.compact.map { |k, v| {provider: k, userdata: v} },
             **data,
           })
         end
