@@ -37,10 +37,10 @@ class User < Hanami::Entity
   end
 
   def primary_group
-    members.find(&:primry)&.group
+    members&.find(&:primry)&.group
   end
 
   def groups
-    members.map(&:group)
+    members&.map(&:group)
   end
 end
