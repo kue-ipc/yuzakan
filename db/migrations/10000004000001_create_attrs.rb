@@ -20,7 +20,6 @@ Hanami::Model.migration do
       column :updated_at, DateTime, null: false
 
       index :name, unique: true
-      index :order, unique: true
     end
   end
 end
