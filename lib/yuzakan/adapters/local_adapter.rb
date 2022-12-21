@@ -4,7 +4,7 @@ module Yuzakan
   module Adapters
     class LocalAdapter < AbstractAdapter
       self.name = 'local'
-      self.label = 'ローカル'
+      self.dislay_name = 'ローカル'
       self.version = '0.0.1'
       self.params = []
 

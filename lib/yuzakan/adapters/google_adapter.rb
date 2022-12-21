@@ -11,7 +11,7 @@ module Yuzakan
   module Adapters
     class GoogleAdapter < AbstractAdapter
       self.name = 'google'
-      self.label = 'Google Workspace'
+      self.dislay_name = 'Google Workspace'
       self.version = '0.0.1'
       self.params = []
 

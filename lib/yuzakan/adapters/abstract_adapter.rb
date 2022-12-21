@@ -62,7 +62,19 @@ module Yuzakan
       extend Yuzakan::Utils::HashArray
 
       class << self
-        attr_accessor :abstract_adapter, :hidden_adapter, :name, :label, :version, :params
+        attr_accessor :abstract_adapter, :hidden_adapter, :name, :dislay_name, :version, :params
+
+        def label_name
+          if display_name
+            "#{display_name} (#{name})"
+          else
+            name
+          end
+        end
+      
+        def label
+          display_name || name
+        end
 
         def selectable?
           !abstract_adapter && !hidden_adapter

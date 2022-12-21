@@ -6,7 +6,7 @@ module Yuzakan
   module Adapters
     class PosixLdapAdapter < LdapAdapter
       self.name = 'posix_ldap'
-      self.label = 'Posix LDAP'
+      self.dislay_name = 'Posix LDAP'
       self.version = '0.0.1'
       self.params = ha_merge(
         LdapAdapter.params + [

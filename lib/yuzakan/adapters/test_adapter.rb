@@ -8,7 +8,7 @@ module Yuzakan
       self.hidden_adapter = true if Hanami.env == 'production'
 
       self.name = 'test'
-      self.label = 'テスト'
+      self.dislay_name = 'テスト'
       self.version = '0.0.1'
       self.params = [
         {

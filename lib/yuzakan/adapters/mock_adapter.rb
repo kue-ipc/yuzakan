@@ -14,7 +14,7 @@ module Yuzakan
       self.hidden_adapter = true if Hanami.env == 'production'
 
       self.name = 'mock'
-      self.label = 'モック'
+      self.dislay_name = 'モック'
       self.version = '0.0.1'
       self.params = [
         {
