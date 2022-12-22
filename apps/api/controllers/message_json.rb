@@ -31,7 +31,7 @@ module Api
         # 日時はISO8601形式の文字列にする
         obj.iso8601
       when Hanami::Entity
-        convert_for_json(convert_entity(obj, assoc: assoc))
+        convert_for_json(convert_entity(obj, assoc: assoc), assoc: assoc)
       else
         obj
       end
@@ -46,7 +46,12 @@ module Api
       case entity
       when Attr
         data.merge!({label: entity.label})
-        data.merge!({attr_mappings: entity.attr_mappings}) if assoc && entity.attr_mappings
+        if assoc && entity.mappings
+          mappings = entity.mappings.map do |mapping|
+            {**convert_entity(mapping), provider: mapping.provider&.name}
+          end
+          data.merge!({mappings: mappings})
+        end
       when Provider
         data.merge!({label: entity.label})
         data.merge!({params: entity.params}) if assoc && entity.params

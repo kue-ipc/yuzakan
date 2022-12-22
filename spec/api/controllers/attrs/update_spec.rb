@@ -9,28 +9,31 @@ describe Api::Controllers::Attrs::Update do
   eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
   let(:action_params) { {id: 'attr1', **attr_params} }
-
   let(:attr_params) {
     {
-      name: 'attr1', label: '属性①', type: 'string', order: 8, hidden: false,
-      attr_mappings: [
-        {name: 'attr1_1', conversion: nil, provider: {name: 'provider1'}},
-        {name: 'attr1_2', conversion: 'e2j', provider: {name: 'provider2'}},
+      name: 'attr1', display_name: '属性①', type: 'string', order: 8, hidden: false,
+      mappings: [
+        {provider: 'provider1', name: 'attr1_1', conversion: nil},
+        {provider: 'provider2', name: 'attr1_2', conversion: 'e2j'},
       ],
     }
   }
-  let(:attr_without_mappings) { Attr.new(id: 42, **attr_params.except(:attr_mappings)) }
-  let(:attr_with_mappings) { Attr.new(id: 42, **attr_params) }
+  let(:attr_attributes) {
+    attr_mappings = attr_params[:mappings].map do |mapping|
+      {**mapping.except(:provider), provider: {name: mapping[:provider]}}
+    end
+    {**attr_params.except(:mappings), attr_mappings: attr_mappings}
+  }
+  let(:attr_without_mappings) { Attr.new(id: 42, **attr_attributes.except(:attr_mappings)) }
+  let(:attr_with_mappings) { Attr.new(id: 42, **attr_attributes) }
   let(:attr_repository) {
     AttrRepository.new.tap do |obj|
       stub(obj).find_with_mappings_by_name { attr_with_mappings }
       stub(obj).find_with_mappings { attr_with_mappings }
       stub(obj).exist_by_name? { false }
-      stub(obj).exist_by_label? { false }
-      stub(obj).exist_by_order? { false }
       stub(obj).update { attr_without_mappings }
-      stub(obj).delete_mapping_by_provider_id { 1 }
       stub(obj).add_mapping { AttrMapping.new }
+      stub(obj).remove_mapping { AttrMapping.new }
     end
   }
   let(:attr_mapping_repository) { AttrMappingRepository.new.tap { |obj| stub(obj).update { AttrMapping.new } } }
@@ -53,7 +56,7 @@ describe Api::Controllers::Attrs::Update do
       _(response[0]).must_equal 200
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal(attr_params)
+      _(json).must_equal({**attr_params, label: attr_attributes[:display_name]})
     end
 
     it 'is successful with different' do
@@ -61,7 +64,7 @@ describe Api::Controllers::Attrs::Update do
       _(response[0]).must_equal 200
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal(attr_params)
+      _(json).must_equal({**attr_params, label: attr_attributes[:display_name]})
     end
 
     describe 'not existed' do
@@ -70,8 +73,6 @@ describe Api::Controllers::Attrs::Update do
           stub(obj).find_with_mappings_by_name { nil }
           stub(obj).find_with_mappings { nil }
           stub(obj).exist_by_name? { false }
-          stub(obj).exist_by_label? { false }
-          stub(obj).exist_by_order? { false }
           stub(obj).update { attr_without_mappings }
           stub(obj).delete_mapping_by_provider_id { 1 }
           stub(obj).add_mapping { AttrMapping.new }
@@ -96,8 +97,6 @@ describe Api::Controllers::Attrs::Update do
           stub(obj).find_with_mappings_by_name { attr_with_mappings }
           stub(obj).find_with_mappings { attr_with_mappings }
           stub(obj).exist_by_name? { true }
-          stub(obj).exist_by_label? { false }
-          stub(obj).exist_by_order? { false }
           stub(obj).update { attr_without_mappings }
           stub(obj).delete_mapping_by_provider_id { 1 }
           stub(obj).add_mapping { AttrMapping.new }
@@ -109,7 +108,7 @@ describe Api::Controllers::Attrs::Update do
         _(response[0]).must_equal 200
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal(attr_params)
+        _(json).must_equal({**attr_params, label: attr_attributes[:display_name]})
       end
 
       it 'is successful with diffrent only label' do
@@ -117,7 +116,7 @@ describe Api::Controllers::Attrs::Update do
         _(response[0]).must_equal 200
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal(attr_params)
+        _(json).must_equal({**attr_params, label: attr_attributes[:display_name]})
       end
 
       it 'is failure with different' do
@@ -129,92 +128,6 @@ describe Api::Controllers::Attrs::Update do
           code: 422,
           message: 'Unprocessable Entity',
           errors: [{name: ['重複しています。']}],
-        })
-      end
-    end
-
-    describe 'existed label' do
-      let(:attr_repository) {
-        AttrRepository.new.tap do |obj|
-          stub(obj).find_with_mappings_by_name { attr_with_mappings }
-          stub(obj).find_with_mappings { attr_with_mappings }
-          stub(obj).exist_by_name? { false }
-          stub(obj).exist_by_label? { true }
-          stub(obj).exist_by_order? { false }
-          stub(obj).update { attr_without_mappings }
-          stub(obj).delete_mapping_by_provider_id { 1 }
-          stub(obj).add_mapping { AttrMapping.new }
-        end
-      }
-
-      it 'is successful' do
-        response = action.call(params)
-        _(response[0]).must_equal 200
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal(attr_params)
-      end
-
-      it 'is successful with diffrent only name' do
-        response = action.call({**params, name: 'hoge'})
-        _(response[0]).must_equal 200
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal(attr_params)
-      end
-
-      it 'is failure with different' do
-        response = action.call({**params, name: 'hoge', label: 'ほげ'})
-        _(response[0]).must_equal 422
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({
-          code: 422,
-          message: 'Unprocessable Entity',
-          errors: [{label: ['重複しています。']}],
-        })
-      end
-    end
-
-    describe 'existed name nad label' do
-      let(:attr_repository) {
-        AttrRepository.new.tap do |obj|
-          stub(obj).find_with_mappings_by_name { attr_with_mappings }
-          stub(obj).find_with_mappings { attr_with_mappings }
-          stub(obj).exist_by_name? { true }
-          stub(obj).exist_by_label? { true }
-          stub(obj).exist_by_order? { false }
-          stub(obj).update { attr_without_mappings }
-          stub(obj).delete_mapping_by_provider_id { 1 }
-          stub(obj).add_mapping { AttrMapping.new }
-        end
-      }
-
-      it 'is successful' do
-        response = action.call(params)
-        _(response[0]).must_equal 200
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal(attr_params)
-      end
-
-      it 'is successful with diffrent only hidden' do
-        response = action.call({**params, hidden: 'true'})
-        _(response[0]).must_equal 200
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal(attr_params)
-      end
-
-      it 'is failure with different' do
-        response = action.call({**params, name: 'hoge', label: 'ほげ'})
-        _(response[0]).must_equal 422
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({
-          code: 422,
-          message: 'Unprocessable Entity',
-          errors: [{name: ['重複しています。'], label: ['重複しています。']}],
         })
       end
     end

@@ -14,18 +14,20 @@ module Api
 
           params do
             required(:name).filled(:str?, :name?, max_size?: 255)
+            optional(:display_name).maybe(:str?, max_size?: 255)
             required(:type).filled(:str?)
-            optional(:dislay_name).maybe(:str?, max_size?: 255)
-            optional(:order).maybe(:int?)
-            optional(:hidden).maybe(:bool?)
+            optional(:order).filled(:int?)
+            optional(:hidden).filled(:bool?)
+            optional(:readonly).filled(:bool?)
             optional(:code).maybe(:str?, max_size?: 4096)
-            # rubocop:disable all
+            # rubocop:disable Layout/BlockEndNewline, Layout/MultilineBlockLayout, Style/BlockDelimiters
             optional(:mappings) { array? { each { schema {
+              predicates NamePredicates
               required(:provider).filled(:str?, :name?, max_size?: 255)
               required(:name).maybe(:str?, max_size?: 255)
               optional(:conversion) { none? | included_in?(AttrMapping::CONVERSIONS) }
             } } } }
-            # rubocop:enable all
+            # rubocop:enable Layout/BlockEndNewline, Layout/MultilineBlockLayout, Style/BlockDelimiters
           end
         end
 
@@ -40,21 +42,21 @@ module Api
         end
 
         def call(params)
-          alt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
+          halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
           halt_json 422, errors: [{name: [I18n.t('errors.uniq?')]}] if @attr_repository.exist_by_name?(params[:name])
 
           mapping_errors = {}
           attr_mappings = (params[:mappings] || []).each_with_index.map do |mapping, idx|
-            next nil if mapping[:name].nil? || mapping[:name].empty?
+            next if mapping[:name].nil? || mapping[:name].empty?
 
-            provider = @provider_repository.find_by_name(mapping[:provider])
+            provider = provider_by_name(mapping[:provider])
             if provider.nil?
               mapping_errors[idx] = {provider: [I18n.t('errors.found?')]}
-              next nil
+              next
             end
 
-            {**provider.except(:provider), provider_id: provider&.id}
+            {**mapping.except(:provider), provider_id: provider&.id}
           end.compact
           halt_json 422, errors: [{mappings: mapping_errors}] unless mapping_errors.empty?
 
@@ -67,6 +69,11 @@ module Api
           self.status = 201
           headers['Location'] = routes.attr_path(@attr.id)
           self.body = generate_json(@attr, assoc: true)
+        end
+
+        private def provider_by_name(name)
+          @named_providers ||= @provider_repository.all.to_h { |provider| [provider.name, provider] }
+          @named_providers[name]
         end
       end
     end

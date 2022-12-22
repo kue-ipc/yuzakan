@@ -5,17 +5,22 @@ describe Api::Controllers::Attrs::Show do
   eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
   let(:action_params) { {id: 'attr1'} }
-
   let(:attr_params) {
     {
-      name: 'attr1', label: '属性①', type: 'string', order: 8, hidden: false,
-      attr_mappings: [
-        {name: 'attr1_1', conversion: nil, provider: {name: 'provider1'}},
-        {name: 'attr1_2', conversion: 'e2j', provider: {name: 'provider2'}},
+      name: 'attr1', display_name: '属性①', type: 'string', order: 8, hidden: false,
+      mappings: [
+        {provider: 'provider1', name: 'attr1_1', conversion: nil},
+        {provider: 'provider2', name: 'attr1_2', conversion: 'e2j'},
       ],
     }
   }
-  let(:attr_with_mappings) { Attr.new(id: 42, **attr_params) }
+  let(:attr_attributes) {
+    attr_mappings = attr_params[:mappings].map do |mapping|
+      {**mapping.except(:provider), provider: {name: mapping[:provider]}}
+    end
+    {**attr_params.except(:mappings), attr_mappings: attr_mappings}
+  }
+  let(:attr_with_mappings) { Attr.new(id: 42, **attr_attributes) }
   let(:attr_repository) { AttrRepository.new.tap { |obj| stub(obj).find_with_mappings_by_name { attr_with_mappings } } }
 
   it 'is successful' do
@@ -23,7 +28,7 @@ describe Api::Controllers::Attrs::Show do
     _(response[0]).must_equal 200
     _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    _(json).must_equal(attr_params.except(:attr_mappings))
+    _(json).must_equal({**attr_params.except(:mappings), label: attr_attributes[:display_name]})
   end
 
   describe 'monitor' do
@@ -36,7 +41,7 @@ describe Api::Controllers::Attrs::Show do
       _(response[0]).must_equal 200
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal(attr_params)
+      _(json).must_equal({**attr_params, label: attr_attributes[:display_name]})
     end
   end
 
@@ -48,7 +53,7 @@ describe Api::Controllers::Attrs::Show do
       _(response[0]).must_equal 200
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal(attr_params)
+      _(json).must_equal({**attr_params, label: attr_attributes[:display_name]})
     end
 
     describe 'not existed' do

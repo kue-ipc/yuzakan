@@ -7,22 +7,26 @@ describe Api::Controllers::Attrs::Create do
   }
   eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
-  let(:action_params) { {**attr_params} }
+  let(:action_params) { attr_params }
   let(:attr_params) {
     {
-      name: 'attr1', label: '属性①', type: 'string', order: 8, hidden: false,
-      attr_mappings: [
-        {name: 'attr1_1', conversion: nil, provider: {name: 'provider1'}},
-        {name: 'attr1_2', conversion: 'e2j', provider: {name: 'provider2'}},
+      name: 'attr1', display_name: '属性①', type: 'string', order: 8, hidden: false,
+      mappings: [
+        {provider: 'provider1', name: 'attr1_1', conversion: nil},
+        {provider: 'provider2', name: 'attr1_2', conversion: 'e2j'},
       ],
     }
   }
-  let(:attr_with_mappings) { Attr.new(id: 42, **attr_params) }
+  let(:attr_attributes) {
+    attr_mappings = attr_params[:mappings].map do |mapping|
+      {**mapping.except(:provider), provider: {name: mapping[:provider]}}
+    end
+    {**attr_params.except(:mappings), attr_mappings: attr_mappings}
+  }
+  let(:attr_with_mappings) { Attr.new(id: 42, **attr_attributes) }
   let(:attr_repository) {
     AttrRepository.new.tap do |obj|
       stub(obj).exist_by_name? { false }
-      stub(obj).exist_by_label? { false }
-      stub(obj).exist_by_order? { false }
       stub(obj).last_order { 16 }
       stub(obj).create_with_mappings { attr_with_mappings }
     end
@@ -47,7 +51,7 @@ describe Api::Controllers::Attrs::Create do
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       _(response[1]['Location']).must_equal "/api/attrs/#{attr_with_mappings.id}"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal(attr_params)
+      _(json).must_equal({**attr_params, label: attr_attributes[:display_name]})
     end
 
     it 'is successful without order param' do
@@ -56,41 +60,41 @@ describe Api::Controllers::Attrs::Create do
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       _(response[1]['Location']).must_equal "/api/attrs/#{attr_with_mappings.id}"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal(attr_params)
+      _(json).must_equal({**attr_params, label: attr_attributes[:display_name]})
     end
 
     it 'is failure with bad name pattern' do
       response = action.call({**params, name: '!'})
-      _(response[0]).must_equal 422
+      _(response[0]).must_equal 400
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
-        code: 422,
-        message: 'Unprocessable Entity',
+        code: 400,
+        message: 'Bad Request',
         errors: [{name: ['名前付けの規則に違反しています。']}],
       })
     end
 
     it 'is failure with name over' do
       response = action.call({**params, name: 'a' * 256})
-      _(response[0]).must_equal 422
+      _(response[0]).must_equal 400
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
-        code: 422,
-        message: 'Unprocessable Entity',
+        code: 400,
+        message: 'Bad Request',
         errors: [{name: ['サイズが255を超えてはいけません。']}],
       })
     end
 
     it 'is failure with name over' do
       response = action.call({**params, name: 1})
-      _(response[0]).must_equal 422
+      _(response[0]).must_equal 400
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
-        code: 422,
-        message: 'Unprocessable Entity',
+        code: 400,
+        message: 'Bad Request',
         errors: [{name: ['文字列を入力してください。']}],
       })
     end
@@ -98,20 +102,20 @@ describe Api::Controllers::Attrs::Create do
     it 'is failure with bad mapping params' do
       response = action.call({
         **params,
-        attr_mappings: [
-          {name: 'attr1_1', conversion: nil, provider: {name: ''}},
+        mappings: [
+          {provider: '', name: 'attr1_1', conversion: nil},
           {name: 'attr1_2', conversion: 'e2j'},
         ],
       })
-      _(response[0]).must_equal 422
+      _(response[0]).must_equal 400
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
-        code: 422,
-        message: 'Unprocessable Entity',
+        code: 400,
+        message: 'Bad Request',
         errors: [{
-          attr_mappings: {
-            '0': {provider: {name: ['入力が必須です。']}},
+          mappings: {
+            '0': {provider: ['入力が必須です。']},
             '1': {provider: ['存在しません。']},
           },
         }],
@@ -120,13 +124,13 @@ describe Api::Controllers::Attrs::Create do
 
     it 'is failure without params' do
       response = action.call(env)
-      _(response[0]).must_equal 422
+      _(response[0]).must_equal 400
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
-        code: 422,
-        message: 'Unprocessable Entity',
-        errors: [{name: ['存在しません。'], label: ['存在しません。'], type: ['存在しません。']}],
+        code: 400,
+        message: 'Bad Request',
+        errors: [{name: ['存在しません。'], type: ['存在しません。']}],
       })
     end
 
@@ -155,73 +159,13 @@ describe Api::Controllers::Attrs::Create do
 
       it 'is failure with bad name pattern' do
         response = action.call({**params, name: '!'})
-        _(response[0]).must_equal 422
+        _(response[0]).must_equal 400
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
         _(json).must_equal({
-          code: 422,
-          message: 'Unprocessable Entity',
+          code: 400,
+          message: 'Bad Request',
           errors: [{name: ['名前付けの規則に違反しています。']}],
-        })
-      end
-    end
-
-    describe 'existed label' do
-      let(:attr_repository) {
-        AttrRepository.new.tap do |obj|
-          stub(obj).exist_by_name? { false }
-          stub(obj).exist_by_label? { true }
-          stub(obj).exist_by_order? { false }
-          stub(obj).last_order { 16 }
-          stub(obj).create_with_mappings { attr_with_mappings }
-        end
-      }
-
-      it 'is failure' do
-        response = action.call(params)
-        _(response[0]).must_equal 422
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({
-          code: 422,
-          message: 'Unprocessable Entity',
-          errors: [{label: ['重複しています。']}],
-        })
-      end
-
-      it 'is failure with bad name pattern' do
-        response = action.call({**params, name: '!'})
-        _(response[0]).must_equal 422
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({
-          code: 422,
-          message: 'Unprocessable Entity',
-          errors: [{name: ['名前付けの規則に違反しています。']}],
-        })
-      end
-    end
-
-    describe 'existed name nad label' do
-      let(:attr_repository) {
-        AttrRepository.new.tap do |obj|
-          stub(obj).exist_by_name? { true }
-          stub(obj).exist_by_label? { true }
-          stub(obj).exist_by_order? { false }
-          stub(obj).last_order { 16 }
-          stub(obj).create_with_mappings { attr_with_mappings }
-        end
-      }
-
-      it 'is failure' do
-        response = action.call(params)
-        _(response[0]).must_equal 422
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({
-          code: 422,
-          message: 'Unprocessable Entity',
-          errors: [{name: ['重複しています。'], label: ['重複しています。']}],
         })
       end
     end
@@ -237,7 +181,7 @@ describe Api::Controllers::Attrs::Create do
         _(json).must_equal({
           code: 422,
           message: 'Unprocessable Entity',
-          errors: [{attr_mappings: {'1': {provider: {name: ['見つかりません。']}}}}],
+          errors: [{mappings: {'1': {provider: ['見つかりません。']}}}],
         })
       end
     end
