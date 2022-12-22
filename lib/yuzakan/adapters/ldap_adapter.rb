@@ -19,7 +19,7 @@ module Yuzakan
       end
 
       self.name = 'ldap'
-      self.dislay_name = 'LDAP'
+      self.display_name = 'LDAP'
       self.version = '0.0.1'
       self.params = [
         {

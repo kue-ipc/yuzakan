@@ -24,7 +24,7 @@ module Yuzakan
   module Adapters
     class SambaLdapAdapter < PosixLdapAdapter
       self.name = 'samba_ldap'
-      self.dislay_name = 'Samba LDAP'
+      self.display_name = 'Samba LDAP'
       self.version = '0.0.1'
       self.params = ha_merge(
         PosixLdapAdapter.params + [

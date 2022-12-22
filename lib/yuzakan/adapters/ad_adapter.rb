@@ -5,7 +5,7 @@ module Yuzakan
   module Adapters
     class AdAdapter < LdapAdapter
       self.name = 'ad'
-      self.dislay_name = 'Active Directory'
+      self.display_name = 'Active Directory'
       self.version = '0.0.1'
       self.params = ha_merge(
         LdapAdapter.params + [
