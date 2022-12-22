@@ -30,6 +30,7 @@ describe Api::Controllers::Myself::Show do
     _(json).must_equal({
       username: 'user',
       display_name: 'ユーザー',
+      label: 'ユーザー',
       email: 'user@example.jp',
       note: nil,
       reserved: false,
@@ -46,9 +47,7 @@ describe Api::Controllers::Myself::Show do
         groups: [],
       },
       provider_userdatas: [{
-        provider: {
-          name: 'provider',
-        },
+        provider: 'provider',
         userdata: {
           username: 'user',
           display_name: 'ユーザー',

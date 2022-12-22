@@ -4,9 +4,9 @@ describe AttrRepository do
   let(:attr_repository) { AttrRepository.new }
 
   before do
-    @attr_hoge = attr_repository.create(name: 'hoge', label: 'ほげ', type: 'string', order: 8)
-    @attr_fuga = attr_repository.create(name: 'fuga', label: 'ふが', type: 'integer', order: 32)
-    @attr_piyo = attr_repository.create(name: 'piyo', label: 'ぴよ', type: 'boolean', order: 16)
+    @attr_hoge = attr_repository.create(name: 'hoge', display_name: 'ほげ', type: 'string', order: 8)
+    @attr_fuga = attr_repository.create(name: 'fuga', display_name: 'ふが', type: 'integer', order: 32)
+    @attr_piyo = attr_repository.create(name: 'piyo', display_name: 'ぴよ', type: 'boolean', order: 16)
   end
 
   after do
@@ -30,16 +30,6 @@ describe AttrRepository do
     _(attr_repository.exist_by_name?('moe')).must_equal false
   end
 
-  it 'exist_by_label?' do
-    _(attr_repository.exist_by_label?('ほげ')).must_equal true
-    _(attr_repository.exist_by_label?('もえ')).must_equal false
-  end
-
-  it 'exist_by_order?' do
-    _(attr_repository.exist_by_order?(8)).must_equal true
-    _(attr_repository.exist_by_order?(24)).must_equal false
-  end
-
   it 'last_order' do
     _(attr_repository.last_order).must_equal 32
     attr_repository.clear
@@ -51,8 +41,8 @@ describe AttrRepository do
     let(:provider_repository) { ProviderRepository.new }
 
     before do
-      @provider_hoge = provider_repository.create(name: 'hoge', label: 'ほげ', adapter_name: 'dummy', order: 8)
-      @provider_fuga = provider_repository.create(name: 'fuga', label: 'ふが', adapter_name: 'dummy', order: 16)
+      @provider_hoge = provider_repository.create(name: 'hoge', display_name: 'ほげ', adapter_name: 'dummy', order: 8)
+      @provider_fuga = provider_repository.create(name: 'fuga', display_name: 'ふが', adapter_name: 'dummy', order: 16)
 
       @attr_mapping_hoge_hoge = attr_mapping_repository.create(attr_id: @attr_hoge.id, provider_id: @provider_hoge.id,
                                                                name: 'hoge_hoge')
@@ -81,7 +71,7 @@ describe AttrRepository do
 
     it 'create_with_mappings' do
       attr_with_mappings = attr_repository.create_with_mappings(
-        name: 'moe', label: 'もえ', type: 'string', order: 40, hidden: false,
+        name: 'moe', display_name: 'もえ', type: 'string', order: 40, hidden: false,
         attr_mappings: [
           {provider_id: @provider_hoge.id, name: 'moe_hoge'},
           {provider_id: @provider_fuga.id, name: 'moe_fuga', conversion: 'e2j'},

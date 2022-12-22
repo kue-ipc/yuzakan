@@ -41,7 +41,7 @@ module Api
       data = entity.to_h
         .except(:id, :created_at, :updated_at)
         .reject do |k, v|
-          k.end_with?('_id') || v.is_a?(Hanami::Entity) || (v.is_a?(Array) && v.first.is_a?(Hanami::Entity))
+          k.end_with?('_id') || v.is_a?(Hanami::Entity) || v.is_a?(Array)
         end
       case entity
       when Attr

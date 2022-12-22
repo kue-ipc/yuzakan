@@ -4,9 +4,9 @@ describe ProviderRepository do
   let(:provider_repository) { ProviderRepository.new }
 
   before do
-    @provider_hoge = provider_repository.create(name: 'hoge', label: 'ほげ', adapter_name: 'test', order: 8)
-    @provider_fuga = provider_repository.create(name: 'fuga', label: 'ふが', adapter_name: 'test', order: 32)
-    @provider_piyo = provider_repository.create(name: 'piyo', label: 'ぴよ', adapter_name: 'test', order: 16)
+    @provider_hoge = provider_repository.create(name: 'hoge', display_name: 'ほげ', adapter_name: 'test', order: 8)
+    @provider_fuga = provider_repository.create(name: 'fuga', display_name: 'ふが', adapter_name: 'test', order: 32)
+    @provider_piyo = provider_repository.create(name: 'piyo', display_name: 'ぴよ', adapter_name: 'test', order: 16)
   end
 
   after do
@@ -27,16 +27,6 @@ describe ProviderRepository do
   it 'exist_by_name?' do
     _(provider_repository.exist_by_name?('hoge')).must_equal true
     _(provider_repository.exist_by_name?('moe')).must_equal false
-  end
-
-  it 'exist_by_label?' do
-    _(provider_repository.exist_by_label?('ほげ')).must_equal true
-    _(provider_repository.exist_by_label?('もえ')).must_equal false
-  end
-
-  it 'exist_by_order?' do
-    _(provider_repository.exist_by_order?(8)).must_equal true
-    _(provider_repository.exist_by_order?(24)).must_equal false
   end
 
   it 'last_order' do
