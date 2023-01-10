@@ -66,13 +66,6 @@ module Admin
           setup_admin(admin_user) &&
           setup_config(config)
 
-          # result = InitialSetup.new.call(params[:setup])
-
-          # if result.failure?
-          #   flash[:errors] = result.errors
-          #   redirect_to routes.path(:setup)
-          # end
-
           unless flash[:errors].empty?
             self.body = Admin::Views::Setup::New.render(exposures)
             return

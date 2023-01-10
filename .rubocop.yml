@@ -69,8 +69,6 @@ Style/EmptyMethod:
   EnforcedStyle: expanded
 Style/FormatString:
   EnforcedStyle: percent
-Style/FrozenStringLiteralComment:
-  EnforcedStyle: never
 Style/MultilineBlockChain:
   Enabled: false
 Style/NumericLiterals:
