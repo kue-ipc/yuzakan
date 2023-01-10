@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Googleでのみ使用されている
+# ReadUserを使えばいい？
+
 require 'hanami/interactor'
 require 'hanami/validations'
 
