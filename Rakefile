@@ -1,7 +1,9 @@
-require 'rake'
-require 'hanami/rake_tasks'
+# frozen_string_literal: true
+
 require 'rake/testtask'
 require 'rake/clean'
+require 'hanami/rake_tasks'
+require 'rom/sql/rake_task'
 
 CLEAN << 'vendor/assets'
 CLEAN << 'public/assets'
@@ -10,6 +12,18 @@ CLEAN << 'rollup.config.mjs'
 
 CLOBBER << 'node_modules'
 
+task :environment do
+  require_relative 'config/app'
+  require 'hanami/prepare'
+end
+
+namespace :db do
+  task setup: :environment do
+    Hanami.app.prepare(:persistence)
+    ROM::SQL::RakeSupport.env = Hanami.app['persistence.config']
+  end
+end
+
 namespace :db do
   task :setup do
     ROM::SQL::RakeSupport.env =
@@ -17,8 +31,7 @@ namespace :db do
         :sql,
         ENV.fetch('DATABASE_URL'),
         logger: Hanami.logger,
-        extensions: %i(pg_array pg_json)
-      )
+        extensions: %i[pg_array pg_json])
   end
 end
 
