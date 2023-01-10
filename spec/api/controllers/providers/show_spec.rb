@@ -8,8 +8,10 @@ describe Api::Controllers::Providers::Show do
   let(:action_params) { {id: 'provider1'} }
   let(:provider_params) {
     {
-      name: 'provider1', label: 'プロバイダー①',
-      adapter_name: 'test', order: 16,
+      name: 'provider1',
+      display_name: 'プロバイダー①',
+      adapter_name: 'test',
+      order: 16,
       readable: true,
       writable: true,
       authenticatable: true,
@@ -49,7 +51,10 @@ describe Api::Controllers::Providers::Show do
     _(response[0]).must_equal 200
     _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    _(json).must_equal({**provider_params})
+    _(json).must_equal({
+      **provider_params,
+      label: provider_params[:display_name],
+    })
   end
 
   describe 'admin' do
@@ -60,7 +65,11 @@ describe Api::Controllers::Providers::Show do
       _(response[0]).must_equal 200
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({**provider_params, params: provider_params_attributes_params})
+      _(json).must_equal({
+        **provider_params,
+        label: provider_params[:display_name],
+        params: provider_params_attributes_params,
+      })
     end
 
     describe 'not existed' do
@@ -79,18 +88,6 @@ describe Api::Controllers::Providers::Show do
         })
       end
     end
-
-    # describe 'not allowed network' do
-    #   let(:config) { Config.new(title: 'title', session_timeout: 3600, admin_networks: '10.10.10.0/24') }
-
-    #   it 'is successful, but no params' do
-    #     response = action.call(params)
-    #     _(response[0]).must_equal 200
-    #     _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-    #     json = JSON.parse(response[2].first, symbolize_names: true)
-    #     _(json).must_equal({**provider_params})
-    #   end
-    # end
   end
 
   describe 'no login session' do

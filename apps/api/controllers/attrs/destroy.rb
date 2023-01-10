@@ -18,7 +18,7 @@ module Api
           @attr_repository.delete(@attr.id)
 
           self.status = 200
-          self.body = generate_json(@attr)
+          self.body = generate_json(@attr, assoc: true)
         end
       end
     end

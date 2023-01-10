@@ -13,11 +13,7 @@ class Group < Hanami::Entity
   end
 
   def label
-    if display_name
-      display_name
-    else
-      groupname
-    end
+    display_name || groupname
   end
 
   def to_s

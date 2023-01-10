@@ -10,10 +10,10 @@ module Api
         end
 
         def call(params) # rubocop:disable Lint/UnusedMethodArgument
-          all_attrs = @attr_repository.ordered_all
+          @attrs = @attr_repository.ordered_all
 
           self.status = 200
-          self.body = generate_json(all_attrs)
+          self.body = generate_json(@attrs)
         end
       end
     end

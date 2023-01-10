@@ -46,6 +46,7 @@ class InitialSetup
   private def valid?(params)
     validation = Validations.new(params).validate
     if validation.failure?
+      Hanami.logger.error "[#{self.class.name}] Validation fails: #{validation.messages}"
       error(validation.messages)
       return false
     end
@@ -105,18 +106,25 @@ class InitialSetup
   end
 
   private def setup_admin(admin_user)
-    create_user = CreateUser.new(
-      provider_repository: @provider_repository,
-      user_repository: @user_repository)
+    create_user = CreateUser.new(provider_repository: @provider_repository)
     result = create_user.call({
       **admin_user,
       providers: ['local'],
       display_name: 'ローカル管理者',
-      clearance_level: 5,
     })
     if result.failure?
       result.errors.each { |e| error e }
       error!('管理者の作成に失敗しました。')
     end
+
+    sync_user = SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
+    result = @sync_user.call(params)
+    if result.failure?
+      result.errors.each { |e| error e }
+      error!('管理者の作成に失敗しました。')
+    end
+
+    admin_user = result.user
+    @user_repository.update(admin_user.id, clearance_level: 5)
   end
 end

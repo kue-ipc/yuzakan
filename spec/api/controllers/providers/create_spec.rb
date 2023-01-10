@@ -8,14 +8,15 @@ describe Api::Controllers::Providers::Create do
 
   let(:provider_params) {
     {
-      name: 'provider1', label: 'プロバイダー①',
-      adapter_name: 'test', order: 16,
+      name: 'provider1',
+      display_name: 'プロバイダー①',
+      adapter_name: 'test',
+      order: 16,
       readable: true,
       writable: true,
       authenticatable: true,
       password_changeable: true,
       lockable: true,
-
       individual_password: false,
       self_management: false,
     }
@@ -55,8 +56,6 @@ describe Api::Controllers::Providers::Create do
   let(:provider_repository) {
     ProviderRepository.new.tap do |obj|
       stub(obj).exist_by_name? { false }
-      stub(obj).exist_by_label? { false }
-      stub(obj).exist_by_order? { false }
       stub(obj).last_order { 16 }
       stub(obj).create { provider_without_params }
       stub(obj).find_with_params { provider_with_params }
@@ -81,7 +80,11 @@ describe Api::Controllers::Providers::Create do
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       _(response[1]['Location']).must_equal "/api/providers/#{provider_with_params.id}"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({**provider_params, params: provider_params_attributes_params})
+      _(json).must_equal({
+        **provider_params,
+        label: provider_params[:display_name],
+        params: provider_params_attributes_params,
+      })
     end
 
     it 'is successful without order param' do
@@ -90,41 +93,45 @@ describe Api::Controllers::Providers::Create do
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       _(response[1]['Location']).must_equal "/api/providers/#{provider_with_params.id}"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({**provider_params, params: provider_params_attributes_params})
+      _(json).must_equal({
+        **provider_params,
+        label: provider_params[:display_name],
+        params: provider_params_attributes_params,
+      })
     end
 
     it 'is failure with bad name pattern' do
       response = action.call({**params, name: '!'})
-      _(response[0]).must_equal 422
+      _(response[0]).must_equal 400
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
-        code: 422,
-        message: 'Unprocessable Entity',
+        code: 400,
+        message: 'Bad Request',
         errors: [{name: ['名前付けの規則に違反しています。']}],
       })
     end
 
     it 'is failure with name over' do
       response = action.call({**params, name: 'a' * 256})
-      _(response[0]).must_equal 422
+      _(response[0]).must_equal 400
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
-        code: 422,
-        message: 'Unprocessable Entity',
+        code: 400,
+        message: 'Bad Request',
         errors: [{name: ['サイズが255を超えてはいけません。']}],
       })
     end
 
-    it 'is failure with name over' do
+    it 'is failure with name number' do
       response = action.call({**params, name: 1})
-      _(response[0]).must_equal 422
+      _(response[0]).must_equal 400
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
-        code: 422,
-        message: 'Unprocessable Entity',
+        code: 400,
+        message: 'Bad Request',
         errors: [{name: ['文字列を入力してください。']}],
       })
     end
@@ -134,12 +141,12 @@ describe Api::Controllers::Providers::Create do
         **params,
         params: 'abc',
       })
-      _(response[0]).must_equal 422
+      _(response[0]).must_equal 400
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
-        code: 422,
-        message: 'Unprocessable Entity',
+        code: 400,
+        message: 'Bad Request',
         errors: [{
           params: ['連想配列を入力してください。'],
         }],
@@ -148,13 +155,13 @@ describe Api::Controllers::Providers::Create do
 
     it 'is failure without params' do
       response = action.call(env)
-      _(response[0]).must_equal 422
+      _(response[0]).must_equal 400
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       _(json).must_equal({
-        code: 422,
-        message: 'Unprocessable Entity',
-        errors: [{name: ['存在しません。'], label: ['存在しません。'], adapter_name: ['存在しません。']}],
+        code: 400,
+        message: 'Bad Request',
+        errors: [{name: ['存在しません。'], adapter_name: ['存在しません。']}],
       })
     end
 
@@ -162,8 +169,6 @@ describe Api::Controllers::Providers::Create do
       let(:provider_repository) {
         ProviderRepository.new.tap do |obj|
           stub(obj).exist_by_name? { true }
-          stub(obj).exist_by_label? { false }
-          stub(obj).exist_by_order? { false }
           stub(obj).last_order { 16 }
           stub(obj).create_with_params { provider_with_params }
         end
@@ -183,73 +188,13 @@ describe Api::Controllers::Providers::Create do
 
       it 'is failure with bad name pattern' do
         response = action.call({**params, name: '!'})
-        _(response[0]).must_equal 422
+        _(response[0]).must_equal 400
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
         _(json).must_equal({
-          code: 422,
-          message: 'Unprocessable Entity',
+          code: 400,
+          message: 'Bad Request',
           errors: [{name: ['名前付けの規則に違反しています。']}],
-        })
-      end
-    end
-
-    describe 'existed label' do
-      let(:provider_repository) {
-        ProviderRepository.new.tap do |obj|
-          stub(obj).exist_by_name? { false }
-          stub(obj).exist_by_label? { true }
-          stub(obj).exist_by_order? { false }
-          stub(obj).last_order { 16 }
-          stub(obj).create_with_params { provider_with_params }
-        end
-      }
-
-      it 'is failure' do
-        response = action.call(params)
-        _(response[0]).must_equal 422
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({
-          code: 422,
-          message: 'Unprocessable Entity',
-          errors: [{label: ['重複しています。']}],
-        })
-      end
-
-      it 'is failure with bad name pattern' do
-        response = action.call({**params, name: '!'})
-        _(response[0]).must_equal 422
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({
-          code: 422,
-          message: 'Unprocessable Entity',
-          errors: [{name: ['名前付けの規則に違反しています。'], label: ['重複しています。']}],
-        })
-      end
-    end
-
-    describe 'existed name nad label' do
-      let(:provider_repository) {
-        ProviderRepository.new.tap do |obj|
-          stub(obj).exist_by_name? { true }
-          stub(obj).exist_by_label? { true }
-          stub(obj).exist_by_order? { false }
-          stub(obj).last_order { 16 }
-          stub(obj).create_with_params { provider_with_params }
-        end
-      }
-
-      it 'is failure' do
-        response = action.call(params)
-        _(response[0]).must_equal 422
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({
-          code: 422,
-          message: 'Unprocessable Entity',
-          errors: [{name: ['重複しています。'], label: ['重複しています。']}],
         })
       end
     end

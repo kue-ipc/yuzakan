@@ -1,8 +1,11 @@
+require_relative './user_interactor'
+
 module Api
   module Controllers
     module Users
       class Create
         include Api::Action
+        include UserInteractor
 
         security_level 4
 
@@ -12,62 +15,51 @@ module Api
 
           params do
             required(:username).filled(:str?, :name?, max_size?: 255)
-            optional(:password).filled(:str?, max_size?: 255)
-            optional(:display_name).filled(:str?, max_size?: 255)
-            optional(:email).filled(:str?, :email?, max_size?: 255)
-            optional(:clearance_level).filled(:int?)
-            optional(:primary_group).filled(:str?, :name?, max_size?: 255)
-            optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
+            optional(:password).maybe(:str?, max_size?: 255)
+            optional(:display_name).maybe(:str?, max_size?: 255)
+            optional(:email).maybe(:str?, :email?, max_size?: 255)
+            optional(:primary_group).maybe(:str?, :name?, max_size?: 255)
             optional(:attrs) { hash? }
+            optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
+            optional(:clearance_level).filled(:int?)
+            optional(:reserved).filled(:bool?)
+            optional(:note).maybe(:str?, max_size?: 4096)
           end
         end
 
         params Params
 
-        def initialize(provider_repository: ProviderRepository.new,
-                       user_repository: UserRepository.new,
-                       config_repository: ConfigRepository.new,
+        def initialize(user_repository: UserRepository.new,
                        **opts)
           super
-          @provider_repository ||= provider_repository
           @user_repository ||= user_repository
-          @config_repository ||= config_repository
         end
 
         def call(params)
-          param_errors = only_first_errors(params.errors)
+          halt_json 400, errors: [params.errors] unless params.valid?
 
-          unless param_errors.key?(:username)
-            sync_user = SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
-            result = sync_user.call({username: params[:username]})
-            halt_json 500, erros: result.errors if result.failure?
+          @username = params[:username]
+          set_sync_user
+          halt_json 422, errors: {username: [I18n.t('errors.uniq?')]} if @user
 
-            param_errors[:username] = [I18n.t('errors.uniq?')] if result.user
+          password = params[:password] || generate_password.password
+
+          create_user({
+            password: password,
+            **params.slice(*USER_BASE_INFO, *USER_PROVIDER_INFO, :providers),
+          })
+
+          set_sync_user
+
+          if @user.nil?
+            @user = @user_repository.create(params.slice(*USER_BASE_INFO, *USER_REPOSITORY_INFO))
+          elsif USER_REPOSITORY_INFO.any? { |name| params.key?(name) }
+            @user = @user_repository.update(@user.id, params.slice(*USER_REPOSITORY_INFO))
           end
-
-          halt_json(422, errors: [param_errors]) unless param_errors.empty?
-
-          password = params[:password] || generate_password
-
-          create_user = CreateUser.new(user_repository: @user_repository,
-                                       provider_repository: @provider_repository)
-          result = create_user.call({**params.to_h, password: password})
-          halt_json 500, erros: result.errors if result.failure?
 
           self.status = 201
           headers['Location'] = routes.user_path(result.user.username)
-          self.body = generate_json({
-            **convert_for_json(result.user),
-            password: password,
-            userdata: result.userdata,
-            provider_userdatas: result.providers.compact.map { |k, v| {provider: {name: k}, userdata: v} },
-          })
-        end
-
-        private def generate_password
-          result = GeneratePassword.new(config_repository: @config_repository).call({})
-          halt_json 500, erros: result.errors if result.failure?
-          result.password
+          self.body = user_json(password: password)
         end
       end
     end

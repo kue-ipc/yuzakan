@@ -9,18 +9,30 @@ module Api
 
         security_level 4
 
-        def initialize(provider_repository: ProviderRepository.new,
-                       user_repository: UserRepository.new,
+        class Params < Hanami::Action::Params
+          predicates NamePredicates
+          messages :i18n
+
+          params do
+            required(:id).filled(:str?, :name?, max_size?: 255)
+            optional(:erase).maybe(:bool?)
+          end
+        end
+
+        params Params
+
+        def initialize(user_repository: UserRepository.new,
                        **opts)
           super
-          @provider_repository ||= provider_repository
           @user_repository ||= user_repository
         end
 
         def call(params)
-          delete_user = DeleteUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
-          result = delete_user.call({username: @user.username})
-          halt_json 500, erros: result.errors if result.failure?
+          delete_user({username: @username}) unless @user.deleted?
+
+          set_sync_user
+
+          @user_repository.delete(@user.id) if params[:erase] && @user.deleted?
 
           self.body = user_json
         end

@@ -16,12 +16,15 @@ module Api
           params do
             required(:id).filled(:str?, :name?, max_size?: 255)
             required(:username).filled(:str?, :name?, max_size?: 255)
-            optional(:display_name).filled(:str?, max_size?: 255)
-            optional(:email).filled(:str?, :email?, max_size?: 255)
-            optional(:clearance_level).filled(:int?)
-            optional(:primary_group).filled(:str?, :name?, max_size?: 255)
-            optional(:providers) { array? { min_size?(1) & each { str? & name? & max_size?(255) } } }
+            optional(:display_name).maybe(:str?, max_size?: 255)
+            optional(:email).maybe(:str?, :email?, max_size?: 255)
+            optional(:primary_group).maybe(:str?, :name?, max_size?: 255)
+            optional(:groups) { array? { each { str? & name? & max_size?(255) } } }
             optional(:attrs) { hash? }
+            optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
+            optional(:clearance_level).filled(:int?)
+            optional(:reserved).filled(:bool?)
+            optional(:note).maybe(:str?, max_size?: 4096)
           end
         end
 
@@ -41,23 +44,28 @@ module Api
             mod_providers = current_providers
           end
 
-          create_user = CreateUser.new(user_repository: @user_repository, provider_repository: @provider_repository)
-          result = create_user.call({**params, providers: add_providers})
-          halt_json 500, erros: result.errors if result.failure?
-
-          delete_user = DeleteUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
-          result = delete_user.call({username: @user.username, providers: del_providers})
-          halt_json 500, erros: result.errors if result.failure?
-
-          update_user = UpdateUser.new(user_repository: @user_repository, provider_repository: @provider_repository)
-          result = update_user.call({**params, providers: mod_providers})
-          halt_json 500, erros: result.errors if result.failure?
-
-          if @user.clearance_level && @user.clearance_level != params[:clearance_level]
-            @user = @user_repository.update(@user.id, clearance_level: params[:clearance_level])
+          if add_providers.size.positve?
+            create_user({
+              **params.slice(*USER_BASE_INFO, *USER_PROVIDER_INFO),
+              providers: add_providers,
+            })
           end
 
-          set_user
+          if mod_providers.size.positve?
+            update_user({
+              **params.slice(*USER_BASE_INFO, *USER_PROVIDER_INFO),
+              providers: mod_providers,
+            })
+          end
+
+          delete_user({username: @user.username, providers: del_providers}) if del_providers.size.positive?
+
+          set_sync_user
+
+          if USER_REPOSITORY_INFO.any? { |name| params.key?(name) }
+            @user = @user_repository.update(@user.id, params.slice(*USER_REPOSITORY_INFO))
+          end
+
           self.body = user_json
         end
       end

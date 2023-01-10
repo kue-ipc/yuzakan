@@ -9,6 +9,33 @@ module Api
 
         security_level 5
 
+        class Params < Hanami::Action::Params
+          include Hanami::Validations::Form
+          predicates NamePredicates
+          messages :i18n
+
+          params do
+            required(:id).filled(:str?, :name?, max_size?: 255)
+            optional(:name).filled(:str?, :name?, max_size?: 255)
+            optional(:display_name).maybe(:str?, max_size?: 255)
+            optional(:type).filled(:str?, max_size?: 255)
+            optional(:order).filled(:int?, gt?: 0)
+            optional(:hidden).filled(:bool?)
+            optional(:readonly).filled(:bool?)
+            optional(:code).maybe(:str?, max_size?: 4096)
+            # rubocop:disable Layout/BlockEndNewline, Layout/MultilineBlockLayout, Style/BlockDelimiters
+            optional(:mappings) { array? { each { schema {
+              predicates NamePredicates
+              required(:provider).filled(:str?, :name?, max_size?: 255)
+              required(:name).maybe(:str?, max_size?: 255)
+              optional(:conversion) { none? | included_in?(AttrMapping::CONVERSIONS) }
+            } } } }
+            # rubocop:enable Layout/BlockEndNewline, Layout/MultilineBlockLayout, Style/BlockDelimiters
+          end
+        end
+
+        params Params
+
         def initialize(attr_repository: AttrRepository.new,
                        attr_mapping_repository: AttrMappingRepository.new,
                        provider_repository: ProviderRepository.new,
@@ -20,16 +47,47 @@ module Api
         end
 
         def call(params)
-          update_attr = UpdateAttr.new(attr: @attr,
-                                       attr_repository: @attr_repository,
-                                       attr_mapping_repository: @attr_mapping_repository,
-                                       provider_repository: @provider_repository)
-          result = update_attr.call(params.to_h.except(:id))
+          if params[:name] && params[:name] != @attr.name &&
+             @attr_repository.exist_by_name?(params[:name])
+            halt_json 422, errors: [{name: [I18n.t('errors.uniq?')]}]
+          end
 
-          halt_json(422, errors: merge_errors(result.errors)) if result.failure?
+          mapping_errors = {}
+          mapping_params = (params[:mappings] || []).each_with_index.map do |mapping, idx|
+            provider = provider_by_name(mapping[:provider])
+            if provider.nil?
+              mapping_errors[idx] = {provider: [I18n.t('errors.found?')]}
+              next
+            end
+
+            {**mapping.except(:provider), provider_id: provider&.id}
+          end.compact
+          halt_json 422, errors: [{mappings: mapping_errors}] unless mapping_errors.empty?
+
+          @attr_repository.update(@attr.id, params.to_h.except(:id, :mappings))
+
+          mapping_params.each do |m_params|
+            current_mapping = @attr.mapping_by_provider_id(m_params[:provider_id])
+            if current_mapping
+              if current_mapping.name == m_params[:name] &&
+                 (!m_params.key?(:conversion) || current_mapping.conversion == m_params[:conversion])
+                next
+              end
+
+              @attr_repository.remove_mapping(@attr, current_mapping.id)
+            end
+            @attr_repository.add_mapping(@attr, m_params) if m_params[:name] && !m_params[:name].empty?
+          end
+
+          @attr = @attr_repository.find_with_mappings(@attr.id)
 
           self.status = 200
-          self.body = generate_json(result.attr)
+          self.body = generate_json(@attr, assoc: true)
+        end
+
+        private def provider_by_name(name)
+          @named_providers ||= @provider_repository.all.to_h { |provider| [provider.name, provider] }
+          @named_providers[name]
         end
       end
     end

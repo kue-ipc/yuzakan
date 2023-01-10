@@ -8,8 +8,10 @@ describe Api::Controllers::Providers::Check do
 
   let(:provider_params) {
     {
-      name: 'provider1', label: 'プロバイダー①',
-      adapter_name: 'mock', order: 16,
+      name: 'provider1',
+      display_name: 'プロバイダー①',
+      adapter_name: 'mock',
+      order: 16,
     }
   }
   let(:provider_params_attributes) { [{name: 'check', value: Marshal.dump(true)}] }

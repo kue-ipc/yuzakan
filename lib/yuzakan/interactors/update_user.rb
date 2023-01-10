@@ -13,40 +13,37 @@ class UpdateUser
       required(:username).filled(:str?, :name?, max_size?: 255)
       optional(:display_name).filled(:str?, max_size?: 255)
       optional(:email).filled(:str?, :email?, max_size?: 255)
-      optional(:clearance_level).filled(:int?)
       optional(:primary_group).filled(:str?, :name?, max_size?: 255)
       optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
       optional(:attrs) { hash? }
     end
   end
 
-  expose :userdatas
+  expose :providers
 
-  def initialize(provider_repository: ProviderRepository.new,
-                 user_repository: UserRepository.new)
+  def initialize(provider_repository: ProviderRepository.new)
     @provider_repository = provider_repository
-    @user_repository = user_repository
   end
 
   def call(params)
     username = params[:username]
-    @userdatas = {}
-
-    userdata = {
-      username: params[:username],
-      display_name: params[:display_name],
-      email: params[:email],
-      primary_group: params[:primary_group],
+    userdata = params.slice(:username, :display_name, :email, :primary_group).merge({
       attrs: params[:attrs] || {},
-    }
+    })
+
+    @providers = {}
 
     get_providers(params[:providers]).each do |provider|
-      @userdatas[provider.name] = provider.user_update(username, **userdata)
+      @providers[provider.name] = provider.user_update(username, **userdata)
     rescue => e
       Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
       Hanami.logger.error e
       error(I18n.t('errors.action.error', action: I18n.t('interactors.update_user'), target: provider.label))
-      error(e.message)
+      if @providers.values.any?
+        error(I18n.t('errors.action.stopped_after_some',
+                     action: I18n.t('interactors.update_user'),
+                     target: I18n.t('entities.provider')))
+      end
       fail!
     end
   end
@@ -54,6 +51,7 @@ class UpdateUser
   private def valid?(params)
     validation = Validations.new(params).validate
     if validation.failure?
+      Hanami.logger.error "[#{self.class.name}] Validation fails: #{validation.messages}"
       error(validation.messages)
       return false
     end
@@ -61,19 +59,25 @@ class UpdateUser
     true
   end
 
-  private def get_providers(providers = nil)
-    if providers
-      providers.map do |provider_name|
+  private def get_providers(provider_names = nil)
+    operation = :user_update
+    if provider_names
+      provider_names.map do |provider_name|
         provider = @provider_repository.find_with_adapter_by_name(provider_name)
         unless provider
           Hanami.logger.warn "[#{self.class.name}] Not found: #{provider_name}"
           error!(I18n.t('errors.not_found', name: I18n.t('entities.provider')))
         end
 
+        unless provider.can_do?(:user_change_password)
+          Hanami.logger.warn "[#{self.class.name}] No ability: #{provider.name}, #{operation}"
+          error!(I18n.t('errors.no_ability', name: provider.label, action: I18n.t(operation, scope: 'operations')))
+        end
+
         provider
       end
     else
-      @provider_repository.ordered_all_with_adapter_by_operation(:user_update)
+      @provider_repository.ordered_all_with_adapter_by_operation(operation)
     end
   end
 end

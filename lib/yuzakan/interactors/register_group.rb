@@ -2,6 +2,7 @@ require 'hanami/interactor'
 require 'hanami/validations'
 require_relative '../predicates/name_predicates'
 
+# Groupレポジトリへの登録または更新
 class RegisterGroup
   include Hanami::Interactor
 
@@ -13,6 +14,7 @@ class RegisterGroup
     validations do
       required(:groupname).filled(:str?, :name?, max_size?: 255)
       optional(:display_name).maybe(:str?, max_size?: 255)
+      optional(:primary).maybe(:bool?)
     end
   end
 
@@ -24,16 +26,16 @@ class RegisterGroup
 
   def call(params)
     groupname = params[:groupname]
-    display_name = params[:display_name] || params[:groupname]
-
-    group = @group_repository.find_by_groupname(groupname)
+    data = params(:groupname, :display_name, :primary).merge({
+      deleted: false,
+      deleted_at: nil,
+    })
+    group_id = @group_repository.find_by_groupname(groupname)&.id
     @group =
-      if group.nil?
-        @group_repository.create(groupname: groupname, display_name: display_name)
-      elsif group.display_name != display_name
-        @group_repository.update(group.id, display_name: display_name)
+      if group_id
+        @group_repository.update(group_id, data)
       else
-        group
+        @group_repository.create(data)
       end
   end
 

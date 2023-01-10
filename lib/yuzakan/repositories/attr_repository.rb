@@ -8,28 +8,12 @@ class AttrRepository < Hanami::Repository
     attrs.where(name: name)
   end
 
-  private def by_label(label)
-    attrs.where(label: label)
-  end
-
-  private def by_order(order)
-    attrs.where(order: order)
-  end
-
   def find_by_name(name)
     by_name(name).one
   end
 
   def exist_by_name?(name)
     by_name(name).exist?
-  end
-
-  def exist_by_label?(label)
-    by_label(label).exist?
-  end
-
-  def exist_by_order?(order)
-    by_order(order).exist?
   end
 
   def ordered_all
@@ -58,6 +42,10 @@ class AttrRepository < Hanami::Repository
 
   def add_mapping(attr, data)
     assoc(:attr_mappings, attr).add(data)
+  end
+
+  def remove_mapping(attr, id)
+    assoc(:attr_mappings, attr).remove(id)
   end
 
   private def mapping_by_provider_id(attr, provider_id)

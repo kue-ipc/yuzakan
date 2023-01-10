@@ -1,8 +1,11 @@
+require_relative '../users/user_interactor'
+
 module Api
   module Controllers
     module Myself
       class Show
         include Api::Action
+        include Users::UserInteractor
 
         def initialize(provider_repository: ProviderRepository.new,
                        **opts)
@@ -11,17 +14,12 @@ module Api
         end
 
         def call(params) # rubocop:disable Lint/UnusedMethodArgument
-          sync_user = SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
-          result = sync_user.call({username: current_user.name})
-          halt_json 500, erros: result.errors if result.failure?
+          @username = current_user.name
+          set_sync_user
 
-          halt_json 404 unless result.user
+          halt_json 404 unless @user
 
-          self.body = generate_json({
-            **convert_for_json(result.user),
-            userdata: result.userdata,
-            provider_userdatas: result.providers.compact.map { |k, v| {provider: {name: k}, userdata: v} },
-          })
+          self.body = user_json
         end
       end
     end

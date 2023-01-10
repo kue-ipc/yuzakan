@@ -64,6 +64,7 @@ ja:
     strong_password?: 'パスワードが弱すぎます。'
     # messages
     not_found: '%{name}が見つかりません。'
+    no_ability: '%{name}は%{action}を実行できません。'
     already_initialized: 既に初期化済みです。
     action:
       fail: '%{action}に失敗しました。'
@@ -88,6 +89,31 @@ ja:
     unlock_user: ユーザーアンロック
     unregister_user: ユーザー解除
     update_user: ユーザー更新
+  operations:
+    user_create: ユーザー作成
+    user_update: ユーザー更新
+    user_delete: ユーザー削除
+    user_read: ユーザー取得
+    user_list: ユーザー一覧取得
+    user_seacrh: ユーザー検索
+    user_auth: ユーザー認証
+    user_change_password: パスワード変更
+    user_generate_code: コード生成
+    user_lock: ユーザーロック
+    user_unlock: ユーザーアンロック
+    group_read: グループ取得
+    group_list: グループ一覧取得
+    member_list: メンバー一覧取得
+    member_add: メンバー追加
+    member_remove: メンバー削除
+  abilities:
+    writable: 書込可能
+    readable: 読取可能
+    authenticatable: 認証可能
+    password_changeable: パスワード変更可能
+    lockable: ロック可能
+    group: グループ
+    individual_password: パスワード分離
   entities:
     user: ユーザー
     group: グループ

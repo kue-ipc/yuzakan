@@ -2,6 +2,7 @@ require 'hanami/interactor'
 require 'hanami/validations'
 require_relative '../predicates/name_predicates'
 
+# Userレポジトリと各プロバイダーのユーザー情報同期
 class SyncUser
   include Hanami::Interactor
 
@@ -29,22 +30,22 @@ class SyncUser
   def call(params)
     @username = params[:username]
 
-    read_user = ReadUser.new(provider_repository: @provider_repository)
-    result = read_user.call({username: @username})
-    if result.failure?
+    read_user_result = ReadUser.new(provider_repository: @provider_repository)
+      .call({username: @username})
+    if read_user_result.failure?
       Hanami.logger.error "[#{self.class.name}] Failed to call ReadUser"
-      Hanami.logger.error result.errors
+      Hanami.logger.error read_user_result.errors
       error(I18n.t('errors.action.fail', action: I18n.t('interactors.read_user')))
-      result.errors.each { |msg| error(msg) }
+      read_user_result.errors.each { |msg| error(msg) }
       fail!
     end
 
-    @userdata = result.userdata
-    @providers = result.providers
+    @userdata = read_user_result.userdata
+    @providers = read_user_result.providers
 
     if @providers.values.any?
       if @userdata[:username] != @username
-        Hanami.logger.error "[#{self.class.name}] Usernames not equal: #{@userdata[:username]}"
+        Hanami.logger.error "[#{self.class.name}] Do not match username: #{@userdata[:username]}"
         error!(I18n.t('errors.eql?', left: I18n.t('attributes.user.username')))
       end
 
@@ -58,14 +59,15 @@ class SyncUser
       end
       @user = register_user_result.user
     else
-      unregister_user_result = UnregisterUser.new(user_repository: @user_repository).call(username: @username)
+      unregister_user_result = UnregisterUser.new(user_repository: @user_repository)
+        .call(username: @username)
       if unregister_user_result.failure?
         Hanami.logger.error "[#{self.class.name}] Failed to call UnregisterUser"
         error(I18n.t('errors.action.fail', action: I18n.t('interactors.unregister_user')))
         unregister_user_result.errors.each { |msg| error(msg) }
         fail!
       end
-      @user = nil
+      @user = unregister_user_result.user
     end
   end
 

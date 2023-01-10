@@ -57,6 +57,10 @@ class Provider < Hanami::Entity
     end
   end
 
+  def label
+    display_name || name
+  end
+
   def to_h
     super.except(:provider_params, :attr_mappings)
   end
@@ -299,6 +303,34 @@ class Provider < Hanami::Entity
     need_group!
     @cache_store.fetch(member_list_key(groupname)) do
       @cache_store[member_list_key(groupname)] = @adapter.member_list(groupname)
+    end
+  end
+
+  def can_do?(operation)
+    ability = Provider.operation_ability(operation)
+    ability.all? do |name, value|
+      __send__(name) == value
+    end
+  end
+
+  def self.operation_ability(operation)
+    case operation
+    when :user_create, :user_update, :user_delete
+      {writable: true}
+    when :user_read, :user_list, :user_seacrh
+      {readable: true}
+    when :user_auth
+      {authenticatable: true}
+    when :user_change_password, :user_generate_code
+      {password_changeable: true}
+    when :user_lock, :user_unlock
+      {lockable: true}
+    when :group_read, :group_list, :member_list
+      {group: true, readable: true}
+    when :member_add, :member_remove
+      {group: true, writable: true}
+    else
+      raise "不明な操作です。#{operation}"
     end
   end
 end

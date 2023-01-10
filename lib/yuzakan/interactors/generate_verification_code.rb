@@ -84,6 +84,7 @@ class GenerateVerificationCode
     ok = true
     validation = Validations.new(params).validate
     if validation.failure?
+      Hanami.logger.error "[#{self.class.name}] Validation fails: #{validation.messages}"
       error(validation.messages)
       ok = false
     end

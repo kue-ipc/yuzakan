@@ -4,6 +4,7 @@ module Api
       module SetAttr
         def self.included(action)
           action.class_eval do
+            params IdParams
             before :set_attr
           end
         end
@@ -14,10 +15,10 @@ module Api
         end
 
         private def set_attr
-          id_validation = IdValidations.new(params).validate
-          halt_json 400, errors: [id_validation.messages] if id_validation.failure?
+          halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
           @attr = @attr_repository.find_with_mappings_by_name(params[:id])
+
           halt_json 404 if @attr.nil?
         end
       end

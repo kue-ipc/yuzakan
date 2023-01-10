@@ -17,33 +17,68 @@ module Api
       halt_json(status, message, location: url, **others)
     end
 
-    private def generate_json(obj)
-      JSON.generate(convert_for_json(obj))
+    private def generate_json(obj, assoc: false)
+      JSON.generate(convert_for_json(obj, assoc: assoc))
     end
 
-    # Timeの精度は2桁までに統一
-    private def convert_for_json(obj)
+    private def convert_for_json(obj, assoc: false)
       case obj
       when Array
-        obj.map { |v| convert_for_json(v) }
+        obj.map { |v| convert_for_json(v, assoc: assoc) }
       when Hash
-        obj.transform_values { |v| convert_for_json(v) }
+        obj.transform_values { |v| convert_for_json(v, assoc: assoc) }
       when Time
+        # 日時はISO8601形式の文字列にする
         obj.iso8601
       when Hanami::Entity
-        convert_for_json(convert_entity(obj))
+        convert_for_json(convert_entity(obj, assoc: assoc), assoc: assoc)
       else
         obj
       end
     end
 
-    private def convert_entity(entity)
-      entity.to_h.except(
-        :id,
-        :provider_id,
-        :attr_id,
-        :primary_group_id,
-        :created_at, :updated_at)
+    private def convert_entity(entity, assoc: false)
+      data = entity.to_h
+        .except(:id, :created_at, :updated_at)
+        .reject do |k, v|
+          k.end_with?('_id') || v.is_a?(Hanami::Entity) || v.is_a?(Array)
+        end
+      case entity
+      when Attr
+        data.merge!({label: entity.label})
+        if assoc && entity.mappings
+          mappings = entity.mappings.map do |mapping|
+            {**convert_entity(mapping), provider: mapping.provider&.name}
+          end
+          data.merge!({mappings: mappings})
+        end
+      when Provider
+        data.merge!({label: entity.label})
+        data.merge!({params: entity.params}) if assoc && entity.params
+      when User
+        data.merge!({label: entity.label})
+        if assoc && entity.members
+          data.merge!({
+            primary_group: entity.primary_group&.groupname,
+            groups: entity.groups&.map(&:groupname),
+          })
+        end
+      when Group
+        data.merge!({label: entity.label})
+        if assoc && entity.members
+          data.merge!({
+            users: entity.users&.map(&:username),
+          })
+        end
+      when Member
+        if assoc
+          data.merge!(user: entity.user.username) if entity.user
+          data.merge!(user: entity.group.groupname) if entity.group
+        end
+      else
+        data
+      end
+      data
     end
 
     private def only_first_errors(errors)

@@ -21,14 +21,26 @@ class User < Hanami::Entity
   end
 
   def label
-    if display_name
-      display_name
-    else
-      username
-    end
+    display_name || username
+  end
+
+  def deleted?
+    deleted
+  end
+
+  def reseverd?
+    reserved
   end
 
   def to_s
     username
+  end
+
+  def primary_group
+    members&.find(&:primry)&.group
+  end
+
+  def groups
+    members&.map(&:group)
   end
 end

@@ -13,32 +13,12 @@ class ProviderRepository < Hanami::Repository
     providers.where(name: name)
   end
 
-  private def by_label(label)
-    providers.where(label: label)
-  end
-
-  private def by_order(order)
-    providers.where(order: order)
-  end
-
   def find_by_name(name)
     by_name(name).one
   end
 
-  def find_by_label(label)
-    by_label(label).one
-  end
-
   def exist_by_name?(name)
     by_name(name).exist?
-  end
-
-  def exist_by_label?(label)
-    by_label(label).exist?
-  end
-
-  def exist_by_order?(order)
-    by_order(order).exist?
   end
 
   def all_individual_password
@@ -82,27 +62,7 @@ class ProviderRepository < Hanami::Repository
   end
 
   def ordered_all_with_adapter_by_operation(operation)
-    operation_ability =
-      case operation
-      when :user_create, :user_update, :user_delete
-        {writable: true}
-      when :user_read, :user_list, :user_seacrh
-        {readable: true}
-      when :user_auth
-        {authenticatable: true}
-      when :user_change_password, :user_generate_code
-        {password_changeable: true, individual_password: false}
-      when :user_lock, :user_unlock
-        {lockable: true}
-      when :group_read, :group_list, :member_list
-        {group: true, readable: true}
-      when :member_add, :member_remove
-        {group: true, writable: true}
-      else
-        raise "不明な操作です。#{operation}"
-      end
-
-    ordered_all_with_adapter_by_ability(operation_ability)
+    ordered_all_with_adapter_by_ability(Provider.operation_ability(operation))
   end
 
   def ordered_all_with_adapter_by_ability(ability)

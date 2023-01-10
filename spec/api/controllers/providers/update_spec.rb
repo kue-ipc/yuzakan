@@ -11,8 +11,10 @@ describe Api::Controllers::Providers::Update do
 
   let(:provider_params) {
     {
-      name: 'provider1', label: 'プロバイダー①',
-      adapter_name: 'test', order: 16,
+      name: 'provider1', 
+      display_name: 'プロバイダー①',
+      adapter_name: 'test',
+       order: 16,
       readable: true,
       writable: true,
       authenticatable: true,
@@ -59,8 +61,6 @@ describe Api::Controllers::Providers::Update do
       stub(obj).find_with_params_by_name { provider_with_params }
       stub(obj).find_with_params { provider_with_params }
       stub(obj).exist_by_name? { false }
-      stub(obj).exist_by_label? { false }
-      stub(obj).exist_by_order? { false }
       stub(obj).last_order { 16 }
       stub(obj).update { provider_without_params }
       stub(obj).delete_param_by_name { 1 }
@@ -85,16 +85,24 @@ describe Api::Controllers::Providers::Update do
       _(response[0]).must_equal 200
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({**provider_params, params: provider_params_attributes_params})
-    end
+      _(json).must_equal({
+        **provider_params,
+        label: provider_params[:display_name],
+        params: provider_params_attributes_params,
+      })
+     end
 
     it 'is successful with different' do
       response = action.call({**params, name: 'hoge', label: 'ほげ'})
       _(response[0]).must_equal 200
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({**provider_params, params: provider_params_attributes_params})
-    end
+      _(json).must_equal({
+        **provider_params,
+        label: provider_params[:display_name],
+        params: provider_params_attributes_params,
+      })
+     end
 
     describe 'not existed' do
       let(:provider_repository) {
@@ -121,8 +129,6 @@ describe Api::Controllers::Providers::Update do
           stub(obj).find_with_params_by_name { provider_with_params }
           stub(obj).find_with_params { provider_with_params }
           stub(obj).exist_by_name? { true }
-          stub(obj).exist_by_label? { false }
-          stub(obj).exist_by_order? { false }
           stub(obj).last_order { 16 }
           stub(obj).update { provider_without_params }
           stub(obj).delete_param_by_name { 1 }
@@ -135,16 +141,24 @@ describe Api::Controllers::Providers::Update do
         _(response[0]).must_equal 200
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({**provider_params, params: provider_params_attributes_params})
-      end
+        _(json).must_equal({
+          **provider_params,
+          label: provider_params[:display_name],
+          params: provider_params_attributes_params,
+        })
+         end
 
       it 'is successful with diffrent only label' do
         response = action.call({**params, labal: 'ほげ'})
         _(response[0]).must_equal 200
         _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({**provider_params, params: provider_params_attributes_params})
-      end
+        _(json).must_equal({
+          **provider_params,
+          label: provider_params[:display_name],
+          params: provider_params_attributes_params,
+        })
+         end
 
       it 'is failure with different' do
         response = action.call({**params, name: 'hoge', label: 'ほげ'})
@@ -155,94 +169,6 @@ describe Api::Controllers::Providers::Update do
           code: 422,
           message: 'Unprocessable Entity',
           errors: [{name: ['重複しています。']}],
-        })
-      end
-    end
-
-    describe 'existed label' do
-      let(:provider_repository) {
-        ProviderRepository.new.tap do |obj|
-          stub(obj).find_with_params_by_name { provider_with_params }
-          stub(obj).find_with_params { provider_with_params }
-          stub(obj).exist_by_name? { false }
-          stub(obj).exist_by_label? { true }
-          stub(obj).exist_by_order? { false }
-          stub(obj).last_order { 16 }
-          stub(obj).update { provider_without_params }
-          stub(obj).delete_param_by_name { 1 }
-          stub(obj).add_param { ProviderParam.new }
-        end
-      }
-
-      it 'is successful' do
-        response = action.call(params)
-        _(response[0]).must_equal 200
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({**provider_params, params: provider_params_attributes_params})
-      end
-
-      it 'is successful with diffrent only name' do
-        response = action.call({**params, name: 'hoge'})
-        _(response[0]).must_equal 200
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({**provider_params, params: provider_params_attributes_params})
-      end
-
-      it 'is failure with different' do
-        response = action.call({**params, name: 'hoge', label: 'ほげ'})
-        _(response[0]).must_equal 422
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({
-          code: 422,
-          message: 'Unprocessable Entity',
-          errors: [{label: ['重複しています。']}],
-        })
-      end
-    end
-
-    describe 'existed label' do
-      let(:provider_repository) {
-        ProviderRepository.new.tap do |obj|
-          stub(obj).find_with_params_by_name { provider_with_params }
-          stub(obj).find_with_params { provider_with_params }
-          stub(obj).exist_by_name? { true }
-          stub(obj).exist_by_label? { true }
-          stub(obj).exist_by_order? { false }
-          stub(obj).last_order { 16 }
-          stub(obj).update { provider_without_params }
-          stub(obj).delete_param_by_name { 1 }
-          stub(obj).add_param { ProviderParam.new }
-        end
-      }
-
-      it 'is successful' do
-        response = action.call(params)
-        _(response[0]).must_equal 200
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({**provider_params, params: provider_params_attributes_params})
-      end
-
-      it 'is successful with diffrent only hidden' do
-        response = action.call({**params, hidden: 'true'})
-        _(response[0]).must_equal 200
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({**provider_params, params: provider_params_attributes_params})
-      end
-
-      it 'is failure with different' do
-        response = action.call({**params, name: 'hoge', label: 'ほげ'})
-        _(response[0]).must_equal 422
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({
-          code: 422,
-          message: 'Unprocessable Entity',
-          errors: [{name: ['重複しています。'], label: ['重複しています。']}],
         })
       end
     end

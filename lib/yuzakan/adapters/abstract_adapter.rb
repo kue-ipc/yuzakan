@@ -16,7 +16,7 @@
 #
 # groupdate:
 #   groupname: String = groupname
-#   dislay_name: String = display name
+#   display_name: String = display name
 #   x disabled: ?bool
 #   x unmanageable: ?bool
 #   x attrs: Hash = {key: value, ...}
@@ -62,7 +62,19 @@ module Yuzakan
       extend Yuzakan::Utils::HashArray
 
       class << self
-        attr_accessor :abstract_adapter, :hidden_adapter, :name, :label, :version, :params
+        attr_accessor :abstract_adapter, :hidden_adapter, :name, :display_name, :version, :params
+
+        def label_name
+          if display_name
+            "#{display_name} (#{name})"
+          else
+            name
+          end
+        end
+      
+        def label
+          display_name || name
+        end
 
         def selectable?
           !abstract_adapter && !hidden_adapter

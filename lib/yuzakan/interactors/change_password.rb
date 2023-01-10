@@ -16,8 +16,6 @@ class ChangePassword
     end
   end
 
-  expose :username
-  expose :password
   expose :providers
 
   def initialize(provider_repository: ProviderRepository.new)
@@ -25,15 +23,15 @@ class ChangePassword
   end
 
   def call(params)
-    @username = params[:username]
-    @password = params[:password]
+    username = params[:username]
+    password = params[:password]
 
     @providers = {}
 
     get_providers(params[:providers]).each do |provider|
-      @providers[provider.name] = provider.user_change_password(@username, @password)
+      @providers[provider.name] = provider.user_change_password(username, password)
     rescue => e
-      Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{@username}"
+      Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
       Hanami.logger.error e
       error(I18n.t('errors.action.error', action: I18n.t('interactors.change_password'), target: provider.label))
       if @providers.values.any?
@@ -41,7 +39,6 @@ class ChangePassword
                      action: I18n.t('interactors.change_password'),
                      target: I18n.t('entities.provider')))
       end
-      error(e.message)
       fail!
     end
   end
@@ -57,19 +54,26 @@ class ChangePassword
     true
   end
 
-  private def get_providers(providers = nil)
-    if providers
-      providers.map do |provider_name|
+  private def get_providers(provider_names = nil)
+    operation = :user_change_password
+    if provider_names
+      provider_names.map do |provider_name|
         provider = @provider_repository.find_with_adapter_by_name(provider_name)
         unless provider
           Hanami.logger.warn "[#{self.class.name}] Not found: #{provider_name}"
           error!(I18n.t('errors.not_found', name: I18n.t('entities.provider')))
         end
 
+        unless provider.can_do?(:user_change_password)
+          Hanami.logger.warn "[#{self.class.name}] No ability: #{provider.name}, #{operation}"
+          error!(I18n.t('errors.no_ability', name: provider.label, action: I18n.t(operation, scope: 'operations')))
+        end
+
         provider
       end
     else
       @provider_repository.ordered_all_with_adapter_by_operation(:user_change_password)
+        .reject(&:individual_password)
     end
   end
 end

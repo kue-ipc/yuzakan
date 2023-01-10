@@ -8,14 +8,15 @@ describe Api::Controllers::Providers::Destroy do
 
   let(:provider_params) {
     {
-      name: 'provider1', label: 'プロバイダー①',
-      adapter_name: 'test', order: 16,
+      name: 'provider1',
+      display_name: 'プロバイダー①',
+      adapter_name: 'test',
+      order: 16,
       readable: true,
       writable: true,
       authenticatable: true,
       password_changeable: true,
       lockable: true,
-
       individual_password: false,
       self_management: false,
     }
@@ -64,7 +65,11 @@ describe Api::Controllers::Providers::Destroy do
       _(response[0]).must_equal 200
       _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({**provider_params, params: provider_params_attributes_params})
+      _(json).must_equal({
+        **provider_params,
+        label: provider_params[:display_name],
+        params: provider_params_attributes_params,
+      })
     end
 
     describe 'not existend' do
