@@ -4,7 +4,7 @@ root to: 'home#index'
 
 resource :setup, only: [:show, :create]
 
-resource :config, only: [:edit, :update] do
+resource :config, only: [:show, :new, :create, :edit, :update] do
   member do
     post 'import'
     get 'export'
