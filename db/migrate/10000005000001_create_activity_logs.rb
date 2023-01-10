@@ -1,4 +1,4 @@
-Hanami::Model.migration do
+ROM::SQL.migration do
   change do
     create_table :activity_logs do
       primary_key :id

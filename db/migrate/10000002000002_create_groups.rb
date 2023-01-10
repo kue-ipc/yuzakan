@@ -1,4 +1,4 @@
-Hanami::Model.migration do
+ROM::SQL.migration do
   change do
     create_table :groups do
       primary_key :id
