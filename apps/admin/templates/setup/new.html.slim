@@ -1,5 +1,5 @@
 h2 初期セットアップ
-= form_for :setup, routes.path(:setup) do
+= form_for :setup, routes.path(:setup), values: {setup: setup} do
   - fields_for :config do
     - div class: 'mb-3' do
       - label 'サイト名', class: 'form-label', for: :title

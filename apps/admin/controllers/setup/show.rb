@@ -6,7 +6,10 @@ module Admin
 
         security_level 0
 
+        expose :setup
+
         def call(params) # rubocop:disable Lint/UnusedMethodArgument
+          @setup = {}
           self.body = Admin::Views::Setup::New.render(exposures) unless configurated?
         end
 

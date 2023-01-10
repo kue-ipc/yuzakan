@@ -31,6 +31,10 @@ class NetworkRepository < Hanami::Repository
     networks.where(address: normalize_address(address))
   end
 
+  def count
+    networks.count
+  end
+
   private def normalize_address(address)
     ipaddr = IPAddr.new(address)
     prefix = ipaddr.prefix

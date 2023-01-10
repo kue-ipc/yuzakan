@@ -20,7 +20,7 @@ module Yuzakan
       end
 
       private def devide_errors(errors)
-        return [[], {}] if errors.nil?
+        return [[], {}] if errors.nil? || errors.empty?
 
         array_errors = []
         hash_errors = {}
