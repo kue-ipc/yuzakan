@@ -10,6 +10,18 @@ CLEAN << 'rollup.config.mjs'
 
 CLOBBER << 'node_modules'
 
+namespace :db do
+  task :setup do
+    ROM::SQL::RakeSupport.env =
+      ROM::Configuration.new(
+        :sql,
+        ENV.fetch('DATABASE_URL'),
+        logger: Hanami.logger,
+        extensions: %i(pg_array pg_json)
+      )
+  end
+end
+
 Rake::TestTask.new do |t|
   t.pattern = 'spec/**/*_spec.rb'
   t.libs << 'spec'
