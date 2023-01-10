@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 root to: 'home#index'
 
 resource :setup, only: [:show, :create]

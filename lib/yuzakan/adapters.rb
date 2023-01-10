@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Yuzakan::Apadters::Manager
 # 各adaptersを遅延読み込みする。
 

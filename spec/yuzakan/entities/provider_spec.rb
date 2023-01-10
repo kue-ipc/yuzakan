@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../spec_helper'
 
 describe Provider do
@@ -22,8 +24,8 @@ describe Provider do
     [
       {
         name: 'str',
-        value:  Marshal.dump('文字列'),
-      }
+        value: Marshal.dump('文字列'),
+      },
     ]
   }
 

@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 module Admin
   module Controllers
     module Groups
       class Index
         include Admin::Action
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+        def call(params)
         end
       end
     end

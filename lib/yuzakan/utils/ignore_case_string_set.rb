@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'set'
 
 module Yuzakan
@@ -46,6 +48,6 @@ module Yuzakan
         enum.each do |obj|
           @attrs << IgnoreCaseStringSet.normalize(obj)
         end
-      end    end
+      end end
   end
 end

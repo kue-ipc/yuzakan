@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../spec_helper'
 
 describe AttrRepository do
@@ -18,7 +20,6 @@ describe AttrRepository do
     _(all).must_be_instance_of Array
     _(all.map(&:name)).must_equal ['hoge', 'piyo', 'fuga']
   end
-
 
   it 'find_by_name' do
     _(attr_repository.find_by_name('hoge')).must_be_instance_of Attr

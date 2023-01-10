@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require_relative '../../../../../spec_helper'
 
 describe Api::Controllers::Providers::Myself::Password::Create do
   let(:action) { Api::Controllers::Providers::Myself::Password::Create.new }
-  let(:params) { Hash[] }
+  let(:params) { {} }
 
   # it 'is successful' do
   #   response = action.call(params)

@@ -1,7 +1,9 @@
-# plese overwrite
+# frozen_string_literal: true
+
+# default let script
 
 def init_let_script
-  -<<~'LET_SCRIPT'
+  <<~'LET_SCRIPT'
     let(:action_opts) {
       {
         activity_log_repository: activity_log_repository,

@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require_relative '../../../spec_helper'
 
 describe Admin::Views::Setup::New do
-  let(:exposures) { Hash[format: :html] }
+  let(:exposures) { {format: :html} }
   let(:template)  { Hanami::View::Template.new('apps/admin/templates/setup/new.html.slim') }
   let(:view)      { Admin::Views::Setup::New.new(template, exposures) }
   let(:rendered)  { view.render }

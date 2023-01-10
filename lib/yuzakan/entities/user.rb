@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # User clearance level
 # 5: supervisor
 # 4: administrator

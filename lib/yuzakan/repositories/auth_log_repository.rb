@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AuthLogRepository < Hanami::Repository
   def by_username(username)
     auth_logs.where(username: username)

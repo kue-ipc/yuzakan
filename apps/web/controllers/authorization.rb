@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # security level
 # level 0: anonymous
 # level 1: limited user

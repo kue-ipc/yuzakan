@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Samba Account Control
 # http://www.samba.gr.jp/project/translation/Samba3-HOWTO/passdb.html#accountflags
 
@@ -23,7 +25,7 @@ module Yuzakan
         }.freeze
         SAMAB_FLAG_MAP_INVERT = SAMAB_FLAG_MAP.invert.freeze
 
-        ATTRIBUTE_NAME = -'sambaAcctFlags'
+        ATTRIBUTE_NAME = 'sambaAcctFlags'
 
         # override
         def initialize(argv = DEFAULT_USER_FLAGS)

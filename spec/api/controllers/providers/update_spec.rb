@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../../spec_helper'
 
 describe Api::Controllers::Providers::Update do
@@ -11,10 +13,10 @@ describe Api::Controllers::Providers::Update do
 
   let(:provider_params) {
     {
-      name: 'provider1', 
+      name: 'provider1',
       display_name: 'プロバイダー①',
       adapter_name: 'test',
-       order: 16,
+      order: 16,
       readable: true,
       writable: true,
       authenticatable: true,
@@ -90,7 +92,7 @@ describe Api::Controllers::Providers::Update do
         label: provider_params[:display_name],
         params: provider_params_attributes_params,
       })
-     end
+    end
 
     it 'is successful with different' do
       response = action.call({**params, name: 'hoge', label: 'ほげ'})
@@ -102,7 +104,7 @@ describe Api::Controllers::Providers::Update do
         label: provider_params[:display_name],
         params: provider_params_attributes_params,
       })
-     end
+    end
 
     describe 'not existed' do
       let(:provider_repository) {
@@ -146,7 +148,7 @@ describe Api::Controllers::Providers::Update do
           label: provider_params[:display_name],
           params: provider_params_attributes_params,
         })
-         end
+      end
 
       it 'is successful with diffrent only label' do
         response = action.call({**params, labal: 'ほげ'})
@@ -158,7 +160,7 @@ describe Api::Controllers::Providers::Update do
           label: provider_params[:display_name],
           params: provider_params_attributes_params,
         })
-         end
+      end
 
       it 'is failure with different' do
         response = action.call({**params, name: 'hoge', label: 'ほげ'})

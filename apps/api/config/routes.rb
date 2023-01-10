@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 resources :adapters, only: [:index, :show]
 
 resources :attrs, only: [:index, :show, :create, :update, :destroy]

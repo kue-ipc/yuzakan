@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Yuzakan::Utils::Pager
 
 module Yuzakan

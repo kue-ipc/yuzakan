@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ConfigRepository < Hanami::Repository
   private :create, :update, :delete
 

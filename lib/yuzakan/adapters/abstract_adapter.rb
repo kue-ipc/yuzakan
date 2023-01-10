@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # adapter
 #
 # initialize(params)
@@ -71,7 +73,7 @@ module Yuzakan
             name
           end
         end
-      
+
         def label
           display_name || name
         end
@@ -109,7 +111,7 @@ module Yuzakan
 
       self.abstract_adapter = true
 
-      def initialize(params, logger: Logger.new(STDERR))
+      def initialize(params, logger: Logger.new($stderr))
         @params = params
         @logger = logger
       end

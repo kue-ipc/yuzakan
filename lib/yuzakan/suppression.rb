@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # メッセージ抑止
 # 2.7系におけるobsoleteやdeprecatedを抑止する。
 # 3.1系で追加されたメソッドなどは対応する。

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'hanami/helpers'
 require 'hanami/assets'
 
@@ -102,7 +104,7 @@ module Web
 
     configure :production do
       scheme 'https'
-      host   ENV['HOST']
+      host   ENV.fetch('HOST', nil)
       port   443
 
       assets do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # change compressor from uglifier to terser
 
 require 'hanami/assets/compressors/uglifier_javascript'
@@ -25,8 +27,8 @@ module Yuzakan
           '(\bimport\b\s*)"([^"]*)"',
           '(\bimport\b\s*\(\s*)"([^"]*)"(\s*\))',
         ].each do |re_str|
-          data.gsub!(Regexp.compile(re_str), '\1"\2?v=' + Yuzakan.version + '"\3')
-          data.gsub!(Regexp.compile(re_str.tr('"', "'")), '\1\'\2?v=' + Yuzakan.version + '\'\3')
+          data.gsub!(Regexp.compile(re_str), "\\1\"\\2?v=#{Yuzakan.version}\"\\3")
+          data.gsub!(Regexp.compile(re_str.tr('"', "'")), "\\1'\\2?v=#{Yuzakan.version}'\\3")
         end
         data
       end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'hanami/action/cache'
 
 module Admin
@@ -6,7 +8,7 @@ module Admin
       class Index
         include Admin::Action
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+        def call(params)
         end
       end
     end

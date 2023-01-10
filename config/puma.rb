@@ -1,4 +1,6 @@
-hanami_env = ENV.fetch('HANAMI_ENV') { 'development' }
+# frozen_string_literal: true
+
+hanami_env = ENV.fetch('HANAMI_ENV', 'development')
 app_root = Dir.pwd
 
 if !ENV.include?('PORT') && hanami_env == 'production'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'ldap_adapter'
 require_relative 'ad_adapter/account_control'
 

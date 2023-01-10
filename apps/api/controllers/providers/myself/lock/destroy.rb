@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module Controllers
     module Providers
@@ -6,7 +8,7 @@ module Api
           class Destroy
             include Api::Action
 
-            def call(params)
+            def call(_params)
               self.body = 'OK'
             end
           end

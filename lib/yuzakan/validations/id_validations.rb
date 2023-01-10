@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'hanami/validations'
 require_relative '../predicates/name_predicates'
 

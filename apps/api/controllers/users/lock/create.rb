@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module Controllers
     module Users
@@ -7,7 +9,7 @@ module Api
 
           security_level 3
 
-          def call(params)
+          def call(_params)
             self.status = 201
             self.body = {}.to_json
           end

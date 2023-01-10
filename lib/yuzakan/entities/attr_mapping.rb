@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AttrMapping < Hanami::Entity
   CONVERSIONS = %w[
     posix_time
@@ -7,13 +9,13 @@ class AttrMapping < Hanami::Entity
     j2e
   ].freeze
 
-  TRUE_STR_VALUES = %w[true yes on]
+  TRUE_STR_VALUES = %w[true yes on].freeze
   TRUE_VALUES = [true, 1] +
                 TRUE_STR_VALUES +
                 TRUE_STR_VALUES.map(&:upcase) +
                 TRUE_STR_VALUES.map(&:intern)
 
-  FALSE_STR_VALUES = %w[false no off]
+  FALSE_STR_VALUES = %w[false no off].freeze
   FALSE_VALUES = [nil, false, 0] +
                  FALSE_STR_VALUES +
                  FALSE_STR_VALUES.map(&:upcase) +

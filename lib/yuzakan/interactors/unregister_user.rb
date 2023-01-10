@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'hanami/interactor'
 require 'hanami/validations'
 require_relative '../predicates/name_predicates'
@@ -29,16 +31,14 @@ class UnregisterUser
   def call(params)
     @user = @user_repository.find_by_username(params[:username])
     if @user
-      @user_repository.update(@user.id, 
-      deleted: true, 
-      deleted_at: Time.now)
+      @user_repository.update(@user.id,
+                              deleted: true,
+                              deleted_at: Time.now)
     end
     @user_repository.set_primary_group(@user, nil)
     current_groups = @user_repository.find_with_groups(@user.id).groups
     current_groups.groups.each do |current_group|
-      if groups.none? { |group| group.groupname == current_group.groupname }
-        @user_repository.remove_group(user, group)
-      end
+      @user_repository.remove_group(user, group) if groups.none? { |group| group.groupname == current_group.groupname }
     end
   end
 

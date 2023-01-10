@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Samba LDAP
 # sambaLMPassword はデフォルト無効とし、設定済みは削除する。
 # sambaNTPassword はデフォルト有効とし、設定する。

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module Controllers
     module Myself
@@ -87,10 +89,10 @@ module Api
             self.status = 200
             self.body = generate_json({
               password: {
-              size: password_size,
-              types: password_types,
-              score: password_score,
-              }
+                size: password_size,
+                types: password_types,
+                score: password_score,
+              },
             })
           end
         end

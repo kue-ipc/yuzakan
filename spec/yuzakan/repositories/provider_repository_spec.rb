@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../spec_helper'
 
 describe ProviderRepository do
@@ -85,7 +87,7 @@ describe ProviderRepository do
     describe 'with adapter' do
       # TODO
       # attr_mappings and attr
-      
+
       # ordered_all_with_adapter
       # find_with_adapter
       # find_with_adapter_by_name

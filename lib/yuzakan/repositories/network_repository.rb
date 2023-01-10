@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ipaddr'
 
 class NetworkRepository < Hanami::Repository
@@ -39,7 +41,7 @@ class NetworkRepository < Hanami::Repository
     ipaddr = IPAddr.new(address)
     prefix = ipaddr.prefix
     if (prefix == 32 && ipaddr.ipv4?) ||
-      (prefix == 128 && ipaddr.ipv6?)
+       (prefix == 128 && ipaddr.ipv6?)
       ipaddr.to_s
     else
       "#{ipaddr}/#{ipaddr.prefix}"

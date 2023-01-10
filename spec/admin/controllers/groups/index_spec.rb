@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../../spec_helper'
 
 describe Admin::Controllers::Groups::Index do
@@ -27,6 +29,4 @@ describe Admin::Controllers::Groups::Index do
       _(response[1]['Location']).must_equal '/'
     end
   end
-
-
 end

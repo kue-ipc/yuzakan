@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # AD Account Control
 # https://learn.microsoft.com/ja-jp/troubleshoot/windows-server/identity/useraccountcontrol-manipulate-account-properties
 
@@ -34,7 +36,7 @@ module Yuzakan
         DEFAULT_USER_FLAGS = Flag::NORMAL_ACCOUNT | Flag::DONT_EXPIRE_PASSWORD
         LOCKED_FLAGS = Flag::ACCOUNTDISABLE | Flag::LOCKOUT
 
-        ATTRIBUTE_NAME = -'userAccountControl'
+        ATTRIBUTE_NAME = 'userAccountControl'
 
         include Enumerable
 

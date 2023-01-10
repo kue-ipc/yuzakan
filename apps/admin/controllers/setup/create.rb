@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'hanami/action/cache'
 
 module Admin
@@ -62,9 +64,9 @@ module Admin
           admin_user = params[:setup][:admin_user]
 
           setup_network &&
-          setup_local_provider &&
-          setup_admin(admin_user) &&
-          setup_config(config)
+            setup_local_provider &&
+            setup_admin(admin_user) &&
+            setup_config(config)
 
           unless flash[:errors].empty?
             self.body = Admin::Views::Setup::New.render(exposures)

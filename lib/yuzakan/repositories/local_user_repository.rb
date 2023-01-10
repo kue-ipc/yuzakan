@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LocalUserRepository < Hanami::Repository
   def by_username(username)
     local_users.where(username: username)

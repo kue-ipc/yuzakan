@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # ParamType class
 #
 # params is Hash Array
