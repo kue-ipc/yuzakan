@@ -98,7 +98,7 @@ module Admin
 
           @provider_repository.create({
             name: 'local',
-            label: 'ローカル',
+            display_name: 'ローカル',
             order: '0',
             adapter_name: 'local',
             readable: true,

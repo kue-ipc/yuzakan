@@ -5,8 +5,8 @@ import {fetchJsonGet} from '../api/fetch_json.js'
 providerTr = ({provider}) ->
   html.tr {}, [
     html.td {},
-      html.a {href: "/admin/providers/#{provider.name}"}, text provider.name
-    html.td {}, text provider.label
+      html.a {href: "/admin/providers/#{provider.name}"}, text provider.label
+    html.td {}, text provider.name
     html.td {}, text provider.adapter_name
     html.td {}, if provider.check?
       if provider.check
@@ -56,7 +56,7 @@ view = ({providers}) ->
     html.thead {},
       html.tr {}, [
         html.th {}, text '名前'
-        html.th {}, text '表示名'
+        html.th {}, text '識別子'
         html.th {}, text 'アダプター'
         html.th {}, text '状態'
       ]
