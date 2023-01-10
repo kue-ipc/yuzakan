@@ -11,6 +11,7 @@
 安定化するまでは前のバージョンとの互換性がない場合があります。
 
 * v0.6からDBの構成を大幅に変更しています。
+* Hanami 2.0 へ移行中です
 
 ## TODO
 
@@ -53,8 +54,8 @@
 
 ### プログラミング言語
 
-* Ruby >= 2.6 < 3.0
-* Node.js >= 12
+* Ruby >= 3.1
+* Node.js >= 18
 
 Node.jsは必須です。
 
@@ -75,11 +76,12 @@ MariaDBはutf8mb4にしてください。DATABES_URLでは"?encoding=utf8mb4"を
 
 ### サポートするOS/ディストリビューション
 
+* [ ] Rocky Linux 9 (予定)
+* [ ] Ubuntu 22.04 LTS (予定)
 * [x] Rocky Linux 8
 * [x] Ubuntu 20.04 LTS
 * [ ] CentOS 8
 * [ ] CentOS Stream 8
-* [ ] Ubuntu 22.04 LTS (予定)
 
 現在はRocky Linux 8とUbuntu 20.04 LTSでのみテストしています。
 

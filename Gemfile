@@ -1,11 +1,13 @@
 source 'https://rubygems.org'
 
 gem 'rake'
-gem 'hanami',       '~> 1.3'
-gem 'hanami-model', '~> 1.3'
+gem 'hanami', '~> 2.0'
+gem 'rom', '~> 5.3'
+gem 'rom-sql', '~> 3.6'
+# gem 'hanami-model', '~> 1.3'
 
 # bug? 0.9.0 confilcet 0.10.0 error
-gem 'dry-container', '~> 0.8.0'
+# gem 'dry-container', '~> 0.8.0'
 
 gem 'rack', '>= 2.2.2'
 
