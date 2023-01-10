@@ -8,7 +8,7 @@
     "@popperjs/core": "^2.11.6",
     "@typopro/web-iosevka": "^3.7.5",
     "bootstrap": "^5.2.3",
-    "bootstrap-icons": "^1.10.2",
+    "bootstrap-icons": "^1.10.3",
     "firacode": "^6.2.0",
     "http-link-header": "^1.1.0",
     "hyperapp": "^2.0.22",
@@ -20,14 +20,14 @@
   },
   "devDependencies": {
     "@coffeelint/cli": "^5.2.11",
-    "@rollup/plugin-commonjs": "^23.0.3",
-    "@rollup/plugin-json": "^5.0.2",
+    "@rollup/plugin-commonjs": "^24.0.0",
+    "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "coffeescript": "^2.7.0",
     "postcss-sass": "^0.5.0",
-    "rollup": "^3.6.0",
+    "rollup": "^3.9.1",
     "rollup-plugin-coffee-script": "^2.0.0",
-    "stylelint": "^14.16.0",
+    "stylelint": "^14.16.1",
     "stylelint-config-standard": "^29.0.0",
     "stylelint-config-standard-scss": "^6.1.0"
   }
