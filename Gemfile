@@ -1,29 +1,29 @@
 source 'https://rubygems.org'
 
-gem 'rake'
 gem 'hanami', '~> 2.0'
+gem 'hanami-router', '~> 2.0'
+gem 'hanami-controller', '~> 2.0'
+gem 'hanami-validations', '~> 2.0'
+
+gem 'dry-types', '~> 1.0', '>= 1.6.1'
+gem 'puma'
+gem 'rake'
+
 gem 'rom', '~> 5.3'
 gem 'rom-sql', '~> 3.6'
-# gem 'hanami-model', '~> 1.3'
-
-# bug? 0.9.0 confilcet 0.10.0 error
-# gem 'dry-container', '~> 0.8.0'
-
-gem 'rack', '>= 2.2.2'
-
 # Database
 gem 'mysql2'
 # gem 'pg'
 # gem 'sqlite3'
 
+# templates
 gem 'slim'
-
 gem 'sassc'
-
 gem 'coffee-script'
 gem 'uglifier'
 gem 'terser'
 
+# utils
 gem 'bcrypt'
 gem 'zxcvbn-js', require: 'zxcvbn'
 
@@ -43,25 +43,33 @@ gem 'google-apis-admin_directory_v1'
 # xxHash
 gem 'xxhash'
 
-group :development do
-  # Code reloading
-  # See: http://hanamirb.org/guides/projects/code-reloading
-  gem 'shotgun', platforms: :ruby
-  gem 'hanami-webconsole'
+group :development, :test do
+  gem 'dotenv'
 end
 
-group :test, :development do
-  gem 'dotenv', '~> 2.4'
-  gem 'pry'
+group :cli, :development do
+  gem 'hanami-reloader'
+end
+
+group :cli, :development, :test do
+  gem 'hanami-rspec'
+end
+
+group :development do
+  gem 'guard-puma', '~> 0.8'
 end
 
 group :test do
+  gem 'rack-test'
+  gem 'database_cleaner-sequel'
+
+  # minitest spec
   gem 'minitest'
   gem 'capybara'
   gem 'rr', require: false
 end
 
 group :production do
-  gem 'puma', '~> 5.6'
+  # for puma on systemd
   gem 'sd_notify'
 end
