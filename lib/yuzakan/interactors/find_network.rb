@@ -28,7 +28,7 @@ class FindNetwork
 
     ip_addr = IPAddr.new(ip)
 
-    @network = @network_repository.all.find { |network| network.include?(ip) }
+    @network = @network_repository.all.find { |network| network.include?(ip_addr) }
   end
 
   private def valid?(params)

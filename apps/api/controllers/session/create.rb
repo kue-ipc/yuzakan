@@ -8,9 +8,6 @@ module Api
 
         security_level 0
 
-        params do
-        end
-
         class Params < Hanami::Action::Params
           predicates NamePredicates
           messages :i18n

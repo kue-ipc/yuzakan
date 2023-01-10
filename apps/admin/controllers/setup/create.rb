@@ -60,13 +60,10 @@ module Admin
             return
           end
 
-          config = params[:setup][:config]
-          admin_user = params[:setup][:admin_user]
-
           setup_network &&
             setup_local_provider &&
-            setup_admin(admin_user) &&
-            setup_config(config)
+            setup_admin(@setup[:admin_user]) &&
+            setup_config(@setup[:config])
 
           unless flash[:errors].empty?
             self.body = Admin::Views::Setup::New.render(exposures)

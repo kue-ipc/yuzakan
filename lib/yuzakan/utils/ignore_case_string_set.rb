@@ -48,6 +48,7 @@ module Yuzakan
         enum.each do |obj|
           @attrs << IgnoreCaseStringSet.normalize(obj)
         end
-      end end
+      end
+    end
   end
 end

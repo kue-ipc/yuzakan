@@ -547,7 +547,7 @@ module Yuzakan
 
       private def scope_in?(dn, base:, scope:)
         dn_arr = dn.to_a.map(&:downcase)
-        base_arr = dn.to_a.map(&:downcase)
+        base_arr = base.to_a.map(&:downcase)
         return false unless dn_arr[-base_arr.size, base_arr.size] == base_arr
 
         case scope
