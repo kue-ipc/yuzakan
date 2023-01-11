@@ -7,13 +7,11 @@ module Admin
     module Config
       class Edit
         include Admin::Action
-        include Hanami::Action::Cache
 
-        cache_control :no_store
+        expose :config
 
-        expose :client
-
-        def call(params)
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+          @config = current_config
         end
       end
     end

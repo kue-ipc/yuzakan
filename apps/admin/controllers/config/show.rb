@@ -20,8 +20,8 @@ module Admin
         def call(params) # rubocop:disable Lint/UnusedMethodArgument
           self.format = :yml
 
-          @attrs = @attr_repository.ordered_all_with_adapter
-          @providers = @provider_repository.ordered_all_with_mappings
+          @attrs = @attr_repository.ordered_all_with_mappings
+          @providers = @provider_repository.ordered_all_with_adapter
         end
       end
     end

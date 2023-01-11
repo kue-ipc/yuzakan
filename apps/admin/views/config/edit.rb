@@ -10,7 +10,7 @@ module Admin
           Form.new(
             :config,
             routes.path(:config),
-            {config: current_config},
+            {config: config},
             method: :patch)
         end
 

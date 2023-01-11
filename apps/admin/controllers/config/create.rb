@@ -54,6 +54,7 @@ module Admin
 
           unless params.valid?
             flash[:errors] << params.errors
+            flash[:failure] = '設定に失敗しました。'
             self.body = Admin::Views::Config::New.render(exposures)
             return
           end
@@ -64,11 +65,12 @@ module Admin
             setup_config(@config)
 
           unless flash[:errors].empty?
+            flash[:failure] = '設定に失敗しました。'
             self.body = Admin::Views::Config::New.render(exposures)
             return
           end
 
-          flash[:success] = '初期セットアップが完了しました。' \
+          flash[:success] = '初期設定が完了しました。' \
                             '管理者でログインしてください。'
         end
 

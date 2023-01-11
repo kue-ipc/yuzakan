@@ -9,18 +9,19 @@ p
   strong 長期保存する場合は、別途暗号化を行ってください。
 
 .mb-3
-  = link_to '設定のエクスポート', routes.path(:export_config),
+  = link_to '設定のエクスポート', routes.path(:config),
     class: 'btn btn-primary',
+    type: 'text/yaml',
     download: "yuzakan_#{Time.now.strftime('%Y%m%d-%H%M%S')}.yml"
 
-= form_for :config, routes.path(:import_config), enctype: 'multipart/form-data' do
+= form_for :config, routes.path(:config), enctype: 'multipart/form-data' do
   - div class: 'input-group' do
-    - file_field :file, class: 'form-control'
+    - file_field :file, class: 'form-control', accept: '.yml,.yaml,text/yaml'
     - submit '設定のインポート', class: 'btn btn-danger'
 
 hr
 
-h4 個別設定
+h4 設定
 
 = form_for form do
   - div class: 'mb-3' do

@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# Yuzakan::Utils::IgnoreCaseStringSet
+#
+# 大文字小文字を無視した文字列のSet
+# 要素は全て小文字化し、freezeされる
+
 require 'set'
 
 module Yuzakan
@@ -8,7 +13,7 @@ module Yuzakan
       include Enumerable
 
       def self.normalize(obj)
-        obj.to_s.downcase.freeze
+        -obj.to_s.downcase
       end
 
       def initialize(enum = nil)
