@@ -13,6 +13,8 @@ module NamePredicates
     @
     [a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*
   \z}x.freeze
+  VALID_DOMAIN_NAME =
+    /\A[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\z/.freeze
 
   predicate(:name?) do |current|
     current =~ VALID_NAME
@@ -24,5 +26,9 @@ module NamePredicates
 
   predicate(:email?) do |current|
     current =~ VALID_EMAIL_ADDRESS
+  end
+
+  predicate(:domain?) do |current|
+    current =~ VALID_DOMAIN_NAME
   end
 end

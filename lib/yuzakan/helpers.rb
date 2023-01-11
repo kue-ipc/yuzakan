@@ -6,6 +6,7 @@ require_relative 'helpers/escape_helper'
 require_relative 'helpers/grid_helper'
 require_relative 'helpers/icon_helper'
 require_relative 'helpers/menu_helper'
+require_relative 'helpers/pattern_helper'
 
 module Yuzakan
   module Helpers
@@ -17,6 +18,7 @@ module Yuzakan
         include Yuzakan::Helpers::GridHelper
         include Yuzakan::Helpers::IconHelper
         include Yuzakan::Helpers::MenuHelper
+        include Yuzakan::Helpers::PatternHelper
       end
     end
   end

@@ -6,7 +6,22 @@ module Admin
       class Show
         include Admin::Action
 
-        def call(params)
+        expose :attrs
+        expose :providers
+
+        def initialize(attr_repository: AttrRepository.new,
+                       provider_repository: ProviderRepository.new,
+                       **opts)
+          super
+          @attr_repository ||= attr_repository
+          @provider_repository ||= provider_repository
+        end
+
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+          self.format = :yml
+
+          @attrs = @attr_repository.ordered_all_with_adapter
+          @providers = @provider_repository.ordered_all_with_mappings
         end
       end
     end

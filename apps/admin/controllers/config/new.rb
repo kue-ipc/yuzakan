@@ -22,6 +22,9 @@ module Admin
           @config = {}
           @admin_user = {}
         end
+
+        def configurate!
+        end
       end
     end
   end

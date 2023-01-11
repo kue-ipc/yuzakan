@@ -1,11 +1,23 @@
+# frozen_string_literal: true
+
 require_relative '../../../spec_helper'
 
 describe Admin::Controllers::Config::New do
-  let(:action) { Admin::Controllers::Config::New.new }
-  let(:params) { Hash[] }
+  let(:action) { Admin::Controllers::Config::New.new(**action_opts) }
+  eval(init_let_script) # rubocop:disable Security/Eval
 
-  it 'is successful' do
+  it 'rediret to root' do
     response = action.call(params)
-    _(response[0]).must_equal 200
+    _(response[0]).must_equal 302
+    _(response[1]['Location']).must_equal '/'
+  end
+
+  describe 'before initialized' do
+    let(:config_repository) { ConfigRepository.new.tap { |obj| stub(obj).current { nil } } }
+
+    it 'is successful' do
+      response = action.call(params)
+      _(response[0]).must_equal 200
+    end
   end
 end

@@ -25,7 +25,7 @@ module Web
     end
 
     private def reply_uninitialized
-      redirect_to Admin.routes.path(:setup)
+      redirect_to Admin.routes.path(:new_config)
     end
   end
 end

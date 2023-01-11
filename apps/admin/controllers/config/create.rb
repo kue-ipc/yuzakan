@@ -16,10 +16,10 @@ module Admin
             required(:config).schema do
               required(:title).filled(:str?, max_size?: 255)
               required(:domain).maybe(:str?, max_size?: 255)
-            end
-            required(:admin_user).schema do
-              required(:username).filled(:str?, :name?, max_size?: 255)
-              required(:password).filled(:str?, max_size?: 255).confirmation
+              required(:admin_user).schema do
+                required(:username).filled(:str?, :name?, max_size?: 255)
+                required(:password).filled(:str?, min_size?: 8, max_size?: 255).confirmation
+              end
             end
           end
         end
@@ -49,23 +49,22 @@ module Admin
             redirect_to Web.routes.path(:root)
           end
 
-          @config = params[:config]
-          @admin_user = params[:admin_user]
+          @config = params[:config]&.except(:admin_user) || {}
+          @admin_user = params[:config]&.[](:admin_user) || {}
 
           unless params.valid?
             flash[:errors] << params.errors
-            pp flash[:errors]
-            self.body = Admin::Views::Setup::New.render(exposures)
+            self.body = Admin::Views::Config::New.render(exposures)
             return
           end
 
           setup_network &&
             setup_local_provider &&
-            setup_admin(@setup[:admin_user]) &&
-            setup_config(@setup[:config])
+            setup_admin(@admin_user) &&
+            setup_config(@config)
 
           unless flash[:errors].empty?
-            self.body = Admin::Views::Setup::New.render(exposures)
+            self.body = Admin::Views::Config::New.render(exposures)
             return
           end
 
