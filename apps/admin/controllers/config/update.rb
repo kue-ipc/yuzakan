@@ -97,12 +97,16 @@ module Admin
         def initialize(config_repository: ConfigRepository.new,
                        network_repository: NetworkRepository.new,
                        provider_repository: ProviderRepository.new,
+                       provider_param_repository: ProviderParamRepository.new,
+                       attr_repository: AttrRepository.new,
                        user_repository: UserRepository.new,
                        **opts)
           super
           @config_repository ||= config_repository
           @network_repository ||= network_repository
           @provider_repository ||= provider_repository
+          @provider_param_repository ||= provider_param_repository
+          @attr_repository ||= attr_repository
           @user_repository ||= user_repository
         end
 
@@ -160,31 +164,6 @@ module Admin
 
               update_attrs(data[:attrs]) if data[:attrs]
               raise '属性の設定に失敗しました。' unless falsh[:errors].empty?
-
-              #   replace_providers_and_attrs if
-              #   provider_repository = ProviderRepository.new
-              #   attr_repository = AttrRepository.new
-              #   # 削除
-              #   provider_repository.all.each do |provider|
-              #     provider_repository.delete(provider.id)
-              #   end
-              #   attr_repository.clear
-
-              #   data[:providers].each do |provider_data|
-              #     result = UpdateProvider.new(provider_repository: provider_repository).call(provider_data)
-              #     if result.failure?
-              #       flash[:errors].concat(result.errors)
-              #       raise 'プロバイダーの設定に失敗しました。'
-              #     end
-              #   end
-
-              #   data[:attrs].each do |attr_data|
-              #     result = CreateAttr.new(attr_repository: attr_repository).call(attr_data)
-              #     if result.failure?
-              #       flash[:errors].concat(result.errors)
-              #       raise '属性の設定に失敗しました。'
-              #     end
-              #   end
             end
           rescue => e
             Hanami.logger.error e
@@ -200,32 +179,89 @@ module Admin
         end
 
         def update_providers(provider_datas)
-          current_providers = provider_repository.all.to_h { |provider| [provider.name, provider] }
-          check_providers = current_providers.keys.to_set
-          provider_datas.each do |provider_data|
+          existing_providers = named_providers.dup
+          # プロバイダーのリストは初期化しておく
+          @named_providers = {}
+
+          provider_datas.each_with_index do |provider_data, idx|
+            provider_name = provider_data[:name]
+            current_provider = existing_providers.delete(provider_name)
+
+            data = provider_data.dup
+            provider_params = provider_data.delete[:params]
+            data[:order] = idx * 8
+
             provider =
-              if current_providers.key?(provider_data[:name])
-                check_providers.delete(provider_data[:name])
-                @provider_repository.update(@provider.id, provider_data.except(:params))
+              if current_provider
+                @provider_repository.update(current_provider.id, data)
               else
-                @provider_repository.create(provider_data.except(:params))
+                @provider_repository.create(data)
               end
+            # プロバイダーのリストを作り直す
+            @named_providers[:provider_name] = provider
 
+            next unless provider_params
 
-            result = UpdateProvider.new(provider_repository: provider_repository).call(provider_data)
-            if result.failure?
-              flash[:errors].concat(result.errors)
-              raise 'プロバイダーの設定に失敗しました。'
+            existing_params = provider.params.dup
+            provider.adapter_param_types.each do |param_type|
+              value = param_type.convert_value(existing_params[param_type.name])
+              next if value.nil?
+
+              data = {name: param_type.name.to_s, value: param_type.dump_value(value)}
+
+              if existing_params.key?(param_type.name)
+                current_value = existing_params.delete(param_type.name)
+
+                if current_value != value
+                  param_name = param_type.name.to_s
+                  existing_provider_param = provider.provider_params.find { |param| param.name == param_name }
+                  if existing_provider_param
+                    @provider_param_repository.update(existing_provider_param.id, data)
+                  else
+                    # 名前がないということはあり得ない？
+                    @provider_repository.add_param(provider, data)
+                  end
+                end
+              else
+                @provider_repository.add_param(provider, data)
+              end
+            end
+            existing_params.each_key do |key|
+              @provider_repository.delete_param_by_name(provider, key.to_s)
             end
           end
+
+          # リストになかったプロバイダーを削除
+          existing_providers.each_value { |provider| @provider_repository.delete(provider.id) }
         end
 
         def update_attrs(attr_datas)
-              #   provider_repository.all.each do |provider|
-              #     provider_repository.delete(provider.id)
-              #   end
-              #   attr_repository.clear
-            end
+          @attr_repository.clear
+
+          attr_datas.each_with_index do |attr_data, idx|
+            data = attr_data.dup
+            data[:oredr] = idx * 8
+
+            data[:attr_mappings] = data[:attr_mappings]
+              &.reject { |am_params| am_params[:name].nil? || am_params[:name].empty? }
+              &.map do |am_params|
+                {
+                  **am_params.slice(:name, :conversion),
+                  provider_id: provider_id_by_name(am_params[:provider]),
+                }
+              end
+
+            @attr_repository.create_with_mappings(params)
+          end
+        end
+
+        private def named_providers
+          @named_providers ||= @provider_repository.all.to_h { |provider| [provider.name, provider] }
+        end
+      
+        private def provider_id_by_name(name)
+          named_providers[name]
+        end
       end
     end
   end
