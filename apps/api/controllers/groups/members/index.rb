@@ -45,7 +45,7 @@ module Api
 
             providers_items = @providers.to_h do |provider|
               list = provider.member_list(groupname)
-              [provider.name, list && Set.new(list)]
+              [provider.name, list&.to_set]
             end
 
             all_items = providers_items.values.compact.sum(Set.new).to_a.sort

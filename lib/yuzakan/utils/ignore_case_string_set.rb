@@ -5,8 +5,6 @@
 # 大文字小文字を無視した文字列のSet
 # 要素は全て小文字化し、freezeされる
 
-require 'set'
-
 module Yuzakan
   module Utils
     class IgnoreCaseStringSet

@@ -8,6 +8,8 @@ module Admin
       class Edit
         include Admin::Action
 
+        security_level 5
+
         expose :config
 
         def call(params) # rubocop:disable Lint/UnusedMethodArgument

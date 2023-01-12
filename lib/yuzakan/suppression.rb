@@ -22,7 +22,7 @@ module URI
   end
 end
 
-# Ruby 3.1 で追加 (Active Supportにあり)
+# Ruby 3.1 で追加
 class Hash
   def except(*keys)
     reject { |key, _value| keys.include?(key) }
@@ -32,3 +32,6 @@ class Hash
     select { |key, _value| keys.include?(key) }
   end
 end
+
+# Ruby 3.2 で組み込みになるため、常にrequireする
+require 'set'

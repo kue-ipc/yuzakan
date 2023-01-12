@@ -6,6 +6,8 @@ module Admin
       class Show
         include Admin::Action
 
+        security_level 5
+
         expose :attrs
         expose :providers
 
