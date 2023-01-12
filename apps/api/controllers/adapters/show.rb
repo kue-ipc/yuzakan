@@ -8,9 +8,10 @@ module Api
       class Show
         include Api::Action
 
+        params IdParams
+
         def call(params)
-          id_validation = IdValidations.new(params).validate
-          halt_json 400, errors: [id_validation.messages] if id_validation.failure?
+          halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
           @adapter = ADAPTERS_MANAGER.by_name(params[:id])
           halt_json 404 unless @adapter

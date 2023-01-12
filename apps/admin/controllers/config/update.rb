@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'hanami/action/cache'
+
 
 module Admin
   module Controllers
@@ -36,7 +36,7 @@ module Admin
         end
 
         class YamlValidator
-          include Hanam::Validations
+          include Hanami::Validations
 
           predicates NamePredicates
           messages :i18n
@@ -60,6 +60,7 @@ module Admin
             end
             # rubocop:disable Layout/BlockEndNewline, Layout/MultilineBlockLayout, Style/BlockDelimiters
             optional(:providers) { array? { each { schema {
+              predicates NamePredicates
               required(:name).filled(:str?, :name?, max_size?: 255)
               optional(:display_name).maybe(:str?, max_size?: 255)
               required(:adapter_name).filled(:str?, :name?, max_size?: 255)
@@ -74,6 +75,7 @@ module Admin
               optional(:params) { hash? }
             } } } }
             optional(:attrs) { array? { each { schema {
+              predicates NamePredicates
               required(:name).filled(:str?, :name?, max_size?: 255)
               optional(:display_name).maybe(:str?, max_size?: 255)
               required(:type).filled(:str?)
@@ -81,6 +83,7 @@ module Admin
               optional(:readonly).filled(:bool?)
               optional(:code).maybe(:str?, max_size?: 4096)
               optional(:attr_mappings) { array? { each { schema {
+                predicates NamePredicates
                 required(:provider).filled(:str?, :name?, max_size?: 255)
                 required(:name).maybe(:str?, max_size?: 255)
                 optional(:conversion) { none? | included_in?(AttrMapping::CONVERSIONS) }
