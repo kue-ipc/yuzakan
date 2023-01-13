@@ -2,14 +2,7 @@
 
 root to: 'home#index'
 
-resource :setup, only: [:show, :create]
-
-resource :config, only: [:show, :new, :create, :edit, :update] do
-  member do
-    post 'import'
-    get 'export'
-  end
-end
+resource :config, only: [:show, :new, :create, :edit, :update]
 put 'config', to: 'config#replace', as: :config
 
 resources :providers, only: [:index, :show]
