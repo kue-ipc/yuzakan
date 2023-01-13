@@ -2,6 +2,6 @@
 
 require_relative '../../spec_helper'
 
-describe GroupRepository do
+RSpec.describe GroupRepository do
   # place your tests here
 end

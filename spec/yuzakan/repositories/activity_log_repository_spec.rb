@@ -2,6 +2,6 @@
 
 require_relative '../../spec_helper'
 
-describe ActivityLogRepository do
+RSpec.describe ActivityLogRepository do
   # place your tests here
 end

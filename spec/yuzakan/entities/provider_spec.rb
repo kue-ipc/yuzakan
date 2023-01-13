@@ -2,7 +2,7 @@
 
 require_relative '../../spec_helper'
 
-describe Provider do
+RSpec.describe Provider do
   let(:attributes) {
     {
       name: 'test',
@@ -31,7 +31,7 @@ describe Provider do
 
   it 'test adapter provider' do
     provider = Provider.new(**attributes)
-    _(provider.name).must_equal 'test'
-    _(provider.params[:str]).must_equal '文字列'
+    expect(provider.name).must_equal 'test'
+    expect(provider.params[:str]).must_equal '文字列'
   end
 end

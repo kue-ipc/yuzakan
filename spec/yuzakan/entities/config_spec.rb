@@ -2,6 +2,6 @@
 
 require_relative '../../spec_helper'
 
-describe Config do
+RSpec.describe Config do
   # place your tests here
 end

@@ -2,7 +2,7 @@
 
 require_relative '../../../spec_helper'
 
-describe Web::Controllers::Google::Show do
+RSpec.describe Web::Controllers::Google::Show do
   let(:action)  { Web::Controllers::Google::Show.new }
   let(:params)  { {'REMOTE_ADDR' => '::1', 'rack.session' => session} }
   let(:session) { {user_id: user_id, access_time: Time.now} }
@@ -11,6 +11,6 @@ describe Web::Controllers::Google::Show do
 
   # it 'is successful' do
   #   response = action.call(params)
-  #   _(response[0]).must_equal 200
+  #   expect(response[0]).must_equal 200
   # end
 end

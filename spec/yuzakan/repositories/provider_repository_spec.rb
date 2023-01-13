@@ -2,7 +2,7 @@
 
 require_relative '../../spec_helper'
 
-describe ProviderRepository do
+RSpec.describe ProviderRepository do
   let(:provider_repository) { ProviderRepository.new }
 
   before do
@@ -17,24 +17,24 @@ describe ProviderRepository do
 
   it 'ordered_all' do
     all = provider_repository.ordered_all
-    _(all).must_be_instance_of Array
-    _(all.map(&:name)).must_equal ['hoge', 'piyo', 'fuga']
+    expect(all).must_be_instance_of Array
+    expect(all.map(&:name)).must_equal ['hoge', 'piyo', 'fuga']
   end
 
   it 'find_by_name' do
-    _(provider_repository.find_by_name('hoge')).must_be_instance_of Provider
-    _(provider_repository.find_by_name('moe')).must_be_nil
+    expect(provider_repository.find_by_name('hoge')).must_be_instance_of Provider
+    expect(provider_repository.find_by_name('moe')).must_be_nil
   end
 
   it 'exist_by_name?' do
-    _(provider_repository.exist_by_name?('hoge')).must_equal true
-    _(provider_repository.exist_by_name?('moe')).must_equal false
+    expect(provider_repository.exist_by_name?('hoge')).must_equal true
+    expect(provider_repository.exist_by_name?('moe')).must_equal false
   end
 
   it 'last_order' do
-    _(provider_repository.last_order).must_equal 32
+    expect(provider_repository.last_order).must_equal 32
     provider_repository.clear
-    _(provider_repository.last_order).must_equal 0
+    expect(provider_repository.last_order).must_equal 0
   end
 
   describe 'with params' do
@@ -53,35 +53,35 @@ describe ProviderRepository do
 
     it 'find_with_params' do
       provider_with_params = provider_repository.find_with_params(@provider_hoge.id)
-      _(provider_with_params).must_be_instance_of Provider
-      _(provider_with_params.name).must_equal 'hoge'
-      _(provider_with_params.params[:str]).must_equal 'ほげほげ'
-      _(provider_with_params.params[:int]).must_equal 42
+      expect(provider_with_params).must_be_instance_of Provider
+      expect(provider_with_params.name).must_equal 'hoge'
+      expect(provider_with_params.params[:str]).must_equal 'ほげほげ'
+      expect(provider_with_params.params[:int]).must_equal 42
     end
 
     it 'find_with_params_by_name' do
       provider_with_params = provider_repository.find_with_params_by_name('hoge')
-      _(provider_with_params).must_be_instance_of Provider
-      _(provider_with_params.name).must_equal 'hoge'
-      _(provider_with_params.params[:str]).must_equal 'ほげほげ'
-      _(provider_with_params.params[:int]).must_equal 42
+      expect(provider_with_params).must_be_instance_of Provider
+      expect(provider_with_params.name).must_equal 'hoge'
+      expect(provider_with_params.params[:str]).must_equal 'ほげほげ'
+      expect(provider_with_params.params[:int]).must_equal 42
     end
 
     it 'add_param' do
       provider_param = provider_repository.add_param(@provider_fuga, {name: 'str', value: Marshal.dump('ふがふが')})
-      _(provider_param).must_be_instance_of ProviderParam
-      _(provider_param.name).must_equal 'str'
-      _(provider_param_repository.all.count).must_equal 3
+      expect(provider_param).must_be_instance_of ProviderParam
+      expect(provider_param.name).must_equal 'str'
+      expect(provider_param_repository.all.count).must_equal 3
     end
 
     it 'delete_param_by_name' do
       delete_count = provider_repository.delete_param_by_name(@provider_hoge, 'str')
-      _(delete_count).must_equal 1
-      _(provider_param_repository.all.count).must_equal 1
+      expect(delete_count).must_equal 1
+      expect(provider_param_repository.all.count).must_equal 1
 
       delete_count = provider_repository.delete_param_by_name(@provider_fuga, 'str')
-      _(delete_count).must_equal 0
-      _(provider_param_repository.all.count).must_equal 1
+      expect(delete_count).must_equal 0
+      expect(provider_param_repository.all.count).must_equal 1
     end
 
     describe 'with adapter' do

@@ -2,7 +2,7 @@
 
 require_relative '../../../spec_helper'
 
-describe Api::Controllers::Attrs::Show do
+RSpec.describe Api::Controllers::Attrs::Show do
   let(:action) { Api::Controllers::Attrs::Show.new(**action_opts, attr_repository: attr_repository) }
   eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
@@ -27,10 +27,10 @@ describe Api::Controllers::Attrs::Show do
 
   it 'is successful' do
     response = action.call(params)
-    _(response[0]).must_equal 200
-    _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    expect(response[0]).must_equal 200
+    expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    _(json).must_equal({**attr_params.except(:mappings), label: attr_attributes[:display_name]})
+    expect(json).must_equal({**attr_params.except(:mappings), label: attr_attributes[:display_name]})
   end
 
   describe 'monitor' do
@@ -40,10 +40,10 @@ describe Api::Controllers::Attrs::Show do
 
     it 'is successful' do
       response = action.call(params)
-      _(response[0]).must_equal 200
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 200
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({**attr_params, label: attr_attributes[:display_name]})
+      expect(json).must_equal({**attr_params, label: attr_attributes[:display_name]})
     end
   end
 
@@ -52,10 +52,10 @@ describe Api::Controllers::Attrs::Show do
 
     it 'is successful' do
       response = action.call(params)
-      _(response[0]).must_equal 200
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 200
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({**attr_params, label: attr_attributes[:display_name]})
+      expect(json).must_equal({**attr_params, label: attr_attributes[:display_name]})
     end
 
     describe 'not existed' do
@@ -63,10 +63,10 @@ describe Api::Controllers::Attrs::Show do
 
       it 'is failure' do
         response = action.call(params)
-        _(response[0]).must_equal 404
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        expect(response[0]).must_equal 404
+        expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({
+        expect(json).must_equal({
           code: 404,
           message: 'Not Found',
         })
@@ -79,10 +79,10 @@ describe Api::Controllers::Attrs::Show do
 
     it 'is error' do
       response = action.call(params)
-      _(response[0]).must_equal 401
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 401
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({code: 401, message: 'Unauthorized'})
+      expect(json).must_equal({code: 401, message: 'Unauthorized'})
     end
   end
 end

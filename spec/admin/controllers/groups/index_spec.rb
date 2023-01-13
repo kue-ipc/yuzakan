@@ -2,13 +2,13 @@
 
 require_relative '../../../spec_helper'
 
-describe Admin::Controllers::Groups::Index do
+RSpec.describe Admin::Controllers::Groups::Index do
   let(:action) { Admin::Controllers::Groups::Index.new(**action_opts) }
   eval(init_let_script) # rubocop:disable Security/Eval
 
   it 'is failure' do
     response = action.call(params)
-    _(response[0]).must_equal 403
+    expect(response[0]).must_equal 403
   end
 
   describe 'admin' do
@@ -16,7 +16,7 @@ describe Admin::Controllers::Groups::Index do
 
     it 'is successful' do
       response = action.call(params)
-      _(response[0]).must_equal 200
+      expect(response[0]).must_equal 200
     end
   end
 
@@ -25,8 +25,8 @@ describe Admin::Controllers::Groups::Index do
 
     it 'is error' do
       response = action.call(params)
-      _(response[0]).must_equal 302
-      _(response[1]['Location']).must_equal '/'
+      expect(response[0]).must_equal 302
+      expect(response[1]['Location']).must_equal '/'
     end
   end
 end

@@ -2,11 +2,11 @@
 
 require 'spec_helper'
 
-describe Web::Views::ApplicationLayout do
+RSpec.describe Web::Views::ApplicationLayout do
   let(:layout)   { Web::Views::ApplicationLayout.new({format: :html}, 'contents') }
   let(:rendered) { layout.render }
 
   # it 'contains application name' do
-  #   _(rendered).must_include('Web')
+  #   expect(rendered).must_include('Web')
   # end
 end

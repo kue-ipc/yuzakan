@@ -2,17 +2,17 @@
 
 require_relative '../../../spec_helper'
 
-describe Api::Controllers::System::Show do
+RSpec.describe Api::Controllers::System::Show do
   let(:action) { Api::Controllers::System::Show.new(**action_opts) }
   eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
 
   it 'is successful' do
     response = action.call(params)
-    _(response[0]).must_equal 200
-    _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    expect(response[0]).must_equal 200
+    expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    _(json).must_equal({
+    expect(json).must_equal({
       url: 'http://0.0.0.0:2300/',
       title: 'title',
       domain: 'kyokyo-u.ac.jp',
@@ -30,10 +30,10 @@ describe Api::Controllers::System::Show do
 
     it 'is successful' do
       response = action.call(params)
-      _(response[0]).must_equal 200
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 200
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
+      expect(json).must_equal({
         url: 'http://0.0.0.0:2300/',
         title: 'title2',
         domain: 'kyokyo-u.ac.jp',
@@ -49,10 +49,10 @@ describe Api::Controllers::System::Show do
 
     it 'is successful' do
       response = action.call(params)
-      _(response[0]).must_equal 200
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 200
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
+      expect(json).must_equal({
         url: 'http://0.0.0.0:2300/',
         title: 'title',
         domain: 'kyokyo-u.ac.jp',

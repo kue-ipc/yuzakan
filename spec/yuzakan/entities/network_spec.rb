@@ -2,6 +2,6 @@
 
 require_relative '../../spec_helper'
 
-describe Network do
+RSpec.describe Network do
   # place your tests here
 end

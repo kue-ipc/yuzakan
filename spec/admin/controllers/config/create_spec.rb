@@ -2,17 +2,17 @@
 
 require_relative '../../../spec_helper'
 
-describe Admin::Controllers::Config::Create do
+RSpec.describe Admin::Controllers::Config::Create do
   let(:action) { Admin::Controllers::Config::Create.new(**action_opts) }
   eval(init_let_script) # rubocop:disable Security/Eval
 
   it 'rediret to root' do
     response = action.call(params)
-    _(response[0]).must_equal 302
-    _(response[1]['Location']).must_equal '/'
+    expect(response[0]).must_equal 302
+    expect(response[1]['Location']).must_equal '/'
   end
 
-  # describe 'before initialized' do
+  # RSpec.describe 'before initialized' do
   #   before do
   #     db_clear
   #   end
@@ -27,8 +27,8 @@ describe Admin::Controllers::Config::Create do
   #     response = action.call(params)
   #     flash = action.exposures[:flash]
 
-  #     _(response[0]).must_equal 200
-  #     _(flash[:errors]).must_be_empty
+  #     expect(response[0]).must_equal 200
+  #     expect(flash[:errors]).must_be_empty
   #   end
   # end
 end

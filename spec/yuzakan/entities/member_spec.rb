@@ -2,6 +2,6 @@
 
 require_relative '../../spec_helper'
 
-describe Member do
+RSpec.describe Member do
   # place your tests here
 end

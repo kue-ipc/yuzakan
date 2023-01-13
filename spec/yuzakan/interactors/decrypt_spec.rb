@@ -2,7 +2,7 @@
 
 require_relative '../../spec_helper'
 
-describe Decrypt do
+RSpec.describe Decrypt do
   let(:interactor) { Decrypt.new(**params) }
   let(:params) { {text: true} }
   let(:encrypted) {
@@ -13,9 +13,9 @@ describe Decrypt do
 
   it 'decryt text' do
     result = interactor.call({encrypted: encrypted})
-    _(result.successful?).must_equal true
-    _(result.data).must_equal text
-    _(result.data.encoding).must_equal Encoding::UTF_8
+    expect(result.successful?).must_equal true
+    expect(result.data).must_equal text
+    expect(result.data.encoding).must_equal Encoding::UTF_8
   end
 
   describe 'other password' do
@@ -23,9 +23,9 @@ describe Decrypt do
 
     it 'failed decryt text other password' do
       result = interactor.call({encrypted: encrypted})
-      _(result.failure?).must_equal true
-      _(result.errors.first).must_equal '復号化に失敗しました。'
-      _(result.data).must_be_nil
+      expect(result.failure?).must_equal true
+      expect(result.errors.first).must_equal '復号化に失敗しました。'
+      expect(result.data).must_be_nil
     end
   end
 
@@ -34,8 +34,8 @@ describe Decrypt do
 
     it 'decryt bad text' do
       result = interactor.call({encrypted: encrypted})
-      _(result.successful?).must_equal true
-      _(result.data).wont_equal text
+      expect(result.successful?).must_equal true
+      expect(result.data).wont_equal text
     end
   end
 end

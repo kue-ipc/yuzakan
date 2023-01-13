@@ -2,7 +2,7 @@
 
 require_relative '../../../spec_helper'
 
-describe Api::Controllers::Providers::Create do
+RSpec.describe Api::Controllers::Providers::Create do
   let(:action) { Api::Controllers::Providers::Create.new(**action_opts, provider_repository: provider_repository) }
   eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
@@ -67,10 +67,10 @@ describe Api::Controllers::Providers::Create do
 
   it 'is failure' do
     response = action.call(params)
-    _(response[0]).must_equal 403
-    _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    expect(response[0]).must_equal 403
+    expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    _(json).must_equal({code: 403, message: 'Forbidden'})
+    expect(json).must_equal({code: 403, message: 'Forbidden'})
   end
 
   describe 'admin' do
@@ -78,11 +78,11 @@ describe Api::Controllers::Providers::Create do
 
     it 'is successful' do
       response = action.call(params)
-      _(response[0]).must_equal 201
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-      _(response[1]['Location']).must_equal "/api/providers/#{provider_with_params.id}"
+      expect(response[0]).must_equal 201
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[1]['Location']).must_equal "/api/providers/#{provider_with_params.id}"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
+      expect(json).must_equal({
         **provider_params,
         label: provider_params[:display_name],
         params: provider_params_attributes_params,
@@ -91,11 +91,11 @@ describe Api::Controllers::Providers::Create do
 
     it 'is successful without order param' do
       response = action.call(params.except(:order))
-      _(response[0]).must_equal 201
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
-      _(response[1]['Location']).must_equal "/api/providers/#{provider_with_params.id}"
+      expect(response[0]).must_equal 201
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[1]['Location']).must_equal "/api/providers/#{provider_with_params.id}"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
+      expect(json).must_equal({
         **provider_params,
         label: provider_params[:display_name],
         params: provider_params_attributes_params,
@@ -104,10 +104,10 @@ describe Api::Controllers::Providers::Create do
 
     it 'is failure with bad name pattern' do
       response = action.call({**params, name: '!'})
-      _(response[0]).must_equal 400
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 400
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
+      expect(json).must_equal({
         code: 400,
         message: 'Bad Request',
         errors: [{name: ['名前付けの規則に違反しています。']}],
@@ -116,10 +116,10 @@ describe Api::Controllers::Providers::Create do
 
     it 'is failure with name over' do
       response = action.call({**params, name: 'a' * 256})
-      _(response[0]).must_equal 400
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 400
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
+      expect(json).must_equal({
         code: 400,
         message: 'Bad Request',
         errors: [{name: ['サイズが255を超えてはいけません。']}],
@@ -128,10 +128,10 @@ describe Api::Controllers::Providers::Create do
 
     it 'is failure with name number' do
       response = action.call({**params, name: 1})
-      _(response[0]).must_equal 400
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 400
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
+      expect(json).must_equal({
         code: 400,
         message: 'Bad Request',
         errors: [{name: ['文字列を入力してください。']}],
@@ -143,10 +143,10 @@ describe Api::Controllers::Providers::Create do
         **params,
         params: 'abc',
       })
-      _(response[0]).must_equal 400
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 400
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
+      expect(json).must_equal({
         code: 400,
         message: 'Bad Request',
         errors: [{
@@ -157,10 +157,10 @@ describe Api::Controllers::Providers::Create do
 
     it 'is failure without params' do
       response = action.call(env)
-      _(response[0]).must_equal 400
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 400
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
+      expect(json).must_equal({
         code: 400,
         message: 'Bad Request',
         errors: [{name: ['存在しません。'], adapter_name: ['存在しません。']}],
@@ -178,10 +178,10 @@ describe Api::Controllers::Providers::Create do
 
       it 'is failure' do
         response = action.call(params)
-        _(response[0]).must_equal 422
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        expect(response[0]).must_equal 422
+        expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({
+        expect(json).must_equal({
           code: 422,
           message: 'Unprocessable Entity',
           errors: [{name: ['重複しています。']}],
@@ -190,10 +190,10 @@ describe Api::Controllers::Providers::Create do
 
       it 'is failure with bad name pattern' do
         response = action.call({**params, name: '!'})
-        _(response[0]).must_equal 400
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        expect(response[0]).must_equal 400
+        expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({
+        expect(json).must_equal({
           code: 400,
           message: 'Bad Request',
           errors: [{name: ['名前付けの規則に違反しています。']}],
@@ -207,10 +207,10 @@ describe Api::Controllers::Providers::Create do
 
     it 'is error' do
       response = action.call(params)
-      _(response[0]).must_equal 401
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 401
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({code: 401, message: 'Unauthorized'})
+      expect(json).must_equal({code: 401, message: 'Unauthorized'})
     end
   end
 end

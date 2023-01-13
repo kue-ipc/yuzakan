@@ -2,5 +2,5 @@
 
 require_relative '../../../../spec_helper'
 
-describe Web::Controllers::User::Password::Edit do
+RSpec.describe Web::Controllers::User::Password::Edit do
 end

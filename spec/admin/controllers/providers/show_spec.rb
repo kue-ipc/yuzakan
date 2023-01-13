@@ -2,7 +2,7 @@
 
 require_relative '../../../spec_helper'
 
-describe Admin::Controllers::Providers::Show do
+RSpec.describe Admin::Controllers::Providers::Show do
   let(:action) { Admin::Controllers::Providers::Show.new(**action_opts, provider_repository: provider_repository) }
   eval(init_let_script) # rubocop:disable Security/Eval
 
@@ -13,7 +13,7 @@ describe Admin::Controllers::Providers::Show do
 
   it 'is failure' do
     response = action.call(params)
-    _(response[0]).must_equal 403
+    expect(response[0]).must_equal 403
   end
 
   describe 'admin' do
@@ -21,17 +21,17 @@ describe Admin::Controllers::Providers::Show do
 
     it 'is successful' do
       response = action.call(params)
-      _(response[0]).must_equal 200
+      expect(response[0]).must_equal 200
     end
 
     it 'is successful with * for new' do
       response = action.call({**params, id: '*'})
-      _(response[0]).must_equal 200
+      expect(response[0]).must_equal 200
     end
 
     it 'is failure with !' do
       response = action.call({**params, id: '!'})
-      _(response[0]).must_equal 400
+      expect(response[0]).must_equal 400
     end
 
     describe 'not existed' do
@@ -41,7 +41,7 @@ describe Admin::Controllers::Providers::Show do
 
       it 'is failure' do
         response = action.call(params)
-        _(response[0]).must_equal 404
+        expect(response[0]).must_equal 404
       end
     end
   end
@@ -51,8 +51,8 @@ describe Admin::Controllers::Providers::Show do
 
     it 'is error' do
       response = action.call(params)
-      _(response[0]).must_equal 302
-      _(response[1]['Location']).must_equal '/'
+      expect(response[0]).must_equal 302
+      expect(response[1]['Location']).must_equal '/'
     end
   end
 end

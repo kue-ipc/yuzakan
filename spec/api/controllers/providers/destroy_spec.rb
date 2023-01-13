@@ -2,7 +2,7 @@
 
 require_relative '../../../spec_helper'
 
-describe Api::Controllers::Providers::Destroy do
+RSpec.describe Api::Controllers::Providers::Destroy do
   let(:action) { Api::Controllers::Providers::Destroy.new(**action_opts, provider_repository: provider_repository) }
   eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
@@ -53,10 +53,10 @@ describe Api::Controllers::Providers::Destroy do
 
   it 'is failure' do
     response = action.call(params)
-    _(response[0]).must_equal 403
-    _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    expect(response[0]).must_equal 403
+    expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    _(json).must_equal({code: 403, message: 'Forbidden'})
+    expect(json).must_equal({code: 403, message: 'Forbidden'})
   end
 
   describe 'admin' do
@@ -64,10 +64,10 @@ describe Api::Controllers::Providers::Destroy do
 
     it 'is successful' do
       response = action.call(params)
-      _(response[0]).must_equal 200
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 200
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
+      expect(json).must_equal({
         **provider_params,
         label: provider_params[:display_name],
         params: provider_params_attributes_params,
@@ -84,10 +84,10 @@ describe Api::Controllers::Providers::Destroy do
 
       it 'is failure' do
         response = action.call(params)
-        _(response[0]).must_equal 404
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        expect(response[0]).must_equal 404
+        expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({
+        expect(json).must_equal({
           code: 404,
           message: 'Not Found',
         })
@@ -100,10 +100,10 @@ describe Api::Controllers::Providers::Destroy do
 
     it 'is error' do
       response = action.call(params)
-      _(response[0]).must_equal 401
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 401
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({code: 401, message: 'Unauthorized'})
+      expect(json).must_equal({code: 401, message: 'Unauthorized'})
     end
   end
 end

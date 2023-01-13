@@ -2,7 +2,7 @@
 
 require_relative '../../../../spec_helper'
 
-describe Api::Controllers::Myself::Password::Update do
+RSpec.describe Api::Controllers::Myself::Password::Update do
   let(:action) {
     Api::Controllers::Myself::Password::Update.new(**action_opts, provider_repository: provider_repository,
                                                                   user_notify: user_notify)
@@ -19,10 +19,10 @@ describe Api::Controllers::Myself::Password::Update do
 
   it 'is successful' do
     response = action.call(params)
-    _(response[0]).must_equal 200
-    _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    expect(response[0]).must_equal 200
+    expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    _(json).must_equal({password: {size: 4, types: 1, score: 0}})
+    expect(json).must_equal({password: {size: 4, types: 1, score: 0}})
   end
 
   describe 'no login session' do
@@ -30,10 +30,10 @@ describe Api::Controllers::Myself::Password::Update do
 
     it 'is error' do
       response = action.call(params)
-      _(response[0]).must_equal 401
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 401
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
+      expect(json).must_equal({
         code: 401,
         message: 'Unauthorized',
       })
@@ -45,10 +45,10 @@ describe Api::Controllers::Myself::Password::Update do
 
     it 'is error' do
       response = action.call(params)
-      _(response[0]).must_equal 401
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 401
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
+      expect(json).must_equal({
         code: 401,
         message: 'Unauthorized',
       })
@@ -60,10 +60,10 @@ describe Api::Controllers::Myself::Password::Update do
 
     it 'is error' do
       response = action.call(params)
-      _(response[0]).must_equal 401
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 401
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
+      expect(json).must_equal({
         code: 401,
         message: 'Unauthorized',
         errors: ['セッションがタイムアウトしました。'],

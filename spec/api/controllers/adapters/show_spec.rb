@@ -2,7 +2,7 @@
 
 require_relative '../../../spec_helper'
 
-describe Api::Controllers::Adapters::Show do
+RSpec.describe Api::Controllers::Adapters::Show do
   let(:action) { Api::Controllers::Adapters::Show.new(**action_opts) }
   eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
@@ -10,26 +10,26 @@ describe Api::Controllers::Adapters::Show do
 
   it 'is successful' do
     response = action.call(params)
-    _(response[0]).must_equal 200
-    _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    expect(response[0]).must_equal 200
+    expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    _(json).must_equal({name: 'dummy', label: 'ダミー'})
+    expect(json).must_equal({name: 'dummy', label: 'ダミー'})
   end
 
   it 'is successful with test adapter' do
     response = action.call({**params, id: 'test'})
-    _(response[0]).must_equal 200
-    _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    expect(response[0]).must_equal 200
+    expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    _(json).must_equal({name: 'test', label: 'テスト'})
+    expect(json).must_equal({name: 'test', label: 'テスト'})
   end
 
   it 'is failure with unknown id' do
     response = action.call({**params, id: 'hoge'})
-    _(response[0]).must_equal 404
-    _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    expect(response[0]).must_equal 404
+    expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    _(json).must_equal({code: 404, message: 'Not Found'})
+    expect(json).must_equal({code: 404, message: 'Not Found'})
   end
 
   describe 'admin' do
@@ -37,18 +37,18 @@ describe Api::Controllers::Adapters::Show do
 
     it 'is successful' do
       response = action.call(params)
-      _(response[0]).must_equal 200
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 200
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({name: 'dummy', label: 'ダミー', param_types: []})
+      expect(json).must_equal({name: 'dummy', label: 'ダミー', param_types: []})
     end
 
     it 'is successful with test adapter' do
       response = action.call({**params, id: 'test'})
-      _(response[0]).must_equal 200
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 200
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
+      expect(json).must_equal({
         name: 'test',
         label: 'テスト',
         param_types: [
@@ -79,10 +79,10 @@ describe Api::Controllers::Adapters::Show do
 
     it 'is failure with unknown id' do
       response = action.call({**params, id: 'hoge'})
-      _(response[0]).must_equal 404
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 404
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({code: 404, message: 'Not Found'})
+      expect(json).must_equal({code: 404, message: 'Not Found'})
     end
   end
 
@@ -91,10 +91,10 @@ describe Api::Controllers::Adapters::Show do
 
     it 'is error' do
       response = action.call(params)
-      _(response[0]).must_equal 401
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 401
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({code: 401, message: 'Unauthorized'})
+      expect(json).must_equal({code: 401, message: 'Unauthorized'})
     end
   end
 end

@@ -2,8 +2,8 @@
 
 require_relative '../../../spec_helper'
 
-describe Admin::Controllers::Home::Index do
-  # describe 'session' do
+RSpec.describe Admin::Controllers::Home::Index do
+  # RSpec.describe 'session' do
   #   let(:action) { Admin::Controllers::Home::Index.new }
   #   let(:params) { {'REMOTE_ADDR' => '::1', 'rack.session' => session} }
   #   let(:session) { {user_id: user_id, access_time: Time.now} }
@@ -12,7 +12,7 @@ describe Admin::Controllers::Home::Index do
 
   #   it 'is successful' do
   #     response = action.call(params)
-  #     _(response[0]).must_equal 200
+  #     expect(response[0]).must_equal 200
   #   end
 
   #   describe 'no usner_id' do
@@ -21,9 +21,9 @@ describe Admin::Controllers::Home::Index do
   #     it 'redirect login' do
   #       response = action.call(params)
   #       flash = action.exposures[:flash]
-  #       _(response[0]).must_equal 302
-  #       _(response[1]['Location']).must_equal '/'
-  #       _(flash[:warn]).must_equal 'ログインしてください。'
+  #       expect(response[0]).must_equal 302
+  #       expect(response[1]['Location']).must_equal '/'
+  #       expect(flash[:warn]).must_equal 'ログインしてください。'
   #     end
   #   end
 
@@ -33,9 +33,9 @@ describe Admin::Controllers::Home::Index do
   #     it 'redirect login' do
   #       response = action.call(params)
   #       flash = action.exposures[:flash]
-  #       _(response[0]).must_equal 302
-  #       _(response[1]['Location']).must_equal '/'
-  #       _(flash[:warn]).must_equal 'ログインしてください。'
+  #       expect(response[0]).must_equal 302
+  #       expect(response[1]['Location']).must_equal '/'
+  #       expect(flash[:warn]).must_equal 'ログインしてください。'
   #     end
   #   end
 
@@ -45,9 +45,9 @@ describe Admin::Controllers::Home::Index do
   #     it 'redirect login' do
   #       response = action.call(params)
   #       flash = action.exposures[:flash]
-  #       _(response[0]).must_equal 302
-  #       _(response[1]['Location']).must_equal '/'
-  #       _(flash[:warn]).must_equal 'ログインしてください。'
+  #       expect(response[0]).must_equal 302
+  #       expect(response[1]['Location']).must_equal '/'
+  #       expect(flash[:warn]).must_equal 'ログインしてください。'
   #     end
   #   end
 
@@ -57,9 +57,9 @@ describe Admin::Controllers::Home::Index do
   #     it 'redirect login' do
   #       response = action.call(params)
   #       flash = action.exposures[:flash]
-  #       _(response[0]).must_equal 302
-  #       _(response[1]['Location']).must_equal '/'
-  #       _(flash[:warn]).must_equal 'セッションがタイムアウトしました。'
+  #       expect(response[0]).must_equal 302
+  #       expect(response[1]['Location']).must_equal '/'
+  #       expect(flash[:warn]).must_equal 'セッションがタイムアウトしました。'
   #     end
   #   end
 
@@ -72,7 +72,7 @@ describe Admin::Controllers::Home::Index do
 
   #       it 'is successful' do
   #         response = action.call(params)
-  #         _(response[0]).must_equal 200
+  #         expect(response[0]).must_equal 200
   #       end
   #     end
 
@@ -82,9 +82,9 @@ describe Admin::Controllers::Home::Index do
   #       it 'redirect login' do
   #         response = action.call(params)
   #         flash = action.exposures[:flash]
-  #         _(response[0]).must_equal 302
-  #         _(response[1]['Location']).must_equal '/'
-  #         _(flash[:warn]).must_equal 'セッションがタイムアウトしました。'
+  #         expect(response[0]).must_equal 302
+  #         expect(response[1]['Location']).must_equal '/'
+  #         expect(flash[:warn]).must_equal 'セッションがタイムアウトしました。'
   #       end
   #     end
   #   end

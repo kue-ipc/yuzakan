@@ -2,7 +2,7 @@
 
 require_relative '../../../spec_helper'
 
-describe Api::Controllers::Providers::Update do
+RSpec.describe Api::Controllers::Providers::Update do
   let(:action) {
     Api::Controllers::Providers::Update.new(**action_opts, provider_repository: provider_repository,
                                                            provider_param_repository: provider_param_repository)
@@ -73,10 +73,10 @@ describe Api::Controllers::Providers::Update do
 
   it 'is failure' do
     response = action.call(params)
-    _(response[0]).must_equal 403
-    _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    expect(response[0]).must_equal 403
+    expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    _(json).must_equal({code: 403, message: 'Forbidden'})
+    expect(json).must_equal({code: 403, message: 'Forbidden'})
   end
 
   describe 'admin' do
@@ -84,10 +84,10 @@ describe Api::Controllers::Providers::Update do
 
     it 'is successful' do
       response = action.call(params)
-      _(response[0]).must_equal 200
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 200
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
+      expect(json).must_equal({
         **provider_params,
         label: provider_params[:display_name],
         params: provider_params_attributes_params,
@@ -96,10 +96,10 @@ describe Api::Controllers::Providers::Update do
 
     it 'is successful with different' do
       response = action.call({**params, name: 'hoge', label: 'ほげ'})
-      _(response[0]).must_equal 200
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 200
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({
+      expect(json).must_equal({
         **provider_params,
         label: provider_params[:display_name],
         params: provider_params_attributes_params,
@@ -115,10 +115,10 @@ describe Api::Controllers::Providers::Update do
 
       it 'is failure' do
         response = action.call(params)
-        _(response[0]).must_equal 404
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        expect(response[0]).must_equal 404
+        expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({
+        expect(json).must_equal({
           code: 404,
           message: 'Not Found',
         })
@@ -140,10 +140,10 @@ describe Api::Controllers::Providers::Update do
 
       it 'is successful' do
         response = action.call(params)
-        _(response[0]).must_equal 200
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        expect(response[0]).must_equal 200
+        expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({
+        expect(json).must_equal({
           **provider_params,
           label: provider_params[:display_name],
           params: provider_params_attributes_params,
@@ -152,10 +152,10 @@ describe Api::Controllers::Providers::Update do
 
       it 'is successful with diffrent only label' do
         response = action.call({**params, labal: 'ほげ'})
-        _(response[0]).must_equal 200
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        expect(response[0]).must_equal 200
+        expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({
+        expect(json).must_equal({
           **provider_params,
           label: provider_params[:display_name],
           params: provider_params_attributes_params,
@@ -164,10 +164,10 @@ describe Api::Controllers::Providers::Update do
 
       it 'is failure with different' do
         response = action.call({**params, name: 'hoge', label: 'ほげ'})
-        _(response[0]).must_equal 422
-        _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        expect(response[0]).must_equal 422
+        expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        _(json).must_equal({
+        expect(json).must_equal({
           code: 422,
           message: 'Unprocessable Entity',
           errors: [{name: ['重複しています。']}],
@@ -181,10 +181,10 @@ describe Api::Controllers::Providers::Update do
 
     it 'is error' do
       response = action.call(params)
-      _(response[0]).must_equal 401
-      _(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).must_equal 401
+      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      _(json).must_equal({code: 401, message: 'Unauthorized'})
+      expect(json).must_equal({code: 401, message: 'Unauthorized'})
     end
   end
 end

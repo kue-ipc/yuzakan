@@ -2,7 +2,7 @@
 
 require_relative '../../../../spec_helper'
 
-describe Web::Views::Google::Password::Create do
+RSpec.describe Web::Views::Google::Password::Create do
   let(:exposures) { {format: :html} }
   let(:template)  { Hanami::View::Template.new('apps/web/templates/google/password/create.html.slim') }
   let(:view) {
@@ -11,6 +11,6 @@ describe Web::Views::Google::Password::Create do
   let(:rendered) { view.render }
 
   it 'exposes #format' do
-    _(view.format).must_equal exposures.fetch(:format)
+    expect(view.format).must_equal exposures.fetch(:format)
   end
 end

@@ -2,6 +2,6 @@
 
 require_relative '../../spec_helper'
 
-describe UserRepository do
+RSpec.describe UserRepository do
   # place your tests here
 end

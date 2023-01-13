@@ -2,8 +2,8 @@
 
 require_relative '../../../spec_helper'
 
-describe Admin::Controllers::Home::Index do
-  # describe 'admin net' do
+RSpec.describe Admin::Controllers::Home::Index do
+  # RSpec.describe 'admin net' do
   #   let(:action) { Admin::Controllers::Home::Index.new }
   #   let(:params) { {'rack.session' => session} }
   #   let(:session) { {user_id: user_id, access_time: Time.now} }
@@ -16,13 +16,13 @@ describe Admin::Controllers::Home::Index do
   #   it 'is successful in network' do
   #     response = action.call(params.merge(
   #                              'REMOTE_ADDR' => '192.168.1.1'))
-  #     _(response[0]).must_equal 200
+  #     expect(response[0]).must_equal 200
   #   end
 
   #   it 'is failure out network' do
   #     response = action.call(params.merge(
   #                              'REMOTE_ADDR' => '192.168.2.1'))
-  #     _(response[0]).must_equal 403
+  #     expect(response[0]).must_equal 403
   #   end
 
   #   describe 'reverse proxy' do
@@ -37,40 +37,40 @@ describe Admin::Controllers::Home::Index do
   #       response = action.call(params.merge(
   #                                'REMOTE_ADDR' => '::1',
   #                                'HTTP_X_FORWARDED_FOR' => '192.168.1.1'))
-  #       _(response[0]).must_equal 200
+  #       expect(response[0]).must_equal 200
   #     end
 
   #     it 'reverse is failure out network' do
   #       response = action.call(params.merge(
   #                                'REMOTE_ADDR' => '::1',
   #                                'HTTP_X_FORWARDED_FOR' => '192.168.2.1'))
-  #       _(response[0]).must_equal 403
+  #       expect(response[0]).must_equal 403
   #     end
 
   #     it 'not reverse is successful in network' do
   #       response = action.call(params.merge(
   #                                'REMOTE_ADDR' => '192.168.1.1'))
-  #       _(response[0]).must_equal 200
+  #       expect(response[0]).must_equal 200
   #     end
 
   #     it 'not reverse is failure out network' do
   #       response = action.call(params.merge(
   #                                'REMOTE_ADDR' => '192.168.2.1'))
-  #       _(response[0]).must_equal 403
+  #       expect(response[0]).must_equal 403
   #     end
 
   #     it 'not reverse and fake is failure fake in network' do
   #       response = action.call(params.merge(
   #                                'REMOTE_ADDR' => '203.0.113.1',
   #                                'HTTP_X_FORWARDED_FOR' => '192.168.2.1'))
-  #       _(response[0]).must_equal 403
+  #       expect(response[0]).must_equal 403
   #     end
 
   #     it 'not reverse and fake is failure fake out network' do
   #       response = action.call(params.merge(
   #                                'REMOTE_ADDR' => '203.0.113.1',
   #                                'HTTP_X_FORWARDED_FOR' => '192.168.1.1'))
-  #       _(response[0]).must_equal 403
+  #       expect(response[0]).must_equal 403
   #     end
 
   #     it 'client is first in network' do
@@ -78,11 +78,11 @@ describe Admin::Controllers::Home::Index do
   #                                'REMOTE_ADDR' => '::1',
   #                                'HTTP_X_FORWARDED_FOR' =>
   #                                  '192.168.1.1, 192.168.2.2, 192.168.3.3'))
-  #       _(response[0]).must_equal 200
+  #       expect(response[0]).must_equal 200
   #     end
   #   end
 
-  #   # describe 'check x-real-ip' do
+  #   # RSpec.describe 'check x-real-ip' do
   #   #   before do
   #   #     UpdateConfig.new.call(
   #   #       client_header: 'X-Real-Ip',
@@ -94,14 +94,14 @@ describe Admin::Controllers::Home::Index do
   #   #     response = action.call(params.merge(
   #   #                             'REMOTE_ADDR' => '127.0.0.1',
   #   #                             'HTTP_X_REAL_IP' => '192.168.1.1'))
-  #   #     _(response[0]).must_equal 200
+  #   #     expect(response[0]).must_equal 200
   #   #   end
 
   #   #   it 'is failure x-real-ip' do
   #   #     response = action.call(params.merge(
   #   #                             'REMOTE_ADDR' => '127.0.0.1',
   #   #                             'HTTP_X_REAL_IP' => '192.168.2.1'))
-  #   #     _(response[0]).must_equal 403
+  #   #     expect(response[0]).must_equal 403
   #   #   end
   #   # end
 
@@ -115,37 +115,37 @@ describe Admin::Controllers::Home::Index do
   #     it 'is successful in network' do
   #       response = action.call(params.merge(
   #                                'REMOTE_ADDR' => '192.168.1.1'))
-  #       _(response[0]).must_equal 200
+  #       expect(response[0]).must_equal 200
   #     end
 
   #     it 'is successful in just' do
   #       response = action.call(params.merge(
   #                                'REMOTE_ADDR' => '192.168.2.10'))
-  #       _(response[0]).must_equal 200
+  #       expect(response[0]).must_equal 200
   #     end
 
   #     it 'is successful in ipv6 network' do
   #       response = action.call(params.merge(
   #                                'REMOTE_ADDR' => 'fd00:1234::5678:9abc'))
-  #       _(response[0]).must_equal 200
+  #       expect(response[0]).must_equal 200
   #     end
 
   #     it 'is failure not match' do
   #       response = action.call(params.merge(
   #                                'REMOTE_ADDR' => '192.168.2.1'))
-  #       _(response[0]).must_equal 403
+  #       expect(response[0]).must_equal 403
   #     end
 
   #     it 'is failure out network' do
   #       response = action.call(params.merge(
   #                                'REMOTE_ADDR' => '10.1.1.1'))
-  #       _(response[0]).must_equal 403
+  #       expect(response[0]).must_equal 403
   #     end
 
   #     it 'is failure out ipv6 network' do
   #       response = action.call(params.merge(
   #                                'REMOTE_ADDR' => 'fd00:5678::1122:3344'))
-  #       _(response[0]).must_equal 403
+  #       expect(response[0]).must_equal 403
   #     end
   #   end
   # end
