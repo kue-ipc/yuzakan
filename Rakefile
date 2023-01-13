@@ -25,8 +25,8 @@ end
 #   t.warning = false
 # end
 
-task default: :test
-task spec: :test
+# task default: :test
+# task spec: :test
 
 desc 'ファイル生成'
 task build: [:build_errors, 'vendor:build']
