@@ -11,8 +11,8 @@ RSpec.describe Web::Controllers::User::Show do
 
   # it 'is successful' do
   #   response = action.call(params)
-  #   expect(response[0]).must_equal 200
-  #   expect(action.send(:client).to_s).must_equal '::1'
+  #   expect(response[0]).to eq 200
+  #   expect(action.send(:client).to_s).to eq '::1'
   # end
 
   # RSpec.describe 'admin login' do
@@ -20,7 +20,7 @@ RSpec.describe Web::Controllers::User::Show do
 
   #   it 'is successful' do
   #     response = action.call(params)
-  #     expect(response[0]).must_equal 200
+  #     expect(response[0]).to eq 200
   #   end
   # end
 
@@ -30,9 +30,9 @@ RSpec.describe Web::Controllers::User::Show do
   #   it 'redirect login with flash' do
   #     response = action.call(params)
   #     flash = action.exposures[:flash]
-  #     expect(response[0]).must_equal 302
-  #     expect(response[1]['Location']).must_equal '/'
-  #     expect(flash[:warn]).must_equal 'セッションがタイムアウトしました。'
+  #     expect(response[0]).to eq 302
+  #     expect(response[1]['Location']).to eq '/'
+  #     expect(flash[:warn]).to eq 'セッションがタイムアウトしました。'
   #   end
   # end
 
@@ -42,9 +42,9 @@ RSpec.describe Web::Controllers::User::Show do
   #   it 'redirect login' do
   #     response = action.call(params)
   #     flash = action.exposures[:flash]
-  #     expect(response[0]).must_equal 302
-  #     expect(response[1]['Location']).must_equal '/'
-  #     expect(flash[:warn]).must_equal 'ログインしてください。'
+  #     expect(response[0]).to eq 302
+  #     expect(response[1]['Location']).to eq '/'
+  #     expect(flash[:warn]).to eq 'ログインしてください。'
   #   end
   # end
 
@@ -54,9 +54,9 @@ RSpec.describe Web::Controllers::User::Show do
   #   it 'redirect login' do
   #     response = action.call(params)
   #     flash = action.exposures[:flash]
-  #     expect(response[0]).must_equal 302
-  #     expect(response[1]['Location']).must_equal '/'
-  #     expect(flash[:warn]).must_equal 'ログインしてください。'
+  #     expect(response[0]).to eq 302
+  #     expect(response[1]['Location']).to eq '/'
+  #     expect(flash[:warn]).to eq 'ログインしてください。'
   #   end
   # end
 
@@ -66,9 +66,9 @@ RSpec.describe Web::Controllers::User::Show do
   #   it 'redirect login' do
   #     response = action.call(params)
   #     flash = action.exposures[:flash]
-  #     expect(response[0]).must_equal 200
-  #     expect(response[1]['Location']).must_equal '/'
-  #     expect(flash[:warn]).must_equal 'ログインしてください。'
+  #     expect(response[0]).to eq 200
+  #     expect(response[1]['Location']).to eq '/'
+  #     expect(flash[:warn]).to eq 'ログインしてください。'
   #   end
   # end
 
@@ -81,7 +81,7 @@ RSpec.describe Web::Controllers::User::Show do
 
   #     it 'is successful' do
   #       response = action.call(params)
-  #       expect(response[0]).must_equal 200
+  #       expect(response[0]).to eq 200
   #     end
   #   end
 
@@ -91,8 +91,8 @@ RSpec.describe Web::Controllers::User::Show do
   #     it 'redirect login' do
   #       response = action.call(params)
   #       flash = action.exposures[:flash]
-  #       expect(response[0]).must_equal 200
-  #       expect(flash[:warn]).must_equal 'セッションがタイムアウトしました。'
+  #       expect(response[0]).to eq 200
+  #       expect(flash[:warn]).to eq 'セッションがタイムアウトしました。'
   #     end
   #   end
   # end

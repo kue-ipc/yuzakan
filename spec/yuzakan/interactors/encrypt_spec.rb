@@ -9,25 +9,25 @@ RSpec.describe Encrypt do
   it 'encryt text' do
     text = 'Ab01#'
     result = interactor.call({data: text})
-    expect(result.successful?).must_equal true
+    expect(result.successful?).to eq true
     expect(result.encrypted).must_match(/\A[\x20-\x7E]*\z/)
 
     pb_crypt = Yuzakan::Utils::PbCrypt.new(ENV.fetch('DB_SECRET'))
     plain_text = pb_crypt.decrypt_text(result.encrypted)
-    expect(plain_text).must_equal text
+    expect(plain_text).to eq text
   end
 
   it 'encryt empty text' do
     text = ''
     result = interactor.call({data: text})
-    expect(result.successful?).must_equal true
+    expect(result.successful?).to eq true
     expect(result.encrypted).must_be_empty
   end
 
   it 'encryt unicode text' do
     text = '日本語😺🀄等'
     result = interactor.call({data: text})
-    expect(result.successful?).must_equal true
+    expect(result.successful?).to eq true
     expect(result.encrypted).must_match(/\A[\x20-\x7E]*\z/)
   end
 
@@ -46,9 +46,9 @@ RSpec.describe Encrypt do
         text = 'A' * n
         result = interactor.call({data: text})
         if result.encrypted.size <= 255
-          expect(result.successful?).must_equal true
+          expect(result.successful?).to eq true
         else
-          expect(result.successful?).must_equal false
+          expect(result.successful?).to eq false
         end
         expect(result.encrypted).must_match(/\A[\x20-\x7E]*\z/)
       end
@@ -60,7 +60,7 @@ RSpec.describe Encrypt do
     it 'encryt 4096 size text' do
       text = 'A' * 4096
       result = interactor.call({data: text})
-      expect(result.successful?).must_equal true
+      expect(result.successful?).to eq true
       expect(result.encrypted).must_match(/\A[\x20-\x7E]*\z/)
     end
   end

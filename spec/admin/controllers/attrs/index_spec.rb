@@ -8,7 +8,7 @@ RSpec.describe Admin::Controllers::Attrs::Index do
 
   it 'is failure' do
     response = action.call(params)
-    expect(response[0]).must_equal 403
+    expect(response[0]).to eq 403
   end
 
   describe 'admin' do
@@ -16,7 +16,7 @@ RSpec.describe Admin::Controllers::Attrs::Index do
 
     it 'is successful' do
       response = action.call(params)
-      expect(response[0]).must_equal 200
+      expect(response[0]).to eq 200
     end
   end
 
@@ -25,8 +25,8 @@ RSpec.describe Admin::Controllers::Attrs::Index do
 
     it 'is error' do
       response = action.call(params)
-      expect(response[0]).must_equal 302
-      expect(response[1]['Location']).must_equal '/'
+      expect(response[0]).to eq 302
+      expect(response[1]['Location']).to eq '/'
     end
   end
 end

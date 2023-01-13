@@ -50,10 +50,10 @@ RSpec.describe Api::Controllers::Providers::Show do
 
   it 'is successful' do
     response = action.call(params)
-    expect(response[0]).must_equal 200
-    expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    expect(response[0]).to eq 200
+    expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    expect(json).must_equal({
+    expect(json).to eq({
       **provider_params,
       label: provider_params[:display_name],
     })
@@ -64,10 +64,10 @@ RSpec.describe Api::Controllers::Providers::Show do
 
     it 'is successful' do
       response = action.call(params)
-      expect(response[0]).must_equal 200
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 200
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).must_equal({
+      expect(json).to eq({
         **provider_params,
         label: provider_params[:display_name],
         params: provider_params_attributes_params,
@@ -81,10 +81,10 @@ RSpec.describe Api::Controllers::Providers::Show do
 
       it 'is failure' do
         response = action.call(params)
-        expect(response[0]).must_equal 404
-        expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        expect(response[0]).to eq 404
+        expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        expect(json).must_equal({
+        expect(json).to eq({
           code: 404,
           message: 'Not Found',
         })
@@ -97,10 +97,10 @@ RSpec.describe Api::Controllers::Providers::Show do
 
     it 'is error' do
       response = action.call(params)
-      expect(response[0]).must_equal 401
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 401
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).must_equal({code: 401, message: 'Unauthorized'})
+      expect(json).to eq({code: 401, message: 'Unauthorized'})
     end
   end
 end

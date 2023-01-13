@@ -9,10 +9,10 @@ RSpec.describe Api::Controllers::System::Show do
 
   it 'is successful' do
     response = action.call(params)
-    expect(response[0]).must_equal 200
-    expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    expect(response[0]).to eq 200
+    expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    expect(json).must_equal({
+    expect(json).to eq({
       url: 'http://0.0.0.0:2300/',
       title: 'title',
       domain: 'kyokyo-u.ac.jp',
@@ -30,10 +30,10 @@ RSpec.describe Api::Controllers::System::Show do
 
     it 'is successful' do
       response = action.call(params)
-      expect(response[0]).must_equal 200
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 200
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).must_equal({
+      expect(json).to eq({
         url: 'http://0.0.0.0:2300/',
         title: 'title2',
         domain: 'kyokyo-u.ac.jp',
@@ -49,10 +49,10 @@ RSpec.describe Api::Controllers::System::Show do
 
     it 'is successful' do
       response = action.call(params)
-      expect(response[0]).must_equal 200
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 200
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).must_equal({
+      expect(json).to eq({
         url: 'http://0.0.0.0:2300/',
         title: 'title',
         domain: 'kyokyo-u.ac.jp',

@@ -31,7 +31,7 @@ RSpec.describe Provider do
 
   it 'test adapter provider' do
     provider = Provider.new(**attributes)
-    expect(provider.name).must_equal 'test'
-    expect(provider.params[:str]).must_equal '文字列'
+    expect(provider.name).to eq 'test'
+    expect(provider.params[:str]).to eq '文字列'
   end
 end

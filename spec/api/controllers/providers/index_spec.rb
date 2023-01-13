@@ -22,10 +22,10 @@ RSpec.describe Api::Controllers::Providers::Index do
 
   it 'is successful' do
     response = action.call(params)
-    expect(response[0]).must_equal 200
-    expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    expect(response[0]).to eq 200
+    expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    expect(json).must_equal(providers_attributes.map do |provider|
+    expect(json).to eq(providers_attributes.map do |provider|
       provider.except(:id).merge(label: provider[:display_name] || provider[:name])
     end)
   end
@@ -35,10 +35,10 @@ RSpec.describe Api::Controllers::Providers::Index do
 
     it 'is error' do
       response = action.call(params)
-      expect(response[0]).must_equal 401
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 401
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).must_equal({code: 401, message: 'Unauthorized'})
+      expect(json).to eq({code: 401, message: 'Unauthorized'})
     end
   end
 end

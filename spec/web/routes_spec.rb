@@ -7,6 +7,6 @@ RSpec.describe Admin.routes do
 
   it 'generates "/"' do
     actual = routes.path(:root)
-    expect(actual).must_equal('/admin')
+    expect(actual).to eq('/admin')
   end
 end

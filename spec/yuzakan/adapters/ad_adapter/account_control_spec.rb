@@ -8,26 +8,26 @@ RSpec.describe Yuzakan::Adapters::AdAdapter::AccountControl do
 
   it 'user flags' do
     # NORMAL_ACCOUNT (0x0200) | DONT_EXPIRE_PASSWORD (0x10000)
-    expect(ac.to_i).must_equal 0x10200
-    expect(ac.accountdisable).must_equal false
-    expect(ac.accountdisable?).must_equal false
-    expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).must_equal false
+    expect(ac.to_i).to eq 0x10200
+    expect(ac.accountdisable).to eq false
+    expect(ac.accountdisable?).to eq false
+    expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq false
   end
 
   it 'enable' do
     ac.accountdisable = false
-    expect(ac.to_i).must_equal 0x10200
-    expect(ac.accountdisable).must_equal false
-    expect(ac.accountdisable?).must_equal false
-    expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).must_equal false
+    expect(ac.to_i).to eq 0x10200
+    expect(ac.accountdisable).to eq false
+    expect(ac.accountdisable?).to eq false
+    expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq false
   end
 
   it 'disable' do
     ac.accountdisable = true
-    expect(ac.to_i).must_equal 0x10202
-    expect(ac.accountdisable).must_equal true
-    expect(ac.accountdisable?).must_equal true
-    expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).must_equal true
+    expect(ac.to_i).to eq 0x10202
+    expect(ac.accountdisable).to eq true
+    expect(ac.accountdisable?).to eq true
+    expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq true
   end
 
   it 'new array' do
@@ -36,15 +36,15 @@ RSpec.describe Yuzakan::Adapters::AdAdapter::AccountControl do
         Yuzakan::Adapters::AdAdapter::AccountControl::Flag::NORMAL_ACCOUNT,
         Yuzakan::Adapters::AdAdapter::AccountControl::Flag::DONT_EXPIRE_PASSWORD,
       ])
-    expect(array_ac == ac).must_equal true
+    expect(array_ac == ac).to eq true
   end
 
   it 'set PASSWORD_EXPIRED' do
-    expect(ac.password_expired).must_equal false
+    expect(ac.password_expired).to eq false
     ac.password_expired = true
-    expect(ac.to_i).must_equal 0x810200
-    expect(ac.password_expired).must_equal true
-    expect(ac.password_expired?).must_equal true
+    expect(ac.to_i).to eq 0x810200
+    expect(ac.password_expired).to eq true
+    expect(ac.password_expired?).to eq true
   end
 
   describe 'disbaled user' do
@@ -55,26 +55,26 @@ RSpec.describe Yuzakan::Adapters::AdAdapter::AccountControl do
     }
 
     it 'user flags' do
-      expect(ac.to_i).must_equal 0x10202
-      expect(ac.accountdisable).must_equal true
-      expect(ac.accountdisable?).must_equal true
-      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).must_equal true
+      expect(ac.to_i).to eq 0x10202
+      expect(ac.accountdisable).to eq true
+      expect(ac.accountdisable?).to eq true
+      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq true
     end
 
     it 'enable' do
       ac.accountdisable = false
-      expect(ac.to_i).must_equal 0x10200
-      expect(ac.accountdisable).must_equal false
-      expect(ac.accountdisable?).must_equal false
-      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).must_equal false
+      expect(ac.to_i).to eq 0x10200
+      expect(ac.accountdisable).to eq false
+      expect(ac.accountdisable?).to eq false
+      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq false
     end
 
     it 'disable' do
       ac.accountdisable = true
-      expect(ac.to_i).must_equal 0x10202
-      expect(ac.accountdisable).must_equal true
-      expect(ac.accountdisable?).must_equal true
-      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).must_equal true
+      expect(ac.to_i).to eq 0x10202
+      expect(ac.accountdisable).to eq true
+      expect(ac.accountdisable?).to eq true
+      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq true
     end
   end
 
@@ -85,26 +85,26 @@ RSpec.describe Yuzakan::Adapters::AdAdapter::AccountControl do
     }
 
     it 'user flags' do
-      expect(ac.to_i).must_equal 0x10210
-      expect(ac.accountdisable).must_equal false
-      expect(ac.accountdisable?).must_equal false
-      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).must_equal true
+      expect(ac.to_i).to eq 0x10210
+      expect(ac.accountdisable).to eq false
+      expect(ac.accountdisable?).to eq false
+      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq true
     end
 
     it 'enable' do
       ac.accountdisable = false
-      expect(ac.to_i).must_equal 0x10210
-      expect(ac.accountdisable).must_equal false
-      expect(ac.accountdisable?).must_equal false
-      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).must_equal true
+      expect(ac.to_i).to eq 0x10210
+      expect(ac.accountdisable).to eq false
+      expect(ac.accountdisable?).to eq false
+      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq true
     end
 
     it 'disable' do
       ac.accountdisable = true
-      expect(ac.to_i).must_equal 0x10212
-      expect(ac.accountdisable).must_equal true
-      expect(ac.accountdisable?).must_equal true
-      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).must_equal true
+      expect(ac.to_i).to eq 0x10212
+      expect(ac.accountdisable).to eq true
+      expect(ac.accountdisable?).to eq true
+      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq true
     end
   end
 
@@ -116,26 +116,26 @@ RSpec.describe Yuzakan::Adapters::AdAdapter::AccountControl do
     }
 
     it 'user flags' do
-      expect(ac.to_i).must_equal 0x10212
-      expect(ac.accountdisable).must_equal true
-      expect(ac.accountdisable?).must_equal true
-      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).must_equal true
+      expect(ac.to_i).to eq 0x10212
+      expect(ac.accountdisable).to eq true
+      expect(ac.accountdisable?).to eq true
+      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq true
     end
 
     it 'enable' do
       ac.accountdisable = false
-      expect(ac.to_i).must_equal 0x10210
-      expect(ac.accountdisable).must_equal false
-      expect(ac.accountdisable?).must_equal false
-      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).must_equal true
+      expect(ac.to_i).to eq 0x10210
+      expect(ac.accountdisable).to eq false
+      expect(ac.accountdisable?).to eq false
+      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq true
     end
 
     it 'disable' do
       ac.accountdisable = true
-      expect(ac.to_i).must_equal 0x10212
-      expect(ac.accountdisable).must_equal true
-      expect(ac.accountdisable?).must_equal true
-      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).must_equal true
+      expect(ac.to_i).to eq 0x10212
+      expect(ac.accountdisable).to eq true
+      expect(ac.accountdisable?).to eq true
+      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq true
     end
   end
 end

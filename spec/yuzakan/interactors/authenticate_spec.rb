@@ -20,12 +20,12 @@ RSpec.describe Authenticate do
 
   #   it 'call failure' do
   #     result = interactor.call(params)
-  #     expect(result.failure?).must_equal true
+  #     expect(result.failure?).to eq true
   #   end
   # end
 
   # it 'call successful' do
   #   result = interactor.call(params)
-  #   expect(result.successful?).must_equal true
+  #   expect(result.successful?).to eq true
   # end
 end

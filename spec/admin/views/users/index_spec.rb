@@ -11,6 +11,6 @@ RSpec.describe Admin::Views::Users::Index do
   let(:rendered)  { view.render }
 
   it 'exposes #format' do
-    expect(view.format).must_equal exposures.fetch(:format)
+    expect(view.format).to eq exposures.fetch(:format)
   end
 end

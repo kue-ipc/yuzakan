@@ -13,9 +13,9 @@ RSpec.describe Decrypt do
 
   it 'decryt text' do
     result = interactor.call({encrypted: encrypted})
-    expect(result.successful?).must_equal true
-    expect(result.data).must_equal text
-    expect(result.data.encoding).must_equal Encoding::UTF_8
+    expect(result.successful?).to eq true
+    expect(result.data).to eq text
+    expect(result.data.encoding).to eq Encoding::UTF_8
   end
 
   describe 'other password' do
@@ -23,8 +23,8 @@ RSpec.describe Decrypt do
 
     it 'failed decryt text other password' do
       result = interactor.call({encrypted: encrypted})
-      expect(result.failure?).must_equal true
-      expect(result.errors.first).must_equal '復号化に失敗しました。'
+      expect(result.failure?).to eq true
+      expect(result.errors.first).to eq '復号化に失敗しました。'
       expect(result.data).must_be_nil
     end
   end
@@ -34,7 +34,7 @@ RSpec.describe Decrypt do
 
     it 'decryt bad text' do
       result = interactor.call({encrypted: encrypted})
-      expect(result.successful?).must_equal true
+      expect(result.successful?).to eq true
       expect(result.data).wont_equal text
     end
   end

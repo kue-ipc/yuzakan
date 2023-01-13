@@ -11,6 +11,6 @@ RSpec.describe Web::Controllers::Google::Show do
 
   # it 'is successful' do
   #   response = action.call(params)
-  #   expect(response[0]).must_equal 200
+  #   expect(response[0]).to eq 200
   # end
 end

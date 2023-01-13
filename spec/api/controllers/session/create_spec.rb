@@ -33,11 +33,11 @@ RSpec.describe Api::Controllers::Session::Create do
   it 'is see other' do
     Rack::Utils::HTTP_STATUS_CODES[303] = 'Hoge'
     response = action.call(params)
-    expect(response[0]).must_equal 303
-    expect(response[1]['Location']).must_equal '/api/session'
-    expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    expect(response[0]).to eq 303
+    expect(response[1]['Location']).to eq '/api/session'
+    expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    expect(json).must_equal({
+    expect(json).to eq({
       code: 303,
       message: 'See Other',
       location: '/api/session',
@@ -51,11 +51,11 @@ RSpec.describe Api::Controllers::Session::Create do
       begin_time = Time.now.floor
       response = action.call(params)
       end_time = Time.now.floor
-      expect(response[0]).must_equal 201
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 201
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json[:uuid]).must_equal uuid
-      expect(json[:current_user]).must_equal({**user.to_h.except(:id), label: user.label})
+      expect(json[:uuid]).to eq uuid
+      expect(json[:current_user]).to eq({**user.to_h.except(:id), label: user.label})
       created_at = Time.iso8601(json[:created_at])
       expect(created_at).must_be :>=, begin_time
       expect(created_at).must_be :<=, end_time
@@ -69,10 +69,10 @@ RSpec.describe Api::Controllers::Session::Create do
 
     it 'is failed with bad username' do
       response = action.call(**params, username: 'baduser')
-      expect(response[0]).must_equal 422
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 422
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).must_equal({
+      expect(json).to eq({
         code: 422,
         message: 'Unprocessable Entity',
         errors: ['ユーザー名またはパスワードが違います。'],
@@ -81,10 +81,10 @@ RSpec.describe Api::Controllers::Session::Create do
 
     it 'is failed with bad password' do
       response = action.call(**params, password: 'badpass')
-      expect(response[0]).must_equal 422
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 422
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).must_equal({
+      expect(json).to eq({
         code: 422,
         message: 'Unprocessable Entity',
         errors: ['ユーザー名またはパスワードが違います。'],
@@ -93,10 +93,10 @@ RSpec.describe Api::Controllers::Session::Create do
 
     it 'is error with no username' do
       response = action.call(**params.reject { |k, _v| k == :username })
-      expect(response[0]).must_equal 400
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 400
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).must_equal({
+      expect(json).to eq({
         code: 400,
         message: 'Bad Request',
         errors: [{username: ['存在しません。']}],
@@ -105,10 +105,10 @@ RSpec.describe Api::Controllers::Session::Create do
 
     it 'is error with no password' do
       response = action.call(**params.reject { |k, _v| k == :password })
-      expect(response[0]).must_equal 400
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 400
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).must_equal({
+      expect(json).to eq({
         code: 400,
         message: 'Bad Request',
         errors: [{password: ['存在しません。']}],
@@ -117,10 +117,10 @@ RSpec.describe Api::Controllers::Session::Create do
 
     it 'is error with too large username' do
       response = action.call(**params, username: 'user' * 64)
-      expect(response[0]).must_equal 400
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 400
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).must_equal({
+      expect(json).to eq({
         code: 400,
         message: 'Bad Request',
         errors: [{username: ['サイズが255を超えてはいけません。']}],
@@ -129,10 +129,10 @@ RSpec.describe Api::Controllers::Session::Create do
 
     it 'is error with empty password' do
       response = action.call(**params, password: '')
-      expect(response[0]).must_equal 400
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 400
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).must_equal({
+      expect(json).to eq({
         code: 400,
         message: 'Bad Request',
         errors: [{password: ['入力が必須です。']}],
@@ -157,10 +157,10 @@ RSpec.describe Api::Controllers::Session::Create do
 
       it 'is failure' do
         response = action.call(params)
-        expect(response[0]).must_equal 403
-        expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+        expect(response[0]).to eq 403
+        expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
-        expect(json).must_equal({
+        expect(json).to eq({
           code: 403,
           message: 'Forbidden',
           errors: ['時間あたりのログイン試行が規定の回数を超えたため、現在ログインが禁止されています。 ' \
@@ -174,10 +174,10 @@ RSpec.describe Api::Controllers::Session::Create do
 
     #   it 'is failure' do
     #     response = action.call(params)
-    #     expect(response[0]).must_equal 403
-    #     expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    #     expect(response[0]).to eq 403
+    #     expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
     #     json = JSON.parse(response[2].first, symbolize_names: true)
-    #     expect(json).must_equal({
+    #     expect(json).to eq({
     #       code: 403,
     #       message: 'Forbidden',
     #       errors: ['現在のネットワークからのログインは許可されていません。'],
@@ -193,11 +193,11 @@ RSpec.describe Api::Controllers::Session::Create do
       begin_time = Time.now.floor
       response = action.call(params)
       end_time = Time.now.floor
-      expect(response[0]).must_equal 201
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 201
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json[:uuid]).must_match(/\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/)
-      expect(json[:current_user]).must_equal({**user.to_h.except(:id), label: user.label})
+      expect(json[:current_user]).to eq({**user.to_h.except(:id), label: user.label})
       created_at = Time.iso8601(json[:created_at])
       expect(created_at).must_be :>=, begin_time
       expect(created_at).must_be :<=, end_time
@@ -215,10 +215,10 @@ RSpec.describe Api::Controllers::Session::Create do
 
     it 'is error' do
       response = action.call(params)
-      expect(response[0]).must_equal 401
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 401
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).must_equal({
+      expect(json).to eq({
         code: 401,
         message: 'Unauthorized',
         errors: ['セッションがタイムアウトしました。'],

@@ -14,7 +14,7 @@ RSpec.describe Yuzakan::Utils::PbCrypt do
     expect(encrypted_text).must_match(/\A[\x20-\x7E]*\z/)
     expect(encrypted_text).wont_equal text
     decrypted_text = pb_crypt.decrypt_text(encrypted_text)
-    expect(decrypted_text).must_equal text
+    expect(decrypted_text).to eq text
   end
 
   it 'encryt and decrypt empty text' do
@@ -22,7 +22,7 @@ RSpec.describe Yuzakan::Utils::PbCrypt do
     encrypted_text = pb_crypt.encrypt_text(text)
     expect(encrypted_text).must_be_empty
     decrypted_text = pb_crypt.decrypt_text(encrypted_text)
-    expect(decrypted_text).must_equal text
+    expect(decrypted_text).to eq text
   end
 
   it 'encryt and decrypt unicode text' do
@@ -31,8 +31,8 @@ RSpec.describe Yuzakan::Utils::PbCrypt do
     expect(encrypted_text).must_match(/\A[\x20-\x7E]*\z/)
     expect(encrypted_text).wont_equal text
     decrypted_text = pb_crypt.decrypt_text(encrypted_text)
-    expect(decrypted_text).must_equal text
-    expect(decrypted_text.encoding).must_equal Encoding::UTF_8
+    expect(decrypted_text).to eq text
+    expect(decrypted_text.encoding).to eq Encoding::UTF_8
   end
 
   it 'encryt and decrypt 1..256 size text' do
@@ -42,7 +42,7 @@ RSpec.describe Yuzakan::Utils::PbCrypt do
       expect(encrypted_text).must_match(/\A[\x20-\x7E]*\z/)
       expect(encrypted_text).wont_equal text
       decrypted_text = pb_crypt.decrypt_text(encrypted_text)
-      expect(decrypted_text).must_equal text
+      expect(decrypted_text).to eq text
     end
   end
 
@@ -52,7 +52,7 @@ RSpec.describe Yuzakan::Utils::PbCrypt do
     expect(encrypted_text).must_match(/\A[\x20-\x7E]*\z/)
     expect(encrypted_text).wont_equal text
     decrypted_text = pb_crypt.decrypt_text(encrypted_text)
-    expect(decrypted_text).must_equal text
+    expect(decrypted_text).to eq text
   end
 
   it 'encryt and decrypt data' do
@@ -60,7 +60,7 @@ RSpec.describe Yuzakan::Utils::PbCrypt do
     encrypted_data = pb_crypt.encrypt(data)
     expect(encrypted_data).wont_equal data
     decrypted_data = pb_crypt.decrypt(encrypted_data)
-    expect(decrypted_data).must_equal data
+    expect(decrypted_data).to eq data
   end
 
   it 'encryt and decrypt empty data' do
@@ -68,7 +68,7 @@ RSpec.describe Yuzakan::Utils::PbCrypt do
     encrypted_data = pb_crypt.encrypt(data)
     expect(encrypted_data).must_be_empty
     decrypted_data = pb_crypt.decrypt(encrypted_data)
-    expect(decrypted_data).must_equal data
+    expect(decrypted_data).to eq data
   end
 
   it 'encryt and decrypt 1..256 size data' do
@@ -77,7 +77,7 @@ RSpec.describe Yuzakan::Utils::PbCrypt do
       encrypted_data = pb_crypt.encrypt(data)
       expect(encrypted_data).wont_equal data
       decrypted_data = pb_crypt.decrypt(encrypted_data)
-      expect(decrypted_data).must_equal data
+      expect(decrypted_data).to eq data
     end
   end
 
@@ -87,7 +87,7 @@ RSpec.describe Yuzakan::Utils::PbCrypt do
     encrypted_data = pb_crypt.encrypt(data)
     expect(encrypted_data).wont_equal data
     decrypted_data = pb_crypt.decrypt(encrypted_data)
-    expect(decrypted_data).must_equal data
+    expect(decrypted_data).to eq data
   end
 
   it 'encryt and decrypt last null data' do
@@ -95,7 +95,7 @@ RSpec.describe Yuzakan::Utils::PbCrypt do
     encrypted_data = pb_crypt.encrypt(data)
     expect(encrypted_data).wont_equal data
     decrypted_data = pb_crypt.decrypt(encrypted_data)
-    expect(decrypted_data).must_equal data
+    expect(decrypted_data).to eq data
   end
 
   it 'encryt and decrypt text other password' do

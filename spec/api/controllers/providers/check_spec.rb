@@ -24,10 +24,10 @@ RSpec.describe Api::Controllers::Providers::Check do
 
   it 'is successful' do
     response = action.call(params)
-    expect(response[0]).must_equal 200
-    expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    expect(response[0]).to eq 200
+    expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    expect(json).must_equal({check: true})
+    expect(json).to eq({check: true})
   end
 
   describe 'check failed' do
@@ -35,10 +35,10 @@ RSpec.describe Api::Controllers::Providers::Check do
 
     it 'is successful, but false' do
       response = action.call(params)
-      expect(response[0]).must_equal 200
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 200
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).must_equal({check: false})
+      expect(json).to eq({check: false})
     end
   end
 
@@ -47,10 +47,10 @@ RSpec.describe Api::Controllers::Providers::Check do
 
     it 'is error' do
       response = action.call(params)
-      expect(response[0]).must_equal 401
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 401
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).must_equal({code: 401, message: 'Unauthorized'})
+      expect(json).to eq({code: 401, message: 'Unauthorized'})
     end
   end
 end

@@ -10,26 +10,26 @@ RSpec.describe Api::Controllers::Adapters::Show do
 
   it 'is successful' do
     response = action.call(params)
-    expect(response[0]).must_equal 200
-    expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    expect(response[0]).to eq 200
+    expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    expect(json).must_equal({name: 'dummy', label: 'ダミー'})
+    expect(json).to eq({name: 'dummy', label: 'ダミー'})
   end
 
   it 'is successful with test adapter' do
     response = action.call({**params, id: 'test'})
-    expect(response[0]).must_equal 200
-    expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    expect(response[0]).to eq 200
+    expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    expect(json).must_equal({name: 'test', label: 'テスト'})
+    expect(json).to eq({name: 'test', label: 'テスト'})
   end
 
   it 'is failure with unknown id' do
     response = action.call({**params, id: 'hoge'})
-    expect(response[0]).must_equal 404
-    expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+    expect(response[0]).to eq 404
+    expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    expect(json).must_equal({code: 404, message: 'Not Found'})
+    expect(json).to eq({code: 404, message: 'Not Found'})
   end
 
   describe 'admin' do
@@ -37,18 +37,18 @@ RSpec.describe Api::Controllers::Adapters::Show do
 
     it 'is successful' do
       response = action.call(params)
-      expect(response[0]).must_equal 200
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 200
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).must_equal({name: 'dummy', label: 'ダミー', param_types: []})
+      expect(json).to eq({name: 'dummy', label: 'ダミー', param_types: []})
     end
 
     it 'is successful with test adapter' do
       response = action.call({**params, id: 'test'})
-      expect(response[0]).must_equal 200
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 200
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).must_equal({
+      expect(json).to eq({
         name: 'test',
         label: 'テスト',
         param_types: [
@@ -79,10 +79,10 @@ RSpec.describe Api::Controllers::Adapters::Show do
 
     it 'is failure with unknown id' do
       response = action.call({**params, id: 'hoge'})
-      expect(response[0]).must_equal 404
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 404
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).must_equal({code: 404, message: 'Not Found'})
+      expect(json).to eq({code: 404, message: 'Not Found'})
     end
   end
 
@@ -91,10 +91,10 @@ RSpec.describe Api::Controllers::Adapters::Show do
 
     it 'is error' do
       response = action.call(params)
-      expect(response[0]).must_equal 401
-      expect(response[1]['Content-Type']).must_equal "#{format}; charset=utf-8"
+      expect(response[0]).to eq 401
+      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).must_equal({code: 401, message: 'Unauthorized'})
+      expect(json).to eq({code: 401, message: 'Unauthorized'})
     end
   end
 end

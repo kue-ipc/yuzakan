@@ -8,27 +8,27 @@ RSpec.describe Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl do
 
   it 'user flags' do
     # NORMAL_ACCOUNT (0x0200) | DONT_EXPIRE_PASSWORD (0x10000)
-    expect(ac.to_s).must_equal '[UX         ]'
+    expect(ac.to_s).to eq '[UX         ]'
   end
 
   it 'enable' do
     ac.accountdisable = false
-    expect(ac.to_s).must_equal '[UX         ]'
+    expect(ac.to_s).to eq '[UX         ]'
   end
 
   it 'disable' do
     ac.accountdisable = true
-    expect(ac.to_s).must_equal '[DUX        ]'
+    expect(ac.to_s).to eq '[DUX        ]'
   end
 
   it 'new string' do
     new_ac = Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl.new('[UX         ]')
-    expect(new_ac == ac).must_equal true
+    expect(new_ac == ac).to eq true
   end
 
   it 'set PASSWORD_EXPIRED' do
     ac.password_expired = true
-    expect(ac.to_s).must_equal '[UX         ]' # no change
+    expect(ac.to_s).to eq '[UX         ]' # no change
   end
 
   describe 'disbaled user' do
@@ -39,22 +39,22 @@ RSpec.describe Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl do
     }
 
     it 'user flags' do
-      expect(ac.to_s).must_equal '[DUX        ]'
+      expect(ac.to_s).to eq '[DUX        ]'
     end
 
     it 'enable' do
       ac.accountdisable = false
-      expect(ac.to_s).must_equal '[UX         ]'
+      expect(ac.to_s).to eq '[UX         ]'
     end
 
     it 'disable' do
       ac.accountdisable = true
-      expect(ac.to_s).must_equal '[DUX        ]'
+      expect(ac.to_s).to eq '[DUX        ]'
     end
 
     it 'new string' do
       new_ac = Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl.new('[UXD        ]')
-      expect(new_ac == ac).must_equal true
+      expect(new_ac == ac).to eq true
     end
   end
 
@@ -65,22 +65,22 @@ RSpec.describe Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl do
     }
 
     it 'user flags' do
-      expect(ac.to_s).must_equal '[LUX        ]'
+      expect(ac.to_s).to eq '[LUX        ]'
     end
 
     it 'enable' do
       ac.accountdisable = false
-      expect(ac.to_s).must_equal '[LUX        ]'
+      expect(ac.to_s).to eq '[LUX        ]'
     end
 
     it 'disable' do
       ac.accountdisable = true
-      expect(ac.to_s).must_equal '[DLUX       ]'
+      expect(ac.to_s).to eq '[DLUX       ]'
     end
 
     it 'new string' do
       new_ac = Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl.new('[UXL        ]')
-      expect(new_ac == ac).must_equal true
+      expect(new_ac == ac).to eq true
     end
   end
 
@@ -92,17 +92,17 @@ RSpec.describe Yuzakan::Adapters::SambaLdapAdapter::SambaAccountControl do
     }
 
     it 'user flags' do
-      expect(ac.to_s).must_equal '[DLUX       ]'
+      expect(ac.to_s).to eq '[DLUX       ]'
     end
 
     it 'enable' do
       ac.accountdisable = false
-      expect(ac.to_s).must_equal '[LUX        ]'
+      expect(ac.to_s).to eq '[LUX        ]'
     end
 
     it 'disable' do
       ac.accountdisable = true
-      expect(ac.to_s).must_equal '[DLUX       ]'
+      expect(ac.to_s).to eq '[DLUX       ]'
     end
   end
 end

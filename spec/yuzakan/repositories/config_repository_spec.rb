@@ -19,7 +19,7 @@ RSpec.describe ConfigRepository do
   #   end
 
   #   it 'initialized? is false' do
-  #     expect(repository.initialized?).must_equal false
+  #     expect(repository.initialized?).to eq false
   #   end
   # end
 
@@ -28,6 +28,6 @@ RSpec.describe ConfigRepository do
   # end
 
   # it 'initialized? is true after initialized' do
-  #   expect(repository.initialized?).must_equal true
+  #   expect(repository.initialized?).to eq true
   # end
 end

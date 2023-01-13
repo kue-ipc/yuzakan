@@ -13,7 +13,7 @@ RSpec.describe Admin::Controllers::Providers::Show do
 
   it 'is failure' do
     response = action.call(params)
-    expect(response[0]).must_equal 403
+    expect(response[0]).to eq 403
   end
 
   describe 'admin' do
@@ -21,17 +21,17 @@ RSpec.describe Admin::Controllers::Providers::Show do
 
     it 'is successful' do
       response = action.call(params)
-      expect(response[0]).must_equal 200
+      expect(response[0]).to eq 200
     end
 
     it 'is successful with * for new' do
       response = action.call({**params, id: '*'})
-      expect(response[0]).must_equal 200
+      expect(response[0]).to eq 200
     end
 
     it 'is failure with !' do
       response = action.call({**params, id: '!'})
-      expect(response[0]).must_equal 400
+      expect(response[0]).to eq 400
     end
 
     describe 'not existed' do
@@ -41,7 +41,7 @@ RSpec.describe Admin::Controllers::Providers::Show do
 
       it 'is failure' do
         response = action.call(params)
-        expect(response[0]).must_equal 404
+        expect(response[0]).to eq 404
       end
     end
   end
@@ -51,8 +51,8 @@ RSpec.describe Admin::Controllers::Providers::Show do
 
     it 'is error' do
       response = action.call(params)
-      expect(response[0]).must_equal 302
-      expect(response[1]['Location']).must_equal '/'
+      expect(response[0]).to eq 302
+      expect(response[1]['Location']).to eq '/'
     end
   end
 end

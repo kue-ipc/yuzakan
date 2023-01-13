@@ -18,7 +18,7 @@ RSpec.describe AttrRepository do
   it 'ordered_all' do
     all = attr_repository.ordered_all
     expect(all).must_be_instance_of Array
-    expect(all.map(&:name)).must_equal ['hoge', 'piyo', 'fuga']
+    expect(all.map(&:name)).to eq ['hoge', 'piyo', 'fuga']
   end
 
   it 'find_by_name' do
@@ -27,14 +27,14 @@ RSpec.describe AttrRepository do
   end
 
   it 'exist_by_name?' do
-    expect(attr_repository.exist_by_name?('hoge')).must_equal true
-    expect(attr_repository.exist_by_name?('moe')).must_equal false
+    expect(attr_repository.exist_by_name?('hoge')).to eq true
+    expect(attr_repository.exist_by_name?('moe')).to eq false
   end
 
   it 'last_order' do
-    expect(attr_repository.last_order).must_equal 32
+    expect(attr_repository.last_order).to eq 32
     attr_repository.clear
-    expect(attr_repository.last_order).must_equal 0
+    expect(attr_repository.last_order).to eq 0
   end
 
   describe 'with mappings' do
@@ -59,15 +59,15 @@ RSpec.describe AttrRepository do
     it 'ordered_all_with_mappings' do
       all = attr_repository.ordered_all_with_mappings
       expect(all).must_be_instance_of Array
-      expect(all.map(&:name)).must_equal ['hoge', 'piyo', 'fuga']
-      expect(all.first.attr_mappings.first.name).must_equal 'hoge_hoge'
+      expect(all.map(&:name)).to eq ['hoge', 'piyo', 'fuga']
+      expect(all.first.attr_mappings.first.name).to eq 'hoge_hoge'
     end
 
     it 'find_with_mappings' do
       attr_with_mappings = attr_repository.find_with_mappings(@attr_hoge.id)
       expect(attr_with_mappings).must_be_instance_of Attr
-      expect(attr_with_mappings.name).must_equal 'hoge'
-      expect(attr_with_mappings.attr_mappings.first.name).must_equal 'hoge_hoge'
+      expect(attr_with_mappings.name).to eq 'hoge'
+      expect(attr_with_mappings.attr_mappings.first.name).to eq 'hoge_hoge'
     end
 
     it 'create_with_mappings' do
@@ -78,32 +78,32 @@ RSpec.describe AttrRepository do
           {provider_id: @provider_fuga.id, name: 'moe_fuga', conversion: 'e2j'},
         ])
       expect(attr_with_mappings).must_be_instance_of Attr
-      expect(attr_with_mappings.name).must_equal 'moe'
-      expect(attr_with_mappings.attr_mappings.first.name).must_equal 'moe_hoge'
-      expect(attr_repository.all.count).must_equal 4
-      expect(attr_mapping_repository.all.count).must_equal 4
+      expect(attr_with_mappings.name).to eq 'moe'
+      expect(attr_with_mappings.attr_mappings.first.name).to eq 'moe_hoge'
+      expect(attr_repository.all.count).to eq 4
+      expect(attr_mapping_repository.all.count).to eq 4
     end
 
     it 'add_mapping' do
       attr_mapping = attr_repository.add_mapping(@attr_fuga, {provider_id: @provider_hoge.id, name: 'fuga_hoge'})
       expect(attr_mapping).must_be_instance_of AttrMapping
-      expect(attr_mapping.name).must_equal 'fuga_hoge'
-      expect(attr_mapping_repository.all.count).must_equal 3
+      expect(attr_mapping.name).to eq 'fuga_hoge'
+      expect(attr_mapping_repository.all.count).to eq 3
     end
 
     it 'delete_mapping_by_provider_id' do
       delete_count = attr_repository.delete_mapping_by_provider_id(@attr_hoge, @provider_hoge.id)
-      expect(delete_count).must_equal 1
-      expect(attr_mapping_repository.all.count).must_equal 1
+      expect(delete_count).to eq 1
+      expect(attr_mapping_repository.all.count).to eq 1
 
       delete_count = attr_repository.delete_mapping_by_provider_id(@attr_fuga, @provider_hoge.id)
-      expect(delete_count).must_equal 0
-      expect(attr_mapping_repository.all.count).must_equal 1
+      expect(delete_count).to eq 0
+      expect(attr_mapping_repository.all.count).to eq 1
     end
 
     it 'find_mapping_by_provider_id' do
       attr_mapping = attr_repository.find_mapping_by_provider_id(@attr_hoge, @provider_hoge.id)
-      expect(attr_mapping).must_equal @attr_mapping_hoge_hoge
+      expect(attr_mapping).to eq @attr_mapping_hoge_hoge
     end
   end
 end

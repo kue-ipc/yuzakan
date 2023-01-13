@@ -8,8 +8,8 @@ RSpec.describe Admin::Controllers::Config::New do
 
   it 'rediret to root' do
     response = action.call(params)
-    expect(response[0]).must_equal 302
-    expect(response[1]['Location']).must_equal '/'
+    expect(response[0]).to eq 302
+    expect(response[1]['Location']).to eq '/'
   end
 
   describe 'before initialized' do
@@ -17,7 +17,7 @@ RSpec.describe Admin::Controllers::Config::New do
 
     it 'is successful' do
       response = action.call(params)
-      expect(response[0]).must_equal 200
+      expect(response[0]).to eq 200
     end
   end
 end
