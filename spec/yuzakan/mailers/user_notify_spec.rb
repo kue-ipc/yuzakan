@@ -19,32 +19,32 @@ RSpec.describe Mailers::UserNotify do
   #   expect(mail.to).to eq ['user@yuzakan.test']
   #   expect(mail.subject).to eq 'テストシステム【テスト処理】'
   #   expect(mail.body.parts.first.decoded)
-  #     .must_include 'テスト処理をしました。'
-  #   expect(mail.body.parts.first.decoded).must_include '実施日時:'
-  #   expect(mail.body.parts.first.decoded).must_include 'システム: テストシステム'
-  #   expect(mail.body.parts.first.decoded).must_include 'ユーザー: user'
-  #   expect(mail.body.parts.first.decoded).must_include '処理内容: テスト処理'
+  #     .to include 'テスト処理をしました。'
+  #   expect(mail.body.parts.first.decoded).to include '実施日時:'
+  #   expect(mail.body.parts.first.decoded).to include 'システム: テストシステム'
+  #   expect(mail.body.parts.first.decoded).to include 'ユーザー: user'
+  #   expect(mail.body.parts.first.decoded).to include '処理内容: テスト処理'
 
-  #   expect(mail.body.parts.first.decoded).wont_include '実施者:'
-  #   expect(mail.body.parts.first.decoded).wont_include '処理結果:'
+  #   expect(mail.body.parts.first.decoded).not_to include '実施者:'
+  #   expect(mail.body.parts.first.decoded).not_to include '処理結果:'
   # end
 
   # it 'delivers email by self' do
   #   mail = Mailers::UserNotify.deliver(**params, by_user: :self)
   #   expect(mail.to).to eq ['user@yuzakan.test']
-  #   expect(mail.body.parts.first.decoded).wont_include '実施者:'
+  #   expect(mail.body.parts.first.decoded).not_to include '実施者:'
   # end
 
   # it 'delivers email by self' do
   #   mail = Mailers::UserNotify.deliver(**params, by_user: :admin)
   #   expect(mail.to).to eq ['user@yuzakan.test']
-  #   expect(mail.body.parts.first.decoded).must_include '実施者: 管理者'
+  #   expect(mail.body.parts.first.decoded).to include '実施者: 管理者'
   # end
 
   # it 'delivers email by system' do
   #   mail = Mailers::UserNotify.deliver(**params, by_user: :system)
   #   expect(mail.to).to eq ['user@yuzakan.test']
-  #   expect(mail.body.parts.first.decoded).must_include '実施者: システム'
+  #   expect(mail.body.parts.first.decoded).to include '実施者: システム'
   # end
 
   # it 'delivers email dumy system' do
@@ -52,26 +52,26 @@ RSpec.describe Mailers::UserNotify do
   #     **params,
   #     providers: [ProviderRepository.new.by_name('dummy').one])
   #   expect(mail.to).to eq ['user@yuzakan.test']
-  #   expect(mail.body.parts.first.decoded).must_include 'システム: ダミー'
-  #   expect(mail.body.parts.first.decoded).wont_include 'システム: テストシステム'
+  #   expect(mail.body.parts.first.decoded).to include 'システム: ダミー'
+  #   expect(mail.body.parts.first.decoded).not_to include 'システム: テストシステム'
   # end
 
   # it 'delivers email result success' do
   #   mail = Mailers::UserNotify.deliver(**params, result: :success)
   #   expect(mail.to).to eq ['user@yuzakan.test']
-  #   expect(mail.body.parts.first.decoded).must_include '処理結果: 成功'
+  #   expect(mail.body.parts.first.decoded).to include '処理結果: 成功'
   # end
 
   # it 'delivers email result failure' do
   #   mail = Mailers::UserNotify.deliver(**params, result: :failure)
   #   expect(mail.to).to eq ['user@yuzakan.test']
-  #   expect(mail.body.parts.first.decoded).must_include '処理結果: 失敗'
+  #   expect(mail.body.parts.first.decoded).to include '処理結果: 失敗'
   # end
 
   # it 'delivers email result error' do
   #   mail = Mailers::UserNotify.deliver(**params, result: :error)
   #   expect(mail.to).to eq ['user@yuzakan.test']
-  #   expect(mail.body.parts.first.decoded).must_include '処理結果: エラー'
+  #   expect(mail.body.parts.first.decoded).to include '処理結果: エラー'
   # end
 
   # RSpec.describe 'contact' do
@@ -86,7 +86,7 @@ RSpec.describe Mailers::UserNotify do
   #   it 'delivers email contact name' do
   #     mail = Mailers::UserNotify.deliver(**params)
   #     expect(mail.to).to eq ['user@yuzakan.test']
-  #     expect(mail.body.parts.first.decoded).must_include 'テスト管理者'
+  #     expect(mail.body.parts.first.decoded).to include 'テスト管理者'
   #   end
 
   #   it 'delivers email contact email' do
@@ -94,14 +94,14 @@ RSpec.describe Mailers::UserNotify do
   #     mail = Mailers::UserNotify.deliver(**params)
   #     expect(mail.to).to eq ['user@yuzakan.test']
   #     expect(mail.body.parts.first.decoded)
-  #       .must_include 'メールアドレス: support@yuzakan.test'
+  #       .to include 'メールアドレス: support@yuzakan.test'
   #   end
 
   #   it 'delivers email contact phone' do
   #     UpdateConfig.new.call(contact_phone: '0000-00-0000')
   #     mail = Mailers::UserNotify.deliver(**params)
   #     expect(mail.to).to eq ['user@yuzakan.test']
-  #     expect(mail.body.parts.first.decoded).must_include '電話番号: 0000-00-0000'
+  #     expect(mail.body.parts.first.decoded).to include '電話番号: 0000-00-0000'
   #   end
   # end
 end

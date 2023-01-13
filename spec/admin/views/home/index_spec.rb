@@ -13,6 +13,6 @@ RSpec.describe Admin::Views::Home::Index do
   end
 
   # it 'exist form' do
-  #   expect(rendered).must_match %(<form)
+  #   expect(rendered).to match %(<form)
   # end
 end

@@ -17,13 +17,13 @@ RSpec.describe ProviderRepository do
 
   it 'ordered_all' do
     all = provider_repository.ordered_all
-    expect(all).must_be_instance_of Array
+    expect(all)..to be_instance_of Array
     expect(all.map(&:name)).to eq ['hoge', 'piyo', 'fuga']
   end
 
   it 'find_by_name' do
-    expect(provider_repository.find_by_name('hoge')).must_be_instance_of Provider
-    expect(provider_repository.find_by_name('moe')).must_be_nil
+    expect(provider_repository.find_by_name('hoge'))..to be_instance_of Provider
+    expect(provider_repository.find_by_name('moe')).to be_nil
   end
 
   it 'exist_by_name?' do
@@ -53,7 +53,7 @@ RSpec.describe ProviderRepository do
 
     it 'find_with_params' do
       provider_with_params = provider_repository.find_with_params(@provider_hoge.id)
-      expect(provider_with_params).must_be_instance_of Provider
+      expect(provider_with_params)..to be_instance_of Provider
       expect(provider_with_params.name).to eq 'hoge'
       expect(provider_with_params.params[:str]).to eq 'ほげほげ'
       expect(provider_with_params.params[:int]).to eq 42
@@ -61,7 +61,7 @@ RSpec.describe ProviderRepository do
 
     it 'find_with_params_by_name' do
       provider_with_params = provider_repository.find_with_params_by_name('hoge')
-      expect(provider_with_params).must_be_instance_of Provider
+      expect(provider_with_params)..to be_instance_of Provider
       expect(provider_with_params.name).to eq 'hoge'
       expect(provider_with_params.params[:str]).to eq 'ほげほげ'
       expect(provider_with_params.params[:int]).to eq 42
@@ -69,7 +69,7 @@ RSpec.describe ProviderRepository do
 
     it 'add_param' do
       provider_param = provider_repository.add_param(@provider_fuga, {name: 'str', value: Marshal.dump('ふがふが')})
-      expect(provider_param).must_be_instance_of ProviderParam
+      expect(provider_param)..to be_instance_of ProviderParam
       expect(provider_param.name).to eq 'str'
       expect(provider_param_repository.all.count).to eq 3
     end

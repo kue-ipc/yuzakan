@@ -7,6 +7,6 @@ RSpec.describe Admin::Views::ApplicationLayout do
   let(:rendered) { layout.render }
 
   # it 'contains application name' do
-  #   expect(rendered).must_include('Admin')
+  #   expect(rendered).to include('Admin')
   # end
 end

@@ -57,14 +57,14 @@ RSpec.describe Api::Controllers::Session::Create do
       expect(json[:uuid]).to eq uuid
       expect(json[:current_user]).to eq({**user.to_h.except(:id), label: user.label})
       created_at = Time.iso8601(json[:created_at])
-      expect(created_at).must_be :>=, begin_time
-      expect(created_at).must_be :<=, end_time
+      expect(created_at).to be >= begin_time
+      expect(created_at).to be <= end_time
       updated_at = Time.iso8601(json[:updated_at])
-      expect(updated_at).must_be :>=, begin_time
-      expect(updated_at).must_be :<=, end_time
+      expect(updated_at).to be >= begin_time
+      expect(updated_at).to be <= end_time
       deleted_at = Time.iso8601(json[:deleted_at])
-      expect(deleted_at).must_be :>=, begin_time + 3600
-      expect(deleted_at).must_be :<=, end_time + 3600
+      expect(deleted_at).to be >= begin_time + 3600
+      expect(deleted_at).to be <= end_time + 3600
     end
 
     it 'is failed with bad username' do
@@ -196,17 +196,17 @@ RSpec.describe Api::Controllers::Session::Create do
       expect(response[0]).to eq 201
       expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json[:uuid]).must_match(/\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/)
+      expect(json[:uuid]).to match(/\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/)
       expect(json[:current_user]).to eq({**user.to_h.except(:id), label: user.label})
       created_at = Time.iso8601(json[:created_at])
-      expect(created_at).must_be :>=, begin_time
-      expect(created_at).must_be :<=, end_time
+      expect(created_at).to be >= begin_time
+      expect(created_at).to be <= end_time
       updated_at = Time.iso8601(json[:updated_at])
-      expect(updated_at).must_be :>=, begin_time
-      expect(updated_at).must_be :<=, end_time
+      expect(updated_at).to be >= begin_time
+      expect(updated_at).to be <= end_time
       deleted_at = Time.iso8601(json[:deleted_at])
-      expect(deleted_at).must_be :>=, begin_time + 3600
-      expect(deleted_at).must_be :<=, end_time + 3600
+      expect(deleted_at).to be >= begin_time + 3600
+      expect(deleted_at).to be <= end_time + 3600
     end
   end
 

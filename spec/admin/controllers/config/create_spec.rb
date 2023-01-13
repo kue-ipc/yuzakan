@@ -28,7 +28,7 @@ RSpec.describe Admin::Controllers::Config::Create do
   #     flash = action.exposures[:flash]
 
   #     expect(response[0]).to eq 200
-  #     expect(flash[:errors]).must_be_empty
+  #     expect(flash[:errors]).to be_empty
   #   end
   # end
 end

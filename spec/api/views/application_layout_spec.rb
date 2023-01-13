@@ -7,6 +7,6 @@ RSpec.describe Api::Views::ApplicationLayout do
   let(:rendered) { layout.render }
 
   it 'contains application name' do
-    expect(rendered).must_include('Api')
+    expect(rendered).to include('Api')
   end
 end

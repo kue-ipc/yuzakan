@@ -25,7 +25,7 @@ RSpec.describe Decrypt do
       result = interactor.call({encrypted: encrypted})
       expect(result.failure?).to eq true
       expect(result.errors.first).to eq '復号化に失敗しました。'
-      expect(result.data).must_be_nil
+      expect(result.data).to be_nil
     end
   end
 
@@ -35,7 +35,7 @@ RSpec.describe Decrypt do
     it 'decryt bad text' do
       result = interactor.call({encrypted: encrypted})
       expect(result.successful?).to eq true
-      expect(result.data).wont_equal text
+      expect(result.data).not_to eq text
     end
   end
 end

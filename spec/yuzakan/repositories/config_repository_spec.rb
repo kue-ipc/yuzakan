@@ -15,7 +15,7 @@ RSpec.describe ConfigRepository do
   #   end
 
   #   it 'current is nil' do
-  #     expect(repository.current).must_be_nil
+  #     expect(repository.current).to be_nil
   #   end
 
   #   it 'initialized? is false' do
@@ -24,7 +24,7 @@ RSpec.describe ConfigRepository do
   # end
 
   # it 'current is config after initialized' do
-  #   expect(repository.current).wont_be_nil
+  #   expect(repository.current).not_to be_nil
   # end
 
   # it 'initialized? is true after initialized' do

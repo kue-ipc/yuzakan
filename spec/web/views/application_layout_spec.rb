@@ -7,6 +7,6 @@ RSpec.describe Web::Views::ApplicationLayout do
   let(:rendered) { layout.render }
 
   # it 'contains application name' do
-  #   expect(rendered).must_include('Web')
+  #   expect(rendered).to include('Web')
   # end
 end
