@@ -195,7 +195,7 @@ module Admin
 
           attr_datas.each_with_index do |attr_data, idx|
             data = attr_data.dup
-            data[:oredr] = idx * 8
+            data[:order] = idx * 8
 
             data[:attr_mappings] = data[:attr_mappings]
               &.reject { |am_params| am_params[:name].nil? || am_params[:name].empty? }
