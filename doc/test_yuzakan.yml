@@ -17,9 +17,8 @@ config:
   contact_phone: 00-0000-0000
 providers:
 - name: local
-  label: ローカル
+  display_name: ローカル
   adapter_name: local
-  order: 1
   readable: true
   writable: true
   authenticatable: true
@@ -30,9 +29,8 @@ providers:
   group: false
   params: {}
 - name: posix_samba
-  label: PosixとSamba
+  display_name: PosixとSamba
   adapter_name: samba_ldap
-  order: 2
   readable: true
   writable: true
   authenticatable: true
@@ -76,9 +74,8 @@ providers:
     samba_lm_password: false
     auth_nt_password: false
 - name: ldap
-  label: 普通のLDAP
+  display_name: 普通のLDAP
   adapter_name: ldap
-  order: 3
   readable: true
   writable: true
   authenticatable: true
@@ -114,114 +111,95 @@ providers:
     create_user_object_classes: inetOrgPerson,nsMemberOf
 attrs:
 - name: display_name_latin
-  label: 表示名(ローマ字)
+  display_name: 表示名(ローマ字)
   type: string
-  order: 12
   hidden: false
   readonly: false
   code: ''
   attr_mappings:
-  - provider:
-      name: ldap
+  - provider: ldap
     name: displayName
     conversion: 
 - name: family_name
-  label: 姓(日本語)
+  display_name: 姓(日本語)
   type: string
-  order: 24
   hidden: false
   readonly: false
   code: display_name?.split(/\s/)?.at(0)
   attr_mappings:
-  - provider:
-      name: ldap
+  - provider: ldap
     name: sn;lang-ja
     conversion: 
 - name: given_name
-  label: 名(日本語)
+  display_name: 名(日本語)
   type: string
-  order: 32
   hidden: false
   readonly: false
   code: display_name?.split(/\s/)?.at(1)
   attr_mappings:
-  - provider:
-      name: ldap
+  - provider: ldap
     name: givenName;lang-ja
     conversion: 
 - name: family_name_latin
-  label: 姓(ローマ字)
+  display_name: 姓(ローマ字)
   type: string
-  order: 48
   hidden: false
   readonly: false
   code: attrs.display_name_latin?.split(/\s/)?.at(0)
   attr_mappings:
-  - provider:
-      name: ldap
+  - provider: ldap
     name: sn
     conversion: 
 - name: given_name_latin
-  label: 名(ローマ字)
+  display_name: 名(ローマ字)
   type: string
-  order: 56
   hidden: false
   readonly: false
   code: attrs.display_name_latin?.split(/\s/)?.at(1)
   attr_mappings:
-  - provider:
-      name: ldap
+  - provider: ldap
     name: givenName
     conversion: 
 - name: uid
-  label: ユーザーID
+  display_name: ユーザーID
   type: integer
-  order: 64
   hidden: false
   readonly: true
   code: ''
   attr_mappings:
-  - provider:
-      name: posix_samba
+  - provider: posix_samba
     name: uidNumber
     conversion: 
 - name: cn
-  label: キャラクター名
+  display_name: キャラクター名
   type: string
-  order: 72
   hidden: false
   readonly: false
   code: username
   attr_mappings:
-  - provider:
-      name: posix_samba
+  - provider: posix_samba
     name: cn
     conversion: 
-  - provider:
-      name: ldap
+  - provider: ldap
     name: cn
     conversion: 
 - name: samba_sid
-  label: Samba SID
+  display_name: Samba SID
   type: string
-  order: 80
   hidden: false
   readonly: true
   code: ''
   attr_mappings:
-  - provider:
-      name: posix_samba
+  - provider: posix_samba
     name: sambaSID
     conversion: 
 - name: home
-  label: ホームディレクトリ
+  display_name: ホームディレクトリ
   type: string
-  order: 88
   hidden: false
   readonly: false
   code: "`/home/${username}`"
   attr_mappings:
-  - provider:
-      name: posix_samba
+  - provider: posix_samba
     name: homeDirectory
     conversion: 
