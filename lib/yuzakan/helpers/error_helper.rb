@@ -31,8 +31,8 @@ module Yuzakan
           case error
           when String
             array_errors << error
-          when Hash
-            hash_errors.merge!(error) { |_, s, o| s + o }
+          when Hash, Hanami::Action::Params::Errors
+            hash_errors.merge!(error.to_h) { |_, s, o| s + o }
           end
         end
         [array_errors, hash_errors]

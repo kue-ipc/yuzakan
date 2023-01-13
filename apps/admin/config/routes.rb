@@ -10,6 +10,7 @@ resource :config, only: [:show, :new, :create, :edit, :update] do
     get 'export'
   end
 end
+put 'config', to: 'config#replace', as: :config
 
 resources :providers, only: [:index, :show]
 
