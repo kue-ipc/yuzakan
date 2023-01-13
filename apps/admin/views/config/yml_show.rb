@@ -84,7 +84,7 @@ module Admin
               }
             end
 
-            data['attrs'] << attr_data
+            data[:attrs] << attr_data
           end
 
           raw YAML.dump(Yuzakan::Utils::HashArray.stringify_keys(data))

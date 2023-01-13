@@ -19,7 +19,7 @@ module Admin
             required(:import).schema do
               required(:yaml).schema do
                 required(:filename) { str? }
-                required(:tempfile) { size?(1..) }
+                required(:tempfile) { size?(1..(1 * 1024 * 1024)) }
               end
             end
           end
@@ -68,7 +68,6 @@ module Admin
             return
           end
 
-          pp params.to_h
           import_yaml(params[:import][:yaml])
 
           unless flash[:errors].empty?
@@ -104,16 +103,9 @@ module Admin
             flash[:errors] << {file: validate_result.messages}
             return
           end
-
           data = validate_result.output
 
           begin
-            if validate_result.failure?
-              flash[:errors] << {file: validate_result.messages}
-              raise 'インポートするファイルのパラメーターが不正です。'
-            end
-            data = validate_result.output
-
             @config_repository.transaction do
               update_config(data[:config]) if data[:config]
               raise '全体設定の設定に失敗しました。' unless flash[:errors].empty?
@@ -122,14 +114,12 @@ module Admin
               raise 'プロバイダーの設定に失敗しました。' unless flash[:errors].empty?
 
               update_attrs(data[:attrs]) if data[:attrs]
-              raise '属性の設定に失敗しました。' unless falsh[:errors].empty?
+              raise '属性の設定に失敗しました。' unless flash[:errors].empty?
             end
           rescue => e
             Hanami.logger.error e
             flash[:errors] << e.message
             flash[:errors] << 'インポートに失敗しました。'
-          ensure
-            file.close!
           end
         end
 
@@ -147,7 +137,7 @@ module Admin
             current_provider = existing_providers.delete(provider_name)
 
             data = provider_data.dup
-            provider_params = provider_data.delete[:params]
+            provider_params = provider_data.delete(:params)
             data[:order] = idx * 8
 
             provider =
@@ -157,41 +147,47 @@ module Admin
                 @provider_repository.create(data)
               end
             # プロバイダーのリストを作り直す
-            @named_providers[:provider_name] = provider
+            @named_providers[provider.name] = provider
 
             next unless provider_params
 
-            existing_params = provider.params.dup
+            existing_params = @provider_param_repository.all_by_provider(provider)
+              .to_h { |param| [param.name, param] }
+
             provider.adapter_param_types.each do |param_type|
-              value = param_type.convert_value(existing_params[param_type.name])
+              param_name = param_type.name
+
+              # 存在チェック
+              next unless provider_params.key?(param_name)
+
+              value = param_type.convert_value(provider_params[param_type.name])
               next if value.nil?
 
-              data = {name: param_type.name.to_s, value: param_type.dump_value(value)}
+              current_param = existing_params.delete(param_name.to_s)
 
-              if existing_params.key?(param_type.name)
-                current_value = existing_params.delete(param_type.name)
+              param_data = {
+                provider_id: provider.id,
+                name: param_name.to_s,
+                value: param_type.dump_value(value),
+              }
 
-                if current_value != value
-                  param_name = param_type.name.to_s
-                  existing_provider_param = provider.provider_params.find { |param| param.name == param_name }
-                  if existing_provider_param
-                    @provider_param_repository.update(existing_provider_param.id, data)
-                  else
-                    # 名前がないということはあり得ない？
-                    @provider_repository.add_param(provider, data)
-                  end
-                end
+              if current_param
+                @provider_param_repository.update(current_param.id, param_data)
               else
-                @provider_repository.add_param(provider, data)
+                @provider_param_repository.create(param_data)
               end
             end
-            existing_params.each_key do |key|
-              @provider_repository.delete_param_by_name(provider, key.to_s)
+
+            # リストになかったパラメーターを削除
+            existing_params.each_value do |param|
+              @provider_param_repository.delete(param.id)
             end
           end
 
           # リストになかったプロバイダーを削除
-          existing_providers.each_value { |provider| @provider_repository.delete(provider.id) }
+          existing_providers.each_value do |provider|
+            @provider_repository.delete(provider.id)
+          end
         end
 
         def update_attrs(attr_datas)
@@ -206,11 +202,10 @@ module Admin
               &.map do |am_params|
                 {
                   **am_params.slice(:name, :conversion),
-                  provider_id: provider_id_by_name(am_params[:provider]),
+                  provider_id: provider_id_by_name(am_params[:provider]).id,
                 }
               end
-
-            @attr_repository.create_with_mappings(params)
+            @attr_repository.create_with_mappings(data)
           end
         end
 

@@ -20,4 +20,14 @@ class ProviderParamRepository < Hanami::Repository
       create(data)
     end
   end
+
+  def all_by_provider(provider)
+    all_by_provider_id(provider.id)
+  end
+
+  def all_by_provider_id(provider_id)
+    provider_params
+      .where(provider_id: provider_id)
+      .to_a
+  end
 end
