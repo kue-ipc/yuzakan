@@ -16,24 +16,10 @@ module Admin
           messages :i18n
 
           params do
-            required(:config).schema do
-              optional(:file)
-
-              optional(:title).filled(:str?, max_size?: 255)
-              optional(:domain).maybe(:str?, max_size?: 255)
-              optional(:session_timeout).filled(:int?, gteq?: 0, lteq?: 24 * 60 * 60)
-              optional(:password_min_size).filled(:int?, gteq?: 1, lteq?: 255)
-              optional(:password_max_size).filled(:int?, gteq?: 1, lteq?: 255)
-              optional(:password_min_score).filled(:int?, gteq?: 0, lteq?: 4)
-              optional(:password_unusable_chars).maybe(:str?, max_size?: 128)
-              optional(:password_extra_dict).maybe(:str?, max_size?: 4096)
-              optional(:generate_password_size).filled(:int?, gteq?: 1, lteq?: 255)
-              optional(:generate_password_type).filled(:str?)
-              optional(:generate_password_chars).maybe(:str?, format?: /^[\x20-\x7e]*$/, max_size?: 128)
-              optional(:contact_name).maybe(:str?, max_size?: 255)
-              optional(:contact_email).maybe(:str?, max_size?: 255)
-              optional(:contact_phone).maybe(:str?, max_size?: 255)
+            optional(:import).schema do
+              optional(:yaml)
             end
+            optional(:config).schema(ConfigValidator)
           end
         end
 
@@ -45,24 +31,8 @@ module Admin
 
           validations do
             optional(:config).schema(ConfigValidator)
-            # rubocop:disable Layout/BlockEndNewline, Layout/MultilineBlockLayout, Style/BlockDelimiters
             optional(:providers) { array? { each { schema(ProviderValidator) } } }
-            optional(:attrs) { array? { each { schema {
-              predicates NamePredicates
-              required(:name).filled(:str?, :name?, max_size?: 255)
-              optional(:display_name).maybe(:str?, max_size?: 255)
-              required(:type).filled(:str?)
-              optional(:hidden).filled(:bool?)
-              optional(:readonly).filled(:bool?)
-              optional(:code).maybe(:str?, max_size?: 4096)
-              optional(:attr_mappings) { array? { each { schema {
-                predicates NamePredicates
-                required(:provider).filled(:str?, :name?, max_size?: 255)
-                required(:name).maybe(:str?, max_size?: 255)
-                optional(:conversion) { none? | included_in?(AttrMapping::CONVERSIONS) }
-              } } } }
-            } } } }
-            # rubocop:enable Layout/BlockEndNewline, Layout/MultilineBlockLayout, Style/BlockDelimiters
+            optional(:attrs) { array? { each { schema(AttrValidator) } } }
           end
         end
 
@@ -89,7 +59,7 @@ module Admin
         def call(params)
           flash[:errors] ||= []
 
-          @config = current_config.merge(params[:config])
+          @config = params[:config] || current_config
 
           unless params.valid?
             flash[:errors] << params.errors
@@ -98,8 +68,8 @@ module Admin
             return
           end
 
-          if @config[:file]
-            import_yaml(@config[:file][:tempfile])
+          if params[:import]
+            import_yaml(params[:import][:file][:tempfile])
           else
             update_config(@config)
           end
@@ -112,6 +82,11 @@ module Admin
 
           flash[:success] = '設定を更新しました。'
           redirect_to routes.path(:edit_config)
+        rescue => e
+          Hanami.logger.error e
+          flash[:errors] << e.message
+          flash[:error] = 'エラーが発生しました。'
+          self.body = Admin::Views::Config::Edit.render(exposures)
         end
 
         def import_yaml(file)

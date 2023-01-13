@@ -2,6 +2,7 @@
 
 require 'hanami/validations'
 require_relative '../predicates/name_predicates'
+require_relative '../entities/attr_mapping'
 
 class AttrMappingValidator
   include Hanami::Validations
@@ -12,5 +13,5 @@ class AttrMappingValidator
     required(:provider).filled(:str?, :name?, max_size?: 255)
     required(:name).maybe(:str?, max_size?: 255)
     optional(:conversion) { none? | included_in?(AttrMapping::CONVERSIONS) }
-end
+  end
 end

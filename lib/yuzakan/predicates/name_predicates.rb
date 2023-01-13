@@ -13,8 +13,9 @@ module NamePredicates
     @
     [a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*
   \z}x.freeze
-  VALID_DOMAIN_NAME =
+  VALID_DOMAIN =
     /\A[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\z/.freeze
+  VALID_PASSWORD = /\A[\x20-\x7e]*\Z/.freeze
 
   predicate(:name?) do |current|
     current =~ VALID_NAME
@@ -29,6 +30,10 @@ module NamePredicates
   end
 
   predicate(:domain?) do |current|
-    current =~ VALID_DOMAIN_NAME
+    current =~ VALID_DOMAIN
+  end
+
+  predicate(:password?) do |current|
+    current =~ VALID_PASSWORD
   end
 end

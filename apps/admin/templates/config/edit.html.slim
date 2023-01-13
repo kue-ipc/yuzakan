@@ -14,9 +14,9 @@ p
     type: 'text/yaml',
     download: "yuzakan_#{Time.now.strftime('%Y%m%d-%H%M%S')}.yml"
 
-= form_for :config, routes.path(:config), enctype: 'multipart/form-data' do
+= form_for :import, routes.path(:config), enctype: 'multipart/form-data' do
   - div class: 'input-group' do
-    - file_field :file, class: 'form-control', accept: '.yml,.yaml,text/yaml'
+    - file_field :yaml, class: 'form-control', accept: '.yml,.yaml,text/yaml'
     - submit '設定のインポート', class: 'btn btn-danger'
 
 hr
