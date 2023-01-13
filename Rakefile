@@ -2,7 +2,6 @@
 
 require 'rake'
 require 'hanami/rake_tasks'
-require 'rake/testtask'
 require 'rake/clean'
 
 CLEAN << 'vendor/assets'
@@ -12,11 +11,19 @@ CLEAN << 'rollup.config.mjs'
 
 CLOBBER << 'node_modules'
 
-Rake::TestTask.new do |t|
-  t.pattern = 'spec/**/*_spec.rb'
-  t.libs << 'spec'
-  t.warning = false
+begin
+  require 'rspec/core/rake_task'
+  RSpec::Core::RakeTask.new(:spec)
+  task default: :spec
+rescue LoadError
 end
+
+# require 'rake/testtask'
+# Rake::TestTask.new do |t|
+#   t.pattern = 'spec/**/*_spec.rb'
+#   t.libs << 'spec'
+#   t.warning = false
+# end
 
 task default: :test
 task spec: :test
