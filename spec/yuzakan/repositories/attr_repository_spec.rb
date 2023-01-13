@@ -17,12 +17,12 @@ RSpec.describe AttrRepository do
 
   it 'ordered_all' do
     all = attr_repository.ordered_all
-    expect(all)..to be_instance_of Array
+    expect(all).to be_instance_of Array
     expect(all.map(&:name)).to eq ['hoge', 'piyo', 'fuga']
   end
 
   it 'find_by_name' do
-    expect(attr_repository.find_by_name('hoge'))..to be_instance_of Attr
+    expect(attr_repository.find_by_name('hoge')).to be_instance_of Attr
     expect(attr_repository.find_by_name('moe')).to be_nil
   end
 
@@ -58,14 +58,14 @@ RSpec.describe AttrRepository do
 
     it 'ordered_all_with_mappings' do
       all = attr_repository.ordered_all_with_mappings
-      expect(all)..to be_instance_of Array
+      expect(all).to be_instance_of Array
       expect(all.map(&:name)).to eq ['hoge', 'piyo', 'fuga']
       expect(all.first.attr_mappings.first.name).to eq 'hoge_hoge'
     end
 
     it 'find_with_mappings' do
       attr_with_mappings = attr_repository.find_with_mappings(@attr_hoge.id)
-      expect(attr_with_mappings)..to be_instance_of Attr
+      expect(attr_with_mappings).to be_instance_of Attr
       expect(attr_with_mappings.name).to eq 'hoge'
       expect(attr_with_mappings.attr_mappings.first.name).to eq 'hoge_hoge'
     end
@@ -77,7 +77,7 @@ RSpec.describe AttrRepository do
           {provider_id: @provider_hoge.id, name: 'moe_hoge'},
           {provider_id: @provider_fuga.id, name: 'moe_fuga', conversion: 'e2j'},
         ])
-      expect(attr_with_mappings)..to be_instance_of Attr
+      expect(attr_with_mappings).to be_instance_of Attr
       expect(attr_with_mappings.name).to eq 'moe'
       expect(attr_with_mappings.attr_mappings.first.name).to eq 'moe_hoge'
       expect(attr_repository.all.count).to eq 4
@@ -86,7 +86,7 @@ RSpec.describe AttrRepository do
 
     it 'add_mapping' do
       attr_mapping = attr_repository.add_mapping(@attr_fuga, {provider_id: @provider_hoge.id, name: 'fuga_hoge'})
-      expect(attr_mapping)..to be_instance_of AttrMapping
+      expect(attr_mapping).to be_instance_of AttrMapping
       expect(attr_mapping.name).to eq 'fuga_hoge'
       expect(attr_mapping_repository.all.count).to eq 3
     end
