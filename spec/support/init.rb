@@ -55,9 +55,8 @@ def init_controller_spec(spec)
   spec.let(:format) { 'text/html' }
   spec.let(:config) { Config.new(title: 'title', session_timeout: 3600, domain: 'kyokyo-u.ac.jp') }
   spec.let(:networks) { [Network.new(address: '192.0.2.0/24', clearance_level: 5, trusted: true)] }
-  spec.let(:activity_log_repository) {
-    instance_double('ActivityLogRepository').tap { |obj| allow(obj).to receive(:create) }
-  }
+  spec.let(:activity_log) { ActivityLog.new(uuid: uuid, client: client, username: user.username) }
+  spec.let(:activity_log_repository) { instance_double('ActivityLogRepository', create: activity_log) }
   spec.let(:config_repository) { instance_double('ConfigRepository', current: config) }
   spec.let(:network_repository) { instance_double('NetworkRepository', all: networks) }
   spec.let(:user_repository) { instance_double('UserRepository', find: user) }

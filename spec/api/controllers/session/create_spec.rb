@@ -9,13 +9,8 @@ RSpec.describe Api::Controllers::Session::Create do
   }
   let(:format) { 'application/json' }
   let(:action_params) { {username: 'user', password: 'pass'} }
-
   let(:user_repository) {
-    UserRepository.new.tap do |obj|
-      stub(obj).find { user }
-      stub(obj).find_by_username { user }
-      stub(obj).update { user }
-    end
+    instance_double('UserRepository', find: user, find_by_username: user, update: user)
   }
   let(:providers) { [create_mock_provider(params: {username: 'user', password: 'pass'})] }
   let(:provider_repository) {
