@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Admin::Controllers::Config::New do
+RSpec.describe Admin::Controllers::Config::New, type: :action do
   init_controller_spec(self)
   let(:action) { Admin::Controllers::Config::New.new(**action_opts) }
 
@@ -11,7 +11,7 @@ RSpec.describe Admin::Controllers::Config::New do
   end
 
   describe 'before initialized' do
-    let(:config_repository) { ConfigRepository.new.tap { |obj| stub(obj).current { nil } } }
+    let(:config_repository) { instance_double('ConfigRepository', current: nil) }
 
     it 'is successful' do
       response = action.call(params)

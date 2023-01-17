@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
-RSpec.describe Admin::Controllers::Providers::Show do
+RSpec.describe Admin::Controllers::Providers::Show, type: :action do
   init_controller_spec(self)
   let(:action) { Admin::Controllers::Providers::Show.new(**action_opts, provider_repository: provider_repository) }
 
   let(:action_params) { {id: 'provider1'} }
-  let(:provider_repository) {
-    ProviderRepository.new.tap { |obj| stub(obj).exist_by_name?('provider1') { true } }
-  }
+  let(:provider_repository) { instance_double('ProviderRepository', exist_by_name?: true) }
 
   it 'is failure' do
     response = action.call(params)
@@ -33,9 +31,7 @@ RSpec.describe Admin::Controllers::Providers::Show do
     end
 
     describe 'not existed' do
-      let(:provider_repository) {
-        ProviderRepository.new.tap { |obj| mock(obj).exist_by_name?('provider1') { false } }
-      }
+      let(:provider_repository) { instance_double('ProviderRepository', exist_by_name?: false) }
 
       it 'is failure' do
         response = action.call(params)
