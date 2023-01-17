@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../../../spec_helper'
-
 RSpec.describe Admin::Controllers::Attrs::Index do
   let(:action) { Admin::Controllers::Attrs::Index.new(**action_opts) }
-  eval(init_let_script) # rubocop:disable Security/Eval
+  init_controller_spec(self)
 
   it 'is failure' do
     response = action.call(params)
