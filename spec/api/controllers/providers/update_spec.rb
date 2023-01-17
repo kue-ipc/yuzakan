@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Api::Controllers::Providers::Update do
+RSpec.describe Api::Controllers::Providers::Update, type: :action do
   init_controller_spec(self)
   let(:action) {
     Api::Controllers::Providers::Update.new(**action_opts, provider_repository: provider_repository,

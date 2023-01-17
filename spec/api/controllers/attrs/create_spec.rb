@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Api::Controllers::Attrs::Create do
+RSpec.describe Api::Controllers::Attrs::Create, type: :action do
   init_controller_spec(self)
   let(:action) {
     Api::Controllers::Attrs::Create.new(**action_opts, attr_repository: attr_repository,

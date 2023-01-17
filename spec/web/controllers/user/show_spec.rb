@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Web::Controllers::User::Show do
+RSpec.describe Web::Controllers::User::Show, type: :action do
   init_controller_spec(self)
   let(:action) { Web::Controllers::User::Show.new(**action_opts) }
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Api::Controllers::Providers::Index do
+RSpec.describe Api::Controllers::Providers::Index, type: :action do
   init_controller_spec(self)
   let(:action) { Api::Controllers::Providers::Index.new(**action_opts, provider_repository: provider_repository) }
   let(:format) { 'application/json' }

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Web::Controllers::Password::Edit do
+RSpec.describe Web::Controllers::Password::Edit, type: :action do
   init_controller_spec(self)
   let(:action) { Web::Controllers::Password::Edit.new(**action_opts) }
 

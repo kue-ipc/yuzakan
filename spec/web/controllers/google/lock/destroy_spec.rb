@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Web::Controllers::Google::Lock::Destroy do
+RSpec.describe Web::Controllers::Google::Lock::Destroy, type: :action do
   let(:action) { Web::Controllers::Google::Lock::Destroy.new }
   let(:params) { {} }
 

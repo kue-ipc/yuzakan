@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe Web::Views::Google::Code::Create do
+RSpec.describe Web::Views::Google::Code::Create, type: :view do
   let(:exposures) { {format: :html} }
   let(:template)  { Hanami::View::Template.new('apps/web/templates/google/code/create.html.slim') }
-  let(:view)      { Web::Views::Google::Code::Create.new(template, **exposures) }
+  let(:view)      { described_class.new(template, exposures) }
   let(:rendered)  { view.render }
 
   it 'exposes #format' do

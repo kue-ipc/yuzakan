@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Web::Controllers::Google::Create do
+RSpec.describe Web::Controllers::Google::Create, type: :action do
   # let(:action)  { Web::Controllers::Google::Create.new }
   # let(:params)  { {'REMOTE_ADDR' => '::1', 'rack.session' => session} }
   # let(:session) { {user_id: user_id, access_time: Time.now} }

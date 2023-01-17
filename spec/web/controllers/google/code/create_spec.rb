@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Web::Controllers::Google::Code::Create do
+RSpec.describe Web::Controllers::Google::Code::Create, type: :action do
   init_controller_spec(self)
   let(:action) { Web::Controllers::Google::Code::Create.new(**action_opts) }
 

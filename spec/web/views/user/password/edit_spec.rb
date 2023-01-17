@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe Web::Views::User::Password::Edit do
+RSpec.describe Web::Views::User::Password::Edit, type: :view do
   let(:exposures) { {format: :html} }
   let(:template)  { Hanami::View::Template.new('apps/web/templates/user/password/edit.html.slim') }
-  let(:view)      { Web::Views::User::Password::Edit.new(template, **exposures) }
+  let(:view)      { described_class.new(template, exposures) }
   let(:rendered)  { view.render }
 
   it 'exposes #format' do

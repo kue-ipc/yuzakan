@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Web::Controllers::User::Show do
+RSpec.describe Web::Controllers::User::Show, type: :action do
   # let(:action)  { Web::Controllers::User::Show.new }
   # let(:params)  { {'REMOTE_ADDR' => '::1', 'rack.session' => session} }
   # let(:session) { {user_id: user_id, access_time: Time.now} }

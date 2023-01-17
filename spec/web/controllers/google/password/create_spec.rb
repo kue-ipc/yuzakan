@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Web::Controllers::Google::Password::Create do
+RSpec.describe Web::Controllers::Google::Password::Create, type: :action do
   let(:action) { Web::Controllers::Google::Password::Create.new }
   let(:params) { {} }
 
