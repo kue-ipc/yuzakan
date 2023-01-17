@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
-require_relative '../../../spec_helper'
-
 RSpec.describe Api::Controllers::Session::Create do
+  init_controller_spec(self)
   let(:action) {
     Api::Controllers::Session::Create.new(**action_opts, user_repository: user_repository,
                                                          provider_repository: provider_repository,
                                                          auth_log_repository: auth_log_repository)
   }
-  eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
   let(:action_params) { {username: 'user', password: 'pass'} }
 

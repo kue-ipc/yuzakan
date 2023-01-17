@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
-require_relative '../../../spec_helper'
-
 RSpec.describe Api::Controllers::Providers::Update do
+  init_controller_spec(self)
   let(:action) {
     Api::Controllers::Providers::Update.new(**action_opts, provider_repository: provider_repository,
                                                            provider_param_repository: provider_param_repository)
   }
-  eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
   let(:action_params) { {id: 'provider1', **provider_params, params: provider_params_params} }
 

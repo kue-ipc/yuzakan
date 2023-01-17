@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../../spec_helper'
-
 RSpec.describe Admin::Views::Users::Index do
   let(:exposures) { {format: :html} }
   let(:template)  {

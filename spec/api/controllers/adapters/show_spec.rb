@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../../../spec_helper'
-
 RSpec.describe Api::Controllers::Adapters::Show do
+  init_controller_spec(self)
   let(:action) { Api::Controllers::Adapters::Show.new(**action_opts) }
-  eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
   let(:action_params) { {id: 'dummy'} }
 

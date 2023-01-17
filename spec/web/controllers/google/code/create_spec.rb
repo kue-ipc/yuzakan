@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../../../../spec_helper'
-
 RSpec.describe Web::Controllers::Google::Code::Create do
-  let(:action) { Web::Controllers::Google::Code::Create.new }
-  let(:params) { {} }
+  init_controller_spec(self)
+  let(:action) { Web::Controllers::Google::Code::Create.new(**action_opts) }
 
   # it 'is successful' do
   #   response = action.call(params)

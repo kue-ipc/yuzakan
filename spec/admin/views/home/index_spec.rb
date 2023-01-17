@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../../spec_helper'
-
 RSpec.describe Admin::Views::Home::Index do
   let(:exposures) { {format: :html, current_config: ConfigRepository.new.current, flash: {}, params: {}} }
   let(:template)  { Hanami::View::Template.new('apps/admin/templates/home/index.html.slim') }

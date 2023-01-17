@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../../../spec_helper'
-
 RSpec.describe Admin::Controllers::Providers::Show do
+  init_controller_spec(self)
   let(:action) { Admin::Controllers::Providers::Show.new(**action_opts, provider_repository: provider_repository) }
-  eval(init_let_script) # rubocop:disable Security/Eval
 
   let(:action_params) { {id: 'provider1'} }
   let(:provider_repository) {

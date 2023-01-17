@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../../../spec_helper'
-
 RSpec.describe Api::Controllers::Providers::Index do
+  init_controller_spec(self)
   let(:action) { Api::Controllers::Providers::Index.new(**action_opts, provider_repository: provider_repository) }
-  eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
 
   let(:providers_attributes) {

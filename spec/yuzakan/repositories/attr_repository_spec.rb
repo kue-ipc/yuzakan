@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../spec_helper'
-
 RSpec.describe AttrRepository do
   let(:attr_repository) { AttrRepository.new }
 

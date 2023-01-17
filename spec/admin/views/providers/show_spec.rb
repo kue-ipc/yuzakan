@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../../spec_helper'
-
 RSpec.describe Admin::Views::Providers::Show do
   let(:exposures) { {format: :html} }
   let(:template)  { Hanami::View::Template.new('apps/admin/templates/providers/show.html.slim') }

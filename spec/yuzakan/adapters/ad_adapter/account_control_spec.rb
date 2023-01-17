@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../../spec_helper'
-
 RSpec.describe Yuzakan::Adapters::AdAdapter::AccountControl do
   let(:ac) { Yuzakan::Adapters::AdAdapter::AccountControl.new(flags) }
   let(:flags) { Yuzakan::Adapters::AdAdapter::AccountControl::DEFAULT_USER_FLAGS }

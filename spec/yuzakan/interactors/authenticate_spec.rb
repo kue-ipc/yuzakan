@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../spec_helper'
-
 RSpec.describe Authenticate do
   # let(:interactor) { Authenticate.new(client: '::1', app: 'test') }
   # let(:params) {

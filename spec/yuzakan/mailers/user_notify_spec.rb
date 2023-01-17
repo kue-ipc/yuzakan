@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../spec_helper'
-
 RSpec.describe Mailers::UserNotify do
   # let(:config) { ConfigRepository.new.current }
   # let(:user) { UserRepository.new.by_name('user').first }

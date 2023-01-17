@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-require_relative '../../../spec_helper'
 require 'yaml'
 
 RSpec.describe Api::Controllers::Myself::Show do
+  init_controller_spec(self)
   let(:action) { Api::Controllers::Myself::Show.new(**action_opts, provider_repository: provider_repository) }
-  eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
 
   let(:providers) {

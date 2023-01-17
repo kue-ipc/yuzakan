@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
-require_relative '../../../../spec_helper'
-
 RSpec.describe Api::Controllers::Groups::Members::Destroy do
-  # let(:action) { Api::Controllers::Groups::Members::Destroy.new }
-  # let(:params) { Hash[] }
+  init_controller_spec(self)
+  let(:action) { Api::Controllers::Groups::Members::Destroy.new(**action_opts) }
+  let(:format) { 'application/json' }
 
   # it 'is successful' do
   #   response = action.call(params)

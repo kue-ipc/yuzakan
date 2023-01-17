@@ -1,4 +1,4 @@
-require_relative '../../../spec_helper'
+# frozen_string_literal: true
 
 RSpec.describe Admin::Views::Config::Create do
   let(:exposures) { Hash[format: :html] }

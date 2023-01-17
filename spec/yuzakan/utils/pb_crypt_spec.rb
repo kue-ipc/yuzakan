@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../spec_helper'
-
 RSpec.describe Yuzakan::Utils::PbCrypt do
   let(:pb_crypt) { Yuzakan::Utils::PbCrypt.new(password) }
   let(:password) {

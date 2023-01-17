@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../spec_helper'
-
 RSpec.describe Encrypt do
   let(:interactor) { Encrypt.new(**params) }
   let(:params) { {text: true} }

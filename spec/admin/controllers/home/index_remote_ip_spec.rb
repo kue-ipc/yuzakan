@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../../spec_helper'
-
 RSpec.describe Admin::Controllers::Home::Index do
   # RSpec.describe 'remote ip' do
   #   let(:action) { Admin::Controllers::Home::Index.new }

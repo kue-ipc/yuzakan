@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
-require_relative '../../../spec_helper'
-
 RSpec.describe Api::Controllers::Attrs::Create do
+  init_controller_spec(self)
   let(:action) {
     Api::Controllers::Attrs::Create.new(**action_opts, attr_repository: attr_repository,
                                                        provider_repository: provider_repository)
   }
-  eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
   let(:action_params) { attr_params }
   let(:attr_params) {

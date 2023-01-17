@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../../../spec_helper'
-
 RSpec.describe Admin::Controllers::Config::Show do
-  # let(:action) { Admin::Controllers::Config::Show.new }
-  # let(:params) { Hash[] }
+  init_controller_spec(self)
+  let(:action) { Admin::Controllers::Config::Show.new(**action_opts) }
 
   # it 'is successful' do
   #   response = action.call(params)

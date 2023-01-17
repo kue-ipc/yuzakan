@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../../../spec_helper'
-
 RSpec.describe Api::Controllers::Attrs::Destroy do
+  init_controller_spec(self)
   let(:action) { Api::Controllers::Attrs::Destroy.new(**action_opts, attr_repository: attr_repository) }
-  eval(init_let_script) # rubocop:disable Security/Eval
   let(:format) { 'application/json' }
   let(:action_params) { {id: 'attr1'} }
   let(:attr_params) {
