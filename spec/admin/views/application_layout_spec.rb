@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Admin::Views::ApplicationLayout do
+RSpec.describe Admin::Views::ApplicationLayout, type: :view do
   let(:layout)   { Admin::Views::ApplicationLayout.new({format: :html}, 'contents') }
   let(:rendered) { layout.render }
 

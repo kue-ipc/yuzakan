@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe Admin::Views::Config::Show do
-  let(:exposures) { Hash[format: :html] }
+RSpec.describe Admin::Views::Config::Show, type: :view do
+  let(:exposures) { {format: :html} }
   let(:template)  { Hanami::View::Template.new('apps/admin/templates/config/show.html.slim') }
-  let(:view)      { Admin::Views::Config::Show.new(template, exposures) }
+  let(:view)      { described_class.new(template, exposures) }
   let(:rendered)  { view.render }
 
   it 'exposes #format' do
