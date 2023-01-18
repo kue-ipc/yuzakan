@@ -9,7 +9,6 @@ module Yuzakan
       end
 
       def symbolize_keys(hash)
-
       end
     end
   end

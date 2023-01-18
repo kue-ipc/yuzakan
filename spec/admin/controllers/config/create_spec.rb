@@ -13,11 +13,11 @@ RSpec.describe Admin::Controllers::Config::Create, type: :action do
   #   before do
   #     db_clear
   #   end
-  
+
   #   after do
   #     db_clear
   #   end
-  
+
   #   let(:config_repository) { instance_double('ConfigRepository', current: nil) }
 
   #   it 'is successful' do
