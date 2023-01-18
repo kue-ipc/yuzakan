@@ -71,12 +71,14 @@ module Yuzakan
           name: :primary_group,
           label: 'プライマリーグループ',
           type: :string,
+          default: '',
         },
         {
           name: :groups,
           label: 'グループ',
           type: :string,
           description: 'カンマまたは空白区切り',
+          default: '',
         },
         {
           name: :attrs,

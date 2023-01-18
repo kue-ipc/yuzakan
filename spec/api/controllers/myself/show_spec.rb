@@ -24,14 +24,16 @@ RSpec.describe Api::Controllers::Myself::Show, type: :action do
   let(:provider_repository) { instance_double('ProviderRepository', ordered_all_with_adapter_by_operation: providers) }
   let(:user_with_groups) {
     User.new(**user.to_h,
-    primary_group: Group.new(name: 'group'),
-    groups: [Group.new(name: 'admin'), Group.new(name: 'staff')])
+      members: [
+        Member.new(primary: true, group: Group.new(groupname: 'group')),
+        Member.new(primary: false, group: Group.new(groupname: 'admin')),
+        Member.new(primary: false, group: Group.new(groupname: 'staff')),
+      ])
   }
 
   it 'is successful' do
     allow(user_repository).to receive(:find_by_username).and_return(user)
     allow(user_repository).to receive(:update).and_return(user)
-    allow(user_repository).to receive(:find_with_groups).and_return(user_with_groups)
     allow(user_repository).to receive(:find_with_groups).and_return(user_with_groups)
 
     response = action.call(params)
@@ -48,14 +50,15 @@ RSpec.describe Api::Controllers::Myself::Show, type: :action do
       deleted: false,
       deleted_at: nil,
       clearance_level: 1,
-      primary_group: nil,
-      groups: [],
+      primary_group: 'group',
+      groups: ['group', 'admin', 'staff'],
       userdata: {
         username: 'user',
         display_name: 'ユーザー',
         email: 'user@example.jp',
-        attrs: {ja_display_name: '表示ユーザー'},
+        primary_group: 'group',
         groups: [],
+        attrs: {ja_display_name: '表示ユーザー'},
       },
       provider_userdatas: [{
         provider: 'provider',
@@ -66,6 +69,7 @@ RSpec.describe Api::Controllers::Myself::Show, type: :action do
           locked: false,
           unmanageable: false,
           mfa: false,
+          primary_group: 'group',
           attrs: {ja_display_name: '表示ユーザー'},
         },
       }],
