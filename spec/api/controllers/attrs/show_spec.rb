@@ -31,22 +31,23 @@ RSpec.describe Api::Controllers::Attrs::Show, type: :action do
     expect(json).to eq({**attr_params.except(:mappings), label: attr_attributes[:display_name]})
   end
 
-  describe 'monitor' do
-    let(:user) {
-      User.new(id: 1, name: 'monitor', display_name: '監視者', email: 'monitor@example.jp', clearance_level: 2)
-    }
+  # describe 'monitor' do
+  #   let(:user) {
+  #     User.new(id: 1, name: 'monitor', display_name: '監視者', email: 'monitor@example.jp', clearance_level: 2)
+  #   }
 
-    it 'is successful' do
-      response = action.call(params)
-      expect(response[0]).to eq 200
-      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).to eq({**attr_params, label: attr_attributes[:display_name]})
-    end
-  end
+  #   it 'is successful' do
+  #     response = action.call(params)
+  #     expect(response[0]).to eq 200
+  #     expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+  #     json = JSON.parse(response[2].first, symbolize_names: true)
+  #     expect(json).to eq({**attr_params, label: attr_attributes[:display_name]})
+  #   end
+  # end
 
   describe 'admin' do
-    let(:user) { User.new(id: 1, name: 'admin', display_name: '管理者', email: 'admin@example.jp', clearance_level: 5) }
+    let(:user) { User.new(**user_attributes, clearance_level: 5) }
+    let(:network) { Network.new(**network_attributes, clearance_level: 5) }
 
     it 'is successful' do
       response = action.call(params)

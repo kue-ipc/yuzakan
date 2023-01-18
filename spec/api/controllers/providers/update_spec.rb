@@ -74,7 +74,8 @@ RSpec.describe Api::Controllers::Providers::Update, type: :action do
   end
 
   describe 'admin' do
-    let(:user) { User.new(id: 1, name: 'admin', display_name: '管理者', email: 'admin@example.jp', clearance_level: 5) }
+    let(:user) { User.new(**user_attributes, clearance_level: 5) }
+    let(:network) { Network.new(**network_attributes, clearance_level: 5) }
 
     it 'is successful' do
       response = action.call(params)

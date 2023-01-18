@@ -12,7 +12,7 @@ RSpec.describe Api::Controllers::System::Show, type: :action do
     expect(json).to eq({
       url: 'http://0.0.0.0:2300/',
       title: 'title',
-      domain: 'kyokyo-u.ac.jp',
+      domain: 'example.jp',
       contact: {name: nil, email: nil, phone: nil},
       app: {name: 'Yuzakan', version: '0.6.0',
             license: File.read(File.join(__dir__, '../../../../LICENSE')),},
@@ -21,8 +21,8 @@ RSpec.describe Api::Controllers::System::Show, type: :action do
 
   describe 'other config' do
     let(:config) {
-      Config.new(title: 'title2', session_timeout: 3600, contact_name: 'admin', contact_email: 'admin@examle.jp',
-                 contact_phone: '00-0000-0000', domain: 'kyokyo-u.ac.jp')
+      Config.new(title: 'title2', session_timeout: 3600, contact_name: 'admin', contact_email: 'admin@example.jp',
+                 contact_phone: '00-0000-0000', domain: 'example.jp')
     }
 
     it 'is successful' do
@@ -33,8 +33,8 @@ RSpec.describe Api::Controllers::System::Show, type: :action do
       expect(json).to eq({
         url: 'http://0.0.0.0:2300/',
         title: 'title2',
-        domain: 'kyokyo-u.ac.jp',
-        contact: {name: 'admin', email: 'admin@examle.jp', phone: '00-0000-0000'},
+        domain: 'example.jp',
+        contact: {name: 'admin', email: 'admin@example.jp', phone: '00-0000-0000'},
         app: {name: 'Yuzakan', version: '0.6.0',
               license: File.read(File.join(__dir__, '../../../../LICENSE')),},
       })
@@ -52,7 +52,7 @@ RSpec.describe Api::Controllers::System::Show, type: :action do
       expect(json).to eq({
         url: 'http://0.0.0.0:2300/',
         title: 'title',
-        domain: 'kyokyo-u.ac.jp',
+        domain: 'example.jp',
         contact: {name: nil, email: nil, phone: nil},
         app: {name: 'Yuzakan', version: '0.6.0',
               license: File.read(File.join(__dir__, '../../../../LICENSE')),},

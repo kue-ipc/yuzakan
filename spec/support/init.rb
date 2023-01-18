@@ -31,41 +31,48 @@ def let_mock_repositories
   }
   let(:group_repository_stubs) { {find_or_create_by_groupname: groups} }
 
-  let(:activity_log) { ActivityLog.new(uuid: uuid, client: client, username: user.username) }
+  let(:activity_log) { ActivityLog.new(**activity_log_attributes) }
+  let(:config) { Config.new(**config_attributes) }
+  let(:network) { Network.new(**network_attributes) }
+  let(:user) { User.new(**user_attributes) }
+  let(:group) { Group.new(**group_attributes) }
+  let(:user_with_groups) {
+    User.new(**user_attributes,
+      groups: [primary_group, *supplementary_groups].compact.uniq,
+      members: [
+        primary_group && Member.new(primary: true, group: primary_group),
+        *supplementary_groups.reject { |g| g == primary_group }.map { |g| Memebr.new(primary: false, group: g) },
+      ].comapct)
+  }
+  let(:networks) { [network] }
+  let(:users) { [user] }
+  let(:groups) { [group] }
+
+  let(:user_members) {
+    [
+      primary_group && Member.new(primary: true, group: primary_group),
+      *supplementary_groups
+        .reject { |g| g.groupname == primary_group.groupname }
+        .map { |g| Memebr.new(primary: false, group: g) },
+    ].compact
+  }
+  let(:primary_group) { group }
+  let(:supplementary_groups) { [] }
+
+  let(:activity_log_attributes) { {uuid: uuid, client: client, username: user.username} }
+  let(:config_attributes) { {title: 'title', session_timeout: 3600, domain: 'example.jp'} }
+  let(:network_attributes) { {address: '192.0.2.0/24', clearance_level: 1, trusted: true} }
+  let(:user_attributes) {
+    {
+      id: 42, username: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1,
+      reserved: false, deleted: false, deleted_at: nil, note: nil,
+    }
+  }
+  let(:group_attributes) { {id: 42, username: 'group', display_name: 'グループ'} }
+
   let(:uuid) { 'ffffffff-ffff-4fff-bfff-ffffffffffff' }
   let(:client) { '192.0.2.1' }
-  let(:config) { Config.new(title: 'title', session_timeout: 3600, domain: 'kyokyo-u.ac.jp') }
-  let(:networks) { [Network.new(address: '192.0.2.0/24', clearance_level: 5, trusted: true)] }
-  let(:admin) {
-    User.new(id: 1, username: 'admin', display_name: '管理者', email: 'admin@example.jp', clearance_level: 5,
-             deleted: false,
-             reserved: false,
-             deleted_at: nil, note: nil)
-  }
-  let(:user) {
-    User.new(id: 42, username: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1,
-             deleted: false,
-             deleted_at: nil, note: nil,
-             reserved: false)
-  }
-  let(:users) {
-    [admin, user]
-  }
-  let(:group) { Group.new(id: 42, username: 'group', display_name: 'グループ') }
-  let(:admin_group) { Group.new(id: 1, username: 'admin', display_name: '管理者') }
-  let(:staff_group) { Group.new(id: 10, username: 'staff', display_name: 'スタッフ') }
-
-  let(:groups) {
-    [admin_group, group, staff_group]
-  }
-  let(:user_with_groups) {
-    User.new(**user.to_h,
-      members: [
-        Member.new(primary: true, group: group),
-        Member.new(primary: false, group: admin_group),
-        Member.new(primary: false, group: staff_group),
-      ])
-  }
+  let(:user_with_groups) { User.new(**user.to_h, members: [Member.new(primary: true, group: group)]) }
 end
 
 # controller spec
