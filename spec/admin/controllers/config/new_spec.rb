@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Admin::Controllers::Config::New, type: :action do
-  init_controller_spec(self)
+  init_controller_spec
   let(:action) { Admin::Controllers::Config::New.new(**action_opts) }
 
   it 'rediret to root' do

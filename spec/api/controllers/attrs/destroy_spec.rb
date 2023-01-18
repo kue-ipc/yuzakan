@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Api::Controllers::Attrs::Destroy, type: :action do
-  init_controller_spec(self)
+  init_controller_spec
   let(:action) { Api::Controllers::Attrs::Destroy.new(**action_opts, attr_repository: attr_repository) }
   let(:format) { 'application/json' }
   let(:action_params) { {id: 'attr1'} }

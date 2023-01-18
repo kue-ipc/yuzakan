@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Api::Controllers::Providers::Check, type: :action do
-  init_controller_spec(self)
+  init_controller_spec
   let(:action) { Api::Controllers::Providers::Check.new(**action_opts, provider_repository: provider_repository) }
   let(:format) { 'application/json' }
   let(:action_params) { {id: 'provider1'} }

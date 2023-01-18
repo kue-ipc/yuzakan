@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Api::Controllers::Groups::Members::Update, type: :action do
-  init_controller_spec(self)
+  init_controller_spec
   let(:action) { Api::Controllers::Groups::Members::Update.new(**action_opts) }
   let(:format) { 'application/json' }
 

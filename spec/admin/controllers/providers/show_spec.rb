@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Admin::Controllers::Providers::Show, type: :action do
-  init_controller_spec(self)
+  init_controller_spec
   let(:action) { Admin::Controllers::Providers::Show.new(**action_opts, provider_repository: provider_repository) }
 
   let(:action_params) { {id: 'provider1'} }

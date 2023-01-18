@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Admin::Controllers::Attrs::Index, type: :action do
-  init_controller_spec(self)
+  init_controller_spec
   let(:action) { Admin::Controllers::Attrs::Index.new(**action_opts) }
 
   it 'is failure' do

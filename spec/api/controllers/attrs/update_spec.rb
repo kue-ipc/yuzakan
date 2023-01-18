@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Api::Controllers::Attrs::Update, type: :action do
-  init_controller_spec(self)
+  init_controller_spec
   let(:action) {
     Api::Controllers::Attrs::Update.new(**action_opts, attr_repository: attr_repository,
                                                        attr_mapping_repository: attr_mapping_repository,

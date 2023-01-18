@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe RegisterUser do
-  init_intercactor_spec(self)
+  init_intercactor_spec
   let(:interactor) { described_class.new(**interactor_opts) }
   let(:interactor_opts) { {user_repository: user_repository} }
   let(:params) {

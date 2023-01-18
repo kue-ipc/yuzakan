@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Api::Controllers::Users::Create, type: :action do
-  init_controller_spec(self)
+  init_controller_spec
   let(:action) { Api::Controllers::Users::Create.new(**action_opts) }
   let(:format) { 'application/json' }
 
