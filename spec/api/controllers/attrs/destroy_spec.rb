@@ -23,10 +23,7 @@ RSpec.describe Api::Controllers::Attrs::Destroy, type: :action do
   let(:attr_with_mappings) { Attr.new(id: 42, **attr_attributes) }
   let(:attr_without_mappings) { Attr.new(id: 42, **attr_attributes.except(:attr_mappings)) }
   let(:attr_repository) {
-    AttrRepository.new.tap do |obj|
-      stub(obj).find_with_mappings_by_name { attr_with_mappings }
-      stub(obj).delete { attr_without_mappings }
-    end
+    instance_double('AttrRepository', find_with_mappings_by_name: attr_with_mappings, delete: attr_without_mappings)
   }
 
   it 'is failure' do

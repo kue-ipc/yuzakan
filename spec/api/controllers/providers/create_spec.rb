@@ -54,13 +54,12 @@ RSpec.describe Api::Controllers::Providers::Create, type: :action do
   let(:provider_without_params) { Provider.new(id: 3, **provider_params) }
   let(:provider_with_params) { Provider.new(id: 3, **provider_params, provider_params: provider_params_attributes) }
   let(:provider_repository) {
-    ProviderRepository.new.tap do |obj|
-      stub(obj).exist_by_name? { false }
-      stub(obj).last_order { 16 }
-      stub(obj).create { provider_without_params }
-      stub(obj).find_with_params { provider_with_params }
-      stub(obj).add_param { ProviderParam.new }
-    end
+    instance_double('ProviderRepository',
+                    exist_by_name?: false,
+                    last_order: 16,
+                    create: provider_without_params,
+                    find_with_params: provider_with_params,
+                    add_param: ProviderParam.new)
   }
 
   it 'is failure' do
@@ -167,11 +166,10 @@ RSpec.describe Api::Controllers::Providers::Create, type: :action do
 
     describe 'existed name' do
       let(:provider_repository) {
-        ProviderRepository.new.tap do |obj|
-          stub(obj).exist_by_name? { true }
-          stub(obj).last_order { 16 }
-          stub(obj).create_with_params { provider_with_params }
-        end
+        instance_double('ProviderRepository',
+                        exist_by_name?: true,
+                        last_order: 16,
+                        create_with_params: provider_with_params)
       }
 
       it 'is failure' do

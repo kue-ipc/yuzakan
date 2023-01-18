@@ -25,14 +25,10 @@ RSpec.describe Api::Controllers::Attrs::Create, type: :action do
   }
   let(:attr_with_mappings) { Attr.new(id: 42, **attr_attributes) }
   let(:attr_repository) {
-    AttrRepository.new.tap do |obj|
-      stub(obj).exist_by_name? { false }
-      stub(obj).last_order { 16 }
-      stub(obj).create_with_mappings { attr_with_mappings }
-    end
+    instance_double('AttrRepository', exist_by_name?: false, last_order: 16, create_with_mappings: attr_with_mappings)
   }
   let(:providers) { [Provider.new(id: 3, name: 'provider1'), Provider.new(id: 7, name: 'provider2')] }
-  let(:provider_repository) { ProviderRepository.new.tap { |obj| stub(obj).all { providers } } }
+  let(:provider_repository) { instance_double('ProviderRepository', all: providers) }
 
   it 'is failure' do
     response = action.call(params)
@@ -136,13 +132,8 @@ RSpec.describe Api::Controllers::Attrs::Create, type: :action do
 
     describe 'existed name' do
       let(:attr_repository) {
-        AttrRepository.new.tap do |obj|
-          stub(obj).exist_by_name? { true }
-          stub(obj).exist_by_label? { false }
-          stub(obj).exist_by_order? { false }
-          stub(obj).last_order { 16 }
-          stub(obj).create_with_mappings { attr_with_mappings }
-        end
+        instance_double('AttrRepository',
+                        exist_by_name?: true, last_order: 16, create_with_mappings: attr_with_mappings)
       }
 
       it 'is failure' do

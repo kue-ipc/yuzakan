@@ -21,7 +21,7 @@ RSpec.describe Api::Controllers::Attrs::Show, type: :action do
     {**attr_params.except(:mappings), attr_mappings: attr_mappings}
   }
   let(:attr_with_mappings) { Attr.new(id: 42, **attr_attributes) }
-  let(:attr_repository) { AttrRepository.new.tap { |obj| stub(obj).find_with_mappings_by_name { attr_with_mappings } } }
+  let(:attr_repository) { instance_double('AttrRepository', find_with_mappings_by_name: attr_with_mappings) }
 
   it 'is successful' do
     response = action.call(params)
@@ -57,7 +57,7 @@ RSpec.describe Api::Controllers::Attrs::Show, type: :action do
     end
 
     describe 'not existed' do
-      let(:attr_repository) { AttrRepository.new.tap { |obj| stub(obj).find_with_mappings { nil } } }
+      let(:attr_repository) { instance_double('AttrRepository', find_with_mappings: nil) }
 
       it 'is failure' do
         response = action.call(params)

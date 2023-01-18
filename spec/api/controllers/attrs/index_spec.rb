@@ -15,7 +15,7 @@ RSpec.describe Api::Controllers::Attrs::Index, type: :action do
     ]
   }
   let(:all_attrs) { attrs_attributes.map { |attributes| Attr.new(attributes) } }
-  let(:attr_repository) { AttrRepository.new.tap { |obj| stub(obj).ordered_all { all_attrs } } }
+  let(:attr_repository) { instance_double('AttrRepository', ordered_all: all_attrs) }
 
   it 'is successful' do
     response = action.call(params)

@@ -19,9 +19,7 @@ RSpec.describe Api::Controllers::Myself::Show, type: :action do
         attr: {name: 'ja_display_name', display_name: '日本語表示名', type: 'string', hidden: false},
       }])]
   }
-  let(:provider_repository) {
-    ProviderRepository.new.tap { |obj| stub(obj).ordered_all_with_adapter_by_operation { providers } }
-  }
+  let(:provider_repository) { instance_double('ProviderRepository', ordered_all_with_adapter_by_operation: providers) }
 
   it 'is successful' do
     response = action.call(params)

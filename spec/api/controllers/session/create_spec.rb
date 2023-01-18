@@ -9,19 +9,10 @@ RSpec.describe Api::Controllers::Session::Create, type: :action do
   }
   let(:format) { 'application/json' }
   let(:action_params) { {username: 'user', password: 'pass'} }
-  let(:user_repository) {
-    instance_double('UserRepository', find: user, find_by_username: user, update: user)
-  }
+  let(:user_repository) { instance_double('UserRepository', find: user, find_by_username: user, update: user) }
   let(:providers) { [create_mock_provider(params: {username: 'user', password: 'pass'})] }
-  let(:provider_repository) {
-    ProviderRepository.new.tap { |obj| stub(obj).ordered_all_with_adapter_by_operation { providers } }
-  }
-  let(:auth_log_repository) {
-    AuthLogRepository.new.tap do |obj|
-      stub(obj).create { AuthLog.new }
-      stub(obj).recent_by_username { [] }
-    end
-  }
+  let(:provider_repository) { instance_double('ProviderRepository', ordered_all_with_adapter_by_operation: providers) }
+  let(:auth_log_repository) { instance_double('AuthLogRepository', create: AuthLog.new, recent_by_username: []) }
 
   it 'is see other' do
     Rack::Utils::HTTP_STATUS_CODES[303] = 'Hoge'
@@ -134,18 +125,15 @@ RSpec.describe Api::Controllers::Session::Create, type: :action do
 
     describe 'too many access' do
       let(:auth_log_repository) {
-        AuthLogRepository.new.tap do |obj|
-          stub(obj).create { AuthLog.new }
-          stub(obj).recent_by_username do
-            [
-              AuthLog.new(result: 'failure'),
-              AuthLog.new(result: 'failure'),
-              AuthLog.new(result: 'failure'),
-              AuthLog.new(result: 'failure'),
-              AuthLog.new(result: 'failure'),
-            ]
-          end
-        end
+        instance_double('AuthLogRepository',
+                        create: AuthLog.new,
+                        recent_by_username: [
+                          AuthLog.new(result: 'failure'),
+                          AuthLog.new(result: 'failure'),
+                          AuthLog.new(result: 'failure'),
+                          AuthLog.new(result: 'failure'),
+                          AuthLog.new(result: 'failure'),
+                        ])
       }
 
       it 'is failure' do

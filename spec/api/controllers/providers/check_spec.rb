@@ -17,8 +17,7 @@ RSpec.describe Api::Controllers::Providers::Check, type: :action do
   let(:provider_params_attributes) { [{name: 'check', value: Marshal.dump(true)}] }
   let(:provider_with_params) { Provider.new(id: 3, **provider_params, provider_params: provider_params_attributes) }
   let(:provider_repository) {
-    ProviderRepository.new.tap { |obj| stub(obj).find_with_params_by_name { provider_with_params } }
-  }
+    instance_double('ProviderRepository', find_with_params_by_name: provider_with_params) }
 
   it 'is successful' do
     response = action.call(params)

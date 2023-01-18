@@ -19,7 +19,7 @@ RSpec.describe Admin::Controllers::Config::Create, type: :action do
   #     db_clear
   #   end
   
-  #   let(:config_repository) { ConfigRepository.new.tap { |obj| stub(obj).current { nil } } }
+  #   let(:config_repository) { instance_double('ConfigRepository', current: nil) }
 
   #   it 'is successful' do
   #     response = action.call(params)

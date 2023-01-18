@@ -27,18 +27,17 @@ RSpec.describe Api::Controllers::Attrs::Update, type: :action do
   let(:attr_without_mappings) { Attr.new(id: 42, **attr_attributes.except(:attr_mappings)) }
   let(:attr_with_mappings) { Attr.new(id: 42, **attr_attributes) }
   let(:attr_repository) {
-    AttrRepository.new.tap do |obj|
-      stub(obj).find_with_mappings_by_name { attr_with_mappings }
-      stub(obj).find_with_mappings { attr_with_mappings }
-      stub(obj).exist_by_name? { false }
-      stub(obj).update { attr_without_mappings }
-      stub(obj).add_mapping { AttrMapping.new }
-      stub(obj).remove_mapping { AttrMapping.new }
-    end
+    instance_double('AttrRepository',
+                    find_with_mappings_by_name: attr_with_mappings,
+                    find_with_mappings: attr_with_mappings,
+                    exist_by_name?: false,
+                    update: attr_without_mappings,
+                    add_mapping: AttrMapping.new,
+                    remove_mapping: AttrMapping.new)
   }
-  let(:attr_mapping_repository) { AttrMappingRepository.new.tap { |obj| stub(obj).update { AttrMapping.new } } }
+  let(:attr_mapping_repository) { instance_double('AttrMappingRepository', update: AttrMapping.new) }
   let(:providers) { [Provider.new(id: 3, name: 'provider1'), Provider.new(id: 7, name: 'provider2')] }
-  let(:provider_repository) { ProviderRepository.new.tap { |obj| stub(obj).all { providers } } }
+  let(:provider_repository) { instance_double('ProviderRepository', all: providers) }
 
   it 'is failure' do
     response = action.call(params)
@@ -69,14 +68,13 @@ RSpec.describe Api::Controllers::Attrs::Update, type: :action do
 
     describe 'not existed' do
       let(:attr_repository) {
-        AttrRepository.new.tap do |obj|
-          stub(obj).find_with_mappings_by_name { nil }
-          stub(obj).find_with_mappings { nil }
-          stub(obj).exist_by_name? { false }
-          stub(obj).update { attr_without_mappings }
-          stub(obj).delete_mapping_by_provider_id { 1 }
-          stub(obj).add_mapping { AttrMapping.new }
-        end
+        instance_double('AttrRepository',
+                        find_with_mappings_by_name: nil,
+                        find_with_mappings: nil,
+                        exist_by_name?: false,
+                        update: attr_without_mappings,
+                        add_mapping: AttrMapping.new,
+                        delete_mapping_by_provider_id: 1)
       }
 
       it 'is failure' do
@@ -93,14 +91,13 @@ RSpec.describe Api::Controllers::Attrs::Update, type: :action do
 
     describe 'existed name' do
       let(:attr_repository) {
-        AttrRepository.new.tap do |obj|
-          stub(obj).find_with_mappings_by_name { attr_with_mappings }
-          stub(obj).find_with_mappings { attr_with_mappings }
-          stub(obj).exist_by_name? { true }
-          stub(obj).update { attr_without_mappings }
-          stub(obj).delete_mapping_by_provider_id { 1 }
-          stub(obj).add_mapping { AttrMapping.new }
-        end
+        instance_double('AttrRepository',
+                        find_with_mappings_by_name: attr_with_mappings,
+                        find_with_mappings: attr_with_mappings,
+                        exist_by_name?: true,
+                        update: attr_without_mappings,
+                        add_mapping: AttrMapping.new,
+                        delete_mapping_by_provider_id: 1)
       }
 
       it 'is successful' do

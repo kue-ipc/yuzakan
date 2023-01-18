@@ -57,17 +57,16 @@ RSpec.describe Api::Controllers::Providers::Update, type: :action do
   let(:provider_with_params) { Provider.new(id: 3, **provider_params, provider_params: provider_params_attributes) }
   let(:provider_without_params) { Provider.new(id: 3, **provider_params) }
   let(:provider_repository) {
-    ProviderRepository.new.tap do |obj|
-      stub(obj).find_with_params_by_name { provider_with_params }
-      stub(obj).find_with_params { provider_with_params }
-      stub(obj).exist_by_name? { false }
-      stub(obj).last_order { 16 }
-      stub(obj).update { provider_without_params }
-      stub(obj).delete_param_by_name { 1 }
-      stub(obj).add_param { ProviderParam.new }
-    end
+    instance_double('ProviderRepository',
+                    find_with_params_by_name: provider_with_params,
+                    find_with_params: provider_with_params,
+                    exist_by_name?: false,
+                    last_order: 16,
+                    update: provider_without_params,
+                    delete_param_by_name: 1,
+                    add_param: ProviderParam.new)
   }
-  let(:provider_param_repository) { ProviderParamRepository.new.tap { |obj| stub(obj).update { ProviderPrama.new } } }
+  let(:provider_param_repository) { instance_double('ProviderParamRepository', update: ProviderPrama.new) }
 
   it 'is failure' do
     response = action.call(params)
@@ -125,15 +124,15 @@ RSpec.describe Api::Controllers::Providers::Update, type: :action do
 
     describe 'existed name' do
       let(:provider_repository) {
-        ProviderRepository.new.tap do |obj|
-          stub(obj).find_with_params_by_name { provider_with_params }
-          stub(obj).find_with_params { provider_with_params }
-          stub(obj).exist_by_name? { true }
-          stub(obj).last_order { 16 }
-          stub(obj).update { provider_without_params }
-          stub(obj).delete_param_by_name { 1 }
-          stub(obj).add_param { ProviderParam.new }
-        end
+        instance_double(
+          'ProviderRepository',
+          find_with_params_by_name: provider_with_params,
+          find_with_params: provider_with_params,
+          exist_by_name?: true,
+          last_order: 16,
+          update: provider_without_params,
+          delete_param_by_name: 1,
+          add_param: ProviderParam.new)
       }
 
       it 'is successful' do

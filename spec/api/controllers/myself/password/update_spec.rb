@@ -10,10 +10,8 @@ RSpec.describe Api::Controllers::Myself::Password::Update, type: :action do
   let(:action_params) { {current_password: 'pass', password: 'word', password_confirmation: 'word'} }
 
   let(:providers) { [create_mock_provider(params: {username: 'user', password: 'pass'})] }
-  let(:provider_repository) {
-    ProviderRepository.new.tap { |obj| stub(obj).ordered_all_with_adapter_by_operation { providers } }
-  }
-  let(:user_notify) { Object.new.tap { |obj| stub(obj).deliver } }
+  let(:provider_repository) { instance_double('ProviderRepository', ordered_all_with_adapter_by_operation: providers) }
+  let(:user_notify) { double('UserNotify', deliver: nil) }
 
   it 'is successful' do
     response = action.call(params)

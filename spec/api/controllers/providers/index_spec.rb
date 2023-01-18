@@ -16,7 +16,7 @@ RSpec.describe Api::Controllers::Providers::Index, type: :action do
   }
 
   let(:providers) { providers_attributes.map { |attributes| Provider.new(attributes) } }
-  let(:provider_repository) { ProviderRepository.new.tap { |obj| stub(obj).ordered_all { providers } } }
+  let(:provider_repository) { instance_double('ProviderRepository', ordered_all: providers) }
 
   it 'is successful' do
     response = action.call(params)
