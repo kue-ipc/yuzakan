@@ -50,10 +50,7 @@ RSpec.describe Api::Controllers::Attrs::Destroy, type: :action do
 
     describe 'not existend' do
       let(:attr_repository) {
-        AttrRepository.new.tap do |obj|
-          mock(obj).find_with_mappings_by_name('attr1') { nil }
-          dont_allow(obj).delete
-        end
+        instance_double('AttrRepository', find_with_mappings_by_name: nil)
       }
 
       it 'is failure' do

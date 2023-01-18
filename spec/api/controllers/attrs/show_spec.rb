@@ -57,7 +57,7 @@ RSpec.describe Api::Controllers::Attrs::Show, type: :action do
     end
 
     describe 'not existed' do
-      let(:attr_repository) { instance_double('AttrRepository', find_with_mappings: nil) }
+      let(:attr_repository) { instance_double('AttrRepository', find_with_mappings_by_name: nil) }
 
       it 'is failure' do
         response = action.call(params)

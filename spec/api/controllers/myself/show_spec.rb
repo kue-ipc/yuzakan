@@ -12,6 +12,8 @@ RSpec.describe Api::Controllers::Myself::Show, type: :action do
       name: 'provider',
       params: {
         username: 'user', display_name: 'ユーザー', email: 'user@example.jp',
+        primary_group: 'group',
+        groups: 'admin, staff',
         attrs: YAML.dump({'jaDisplayName' => '表示ユーザー'}),
       },
       attr_mappings: [{
@@ -20,8 +22,18 @@ RSpec.describe Api::Controllers::Myself::Show, type: :action do
       }])]
   }
   let(:provider_repository) { instance_double('ProviderRepository', ordered_all_with_adapter_by_operation: providers) }
+  let(:user_with_groups) {
+    User.new(**user.to_h,
+    primary_group: Group.new(name: 'group'),
+    groups: [Group.new(name: 'admin'), Group.new(name: 'staff')])
+  }
 
   it 'is successful' do
+    allow(user_repository).to receive(:find_by_username).and_return(user)
+    allow(user_repository).to receive(:update).and_return(user)
+    allow(user_repository).to receive(:find_with_groups).and_return(user_with_groups)
+    allow(user_repository).to receive(:find_with_groups).and_return(user_with_groups)
+
     response = action.call(params)
     expect(response[0]).to eq 200
     expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"

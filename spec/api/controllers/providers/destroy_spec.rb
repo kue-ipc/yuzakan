@@ -73,10 +73,7 @@ RSpec.describe Api::Controllers::Providers::Destroy, type: :action do
 
     describe 'not existend' do
       let(:provider_repository) {
-        ProviderRepository.new.tap do |obj|
-          mock(obj).find_with_params_by_name('provider1') { nil }
-          dont_allow(obj).delete
-        end
+        instance_double('ProviderRepository', find_with_params_by_name: nil)
       }
 
       it 'is failure' do

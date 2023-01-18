@@ -68,6 +68,17 @@ module Yuzakan
           default: false,
         },
         {
+          name: :primary_group,
+          label: 'プライマリーグループ',
+          type: :string,
+        },
+        {
+          name: :groups,
+          label: 'グループ',
+          type: :string,
+          description: 'カンマまたは空白区切り',
+        },
+        {
           name: :attrs,
           label: '属性',
           type: :text,
@@ -79,6 +90,9 @@ module Yuzakan
       def initialize(params, **opts)
         super
         @passwords = {@params[:username] => BCrypt::Password.create(@params[:password])}
+        primary_group = @params[:primary_group]
+        primary_group = nil if primary_group&.empty?
+        groups = @params[:groups].to_s.split(/\s|,/).map(&:strip).reject(&:empty?)
         @users = {@params[:username] => {
           username: @params[:username],
           display_name: @params[:display_name],
@@ -86,8 +100,11 @@ module Yuzakan
           locked: @params[:locked],
           unmanageable: @params[:unmanageable],
           mfa: @params[:mfa],
+          primary_group: primary_group,
+          groups: groups,
           attrs: YAML.safe_load(@params[:attrs]),
         }}
+        @groups = [primary_group, *groups].uniq.compact.to_h { |name| [name, {groupname: name, display_name: name}] }
       end
 
       def check

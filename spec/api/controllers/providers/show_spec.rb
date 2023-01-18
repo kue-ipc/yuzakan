@@ -72,7 +72,7 @@ RSpec.describe Api::Controllers::Providers::Show, type: :action do
 
     describe 'not existed' do
       let(:provider_repository) {
-        ProviderRepository.new.tap { |obj| mock(obj).find_with_params_by_name('provider1') { nil } }
+        instance_double('ProviderRepository', find_with_params_by_name: nil)
       }
 
       it 'is failure' do

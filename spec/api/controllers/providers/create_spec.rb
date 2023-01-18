@@ -169,7 +169,9 @@ RSpec.describe Api::Controllers::Providers::Create, type: :action do
         instance_double('ProviderRepository',
                         exist_by_name?: true,
                         last_order: 16,
-                        create_with_params: provider_with_params)
+                        create: provider_without_params,
+                        find_with_params: provider_with_params,
+                        add_param: ProviderParam.new)
       }
 
       it 'is failure' do

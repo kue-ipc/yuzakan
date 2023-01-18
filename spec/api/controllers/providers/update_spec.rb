@@ -66,7 +66,7 @@ RSpec.describe Api::Controllers::Providers::Update, type: :action do
                     delete_param_by_name: 1,
                     add_param: ProviderParam.new)
   }
-  let(:provider_param_repository) { instance_double('ProviderParamRepository', update: ProviderPrama.new) }
+  let(:provider_param_repository) { instance_double('ProviderParamRepository', update: ProviderParam.new) }
 
   it 'is failure' do
     response = action.call(params)
@@ -105,9 +105,7 @@ RSpec.describe Api::Controllers::Providers::Update, type: :action do
 
     describe 'not existed' do
       let(:provider_repository) {
-        ProviderRepository.new.tap do |obj|
-          mock(obj).find_with_params_by_name('provider1') { nil }
-        end
+        instance_double('ProviderRepository', find_with_params_by_name: nil)
       }
 
       it 'is failure' do
