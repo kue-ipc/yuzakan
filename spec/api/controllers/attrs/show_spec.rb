@@ -2,7 +2,7 @@
 
 RSpec.describe Api::Controllers::Attrs::Show, type: :action do
   init_controller_spec
-  let(:action) { Api::Controllers::Attrs::Show.new(**action_opts, attr_repository: attr_repository) }
+  let(:action_opts) { {attr_repository: attr_repository} }
   let(:format) { 'application/json' }
   let(:action_params) { {id: 'attr1'} }
   let(:attr_params) {

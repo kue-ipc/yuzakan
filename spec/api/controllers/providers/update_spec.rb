@@ -2,10 +2,7 @@
 
 RSpec.describe Api::Controllers::Providers::Update, type: :action do
   init_controller_spec
-  let(:action) {
-    Api::Controllers::Providers::Update.new(**action_opts, provider_repository: provider_repository,
-                                                           provider_param_repository: provider_param_repository)
-  }
+  let(:action_opts) { {provider_repository: provider_repository, provider_param_repository: provider_param_repository} }
   let(:format) { 'application/json' }
   let(:action_params) { {id: 'provider1', **provider_params, params: provider_params_params} }
 

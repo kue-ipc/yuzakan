@@ -2,7 +2,7 @@
 
 RSpec.describe Api::Controllers::Providers::Check, type: :action do
   init_controller_spec
-  let(:action) { Api::Controllers::Providers::Check.new(**action_opts, provider_repository: provider_repository) }
+  let(:action_opts) { {provider_repository: provider_repository} }
   let(:format) { 'application/json' }
   let(:action_params) { {id: 'provider1'} }
 
@@ -17,7 +17,8 @@ RSpec.describe Api::Controllers::Providers::Check, type: :action do
   let(:provider_params_attributes) { [{name: 'check', value: Marshal.dump(true)}] }
   let(:provider_with_params) { Provider.new(id: 3, **provider_params, provider_params: provider_params_attributes) }
   let(:provider_repository) {
-    instance_double('ProviderRepository', find_with_params_by_name: provider_with_params) }
+    instance_double('ProviderRepository', find_with_params_by_name: provider_with_params)
+  }
 
   it 'is successful' do
     response = action.call(params)

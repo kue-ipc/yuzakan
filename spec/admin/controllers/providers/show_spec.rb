@@ -2,10 +2,9 @@
 
 RSpec.describe Admin::Controllers::Providers::Show, type: :action do
   init_controller_spec
-  let(:action) { Admin::Controllers::Providers::Show.new(**action_opts, provider_repository: provider_repository) }
-
+  let(:action_opts) { {provider_repository: provider_repository} }
   let(:action_params) { {id: 'provider1'} }
-  let(:provider_repository) { instance_double('ProviderRepository', exist_by_name?: true) }
+  let(:provider_repository_stubs) { {exist_by_name?: true} }
 
   it 'is failure' do
     response = action.call(params)
@@ -31,7 +30,7 @@ RSpec.describe Admin::Controllers::Providers::Show, type: :action do
     end
 
     describe 'not existed' do
-      let(:provider_repository) { instance_double('ProviderRepository', exist_by_name?: false) }
+      let(:provider_repository_stubs) { {exist_by_name?: false} }
 
       it 'is failure' do
         response = action.call(params)

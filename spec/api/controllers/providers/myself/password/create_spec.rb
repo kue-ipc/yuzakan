@@ -2,7 +2,6 @@
 
 RSpec.describe Api::Controllers::Providers::Myself::Password::Create, type: :action do
   init_controller_spec
-  let(:action) { Api::Controllers::Providers::Myself::Password::Create.new(**action_opts) }
   let(:format) { 'application/json' }
 
   # it 'is successful' do

@@ -2,7 +2,6 @@
 
 RSpec.describe Admin::Controllers::Providers::Index, type: :action do
   init_controller_spec
-  let(:action) { Admin::Controllers::Providers::Index.new(**action_opts) }
 
   it 'is failure' do
     response = action.call(params)

@@ -2,7 +2,7 @@
 
 RSpec.describe Api::Controllers::Providers::Show, type: :action do
   init_controller_spec
-  let(:action) { Api::Controllers::Providers::Show.new(**action_opts, provider_repository: provider_repository) }
+  let(:action_opts) { {provider_repository: provider_repository} }
   let(:format) { 'application/json' }
 
   let(:action_params) { {id: 'provider1'} }

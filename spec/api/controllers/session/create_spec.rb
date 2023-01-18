@@ -2,10 +2,12 @@
 
 RSpec.describe Api::Controllers::Session::Create, type: :action do
   init_controller_spec
-  let(:action) {
-    Api::Controllers::Session::Create.new(**action_opts, user_repository: user_repository,
-                                                         provider_repository: provider_repository,
-                                                         auth_log_repository: auth_log_repository)
+  let(:action_opts) {
+    {
+      user_repository: user_repository,
+      provider_repository: provider_repository,
+      auth_log_repository: auth_log_repository,
+    }
   }
   let(:format) { 'application/json' }
   let(:action_params) { {username: 'user', password: 'pass'} }

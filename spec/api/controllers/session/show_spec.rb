@@ -2,7 +2,6 @@
 
 RSpec.describe Api::Controllers::Session::Show, type: :action do
   init_controller_spec
-  let(:action) { Api::Controllers::Session::Show.new(**action_opts) }
   let(:format) { 'application/json' }
 
   it 'is successful' do

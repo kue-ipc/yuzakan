@@ -2,10 +2,7 @@
 
 RSpec.describe Api::Controllers::Myself::Password::Update, type: :action do
   init_controller_spec
-  let(:action) {
-    Api::Controllers::Myself::Password::Update.new(**action_opts, provider_repository: provider_repository,
-                                                                  user_notify: user_notify)
-  }
+  let(:action_opts) { {provider_repository: provider_repository, user_notify: user_notify} }
   let(:format) { 'application/json' }
   let(:action_params) { {current_password: 'pass', password: 'word', password_confirmation: 'word'} }
 
