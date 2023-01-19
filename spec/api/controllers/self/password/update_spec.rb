@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Api::Controllers::Myself::Password::Update, type: :action do
+RSpec.describe Api::Controllers::Self::Password::Update, type: :action do
   init_controller_spec
   let(:action_opts) { {provider_repository: provider_repository, user_notify: user_notify} }
   let(:format) { 'application/json' }

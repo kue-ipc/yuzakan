@@ -2,8 +2,8 @@
 
 module Api
   module Controllers
-    module Providers
-      module Myself
+    module Self
+      module Providers
         class Show
           include Api::Action
 

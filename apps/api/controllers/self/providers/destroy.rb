@@ -2,8 +2,8 @@
 
 module Api
   module Controllers
-    module Providers
-      module Myself
+    module Self
+      module Providers
         class Destroy
           include Api::Action
 

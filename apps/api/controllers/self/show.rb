@@ -4,7 +4,7 @@ require_relative '../users/user_interactor'
 
 module Api
   module Controllers
-    module Myself
+    module Self
       class Show
         include Api::Action
         include Users::UserInteractor

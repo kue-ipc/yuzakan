@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Api::Controllers::Providers::Myself::Code::Create, type: :action do
+RSpec.describe Api::Controllers::Self::Providers::Code::Create, type: :action do
   init_controller_spec
   let(:format) { 'application/json' }
 

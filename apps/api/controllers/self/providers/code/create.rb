@@ -2,8 +2,8 @@
 
 module Api
   module Controllers
-    module Providers
-      module Myself
+    module Self
+      module Providers
         module Code
           class Create
             include Api::Action

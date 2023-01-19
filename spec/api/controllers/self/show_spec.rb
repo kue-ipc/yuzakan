@@ -2,7 +2,7 @@
 
 require 'yaml'
 
-RSpec.describe Api::Controllers::Myself::Show, type: :action do
+RSpec.describe Api::Controllers::Self::Show, type: :action do
   init_controller_spec
   let(:action_opts) { {provider_repository: provider_repository} }
   let(:format) { 'application/json' }

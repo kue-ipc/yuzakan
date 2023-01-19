@@ -2,7 +2,7 @@
 
 module Api
   module Controllers
-    module Myself
+    module Self
       module Password
         class Update
           include Api::Action
