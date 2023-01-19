@@ -18,6 +18,6 @@ class CreateAttrValidator
     optional(:readonly).filled(:bool?)
     optional(:code).maybe(:str?, max_size?: 4096)
     optional(:description).maybe(:str?, max_size?: 4096)
-    optional(:attr_mappings) { array? { each { schema(CreateAttrMappingValidator) } } }
+    optional(:attr_mappings).each(schema: CreateAttrMappingValidator)
   end
 end

@@ -33,8 +33,8 @@ module Admin
 
           validations do
             optional(:config).schema(UpdateConfigValidator)
-            optional(:providers) { array? { each { schema(CreateProviderValidator) } } }
-            optional(:attrs) { array? { each { schema(CreateAttrValidator) } } }
+            optional(:providers).each(schema: CreateProviderValidator)
+            optional(:attrs).each(schema: CreateAttrValidator)
           end
         end
 
