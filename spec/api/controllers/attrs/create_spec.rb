@@ -4,28 +4,12 @@ RSpec.describe Api::Controllers::Attrs::Create, type: :action do
   init_controller_spec
   let(:action_opts) { {attr_repository: attr_repository, provider_repository: provider_repository} }
   let(:format) { 'application/json' }
-  let(:action_params) { attr_params }
-  let(:attr_params) {
+  let(:action_params) {
     {
-      name: 'attr1', display_name: '属性①', type: 'string', order: 8, hidden: false,
-      mappings: [
-        {provider: 'provider1', name: 'attr1_1', conversion: nil},
-        {provider: 'provider2', name: 'attr1_2', conversion: 'e2j'},
-      ],
+      **attr_attributes.except(:id),
+      mappings: attr_mappings_attributes,
     }
   }
-  let(:attr_attributes) {
-    attr_mappings = attr_params[:mappings].map do |mapping|
-      {**mapping.except(:provider), provider: {name: mapping[:provider]}}
-    end
-    {**attr_params.except(:mappings), attr_mappings: attr_mappings}
-  }
-  let(:attr_with_mappings) { Attr.new(id: 42, **attr_attributes) }
-  let(:attr_repository) {
-    instance_double('AttrRepository', exist_by_name?: false, last_order: 16, create_with_mappings: attr_with_mappings)
-  }
-  let(:providers) { [Provider.new(id: 3, name: 'provider1'), Provider.new(id: 7, name: 'provider2')] }
-  let(:provider_repository) { instance_double('ProviderRepository', all: providers) }
 
   it 'is failure' do
     response = action.call(params)
@@ -45,7 +29,11 @@ RSpec.describe Api::Controllers::Attrs::Create, type: :action do
       expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       expect(response[1]['Location']).to eq "/api/attrs/#{attr_with_mappings.id}"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).to eq({**attr_params, label: attr_attributes[:display_name]})
+      expect(json).to eq({
+        **attr_attributes.except(:id),
+        label: attr_attributes[:display_name] || attr_attributes[:name],
+        mappings: attr_mappings_attributes,
+      })
     end
 
     it 'is successful without order param' do
@@ -54,7 +42,11 @@ RSpec.describe Api::Controllers::Attrs::Create, type: :action do
       expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       expect(response[1]['Location']).to eq "/api/attrs/#{attr_with_mappings.id}"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).to eq({**attr_params, label: attr_attributes[:display_name]})
+      expect(json).to eq({
+        **attr_attributes.except(:id),
+        label: attr_attributes[:display_name] || attr_attributes[:name],
+        mappings: attr_mappings_attributes,
+      })
     end
 
     it 'is failure with bad name pattern' do
@@ -129,10 +121,7 @@ RSpec.describe Api::Controllers::Attrs::Create, type: :action do
     end
 
     describe 'existed name' do
-      let(:attr_repository) {
-        instance_double('AttrRepository',
-                        exist_by_name?: true, last_order: 16, create_with_mappings: attr_with_mappings)
-      }
+      let(:attr_repository) { instance_double('AttrRepository', **attr_repository_stubs, exist_by_name?: true) }
 
       it 'is failure' do
         response = action.call(params)
@@ -160,7 +149,12 @@ RSpec.describe Api::Controllers::Attrs::Create, type: :action do
     end
 
     describe 'not found provider' do
-      let(:providers) { [Provider.new(id: 3, name: 'provider1')] }
+      # provider1のみない
+      let(:providers) {
+        providers_attributes
+          .reject { |attributes| attributes[:name] == 'provider1' }
+          .map { |attributes| Provider.new(attributes) }
+      }
 
       it 'is failure' do
         response = action.call(params)
