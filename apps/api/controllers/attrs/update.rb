@@ -21,7 +21,7 @@ module Api
             optional(:name).filled(:str?, :name?, max_size?: 255)
             optional(:display_name).maybe(:str?, max_size?: 255)
             optional(:type).filled(:str?, max_size?: 255)
-            optional(:order).filled(:int?, gt?: 0)
+            optional(:order).filled(:int?)
             optional(:hidden).filled(:bool?)
             optional(:readonly).filled(:bool?)
             optional(:code).maybe(:str?, max_size?: 4096)

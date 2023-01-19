@@ -60,7 +60,7 @@ attrMappingTd = ({attr, provider}) ->
 attrTr = ({attr, index, providers}) ->
   html.tr {}, [
     html.td {},
-      if attr.order
+      if attr.order?
         [
           html.div {class: 'mb-1'}, html.button {
             class: 'btn btn-secondary'
@@ -106,6 +106,7 @@ attrTr = ({attr, index, providers}) ->
           checked: attr.hidden
           onchange: (state, event) -> [attrAction, {name: attr.name, attr: {hidden: !attr.hidden}}]
         }
+
         html.label {
           class:
             if attr.hidden
@@ -123,6 +124,7 @@ attrTr = ({attr, index, providers}) ->
           checked: attr.readonly
           onchange: (state, event) -> [attrAction, {name: attr.name, attr: {readonly: !attr.readonly}}]
         }
+
         html.label {
           class:
             if attr.readonly
@@ -135,12 +137,11 @@ attrTr = ({attr, index, providers}) ->
         html.button {
           class: if attr.code then 'btn btn-primary' else 'btn btn-outline-primary'
           onclick: (state) -> [state, [inputCodeRunner, {attr}]]
-        },
-          text 'コード'
+        }, text 'コード'
       ]
     ]
     html.td {},
-      if attr.order
+      if attr.order?
         [
           html.div {class: 'mb-1'}, html.button {
             class: 'btn btn-warning'
@@ -250,61 +251,58 @@ destroyAttrRunner = (dispatch, {attr}) ->
 
 upAttrAction = (state, {name}) ->
   attrIndex = state.attrs.findIndex (attr) -> attr.name == name
-  diffOrder =
+  newOrder =
     switch attrIndex
-      when 0
-        1
-      when 1
-        state.attrs[0].order
+      when 0, 1
+        state.attrs[0].order - 8
       else
-        state.attrs[attrIndex - 1].order - state.attrs[attrIndex - 2].order
+        Math.floor((state.attrs[attrIndex - 1].order + state.attrs[attrIndex - 2].order) / 2)
 
-  if diffOrder == 1
-    console.warn '隙間がありません。'
+  if state.attrs[attrIndex].order == newOrder
+    console.warn '移動できません。'
     return state
  
-  newAttr = {state.attrs[attrIndex]..., order: state.attrs[attrIndex - 1].order - Math.floor(diffOrder / 2)}
+  newAttr = {state.attrs[attrIndex]..., order: newOrder}
+
   [
     {
       state...
       attrs: [
-        state.attrs[...(attrIndex - 1)]...
-        newAttr
-        state.attrs[attrIndex - 1]
+        state.attrs[...(attrIndex)]...
         state.attrs[(attrIndex + 1)..]...
-      ]
+        newAttr
+      ].sort (a, b) -> a.order - b.order || a.name.localeCompare(b.name)
     }
     [updateAttrRunner, {attr: newAttr}]
   ]
 
 downAttrAction = (state, {name}) ->
   attrIndex = state.attrs.findIndex (attr) -> attr.name == name
-  diffOrder =
+  newOrder =
     switch attrIndex
       when state.attrs.length - 1, state.attrs.length - 2
-        16
+        state.attrs.at(-1).order + 8
       else
-        diffOreder = state.attrs[attrIndex + 2].order - state.attrs[attrIndex + 1].order
+        Math.floor((state.attrs[attrIndex + 1].order + state.attrs[attrIndex + 2].order) / 2)
 
-  if diffOrder == 1
-    console.warn '隙間がありません。'
+  if state.attrs[attrIndex].order == newOrder
+    console.warn '移動できません。'
     return state
  
-  newAttr = {
-    state.attrs[attrIndex]...
-    order: (state.attrs[attrIndex + 1]?.order ? state.attrs[attrIndex].order) + diffOrder // 2}
+  newAttr = {state.attrs[attrIndex]..., order: newOrder}
+
   [
     {
       state...
       attrs: [
-        state.attrs[...attrIndex]...
-        state.attrs[attrIndex + 1]
+        state.attrs[...(attrIndex)]...
+        state.attrs[(attrIndex + 1)..]...
         newAttr
-        state.attrs[(attrIndex + 2)..]...
-      ].filter (_) -> _?
+      ].sort (a, b) -> a.order - b.order || a.name.localeCompare(b.name)
     }
     [updateAttrRunner, {attr: newAttr}]
   ]
+
 showAttrRunner = (dispatch, {attr}) ->
   response = await fetchJsonGet({url: "/api/attrs/#{attr.name}"})
   if response.ok
@@ -360,7 +358,7 @@ view = ({attrs, providers, newAttr}) ->
       html.tr {}, [
         html.th {}, text '順番'
         html.th {}, text '名前/表示名'
-        html.th {}, text '型/隠し'
+        html.th {}, text '型/オプション'
         html.th {}, text '操作'
         (providerTh({provider}) for provider in providers)...
       ]
