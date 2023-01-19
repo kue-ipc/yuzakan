@@ -11,7 +11,7 @@ RSpec.describe Admin::Controllers::Home::Index, type: :action do
 
   describe 'admin' do
     let(:user) { User.new(**user_attributes, clearance_level: 5) }
-    let(:network) { Network.new(**network_attributes, clearance_level: 5) }
+    let(:client) { '127.0.0.1' }
 
     it 'is successful' do
       response = action.call(params)
@@ -23,7 +23,7 @@ RSpec.describe Admin::Controllers::Home::Index, type: :action do
   level_matrix do |pattern|
     describe "user: #{pattern[:user_level]} network: #{pattern[:network_level]}" do
       let(:user) { User.new(**user_attributes, clearance_level: pattern[:user_level]) }
-      let(:network) { Network.new(**network_attributes, clearance_level: pattern[:network_level]) }
+      let(:client) { "10.1.#{pattern[:network_level]}.1" }
 
       if [pattern[:user_level], pattern[:network_level]].min >= 2
         it 'is successful' do

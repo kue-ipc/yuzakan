@@ -37,7 +37,7 @@ RSpec.describe Api::Controllers::Attrs::Create, type: :action do
 
   describe 'admin' do
     let(:user) { User.new(**user_attributes, clearance_level: 5) }
-    let(:network) { Network.new(**network_attributes, clearance_level: 5) }
+    let(:client) { '127.0.0.1' }
 
     it 'is successful' do
       response = action.call(params)

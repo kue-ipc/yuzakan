@@ -28,7 +28,9 @@ class FindNetwork
 
     ip_addr = IPAddr.new(ip)
 
-    @network = @network_repository.all.find { |network| network.include?(ip_addr) }
+    @network = @network_repository.all
+      .select { |network| network.include?(ip_addr) }
+      .max { |a, b| a.ipaddr.prefix <=> b.ipaddr.prefix }
   end
 
   private def valid?(params)

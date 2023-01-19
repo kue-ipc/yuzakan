@@ -15,25 +15,43 @@ def let_mock_repositories
   let(:provider_repository) { instance_double('ProviderRepository', **provider_repository_stubs) }
   let(:user_repository) { instance_double('UserRepository', **user_repository_stubs) }
 
+  # repostitory stubs
+  # let(:model_repository_stubs) {
+  #   {
+  #     create: model,
+  #     update: model || nil,
+  #     delete: model || nil,
+  #     all: models,
+  #     find: model || nil,
+  #     last: model || nil,
+  #     clear: models.size,
+  #   }
+  # }
   let(:activity_log_repository_stubs) { {create: activity_log} }
+  let(:attr_mapping_repository_stubs) { {} }
+  let(:attr_repository_stubs) { {} }
+  let(:auth_log_repository_stubs) { {} }
   let(:config_repository_stubs) { {current: config} }
+  let(:group_repository_stubs) { {find_or_create_by_groupname: groups} }
+  let(:member_repository_stubs) { {} }
   let(:network_repository_stubs) { {all: networks} }
+  let(:provider_param_repository_stubs) { {} }
+  let(:provider_repository_stubs) { {} }
   let(:user_repository_stubs) {
     {
+      update: user,
       find: user,
       find_by_username: user,
-      update: user,
       find_with_groups: user_with_groups,
       set_primary_group: Member.new,
       add_group: Member.new,
       remove_group: Member.new,
     }
   }
-  let(:group_repository_stubs) { {find_or_create_by_groupname: groups} }
 
   let(:activity_log) { ActivityLog.new(**activity_log_attributes) }
   let(:config) { Config.new(**config_attributes) }
-  let(:network) { Network.new(**network_attributes) }
+  # let(:network) { Network.new(**network_attributes) }
   let(:user) { User.new(**user_attributes) }
   let(:group) { Group.new(**group_attributes) }
   let(:user_with_groups) {
@@ -44,8 +62,9 @@ def let_mock_repositories
         *supplementary_groups.reject { |g| g == primary_group }.map { |g| Memebr.new(primary: false, group: g) },
       ].comapct)
   }
-  let(:networks) { [network] }
-  let(:users) { [user] }
+  let(:attrs) { attrs_attributes.map { |attributes| Attr.new(attributes) } }
+  let(:networks) { networks_attributes.map { |attributes| Network.new(attributes) } }
+  let(:users) { users_attributes.map { |attributes| User.new(attributes) } }
   let(:groups) { [group] }
 
   let(:user_members) {
@@ -61,12 +80,60 @@ def let_mock_repositories
 
   let(:activity_log_attributes) { {uuid: uuid, client: client, username: user.username} }
   let(:config_attributes) { {title: 'title', session_timeout: 3600, domain: 'example.jp'} }
-  let(:network_attributes) { {address: '192.0.2.0/24', clearance_level: 1, trusted: true} }
   let(:user_attributes) {
     {
       id: 42, username: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1,
       reserved: false, deleted: false, deleted_at: nil, note: nil,
     }
+  }
+  let(:group_attributes) { {id: 42, username: 'group', display_name: 'グループ'} }
+
+  let(:attrs_attributes) {
+    [
+      {id: 42, name: 'attr42', display_name: '属性42', type: 'string', order: 8, hidden: false},
+      {id: 24, name: 'attr24', display_name: '属性24', type: 'integer', order: 16, hidden: false},
+      {id: 19, name: 'attr19', display_name: '属性19', type: 'boolean', order: 24, hidden: false},
+      {id: 27, name: 'attr27', display_name: '属性27', type: 'string', order: 32, hidden: true},
+      {id: 28, name: 'attr28', type: 'string', order: 40, hidden: true},
+    ]
+  }
+  let(:networks_attributes) {
+    [
+      {address: '127.0.0.8/8', clearance_level: 5, trusted: true},
+      {address: '10.0.0.0/8', clearance_level: 5, trusted: true},
+      {address: '172.16.0.0/12', clearance_level: 5, trusted: true},
+      {address: '192.168.0.0/16', clearance_level: 5, trusted: true},
+      {address: '0.0.0.0/0', clearance_level: 1, trusted: false},
+      {address: '::1', clearance_level: 5, trusted: true},
+      {address: 'fc00::/7', clearance_level: 5, trusted: true},
+      {address: '::/0', clearance_level: 1, trusted: false},
+      {address: '192.0.2.0/24', clearance_level: 1, trusted: true},
+      {address: '198.51.100.0/24', clearance_level: 0, trusted: false},
+      # {address: '203.0.113.0/24', clearance_level: 1, trusted: fales},
+      {address: '2001:db8:1::/64', clearance_level: 1, trusted: true},
+      {address: '2001:db8:2::/64', clearance_level: 1, trusted: false},
+      # {address: '2001:db8::/32', clearance_level: 1, trusted: false},
+      {address: '10.1.0.0/24', clearance_level: 0, trusted: true},
+      {address: '10.1.1.0/24', clearance_level: 1, trusted: true},
+      {address: '10.1.2.0/24', clearance_level: 2, trusted: true},
+      {address: '10.1.3.0/24', clearance_level: 3, trusted: true},
+      {address: '10.1.4.0/24', clearance_level: 4, trusted: true},
+      {address: '10.1.5.0/24', clearance_level: 5, trusted: true},
+      {address: '10.2.0.0/24', clearance_level: 0, trusted: false},
+      {address: '10.2.1.0/24', clearance_level: 1, trusted: false},
+      {address: '10.2.2.0/24', clearance_level: 2, trusted: false},
+      {address: '10.2.3.0/24', clearance_level: 3, trusted: false},
+      {address: '10.2.4.0/24', clearance_level: 4, trusted: false},
+      {address: '10.2.5.0/24', clearance_level: 5, trusted: false},
+    ]
+  }
+  let(:users_attributes) {
+    [
+      user_attributes,
+      {**user_attributes, id: 1, username: 'admin', display_name: '管理者', email: 'admin@example.jp', clearance_level: 5},
+      {**user_attributes, id: 24, username: 'reserved', reserved: true},
+      {**user_attributes, id: 19, username: 'deleted', deleted: true, deleted_at: Time.now - (24 * 60 * 60)},
+    ]
   }
   let(:group_attributes) { {id: 42, username: 'group', display_name: 'グループ'} }
 
