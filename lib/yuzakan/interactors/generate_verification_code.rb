@@ -6,7 +6,7 @@ require 'hanami/validations/form'
 class GenerateVerificationCode
   include Hanami::Interactor
 
-  class Validations
+  class Validator
     include Hanami::Validations::Form
     messages_path 'config/messages.yml'
 
@@ -83,26 +83,25 @@ class GenerateVerificationCode
   end
 
   private def valid?(params)
-    ok = true
-    validation = Validations.new(params).validate
-    if validation.failure?
-      Hanami.logger.error "[#{self.class.name}] Validation fails: #{validation.messages}"
-      error(validation.messages)
-      ok = false
+    result = Validator.new(params).validate
+    if result.failure?
+      Hanami.logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
+      error(result.messages)
+      return false
     end
 
-    return ok if @user.clearance_level >= 3
+    return true if @user.clearance_level >= 3
 
     unless @providers&.all?(&:self_management)
       error('自己管理可能なシステム以外でバックアップコードを生成することはできません。')
-      ok = false
+      return false
     end
 
     if params&.key?(:username) && params[:username] != @user.name
       error(username: '自分自身以外のバックアップコードを生成することはできません。')
-      ok = false
+      return false
     end
 
-    ok
+    true
   end
 end

@@ -8,7 +8,7 @@ require_relative '../predicates/name_predicates'
 class SyncUser
   include Hanami::Interactor
 
-  class Validations
+  class Validator
     include Hanami::Validations
     predicates NamePredicates
     messages :i18n
@@ -76,10 +76,10 @@ class SyncUser
   end
 
   private def valid?(params)
-    validation = Validations.new(params).validate
-    if validation.failure?
-      Hanami.logger.error "[#{self.class.name}] Validation fails: #{validation.messages}"
-      error(validation.messages)
+    result = Validator.new(params).validate
+    if result.failure?
+      Hanami.logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
+      error(result.messages)
       return false
     end
 

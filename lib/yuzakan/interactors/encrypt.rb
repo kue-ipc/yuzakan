@@ -8,7 +8,7 @@ require_relative '../utils/pb_crypt'
 class Encrypt
   include Hanami::Interactor
 
-  class Validations
+  class Validator
     include Hanami::Validations
     messages_path 'config/messages.yml'
 
@@ -37,10 +37,10 @@ class Encrypt
   end
 
   private def valid?(params)
-    validation = Validations.new(params).validate
-    if validation.failure?
-      Hanami.logger.error "[#{self.class.name}] Validation fails: #{validation.messages}"
-      error(validation.messages)
+    result = Validator.new(params).validate
+    if result.failure?
+      Hanami.logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
+      error(result.messages)
       return false
     end
 

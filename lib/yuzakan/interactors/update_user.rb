@@ -6,7 +6,7 @@ require 'hanami/validations/form'
 class UpdateUser
   include Hanami::Interactor
 
-  class Validations
+  class Validator
     include Hanami::Validations
     predicates NamePredicates
     messages :i18n

@@ -8,7 +8,7 @@ require_relative '../predicates/name_predicates'
 class UnregisterUser
   include Hanami::Interactor
 
-  class Validations
+  class Validator
     include Hanami::Validations
     predicates NamePredicates
     messages :i18n
