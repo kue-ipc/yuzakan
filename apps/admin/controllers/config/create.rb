@@ -33,12 +33,14 @@ module Admin
                        network_repository: NetworkRepository.new,
                        provider_repository: ProviderRepository.new,
                        user_repository: UserRepository.new,
+                       group_repository: GroupRepository.new,
                        **opts)
           super
           @config_repository ||= config_repository
           @network_repository ||= network_repository
           @provider_repository ||= provider_repository
           @user_repository ||= user_repository
+          @group_repository ||= group_repository
         end
 
         def call(params)
@@ -125,7 +127,9 @@ module Admin
             return false
           end
 
-          sync_user = SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
+          sync_user = SyncUser.new(provider_repository: @provider_repository,
+                                   user_repository: @user_repository,
+                                   group_repository: @group_repository)
           result = sync_user.call(admin_user.slice(:username))
           if result.failure?
             flash[:errors].concat(result.errors)

@@ -11,16 +11,20 @@ module Api
         def initialize(config_repository: ConfigRepository.new,
                        provider_repository: ProviderRepository.new,
                        user_repository: UserRepository.new,
+                       group_repository: GroupRepository.new,
                        **opts)
 
           super
           @config_repository ||= config_repository
           @provider_repository ||= provider_repository
           @user_repository ||= user_repository
+          @group_repository ||= group_repository
         end
 
         private def sync_user(params)
-          @sync_user ||= SyncUser.new(provider_repository: @provider_repository, user_repository: @user_repository)
+          @sync_user ||= SyncUser.new(provider_repository: @provider_repository,
+                                      user_repository: @user_repository,
+                                      group_repository: @group_repository)
           result = @sync_user.call(params)
           halt_json 500, errors: result.errors if result.failure?
 

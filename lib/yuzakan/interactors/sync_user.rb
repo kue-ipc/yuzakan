@@ -24,9 +24,11 @@ class SyncUser
   expose :providers
 
   def initialize(provider_repository: ProviderRepository.new,
-                 user_repository: UserRepository.new)
+                 user_repository: UserRepository.new,
+                 group_repository: GroupRepository.new)
     @provider_repository = provider_repository
     @user_repository = user_repository
+    @group_repository = group_repository
   end
 
   def call(params)
@@ -51,7 +53,7 @@ class SyncUser
         error!(I18n.t('errors.eql?', left: I18n.t('attributes.user.username')))
       end
 
-      register_user_result = RegisterUser.new(user_repository: @user_repository)
+      register_user_result = RegisterUser.new(user_repository: @user_repository, group_repository: @group_repository)
         .call(@userdata.slice(:username, :display_name, :email, :primary_group, :groups))
       if register_user_result.failure?
         Hanami.logger.error "[#{self.class.name}] Failed to call RegisterUser"
