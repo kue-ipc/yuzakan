@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../../../../lib/yuzakan/validators/config_validator'
-require_relative '../../../../lib/yuzakan/validators/provider_validator'
-require_relative '../../../../lib/yuzakan/validators/attr_validator'
+require_relative '../../../../lib/yuzakan/validators/update_config_validator'
+require_relative '../../../../lib/yuzakan/validators/create_provider_validator'
+require_relative '../../../../lib/yuzakan/validators/create_attr_validator'
 
 module Admin
   module Controllers
@@ -32,9 +32,9 @@ module Admin
           messages :i18n
 
           validations do
-            optional(:config).schema(ConfigValidator)
-            optional(:providers) { array? { each { schema(ProviderValidator) } } }
-            optional(:attrs) { array? { each { schema(AttrValidator) } } }
+            optional(:config).schema(UpdateConfigValidator)
+            optional(:providers) { array? { each { schema(CreateProviderValidator) } } }
+            optional(:attrs) { array? { each { schema(CreateAttrValidator) } } }
           end
         end
 

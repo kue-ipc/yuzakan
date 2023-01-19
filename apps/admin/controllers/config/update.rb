@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../../lib/yuzakan/validators/config_validator'
-require_relative '../../../../lib/yuzakan/validators/provider_validator'
-require_relative '../../../../lib/yuzakan/validators/attr_validator'
+require_relative '../../../../lib/yuzakan/validators/update_config_validator'
 
 module Admin
   module Controllers
@@ -16,23 +14,7 @@ module Admin
           messages :i18n
 
           params do
-            optional(:import).schema do
-              optional(:yaml)
-            end
-            optional(:config).schema(ConfigValidator)
-          end
-        end
-
-        class YamlValidator
-          include Hanami::Validations
-
-          predicates NamePredicates
-          messages :i18n
-
-          validations do
-            optional(:config).schema(ConfigValidator)
-            optional(:providers) { array? { each { schema(ProviderValidator) } } }
-            optional(:attrs) { array? { each { schema(AttrValidator) } } }
+            optional(:config).schema(UpdateConfigValidator)
           end
         end
 

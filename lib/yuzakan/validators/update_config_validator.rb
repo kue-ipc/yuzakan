@@ -3,7 +3,7 @@
 require 'hanami/validations'
 require_relative '../predicates/name_predicates'
 
-class ConfigValidator
+class UpdateConfigValidator
   include Hanami::Validations
 
   predicates NamePredicates
