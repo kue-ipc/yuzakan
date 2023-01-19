@@ -8,7 +8,7 @@ class ProviderRepository < Hanami::Repository
   end
 
   def ordered_all
-    providers.order(:order).to_a
+    providers.order(:order, :name).to_a
   end
 
   private def by_name(name)
@@ -52,7 +52,7 @@ class ProviderRepository < Hanami::Repository
   end
 
   def ordered_all_with_adapter
-    aggregate(:provider_params, attr_mappings: :attr).order(:order).map_to(Provider).to_a
+    aggregate(:provider_params, attr_mappings: :attr).order(:order, :name).map_to(Provider).to_a
   end
 
   def find_with_adapter(id)
@@ -68,7 +68,7 @@ class ProviderRepository < Hanami::Repository
   end
 
   def ordered_all_with_adapter_by_ability(ability)
-    aggregate(:provider_params, attr_mappings: :attr).where(ability).order(:order).map_to(Provider).to_a
+    aggregate(:provider_params, attr_mappings: :attr).where(ability).order(:order, :name).map_to(Provider).to_a
   end
 
   def first_google
@@ -89,10 +89,11 @@ class ProviderRepository < Hanami::Repository
   end
 
   def ordered_all_with_adapter_self_management
-    aggregate(:provider_params, attr_mappings: :attr).where(self_management: true).order(:order).map_to(Provider).to_a
+    aggregate(:provider_params, attr_mappings: :attr).where(self_management: true)
+      .order(:order, :name).as(Provider).to_a
   end
 
   def ordered_all_self_management
-    providers.where(self_management: true).order(:order).to_a
+    providers.where(self_management: true).order(:order, :name).to_a
   end
 end

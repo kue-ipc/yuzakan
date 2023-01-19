@@ -19,7 +19,7 @@ class AttrRepository < Hanami::Repository
   end
 
   def ordered_all
-    attrs.order(:order).to_a
+    attrs.order(:order, :name).to_a
   end
 
   def last_order
@@ -27,7 +27,7 @@ class AttrRepository < Hanami::Repository
   end
 
   def ordered_all_with_mappings
-    aggregate(attr_mappings: :provider).order(:order).map_to(Attr).to_a
+    aggregate(attr_mappings: :provider).order(:order, :name).map_to(Attr).to_a
   end
 
   def find_with_mappings(id)
