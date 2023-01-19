@@ -25,14 +25,14 @@ module Api
             optional(:hidden).filled(:bool?)
             optional(:readonly).filled(:bool?)
             optional(:code).maybe(:str?, max_size?: 4096)
-            # rubocop:disable Layout/BlockEndNewline, Layout/MultilineBlockLayout, Style/BlockDelimiters
-            optional(:mappings) { array? { each { schema {
-              predicates NamePredicates
-              required(:provider).filled(:str?, :name?, max_size?: 255)
-              required(:name).maybe(:str?, max_size?: 255)
-              optional(:conversion) { none? | included_in?(AttrMapping::CONVERSIONS) }
-            } } } }
-            # rubocop:enable Layout/BlockEndNewline, Layout/MultilineBlockLayout, Style/BlockDelimiters
+            optional(:mappings).each do
+              schema do
+                predicates NamePredicates
+                required(:provider).filled(:str?, :name?, max_size?: 255)
+                required(:name).maybe(:str?, max_size?: 255)
+                optional(:conversion) { none? | included_in?(AttrMapping::CONVERSIONS) }
+              end
+            end
           end
         end
 

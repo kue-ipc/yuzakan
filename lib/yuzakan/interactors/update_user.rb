@@ -16,7 +16,7 @@ class UpdateUser
       optional(:display_name).filled(:str?, max_size?: 255)
       optional(:email).filled(:str?, :email?, max_size?: 255)
       optional(:primary_group).filled(:str?, :name?, max_size?: 255)
-      optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
+      optional(:providers).each(:str?, :name?, max_size?: 255)
       optional(:attrs) { hash? }
     end
   end

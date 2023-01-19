@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'hanami/validations'
-
 module Api
   module Controllers
     module Attrs
@@ -17,19 +15,19 @@ module Api
           params do
             required(:name).filled(:str?, :name?, max_size?: 255)
             optional(:display_name).maybe(:str?, max_size?: 255)
-            required(:type).filled(:str?)
+            required(:type).filled(:str?, included_in?: Attr::TYPES)
             optional(:order).filled(:int?)
             optional(:hidden).filled(:bool?)
             optional(:readonly).filled(:bool?)
             optional(:code).maybe(:str?, max_size?: 4096)
-            # rubocop:disable Layout/BlockEndNewline, Layout/MultilineBlockLayout, Style/BlockDelimiters
-            optional(:mappings) { array? { each { schema {
-              predicates NamePredicates
-              required(:provider).filled(:str?, :name?, max_size?: 255)
-              required(:name).maybe(:str?, max_size?: 255)
-              optional(:conversion) { none? | included_in?(AttrMapping::CONVERSIONS) }
-            } } } }
-            # rubocop:enable Layout/BlockEndNewline, Layout/MultilineBlockLayout, Style/BlockDelimiters
+            optional(:mappings).each do
+              schema do
+                predicates NamePredicates
+                required(:provider).filled(:str?, :name?, max_size?: 255)
+                required(:name).maybe(:str?, max_size?: 255)
+                optional(:conversion).maybe(:str?, included_in?: AttrMapping::CONVERSIONS)
+              end
+            end
           end
         end
 

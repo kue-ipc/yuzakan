@@ -22,7 +22,7 @@ module Api
             optional(:email).maybe(:str?, :email?, max_size?: 255)
             optional(:primary_group).maybe(:str?, :name?, max_size?: 255)
             optional(:attrs) { hash? }
-            optional(:providers) { array? { each { str? & name? & max_size?(255) } } }
+            optional(:providers).each(:str?, :name?, max_size?: 255)
             optional(:clearance_level).filled(:int?)
             optional(:reserved).filled(:bool?)
             optional(:note).maybe(:str?, max_size?: 4096)
