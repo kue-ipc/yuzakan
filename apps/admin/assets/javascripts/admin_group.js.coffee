@@ -6,6 +6,7 @@ import {fetchJsonGet} from '../api/fetch_json.js'
 import {fieldName, fieldId} from '../form_helper.js'
 import csrf from '../csrf.js'
 import {dlClasses, dtClasses, ddClasses} from '../dl_horizontal.js'
+import BsIcon from '../bs_icon.js'
 
 parentNames = ['group']
 
@@ -55,9 +56,7 @@ init = [
 ]
 
 view = ({mode, name, group, providers}) ->
-  provider_groupdatas =
-    for provider in providers
-      (group.provider_groupdatas.find (data) -> data.provider.name == provider.name)?.groupdata
+  group_providers = new Map(group.providers)
 
   html.div {}, [
     html.h4 {}, text '基本情報'
@@ -70,6 +69,31 @@ view = ({mode, name, group, providers}) ->
         text '表示名'
       html.dd {class: ddClasses},
         text group.display_name ? ''
+      html.dt {class: dtClasses},
+        text 'プライマリ'
+      html.dd {class: ddClasses},
+        if group.primary
+          html.span {class: 'text-success'},
+            BsIcon({name: 'check-square'})
+        else
+          html.span {class: 'text-muted'},
+            BsIcon({name: 'square'})
+      html.dt {class: dtClasses},
+        text '状態'
+      html.dd {class: ddClasses},
+        if group.deleted
+          html.span {class: 'text-failure'},
+            text "削除済み(#{group.deleted_at})"
+        else if group.obsoleted
+          html.span {class: 'text-muted'},
+            text '廃止'
+        else
+          html.span {class: 'text-success'},
+            text '正常'
+      html.dt {class: dtClasses},
+        text '備考'
+      html.dd {class: ddClasses},
+        text group.note ? ''
     ]
 
     html.h4 {}, text '登録状況'
@@ -83,14 +107,16 @@ view = ({mode, name, group, providers}) ->
         ]
       html.tbody {},
         for {name, label} in [
-          {name: 'name', label: 'グループ名'}
+          {name: 'groupname', label: 'グループ名'}
           {name: 'display_name', label: '表示名'}
+          {name: 'prymary', label: 'プライマリ'}
         ]
           html.tr {}, [
             html.td {}, text label
             html.td {}, text group[name] ? ''
             (
-              for groupdata in provider_groupdatas
+              for provider in providers
+                groupdata = group_providers.get(provider.name)
                 html.td {},
                   if not groupdata?[name]
                     html.span {class: 'text-muted'}, text 'N/A'

@@ -51,7 +51,7 @@ groupTr = ({group, providers}) ->
   html.tr {}, [
     html.td {},
       html.a {href: "/admin/groups/#{group.groupname}"}, text group.groupname
-    html.td {}, text group.display_name
+    html.td {}, text group.label
     (groupProviderTd({group, provider}) for provider in providers)...
   ]
 
@@ -96,8 +96,8 @@ view = ({groups, providers, page, per_page, total, query}) ->
       html.table {class: 'table'}, [
         html.thead {},
           html.tr {}, [
-            html.th {}, text 'グループ名'
-            html.th {}, text '表示名'
+            html.th {}, text '識別子'
+            html.th {}, text '名前'
             (providerTh({provider}) for provider in providers)...
           ]
         html.tbody {}, (groupTr({group, providers}) for group in groups)

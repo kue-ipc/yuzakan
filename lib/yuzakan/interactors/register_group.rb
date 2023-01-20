@@ -27,12 +27,11 @@ class RegisterGroup
   expose :group
 
   def call(params)
-    groupname = params[:groupname]
-    data = params(:groupname, :display_name, :primary).merge({
+    data = params.slice(:groupname, :display_name, :primary).merge({
       deleted: false,
       deleted_at: nil,
     })
-    group_id = @group_repository.find_by_groupname(groupname)&.id
+    group_id = @group_repository.find_by_groupname(params[:groupname])&.id
     @group =
       if group_id
         @group_repository.update(group_id, data)
@@ -42,10 +41,10 @@ class RegisterGroup
   end
 
   private def valid?(params)
-    validation = Validations.new(params).validate
-    if validation.failure?
-      Hanami.logger.error "[#{self.class.name}] Validation fails: #{validation.messages}"
-      error(validation.messages)
+    result = Validator.new(params).validate
+    if result.failure?
+      Hanami.logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
+      error(result.messages)
       return false
     end
 

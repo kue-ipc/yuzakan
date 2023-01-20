@@ -18,7 +18,6 @@ class SyncGroup
     end
   end
 
-  expose :groupname
   expose :group
   expose :groupdata
   expose :providers
@@ -30,10 +29,10 @@ class SyncGroup
   end
 
   def call(params)
-    @groupname = params[:groupname]
+    groupname = params[:groupname]
 
     read_group_result = ReadGroup.new(provider_repository: @provider_repository)
-      .call({groupname: groupname})
+      .call({groupname: params[:groupname]})
     if read_group_result.failure?
       Hanami.logger.error "[#{self.class.name}] Failed to call ReadGroup"
       Hanami.logger.error read_group_result.errors
@@ -45,7 +44,7 @@ class SyncGroup
     @providers = read_group_result.providers
 
     if @providers.values.any?
-      if @groupdata[:groupname] != @groupname
+      if @groupdata[:groupname] != params[:groupname]
         Hanami.logger.error "[#{self.class.name}] Do not match groupname: #{@groupdata[:groupname]}"
         error!(I18n.t('errors.eql?', left: I18n.t('attributes.group.groupname')))
       end

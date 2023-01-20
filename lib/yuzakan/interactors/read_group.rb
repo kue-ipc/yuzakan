@@ -18,7 +18,6 @@ class ReadGroup
     end
   end
 
-  expose :groupname
   expose :groupdata
   expose :providers
 
@@ -27,7 +26,6 @@ class ReadGroup
   end
 
   def call(params)
-    @gorupname = params[:groupname]
     @groupdata = {primary: false}
     @providers = {}
 
@@ -41,7 +39,7 @@ class ReadGroup
         @gorupdata[:primary] = true if groupdata[:primary]
       end
     rescue => e
-      Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{@groupname}"
+      Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{params[:groupname]}"
       Hanami.logger.error e
       error(I18n.t('errors.action.error', action: I18n.t('interactors.read_group'), target: provider.label))
       error(e.message)
