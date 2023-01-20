@@ -46,8 +46,12 @@ class AttrRepository < Hanami::Repository
     assoc(:attr_mappings, attr).add(data)
   end
 
-  def remove_mapping(attr, id)
-    assoc(:attr_mappings, attr).remove(id)
+  def delete_mapping(attr, id)
+    mapping_for(attr, id).delete
+  end
+
+  def mapping_for(attr, id)
+    assoc(:attr_mappings, attr).where(id: id)
   end
 
   private def mapping_by_provider_id(attr, provider_id)

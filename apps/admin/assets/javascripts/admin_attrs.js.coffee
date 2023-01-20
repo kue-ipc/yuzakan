@@ -1,10 +1,14 @@
 import {text, app} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
-import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '../api/fetch_json.js'
+
 import csrf from '../csrf.js'
 import ConfirmDialog from '../confirm_dialog.js'
 import InputTextDialog from '../input_text_dialog.js'
 import {ATTR_TYPES, MAPPING_CONVERSIONS} from '../definition.js'
+
+import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '../api/fetch_json.js'
+import {runGetProviders} from '../api/get_providers.js'
+import {createRunGetAttrs} from '../api/get_attrs.js'
 
 deleteConfirm = new ConfirmDialog {
   id: 'admin_attrs_confirm'
@@ -27,11 +31,11 @@ providerTh = ({provider}) ->
   html.th {}, text provider.label
 
 attrMappingTd = ({attr, provider}) ->
-  unless attr.attr_mappings?
+  unless attr.mappings?
     return html.td {}, text '読み込み中'
 
-  mapping = attr.attr_mappings.find (attr_mapping) ->
-    attr_mapping.provider.name == provider.name
+  mapping = attr.mappings.find (mapping) ->
+    mapping.provider == provider.name
   mapping ?= {name: '', conversion: null}
 
   html.td {}, [
@@ -41,14 +45,14 @@ attrMappingTd = ({attr, provider}) ->
       value: mapping.name
       oninput: (state, event) -> [
         attrMappingAction
-        {name: attr.name, attr_mapping: {name: event.target.value, provider: {name: provider.name}}}
+        {name: attr.name, mapping: {name: event.target.value, provider: provider.name}}
       ]
     }
     html.select {
       class: 'form-select'
       oninput: (state, event) -> [
         attrMappingAction
-        {name: attr.name, attr_mapping: {conversion: event.target.value, provider: {name: provider.name}}}
+        {name: attr.name, mapping: {conversion: event.target.value, provider: provider.name}}
       ]
       }, MAPPING_CONVERSIONS.map (conversion) ->
         html.option {
@@ -182,32 +186,32 @@ deleteAttrAction = (state, {name}) ->
   attrs = state.attrs.filter (attr) -> attr.name != name
   {state..., attrs}
 
-replaceAttrMapping = (attr_mappings, attr_mapping) ->
+replaceAttrMapping = (mappings, mapping) ->
   replaced = false
-  new_attr_mappings = for current in attr_mappings
-    if current.provider.name == attr_mapping.provider.name
+  new_attr_mappings = for current in mappings
+    if current.provider == mapping.provider
       replaced = true
-      {current..., attr_mapping...}
+      {current..., mapping...}
     else
       current
 
   if replaced
     new_attr_mappings
   else
-    [new_attr_mappings..., {name: '', conversion: null, attr_mapping...}]
+    [new_attr_mappings..., {name: '', conversion: null, mapping...}]
 
-attrMappingAction = (state, {name, attr_mapping}) ->
+attrMappingAction = (state, {name, mapping}) ->
   if name
     attrs = for attr in state.attrs
       if attr.name == name
-        {attr..., attr_mappings: replaceAttrMapping(attr.attr_mappings, attr_mapping)}
+        {attr..., mappings: replaceAttrMapping(attr.mappings, mapping)}
       else
         attr
     {state..., attrs}
   else
     {
       state...
-      newAttr: {state.newAttr..., attr_mappings: replaceAttrMapping(state.newAttr.mappings, attr_mapping)}
+      newAttr: {state.newAttr..., mappings: replaceAttrMapping(state.newAttr.mappings, mapping)}
     }
 
 inputCodeRunner = (dispatch, {attr}) ->
@@ -310,28 +314,13 @@ showAttrRunner = (dispatch, {attr}) ->
   else
     console.error response
 
-initAllAttrsAction = (state, {attrs}) ->
+SetAttrsThenShow = (state, attrs) ->
   [
     {state..., attrs}
     ([showAttrRunner, {attr}] for attr in attrs)...
   ]
 
-indexAllAttrsRunner = (dispatch) ->
-  response = await fetchJsonGet({url: '/api/attrs'})
-  if response.ok
-    dispatch(initAllAttrsAction, {attrs: response.data})
-  else
-    console.error response
-
-initAllProvidersAction = (state, {providers}) ->
-  {state..., providers}
-
-indexAllProvidersRunner = (dispatch) ->
-  response = await fetchJsonGet({url: '/api/providers'})
-  if response.ok
-    dispatch(initAllProvidersAction, {providers: response.data})
-  else
-    console.error response
+runGetAttrsThenShow = createRunGetAttrs(SetAttrsThenShow)
 
 initNewAttr = {
   name: undefined
@@ -339,7 +328,7 @@ initNewAttr = {
   label: ''
   type: 'string'
   hidden: false
-  attr_mappings: []
+  mappings: []
 }
 
 init = [
@@ -348,8 +337,8 @@ init = [
     providers: []
     newAttr: initNewAttr
   }
-  [indexAllAttrsRunner]
-  [indexAllProvidersRunner]
+  [runGetAttrsThenShow]
+  [runGetProviders]
 ]
 
 view = ({attrs, providers, newAttr}) ->

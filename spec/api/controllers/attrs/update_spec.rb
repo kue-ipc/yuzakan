@@ -17,26 +17,6 @@ RSpec.describe Api::Controllers::Attrs::Update, type: :action do
       mappings: attr_mappings_attributes,
     }
   }
-  # let(:attr_attributes) {
-  #   attr_mappings = attr_params[:mappings].map do |mapping|
-  #     {**mapping.except(:provider), provider: {name: mapping[:provider]}}
-  #   end
-  #   {**attr_params.except(:mappings), attr_mappings: attr_mappings}
-  # }
-  # let(:attr_without_mappings) { Attr.new(id: 42, **attr_attributes.except(:attr_mappings)) }
-  # let(:attr_with_mappings) { Attr.new(id: 42, **attr_attributes) }
-  # let(:attr_repository) {
-  #   instance_double('AttrRepository',
-  #                   find_with_mappings_by_name: attr_with_mappings,
-  #                   find_with_mappings: attr_with_mappings,
-  #                   exist_by_name?: false,
-  #                   update: attr_without_mappings,
-  #                   add_mapping: AttrMapping.new,
-  #                   remove_mapping: AttrMapping.new)
-  # }
-  # let(:attr_mapping_repository) { instance_double('AttrMappingRepository', update: AttrMapping.new) }
-  # let(:providers) { [Provider.new(id: 3, name: 'provider1'), Provider.new(id: 7, name: 'provider2')] }
-  # let(:provider_repository) { instance_double('ProviderRepository', all: providers) }
 
   it 'is failure' do
     response = action.call(params)
