@@ -9,6 +9,9 @@ require_relative '../apps/admin/application'
 require_relative '../apps/api/application'
 require_relative '../apps/web/application'
 
+# Opal Tilt Template
+require 'tilt/opal'
+
 # CoffeeScript v2 (from node_modulses)
 ENV['COFFEESCRIPT_SOURCE_PATH'] ||= File.expand_path(
   '../node_modules/coffeescript/lib/coffeescript-browser-compiler-legacy/coffeescript.js', __dir__)

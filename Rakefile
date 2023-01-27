@@ -49,7 +49,7 @@ namespace :vendor do
   desc 'ベンダーファイル生成'
   task build: [:build_js, :build_font, :build_image]
 
-  task build_js: [:build_js_rollup, :build_js_hyperapp]
+  task build_js: [:build_js_rollup, :build_js_hyperapp, :build_js_opal]
 
   task build_js_rollup: ['rollup.config.mjs', 'node_modules/.bin/rollup'] do
     sh 'npx rollup -c'
@@ -76,6 +76,10 @@ namespace :vendor do
       js_data.gsub!(Regexp.compile(re_str.tr('"', "'")), '\1\'./\2.js\'\3')
     end
     File.write(t.name, js_data)
+  end
+
+  task build_js_opal: ['vendor/assets/javascripts'] do
+    sh 'opal --no-source-map --no-exit --use-strict --esm -c src/opal.rb -o vendor/assets/javascripts/opal.js'
   end
 
   task build_font: ['vendor/assets/fonts'] do
