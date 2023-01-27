@@ -3,6 +3,7 @@ GEM
   specs:
     addressable (2.8.1)
       public_suffix (>= 2.0.2, < 6.0)
+    ast (2.4.2)
     bcrypt (3.1.18)
     better_errors (2.9.1)
       coderay (>= 1.0.0)
@@ -180,7 +181,12 @@ GEM
     nio4r (2.5.8)
     nokogiri (1.14.0-x86_64-linux)
       racc (~> 1.4)
+    opal (1.7.2)
+      ast (>= 2.3.0)
+      parser (~> 3.0, >= 3.0.3.2)
     os (1.1.4)
+    parser (3.2.0.0)
+      ast (~> 2.4.1)
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -295,6 +301,7 @@ DEPENDENCIES
   i18n
   mysql2
   net-ldap
+  opal
   pry
   puma (~> 5.6)
   rack (>= 2.2.2)

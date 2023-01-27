@@ -20,6 +20,7 @@ gem 'slim'
 
 gem 'sassc'
 
+gem 'opal'
 gem 'coffee-script'
 gem 'uglifier'
 gem 'terser'
