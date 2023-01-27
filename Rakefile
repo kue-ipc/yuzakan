@@ -79,7 +79,19 @@ namespace :vendor do
   end
 
   task build_js_opal: ['vendor/assets/javascripts'] do
-    sh 'opal --no-source-map --no-exit --use-strict --esm -c src/opal.rb -o vendor/assets/javascripts/opal.js'
+    # libaries = %w[
+    #   js
+    #   native
+    # ]
+    # cmd = +'opal --no-source-map --no-exit --use-strict --esm --no-cache'
+    # libaries.each do |name|
+    #   cmd << " -r #{name}"
+    # end
+    # cmd << ' -c src/opal.rb -o vendor/assets/javascripts/opal.js'
+
+    # sh cmd
+    rm 'vendor/assets/javascripts/opal.js'
+    sh 'opal --no-source-map --no-exit --use-strict --esm --no-cache -c src/opal.rb -o vendor/assets/javascripts/opal.js'
   end
 
   task build_font: ['vendor/assets/fonts'] do
