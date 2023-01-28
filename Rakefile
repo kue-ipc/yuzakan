@@ -90,7 +90,7 @@ namespace :vendor do
     # cmd << ' -c src/opal.rb -o vendor/assets/javascripts/opal.js'
 
     # sh cmd
-    rm 'vendor/assets/javascripts/opal.js'
+    rm 'vendor/assets/javascripts/opal.js' if FileTest.exist?('vendor/assets/javascripts/opal.js')
     sh 'opal --no-source-map --no-exit --use-strict --esm --no-cache -c src/opal.rb -o vendor/assets/javascripts/opal.js'
   end
 
