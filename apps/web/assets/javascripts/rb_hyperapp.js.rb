@@ -1,17 +1,29 @@
-puts 'a'
+puts 'hyperapp2'
 
 module Hyperapp
   JSModule = Native.import('./hyperapp.js')
 
+  @@view_stack = []
+
   module_function
 
-  def h(tag, **_props, &chidren_block)
-    children = chidren_block.call
-    JSModule.h(tag, pros, children)
+  def h(tag, **props, &block)
+    children =
+      if block_given?
+        @@view_stack.push([])
+        block.call
+        children = @@view_stack.pop
+      end
+    view = JSModule.h(tag, props, children)
+    @@viwe_stack.last&.push(view)
+    $$.console.log(view)
+    view
   end
 
   def text(content)
-    JSModule.text(content)
+    view = JSModule.text(content)
+    @@viwe_stack.last&.push(view)
+    view
   end
 
   def app(init: {}, view: nil, node: nil, subscriptions: nil, dispatch: :itself.to_proc)
@@ -29,12 +41,18 @@ module Hyperapp
   end
 end
 
+$$.console.log(Hyperapp::JSModule)
+
+
 include Hyperapp
 
+view = lambda { |state|
+  puts state
+  h('div') { text('テスト') }
+}
+
 app(
-  view: lambda { |_state|
-    h('div') { text('テスト') }
-  },
+  view: view,
   node: $$.document.getElementById('test'))
 
 # add_todo = lambda do |state|
