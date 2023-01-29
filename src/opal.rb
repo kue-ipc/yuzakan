@@ -1,5 +1,7 @@
 require 'js'
 require 'native'
+require 'promise/v2'
+require 'await'
 
 module JS
   def import(module_name)
@@ -12,5 +14,7 @@ module Native
     Native(JS.import(module_name))
   end
 end
+
+Promise = PromiseV2
 
 JS[:Opal]

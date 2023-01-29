@@ -1,7 +1,18 @@
+# use_strict: true
+# await: true
+
+# JSModule = Native.import('./hyperapp.js').__await__
+
+ 
+
+# %x{
+#   console.log('hoge');
+# }
+
 # x = 3
 
 # `import("./rb_hyperapp.js")`
-JS.import('./rb_hyperapp.js')
+JS.import('./rb_hyperapp.js').__await__
 
 # require 'test_opal2'
 # puts 'hello opal!!!'

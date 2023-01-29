@@ -1,7 +1,9 @@
+# await: true
+
 puts 'hyperapp2'
 
 module Hyperapp
-  JSModule = Native.import('./hyperapp.js')
+  JSModule = JS.import('./hyperapp.js').__await__
 
   @@view_stack = []
 
@@ -12,7 +14,7 @@ module Hyperapp
       if block_given?
         @@view_stack.push([])
         block.call
-        children = @@view_stack.pop
+        @@view_stack.pop
       end
     view = JSModule.h(tag, props, children)
     @@viwe_stack.last&.push(view)
