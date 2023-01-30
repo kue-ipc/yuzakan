@@ -16,26 +16,25 @@ module Hyperapp
         block.call
         @@view_stack.pop
       end
-    view = JSModule.h(tag, props, children)
-    @@viwe_stack.last&.push(view)
-    $$.console.log(view)
+    view = JSModule.JS.h(tag, props.to_n, children)
+    @@view_stack.last&.push(view)
     view
   end
 
   def text(content)
-    view = JSModule.text(content)
-    @@viwe_stack.last&.push(view)
+    view = JSModule.JS.text(content)
+    @@view_stack.last&.push(view)
     view
   end
 
   def app(init: {}, view: nil, node: nil, subscriptions: nil, dispatch: :itself.to_proc)
-    JSModule.app({
+    JSModule.JS.app({
       init: init,
       view: view,
       node: node,
       subscriptions: subscriptions,
       dispatch: dispatch,
-    })
+    }.to_n)
   end
 
   def memo(view, data = nil)
@@ -43,13 +42,9 @@ module Hyperapp
   end
 end
 
-$$.console.log(Hyperapp::JSModule)
-
-
 include Hyperapp
 
 view = lambda { |state|
-  puts state
   h('div') { text('テスト') }
 }
 
