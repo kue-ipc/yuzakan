@@ -1,3 +1,5 @@
+# await: true
+
 require 'js'
 require 'native'
 require 'promise/v2'
@@ -11,7 +13,7 @@ end
 
 module Native
   def self.import(module_name)
-    Native(JS.import(module_name))
+    Native(JS.import(module_name).__await__)
   end
 end
 

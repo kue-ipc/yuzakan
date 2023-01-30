@@ -18,16 +18,6 @@ begin
 rescue LoadError
 end
 
-# require 'rake/testtask'
-# Rake::TestTask.new do |t|
-#   t.pattern = 'spec/**/*_spec.rb'
-#   t.libs << 'spec'
-#   t.warning = false
-# end
-
-# task default: :test
-# task spec: :test
-
 desc 'ファイル生成'
 task build: [:build_errors, 'vendor:build']
 
@@ -79,19 +69,10 @@ namespace :vendor do
   end
 
   task build_js_opal: ['vendor/assets/javascripts'] do
-    # libaries = %w[
-    #   js
-    #   native
-    # ]
-    # cmd = +'opal --no-source-map --no-exit --use-strict --esm --no-cache'
-    # libaries.each do |name|
-    #   cmd << " -r #{name}"
-    # end
-    # cmd << ' -c src/opal.rb -o vendor/assets/javascripts/opal.js'
-
-    # sh cmd
-    rm 'vendor/assets/javascripts/opal.js' if FileTest.exist?('vendor/assets/javascripts/opal.js')
-    sh 'opal --no-source-map --no-exit --use-strict --esm --no-cache -c src/opal.rb -o vendor/assets/javascripts/opal.js'
+    rm_f 'vendor/assets/javascripts/opal.js'
+    pp $:
+    sh 'opal --no-source-map --no-exit --use-strict --esm --no-cache ' \
+       '-c src/opal.rb -o vendor/assets/javascripts/opal.js'
   end
 
   task build_font: ['vendor/assets/fonts'] do
