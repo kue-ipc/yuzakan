@@ -70,7 +70,6 @@ namespace :vendor do
 
   task build_js_opal: ['vendor/assets/javascripts'] do
     rm_f 'vendor/assets/javascripts/opal.js'
-    pp $:
     sh 'opal --no-source-map --no-exit --use-strict --esm --no-cache ' \
        '-c src/opal.rb -o vendor/assets/javascripts/opal.js'
   end
