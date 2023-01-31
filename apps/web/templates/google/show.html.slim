@@ -84,7 +84,7 @@ h3 操作メニュー
     - available_operations.each do |operation|
       = menu_link(**menu_operations[operation], url: "\##{operation}")
 
-  = javascript 'submit_before_agreement', type: 'module', defer: true
+  = javascript 'submit_before_agreement', type: 'module'
   - available_operations.each do |operation|
     = modal operation, modal_forms[operation], rules: modal_rules[operation], \
             **modal_options[operation]

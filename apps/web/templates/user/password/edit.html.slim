@@ -2,7 +2,7 @@ h2 パスワード変更
 
 p 現在のパスワードと新しいパスワードを入力してください。新しいパスワード下記の「パスワードの要件」を満たす必要があります。
 
-= javascript 'change_password', type: 'module', defer: true
+= javascript 'change_password', type: 'module'
 .change_password.mx-auto.p-3.border.rounded.mb-2
   = form_for form do
     - fields_for :password do

@@ -73,7 +73,7 @@ headerNav = ({system, session}) ->
 #           - span class: 'd-none d-lg-inline' do
 #             - text current_user.label_name
 #         .logout-button
-#         = javascript 'logout', defer: true, type: 'module'
+#         = javascript 'logout', type: 'module'
 #       - else
 #         ul.navbar-nav.me-auto
 #           li.nav-item

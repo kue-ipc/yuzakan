@@ -8,7 +8,7 @@ html lang="ja"
       = current_config&.title || '未初期化'
     = favicon
     = stylesheet 'application'
-    = javascript 'application', defer: true, type: 'module'
+    = javascript 'application', type: 'module'
   body
     = render partial: 'partial/header'
     main.container-fluid.mt-2
