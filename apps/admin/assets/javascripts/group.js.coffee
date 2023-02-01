@@ -1,17 +1,17 @@
 # グループ
 
-import {text, app} from '../hyperapp.js'
-import * as html from '../hyperapp-html.js'
+import {text, app} from '/assets/hyperapp.js'
+import * as html from '/assets/hyperapp-html.js'
 
-import {fetchJsonGet} from '../api/fetch_json.js'
-import {fieldName, fieldId} from '../form_helper.js'
-import csrf from '../csrf.js'
+import {fetchJsonGet} from '/assets/api/fetch_json.js'
+import {fieldName, fieldId} from '/assets/form_helper.js'
+import csrf from '/assets/csrf.js'
 
-import {dlClasses, dtClasses, ddClasses} from '../dl_horizontal.js'
-import BsIcon from '../bs_icon.js'
-import valueDisplay from '../value_display.js'
+import {dlClasses, dtClasses, ddClasses} from '/assets/dl_horizontal.js'
+import BsIcon from '/assets/bs_icon.js'
+import valueDisplay from '/assets/value_display.js'
 
-import {runGetProviders} from '../api/get_providers.js'
+import {runGetProviders} from '/assets/api/get_providers.js'
 
 parentNames = ['group']
 
@@ -144,6 +144,6 @@ view = ({mode, name, group, providers}) ->
     providerReg {mode, group, providers}
   ]
 
-node = document.getElementById('admin_group')
+node = document.getElementById('group')
 
 app {init, view, node}

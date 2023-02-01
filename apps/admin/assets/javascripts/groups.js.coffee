@@ -1,7 +1,7 @@
-import {text, app} from '../hyperapp.js'
-import * as html from '../hyperapp-html.js'
-import {fetchJsonGet} from '../api/fetch_json.js'
-import BsIcon from '../bs_icon.js'
+import {text, app} from '/assets/hyperapp.js'
+import * as html from '/assets/hyperapp-html.js'
+import {fetchJsonGet} from '/assets/api/fetch_json.js'
+import BsIcon from '/assets/bs_icon.js'
 
 pageAction = (state, {page}) ->
   newState = {state..., page}
@@ -96,7 +96,7 @@ view = ({groups, providers, page, per_page, total, query}) ->
       html.table {class: 'table'}, [
         html.thead {},
           html.tr {}, [
-            html.th {}, text '識別子'
+            html.th {}, text 'グループ名'
             html.th {}, text '名前'
             (providerTh({provider}) for provider in providers)...
           ]
@@ -104,6 +104,6 @@ view = ({groups, providers, page, per_page, total, query}) ->
       ]
   ]
 
-node = document.getElementById('admin_groups')
+node = document.getElementById('groups')
 
 app {init, view, node}
