@@ -71,6 +71,8 @@ module Yuzakan
       self.multi_attrs = PosixLdapAdapter.multi_attrs
       self.hide_attrs = PosixLdapAdapter.hide_attrs + %w[sambaNTPassword sambaLMPassword].map(&:downcase)
 
+      group :primary
+
       # override
       def user_auth(username, password)
         return true if super

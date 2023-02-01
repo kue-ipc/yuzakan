@@ -38,6 +38,7 @@ class SyncGroup
       Hanami.logger.error read_group_result.errors
       error(I18n.t('errors.action.fail', action: I18n.t('interactors.read_group')))
       read_group_result.errors.each { |msg| error(msg) }
+      fail!
     end
 
     @groupdata = read_group_result.groupdata
@@ -59,15 +60,15 @@ class SyncGroup
       end
       @group = register_group_result.group
     else
-      nuregister_group_result = UnregisterGroup.new(group_repository: @group_repository)
+      unregister_group_result = UnregisterGroup.new(group_repository: @group_repository)
         .call(@groupdata.slice(:groupname))
-      if nuregister_group_result.failure?
+      if unregister_group_result.failure?
         Hanami.logger.error "[#{self.class.name}] Failed to call UnregisterGroup"
         error(I18n.t('errors.action.fail', action: I18n.t('interactors.unregister_group')))
         unregister_group_result.errors.each { |msg| error(msg) }
         fail!
       end
-      @group = nuregister_group_result.group
+      @group = unregister_group_result.group
     end
   end
 

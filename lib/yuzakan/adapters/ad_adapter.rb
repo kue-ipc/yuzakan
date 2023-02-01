@@ -69,8 +69,11 @@ module Yuzakan
             delete: true,
           },
         ], key: :name)
+
       self.multi_attrs = LdapAdapter.multi_attrs
       self.hide_attrs = LdapAdapter.hide_attrs
+
+      group true
 
       private def run_after_user_create(username, password = nil, **userdata)
         super

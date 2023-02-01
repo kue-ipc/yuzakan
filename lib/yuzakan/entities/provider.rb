@@ -288,6 +288,7 @@ class Provider < Hanami::Entity
     need_group!
     @cache_store.fetch(group_key(groupname)) do
       groupdata = @adapter.group_read(groupname)
+      groupdata = {primary: true}.merge(groupdata) if @adapter.class.has_primary_group?
       @cache_store[group_key(groupname)] = groupdata
     end
   end

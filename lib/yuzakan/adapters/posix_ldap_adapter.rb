@@ -74,6 +74,8 @@ module Yuzakan
       self.multi_attrs = LdapAdapter.multi_attrs
       self.hide_attrs = LdapAdapter.hide_attrs
 
+      group :primary
+
       # override
       private def create_user_attributes(username, **userdata)
         attributes = super

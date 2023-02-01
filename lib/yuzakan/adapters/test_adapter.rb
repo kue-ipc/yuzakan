@@ -65,6 +65,8 @@ module Yuzakan
         },
       ]
 
+      group :primary
+
       def check
         true
       end

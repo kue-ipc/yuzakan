@@ -64,7 +64,7 @@ module Yuzakan
       extend Yuzakan::Utils::HashArray
 
       class << self
-        attr_accessor :abstract_adapter, :hidden_adapter, :name, :display_name, :version, :params
+        attr_accessor :name, :display_name, :version, :params
 
         def label_name
           if display_name
@@ -78,12 +78,36 @@ module Yuzakan
           display_name || name
         end
 
-        def selectable?
-          !abstract_adapter && !hidden_adapter
+        def abstract(bool = nil)
+          @abstract_adapter = bool
+        end
+
+        def hidden(bool = nil)
+          @hidden_adapter = bool
+        end
+
+        def group(type)
+          @group = type
         end
 
         def abstract?
-          nil | abstract_adapter
+          nil | @abstract_adapter
+        end
+
+        def hidden?
+          nil | @hidden_adapter
+        end
+
+        def selectable?
+          !(abstract? || hidden?)
+        end
+
+        def has_group?
+          nil | @group
+        end
+
+        def has_primary_group?
+          @group == :primary
         end
 
         def param_types
@@ -109,7 +133,7 @@ module Yuzakan
         end
       end
 
-      self.abstract_adapter = true
+      abstract true
 
       def initialize(params, logger: Logger.new($stderr))
         @params = params

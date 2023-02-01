@@ -10,6 +10,8 @@ module Yuzakan
       self.version = '0.0.1'
       self.params = []
 
+      group false
+
       def initialize(params, **opts)
         super
         @repository = LocalUserRepository.new

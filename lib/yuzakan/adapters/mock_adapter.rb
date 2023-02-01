@@ -89,6 +89,8 @@ module Yuzakan
         },
       ]
 
+      group :primary
+
       def initialize(params, **opts)
         super
         @passwords = {@params[:username] => BCrypt::Password.create(@params[:password])}

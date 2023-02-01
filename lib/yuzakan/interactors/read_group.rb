@@ -36,7 +36,7 @@ class ReadGroup
         %i[groupname display_name].each do |name|
           @groupdata[name] ||= groupdata[name] unless groupdata[name].nil?
         end
-        @gorupdata[:primary] = true if groupdata[:primary]
+        @groupdata[:primary] = true if groupdata[:primary]
       end
     rescue => e
       Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{params[:groupname]}"

@@ -23,12 +23,14 @@ module Api
               generate_json({
                 name: @adapter.name,
                 label: @adapter.label,
+                group: @adapter.has_group?,
                 param_types: @adapter.param_types,
               })
             else
               generate_json({
                 name: @adapter.name,
                 label: @adapter.label,
+                group: @adapter.has_group?,
               })
             end
         end

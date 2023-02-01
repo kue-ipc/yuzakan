@@ -2,11 +2,14 @@
 
 import {text, app} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
+
 import {fetchJsonGet} from '../api/fetch_json.js'
 import {fieldName, fieldId} from '../form_helper.js'
 import csrf from '../csrf.js'
+
 import {dlClasses, dtClasses, ddClasses} from '../dl_horizontal.js'
 import BsIcon from '../bs_icon.js'
+import valueDisplay from '../value_display.js'
 
 parentNames = ['group']
 
@@ -106,24 +109,30 @@ view = ({mode, name, group, providers}) ->
           (html.th({}, text provider.label) for provider in providers)...
         ]
       html.tbody {},
-        for {name, label} in [
-          {name: 'groupname', label: 'グループ名'}
-          {name: 'display_name', label: '表示名'}
-          {name: 'prymary', label: 'プライマリ'}
+        for {name, label, type} in [
+          {name: 'groupname', label: 'グループ名', type: 'string'}
+          {name: 'display_name', label: '表示名', type: 'string'}
+          {name: 'primary', label: 'プライマリ', type: 'boolean'}
         ]
           html.tr {}, [
             html.td {}, text label
-            html.td {}, text group[name] ? ''
+            # html.td {}, valueDisplay {value: group[name], type}
             (
               for provider in providers
                 groupdata = group_providers.get(provider.name)
                 html.td {},
-                  if not groupdata?[name]
-                    html.span {class: 'text-muted'}, text 'N/A'
-                  else if group[name] == groupdata[name]
-                    html.span {class: 'text-success'}, text groupdata?[name]
-                  else
-                    html.span {class: 'text-danger'}, text groupdata?[name]
+                  valueDisplay {
+                    value: groupdata?[name]
+                    type
+                    color: 
+                      if group[name]
+                        if group[name] == groupdata?[name]
+                          'success'
+                        else
+                          'danger'
+                      else
+                        'body'
+                  }
             )...
           ]
     ]

@@ -238,6 +238,8 @@ module Yuzakan
       self.multi_attrs = Yuzakan::Utils::IgnoreCaseStringSet.new(%w[objectClass member memberOf])
       self.hide_attrs = Yuzakan::Utils::IgnoreCaseStringSet.new(%w[userPassword])
 
+      group true
+
       def check
         opts = {
           base: @params[:base_dn],
