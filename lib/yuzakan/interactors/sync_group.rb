@@ -29,8 +29,6 @@ class SyncGroup
   end
 
   def call(params)
-    groupname = params[:groupname]
-
     read_group_result = ReadGroup.new(provider_repository: @provider_repository)
       .call({groupname: params[:groupname]})
     if read_group_result.failure?
@@ -61,7 +59,7 @@ class SyncGroup
       @group = register_group_result.group
     else
       unregister_group_result = UnregisterGroup.new(group_repository: @group_repository)
-        .call(@groupdata.slice(:groupname))
+        .call(groupname: params[:groupname])
       if unregister_group_result.failure?
         Hanami.logger.error "[#{self.class.name}] Failed to call UnregisterGroup"
         error(I18n.t('errors.action.fail', action: I18n.t('interactors.unregister_group')))
