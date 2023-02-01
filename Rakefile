@@ -3,6 +3,7 @@
 require 'rake'
 require 'hanami/rake_tasks'
 require 'rake/clean'
+require 'tempfile'
 
 CLEAN << 'vendor/assets'
 CLEAN << 'public/assets'
@@ -69,9 +70,33 @@ namespace :vendor do
   end
 
   task build_js_opal: ['vendor/assets/javascripts'] do
-    rm_f 'vendor/assets/javascripts/opal.js'
-    sh 'opal --no-source-map --no-exit --esm --no-cache ' \
-       '-c src/opal.rb -o vendor/assets/javascripts/opal.js'
+    stdlibs = %w[
+      js
+      native
+    ]
+
+    Tempfile.open do |fp|
+      fp.puts '`Opal`'
+      fp.close
+
+      cmd = %w[
+        opal
+        --no-source-map
+        --no-exit
+        --esm
+        --no-cache
+        --compile
+        --output vendor/assets/javascripts/opal.js
+      ]
+      stdlibs.each do |lib|
+        cmd << '--require'
+        cmd << lib
+      end
+      cmd << '--'
+      cmd << fp.path
+
+      sh(*cmd)
+    end
   end
 
   task build_font: ['vendor/assets/fonts'] do
