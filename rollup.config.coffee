@@ -17,6 +17,7 @@ targets = [
   {name: 'hyperapp-events', ext: 'coffee'}
   {name: 'hyperapp-time', ext: 'coffee'}
   {name: 'hyperapp', ext: 'coffee'}
+  {name: 'lodash-fp', ext: 'coffee'}
   {name: 'lodash', ext: 'coffee'}
   {name: 'luxon', ext: 'coffee'}
   {name: 'pluralize', ext: 'coffee'}
