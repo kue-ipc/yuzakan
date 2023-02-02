@@ -45,6 +45,10 @@ export createRunPage = (action, url, allowKeys = []) ->
   responseAction = createJsonPageAction(action)
   createRunJson(responseAction, url, [allowKeys..., 'page', 'per_page'])
 
+export createRunName = (action, url, allowKeys = []) ->
+  responseAction = createJsonGetAction(action)
+  createRunJson(responseAction, url, allowKeys)
+
 export createRunGetWithPagination = (action, url, allowKeys = []) ->
   (dispatch, props = {}) ->
     data = dataFilter(props, allowKeys)

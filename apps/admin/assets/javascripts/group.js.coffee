@@ -13,7 +13,7 @@ import valueDisplay from '/assets/value_display.js'
 
 import {runGetProviders} from '/assets/api/providers.js'
 
-import operationMenu from './group_operation_menu.js'
+# import operationMenu from './group_operation_menu.js'
 
 parentNames = ['group']
 
@@ -142,7 +142,7 @@ view = ({mode, name, group, providers}) ->
 
   html.div {}, [
     basicInfo {mode, group}
-    operationMenu {mode, group}
+    # operationMenu {mode, group}
     providerReg {mode, group, providers}
   ]
 
