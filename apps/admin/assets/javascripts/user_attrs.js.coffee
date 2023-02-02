@@ -1,6 +1,6 @@
-import {toRomaji, toKatakana, toHiragana} from '../ja_conv.js'
-import {capitalize} from '../string_utils.js'
-import {xxh32, xxh64} from '../hash.js'
+import {toRomaji, toKatakana, toHiragana} from '/assets/ja_conv.js'
+import {capitalize} from '/assets/string_utils.js'
+import {xxh32, xxh64} from '/assets/hash.js'
 
 export getAttrDefaultValue = ({user, attrs, code}) ->
   return unless code

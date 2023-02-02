@@ -1,2 +1,2 @@
-import './bootstrap.js'
-import './opal.js'
+import '/assets/bootstrap.js'
+import '/assets/opal.js'

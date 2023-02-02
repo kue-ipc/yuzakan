@@ -1,14 +1,14 @@
 # /admin/user/*
 
-import {text, app} from '../hyperapp.js'
-import * as html from '../hyperapp-html.js'
+import {text, app} from '/assets/hyperapp.js'
+import * as html from '/assets/hyperapp-html.js'
 
-import {fetchJsonGet} from '../api/fetch_json.js'
+import {fetchJsonGet} from '/assets/api/fetch_json.js'
 
-import {runGetSystem} from '../api/get_system.js'
-import {createRunGetAttrs} from '../api/attrs.js'
-import {runGetProviders} from '../api/providers.js'
-import {runGetGroups} from '../api/groups.js'
+import {runGetSystem} from '/assets/api/get_system.js'
+import {createRunGetAttrs} from '/assets/api/attrs.js'
+import {runGetProviders} from '/assets/api/providers.js'
+import {runGetGroups} from '/assets/api/groups.js'
 
 import basicInfo from './user_basic_info.js'
 import operationMenu from './user_operation_menu.js'

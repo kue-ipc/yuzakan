@@ -1,5 +1,5 @@
-import {text} from '../hyperapp.js'
-import * as html from '../hyperapp-html.js'
+import {text} from '/assets/hyperapp.js'
+import * as html from '/assets/hyperapp-html.js'
 
 RemoveGroup = (state, groupname) ->
   {

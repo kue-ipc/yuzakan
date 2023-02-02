@@ -1,14 +1,15 @@
-# プロバイダー
+# path: /admin/providers/:name
+# node: provider
 
-import {text, app} from '../hyperapp.js'
-import * as html from '../hyperapp-html.js'
-import {fetchJsonGet} from '../api/fetch_json.js'
-import {fieldName, fieldId} from '../form_helper.js'
-import csrf from '../csrf.js'
+import {text, app} from '/assets/hyperapp.js'
+import * as html from '/assets/hyperapp-html.js'
+import {fetchJsonGet} from '/assets/api/fetch_json.js'
+import {fieldName, fieldId} from '/assets/form_helper.js'
+import csrf from '/assets/csrf.js'
 
 import providerParams from './provider_params.js'
-import WebData from '../web_data.js'
-import ConfirmDialog from '../confirm_dialog.js'
+import WebData from '/assets/web_data.js'
+import ConfirmDialog from '/assets/confirm_dialog.js'
 
 parentNames = ['provider']
 

@@ -1,8 +1,8 @@
-import {text} from '../hyperapp.js'
-import * as html from '../hyperapp-html.js'
+import {text} from '/assets/hyperapp.js'
+import * as html from '/assets/hyperapp-html.js'
 
-import BsIcon from '../bs_icon.js'
-import valueDisplay from '../value_display.js'
+import BsIcon from '/assets/bs_icon.js'
+import valueDisplay from '/assets/value_display.js'
 
 PROVIDER_REG_ITEMS = [
   {name: 'username', label: 'ユーザー名', type: 'string'}

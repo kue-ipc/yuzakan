@@ -1,10 +1,10 @@
-import HttpLinkHeader from '../http-link-header.js'
+import HttpLinkHeader from '/assets/http-link-header.js'
 
 import {
   filedToList, fieldName,
   formDataToObj, formDataToJson, formDataToUrlencoded,
   objToUrlencoded
-} from '../form_helper.js'
+} from '/assets/form_helper.js'
 
 export DEFAULT_PAGE = 1
 export DEFAULT_PER_PAGE = 50

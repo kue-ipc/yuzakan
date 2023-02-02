@@ -1,14 +1,14 @@
-import {text, app} from '../hyperapp.js'
-import * as html from '../hyperapp-html.js'
+import {text, app} from '/assets/hyperapp.js'
+import * as html from '/assets/hyperapp-html.js'
 
-import csrf from '../csrf.js'
-import ConfirmDialog from '../confirm_dialog.js'
-import InputTextDialog from '../input_text_dialog.js'
-import {ATTR_TYPES, MAPPING_CONVERSIONS} from '../definition.js'
+import csrf from '/assets/csrf.js'
+import ConfirmDialog from '/assets/confirm_dialog.js'
+import InputTextDialog from '/assets/input_text_dialog.js'
+import {ATTR_TYPES, MAPPING_CONVERSIONS} from '/assets/definition.js'
 
-import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '../api/fetch_json.js'
-import {runGetProviders} from '../api/providers.js'
-import {createRunGetAttrs} from '../api/attrs.js'
+import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '/assets/api/fetch_json.js'
+import {runGetProviders} from '/assets/api/providers.js'
+import {createRunGetAttrs} from '/assets/api/attrs.js'
 
 deleteConfirm = new ConfirmDialog {
   id: 'attrs_confirm'

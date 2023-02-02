@@ -1,11 +1,11 @@
-import {text, app} from '../hyperapp.js'
-import * as html from '../hyperapp-html.js'
+import {text, app} from '/assets/hyperapp.js'
+import * as html from '/assets/hyperapp-html.js'
 
-import {PageUsers} from '../api/users.js'
-import {runGetProviders} from '../api/providers.js'
+import {PageUsers} from '/assets/api/users.js'
+import {runGetProviders} from '/assets/api/providers.js'
 
-import BsIcon from '../bs_icon.js'
-import {objToUrlencoded} from '../form_helper.js'
+import BsIcon from '/assets/bs_icon.js'
+import {objToUrlencoded} from '/assets/form_helper.js'
 
 searchAction = (state, {query}) ->
   return state if state.query == query

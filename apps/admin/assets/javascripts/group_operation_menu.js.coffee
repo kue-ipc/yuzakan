@@ -8,7 +8,7 @@ import WebData from '/assets/web_data.js'
 import ConfirmDialog from '/assets/confirm_dialog.js'
 import LoginInfo from '/assets/login_info.js'
 
-import {runGetGroupWithInit} from './admin_group_get_group.js'
+# import {runGetGroupWithInit} from './admin_group_get_group.js'
 
 parentNames = ['group']
 

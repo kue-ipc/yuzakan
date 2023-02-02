@@ -1,12 +1,12 @@
-import {text} from '../hyperapp.js'
-import * as html from '../hyperapp-html.js'
-import {DateTime} from '../luxon.js'
+import {text} from '/assets/hyperapp.js'
+import * as html from '/assets/hyperapp-html.js'
+import {DateTime} from '/assets/luxon.js'
 
-import {fieldName, fieldId} from '../form_helper.js'
-import csrf from '../csrf.js'
-import WebData from '../web_data.js'
-import ConfirmDialog from '../confirm_dialog.js'
-import LoginInfo from '../login_info.js'
+import {fieldName, fieldId} from '/assets/form_helper.js'
+import csrf from '/assets/csrf.js'
+import WebData from '/assets/web_data.js'
+import ConfirmDialog from '/assets/confirm_dialog.js'
+import LoginInfo from '/assets/login_info.js'
 
 import {runGetUserWithInit} from './user_get_user.js'
 

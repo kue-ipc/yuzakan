@@ -1,7 +1,7 @@
-import {text} from '../hyperapp.js'
-import * as html from '../hyperapp-html.js'
+import {text} from '/assets/hyperapp.js'
+import * as html from '/assets/hyperapp-html.js'
 
-import valueDisplay from '../value_display.js'
+import valueDisplay from '/assets/value_display.js'
 
 import {CalcUserAttrs} from './user_attrs.js'
 

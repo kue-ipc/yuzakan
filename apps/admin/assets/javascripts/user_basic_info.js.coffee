@@ -1,9 +1,9 @@
-import {text} from '../hyperapp.js'
-import * as html from '../hyperapp-html.js'
+import {text} from '/assets/hyperapp.js'
+import * as html from '/assets/hyperapp-html.js'
 
-import * as dlh from '../dl_horizontal.js'
-import {CLEARANCE_LEVELS} from '../definition.js'
-import {createEventValueAction} from '../input_event.js'
+import * as dlh from '/assets/dl_horizontal.js'
+import {CLEARANCE_LEVELS} from '/assets/definition.js'
+import {createEventValueAction} from '/assets/input_event.js'
 
 import {CalcUserAttrs} from './user_attrs.js'
 

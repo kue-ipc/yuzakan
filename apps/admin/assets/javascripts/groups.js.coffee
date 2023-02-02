@@ -1,5 +1,6 @@
 import {text, app} from '/assets/hyperapp.js'
 import * as html from '/assets/hyperapp-html.js'
+
 import {fetchJsonGet} from '/assets/api/fetch_json.js'
 import BsIcon from '/assets/bs_icon.js'
 
