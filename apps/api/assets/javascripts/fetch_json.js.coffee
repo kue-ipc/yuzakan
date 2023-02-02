@@ -1,3 +1,4 @@
+import * as R from '/assets/vendor/ramda.js'
 import HttpLinkHeader from '/assets/vendor/http-link-header.js'
 
 import {
@@ -28,8 +29,8 @@ export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
   headers = new Headers {
     'Accept': 'application/json'
   }
-
-  if data?
+ 
+  if data? && R.not(R.isEmpty(data))
     if ['POST', 'PUT', 'PATCH'].includes(method)
       switch type
         when 'json'

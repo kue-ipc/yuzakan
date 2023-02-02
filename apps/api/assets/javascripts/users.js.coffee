@@ -4,16 +4,22 @@ import {createRunPage, createRunGetWithPagination} from './run_json.js'
 
 export API_USERS = '/api/users'
 
+# Actions
+
 export SetUsers = (state, users) -> {state..., users}
-
-export createRunGetUsers = (action = SetUsers) -> createRunGetWithPagination(action, API_USERS)
-
-export runGetUsers = createRunGetUsers()
 
 export GetUsers = (state) -> [state, runGetUsers]
 
+export PageUsers = (state) -> [state, [runPageUsers, state]]
+
+# Effecter Generators
+
+export createRunGetUsers = (action = SetUsers) -> createRunGetWithPagination(action, API_USERS)
+
 export createRunPageUsers = (action = SetUsers) -> createRunPage(action, API_USERS, ['query'])
 
-export runPageUsers = createRunPageUsers()
+# Effecters
 
-export PageUsers = (state) -> [state, [runPageUsers, state]]
+export runGetUsers = createRunGetUsers()
+
+export runPageUsers = createRunPageUsers()
