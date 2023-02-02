@@ -1,4 +1,4 @@
-import HttpLinkHeader from '/assets/http-link-header.js'
+import HttpLinkHeader from '/assets/vendor/http-link-header.js'
 
 import {
   filedToList, fieldName,

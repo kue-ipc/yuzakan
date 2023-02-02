@@ -1,5 +1,5 @@
-import {text, app} from '/assets/hyperapp.js'
-import * as html from '/assets/hyperapp-html.js'
+import {text, app} from '/assets/vendor/hyperapp.js'
+import * as html from '/assets/vendor/hyperapp-html.js'
 
 import csrf from '/assets/csrf.js'
 import ConfirmDialog from '/assets/confirm_dialog.js'

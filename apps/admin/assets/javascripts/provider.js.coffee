@@ -1,8 +1,8 @@
 # path: /admin/providers/:name
 # node: provider
 
-import {text, app} from '/assets/hyperapp.js'
-import * as html from '/assets/hyperapp-html.js'
+import {text, app} from '/assets/vendor/hyperapp.js'
+import * as html from '/assets/vendor/hyperapp-html.js'
 import {fetchJsonGet} from '/assets/api/fetch_json.js'
 import {fieldName, fieldId} from '/assets/form_helper.js'
 import csrf from '/assets/csrf.js'

@@ -1,6 +1,6 @@
-import {text} from '/assets/hyperapp.js'
-import * as html from '/assets/hyperapp-html.js'
-import {DateTime} from '/assets/luxon.js'
+import {text} from '/assets/vendor/hyperapp.js'
+import * as html from '/assets/vendor/hyperapp-html.js'
+import {DateTime} from '/assets/vendor/luxon.js'
 
 import {fieldName, fieldId} from '/assets/form_helper.js'
 import csrf from '/assets/csrf.js'

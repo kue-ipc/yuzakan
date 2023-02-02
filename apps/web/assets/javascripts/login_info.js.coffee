@@ -1,6 +1,6 @@
-import {app, text} from './hyperapp.js'
-import * as html from './hyperapp-html.js'
-import {DateTime} from './luxon.js'
+import {app, text} from '/assets/vendor/hyperapp.js'
+import * as html from '/assets/vendor/hyperapp-html.js'
+import {DateTime} from '/assets/vendor/luxon.js'
 
 import ModalDialog from './modal_dialog.js'
 import BsIcon from './bs_icon.js'

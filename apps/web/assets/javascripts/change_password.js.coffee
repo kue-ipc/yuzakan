@@ -1,5 +1,5 @@
-import {h, text, app} from './hyperapp.js'
-import zxcvbn from './zxcvbn.js'
+import {h, text, app} from '/assets/vendor/hyperapp.js'
+import zxcvbn from '/assets/vendor/zxcvbn.js'
 
 import BsIcon from './bs_icon.js'
 import {camelize} from './string_utils.js'

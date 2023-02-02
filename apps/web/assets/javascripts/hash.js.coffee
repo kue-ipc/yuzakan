@@ -1,4 +1,4 @@
-import XXH from './xxhashjs.js'
+import XXH from '/assets/vendor/xxhashjs.js'
 
 zeroPadding = (str, size) ->
   ('0'.repeat(size) + str).slice(-size)

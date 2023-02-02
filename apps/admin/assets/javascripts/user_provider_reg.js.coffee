@@ -1,5 +1,5 @@
-import {text} from '/assets/hyperapp.js'
-import * as html from '/assets/hyperapp-html.js'
+import {text} from '/assets/vendor/hyperapp.js'
+import * as html from '/assets/vendor/hyperapp-html.js'
 
 import BsIcon from '/assets/bs_icon.js'
 import valueDisplay from '/assets/value_display.js'

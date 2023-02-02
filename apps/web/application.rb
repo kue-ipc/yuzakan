@@ -51,7 +51,6 @@ module Web
         stylesheet_compressor :sass
         sources << [
           'assets',
-          '../../vendor/assets',
         ]
       end
 

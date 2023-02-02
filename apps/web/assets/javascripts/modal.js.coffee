@@ -1,5 +1,5 @@
-import {text} from './hyperapp.js'
-import * as html from './hyperapp-html.js'
+import {text} from '/assets/vendor/hyperapp.js'
+import * as html from '/assets/vendor/hyperapp-html.js'
 import {StatusIcon} from './status.js'
 
 export modalHeader = ({id, title, status, closable}) ->

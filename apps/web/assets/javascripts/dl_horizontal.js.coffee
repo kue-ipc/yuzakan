@@ -1,4 +1,4 @@
-import * as html from './hyperapp-html.js'
+import * as html from '/assets/vendor/hyperapp-html.js'
 import {join} from './class_prop.js'
 
 cols = {

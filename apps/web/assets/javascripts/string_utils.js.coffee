@@ -1,4 +1,4 @@
-import Pluralize from './pluralize.js'
+import Pluralize from '/assets/vendor/pluralize.js'
 
 # abcDef_ghi-jkl -> abc def ghi jkl
 export strToList = (str) ->
