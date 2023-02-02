@@ -7,8 +7,8 @@ import InputTextDialog from '../input_text_dialog.js'
 import {ATTR_TYPES, MAPPING_CONVERSIONS} from '../definition.js'
 
 import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '../api/fetch_json.js'
-import {runGetProviders} from '../api/get_providers.js'
-import {createRunGetAttrs} from '../api/get_attrs.js'
+import {runGetProviders} from '../api/providers.js'
+import {createRunGetAttrs} from '../api/attrs.js'
 
 deleteConfirm = new ConfirmDialog {
   id: 'admin_attrs_confirm'

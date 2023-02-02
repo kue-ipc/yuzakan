@@ -6,9 +6,9 @@ import * as html from '../hyperapp-html.js'
 import {fetchJsonGet} from '../api/fetch_json.js'
 
 import {runGetSystem} from '../api/get_system.js'
-import {createRunGetAttrs} from '../api/get_attrs.js'
-import {runGetProviders} from '../api/get_providers.js'
-import {runGetGroups} from '../api/get_groups.js'
+import {createRunGetAttrs} from '../api/attrs.js'
+import {runGetProviders} from '../api/providers.js'
+import {runGetGroups} from '../api/groups.js'
 
 import basicInfo from './admin_user_basic_info.js'
 import operationMenu from './admin_user_operation_menu.js'

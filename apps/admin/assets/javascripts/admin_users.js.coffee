@@ -1,8 +1,8 @@
 import {text, app} from '../hyperapp.js'
 import * as html from '../hyperapp-html.js'
 
-import {PageUsers} from '../api/get_users.js'
-import {runGetProviders} from '../api/get_providers.js'
+import {PageUsers} from '../api/users.js'
+import {runGetProviders} from '../api/providers.js'
 
 import BsIcon from '../bs_icon.js'
 import {objToUrlencoded} from '../form_helper.js'

@@ -11,7 +11,9 @@ import {dlClasses, dtClasses, ddClasses} from '/assets/dl_horizontal.js'
 import BsIcon from '/assets/bs_icon.js'
 import valueDisplay from '/assets/value_display.js'
 
-import {runGetProviders} from '/assets/api/get_providers.js'
+import {runGetProviders} from '/assets/api/providers.js'
+
+import operationMenu from './group_operation_menu.js'
 
 parentNames = ['group']
 
@@ -140,7 +142,7 @@ view = ({mode, name, group, providers}) ->
 
   html.div {}, [
     basicInfo {mode, group}
-    # operationMenu {mode, group}
+    operationMenu {mode, group}
     providerReg {mode, group, providers}
   ]
 
