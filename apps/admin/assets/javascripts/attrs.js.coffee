@@ -11,7 +11,7 @@ import {runGetProviders} from '../api/providers.js'
 import {createRunGetAttrs} from '../api/attrs.js'
 
 deleteConfirm = new ConfirmDialog {
-  id: 'admin_attrs_confirm'
+  id: 'attrs_confirm'
   status: 'alert'
   title: '属性の削除'
   message: '属性を削除してもよろしいですか？'
@@ -22,7 +22,7 @@ deleteConfirm = new ConfirmDialog {
 }
 
 inputCode = new InputTextDialog {
-  id: 'admin_attrs_input_code'
+  id: 'attrs_input_code'
   title: 'コードの入力'
   size: 4096
 }
@@ -357,7 +357,7 @@ view = ({attrs, providers, newAttr}) ->
         attrTr({attr, index, providers: providers})
   ]
 
-node = document.getElementById('admin_attrs')
+node = document.getElementById('attrs')
 
 app {init, view, node}
 

@@ -63,6 +63,6 @@ view = ({providers}) ->
     html.tbody {}, (providerTr({provider}) for provider in providers)
   ]
 
-node = document.getElementById('admin_providers')
+node = document.getElementById('providers')
 
 app {init, view, node}

@@ -256,6 +256,6 @@ view = ({name, provider, adapters}) ->
         ]
   ]
 
-node = document.getElementById('admin_provider')
+node = document.getElementById('provider')
 
 app {init, view, node}
