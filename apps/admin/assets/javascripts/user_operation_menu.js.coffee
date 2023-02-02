@@ -8,7 +8,7 @@ import WebData from '../web_data.js'
 import ConfirmDialog from '../confirm_dialog.js'
 import LoginInfo from '../login_info.js'
 
-import {runGetUserWithInit} from './admin_user_get_user.js'
+import {runGetUserWithInit} from './user_get_user.js'
 
 parentNames = ['user']
 

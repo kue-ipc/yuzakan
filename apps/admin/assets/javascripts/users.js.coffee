@@ -167,7 +167,7 @@ view = ({users, providers, page, per_page, total, query}) ->
       ]
   ]
 
-node = document.getElementById('admin_users')
+node = document.getElementById('users')
 
 onPopstateSubscriber = (dispatch) ->
   window.addEventListener 'popstate', (event) ->

@@ -10,14 +10,14 @@ import {createRunGetAttrs} from '../api/attrs.js'
 import {runGetProviders} from '../api/providers.js'
 import {runGetGroups} from '../api/groups.js'
 
-import basicInfo from './admin_user_basic_info.js'
-import operationMenu from './admin_user_operation_menu.js'
-import groupMembership from './admin_user_group_membership.js'
-import providerReg from './admin_user_provider_reg.js'
-import attrList from './admin_user_attr_list.js'
-import {runGetUserWithInit} from './admin_user_get_user.js'
+import basicInfo from './user_basic_info.js'
+import operationMenu from './user_operation_menu.js'
+import groupMembership from './user_group_membership.js'
+import providerReg from './user_provider_reg.js'
+import attrList from './user_attr_list.js'
+import {runGetUserWithInit} from './user_get_user.js'
 
-import {InitUserAttrs} from './admin_user_attrs.js'
+import {InitUserAttrs} from './user_attrs.js'
 
 SetAttrsWithInit = (state, attrs) -> [InitUserAttrs, {attrs}]
 
@@ -52,6 +52,6 @@ view = ({mode, name, user, providers, attrs, groups, system}) ->
     attrList {mode, user, providers, attrs}
   ]
 
-node = document.getElementById('admin_user')
+node = document.getElementById('user')
 
 app {init, view, node}

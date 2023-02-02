@@ -3,7 +3,7 @@ import * as html from '../hyperapp-html.js'
 
 import valueDisplay from '../value_display.js'
 
-import {CalcUserAttrs} from './admin_user_attrs.js'
+import {CalcUserAttrs} from './user_attrs.js'
 
 SetUserAttr = (state, {attr_name, value}) ->
   user = {state.user..., attrs: {state.user.attrs..., [attr_name]: value}}
