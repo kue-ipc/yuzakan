@@ -13,12 +13,14 @@ distDirs = [
 targets = [
   {name: 'bootstrap', ext: 'coffee'}
   {name: 'http-link-header', ext: 'coffee'}
-  {name: 'hyperapp', ext: 'coffee'}
   {name: 'hyperapp-dom', ext: 'coffee'}
   {name: 'hyperapp-events', ext: 'coffee'}
   {name: 'hyperapp-time', ext: 'coffee'}
+  {name: 'hyperapp', ext: 'coffee'}
+  {name: 'lodash', ext: 'coffee'}
   {name: 'luxon', ext: 'coffee'}
   {name: 'pluralize', ext: 'coffee'}
+  {name: 'ramda', ext: 'coffee'}
   {name: 'xxhashjs', ext: 'coffee'}
   {name: 'zxcvbn', ext: 'coffee'}
 ]
