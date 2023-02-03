@@ -19,9 +19,11 @@ module Api
             optional(:per_page).filled(:int?, gteq?: 10, lteq?: 100)
             optional(:sync).maybe(:bool?)
             optional(:query).maybe(:bool?)
-            optional(:primary).maybe(:bool?)
-            optional(:obsoleted).maybe(:bool?)
-            optional(:deleted).maybe(:bool?)
+            optional(:filter).schema do
+              optional(:primary).filled(:bool?)
+              optional(:obsoleted).filled(:bool?)
+              optional(:deleted).filled(:bool?)
+            end
           end
         end
 

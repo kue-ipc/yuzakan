@@ -27,6 +27,10 @@ class ProviderRepository < Hanami::Repository
     providers.where(individual_password: true).to_a
   end
 
+  def ordered_all_group
+    providers.where(group: true).order(:order, :name).to_a
+  end
+
   def find_with_params(id)
     aggregate(:provider_params).where(id: id).map_to(Provider).one
   end

@@ -62,7 +62,7 @@ initState = {groups: [], providers: [], page: 1, per_page: 20, total: 0, query: 
 
 init = [
   initState
-  [runIndexProviders]
+  [runIndexProviders, {filter: {group: true}}]
   [runIndexWithPageGroups, initState]
 ]
 
