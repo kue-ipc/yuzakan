@@ -22,8 +22,8 @@ $source-code-pro-fonts: (
     @each $key, $value in $attr {
       font-#{$key}: $value;
     }
-    src: url("./SourceCodePro-#{$name}.woff2") format("woff2"),
-         url("./SourceCodePro-#{$name}.woff") format("woff");
+    src: url("/assets/vendor/SourceCodePro-#{$name}.woff2") format("woff2"),
+         url("/assets/vendor/SourceCodePro-#{$name}.woff") format("woff");
   }
 }
 
@@ -38,7 +38,7 @@ $source-code-variable-fonts: (
     @each $key, $value in $attr {
       font-#{$key}: $value;
     }
-    src: url("./SourceCodeVariable-#{$name}.woff2") format("woff2"),
-         url("./SourceCodeVariable-#{$name}.woff") format("woff");
+    src: url("/assets/vendor//SourceCodeVariable-#{$name}.woff2") format("woff2"),
+         url("/assets/vendor//SourceCodeVariable-#{$name}.woff") format("woff");
   }
 }

@@ -15,4 +15,4 @@ export default BsIcon = ({name, size = 24, alt, props...}) ->
   svg_props = {svg_props..., role: 'img', 'aria-label': alt} if alt?
 
   svg.svg svg_props,
-    svg.use {href: "/assets/bootstrap-icons.svg\##{name}"}
+    svg.use {href: "/assets/vendor/bootstrap-icons.svg\##{name}"}

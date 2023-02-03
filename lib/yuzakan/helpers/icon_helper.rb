@@ -22,7 +22,7 @@ module Yuzakan
 
         html.svg(**svg_opts) do
           html.empty_tag :use,
-                         'xlink:href': "/assets/bootstrap-icons.svg##{name}"
+                         'xlink:href': "/assets/vendor/bootstrap-icons.svg##{name}"
         end
       end
     end

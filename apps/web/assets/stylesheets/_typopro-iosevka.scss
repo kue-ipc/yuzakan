@@ -30,7 +30,7 @@ $typopro-iosevka-term-fonts: (
     @each $key, $value in $attr {
       font-#{$key}: $value;
     }
-    src: url("./TypoPRO-iosevka-term-#{$name}.woff") format("woff");
+    src: url("/assets/vendor/TypoPRO-iosevka-term-#{$name}.woff") format("woff");
   }
 }
 

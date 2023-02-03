@@ -1,11 +1,8 @@
-import * as R from '/assets/vendor/ramda.js'
 import HttpLinkHeader from '/assets/vendor/http-link-header.js'
 
-import {
-  filedToList, fieldName,
-  formDataToObj, formDataToJson, formDataToUrlencoded,
-  objToUrlencoded
-} from '/assets/form_helper.js'
+import {isPresent} from '/assets/utils.js'
+
+import {formDataToJson, formDataToUrlencoded, objToUrlencoded} from '/assets/form_helper.js'
 
 export DEFAULT_PAGE = 1
 export DEFAULT_PER_PAGE = 50
@@ -14,9 +11,11 @@ export MAX_PAGE = 10000
 export MIN_PER_PAGE = 10
 export MAX_PER_PAGE = 100
 
+ALLOWED_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE']
+
 export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
   method = method.toUpperCase()
-  unless ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'].includes(method)
+  unless ALLOWED_METHODS.includes(method)
     throw new Error("Unknown or unsupported method: #{method}")
 
   init = {
@@ -30,7 +29,7 @@ export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
     'Accept': 'application/json'
   }
  
-  if data? && R.not(R.isEmpty(data))
+  if isPresent(data)
     if ['POST', 'PUT', 'PATCH'].includes(method)
       switch type
         when 'json'
