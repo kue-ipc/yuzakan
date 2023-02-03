@@ -1,10 +1,10 @@
 import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
-import {fetchJsonGet} from '/assets/api/fetch_json.js'
 import BsIcon from '/assets/bs_icon.js'
 
 import {runIndexGroups} from '/assets/api/groups.js'
+import {runIndexProviders} from '/assets/api/providers.js'
 
 pageAction = (state, {page}) ->
   newState = {state..., page}
@@ -58,35 +58,11 @@ groupTr = ({group, providers}) ->
     (groupProviderTd({group, provider}) for provider in providers)...
   ]
 
-initAllGroupsAction = (state, {groups, total}) ->
-  {state..., groups, total}
-
-indexAllGroupsRunner = (dispatch, {page, per_page, query}) ->
-  response = await fetchJsonGet({url: '/api/groups', data: {page, per_page, query}})
-  if response.ok
-    dispatch(initAllGroupsAction, {
-      groups: response.data
-      total: response.total
-    })
-  else
-    console.error response
-
-initAllProvidersAction = (state, {providers}) ->
-  # providers group only
-  {state..., providers: (provider for provider in providers when provider.group)}
-
-indexAllProvidersRunner = (dispatch) ->
-  response = await fetchJsonGet({url: '/api/providers'})
-  if response.ok
-    dispatch(initAllProvidersAction, {providers: response.data})
-  else
-    console.error response
-
 initState = {groups: [], providers: [], page: 1, per_page: 20, total: 0, query: ''}
 
 init = [
   initState
-  [indexAllProvidersRunner]
+  [runIndexProviders]
   [runIndexGroups, initState]
 ]
 

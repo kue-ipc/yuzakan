@@ -1,7 +1,5 @@
 # /api/groups
 
-# import {createRunPage, createRunGetWithPagination} from './run_json.js'
-
 import {
   createRunIndexWithPage
   createRunShowWithId
@@ -9,9 +7,7 @@ import {
   createRunDestroyWithId
 } from './hyper_json.js'
 
-
 export API_GROUPS = '/api/groups'
-
 
 # Actions
 
@@ -19,53 +15,38 @@ export SetGroups = (state, groups) -> {state..., groups}
 
 export SetGroup = (state, group) -> {state..., group}
 
-export createSetGroups = (action) ->
-  (state, groups) ->
-    action(SetGroups(state, groups), groups)
+# create Actions
 
-export createSetGroup = (action) ->
-  (state, group) ->
-    action(SetGroup(state, group), group)
+export createSetGroups = (action = null) ->
+  if action?
+    (state, groups) ->
+      action(SetGroups(state, groups), groups)
+  else
+    SetGroups
 
-export createRunIndexGroups = ({action = null} = {}) ->
-  setAction =
-    if action?
-      createSetGroups(action)
-    else
-      SetGroups
-  createRunIndexWithPage({action: setAction, url: API_GROUPS, dataKeys: [
+export createSetGroup = (action = null) ->
+  if action?
+    (state, group) ->
+      action(SetGroup(state, group), group)
+  else
+    SetGroup
+
+# create Effecters
+
+export createRunIndexGroups = ({action = null, params...} = {}) ->
+  createRunIndexWithPage({params..., action: createSetGroups(action), url: API_GROUPS, dataKeys: [
     'sync'
     'query'
     'filters'
   ]})
 
-export runIndexGroups = createRunIndexGroups()
-
-export createRunShowGroup = ({action = null} = {}) ->
-  setAction =
-    if action?
-      createSetGroup(action)
-    else
-      SetGroup
-  createRunShowWithId({action: setAction, url: API_GROUPS, idKey: 'name', dataKeys: [
+export createRunShowGroup = ({action = null, params...} = {}) ->
+  createRunShowWithId({params..., action: createSetGroup(action), url: API_GROUPS, idKey: 'name', dataKeys: [
     'sync'
   ]})
 
+# Effecters
+
+export runIndexGroups = createRunIndexGroups()
+
 export runShowGroup = createRunShowGroup()
-
-
-# export createRunGetGroups = (action = SetGroups) -> createRunGetWithPagination(action, API_GROUPS)
-
-
-
-# export createRunPageGroups = (action = SetGroups) -> createRunPage(action, API_GROUPS, ['query'])
-
-# export PageGroups = (state) -> [state, [runPageGroups, state]]
-
-
-
-# export runGetGroups = createRunGetGroups()
-
-# export runPageGroups = createRunPageGroups()
-
-

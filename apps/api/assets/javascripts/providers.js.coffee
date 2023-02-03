@@ -1,13 +1,47 @@
 # /api/providers
 
-import {createRunGet} from './run_json.js'
+import {
+  createRunIndex
+  createRunShowWithId
+  createRunCreateWithId
+  createRunUpdateWithId
+  createRunDestroyWithId
+} from './hyper_json.js'
 
 export API_PROVIDERS = '/api/providers'
 
+# Actiosn
+
 export SetProviders = (state, providers) -> {state..., providers}
 
-export createRunGetProviders = (action = SetProviders) -> createRunGet(action, API_PROVIDERS)
+export SetProvider = (state, provider) -> {state..., provider}
 
-export runGetProviders = createRunGetProviders()
+# create Actions
 
-export GetProviders = (state) -> [state, runGetProviders]
+export createSetProviders = (action = null) ->
+  if action?
+    (state, providers) ->
+      action(SetProviders(state, providers), providers)
+  else
+    SetProviders
+
+export createSetProvider = (action = null) ->
+  if action?
+    (state, provider) ->
+      action(SetProvider(state, provider), provider)
+  else
+    SetProvider
+
+# create Effecters
+
+export createRunIndexProviders = ({action = null, params...} = {}) ->
+  createRunIndex({params..., action: createSetProviders(action), url: API_PROVIDERS})
+
+export createRunShowProvider = ({action = null, params...} = {}) ->
+  createRunShowWithId({params..., action: createSetProvider(action), url: API_PROVIDERS, idKey: 'name'})
+
+# Effecters
+
+export runIndexProviders = createRunIndexProviders()
+
+export runShowProvider = createRunShowProvider()
