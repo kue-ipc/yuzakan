@@ -1,6 +1,6 @@
 # Createer functions for Hyperapp object and fetch api
 
-import {pick} '/assets/utils.js'
+import {pick} from '/assets/utils.js'
 
 import {fetchJson, MIN_PAGE, MAX_PAGE, MIN_PER_PAGE, MAX_PER_PAGE} from './fetch_json.js'
 
@@ -18,7 +18,7 @@ export createResponseAction = ({action, fallback = null}) ->
     else
       console.error response
       if fallback
-        [fallback, null]
+        [fallback, response.data]
       else
         # do nothing
         state
@@ -27,20 +27,12 @@ export createResponseAction = ({action, fallback = null}) ->
 # エラーの場合はページ情報を更新しない。
 export createResponseActionWithPage = (params) ->
   responseAction = createResponseAction(params)
-  effecter = (dispatch, response) -> dispatch(responseAction, response)
   (state, response) ->
     if response.ok
-      [
-        {
-          state...
-          total: response.total
-          start: response.start
-          end: response.end
-          page: response.page
-          per_page: response.per_page
-        }
-        [effecter, response]
-      ]
+      responseAction({
+        state...
+        pick(response, ['page', 'per_page', 'total', 'start', 'end'])...
+      }, response)
     else
       [responseAction, response]
 
@@ -48,20 +40,11 @@ export createResponseActionWithPage = (params) ->
 # エラーの場合はIDを更新しない
 export createResponseActionWithId = ({idKey = 'id', params...}) ->
   responseAction = createResponseAction(params)
-  effecter = (dispatch, response) -> dispatch(responseAction, response)
   (state, response) ->
     if response.ok
-      [
-        {
-          state...
-          id: response.data[idKey]
-        }
-        [effecter, response]
-      ]
+      responseAction({state..., id: response.data[idKey]}, response)
     else
       [responseAction, response]
-
-
 
 # create Effecter
 
@@ -74,19 +57,19 @@ export createRunResponse = ({action, url, pathKeys = [], dataKeys = [], params..
         console.error 'given props does not have the property for path: %s', key
         return
       url = url.replace(":#{key}", props[key])
-    data = pick(props, allowKeys)
+    data = pick(props, dataKeys)
     response = await fetchJson({params..., url, data})
     dispatch(action, response)
 
-# 通常のGet
-export createRunGet = ({action, fallback = null, params...}) ->
-  responseAction = createResponseAction(action, fallback)
-  createRunResponse({params..., action: responseAction, method: 'GET'})
+# # 通常のGet
+# export createRunGet = ({action, fallback = null, params...}) ->
+#   responseAction = createResponseAction(action, fallback)
+#   createRunResponse({params..., action: responseAction, method: 'GET'})
 
-# ページ情報付きGet
-export createRunPageGet = ({action, fallback = null, params...}) ->
-  responseAction = createResponseActionWithPage(action, fallback)
-  createRunResponse({params..., action: responseAction, method: 'GET'})
+# # ページ情報付きGet
+# export createRunPageGet = ({action, fallback = null, params...}) ->
+#   responseAction = createResponseActionWithPage(action, fallback)
+#   createRunResponse({params..., action: responseAction, method: 'GET'})
 
 # RESTful Resources
 export createRunIndex = ({action, fallback = null, params...}) ->
@@ -94,7 +77,7 @@ export createRunIndex = ({action, fallback = null, params...}) ->
   createRunResponse({params..., action: responseAction, method: 'GET'})
 
 export createRunIndexWithPage = ({action, fallback = null, params...}) ->
-  responseAction = createResponseActionWithPage(action, fallback)
+  responseAction = createResponseActionWithPage({action, fallback})
   createRunResponse({params..., action: responseAction, method: 'GET'})
 
 export createRunShowWithId = ({action, fallback = null, url, idKey = 'id', params...}) ->

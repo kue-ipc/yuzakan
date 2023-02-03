@@ -17,7 +17,11 @@ module Api
           params do
             optional(:page).filled(:int?, gteq?: 1, lteq?: 10000)
             optional(:per_page).filled(:int?, gteq?: 10, lteq?: 100)
-            optional(:no_sync).maybe(:bool?)
+            optional(:sync).maybe(:bool?)
+            optional(:query).maybe(:bool?)
+            optional(:primary).maybe(:bool?)
+            optional(:obsoleted).maybe(:bool?)
+            optional(:deleted).maybe(:bool?)
           end
         end
 

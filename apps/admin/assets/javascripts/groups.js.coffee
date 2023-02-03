@@ -4,6 +4,8 @@ import * as html from '/assets/vendor/hyperapp-html.js'
 import {fetchJsonGet} from '/assets/api/fetch_json.js'
 import BsIcon from '/assets/bs_icon.js'
 
+import {runIndexGroups} from '/assets/api/groups.js'
+
 pageAction = (state, {page}) ->
   newState = {state..., page}
   [
@@ -85,7 +87,7 @@ initState = {groups: [], providers: [], page: 1, per_page: 20, total: 0, query: 
 init = [
   initState
   [indexAllProvidersRunner]
-  [indexAllGroupsRunner, initState]
+  [runIndexGroups, initState]
 ]
 
 view = ({groups, providers, page, per_page, total, query}) ->
