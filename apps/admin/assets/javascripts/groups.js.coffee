@@ -3,7 +3,7 @@ import * as html from '/assets/vendor/hyperapp-html.js'
 
 import BsIcon from '/assets/bs_icon.js'
 
-import {runIndexGroups} from '/assets/api/groups.js'
+import {runIndexWithPageGroups} from '/assets/api/groups.js'
 import {runIndexProviders} from '/assets/api/providers.js'
 
 pageAction = (state, {page}) ->
@@ -63,7 +63,7 @@ initState = {groups: [], providers: [], page: 1, per_page: 20, total: 0, query: 
 init = [
   initState
   [runIndexProviders]
-  [runIndexGroups, initState]
+  [runIndexWithPageGroups, initState]
 ]
 
 view = ({groups, providers, page, per_page, total, query}) ->

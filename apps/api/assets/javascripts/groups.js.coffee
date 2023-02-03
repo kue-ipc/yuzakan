@@ -33,7 +33,7 @@ export createSetGroup = (action = null) ->
 
 # create Effecters
 
-export createRunIndexGroups = ({action = null, params...} = {}) ->
+export createRunIndexWithPageGroups = ({action = null, params...} = {}) ->
   createRunIndexWithPage({params..., action: createSetGroups(action), url: API_GROUPS, dataKeys: [
     'sync'
     'query'
@@ -47,6 +47,6 @@ export createRunShowGroup = ({action = null, params...} = {}) ->
 
 # Effecters
 
-export runIndexGroups = createRunIndexGroups()
+export runIndexWithPageGroups = createRunIndexWithPageGroups()
 
 export runShowGroup = createRunShowGroup()
