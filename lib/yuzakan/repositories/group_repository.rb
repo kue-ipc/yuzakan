@@ -6,8 +6,49 @@ class GroupRepository < Hanami::Repository
     has_many :users, through: :members
   end
 
+  def ordered_all
+    groups.order(:groupname).to_a
+  end
+
+  def ordered_filter(order: {groupname: :asc}, filter: {})
+    order = {groupname: :asc} if order.nil? || order.empty?
+
+    order_attributes = order.map do |key, value|
+      case value.downcase.intern
+      when :asc
+        groups[key].qualified.asc
+      when :desc
+        groups[key].qualified.desc
+      end
+    end.compact
+
+    filter(**filter).order(*order_attributes)
+  end
+
+  def filter(query: nil, primary: nil, obsoleted: nil, deleted: nil)
+    q = groups
+    q = q.where { groupname.ilike("%#{query}%") | display_name.ilike("%#{query}%") } if query && !query.empty?
+
+    q = q.where(primary: primary) unless primary.nil?
+
+    q = q.where(obsoleted: obsoleted) unless obsoleted.nil?
+
+    case deleted
+    when true, false
+      q = q.where(deleted: deleted)
+    when Range
+      q = q.where(deleted: true).where(deleted_at: deleted)
+    end
+
+    q
+  end
+
   def by_groupname(groupname)
     groups.where(groupname: groupname)
+  end
+
+  def all_by_groupname(groupnames)
+    by_groupname(groupnames).to_a
   end
 
   def find_by_groupname(groupname)
