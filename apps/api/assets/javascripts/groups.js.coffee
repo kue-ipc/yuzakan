@@ -9,6 +9,10 @@ import {
 
 export API_GROUPS = '/api/groups'
 
+export INDEX_GROUPS_ALLOW_KEYS = ['page', 'per_page', 'sync', 'order', 'query', 'sync', 'primary_only', 'show_deleted']
+
+export SHOW_GROUP_ALLOW_KEYS = ['sync']
+
 # Actions
 
 export SetGroups = (state, groups) -> {state..., groups}
@@ -34,16 +38,20 @@ export createSetGroup = (action = null) ->
 # create Effecters
 
 export createRunIndexWithPageGroups = ({action = null, params...} = {}) ->
-  createRunIndexWithPage({params..., action: createSetGroups(action), url: API_GROUPS, dataKeys: [
-    'sync'
-    'query'
-    'filters'
-  ]})
+  createRunIndexWithPage({
+    params...
+    action: createSetGroups(action)
+    url: API_GROUPS
+    dataKeys: INDEX_GROUPS_ALLOW_KEYS
+  })
 
 export createRunShowGroup = ({action = null, params...} = {}) ->
-  createRunShowWithId({params..., action: createSetGroup(action), url: API_GROUPS, idKey: 'name', dataKeys: [
-    'sync'
-  ]})
+  createRunShowWithId({
+    params...
+    action: createSetGroup(action)
+    url: API_GROUPS
+    idKey: 'name'
+    dataKeys: SHOW_GROUP_ALLOW_KEYS})
 
 # Effecters
 

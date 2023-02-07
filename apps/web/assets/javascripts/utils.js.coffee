@@ -16,8 +16,7 @@ export presence = (obj) ->
   else
     null
 
-# TODO 逆にするだけができるはず
-export pick = (obj, keys) -> R.pick(keys, obj)
+export pick = R.flip(R.pick)
 
 
 # TODO
