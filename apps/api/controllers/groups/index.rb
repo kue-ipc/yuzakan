@@ -78,8 +78,10 @@ module Api
               {groupname: :asc}
             end
 
+          query = ("%#{params[:query]}%" if params[:query]&.size&.positive?)
+
           filter = {}
-          filter[:query] = params[:query] if params[:query] && !params[:query].empty?
+          filter[:query] = query if query
           filter[:primary] = true if params[:primary_only]
           filter[:deleted] = false unless params[:show_deleted]
 
@@ -92,10 +94,16 @@ module Api
 
         def get_groups_from_provider(params)
           @groups_providers = Hash.new { |hash, key| hash[key] = [] }
+          query = ("*#{params[:query]}*" if params[:query]&.size&.positive?)
+
           @provider_repository.ordered_all_with_adapter_by_operation(:group_read).each do |provider|
-            provider.group_list.each do |item|
-              @groups_providers[item] << provider.name
-            end
+            items =
+              if query
+                provider.group_search(query)
+              else
+                provider.group_list
+              end
+            items.each { |item| @groups_providers[item] << provider.name }
           end
 
           all_groupnames = @groups_providers.keys

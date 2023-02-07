@@ -118,9 +118,22 @@ class Provider < Hanami::Entity
     user_search_key_raw(Digest::MD5.hexdigest(query))
   end
 
+  def group_search_key_raw(name)
+    key('search', 'group', name)
+  end
+
+  def group_search_key(query)
+    group_search_key_raw(Digest::MD5.hexdigest(query))
+  end
+
   def clear_user_list_cache
     @cache_store.delete(user_list_key)
     @cache_store.delete_matched(user_search_key_raw('*'))
+  end
+
+  def clear_group_list_cache
+    @cache_store.delete(group_list_key)
+    @cache_store.delete_matched(group_search_key_raw('*'))
   end
 
   # Ruby attrs -> Adapter aatrs
@@ -298,6 +311,14 @@ class Provider < Hanami::Entity
     need_group!
     @cache_store.fetch(group_list_key) do
       @cache_store[group_list_key] = @adapter.group_list
+    end
+  end
+
+  def group_search(query)
+    need_adapter!
+    need_group!
+    @cache_store.fetch(group_search_key(query)) do
+      @cache_store[group_search_key(query)] = @adapter.group_search(query)
     end
   end
 

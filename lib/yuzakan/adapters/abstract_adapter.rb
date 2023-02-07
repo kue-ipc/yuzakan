@@ -46,11 +46,12 @@
 # group_read(groupname) -> groupdata? [readable]
 # x group_update(groupname, **groupdata) -> groupdata? [writeable]
 # x group_delete(groupname) -> groupdata? [writable]
-# group_list -> Array[groupname]
+# group_list -> Array[groupname] [readable]
+# group_search(query) -> Array[groupname] [readable]
 #
-# member_list(groupname) -> Array[usernames]
-# member_add(groupname, username) -> bool
-# member_remove(groupname, username) -> bool
+# member_list(groupname) -> Array[usernames] [readable]
+# member_add(groupname, username) -> bool [writable]
+# member_remove(groupname, username) -> bool [writable]
 #
 
 require 'logger'
@@ -197,6 +198,10 @@ module Yuzakan
       end
 
       def group_list
+        raise NotImplementedError
+      end
+
+      def group_search(query)
         raise NotImplementedError
       end
 

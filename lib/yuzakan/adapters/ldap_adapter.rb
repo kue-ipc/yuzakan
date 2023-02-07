@@ -352,10 +352,8 @@ module Yuzakan
 
         [:display_name, :email].each do |name|
           attr_name = @params["user_#{name}_attr".intern]
-          filter |= Net::LDAP::Filter.eq(attr_name, query) if attr_name && attr_name.empty?
+          filter |= Net::LDAP::Filter.eq(attr_name, query) if attr_name&.size&.positive?
         end
-
-        filter &= Net::LDAP::Filter.construct(@params[:user_search_filter]) if @params[:user_search_filter]
 
         opts = search_user_opts('*', filter: filter)
         ldap_search(opts).map { |user| get_user_name(user) }
@@ -374,6 +372,18 @@ module Yuzakan
       def group_list
         opts = search_group_opts('*')
         ldap_search(opts).map { |group| get_group_name(group) }
+      end
+
+      def group_search(query)
+        filter = Net::LDAP::Filter.eq(@params[:group_name_attr], query)
+
+        [:display_name].each do |name|
+          attr_name = @params["group_#{name}_attr".intern]
+          filter |= Net::LDAP::Filter.eq(attr_name, query) if attr_name&.size&.positive?
+        end
+
+        opts = search_group_opts('*', filter: filter)
+        ldap_search(opts).map { |user| get_group_name(user) }
       end
 
       def member_list(groupname)
@@ -436,7 +446,7 @@ module Yuzakan
 
         [:display_name, :email].each do |name|
           attr_name = @params["user_#{name}_attr".intern]
-          if attr_name && !attr_name.empty? && (userdata[name])
+          if attr_name&.size&.positive? && (userdata[name])
             attributes[attribute_name(@params["user_#{name}_attr".intern])] = userdata[name]
           end
         end
@@ -450,7 +460,7 @@ module Yuzakan
 
         [:display_name, :email].each do |name|
           attr_name = @params["user_#{name}_attr".intern]
-          if attr_name && !attr_name.empty? && (userdata[name])
+          if attr_name&.size&.positive? && (userdata[name])
             attributes[attribute_name(@params["user_#{name}_attr".intern])] = userdata[name]
           end
         end

@@ -27,7 +27,7 @@ class GroupRepository < Hanami::Repository
 
   def filter(query: nil, primary: nil, obsoleted: nil, deleted: nil)
     q = groups
-    q = q.where { groupname.ilike("%#{query}%") | display_name.ilike("%#{query}%") } if query && !query.empty?
+    q = q.where { groupname.ilike("%#{query}%") | display_name.ilike("%#{query}%") } if query&.size&.positive?
 
     q = q.where(primary: primary) unless primary.nil?
 

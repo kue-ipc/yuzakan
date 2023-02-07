@@ -78,7 +78,7 @@ module Api
 
               @attr_repository.delete_mapping(@attr, current_mapping.id)
             end
-            @attr_repository.add_mapping(@attr, m_params) if m_params[:name] && !m_params[:name].empty?
+            @attr_repository.add_mapping(@attr, m_params) if m_params[:name]&.size&.positive?
           end
 
           @attr = @attr_repository.find_with_mappings(@attr.id)

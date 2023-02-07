@@ -111,7 +111,7 @@ module Web
                         end
                       end
                     end
-                    if inputs && !inputs.empty?
+                    if inputs&.size&.positive?
                       hr
                       inputs.each do |input_data|
                         div class: 'form-check' do
