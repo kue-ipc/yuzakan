@@ -80,7 +80,7 @@ Search = (state, query) ->
   return state if state.query == query
 
   # ページを初期化
-  [ReloadIndexGroups, {page: 1, query}]
+  [ReloadIndexGroups, {page: 1n, query}]
 
 queryParams = Object.fromEntries(new URLSearchParams(location.search))
 
