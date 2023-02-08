@@ -2,7 +2,7 @@ import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
 import BsIcon from '/assets/bs_icon.js'
-import {pick} from '/assets/utils.js'
+import {pick, pickType} from '/assets/utils.js'
 import {objToUrlencoded} from '/assets/form_helper.js'
 
 import {runIndexWithPageGroups, INDEX_GROUPS_ALLOW_KEYS} from '/assets/api/groups.js'
@@ -91,11 +91,11 @@ Search = (state, query) ->
   # ページを初期化
   [ReloadIndexGroups, {page: 1, query}]
 
-queryParams = new URLSearchParams(location.search)
+queryParams = Object.fromEntries(new URLSearchParams(location.search))
 
 initState = {
   groups: [], providers: [], total: 0
-  Object.fromEntries([key, queryParams.get(key)] for key in INDEX_GROUPS_ALLOW_KEYS)...
+  pickType(queryParams, INDEX_GROUPS_ALLOW_KEYS)...
 }
 
 init = [

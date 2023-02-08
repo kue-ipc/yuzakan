@@ -1,8 +1,10 @@
 # Createer functions for Hyperapp object and fetch api
 
-import {pick} from '/assets/utils.js'
+import {pick, pickType} from '/assets/utils.js'
 
 import {fetchJson, MIN_PAGE, MAX_PAGE, MIN_PER_PAGE, MAX_PER_PAGE} from './fetch_json.js'
+
+
 
 # create Actions
 
@@ -62,19 +64,9 @@ export createRunResponse = ({action, url, pathKeys = [], dataKeys = [], params..
         console.error 'given props does not have the property for path: %s', key
         return
       url = url.replace(":#{key}", props[key])
-    data = pick(props, dataKeys)
+    data = pickType(props, dataKeys)
     response = await fetchJson({params..., url, data})
     dispatch(action, response)
-
-# # 通常のGet
-# export createRunGet = ({action, fallback = null, params...}) ->
-#   responseAction = createResponseAction(action, fallback)
-#   createRunResponse({params..., action: responseAction, method: 'GET'})
-
-# # ページ情報付きGet
-# export createRunPageGet = ({action, fallback = null, params...}) ->
-#   responseAction = createResponseActionWithPage(action, fallback)
-#   createRunResponse({params..., action: responseAction, method: 'GET'})
 
 # RESTful Resources
 export createRunIndex = ({action, fallback = null, params...}) ->

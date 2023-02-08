@@ -9,9 +9,19 @@ import {
 
 export API_GROUPS = '/api/groups'
 
-export INDEX_GROUPS_ALLOW_KEYS = ['page', 'per_page', 'sync', 'order', 'query', 'sync', 'primary_only', 'show_deleted']
+export INDEX_GROUPS_ALLOW_KEYS = {
+  page: 'number'
+  per_page: 'number'
+  sync: 'boolean'
+  order: 'string'
+  query: 'string'
+  primary_only: 'boolean'
+  show_deleted: 'boolean'
+}
 
-export SHOW_GROUP_ALLOW_KEYS = ['sync']
+export SHOW_GROUP_ALLOW_KEYS = {
+  sync: 'boolean'
+}
 
 # Actions
 
@@ -23,15 +33,23 @@ export SetGroup = (state, group) -> {state..., group}
 
 export createSetGroups = (action = null) ->
   if action?
+    runAction = (dispatch, groups) -> dispatch(action, groups)
     (state, groups) ->
-      action(SetGroups(state, groups), groups)
+      [
+        SetGroups(state, groups)...,
+        [runAction, groups]
+      ]
   else
     SetGroups
 
 export createSetGroup = (action = null) ->
   if action?
+    runAction = (dispatch, group) -> dispatch(action, group)
     (state, group) ->
-      action(SetGroup(state, group), group)
+      [
+        SetGroup(state, group)...,
+        [runAction, group]
+      ]
   else
     SetGroup
 

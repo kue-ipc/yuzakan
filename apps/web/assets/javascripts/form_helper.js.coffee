@@ -37,9 +37,27 @@ export objToUrlencoded = (obj) ->
   objToUrlencodedParams(obj).join('&')
 
 export objToUrlencodedParams = (obj, parents = []) ->
-  [for own key, value of obj
-    if typeof value == 'object'
+  (for own key, value of obj
+    if !value?
+      undefined
+    else if typeof value == 'object'
       objToUrlencodedParams(value, [parents..., key])
     else
-      "#{encodeURIComponent(fieldName(key, parents))}=#{encodeURIComponent(value)}"
-  ].flat()
+      "#{encodeURIComponent(fieldName(key, parents))}=#{valueToUrlencoded(value)}"
+  ).flat().filter((v) -> v?)
+
+# JavaScriptの値をUrlencodedの文字列に落とし込む前に変換する
+# true, fales -> 1, 0
+# 日付 -> Posixタイム(秒)
+export valueToUrlencoded = (value) ->
+  if !value?
+    ''
+  else if value == true
+    '1'
+  else if value == false
+    '0'
+  else if value instanceof Date
+    # Date.prototype.getTime()はミリ秒で返すため、1000で割り、整数にする
+    String(value.getTime() // 1000)
+  else
+    encodeURIComponent(String(value))
