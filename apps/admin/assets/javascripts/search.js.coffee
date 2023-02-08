@@ -7,6 +7,7 @@ export default search = ({query, onsearch}) ->
   searchInput = html.input {
     class: 'form-control'
     type: 'search'
+    value: query
     placeholder: '検索...'
     onkeypress: (state, event) ->
       if event.keyCode == 13

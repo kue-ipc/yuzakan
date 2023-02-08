@@ -66,7 +66,7 @@ ReloadIndexGroups = (state, data) ->
   ]
 
 runGroupHistory = (dispatch, data) ->
-  data = pickType(data, INDEX_GROUPS_ALLOW_KEYS)
+  data = pick(data, Object.keys(INDEX_GROUPS_ALLOW_KEYS))
   query = "?#{objToUrlencoded(data)}"
   if (query != location.search)
     history.pushState(data, '', "/admin/groups?#{objToUrlencoded(data)}")
@@ -92,9 +92,8 @@ initState = {
 init = [
   initState
   [runIndexProviders, {has_groups: true}]
-  [runIndexWithPageGroups, pick(initState, INDEX_GROUPS_ALLOW_KEYS)]
+  [runIndexWithPageGroups, pick(initState, Object.keys(INDEX_GROUPS_ALLOW_KEYS))]
 ]
-
 
 view = ({groups, providers, page, per_page, total, start, end, query, sync, primary_only, show_deleted}) ->
   html.div {}, [
