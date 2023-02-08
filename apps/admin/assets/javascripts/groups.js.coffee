@@ -12,9 +12,14 @@ import {runIndexProviders} from '/assets/api/providers.js'
 import pagination from './pagination.js'
 import search from './search.js'
 
+# csvData = ->
+#   html.button {
+#     class: 'btn btn-primary'
+#   }, text 'ダウンロード'
+
+
 ChangeCondition = (state, event) ->
   [ReloadIndexGroups, {[event.target.name]: event.target.checked}]
-
 
 condition = (props) ->
   html.div {class: 'row'},
@@ -50,8 +55,9 @@ groupProviderTd = ({group, provider}) ->
 
 groupTr = ({group, providers}) ->
   html.tr {key: "group[#{group.gropname}]"}, [
-    html.td {key: 'groupname'},
-      html.a {href: "/admin/groups/#{group.groupname}"}, text group.groupname
+    html.td {key: 'action'},
+      html.a {class: 'btn btn-sm btn-primary', href: "/admin/groups/#{group.groupname}"}, text '閲覧'
+    html.td {key: 'groupname'}, text group.groupname
     html.td {key: 'label'}, text group.label
     (groupProviderTd({group, provider}) for provider in providers)...
   ]
@@ -106,6 +112,7 @@ view = ({groups, providers, page, per_page, total, start, end, query, sync, prim
       html.table {class: 'table'}, [
         html.thead {},
           html.tr {}, [
+            html.th {key: 'action'}, text 'アクション'
             html.th {key: 'groupname'}, text 'グループ名'
             html.th {key: 'label'}, text 'ラベル'
             (providerTh({provider}) for provider in providers)...
