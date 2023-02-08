@@ -1,6 +1,7 @@
 # utils
 
 import * as R from '/assets/vendor/ramda.js'
+import {DateTime} from '/assets/vendor/luxon.js'
 
 export isNil = R.isNil
 
@@ -53,21 +54,24 @@ FALSE_STRINGS = [
   'off'
 ]
 
+export objToJson = (obj) ->
+  JSON.stringify obj, (key, value) ->
+    return value if typeof value != 'object'
+
+    if value instanceof Map
+      Object.fromEntries([value...])
+    else if value instanceof Set
+      [value...]
+    else
+      obj
+
 # convert to the specified type
 export convertToType = (val, type = 'string') ->
-  return val if typeof val == type
-
-  unless val?
-    if type == 'object' || type == 'function'
-      return null
-    else
-      return undefined
+  return val unless val?
 
   switch type
-    when 'undefiend'
-      undefined
-    when 'object'
-      Object(val)
+    when 'string', 'text'
+      String(val)
     when 'boolean'
       if typeof val == 'string'
         lowerStr = val.toLowerCase()
@@ -80,16 +84,39 @@ export convertToType = (val, type = 'string') ->
           Boolean(val)
       else
         Boolean(val)
-    when 'number'
-      Number(val)
-    when 'bigint'
+    when 'integer'
       BigInt(val)
-    when 'string'
-      String(val)
-    when 'symbol'
-      Symbol(val)
-    when 'function'
-      Funicton(val)
+    when 'float'
+      Number(val)
+    when 'datetime'
+      switch typeof val
+        when 'number'
+          DateTime.fromSeconds(val)
+        when 'bigint'
+          DateTime.fromSeconds(Number(val))
+        when 'string'
+          DateTime.fromISO(val)
+        when 'object'
+          if val instanceof Date
+            DateTime.fromJSDate(val)
+          else if val instanceof DateTime
+            val
+          else
+            console.warn "no datetime object: #{val}"
+            DateTime.fromJSDate(Date(val))
+        else
+          console.warn "no datetime object: #{val}"
+          DateTime.fromJSDate(Date(val))
+    when 'date'
+      convertToType(val, 'datetime').toISODate()
+    when 'time'
+      convertToType(val, 'datetime').toISOTime(includeOffset: false)
+    when 'list'
+      value
+    when 'map'
+      value
+    when 'set'
+      vaule
     else
       console.warn "cannot convert to the unknown type: #{type}"
       undefined

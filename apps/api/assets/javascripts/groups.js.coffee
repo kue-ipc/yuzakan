@@ -10,8 +10,8 @@ import {
 export API_GROUPS = '/api/groups'
 
 export INDEX_GROUPS_ALLOW_KEYS = {
-  page: 'number'
-  per_page: 'number'
+  page: 'integer'
+  per_page: 'integer'
   sync: 'boolean'
   order: 'string'
   query: 'string'

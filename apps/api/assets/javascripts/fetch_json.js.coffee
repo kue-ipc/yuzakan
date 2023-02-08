@@ -1,15 +1,15 @@
 import HttpLinkHeader from '/assets/vendor/http-link-header.js'
 
-import {isPresent} from '/assets/utils.js'
+import {isPresent, objToJson} from '/assets/utils.js'
 
 import {formDataToJson, formDataToUrlencoded, objToUrlencoded} from '/assets/form_helper.js'
 
-export DEFAULT_PAGE = 1
-export DEFAULT_PER_PAGE = 20
-export MIN_PAGE = 1
-export MAX_PAGE = 10000
-export MIN_PER_PAGE = 10
-export MAX_PER_PAGE = 100
+export DEFAULT_PAGE = 1n
+export DEFAULT_PER_PAGE = 20n
+export MIN_PAGE = 1n
+export MAX_PAGE = 10000n
+export MIN_PER_PAGE = 10n
+export MAX_PER_PAGE = 100n
 
 ALLOWED_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE']
 
@@ -37,7 +37,7 @@ export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
           if data instanceof FormData
             data = formDataToJson(data)
           else if typeof data != 'string'
-            data = JSON.stringify(data)
+            data = objToJson(data)
         when 'urlencoded'
           content_type = 'application/x-www-form-urlencoded'
           if data instanceof FormData
