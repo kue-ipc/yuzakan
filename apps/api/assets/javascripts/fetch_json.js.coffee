@@ -92,9 +92,9 @@ export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
       {
         page: (data.page ? DEFAULT_PAGE)
         per_page: (data.per_page ? DEFAULT_PER_PAGE)
-        total: parseInt(totalCount, 10)
-        start: parseInt(result[1], 10)
-        end: parseInt(result[2], 10)
+        total: BigInt(totalCount)
+        start: BigInt(result[1])
+        end: BigInt(result[2])
       }
     else
       {}

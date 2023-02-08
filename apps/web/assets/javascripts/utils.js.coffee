@@ -56,6 +56,8 @@ FALSE_STRINGS = [
 
 export objToJson = (obj) ->
   JSON.stringify obj, (key, value) ->
+    # TODO
+    return String(value) if typeof value == 'bigint'
     return value if typeof value != 'object'
 
     if value instanceof Map
