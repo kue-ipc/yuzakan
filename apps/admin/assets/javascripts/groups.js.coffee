@@ -58,7 +58,7 @@ Search = (state, query) ->
 queryParams = Object.fromEntries(new URLSearchParams(location.search))
 
 initState = {
-  groups: [], providers: [], total: 0
+  groups: [], providers: [], total: 0n
   pickType(queryParams, INDEX_GROUPS_ALLOW_KEYS)...
 }
 
@@ -69,11 +69,12 @@ init = [
 ]
 
 
-view = ({groups, providers, page, per_page, total, query, params...}) ->
+view = ({groups, providers, page, per_page, total, start, end, query, params...}) ->
+  console.log {page, per_page, total, query, params...}
   html.div {}, [
-    pagination({page, per_page, total, onpage: MovePage})
+    pagination({page, per_page, total, start, end, onpage: MovePage})
     search({query, onsearch: Search})
-    if query && total == 0
+    if query && total == 0n
       html.p {}, text 'グループが存在しません。'
     else
       html.table {class: 'table'}, [
