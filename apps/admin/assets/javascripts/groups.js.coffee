@@ -12,6 +12,32 @@ import {runIndexProviders} from '/assets/api/providers.js'
 import pagination from './pagination.js'
 import search from './search.js'
 
+ChangeCondition = (state, event) ->
+  [ReloadIndexGroups, {[event.target.name]: event.target.checked}]
+
+
+condition = (props) ->
+  html.div {class: 'row'},
+    for key, val of {
+      sync: 'プロバイダーと同期'
+      primary_only: 'プライマリーのみ'
+      show_deleted: '削除済みも表示'
+    }
+      id = "condition-#{key}"
+      html.div {key: "condition[#{key}]", class: 'col-md-3'},
+        html.div {class: 'form-check'}, [
+          html.input {
+            id
+            class: 'form-check-input'
+            name: key
+            type: 'checkbox'
+            checked: props[key]
+            onchange: ChangeCondition
+          }
+          html.label {class: 'form-check-label', for: id}, text val
+        ]
+
+
 providerTh = ({provider}) ->
   html.th {key: "provider[#{provider.name}]"}, text provider.label
 
@@ -35,11 +61,12 @@ ReloadIndexGroups = (state, data) ->
   newState = {state..., data...}
   [
     newState,
-    [runGroupHistory, data]
-    [runIndexWithPageGroups, data]
+    [runGroupHistory, newState]
+    [runIndexWithPageGroups, newState]
   ]
 
 runGroupHistory = (dispatch, data) ->
+  data = pickType(data, INDEX_GROUPS_ALLOW_KEYS)
   query = "?#{objToUrlencoded(data)}"
   if (query != location.search)
     history.pushState(data, '', "/admin/groups?#{objToUrlencoded(data)}")
@@ -69,11 +96,11 @@ init = [
 ]
 
 
-view = ({groups, providers, page, per_page, total, start, end, query, params...}) ->
-  console.log {page, per_page, total, query, params...}
+view = ({groups, providers, page, per_page, total, start, end, query, sync, primary_only, show_deleted}) ->
   html.div {}, [
     pagination({page, per_page, total, start, end, onpage: MovePage})
     search({query, onsearch: Search})
+    condition({sync, primary_only, show_deleted})
     if query && total == 0n
       html.p {}, text 'グループが存在しません。'
     else
