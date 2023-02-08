@@ -27,12 +27,13 @@ export createResponseAction = ({action, fallback = null}) ->
 # エラーの場合はページ情報を更新しない。
 export createResponseActionWithPage = (params) ->
   responseAction = createResponseAction(params)
+  runResponseAction = (dispatch, props) -> dispatch(responseAction, props)
   (state, response) ->
     if response.ok
-      responseAction({
-        state...
-        pick(response, ['page', 'per_page', 'total', 'start', 'end'])...
-      }, response)
+      [
+        {state..., pick(response, ['page', 'per_page', 'total', 'start', 'end'])...}
+        [runResponseAction, response]
+      ]
     else
       [responseAction, response]
 
@@ -40,9 +41,13 @@ export createResponseActionWithPage = (params) ->
 # エラーの場合はIDを更新しない
 export createResponseActionWithId = ({idKey = 'id', params...}) ->
   responseAction = createResponseAction(params)
+  runResponseAction = (dispatch, props) -> dispatch(responseAction, props)
   (state, response) ->
     if response.ok
-      responseAction({state..., id: response.data[idKey]}, response)
+      [
+        {state..., id: response.data[idKey]}
+        [runResponseAction, response]
+      ]
     else
       [responseAction, response]
 

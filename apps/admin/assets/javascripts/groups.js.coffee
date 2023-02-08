@@ -66,57 +66,51 @@ groupTr = ({group, providers}) ->
     (groupProviderTd({group, provider}) for provider in providers)...
   ]
 
-runGroupHistory = (dispatch, state) ->
-  data = pick(state, INDEX_GROUPS_ALLOW_KEYS)
+ReloadIndexGroups = (state, data) ->
+  data = pick(data, INDEX_GROUPS_ALLOW_KEYS)
+  newState = {state..., data...}
+  [
+    newState,
+    [runGroupHistory, data]
+    [runIndexWithPageGroups, data]
+  ]
+
+runGroupHistory = (dispatch, data) ->
   query = "?#{objToUrlencoded(data)}"
   if (query != location.search)
     history.pushState(data, '', "/admin/groups?#{objToUrlencoded(data)}")
-  dispatch(PageUsers)
 
-onPage = (state, page) ->
-  newState = {state..., page}
-  [
-    newState
-    [runGroupHistory, newState]
-    [runIndexWithPageGroups, newState]
-  ]
+MovePage = (state, page) ->
+  return state if state.page == page
 
-onSearch = (state, query) ->
+  [ReloadIndexGroups, {page}]
+
+Search = (state, query) ->
   return state if state.query == query
 
   # ページを初期化
-  newState = {state..., page: 1, query}
-  [
-    newState
-    [runGroupHistory, newState]
-    [runIndexWithPageGroups, newState]
-  ]
+  [ReloadIndexGroups, {page: 1, query}]
 
-queryParams = new URLSearchParams(location.seach)
-
-console.log location.seach
-console.log queryParams
-console.log ([key, queryParams.get(key)] for key in INDEX_GROUPS_ALLOW_KEYS)
-console.log Object.fromEntries([key, queryParams.get(key)] for key in INDEX_GROUPS_ALLOW_KEYS)
+queryParams = new URLSearchParams(location.search)
 
 initState = {
   groups: [], providers: [], total: 0
   Object.fromEntries([key, queryParams.get(key)] for key in INDEX_GROUPS_ALLOW_KEYS)...
 }
 
-console.log initState
-
 init = [
   initState
-  [runIndexProviders, {filter: {group: true}}]
-  [runIndexWithPageGroups, initState]
+  [runIndexProviders, {has_groups: true}]
+  [runIndexWithPageGroups, pick(initState, INDEX_GROUPS_ALLOW_KEYS)]
 ]
 
 
-view = ({groups, providers, page, per_page, total, query}) ->
+view = ({groups, providers, page, per_page, total, query, params...}) ->
+  console.log 'view'
+  console.log {page, per_page, total, query, params...}
   html.div {}, [
-    pagination({page, per_page, total})
-    search({query, onSearch})
+    pagination({page, per_page, total, onpage: MovePage})
+    search({query, onsearch: Search})
     if query && total == 0
       html.p {}, text 'グループが存在しません。'
     else
