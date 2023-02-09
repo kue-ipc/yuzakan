@@ -12,11 +12,45 @@ import {runIndexProviders} from '/assets/api/providers.js'
 import pagination from './pagination.js'
 import search from './search.js'
 
-# csvData = ->
-#   html.button {
-#     class: 'btn btn-primary'
-#   }, text 'ダウンロード'
+GROUP_KEYS = [
+  'groupname'
+  'display_name'
+  'note'
+  'primary'
+  'obsoleted'
+  'deleted'
+  'deleted_at'
+  'providers'
+]
 
+valueToCsv = (value) ->
+  switch value
+    when null, undefined
+      ''
+    when true
+      '1'
+    when false
+      '0'
+    else
+      '"' + String(value).replace(/"/g, '""') + '"'
+
+createCsv = (groups) ->
+  csv = []
+  csv.push "\ufeffaction," + GROUP_KEYS.join(',') + "\r\n"
+  for group in groups
+    csv.push ',' + (valueToCsv(group[key]) for key in GROUP_KEYS).join(',') + "\r\n"
+  csv
+
+downloadCsv = ({groups})->
+  csv = createCsv(groups)
+  blob = new Blob csv, {type: 'text/csv'}
+  url = URL.createObjectURL(blob)
+  html.a {
+    class: 'btn btn-primary'
+    href: url
+    type: 'text/csv'
+    download: 'groups.csv'
+  }, text 'ダウンロード'
 
 ChangeCondition = (state, event) ->
   [ReloadIndexGroups, {[event.target.name]: event.target.checked}]
@@ -106,6 +140,9 @@ view = ({groups, providers, page, per_page, total, start, end, query, sync, prim
     pagination({page, per_page, total, start, end, onpage: MovePage})
     search({query, onsearch: Search})
     condition({sync, primary_only, show_deleted})
+    html.div {}, [
+      downloadCsv({groups})
+    ]
     if query && total == 0n
       html.p {}, text 'グループが存在しません。'
     else
