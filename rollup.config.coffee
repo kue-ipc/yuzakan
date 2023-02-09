@@ -24,6 +24,8 @@ targets = [
   {name: 'ramda', ext: 'coffee'}
   {name: 'xxhashjs', ext: 'coffee'}
   {name: 'zxcvbn', ext: 'coffee'}
+  {name: 'csv-parse', ext: 'coffee'}
+  {name: 'csv-generate', ext: 'coffee'}
 ]
 
 export default targets.map (target) -> {
