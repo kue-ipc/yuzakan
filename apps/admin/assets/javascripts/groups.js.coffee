@@ -42,6 +42,8 @@ createCsv = (groups) ->
   csv
 
 downloadCsv = ({groups})->
+  return html.span {} unless groups?
+
   csv = createCsv(groups)
   blob = new Blob csv, {type: 'text/csv'}
   url = URL.createObjectURL(blob)
@@ -52,11 +54,31 @@ downloadCsv = ({groups})->
     download: 'groups.csv'
   }, text 'ダウンロード'
 
+uploadCsv = () ->
+  inputFile = html.input {class: 'form-control', type: 'file', accept: '.csv,text/csv'}
+  html.div {class: 'input-group'}, [
+    inputFile
+    html.button {
+      class: 'btn btn-primary'
+      onclick: () -> [UploadCsv, inputFile.node.files]
+    }, text 'アップロード'
+  ]
+
+runReadCsv = (dispatch, file) ->
+  csv = await file.text()
+  console.log csv
+
+UploadCsv = (state, files) ->
+  return state unless files?.length
+
+  [state, [runReadCsv, files[0]]]
+
+
 ChangeCondition = (state, event) ->
   [ReloadIndexGroups, {[event.target.name]: event.target.checked}]
 
 condition = (props) ->
-  html.div {class: 'row'},
+  html.div {class: 'row mb-2'},
     for key, val of {
       sync: 'プロバイダーと同期'
       primary_only: 'プライマリーのみ'
@@ -137,12 +159,13 @@ init = [
 
 view = ({groups, providers, page, per_page, total, start, end, query, sync, primary_only, show_deleted}) ->
   html.div {}, [
-    pagination({page, per_page, total, start, end, onpage: MovePage})
     search({query, onsearch: Search})
     condition({sync, primary_only, show_deleted})
-    html.div {}, [
-      downloadCsv({groups})
+    html.div {class: 'row mb-2'}, [
+      html.div {class: 'col-md-3'}, downloadCsv({groups})
+      html.div {class: 'col-md-6'}, uploadCsv()
     ]
+    pagination({page, per_page, total, start, end, onpage: MovePage})
     if query && total == 0n
       html.p {}, text 'グループが存在しません。'
     else
