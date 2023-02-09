@@ -79,7 +79,7 @@ export convertToType = (val, type = 'string') ->
         lowerStr = val.toLowerCase()
         if TRUE_STRINGS.includes(lowerStr)
           true
-        else if FALSE_STRINGS.include(lowerStr)
+        else if FALSE_STRINGS.includes(lowerStr)
           false
         else
           console.warn "no boolean string: #{val}"
