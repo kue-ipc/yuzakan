@@ -1,15 +1,15 @@
 import HttpLinkHeader from '/assets/vendor/http-link-header.js'
 
-import {isPresent, objToJson} from '/assets/utils.js'
+import {isPresent, objToJson, toInteger} from '/assets/utils.js'
 
 import {formDataToJson, formDataToUrlencoded, objToUrlencoded} from '/assets/form_helper.js'
 
-export DEFAULT_PAGE = 1n
-export DEFAULT_PER_PAGE = 20n
-export MIN_PAGE = 1n
-export MAX_PAGE = 10000n
-export MIN_PER_PAGE = 10n
-export MAX_PER_PAGE = 100n
+export DEFAULT_PAGE = 1
+export DEFAULT_PER_PAGE = 20
+export MIN_PAGE = 1
+export MAX_PAGE = 10000
+export MIN_PER_PAGE = 10
+export MAX_PER_PAGE = 100
 
 ALLOWED_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE']
 
@@ -85,33 +85,34 @@ export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
 
   pageInfo =
     if totalCount
+      total = toInteger(totalCount)
       contentRange = response.headers.get('Content-Range')
-      result = contentRange.match(/^items\s+(\d+)-(\d+)\/(\d+)$/)
-      if result[3] != totalCount
-        console.warn "do not match Total-Count(#{totalCount}) and size of Content-Range(#{result[2]})"
+      match = contentRange.match(/^items\s+(?<start>\d+)-(?<end>\d+)\/(?<total>\d+)$/)
+      if total != toInteger(match.groups.total)
+        console.warn "Do not match Total-Count(#{totalCount}) and size of Content-Range(#{contentRange})"
       {
-        page: (data.page ? DEFAULT_PAGE)
-        per_page: (data.per_page ? DEFAULT_PER_PAGE)
-        total: BigInt(totalCount)
-        start: BigInt(result[1])
-        end: BigInt(result[2])
+        page: toInteger(data.page ? DEFAULT_PAGE)
+        per_page: toInteger(data.per_page ? DEFAULT_PER_PAGE)
+        total
+        start: toInteger(match.groups.start)
+        end: toInteger(match.groups.end)
       }
     else
       {}
 
   linkHeader = response.headers.get('Link')
-  link =
-    if linkHeader
-      {link: HttpLinkHeader.parse(linkHeader)}
+  links = 
+    if linkHeader?
+      {links: HttpLinkHeader.parse(linkHeader)}
     else
       {}
 
   {
     ok: response.ok
-    code: parseInt(response.status, 10)
+    code: toInteger(response.status)
     responseData...
     pageInfo...
-    link...
+    links...
   }
 
 export fetchJsonGet = (params) ->

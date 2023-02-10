@@ -67,6 +67,21 @@ export objToJson = (obj) ->
     else
       obj
 
+TYPES = [
+  'array'
+  'decimal'
+  'array'
+  'decimal'
+  'bool'
+  'date'
+  'date_time'
+  'float'
+  'hash'
+  'int'
+  'str'
+  'time'
+]
+
 # convert to the specified type
 export convertToType = (val, type = 'string') ->
   return val unless val?
@@ -87,7 +102,7 @@ export convertToType = (val, type = 'string') ->
       else
         Boolean(val)
     when 'integer'
-      BigInt(val)
+      Math.floor(Number(val))
     when 'float'
       Number(val)
     when 'datetime'
@@ -122,6 +137,11 @@ export convertToType = (val, type = 'string') ->
     else
       console.warn "cannot convert to the unknown type: #{type}"
       undefined
+
+export toInteger = (val) ->
+  # not use bigint
+  val ? Math.floor(Number(val))
+
 
 
 # TODO

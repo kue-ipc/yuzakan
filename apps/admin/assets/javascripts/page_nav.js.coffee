@@ -7,8 +7,8 @@ import {compact} from '/assets/utils.js'
 export default pageNav = ({page, per_page, total, onpage}) ->
   return html.div {} unless total
 
-  total_page = (total - 1n) / per_page + 1n
-  start = per_page * (page - 1n) + 1n
+  total_page = (total - 1) / per_page + 1
+  start = per_page * (page - 1) + 1
   end = per_page * page
   end = total if total < end
 
@@ -21,18 +21,18 @@ export default pageNav = ({page, per_page, total, onpage}) ->
 
 pageList = ({page, total_page, onpage}) ->
   compact([
-    pageItem {content: 'first', page: 1n, disabled: page == 1n, onpage}
-    pageItem {content: 'prev', page: page - 1n, disabled: page == 1n, onpage}
-    pageEllipsis {start: 1n, end: page - 3n, onpage}
-    (pageNumList {start: page - 2n, end: page + 2n, page, total_page, onpage})...
-    pageEllipsis {start: page + 3n, end: total_page, onpage}
-    pageItem {content: 'next', page: page + 1n, disabled: page == total_page, onpage}
+    pageItem {content: 'first', page: 1, disabled: page == 1, onpage}
+    pageItem {content: 'prev', page: page - 1, disabled: page == 1, onpage}
+    pageEllipsis {start: 1, end: page - 3, onpage}
+    (pageNumList {start: page - 2, end: page + 2, page, total_page, onpage})...
+    pageEllipsis {start: page + 3, end: total_page, onpage}
+    pageItem {content: 'next', page: page + 1, disabled: page == total_page, onpage}
     pageItem {content: 'last', page: total_page, disabled: page == total_page, onpage}
   ])
 
 pageNumList = ({start, end, page, total_page, onpage}) ->
   for num in [start..end]
-    if num > 0n && num <= total_page
+    if num > 0 && num <= total_page
       pageItem {content: num, page: num, active: page == num, onpage}
     else
       null

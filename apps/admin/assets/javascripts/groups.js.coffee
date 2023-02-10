@@ -142,12 +142,12 @@ Search = (state, query) ->
   return state if state.query == query
 
   # ページを初期化
-  [ReloadIndexGroups, {page: 1n, query}]
+  [ReloadIndexGroups, {page: 1, query}]
 
 queryParams = Object.fromEntries(new URLSearchParams(location.search))
 
 initState = {
-  groups: [], providers: [], total: 0n
+  groups: [], providers: [], total: 0
   pickType(queryParams, INDEX_GROUPS_ALLOW_KEYS)...
 }
 
@@ -166,7 +166,7 @@ view = ({groups, providers, page, per_page, total, start, end, query, sync, prim
       html.div {class: 'col-md-6'}, uploadCsv()
     ]
     pageNav({page, per_page, total, start, end, onpage: MovePage})
-    if query && total == 0n
+    if query && total == 0
       html.p {}, text 'グループが存在しません。'
     else
       html.table {class: 'table'}, [
