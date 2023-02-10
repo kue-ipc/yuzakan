@@ -12,6 +12,8 @@ distDirs = [
 ]
 targets = [
   {name: 'bootstrap', ext: 'coffee'}
+  {name: 'csv-generate', ext: 'coffee'}
+  {name: 'csv-parse', ext: 'coffee'}
   {name: 'http-link-header', ext: 'coffee'}
   {name: 'hyperapp-dom', ext: 'coffee'}
   {name: 'hyperapp-events', ext: 'coffee'}
@@ -24,8 +26,6 @@ targets = [
   {name: 'ramda', ext: 'coffee'}
   {name: 'xxhashjs', ext: 'coffee'}
   {name: 'zxcvbn', ext: 'coffee'}
-  {name: 'csv-parse', ext: 'coffee'}
-  {name: 'csv-generate', ext: 'coffee'}
 ]
 
 export default targets.map (target) -> {
