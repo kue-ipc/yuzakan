@@ -68,6 +68,7 @@ export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
   init.headers = headers
 
   request = new Request url, init
+  console.debug 'fetch %s %s', request.method, request.url
   response = await fetch request
 
   contentType = response.headers.get('Content-Type')

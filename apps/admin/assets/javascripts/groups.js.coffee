@@ -10,7 +10,7 @@ import {runIndexWithPageGroups, INDEX_GROUPS_ALLOW_KEYS} from '/assets/api/group
 import {runIndexProviders} from '/assets/api/providers.js'
 
 import pageNav from './page_nav.js'
-import search from './search.js'
+import searchForm from './search_form.js'
 
 GROUP_KEYS = [
   'groupname'
@@ -74,18 +74,17 @@ UploadCsv = (state, files) ->
   [state, [runReadCsv, files[0]]]
 
 
-ChangeCondition = (state, event) ->
-  [ReloadIndexGroups, {[event.target.name]: event.target.checked}]
+indexGroupsOption = ({onchange: action, props...}) ->
+  onchange = (state, event) -> [action, {[event.target.name]: event.target.checked}]
 
-condition = (props) ->
   html.div {class: 'row mb-2'},
     for key, val of {
       sync: 'プロバイダーと同期'
       primary_only: 'プライマリーのみ'
       show_deleted: '削除済みも表示'
     }
-      id = "condition-#{key}"
-      html.div {key: "condition[#{key}]", class: 'col-md-3'},
+      id = "option-#{key}"
+      html.div {key: "option[#{key}]", class: 'col-md-3'},
         html.div {class: 'form-check'}, [
           html.input {
             id
@@ -93,11 +92,10 @@ condition = (props) ->
             name: key
             type: 'checkbox'
             checked: props[key]
-            onchange: ChangeCondition
+            onchange: onchange
           }
           html.label {class: 'form-check-label', for: id}, text val
         ]
-
 
 providerTh = ({provider}) ->
   html.th {key: "provider[#{provider.name}]"}, text provider.label
@@ -119,36 +117,53 @@ groupTr = ({group, providers}) ->
   ]
 
 ReloadIndexGroups = (state, data) ->
-  data = pickType(data, INDEX_GROUPS_ALLOW_KEYS)
+  console.debug 'reload index groups'
   newState = {state..., data...}
+  params = {
+    newState.page_info...
+    newState.search...
+    newState.option...
+    order: newState.order
+  }
   [
     newState,
-    [runGroupHistory, newState]
-    [runIndexWithPageGroups, newState]
+    [runGroupHistory, params]
+    [runIndexWithPageGroups, params]
   ]
 
-runGroupHistory = (dispatch, data) ->
-  data = pick(data, Object.keys(INDEX_GROUPS_ALLOW_KEYS))
-  query = "?#{objToUrlencoded(data)}"
+runGroupHistory = (dispatch, params) ->
+  params = pick(params, Object.keys(INDEX_GROUPS_ALLOW_KEYS))
+  query = "?#{objToUrlencoded(params)}"
   if (query != location.search)
-    history.pushState(data, '', "/admin/groups?#{objToUrlencoded(data)}")
+    history.pushState(params, '', "/admin/groups?#{query}")
 
 MovePage = (state, page) ->
   return state if state.page == page
 
-  [ReloadIndexGroups, {page}]
+  [ReloadIndexGroups, {page_info: {state.page_info... , page}}]
 
 Search = (state, query) ->
   return state if state.query == query
 
-  # ページを初期化
-  [ReloadIndexGroups, {page: 1, query}]
+  # ページ情報を初期化
+  [ReloadIndexGroups, {page_info: {}, search: {query}}]
 
-queryParams = Object.fromEntries(new URLSearchParams(location.search))
+ChangeOption = (state, option) ->
+  [ReloadIndexGroups, {option: {state.option..., option...}}]
+
+SortOrder = (state, order) ->
+  [ReloadIndexGroups, {order}]
+
+queryParams = pickType(Object.fromEntries(new URLSearchParams(location.search)))
 
 initState = {
-  groups: [], providers: [], total: 0
-  pickType(queryParams, INDEX_GROUPS_ALLOW_KEYS)...
+  groups: []
+  providers: []
+  total: 0
+  page_info: pick(queryParams, ['page', 'per_page'])
+  search: pick(queryParams, ['query'])
+  option: pick(queryParams, ['sync', 'primary_only', 'show_deleted'])
+  order: queryParams['order']
 }
 
 init = [
@@ -157,16 +172,16 @@ init = [
   [runIndexWithPageGroups, pick(initState, Object.keys(INDEX_GROUPS_ALLOW_KEYS))]
 ]
 
-view = ({groups, providers, page, per_page, total, start, end, query, sync, primary_only, show_deleted}) ->
+view = ({groups, providers, page_info, search, option, order}) ->
   html.div {}, [
-    search({query, onsearch: Search})
-    condition({sync, primary_only, show_deleted})
+    searchForm({search..., onsearch: Search})
+    indexGroupsOption({option..., onchange: ChangeOption})
     html.div {class: 'row mb-2'}, [
       html.div {class: 'col-md-3'}, downloadCsv({groups})
       html.div {class: 'col-md-6'}, uploadCsv()
     ]
-    pageNav({page, per_page, total, start, end, onpage: MovePage})
-    if query && total == 0
+    pageNav({page_info..., onpage: MovePage})
+    if groups.length == 0
       html.p {}, text 'グループが存在しません。'
     else
       html.table {class: 'table'}, [

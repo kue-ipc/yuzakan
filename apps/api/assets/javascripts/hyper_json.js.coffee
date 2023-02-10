@@ -2,9 +2,7 @@
 
 import {pick, pickType} from '/assets/utils.js'
 
-import {fetchJson, MIN_PAGE, MAX_PAGE, MIN_PER_PAGE, MAX_PER_PAGE} from './fetch_json.js'
-
-
+import {fetchJson} from './fetch_json.js'
 
 # create Actions
 
@@ -32,8 +30,12 @@ export createResponseActionWithPage = (params) ->
   runResponseAction = (dispatch, props) -> dispatch(responseAction, props)
   (state, response) ->
     if response.ok
+      page_info = {
+        pick(response, ['page', 'per_page', 'total', 'start', 'end'])...
+        total_page: Math.ceil(response.total / response.per_page)
+      }
       [
-        {state..., pick(response, ['page', 'per_page', 'total', 'start', 'end'])...}
+        {state..., page_info}
         [runResponseAction, response]
       ]
     else

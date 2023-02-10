@@ -4,13 +4,13 @@ import * as html from '/assets/vendor/hyperapp-html.js'
 import {compact} from '/assets/utils.js'
 
 # page navigatino view
-export default pageNav = ({page, per_page, total, onpage}) ->
+export default pageNav = ({page, per_page, total_page, total, start, end, onpage}) ->
   return html.div {} unless total
 
-  total_page = (total - 1) / per_page + 1
-  start = per_page * (page - 1) + 1
-  end = per_page * page
-  end = total if total < end
+  # total_page = (total - 1) / per_page + 1
+  # start = per_page * (page - 1) + 1
+  # end = per_page * page
+  # end = total if total < end
 
   html.nav {class: 'd-flex', 'aria-label': 'ページナビゲーション'}, [
     html.ul {class: 'pagination'},

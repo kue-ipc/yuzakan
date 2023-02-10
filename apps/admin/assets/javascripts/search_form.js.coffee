@@ -3,7 +3,7 @@ import * as html from '/assets/vendor/hyperapp-html.js'
 
 import BsIcon from '/assets/bs_icon.js'
 
-export default search = ({query, onsearch}) ->
+export default searchForm = ({query, onsearch}) ->
   searchInput = html.input {
     class: 'form-control'
     type: 'search'
