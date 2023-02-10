@@ -82,9 +82,8 @@ export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
       throw new Error("Unknown or unsupported content type: #{contentType}")
 
   totalCount = response.headers.get('Total-Count')
-
   pageInfo =
-    if totalCount
+    if totalCount?
       total = toInteger(totalCount)
       contentRange = response.headers.get('Content-Range')
       match = contentRange.match(/^items\s+(?<start>\d+)-(?<end>\d+)\/(?<total>\d+)$/)
@@ -101,7 +100,7 @@ export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
       {}
 
   linkHeader = response.headers.get('Link')
-  links = 
+  linkInfo =
     if linkHeader?
       {links: HttpLinkHeader.parse(linkHeader)}
     else
@@ -112,7 +111,7 @@ export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
     code: toInteger(response.status)
     responseData...
     pageInfo...
-    links...
+    linkInfo...
   }
 
 export fetchJsonGet = (params) ->
