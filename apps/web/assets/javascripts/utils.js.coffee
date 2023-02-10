@@ -56,93 +56,113 @@ FALSE_STRINGS = [
 
 export objToJson = (obj) ->
   JSON.stringify obj, (key, value) ->
-    # TODO
-    return String(value) if typeof value == 'bigint'
-    return value if typeof value != 'object'
-
-    if value instanceof Map
-      Object.fromEntries([value...])
-    else if value instanceof Set
-      [value...]
-    else
-      obj
-
-TYPES = [
-  'array'
-  'decimal'
-  'array'
-  'decimal'
-  'bool'
-  'date'
-  'date_time'
-  'float'
-  'hash'
-  'int'
-  'str'
-  'time'
-]
+    switch typeof value
+      when 'bigint'
+        # 精度落ち
+        Number(value)
+      when 'object'
+        if value instanceof Map
+          Object.fromEntries([value...])
+        else if value instanceof Set
+          [value...]
+        else
+          value
+      else
+        value
 
 # convert to the specified type
 export convertToType = (val, type = 'string') ->
   return val unless val?
 
+  # オブジェクトの場合は入れ子で処理
+  if typeof type == 'object'
+    return pickType(val, type)
+
   switch type
     when 'string', 'text'
-      String(val)
+      toString(val)
     when 'boolean'
-      if typeof val == 'string'
-        lowerStr = val.toLowerCase()
-        if TRUE_STRINGS.includes(lowerStr)
-          true
-        else if FALSE_STRINGS.includes(lowerStr)
-          false
-        else
-          console.warn "no boolean string: #{val}"
-          Boolean(val)
-      else
-        Boolean(val)
+      toBoolean(val)
     when 'integer'
-      Math.floor(Number(val))
+      toInteger(val)
     when 'float'
-      Number(val)
+      toFloat(val)
     when 'datetime'
-      switch typeof val
-        when 'number'
-          DateTime.fromSeconds(val)
-        when 'bigint'
-          DateTime.fromSeconds(Number(val))
-        when 'string'
-          DateTime.fromISO(val)
-        when 'object'
-          if val instanceof Date
-            DateTime.fromJSDate(val)
-          else if val instanceof DateTime
-            val
-          else
-            console.warn "no datetime object: #{val}"
-            DateTime.fromJSDate(Date(val))
-        else
-          console.warn "no datetime object: #{val}"
-          DateTime.fromJSDate(Date(val))
+      toDateTime(val)
     when 'date'
-      convertToType(val, 'datetime').toISODate()
+      toDate(val)
     when 'time'
-      convertToType(val, 'datetime').toISOTime(includeOffset: false)
+      toTime(val)
     when 'list'
-      value
+      toList(val)
     when 'map'
-      value
+      toMap(val)
     when 'set'
-      vaule
+      toSet(val)
     else
       console.warn "cannot convert to the unknown type: #{type}"
       undefined
 
-export toInteger = (val) ->
-  # not use bigint
-  val ? Math.floor(Number(val))
+export toString = (val) -> String(val)
 
+export toBoolean = (val) ->
+  if typeof val == 'string'
+    lowerStr = val.toLowerCase()
+    if TRUE_STRINGS.includes(lowerStr)
+      true
+    else if FALSE_STRINGS.includes(lowerStr)
+      false
+    else
+      console.warn "no boolean string: #{val}"
+      Boolean(val)
+  else
+    Boolean(val)
 
+export toInteger = (val) -> Math.floor(Number(val))
+
+export toFloat = (val) -> Number(val)
+
+export toDateTime = (val) ->
+  dateTime = switch typeof val
+    when 'number'
+      DateTime.fromSeconds(val)
+    when 'bigint'
+      DateTime.fromSeconds(Number(val))
+    when 'string'
+      DateTime.fromISO(val)
+    when 'object'
+      if val instanceof Date
+        DateTime.fromJSDate(val)
+      else if val instanceof DateTime
+        val
+      else
+        console.warn "no datetime object: #{val}"
+        DateTime.fromJSDate(Date(val))
+    else
+      console.warn "no datetime object: #{val}"
+      DateTime.fromJSDate(Date(val))
+  dateTime.toLocal()
+
+export toDate = (val) -> toDateTime(val).toISODate()
+
+export toTime = (val) -> toDateTime(val).toISOTime(includeOffset: false)
+
+export toList = (val) ->
+  val = JSON.parse(val) if typeof val == 'string'
+
+  return val if val instanceof Array
+
+  [val...]
+
+export toMap = (val) ->
+  return val if val instanceof Map
+
+  new Map(toList(val).map(toList))
+
+export toSet = (val) ->
+  return val if val instanceof Set
+
+  new Set(toList(val))
 
 # TODO
 # export deepFreeze = (obj)

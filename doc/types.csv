@@ -1,0 +1,14 @@
+name,Ruby,ES
+array,Array,Array
+bool,"True,False",boolean
+date,Date,'yyyy-mm-dd'
+hash,Hash,Object
+decimal,BigDecimal,float
+date_time,DateTime,DateTime
+float,Float,number
+int,Integer,number
+str,String,string
+time,Time,'HH:MM:SS'
+text,String,string
+password,String,string
+file,File,Blob
