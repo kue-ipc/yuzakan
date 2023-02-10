@@ -9,7 +9,7 @@ import valueDisplay from '/assets/value_display.js'
 import {runIndexWithPageGroups, INDEX_GROUPS_ALLOW_KEYS} from '/assets/api/groups.js'
 import {runIndexProviders} from '/assets/api/providers.js'
 
-import pagination from './pagination.js'
+import pageNav from './page_nav.js'
 import search from './search.js'
 
 GROUP_KEYS = [
@@ -165,7 +165,7 @@ view = ({groups, providers, page, per_page, total, start, end, query, sync, prim
       html.div {class: 'col-md-3'}, downloadCsv({groups})
       html.div {class: 'col-md-6'}, uploadCsv()
     ]
-    pagination({page, per_page, total, start, end, onpage: MovePage})
+    pageNav({page, per_page, total, start, end, onpage: MovePage})
     if query && total == 0n
       html.p {}, text 'グループが存在しません。'
     else

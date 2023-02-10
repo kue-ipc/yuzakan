@@ -1,51 +1,66 @@
 import {text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
+import {compact} from '/assets/utils.js'
+
+# page navigatino view
+export default pageNav = ({page, per_page, total, onpage}) ->
+  return html.div {} unless total
+
+  total_page = (total - 1n) / per_page + 1n
+  start = per_page * (page - 1n) + 1n
+  end = per_page * page
+  end = total if total < end
+
+  html.nav {class: 'd-flex', 'aria-label': 'ページナビゲーション'}, [
+    html.ul {class: 'pagination'},
+      pageList {page, total_page, onpage}
+    html.p {class: 'ms-2 mt-2'},
+      text "#{start} - #{end} / #{total} (#{page} / #{total_page} ページ)"
+  ]
+
+pageList = ({page, total_page, onpage}) ->
+  compact([
+    pageItem {content: 'first', page: 1n, disabled: page == 1n, onpage}
+    pageItem {content: 'prev', page: page - 1n, disabled: page == 1n, onpage}
+    pageEllipsis {start: 1n, end: page - 3n, onpage}
+    (pageNumList {start: page - 2n, end: page + 2n, page, total_page, onpage})...
+    pageEllipsis {start: page + 3n, end: total_page, onpage}
+    pageItem {content: 'next', page: page + 1n, disabled: page == total_page, onpage}
+    pageItem {content: 'last', page: total_page, disabled: page == total_page, onpage}
+  ])
+
+pageNumList = ({start, end, page, total_page, onpage}) ->
+  for num in [start..end]
+    if num > 0n && num <= total_page
+      pageItem {content: num, page: num, active: page == num, onpage}
+    else
+      null
+
 pageItem = ({content, page, active = false, disabled = false, onpage}) ->
-  liClass = ['page-item']
-  liClass.push 'active' if active
-  liClass.push 'disabled' if disabled
-  html.li {class: liClass},
+  html.li {key: "page[#{content}]", class: {'page-item': true, active, disabled}},
     html.button {
       type: 'button'
       class: 'page-link'
       onclick: (state) -> [onpage, page]
-    }, text content
+    }, text pageText(content)
 
-pageEllipsis = ({content = '...'}) ->
-  liClass = ['page-item', 'disabled']
-  html.li {class: liClass},
-    html.span {class: 'page-link'}, text content
-
-export default pagination = ({page, per_page, total, start, end, onpage}) ->
-  return html.div {} unless total
-
-  first_page = 1n
-  last_page = total / per_page + 1n
-  total_page = last_page - first_page + 1n
-
-  list = []
-  list.push(pageItem {content: '最初', page: first_page, disabled: page == first_page, onpage})
-  list.push(pageItem {content: '前', page: page - 1n, disabled: page == first_page, onpage})
-
-  if last_page <= 5n
-    list.push(pageItem {content: num, page: num, active: page == num, onpage}) for num in [first_page..last_page]
-  else if page <= 3n
-    list.push(pageItem {content: num, page: num, active: page == num, onpage}) for num in [first_page..5n]
-    list.push(pageEllipsis {})
-  else if last_page - page <= 2n
-    list.push(pageEllipsis {})
-    list.push(pageItem {content: num, page: num, active: page == num, onpage}) for num in [(last_page - 4n)..last_page]
+pageText = (content) ->
+  if typeof content == 'string'
+    {
+      first: '最初'
+      last: '最後'
+      prev: '前'
+      next: '次'
+    }[content] || content
   else
-    list.push(pageEllipsis {})
-    list.push(pageItem {content: num, page: num, active: page == num, onpage}) for num in [(page - 2n)..(page + 2n)]
-    list.push(pageEllipsis {})
+    String(content)
 
-  list.push(pageItem {content: '次', page: page + 1n, disabled: page == last_page, onpage})
-  list.push(pageItem {content: '最後', page: last_page, disabled: page == last_page, onpage})
-
-  html.nav {class: 'd-flex', 'aria-label': 'ページナビゲーション'}, [
-    html.ul {class: 'pagination'}, list
-    html.p {class: 'ms-2 mt-2'},
-      text "#{start + 1n} - #{end + 1n} / #{total} (#{page} / #{total_page} ページ)"
-  ]
+pageEllipsis = ({start, end, onpage}) ->
+  if start > end
+    return null
+  else if start == end
+    pageItem(content: start, page: start, onpage)
+  else
+    html.li {key: "page[#{start}..#{end}]", class: ['page-item', 'disabled']},
+      html.span {class: 'page-link'}, text '...'
