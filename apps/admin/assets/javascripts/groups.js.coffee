@@ -12,6 +12,8 @@ import {runIndexProviders} from '/assets/api/providers.js'
 import pageNav from './page_nav.js'
 import searchForm from './search_form.js'
 
+import {downloadButton} from './groups_csv.js'
+
 GROUP_KEYS = [
   'groupname'
   'display_name'
@@ -177,7 +179,7 @@ view = ({groups, providers, page_info, search, option, order}) ->
     searchForm({search..., onsearch: Search})
     indexGroupsOption({option..., onchange: ChangeOption})
     html.div {class: 'row mb-2'}, [
-      html.div {class: 'col-md-3'}, downloadCsv({groups})
+      html.div {class: 'col-md-3'}, downloadButton({groups})
       html.div {class: 'col-md-6'}, uploadCsv()
     ]
     pageNav({page_info..., onpage: MovePage})
