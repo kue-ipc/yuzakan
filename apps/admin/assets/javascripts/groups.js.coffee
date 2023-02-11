@@ -14,48 +14,6 @@ import searchForm from './search_form.js'
 
 import {downloadButton} from './groups_csv.js'
 
-GROUP_KEYS = [
-  'groupname'
-  'display_name'
-  'note'
-  'primary'
-  'obsoleted'
-  'deleted'
-  'deleted_at'
-  'providers'
-]
-
-valueToCsv = (value) ->
-  switch value
-    when null, undefined
-      ''
-    when true
-      '1'
-    when false
-      '0'
-    else
-      '"' + String(value).replace(/"/g, '""') + '"'
-
-createCsv = (groups) ->
-  csv = []
-  csv.push "\ufeffaction," + GROUP_KEYS.join(',') + "\r\n"
-  for group in groups
-    csv.push ',' + (valueToCsv(group[key]) for key in GROUP_KEYS).join(',') + "\r\n"
-  csv
-
-downloadCsv = ({groups})->
-  return html.span {} unless groups?
-
-  csv = createCsv(groups)
-  blob = new Blob csv, {type: 'text/csv'}
-  url = URL.createObjectURL(blob)
-  html.a {
-    class: 'btn btn-primary'
-    href: url
-    type: 'text/csv'
-    download: 'groups.csv'
-  }, text 'ダウンロード'
-
 uploadCsv = () ->
   inputFile = html.input {class: 'form-control', type: 'file', accept: '.csv,text/csv'}
   html.div {class: 'input-group'}, [

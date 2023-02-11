@@ -1,8 +1,8 @@
 import {text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
-
 import {stringify} from '/assets/vendor/csv-stringify.js'
 import {parse} from '/assets/vendor/csv-parse.js'
+import FileSaver from '/assets/vendor/file-saver.js'
 
 GROUP_KEYS = [
   'action'
@@ -27,12 +27,13 @@ createCSV = (groups) ->
       if err?
         reject(err)
       else
+        console.debug 'create CSV'
         resolve(output)
 
 runDownloadCSV = (dispatch, groups) ->
   csv = await createCSV(groups)
-  console.log csv
-  # TODO
+  blob = new Blob [csv], {type: 'text/csv'}
+  FileSaver.saveAs(blob, 'groups.csv')
 
 DownloadCSV = (state, groups) -> [state, [runDownloadCSV, groups]]
 
