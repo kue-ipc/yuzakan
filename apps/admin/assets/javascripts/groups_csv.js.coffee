@@ -42,3 +42,45 @@ export downloadButton = ({groups})->
     class: 'btn btn-primary'
     onclick: -> [DownloadCSV, groups]
   }, text 'ダウンロード'
+
+
+# uploadCsv = () ->
+#   inputFile = html.input {class: 'form-control', type: 'file', accept: '.csv,text/csv'}
+#   html.div {class: 'input-group'}, [
+#     inputFile
+#     html.button {
+#       class: 'btn btn-primary'
+#       onclick: () -> [UploadCsv, inputFile.node.files]
+#     }, text 'アップロード'
+#   ]
+
+runReadCSV = (dispatch, file) ->
+  csv = await file.text()
+  console.log csv
+
+UploadCSV = (state, files) ->
+  return state unless files?.length
+
+  [state, [runReadCSV, files[0]]]
+
+runClickInput = (dispatch, input) ->
+  input.click()
+
+ClickUploadButton = (state, input) ->  [state, [runClickInput, input]]
+
+export uploadButton = () ->
+  inputFile = html.input {
+    class: 'visually-hidden'
+    type: 'file'
+    accept: '.csv,text/csv'
+    onchange: (state, event) -> [UploadCSV, event.target.files]
+  }
+  html.div {}, [
+    inputFile
+    html.button {
+      class: 'btn btn-primary'
+      onclick: () -> [ClickUploadButton, inputFile.node]
+    }, text 'アップロード'
+  ]
+
+

@@ -12,27 +12,7 @@ import {runIndexProviders} from '/assets/api/providers.js'
 import pageNav from './page_nav.js'
 import searchForm from './search_form.js'
 
-import {downloadButton} from './groups_csv.js'
-
-uploadCsv = () ->
-  inputFile = html.input {class: 'form-control', type: 'file', accept: '.csv,text/csv'}
-  html.div {class: 'input-group'}, [
-    inputFile
-    html.button {
-      class: 'btn btn-primary'
-      onclick: () -> [UploadCsv, inputFile.node.files]
-    }, text 'アップロード'
-  ]
-
-runReadCsv = (dispatch, file) ->
-  csv = await file.text()
-  console.log csv
-
-UploadCsv = (state, files) ->
-  return state unless files?.length
-
-  [state, [runReadCsv, files[0]]]
-
+import {downloadButton, uploadButton} from './groups_csv.js'
 
 indexGroupsOption = ({onchange: action, props...}) ->
   onchange = (state, event) -> [action, {[event.target.name]: event.target.checked}]
@@ -138,7 +118,7 @@ view = ({groups, providers, page_info, search, option, order}) ->
     indexGroupsOption({option..., onchange: ChangeOption})
     html.div {class: 'row mb-2'}, [
       html.div {class: 'col-md-3'}, downloadButton({groups})
-      html.div {class: 'col-md-6'}, uploadCsv()
+      html.div {class: 'col-md-6'}, uploadButton()
     ]
     pageNav({page_info..., onpage: MovePage})
     if groups.length == 0
