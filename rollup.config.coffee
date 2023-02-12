@@ -12,8 +12,7 @@ distDirs = [
 ]
 targets = [
   {name: 'bootstrap', ext: 'coffee'}
-  {name: 'csv-parse', ext: 'coffee'}
-  {name: 'csv-stringify', ext: 'coffee'}
+  {name: 'csv', ext: 'coffee'}
   {name: 'file-saver', ext: 'coffee'}
   {name: 'http-link-header', ext: 'coffee'}
   {name: 'hyperapp-dom', ext: 'coffee'}

@@ -1,7 +1,6 @@
 import {text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
-import {stringify} from '/assets/vendor/csv-stringify.js'
-import {parse} from '/assets/vendor/csv-parse.js'
+import {parse, stringify} from '/assets/vendor/csv.js'
 import FileSaver from '/assets/vendor/file-saver.js'
 
 GROUP_KEYS = [
