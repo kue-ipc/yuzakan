@@ -19,6 +19,16 @@ export INDEX_GROUPS_ALLOW_KEYS = {
   show_deleted: 'boolean'
 }
 
+export GROUP_KEYS = {
+  groupname: 'string'
+  display_name: 'string'
+  note: 'string'
+  obsoleted: 'boolean'
+  primary: 'boolean'
+  deleted: 'boolean'
+  deleted_at: 'datetime'
+}
+
 export SHOW_GROUP_ALLOW_KEYS = {
   sync: 'boolean'
 }
