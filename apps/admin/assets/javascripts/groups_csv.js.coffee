@@ -43,20 +43,22 @@ export downloadButton = ({groups})->
     onclick: -> [DownloadCSV, groups]
   }, text 'ダウンロード'
 
-
-# uploadCsv = () ->
-#   inputFile = html.input {class: 'form-control', type: 'file', accept: '.csv,text/csv'}
-#   html.div {class: 'input-group'}, [
-#     inputFile
-#     html.button {
-#       class: 'btn btn-primary'
-#       onclick: () -> [UploadCsv, inputFile.node.files]
-#     }, text 'アップロード'
-#   ]
+parseCSV = (csv) ->
+  new Promise (resolve, reject) ->
+    parse csv, {
+      bom: true
+      columns: true
+    }, (err, records) ->
+      if err?
+        reject(err)
+      else
+        console.debug 'parse CSV'
+        resolve(records)
 
 runReadCSV = (dispatch, file) ->
   csv = await file.text()
-  console.log csv
+  groups = await parseCSV(csv)
+  console.log groups
 
 UploadCSV = (state, files) ->
   return state unless files?.length
