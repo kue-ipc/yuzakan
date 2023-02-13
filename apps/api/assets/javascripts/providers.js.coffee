@@ -58,7 +58,7 @@ export createSetProviders = (action = null) ->
     runAction = (dispatch, providers) -> dispatch(action, providers)
     (state, providers) ->
       [
-        SetProviders(state, groups)...,
+        SetProviders(state, groups),
         [runAction, providers]
       ]
   else
@@ -69,7 +69,7 @@ export createSetProvider = (action = null) ->
     runAction = (dispatch, provider) -> dispatch(action, provider)
     (state, provider) ->
       [
-        SetProvider(state, provider)...,
+        SetProvider(state, provider),
         [runAction, provider]
       ]
   else

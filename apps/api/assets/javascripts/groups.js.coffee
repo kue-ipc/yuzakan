@@ -58,7 +58,7 @@ export createSetGroups = (action = null) ->
     runAction = (dispatch, groups) -> dispatch(action, groups)
     (state, groups) ->
       [
-        SetGroups(state, groups)...,
+        SetGroups(state, groups),
         [runAction, groups]
       ]
   else
@@ -69,7 +69,7 @@ export createSetGroup = (action = null) ->
     runAction = (dispatch, group) -> dispatch(action, group)
     (state, group) ->
       [
-        SetGroup(state, group)...,
+        SetGroup(state, group),
         [runAction, group]
       ]
   else

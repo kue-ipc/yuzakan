@@ -6,7 +6,7 @@ import {pick, pickType, toBoolean} from '/assets/utils.js'
 import {objToUrlencoded} from '/assets/form_helper.js'
 import valueDisplay from '/assets/value_display.js'
 
-import {runIndexWithPageGroups, INDEX_GROUPS_PARAM_TYPES, GROUP_PROPERTIES} from '/assets/api/groups.js'
+import {createRunIndexWithPageGroups, INDEX_GROUPS_PARAM_TYPES, GROUP_PROPERTIES} from '/assets/api/groups.js'
 import {runIndexProviders} from '/assets/api/providers.js'
 
 import pageNav from './page_nav.js'
@@ -14,6 +14,8 @@ import searchForm from './search_form.js'
 
 # import {downloadButton, uploadButton} from './groups_csv.js'
 import {downloadButton, uploadButton} from './csv.js'
+
+# views
 
 indexGroupsOption = ({onchange: action, props...}) ->
   onchange = (state, event) -> [action, {[event.target.name]: event.target.checked}]
@@ -57,6 +59,13 @@ groupTr = ({group, providers}) ->
     (groupProviderTd({group, provider}) for provider in providers)...
   ]
 
+doAllActionButton = () ->
+  html.button {
+    class: 'btn btn-danger'
+  }, text 'すべて実行'
+
+# actions
+
 ReloadIndexGroups = (state, data) ->
   console.debug 'reload index groups'
   newState = {state..., data...}
@@ -69,8 +78,20 @@ ReloadIndexGroups = (state, data) ->
   [
     newState,
     [runGroupHistory, params]
-    [runIndexWithPageGroups, params]
+    [runLoadIndexGroups, params]
   ]
+
+FinishIndexGroups = (state, groups) ->
+  console.debug 'finish load groups'
+  {
+    state...
+    mode: 'loaded'
+    groups: ({action: '', group...} for group in groups)
+  }
+
+# effecters
+
+runLoadIndexGroups = createRunIndexWithPageGroups({action: FinishIndexGroups})
 
 runGroupHistory = (dispatch, params) ->
   params = pick(params, Object.keys(INDEX_GROUPS_PARAM_TYPES))
@@ -98,19 +119,22 @@ SortOrder = (state, order) ->
 UploadGroups = (state, {list, filename}) ->
   groups = for data in list
     {
-      action: data.action?.toLowerCase()
+      action: data.action?.toUpperCase()
       pickType(data, GROUP_PROPERTIES)...
       providers: (k for k, v of data.providers when toBoolean(v))
+      label: data.display_name || data.groupname
     }
 
   {
     state...
+    mode: 'upload'
     groups
   }
 
 queryParams = pickType(Object.fromEntries(new URLSearchParams(location.search)))
 
 initState = {
+  mode: 'loading'
   groups: []
   providers: []
   total: 0
@@ -123,19 +147,32 @@ initState = {
 init = [
   initState
   [runIndexProviders, {has_groups: true}]
-  [runIndexWithPageGroups, pick(initState, Object.keys(INDEX_GROUPS_PARAM_TYPES))]
+  [runLoadIndexGroups, pick(initState, Object.keys(INDEX_GROUPS_PARAM_TYPES))]
 ]
 
-view = ({groups, providers, page_info, search, option, order}) ->
+view = ({mode, groups, providers, page_info, search, option, order}) ->
   html.div {}, [
-    searchForm({search..., onsearch: Search})
-    indexGroupsOption({option..., onchange: ChangeOption})
-    html.div {class: 'row mb-2'}, [
-      html.div {class: 'col-md-3'}, downloadButton({list: groups, filename: 'groups.csv'})
-      html.div {class: 'col-md-6'}, uploadButton({onupload: UploadGroups})
-    ]
-    pageNav({page_info..., onpage: MovePage})
-    if groups.length == 0
+    if mode == 'upload'
+      html.div {}, [
+        html.div {class: 'mb-2'}, text 'アップロードモード'
+        html.div {key: 'buttons', class: 'row mb-2'}, [
+          html.div {class: 'col-md-3'}, doAllActionButton()
+          html.div {class: 'col-md-3'}, downloadButton({list: groups, filename: 'result_groups.csv'})
+        ]
+      ]
+    else
+      html.div {}, [
+        searchForm({search..., onsearch: Search})
+        indexGroupsOption({option..., onchange: ChangeOption})
+        html.div {key: 'buttons', class: 'row mb-2'}, [
+          html.div {class: 'col-md-3'}, uploadButton({onupload: UploadGroups})
+          html.div {class: 'col-md-3'}, downloadButton({list: groups, filename: 'groups.csv'})
+        ]
+        pageNav({page_info..., onpage: MovePage})
+      ]
+    if mode == 'loading'
+      html.p {}, text '読込中...'
+    else if groups.length == 0
       html.p {}, text 'グループが存在しません。'
     else
       html.table {class: 'table'}, [

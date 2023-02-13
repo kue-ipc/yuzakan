@@ -88,7 +88,7 @@ export csvToList = (csv) ->
 # {list: データ, filaname: ファイル名}
 export downloadButton = (props)->
   html.button {
-    class: 'btn btn-primary'
+    class: 'btn btn-secondary'
     onclick: -> [DownloadCsv, props]
   }, text 'ダウンロード'
 
@@ -115,8 +115,9 @@ export uploadButton = ({onupload}) ->
   html.div {}, [
     inputFile
     html.button {
-      class: 'btn btn-primary'
-      onclick: () -> [ClickUploadButton, inputFile.node]
+      class: 'btn btn-warning'
+      # onclick: -> [ClickUploadButton, inputFile.node]
+      onclick: -> [ClickUploadButton, inputFile.node]
     }, text 'アップロード'
   ]
 
