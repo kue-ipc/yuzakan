@@ -11,12 +11,7 @@ module Api
           messages :i18n
 
           params do
-            # optional(:page).filled(:int?, gteq?: 1, lteq?: 10000)
-            # optional(:per_page).filled(:int?, gteq?: 10, lteq?: 100)
-            # optional(:query).maybe(:bool?)
-            optional(:filter).schema do
-              optional(:group).filled(:bool?)
-            end
+            optional(:has_groups).filled(:bool?)
           end
         end
 
@@ -31,7 +26,7 @@ module Api
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
           @providers =
-            if params.dig(:filter, :group)
+            if params[:has_groups]
               @provider_repository.ordered_all_group
             else
               @provider_repository.ordered_all

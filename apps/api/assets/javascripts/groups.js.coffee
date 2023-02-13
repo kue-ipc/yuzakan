@@ -91,7 +91,8 @@ export createRunShowGroup = ({action = null, params...} = {}) ->
     action: createSetGroup(action)
     url: API_GROUPS
     idKey: 'name'
-    dataTypes: SHOW_GROUP_PARAM_TYPES})
+    dataTypes: SHOW_GROUP_PARAM_TYPES
+  })
 
 # Effecters
 
