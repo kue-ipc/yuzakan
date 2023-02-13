@@ -23,7 +23,7 @@ module Api
             optional(:obsoleted).filled(:bool?)
 
             optional(:deleted).filled(:bool?)
-            optional(:deleted_at).maybe(:datetime?)
+            optional(:deleted_at).maybe(:date_time?)
           end
         end
 
