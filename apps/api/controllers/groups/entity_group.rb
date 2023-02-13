@@ -10,7 +10,6 @@ module Api
 
         def initialize(group_repository: GroupRepository.new,
                        **opts)
-
           super
           @group_repository ||= group_repository
         end

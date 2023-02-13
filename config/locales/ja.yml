@@ -67,7 +67,8 @@ ja:
     # messages
     not_found: '%{name}が見つかりません。'
     no_ability: '%{name}は%{action}を実行できません。'
-    already_initialized: 既に初期化済みです。
+    already_initialized: '既に初期化済みです。'
+    unchangeable: '%{name}は変更できません。'
     action:
       fail: '%{action}に失敗しました。'
       error: '%{target}に対して%{action}時にエラーが発生しました。'
