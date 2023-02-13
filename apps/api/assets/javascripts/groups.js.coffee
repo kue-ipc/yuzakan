@@ -9,7 +9,17 @@ import {
 
 export API_GROUPS = '/api/groups'
 
-export INDEX_GROUPS_ALLOW_KEYS = {
+export GROUP_PROPERTIES = {
+  groupname: 'string'
+  display_name: 'string'
+  note: 'string'
+  primary: 'boolean'
+  obsoleted: 'boolean'
+  deleted: 'boolean'
+  deleted_at: 'datetime'
+}
+
+export INDEX_GROUPS_PARAM_TYPES = {
   page: 'integer'
   per_page: 'integer'
   sync: 'boolean'
@@ -19,18 +29,20 @@ export INDEX_GROUPS_ALLOW_KEYS = {
   show_deleted: 'boolean'
 }
 
-export GROUP_KEYS = {
-  groupname: 'string'
-  display_name: 'string'
-  note: 'string'
-  obsoleted: 'boolean'
-  primary: 'boolean'
-  deleted: 'boolean'
-  deleted_at: 'datetime'
+export SHOW_GROUP_PARAM_TYPES = {
+  sync: 'boolean'
 }
 
-export SHOW_GROUP_ALLOW_KEYS = {
-  sync: 'boolean'
+export CREATE_GROUP_PARAM_TYPES = {
+  GROUP_PROPERTIES...
+}
+
+export UPDATE_GROUP_PARAM_TYPES = {
+  GROUP_PROPERTIES...
+}
+
+export DESTROY_GROUP_PARAM_TYPES = {
+  permanent: 'boolean'
 }
 
 # Actions
@@ -70,7 +82,7 @@ export createRunIndexWithPageGroups = ({action = null, params...} = {}) ->
     params...
     action: createSetGroups(action)
     url: API_GROUPS
-    dataKeys: INDEX_GROUPS_ALLOW_KEYS
+    dataTypes: INDEX_GROUPS_PARAM_TYPES
   })
 
 export createRunShowGroup = ({action = null, params...} = {}) ->
@@ -79,7 +91,7 @@ export createRunShowGroup = ({action = null, params...} = {}) ->
     action: createSetGroup(action)
     url: API_GROUPS
     idKey: 'name'
-    dataKeys: SHOW_GROUP_ALLOW_KEYS})
+    dataTypes: SHOW_GROUP_PARAM_TYPES})
 
 # Effecters
 

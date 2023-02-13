@@ -59,14 +59,14 @@ export createResponseActionWithId = ({idKey = 'id', params...}) ->
 
 # レスポンスを直接渡すアクションを作成する。
 # pathKeys内の文字列はそれぞれ部分文字列になっていはいけない。
-export createRunResponse = ({action, url, pathKeys = [], dataKeys = [], params...}) ->
+export createRunResponse = ({action, url, pathKeys = [], dataTypes = [], params...}) ->
   (dispatch, props = {}) ->
     for key in pathKeys
       unless props.hasOwnProperty(key)
         console.error 'given props does not have the property for path: %s', key
         return
       url = url.replace(":#{key}", props[key])
-    data = pickType(props, dataKeys)
+    data = pickType(props, dataTypes)
     response = await fetchJson({params..., url, data})
     dispatch(action, response)
 

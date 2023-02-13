@@ -6,7 +6,7 @@ import {pick, pickType} from '/assets/utils.js'
 import {objToUrlencoded} from '/assets/form_helper.js'
 import valueDisplay from '/assets/value_display.js'
 
-import {runIndexWithPageGroups, INDEX_GROUPS_ALLOW_KEYS} from '/assets/api/groups.js'
+import {runIndexWithPageGroups, INDEX_GROUPS_PARAM_TYPES} from '/assets/api/groups.js'
 import {runIndexProviders} from '/assets/api/providers.js'
 
 import pageNav from './page_nav.js'
@@ -72,7 +72,7 @@ ReloadIndexGroups = (state, data) ->
   ]
 
 runGroupHistory = (dispatch, params) ->
-  params = pick(params, Object.keys(INDEX_GROUPS_ALLOW_KEYS))
+  params = pick(params, Object.keys(INDEX_GROUPS_PARAM_TYPES))
   query = "?#{objToUrlencoded(params)}"
   if (query != location.search)
     history.pushState(params, '', "/admin/groups?#{query}")
@@ -109,7 +109,7 @@ initState = {
 init = [
   initState
   [runIndexProviders, {has_groups: true}]
-  [runIndexWithPageGroups, pick(initState, Object.keys(INDEX_GROUPS_ALLOW_KEYS))]
+  [runIndexWithPageGroups, pick(initState, Object.keys(INDEX_GROUPS_PARAM_TYPES))]
 ]
 
 view = ({groups, providers, page_info, search, option, order}) ->

@@ -35,7 +35,7 @@ export createSetProvider = (action = null) ->
 # create Effecters
 
 export createRunIndexProviders = ({action = null, params...} = {}) ->
-  createRunIndex({params..., action: createSetProviders(action), url: API_PROVIDERS, dataKeys: ['filter']})
+  createRunIndex({params..., action: createSetProviders(action), url: API_PROVIDERS, dataTypes: ['filter']})
 
 export createRunShowProvider = ({action = null, params...} = {}) ->
   createRunShowWithId({params..., action: createSetProvider(action), url: API_PROVIDERS, idKey: 'name'})
