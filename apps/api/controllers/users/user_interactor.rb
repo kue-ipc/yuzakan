@@ -40,8 +40,8 @@ module Api
         end
 
         private def read_user(params)
-          @create_user ||= ReadUser.new(provider_repository: @provider_repository)
-          result = @create_user.call(params)
+          @read_user ||= ReadUser.new(provider_repository: @provider_repository)
+          result = @read_user.call(params)
           halt_json 500, errors: result.errors if result.failure?
 
           result
