@@ -26,7 +26,7 @@ resources :users, only: [:index, :show, :create, :update, :destroy] do
   resource :lock, only: [:create, :destroy]
 end
 
-resources :groups, only: [:index, :show] do
+resources :groups, only: [:index, :show, :update] do
   resources :members, only: [:index, :update, :destroy]
 end
 
