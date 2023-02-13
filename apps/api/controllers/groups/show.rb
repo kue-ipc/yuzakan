@@ -1,48 +1,18 @@
 # frozen_string_literal: true
 
+require_relative './set_group'
+
 module Api
   module Controllers
     module Groups
       class Show
         include Api::Action
+        include SetGroup
 
         security_level 2
 
-        class Params < Hanami::Action::Params
-          predicates NamePredicates
-          messages :i18n
-
-          params do
-            required(:id).filled(:str?, :name?, max_size?: 255)
-          end
-        end
-
-        params Params
-
-        def initialize(provider_repository: ProviderRepository.new,
-                       group_repository: GroupRepository.new,
-                       **opts)
-          super
-          @provider_repository ||= provider_repository
-          @group_repository ||= group_repository
-        end
-
-        def call(params)
-          halt_json 400, errors: [params.errors] unless params.valid?
-
-          groupname = params[:id]
-
-          sync_group = SyncGroup.new(provider_repository: @provider_repository, group_repository: @group_repository)
-          result = sync_group.call({groupname: groupname})
-          halt_json 500, errors: result.errors if result.failure?
-
-          halt_json 404 unless result.group
-
-          self.body = generate_json({
-            **convert_for_json(result.group),
-            groupdata: result.groupdata,
-            providers: result.providers.map { |key, value| [key, value] },
-          })
+        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+          self.body = group_json
         end
       end
     end
