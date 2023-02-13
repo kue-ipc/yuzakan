@@ -36,23 +36,23 @@ export pick = R.flip(R.pick)
 export pickType = (obj, keys) ->
   Object.fromEntries([key, convertToType(obj[key], type)] for own key, type of keys when obj.hasOwnProperty(key))
 
-TRUE_STRINGS = [
+TRUE_STRINGS = new Set([
   '1'
   't'
   'true'
   'y'
   'yes'
   'on'
-]
+])
 
-FALSE_STRINGS = [
+FALSE_STRINGS = new Set([
   '0'
   'f'
   'false'
   'n'
   'no'
   'off'
-]
+])
 
 export objToJson = (obj) ->
   JSON.stringify obj, (key, value) ->
@@ -108,15 +108,12 @@ export toString = (val) -> String(val)
 export toBoolean = (val) ->
   if typeof val == 'string'
     lowerStr = val.toLowerCase()
-    if TRUE_STRINGS.includes(lowerStr)
-      true
-    else if FALSE_STRINGS.includes(lowerStr)
-      false
-    else
-      console.warn "no boolean string: #{val}"
-      Boolean(val)
-  else
-    Boolean(val)
+    if TRUE_STRINGS.has(lowerStr)
+      return true
+    else if FALSE_STRINGS.has(lowerStr)
+      return false
+
+  Boolean(val)
 
 export toInteger = (val) -> Math.floor(Number(val))
 

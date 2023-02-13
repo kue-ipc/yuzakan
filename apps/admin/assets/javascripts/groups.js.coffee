@@ -2,17 +2,18 @@ import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
 import BsIcon from '/assets/bs_icon.js'
-import {pick, pickType} from '/assets/utils.js'
+import {pick, pickType, toBoolean} from '/assets/utils.js'
 import {objToUrlencoded} from '/assets/form_helper.js'
 import valueDisplay from '/assets/value_display.js'
 
-import {runIndexWithPageGroups, INDEX_GROUPS_PARAM_TYPES} from '/assets/api/groups.js'
+import {runIndexWithPageGroups, INDEX_GROUPS_PARAM_TYPES, GROUP_PROPERTIES} from '/assets/api/groups.js'
 import {runIndexProviders} from '/assets/api/providers.js'
 
 import pageNav from './page_nav.js'
 import searchForm from './search_form.js'
 
-import {downloadButton, uploadButton} from './groups_csv.js'
+# import {downloadButton, uploadButton} from './groups_csv.js'
+import {downloadButton, uploadButton} from './csv.js'
 
 indexGroupsOption = ({onchange: action, props...}) ->
   onchange = (state, event) -> [action, {[event.target.name]: event.target.checked}]
@@ -94,6 +95,19 @@ ChangeOption = (state, option) ->
 SortOrder = (state, order) ->
   [ReloadIndexGroups, {order}]
 
+UploadGroups = (state, {list, filename}) ->
+  groups = for data in list
+    {
+      action: data.action?.toLowerCase()
+      pickType(data, GROUP_PROPERTIES)...
+      providers: (k for k, v of data.providers when toBoolean(v))
+    }
+
+  {
+    state...
+    groups
+  }
+
 queryParams = pickType(Object.fromEntries(new URLSearchParams(location.search)))
 
 initState = {
@@ -117,8 +131,8 @@ view = ({groups, providers, page_info, search, option, order}) ->
     searchForm({search..., onsearch: Search})
     indexGroupsOption({option..., onchange: ChangeOption})
     html.div {class: 'row mb-2'}, [
-      html.div {class: 'col-md-3'}, downloadButton({groups})
-      html.div {class: 'col-md-6'}, uploadButton()
+      html.div {class: 'col-md-3'}, downloadButton({list: groups, filename: 'groups.csv'})
+      html.div {class: 'col-md-6'}, uploadButton({onupload: UploadGroups})
     ]
     pageNav({page_info..., onpage: MovePage})
     if groups.length == 0
