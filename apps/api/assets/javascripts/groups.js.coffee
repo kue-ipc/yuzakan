@@ -69,6 +69,15 @@ export createRunShowGroup = ({action = SetGroup, params...} = {}) ->
     params...
   })
 
+export createRunUpdateGroup = ({action = SetGroup, params...} = {}) ->
+  createRunUpdateWithId({
+    action
+    url: API_GROUPS
+    dataTypes: UPDATE_GROUP_PARAM_TYPES
+    params...
+  })
+
+
 # Effecters
 
 export runIndexWithPageGroups = createRunIndexWithPageGroups()

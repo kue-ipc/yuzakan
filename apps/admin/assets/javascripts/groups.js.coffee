@@ -1,12 +1,16 @@
 import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
+import {Collapse} from '/assets/vendor/bootstrap.js'
 
 import BsIcon from '/assets/bs_icon.js'
-import {pick, pickType, toBoolean} from '/assets/utils.js'
+import {pick, pickType, toBoolean, updateList} from '/assets/utils.js'
 import {objToUrlencoded} from '/assets/form_helper.js'
 import valueDisplay from '/assets/value_display.js'
 
-import {createRunIndexWithPageGroups, INDEX_GROUPS_PARAM_TYPES, GROUP_PROPERTIES} from '/assets/api/groups.js'
+import {
+  createRunIndexWithPageGroups, createRunUpdateGroup
+  INDEX_GROUPS_PARAM_TYPES, GROUP_PROPERTIES
+} from '/assets/api/groups.js'
 import {runIndexProviders} from '/assets/api/providers.js'
 
 import pageNav from './page_nav.js'
@@ -44,19 +48,83 @@ providerTh = ({provider}) ->
   html.th {key: "provider[#{provider.name}]"}, text provider.label
 
 groupProviderTd = ({group, provider}) ->
-  html.td {key: "group[#{group.gropname}]"},
+  html.td {key: "group[#{group.groupname}]"},
     valueDisplay {
       value: group.providers?.includes(provider.name)
       type: 'boolean'
     }
 
+SetGroupInList = (state, group) ->
+  {
+    state...
+    groups: updateGroupList(group, state.groups)
+  }
+
+updateGroupList = (group, groups) -> updateList(group, groups, 'groupname')
+
+SetGroupInListOk = (state, group) ->
+  [SetGroupInList, {group..., action: 'SUC'}]
+
+ModGroup = (state, group) ->
+  fallback = (state, error) ->
+    [SetGroupInList, {group..., action: 'ERR', error}]
+  run = createRunUpdateGroup({action: SetGroupInListOk, fallback})
+  [
+    {state..., groups: updateGroupList({group..., action: 'ACT'}, state.groups)}
+    [run, {group..., id: group.groupname}]
+  ]
+
 groupTr = ({group, providers}) ->
-  html.tr {key: "group[#{group.gropname}]"}, [
+  color = switch group.action
+    when 'ADD'
+      'primary'
+    when 'MOD'
+      'info'
+    when 'DEL'
+      'waring'
+    when 'ERR'
+      'danger'
+    when 'SUC'
+      'success'
+    when 'ACT'
+      'secondary'
+    else
+      'light'
+  html.tr {
+    key: "group[#{group.groupname}]"
+    class: ["table-#{color}"]
+    onclick: -> [SetGroupInList, {group..., show_detail: !group.show_detail}]
+  }, [
+    html.td {key: 'show'},
+      if group.show_detail
+        BsIcon {name: 'chevron-down'}
+      else
+        BsIcon {name: 'chevron-right'}
     html.td {key: 'action'},
-      html.a {class: 'btn btn-sm btn-primary', href: "/admin/groups/#{group.groupname}"}, text '閲覧'
+      switch group.action
+        when 'ACT'
+          html.div {class: 'spinner-border', role: 'status'},
+            html.span {class: 'visually-hidden'}, text: '実行中'
+        when 'MOD'
+          html.button {
+            class: 'btn btn-sm btn-info'
+            onclick: -> [ModGroup, group]
+          }, text '変更'
+        when 'ERR'
+          html.div {}, text 'エラー'
+        else
+          html.a {href: "/admin/groups/#{group.groupname}"}, text '閲覧'
     html.td {key: 'groupname'}, text group.groupname
     html.td {key: 'label'}, text group.label
     (groupProviderTd({group, provider}) for provider in providers)...
+  ]
+
+groupDetailTr = ({group, colspan}) ->
+  html.tr {
+    key: "group-detail[#{group.groupname}]"
+    class: {collapse: true, show: group.show_detail}
+  }, [
+    html.td {colspan}, text JSON.stringify(group)
   ]
 
 doAllActionButton = () ->
@@ -156,8 +224,12 @@ view = ({mode, groups, providers, page_info, search, option, order}) ->
       html.div {}, [
         html.div {class: 'mb-2'}, text 'アップロードモード'
         html.div {key: 'buttons', class: 'row mb-2'}, [
-          html.div {class: 'col-md-3'}, doAllActionButton()
-          html.div {class: 'col-md-3'}, downloadButton({list: groups, filename: 'result_groups.csv'})
+          html.div {key: 'upload', class: 'col-md-3'},
+            uploadButton {onupload: UploadGroups, disabled: true}
+          html.div {key: 'download', class: 'col-md-3'},
+            downloadButton {list: groups, filename: 'result_groups.csv'}
+          html.div {key: 'do_all_action', class: 'col-md-3'},
+            doAllActionButton {}
         ]
       ]
     else
@@ -167,28 +239,37 @@ view = ({mode, groups, providers, page_info, search, option, order}) ->
         ("provider[#{provider.name}]" for provider in providers)...
       ]
       html.div {}, [
-        searchForm({search..., onsearch: Search})
-        indexGroupsOption({option..., onchange: ChangeOption})
+        searchForm {search..., onsearch: Search}
+        indexGroupsOption {option..., onchange: ChangeOption}
         html.div {key: 'buttons', class: 'row mb-2'}, [
-          html.div {class: 'col-md-3'}, uploadButton({onupload: UploadGroups})
-          html.div {class: 'col-md-3'}, downloadButton({list: groups, filename: 'groups.csv', headers})
+          html.div {key: 'upload', class: 'col-md-3'},
+            uploadButton {onupload: UploadGroups}
+          html.div {key: 'downolad', class: 'col-md-3'},
+            downloadButton {list: groups, filename: 'groups.csv', headers, disabled: mode == 'loading'}
         ]
-        pageNav({page_info..., onpage: MovePage})
+        pageNav {page_info..., onpage: MovePage}
       ]
     if mode == 'loading'
       html.p {}, text '読込中...'
     else if groups.length == 0
       html.p {}, text 'グループが存在しません。'
     else
-      html.table {class: 'table'}, [
+      html.table {id: 'group-table', class: 'table'}, [
         html.thead {},
           html.tr {}, [
+            html.th {key: 'show'}, text ''
             html.th {key: 'action'}, text 'アクション'
             html.th {key: 'groupname'}, text 'グループ名'
             html.th {key: 'label'}, text 'ラベル'
             (providerTh({provider}) for provider in providers)...
           ]
-        html.tbody {}, (groupTr({group, providers}) for group in groups)
+        html.tbody {},
+          (for group in groups
+            [
+              groupTr({group, providers})
+              groupDetailTr({group, colspan: 4 + providers.length})
+            ]
+          ).flat()
       ]
   ]
 

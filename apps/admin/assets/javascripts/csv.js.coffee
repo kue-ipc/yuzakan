@@ -86,9 +86,10 @@ export csvToList = (csv) ->
 
 # Downolad button view
 # {list: データ, filaname: ファイル名}
-export downloadButton = (props)->
+export downloadButton = ({disabled = false, props...})->
   html.button {
     class: 'btn btn-secondary'
+    disabled
     onclick: -> [DownloadCsv, props]
   }, text 'ダウンロード'
 
@@ -105,7 +106,7 @@ runDownloadCsv = (dispatch, {list, filename, headers}) ->
 # アクションのprops
 #   list: データ(配列)
 #   filename: ファイル名
-export uploadButton = ({onupload}) ->
+export uploadButton = ({disabled = false, onupload}) ->
   inputFile = html.input {
     class: 'visually-hidden'
     type: 'file'
@@ -116,7 +117,7 @@ export uploadButton = ({onupload}) ->
     inputFile
     html.button {
       class: 'btn btn-warning'
-      # onclick: -> [ClickUploadButton, inputFile.node]
+      disabled
       onclick: -> [ClickUploadButton, inputFile.node]
     }, text 'アップロード'
   ]

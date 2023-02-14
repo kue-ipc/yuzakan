@@ -146,7 +146,6 @@ export toTime = (val) -> toDateTime(val).toISOTime(includeOffset: false)
 
 export toList = (val) ->
   val = JSON.parse(val) if typeof val == 'string'
-
   return val if val instanceof Array
 
   [val...]
@@ -160,6 +159,15 @@ export toSet = (val) ->
   return val if val instanceof Set
 
   new Set(toList(val))
+
+export updateList = (item, list, sameKey = 'id') ->
+  keyValue = item[sameKey]
+  for v in list
+    if v[sameKey] == keyValue
+      {v..., item...}
+    else
+      v
+
 
 # TODO
 # export deepFreeze = (obj)
