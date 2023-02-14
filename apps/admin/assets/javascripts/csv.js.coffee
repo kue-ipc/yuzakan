@@ -5,19 +5,32 @@ import FileSaver from '/assets/vendor/file-saver.js'
 
 # async csv and records utilities
 
-recordsToCsv = (records, options = {}) ->
+recordsToCsv = (records, {headers} = {}) ->
   new Promise (resolve, reject) ->
     stringify records, {
       bom: true
+      columns: headers
       header: true
       quoted_string: true
-      options...
+      record_delimiter: 'windows'
     }, (err, output) ->
       if err?
         reject(err)
       else
         console.debug 'records to csv'
         resolve(output)
+
+csvToRecords = (csv) ->
+  new Promise (resolve, reject) ->
+    parse csv, {
+      bom: true
+      columns: true
+    }, (err, records) ->
+      if err?
+        reject(err)
+      else
+        console.debug 'csv to records'
+        resolve(records)
 
 transformRecords = (records, handler) ->
   new Promise (resolve, reject) ->
@@ -26,19 +39,6 @@ transformRecords = (records, handler) ->
         reject(err)
       else
         resolve(output)
-
-csvToRecords = (csv, options = {}) ->
-  new Promise (resolve, reject) ->
-    parse csv, {
-      bom: true
-      columns: true
-      options...
-    }, (err, records) ->
-      if err?
-        reject(err)
-      else
-        console.debug 'csv to records'
-        resolve(records)
 
 objToRecord = (obj) ->
   obj = Object.fromEntries(obj) if obj instanceof Map
@@ -72,9 +72,9 @@ recordsToObj = (record) ->
       obj[key] = value
   obj
 
-export listToCsv = (list) ->
+export listToCsv = (list, {headers} = {}) ->
   records = await transformRecords(list, objToRecord)
-  csv = await recordsToCsv(records)
+  csv = await recordsToCsv(records, {headers})
   csv
 
 export csvToList = (csv) ->
@@ -94,9 +94,9 @@ export downloadButton = (props)->
 
 DownloadCsv = (state, props) -> [state, [runDownloadCsv, props]]
 
-runDownloadCsv = (dispatch, {list, filename}) ->
+runDownloadCsv = (dispatch, {list, filename, headers}) ->
   console.debug 'download: %s', filename
-  csv = await listToCsv(list)
+  csv = await listToCsv(list, {headers})
   blob = new Blob [csv], {type: 'text/csv'}
   FileSaver.saveAs(blob, filename)
 

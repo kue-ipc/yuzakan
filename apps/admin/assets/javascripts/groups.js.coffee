@@ -161,12 +161,17 @@ view = ({mode, groups, providers, page_info, search, option, order}) ->
         ]
       ]
     else
+      headers = [
+        'action'
+        Object.keys(GROUP_PROPERTIES)...
+        ("provider[#{provider.name}]" for provider in providers)...
+      ]
       html.div {}, [
         searchForm({search..., onsearch: Search})
         indexGroupsOption({option..., onchange: ChangeOption})
         html.div {key: 'buttons', class: 'row mb-2'}, [
           html.div {class: 'col-md-3'}, uploadButton({onupload: UploadGroups})
-          html.div {class: 'col-md-3'}, downloadButton({list: groups, filename: 'groups.csv'})
+          html.div {class: 'col-md-3'}, downloadButton({list: groups, filename: 'groups.csv', headers})
         ]
         pageNav({page_info..., onpage: MovePage})
       ]
