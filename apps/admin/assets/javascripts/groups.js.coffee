@@ -123,9 +123,18 @@ groupDetailTr = ({group, colspan}) ->
   html.tr {
     key: "group-detail[#{group.groupname}]"
     class: {collapse: true, show: group.show_detail}
-  }, [
-    html.td {colspan}, text JSON.stringify(group)
-  ]
+  },
+    html.td {colspan}, [
+      html.div {key: 'properties'}, [
+        html.span {}, text "表示名: #{group.display_name || '(無し)'}"
+        html.span {class: 'ms-2 badge text-bg-primary'}, text 'プライマリー' if group.primary
+        html.span {class: 'ms-2 badge text-bg-warnig'}, text '廃止済み' if group.obsoleted
+        html.span {class: 'ms-2 badge text-bg-danger'}, text '削除済み' if group.deleted
+        html.span {class: 'ms-2'}, text "削除日: #{group.deleted_at}" if group.deleted_at
+      ]
+      html.div {key: 'note', class: 'text-info'}, text group.note if group.note
+      html.div {key: 'error', class: 'text-danger'}, text group.error if group.error
+    ]
 
 doAllActionButton = () ->
   html.button {

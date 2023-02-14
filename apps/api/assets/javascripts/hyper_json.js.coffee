@@ -1,6 +1,7 @@
 # Createer functions for Hyperapp object and fetch api
 
 import {pick, pickType} from '/assets/utils.js'
+import csrf from '/assets/csrf.js'
 
 import {fetchJson} from './fetch_json.js'
 
@@ -66,7 +67,7 @@ export createRunResponse = ({action, url, pathKeys = [], dataTypes = [], params.
         console.error 'given props does not have the property for path: %s', key
         return
       url = url.replace(":#{key}", props[key])
-    data = pickType(props, dataTypes)
+    data = {pickType(props, dataTypes)..., csrf()...}
     response = await fetchJson({params..., url, data})
     dispatch(action, response)
 

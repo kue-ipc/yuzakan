@@ -126,7 +126,10 @@ export toDateTime = (val) ->
     when 'bigint'
       DateTime.fromSeconds(Number(val))
     when 'string'
-      DateTime.fromISO(val)
+      if val
+        DateTime.fromISO(val)
+      else
+        null
     when 'object'
       if val instanceof Date
         DateTime.fromJSDate(val)
@@ -138,11 +141,11 @@ export toDateTime = (val) ->
     else
       console.warn "no datetime object: #{val}"
       DateTime.fromJSDate(Date(val))
-  dateTime.toLocal()
+  dateTime?.toLocal()
 
-export toDate = (val) -> toDateTime(val).toISODate()
+export toDate = (val) -> toDateTime(val)?.toISODate()
 
-export toTime = (val) -> toDateTime(val).toISOTime(includeOffset: false)
+export toTime = (val) -> toDateTime(val)?.toISOTime(includeOffset: false)
 
 export toList = (val) ->
   val = JSON.parse(val) if typeof val == 'string'
