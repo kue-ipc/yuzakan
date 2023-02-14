@@ -51,43 +51,19 @@ export SetProviders = (state, providers) -> {state..., providers}
 
 export SetProvider = (state, provider) -> {state..., provider}
 
-# create Actions
-
-export createSetProviders = (action = null) ->
-  if action?
-    runAction = (dispatch, providers) -> dispatch(action, providers)
-    (state, providers) ->
-      [
-        SetProviders(state, groups),
-        [runAction, providers]
-      ]
-  else
-    SetProviders
-
-export createSetProvider = (action = null) ->
-  if action?
-    runAction = (dispatch, provider) -> dispatch(action, provider)
-    (state, provider) ->
-      [
-        SetProvider(state, provider),
-        [runAction, provider]
-      ]
-  else
-    SetProvider
-
 # create Effecters
 
-export createRunIndexProviders = ({action = null, params...} = {}) ->
+export createRunIndexProviders = ({action = SetProviders, params...} = {}) ->
   createRunIndex({
-    action: createSetProviders(action)
+    action
     url: API_PROVIDERS
     dataTypes: INDEX_PROVIDERS_PARAM_TYPES
     params...
   })
 
-export createRunShowProvider = ({action = null, params...} = {}) ->
+export createRunShowProvider = ({action = SetProvider, params...} = {}) ->
   createRunShowWithId({
-    action: createSetProvider(action)
+    action
     url: API_PROVIDERS
     dataTypes: SHOW_PROVIDER_PARAM_TYPES
     params...

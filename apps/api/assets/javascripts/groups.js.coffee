@@ -51,47 +51,22 @@ export SetGroups = (state, groups) -> {state..., groups}
 
 export SetGroup = (state, group) -> {state..., group}
 
-# create Actions
-
-export createSetGroups = (action = null) ->
-  if action?
-    runAction = (dispatch, groups) -> dispatch(action, groups)
-    (state, groups) ->
-      [
-        SetGroups(state, groups),
-        [runAction, groups]
-      ]
-  else
-    SetGroups
-
-export createSetGroup = (action = null) ->
-  if action?
-    runAction = (dispatch, group) -> dispatch(action, group)
-    (state, group) ->
-      [
-        SetGroup(state, group),
-        [runAction, group]
-      ]
-  else
-    SetGroup
-
 # create Effecters
 
-export createRunIndexWithPageGroups = ({action = null, params...} = {}) ->
+export createRunIndexWithPageGroups = ({action = SetGroups, params...} = {}) ->
   createRunIndexWithPage({
-    params...
-    action: createSetGroups(action)
+    action
     url: API_GROUPS
     dataTypes: INDEX_GROUPS_PARAM_TYPES
+    params...
   })
 
-export createRunShowGroup = ({action = null, params...} = {}) ->
+export createRunShowGroup = ({action = SetGroup, params...} = {}) ->
   createRunShowWithId({
-    params...
-    action: createSetGroup(action)
+    action
     url: API_GROUPS
-    idKey: 'name'
     dataTypes: SHOW_GROUP_PARAM_TYPES
+    params...
   })
 
 # Effecters
