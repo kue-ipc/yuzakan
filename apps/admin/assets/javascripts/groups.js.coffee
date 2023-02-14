@@ -97,7 +97,7 @@ runGroupHistory = (dispatch, params) ->
   params = pick(params, Object.keys(INDEX_GROUPS_PARAM_TYPES))
   query = "?#{objToUrlencoded(params)}"
   if (query != location.search)
-    history.pushState(params, '', "/admin/groups?#{query}")
+    history.pushState(params, '', "/admin/groups#{query}")
 
 MovePage = (state, page) ->
   return state if state.page == page
