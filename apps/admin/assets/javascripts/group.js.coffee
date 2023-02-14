@@ -107,23 +107,20 @@ providerReg = ({mode, group, providers}) ->
         html.tr {}, [
           html.td {}, text label
           # html.td {}, valueDisplay {value: group[name], type}
-          (
-            # only provider that has group
-            for provider in providers when provider.group
-              groupdata = group_providers.get(provider.name)
-              html.td {},
-                valueDisplay {
-                  value: groupdata?[name]
-                  type
-                  color: 
-                    if group[name]
-                      if group[name] == groupdata?[name]
-                        'success'
-                      else
-                        'danger'
-                    else
-                      'body'
-                }
+          (for provider in providers when provider.group
+            groupdata = group_providers.get(provider.name)
+            html.td {},
+              valueDisplay {
+                value: groupdata?[name]
+                type
+                color: if group[name]
+                  if group[name] == groupdata?[name]
+                    'success'
+                  else
+                    'danger'
+                else
+                  'body'
+              }
           )...
         ]
   ]
