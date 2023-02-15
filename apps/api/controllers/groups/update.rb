@@ -42,7 +42,7 @@ module Api
             }
           end
 
-          @group = @group_repository.update(@group.id, params.expect(:id, :sync, :groupname))
+          @group = @group_repository.update(@group.id, params.to_h.except(:id, :sync, :groupname))
           self.body = group_json
         end
       end
