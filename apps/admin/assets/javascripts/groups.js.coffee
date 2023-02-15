@@ -100,7 +100,12 @@ groupTr = ({group, providers}) ->
         else
           html.a {href: "/admin/groups/#{group.groupname}"}, text '閲覧'
     html.td {key: 'groupname'}, text group.groupname
-    html.td {key: 'label'}, text group.label
+    html.td {key: 'label'}, [
+      html.span {}, text group.label
+      html.span {class: 'ms-2 badge text-bg-primary'}, text 'プライマリー' if group.primary
+      html.span {class: 'ms-2 badge text-bg-warning'}, text '使用禁止' if group.prohibited
+      html.span {class: 'ms-2 badge text-bg-danger'}, text '削除済み' if group.deleted
+    ]
     (groupProviderTd({group, provider}) for provider in providers)...
   ]
 
@@ -112,9 +117,6 @@ groupDetailTr = ({group, colspan}) ->
     html.td {colspan}, [
       html.div {key: 'properties'}, [
         html.span {}, text "表示名: #{group.display_name || '(無し)'}"
-        html.span {class: 'ms-2 badge text-bg-primary'}, text 'プライマリー' if group.primary
-        html.span {class: 'ms-2 badge text-bg-warnig'}, text '使用禁止' if group.prohibited
-        html.span {class: 'ms-2 badge text-bg-danger'}, text '削除済み' if group.deleted
         html.span {class: 'ms-2'}, text "削除日: #{group.deleted_at}" if group.deleted_at
       ]
       if group.note
@@ -189,7 +191,8 @@ Search = (state, query) ->
   [ReloadIndexGroups, {page_info: {}, search: {query}}]
 
 ChangeOption = (state, option) ->
-  [ReloadIndexGroups, {option: {state.option..., option...}}]
+  # ページ情報を初期化
+  [ReloadIndexGroups, {page_info: {}, option: {state.option..., option...}}]
 
 SortOrder = (state, order) ->
   [ReloadIndexGroups, {order}]
