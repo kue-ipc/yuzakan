@@ -1,6 +1,5 @@
 import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
-import {Collapse} from '/assets/vendor/bootstrap.js'
 
 import BsIcon from '/assets/bs_icon.js'
 import {pick, pickType, toBoolean, updateList} from '/assets/utils.js'
