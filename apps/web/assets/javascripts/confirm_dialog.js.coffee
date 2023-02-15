@@ -1,7 +1,5 @@
-# import {Modal} from '/assets/vendor/bootstrap.js'
 import {text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
-# import {modalDialog} from './modal.js'
 
 import ModalDialog from './modal_dialog.js'
 

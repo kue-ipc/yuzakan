@@ -6,6 +6,8 @@ import BsIcon from '/assets/bs_icon.js'
 import {pick, pickType, toBoolean, updateList} from '/assets/utils.js'
 import {objToUrlencoded} from '/assets/form_helper.js'
 import valueDisplay from '/assets/value_display.js'
+import ConfirmDialog from '/assets/confirm_dialog.js'
+import {fieldId} from '/assets/form_helper.js'
 
 import {
   createRunIndexWithPageGroups, createRunUpdateGroup
@@ -21,6 +23,18 @@ import {downloadButton, uploadButton} from './csv.js'
 # Functions
 
 updateGroupList = (group, groups) -> updateList(group, groups, 'groupname')
+
+# dialog
+
+doAllActionConfirm = new ConfirmDialog {
+  id: fieldId('do_all_action', ['modal', 'confirm', 'group'])
+  states: 'alert'
+  title: 'すべて実行'
+  action: {
+    color: 'danger'
+    label: 'すべて実行'
+  }
+}
 
 # Views
 
@@ -134,6 +148,7 @@ groupDetailTr = ({group, colspan}) ->
 doAllActionButton = () ->
   html.button {
     class: 'btn btn-danger'
+    onclick: DoAllActionWithConfirm
   }, text 'すべて実行'
 
 # Actions
@@ -144,13 +159,12 @@ SetGroupInList = (state, group) ->
     groups: updateGroupList(group, state.groups)
   }
 
-SetGroupInListOk = (state, group) ->
-  [SetGroupInList, {group..., action: 'SUC'}]
-
 ModGroup = (state, group) ->
-  fallback = (state, error) ->
+  action = (_, data) ->
+    [SetGroupInList, {group..., data..., action: 'SUC', error: null}]
+  fallback = (_, error) ->
     [SetGroupInList, {group..., action: 'ERR', error, show_detail: true}]
-  run = createRunUpdateGroup({action: SetGroupInListOk, fallback})
+  run = createRunUpdateGroup({action, fallback})
   [
     {state..., groups: updateGroupList({group..., action: 'ACT'}, state.groups)}
     [run, {group..., id: group.groupname}]
@@ -212,6 +226,36 @@ UploadGroups = (state, {list, filename}) ->
     groups
   }
 
+DoAllActionWithConfirm = (state) ->
+  [state, runDoAllActionWithConfirm]
+
+SetGroupInListNextAll = (state, group) ->
+  [
+    {
+      state...
+      groups: updateGroupList(group, state.groups)
+    }
+    runDoAllAction
+  ]
+
+ModGroupNextAll = (state, group) ->
+  action = (_, data) ->
+    [SetGroupInListNextAll, {group..., data..., action: 'SUC', error: null}]
+  fallback = (_, error) ->
+    [SetGroupInListNextAll, {group..., action: 'ERR', error, show_detail: true}]
+  run = createRunUpdateGroup({action, fallback})
+  [
+    {state..., groups: updateGroupList({group..., action: 'ACT'}, state.groups)}
+    [run, {group..., id: group.groupname}]
+  ]
+
+DoAllAction = (state) ->
+  doActionGroup = state.groups.find (group) -> group.action == 'MOD'
+  if doActionGroup
+    [ModGroupNextAll, doActionGroup]
+  else
+    state
+
 # Effecters
 
 runIndexProviders = createRunIndexProviders()
@@ -223,6 +267,21 @@ runGroupHistory = (dispatch, params) ->
   query = "?#{objToUrlencoded(params)}"
   if (query != location.search)
     history.pushState(params, '', "/admin/groups#{query}")
+
+runDoAllActionWithConfirm = (dispatch) ->
+  confirm = await doAllActionConfirm.showPromise({
+    messages: [
+      'すべての処理を実行します。'
+      '処理は途中で停止することはできません。'
+      'ブラウザーを閉じると処理が中断されます。決して、閉じないでください。'
+      '予期せぬ中断を避けるために、スリープは無効にしておいてください。'
+      'すべての処理を実行してもよろしいですか？']
+  })
+  if confirm
+    dispatch(DoAllAction)
+
+runDoAllAction = (dispatch) ->
+  dispatch(DoAllAction)
 
 # main
 
