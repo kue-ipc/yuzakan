@@ -62,7 +62,7 @@ module Api
           @provider = @provider_repository.find_with_params(@provider.id)
 
           self.status = 201
-          headers['Location'] = routes.provider_path(@provider.id)
+          headers['Content-Location'] = routes.provider_path(@provider.name)
           self.body = generate_json(@provider, assoc: true)
         end
       end

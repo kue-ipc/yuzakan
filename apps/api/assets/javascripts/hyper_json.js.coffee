@@ -49,8 +49,11 @@ export createResponseActionWithId = ({idKey = 'id', params...}) ->
   runResponseAction = (dispatch, props) -> dispatch(responseAction, props)
   (state, response) ->
     if response.ok
+      url = new URL(response.location)
+      # TODO: '/'で終わる場合を考慮すべき
+      last = url.pathname.split('/').at(-1)
       [
-        {state..., id: response.data[idKey]}
+        {state..., [idKey]: last}
         [runResponseAction, response]
       ]
     else

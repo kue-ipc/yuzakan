@@ -44,8 +44,8 @@ module Api
         end
 
         def call(params)
-          if params[:name] && params[:name] != @provider.name &&
-             @provider_repository.exist_by_name?(params[:name])
+          change_name = params[:name] && params[:name] != @provider.name
+          if change_name && @provider_repository.exist_by_name?(params[:name])
             halt_json 422, errors: [{name: [I18n.t('errors.uniq?')]}]
           end
 
@@ -85,6 +85,7 @@ module Api
           @provider = @provider_repository.find_with_params(@provider.id)
 
           self.status = 200
+          headers['Content-Location'] = routes.provider_path(@provider.name) if change_name
           self.body = generate_json(@provider, assoc: true)
         end
       end

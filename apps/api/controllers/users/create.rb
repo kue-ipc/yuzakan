@@ -60,7 +60,7 @@ module Api
           end
 
           self.status = 201
-          headers['Location'] = routes.user_path(result.user.username)
+          headers['Content-Location'] = routes.user_path(@user.username)
           self.body = user_json(password: password)
         end
       end

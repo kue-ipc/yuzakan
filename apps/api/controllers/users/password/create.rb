@@ -50,7 +50,7 @@ module Api
             # }
 
             self.status = 201
-            headers['Location'] = routes.user_password_path(result.username)
+            headers['Content-Location'] = routes.user_password_path(result.username)
             self.body = generate_json({
               username: result.username,
               password: result.password,

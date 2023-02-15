@@ -67,7 +67,7 @@ module Api
             attr_mappings: attr_mappings)
 
           self.status = 201
-          headers['Location'] = routes.attr_path(@attr.id)
+          headers['Content-Location'] = routes.attr_path(@attr.name)
           self.body = generate_json(@attr, assoc: true)
         end
 
