@@ -54,6 +54,15 @@ export SetGroup = (state, group) -> {state..., group}
 
 # create Effecters
 
+export createRunIndexGroups = ({action = SetGroups, params...} = {}) ->
+  createRunIndex({
+    action
+    url: API_GROUPS
+    dataTypes: omit(INDEX_GROUPS_PARAM_TYPES, ['page', 'per_page', 'sync'])
+    data: {page: 'all'}
+    params...
+  })
+
 export createRunIndexWithPageGroups = ({action = SetGroups, params...} = {}) ->
   createRunIndexWithPage({
     action

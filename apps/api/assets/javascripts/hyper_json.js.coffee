@@ -3,7 +3,7 @@
 import {pick, pickType, identity} from '/assets/utils.js'
 import csrf from '/assets/csrf.js'
 
-import {fetchJson} from './fetch_json.js'
+import {fetchJson, DEFAULT_PAGE, DEFAULT_PER_PAGE} from './fetch_json.js'
 
 # create Actions
 
@@ -62,37 +62,38 @@ export createResponseActionSetId = ({idKey = 'id', params...}) ->
 
 # レスポンスを直接渡すアクションを作成する。
 # pathKeys内の文字列はそれぞれ部分文字列になっていはいけない。
-export createRunResponse = ({action, url, pathKeys = [], dataTypes = [], method, params...}) ->
+export createRunResponse = ({action, url, pathKeys = [], dataTypes = [], method, data = {}, params...}) ->
   (dispatch, props = {}) ->
     for key in pathKeys
       unless key of props
         console.error 'given props does not have the property for path: %s', key
         return
       url = url.replace(":#{key}", props[key])
-    data = pickType(props, dataTypes)
+    data = {data..., pickType(props, dataTypes)...}
     if ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method.toUpperCase())
       data = {data..., csrf()...}
 
-    response = await fetchJson({params..., method, url, data})
+    response = await fetchJson({method, url, data, params...})
     dispatch(action, response)
 
 # RESTful Resources
 # GET /resources
 export createRunIndex = ({action, fallback = null, params...}) ->
   responseAction = createResponseAction({action, fallback})
-  createRunResponse({params..., action: responseAction, method: 'GET'})
+  createRunResponse({action: responseAction, method: 'GET', params...})
 
 # GET /resources?page=x&per_page=y
-export createRunIndexWithPage = ({action, fallback = null, params...}) ->
+export createRunIndexWithPage = ({action, fallback = null, data = {}, params...}) ->
   responseAction = createResponseActionSetPage({action, fallback})
-  createRunResponse({params..., action: responseAction, method: 'GET'})
+  data = {page: DEFAULT_PAGE, per_page: DEFAULT_PER_PAGE, data...}
+  createRunResponse({action: responseAction, data, method: 'GET', params...})
 
 # GET /resources/:id
 export createRunShowWithId = ({action, fallback = null, url, idKey = 'id', params...}) ->
   responseAction = createResponseAction({action, fallback})
   url = "#{url}/:#{idKey}" unless url.includes(':#{idKey}')
   pathKeys = [idKey]
-  createRunResponse({params..., action: responseAction, url, pathKeys, method: 'GET'})
+  createRunResponse({action: responseAction, url, pathKeys, method: 'GET', params...})
 
 # POST /resources
 export createRunCreateWithId = ({action, fallback = null, idKey = 'id', setId = false, params...}) ->
@@ -100,7 +101,7 @@ export createRunCreateWithId = ({action, fallback = null, idKey = 'id', setId = 
     createResponseActionSetId({action, fallback, idKey})
   else
     createResponseAction({action, fallback})
-  createRunResponse({params..., action: responseAction, method: 'POST'})
+  createRunResponse({action: responseAction, method: 'POST', params...})
 
 # PATCH /resources/:id
 export createRunUpdateWithId = ({action, fallback = null, url, idKey = 'id', setId = false, params...}) ->
@@ -110,35 +111,35 @@ export createRunUpdateWithId = ({action, fallback = null, url, idKey = 'id', set
     createResponseAction({action, fallback})
   url = "#{url}/:#{idKey}" unless url.includes(':#{idKey}')
   pathKeys = [idKey]
-  createRunResponse({params..., action: responseAction, url, pathKeys, method: 'PATCH'})
+  createRunResponse({action: responseAction, url, pathKeys, method: 'PATCH', params...})
 
 # DELETE /resources/:id
 export createRunDestroyWithId = ({action, fallback = null, url, idKey = 'id', params...}) ->
   responseAction = createResponseAction({action, fallback})
   url = "#{url}/:#{idKey}" unless url.includes(':#{idKey}')
   pathKeys = [idKey]
-  createRunResponse({params..., action: responseAction, url, pathKeys, method: 'DELETE'})
+  createRunResponse({action: responseAction, url, pathKeys, method: 'DELETE', params...})
 
 # RESTful Resource
 # GET /resource
 export createRunShow = ({action, fallback = null, params...}) ->
   responseAction = createResponseAction({action, fallback})
-  createRunResponse({params..., action: responseAction, method: 'GET'})
+  createRunResponse({action: responseAction, method: 'GET', params...})
 
 # POST /resource
 export createRunCreate = ({action, fallback = null, params...}) ->
-  responseAction = createResponseAction({action, fallback, idKey})
-  createRunResponse({params..., action: responseAction, method: 'POST'})
+  responseAction = createResponseAction({action, fallback})
+  createRunResponse({action: responseAction, method: 'POST', params...})
 
 # PATCH /resource
 export createRunUpdate = ({action, fallback = null, params...}) ->
-  responseAction = createResponseAction({action, fallback, idKey})
-  createRunResponse({params..., action: responseAction, method: 'PATCH'})
+  responseAction = createResponseAction({action, fallback})
+  createRunResponse({action: responseAction, method: 'PATCH', params...})
 
 # DELETE /resource
 export createRunDestroy = ({action, fallback = null, params...}) ->
-  responseAction = createResponseAction({action, fallback, idKey})
-  createRunResponse({params..., action: responseAction, method: 'DELETE'})
+  responseAction = createResponseAction({action, fallback})
+  createRunResponse({action: responseAction, method: 'DELETE', params...})
 
 
 
