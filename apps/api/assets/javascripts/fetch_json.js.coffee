@@ -30,7 +30,7 @@ export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
   }
  
   if isPresent(data)
-    if ['POST', 'PUT', 'PATCH'].includes(method)
+    if ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)
       switch type
         when 'json'
           content_type = 'application/json'

@@ -173,6 +173,18 @@ export updateList = (item, list, sameKey = 'id') ->
     else
       v
 
+# URLから最後の文字列を取り出す。
+# 空文字列しかない場合は undefined を返す
+export getBasenameFromUrl = (url) ->
+  basename(url.pathname)
+
+export getQueryParamsFromUrl = (url) ->
+  Object.fromEntries(new URLSearchParams(url.search))
+
+export basename = (path) ->
+  return '' unless path
+
+  path.split('/').reverse().find(identity) || '/'
 
 # TODO
 # export deepFreeze = (obj)

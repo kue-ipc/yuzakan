@@ -62,15 +62,18 @@ export createResponseActionSetId = ({idKey = 'id', params...}) ->
 
 # レスポンスを直接渡すアクションを作成する。
 # pathKeys内の文字列はそれぞれ部分文字列になっていはいけない。
-export createRunResponse = ({action, url, pathKeys = [], dataTypes = [], params...}) ->
+export createRunResponse = ({action, url, pathKeys = [], dataTypes = [], method, params...}) ->
   (dispatch, props = {}) ->
     for key in pathKeys
       unless key of props
         console.error 'given props does not have the property for path: %s', key
         return
       url = url.replace(":#{key}", props[key])
-    data = {pickType(props, dataTypes)..., csrf()...}
-    response = await fetchJson({params..., url, data})
+    data = pickType(props, dataTypes)
+    if ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method.toUpperCase())
+      data = {data..., csrf()...}
+
+    response = await fetchJson({params..., method, url, data})
     dispatch(action, response)
 
 # RESTful Resources

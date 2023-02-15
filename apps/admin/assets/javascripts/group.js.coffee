@@ -3,50 +3,17 @@
 import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
-import {fetchJsonGet} from '/assets/api/fetch_json.js'
-import {fieldName, fieldId} from '/assets/form_helper.js'
-import csrf from '/assets/csrf.js'
-
+import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl} from '/assets/utils.js'
+import {objToUrlencoded} from '/assets/form_helper.js'
 import {dlClasses, dtClasses, ddClasses} from '/assets/dl_horizontal.js'
 import BsIcon from '/assets/bs_icon.js'
 import valueDisplay from '/assets/value_display.js'
 
-import {runGetProviders} from '/assets/api/providers.js'
+import {createRunIndexProviders} from '/assets/api/providers.js'
+import {createRunShowGroup} from '/assets/api/groups.js'
+import {SHOW_GROUP_PARAM_TYPES} from '/assets/api/groups.js'
 
-# import operationMenu from './group_operation_menu.js'
-
-parentNames = ['group']
-
-SetMode = (state, mode) -> {state..., mode}
-
-SetGroup = (state, {name, group}) ->
-  history.pushState(null, null, "/admin/groups/#{name}") if name? && name != state.name
-
-  {
-    state...
-    name: name ? state.name
-    group: {state.group..., group...}
-  }
-
-runGetGroup = (dispatch, {name}) ->
-  return unless name?
-
-  response = await fetchJsonGet({url: "/api/groups/#{name}"})
-  if response.ok
-    dispatch(SetGroup, {group: response.data})
-  else
-    console.error response
-    dispatch(SetMode, 'none')
-
-name = location.pathname.split('/').at(-1)
-name = undefined if name == '*'
-mode = if name? then 'show' else 'new'
-
-init = [
-  {mode, name, group: null, providers: null}
-  [runGetProviders]
-  [runGetGroup, {name}]
-]
+# Views
 
 basicInfo = ({mode, group}) ->
   html.h4 {}, text '基本情報'
@@ -96,7 +63,7 @@ providerReg = ({mode, group, providers}) ->
       html.tr {}, [
         html.th {}, text '名前'
         # html.th {}, text '値'
-        (html.th({}, text provider.label) for provider in providers when provider.group)...
+        (html.th({}, text provider.label) for provider in providers)...
       ]
     html.tbody {},
       for {name, label, type} in [
@@ -107,7 +74,7 @@ providerReg = ({mode, group, providers}) ->
         html.tr {}, [
           html.td {}, text label
           # html.td {}, valueDisplay {value: group[name], type}
-          (for provider in providers when provider.group
+          (for provider in providers
             groupdata = group_providers.get(provider.name)
             html.td {},
               valueDisplay {
@@ -125,24 +92,81 @@ providerReg = ({mode, group, providers}) ->
         ]
   ]
 
-view = ({mode, name, group, providers}) ->
-  if mode == 'none'
-    return html.div {},
-      html.strong {}, text 'グループが見つかりませんでした。'
-
-  if mode == 'new'
-    return html.div {},
-      html.strong {}, text 'グループの新規作成はできません。'
-
-  unless group? && providers?
-    return html.div {}, text '読み込み中...'
-
+operationMenu = ({option}) ->
   html.div {}, [
-    basicInfo {mode, group}
-    # operationMenu {mode, group}
-    providerReg {mode, group, providers}
+    if option?.sync
+      html.button {
+        class: 'btn btn-primary'
+        disbled: true
+      }, text 'プロバイダーと同期'
+    else
+      html.button {
+        class: 'btn btn-primary'
+        onclick: -> [ChangeOption, {sync: true}]
+      }, text 'プロバイダーと同期'
   ]
 
-node = document.getElementById('group')
+ReloadShowGroup = (state, data) ->
+  console.debug 'reload show group'
+  newState = {state..., data...}
+  params = pick({
+    newState.option...
+  }, Object.keys(SHOW_GROUP_PARAM_TYPES))
+  [
+    newState,
+    [runPushHistory, params]
+    [runShowGroup, {id: state.id, params...}]
+  ]
 
-app {init, view, node}
+ChangeOption = (state, option) ->
+  [ReloadShowGroup, {option: {state.option..., option...}}]
+
+# Effectors
+
+runIndexProviders = createRunIndexProviders()
+
+runShowGroup = createRunShowGroup()
+
+runPushHistory = (dispatch, params) ->
+  query = "?#{objToUrlencoded(params)}"
+  if (query != location.search)
+    history.pushState(params, '', "#{location.pathname}#{query}")
+
+# main
+
+main = ->
+  id = getBasenameFromUrl(location)
+  id = undefined if id == '*'
+  mode = if id? then 'show' else 'new'
+
+  queryParams = pickType(getQueryParamsFromUrl(location), SHOW_GROUP_PARAM_TYPES)
+
+  init = [
+    {mode, id, group: null, providers: [], option: queryParams}
+    [runIndexProviders, {has_groups: true}]
+    [runShowGroup, {id, queryParams...}]
+  ]
+
+  view = ({mode, id, group, providers, option}) ->
+    if mode == 'none'
+      return html.div {},
+        html.strong {}, text 'グループが見つかりませんでした。'
+
+    if mode == 'new'
+      return html.div {},
+        html.strong {}, text 'グループの新規作成はできません。'
+
+    unless group? && providers?
+      return html.div {}, text '読み込み中...'
+
+    html.div {}, [
+      basicInfo {mode, group}
+      operationMenu {option}
+      providerReg {mode, group, providers}
+    ]
+
+  node = document.getElementById('group')
+
+  app {init, view, node}
+
+main()

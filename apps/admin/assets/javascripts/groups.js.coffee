@@ -2,7 +2,7 @@ import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
 import BsIcon from '/assets/bs_icon.js'
-import {pick, pickType, toBoolean, updateList} from '/assets/utils.js'
+import {pick, pickType, toBoolean, updateList, getQueryParamsFromUrl} from '/assets/utils.js'
 import {objToUrlencoded} from '/assets/form_helper.js'
 import valueDisplay from '/assets/value_display.js'
 import ConfirmDialog from '/assets/confirm_dialog.js'
@@ -172,15 +172,15 @@ ModGroup = (state, group) ->
 ReloadIndexGroups = (state, data) ->
   console.debug 'reload index groups'
   newState = {state..., data...}
-  params = {
+  params = pick({
     newState.page_info...
     newState.search...
     newState.option...
     order: newState.order
-  }
+  }, Object.keys(INDEX_GROUPS_PARAM_TYPES))
   [
     newState,
-    [runGroupHistory, params]
+    [runPushHistory, params]
     [runIndexGroups, params]
   ]
 
@@ -261,11 +261,12 @@ runIndexProviders = createRunIndexProviders()
 
 runIndexGroups = createRunIndexWithPageGroups({action: FinishIndexGroups})
 
-runGroupHistory = (dispatch, params) ->
-  params = pick(params, Object.keys(INDEX_GROUPS_PARAM_TYPES))
+runPushHistory = (dispatch, params) ->
   query = "?#{objToUrlencoded(params)}"
   if (query != location.search)
-    history.pushState(params, '', "/admin/groups#{query}")
+    history.pushState(params, '', "#{location.pathname}#{query}")
+
+
 
 runDoAllActionWithConfirm = (dispatch) ->
   confirm = await doAllActionConfirm.showPromise({
@@ -285,7 +286,7 @@ runDoAllAction = (dispatch) ->
 # main
 
 main = ->
-  queryParams = pickType(Object.fromEntries(new URLSearchParams(location.search)))
+  queryParams = pickType(getQueryParamsFromUrl(location))
 
   initState = {
     mode: 'loading'
