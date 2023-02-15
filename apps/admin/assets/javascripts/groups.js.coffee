@@ -11,15 +11,18 @@ import {
   createRunIndexWithPageGroups, createRunUpdateGroup
   INDEX_GROUPS_PARAM_TYPES, GROUP_PROPERTIES
 } from '/assets/api/groups.js'
-import {runIndexProviders} from '/assets/api/providers.js'
+import {createRunIndexProviders} from '/assets/api/providers.js'
 
 import pageNav from './page_nav.js'
 import searchForm from './search_form.js'
 
-# import {downloadButton, uploadButton} from './groups_csv.js'
 import {downloadButton, uploadButton} from './csv.js'
 
-# views
+# Functions
+
+updateGroupList = (group, groups) -> updateList(group, groups, 'groupname')
+
+# Views
 
 indexGroupsOption = ({onchange: action, props...}) ->
   onchange = (state, event) -> [action, {[event.target.name]: event.target.checked}]
@@ -53,26 +56,6 @@ groupProviderTd = ({group, provider}) ->
       value: group.providers?.includes(provider.name)
       type: 'boolean'
     }
-
-SetGroupInList = (state, group) ->
-  {
-    state...
-    groups: updateGroupList(group, state.groups)
-  }
-
-updateGroupList = (group, groups) -> updateList(group, groups, 'groupname')
-
-SetGroupInListOk = (state, group) ->
-  [SetGroupInList, {group..., action: 'SUC'}]
-
-ModGroup = (state, group) ->
-  fallback = (state, error) ->
-    [SetGroupInList, {group..., action: 'ERR', error, show_detail: true}]
-  run = createRunUpdateGroup({action: SetGroupInListOk, fallback})
-  [
-    {state..., groups: updateGroupList({group..., action: 'ACT'}, state.groups)}
-    [run, {group..., id: group.groupname}]
-  ]
 
 groupTr = ({group, providers}) ->
   color = switch group.action
@@ -151,7 +134,25 @@ doAllActionButton = () ->
     class: 'btn btn-danger'
   }, text 'すべて実行'
 
-# actions
+# Actions
+
+SetGroupInList = (state, group) ->
+  {
+    state...
+    groups: updateGroupList(group, state.groups)
+  }
+
+SetGroupInListOk = (state, group) ->
+  [SetGroupInList, {group..., action: 'SUC'}]
+
+ModGroup = (state, group) ->
+  fallback = (state, error) ->
+    [SetGroupInList, {group..., action: 'ERR', error, show_detail: true}]
+  run = createRunUpdateGroup({action: SetGroupInListOk, fallback})
+  [
+    {state..., groups: updateGroupList({group..., action: 'ACT'}, state.groups)}
+    [run, {group..., id: group.groupname}]
+  ]
 
 ReloadIndexGroups = (state, data) ->
   console.debug 'reload index groups'
@@ -165,7 +166,7 @@ ReloadIndexGroups = (state, data) ->
   [
     newState,
     [runGroupHistory, params]
-    [runLoadIndexGroups, params]
+    [runIndexGroups, params]
   ]
 
 FinishIndexGroups = (state, groups) ->
@@ -175,16 +176,6 @@ FinishIndexGroups = (state, groups) ->
     mode: 'loaded'
     groups: ({action: '', group...} for group in groups)
   }
-
-# effecters
-
-runLoadIndexGroups = createRunIndexWithPageGroups({action: FinishIndexGroups})
-
-runGroupHistory = (dispatch, params) ->
-  params = pick(params, Object.keys(INDEX_GROUPS_PARAM_TYPES))
-  query = "?#{objToUrlencoded(params)}"
-  if (query != location.search)
-    history.pushState(params, '', "/admin/groups#{query}")
 
 MovePage = (state, page) ->
   return state if state.page == page
@@ -218,81 +209,98 @@ UploadGroups = (state, {list, filename}) ->
     groups
   }
 
-queryParams = pickType(Object.fromEntries(new URLSearchParams(location.search)))
+# Effecters
 
-initState = {
-  mode: 'loading'
-  groups: []
-  providers: []
-  total: 0
-  page_info: pick(queryParams, ['page', 'per_page'])
-  search: pick(queryParams, ['query'])
-  option: pick(queryParams, ['sync', 'primary_only', 'show_deleted'])
-  order: queryParams['order']
-}
+runIndexProviders = createRunIndexProviders()
 
-init = [
-  initState
-  [runIndexProviders, {has_groups: true}]
-  [runLoadIndexGroups, pick(initState, Object.keys(INDEX_GROUPS_PARAM_TYPES))]
-]
+runIndexGroups = createRunIndexWithPageGroups({action: FinishIndexGroups})
 
-view = ({mode, groups, providers, page_info, search, option, order}) ->
-  html.div {}, [
-    if mode == 'upload'
-      html.div {}, [
-        html.div {class: 'mb-2'}, text 'アップロードモード'
-        html.div {key: 'buttons', class: 'row mb-2'}, [
-          html.div {key: 'upload', class: 'col-md-3'},
-            uploadButton {onupload: UploadGroups, disabled: true}
-          html.div {key: 'download', class: 'col-md-3'},
-            # アップロードモードではヘッダを指定しない
-            downloadButton {list: groups, filename: 'result_groups.csv'}
-          html.div {key: 'do_all_action', class: 'col-md-3'},
-            doAllActionButton {}
-        ]
-      ]
-    else
-      headers = [
-        'action'
-        Object.keys(GROUP_PROPERTIES)...
-        ("provider[#{provider.name}]" for provider in providers)...
-      ]
-      html.div {}, [
-        searchForm {search..., onsearch: Search}
-        indexGroupsOption {option..., onchange: ChangeOption}
-        html.div {key: 'buttons', class: 'row mb-2'}, [
-          html.div {key: 'upload', class: 'col-md-3'},
-            uploadButton {onupload: UploadGroups}
-          html.div {key: 'downolad', class: 'col-md-3'},
-            downloadButton {list: groups, filename: 'groups.csv', headers, disabled: mode == 'loading'}
-        ]
-        pageNav {page_info..., onpage: MovePage}
-      ]
-    if mode == 'loading'
-      html.p {}, text '読込中...'
-    else if groups.length == 0
-      html.p {}, text 'グループが存在しません。'
-    else
-      html.table {id: 'group-table', class: 'table'}, [
-        html.thead {},
-          html.tr {}, [
-            html.th {key: 'show'}, text ''
-            html.th {key: 'action'}, text 'アクション'
-            html.th {key: 'groupname'}, text 'グループ名'
-            html.th {key: 'label'}, text 'ラベル'
-            (providerTh({provider}) for provider in providers)...
-          ]
-        html.tbody {},
-          (for group in groups
-            [
-              groupTr({group, providers})
-              groupDetailTr({group, colspan: 4 + providers.length})
-            ]
-          ).flat()
-      ]
+runGroupHistory = (dispatch, params) ->
+  params = pick(params, Object.keys(INDEX_GROUPS_PARAM_TYPES))
+  query = "?#{objToUrlencoded(params)}"
+  if (query != location.search)
+    history.pushState(params, '', "/admin/groups#{query}")
+
+# main
+
+main = ->
+  queryParams = pickType(Object.fromEntries(new URLSearchParams(location.search)))
+
+  initState = {
+    mode: 'loading'
+    groups: []
+    providers: []
+    total: 0
+    page_info: pick(queryParams, ['page', 'per_page'])
+    search: pick(queryParams, ['query'])
+    option: pick(queryParams, ['sync', 'primary_only', 'show_deleted'])
+    order: queryParams['order']
+  }
+
+  init = [
+    initState
+    [runIndexProviders, {has_groups: true}]
+    [runIndexGroups, pick(initState, Object.keys(INDEX_GROUPS_PARAM_TYPES))]
   ]
 
-node = document.getElementById('groups')
+  view = ({mode, groups, providers, page_info, search, option, order}) ->
+    html.div {}, [
+      if mode == 'upload'
+        html.div {}, [
+          html.div {class: 'mb-2'}, text 'アップロードモード'
+          html.div {key: 'buttons', class: 'row mb-2'}, [
+            html.div {key: 'upload', class: 'col-md-3'},
+              uploadButton {onupload: UploadGroups, disabled: true}
+            html.div {key: 'download', class: 'col-md-3'},
+              # アップロードモードではヘッダを指定しない
+              downloadButton {list: groups, filename: 'result_groups.csv'}
+            html.div {key: 'do_all_action', class: 'col-md-3'},
+              doAllActionButton {}
+          ]
+        ]
+      else
+        headers = [
+          'action'
+          Object.keys(GROUP_PROPERTIES)...
+          ("provider[#{provider.name}]" for provider in providers)...
+        ]
+        html.div {}, [
+          searchForm {search..., onsearch: Search}
+          indexGroupsOption {option..., onchange: ChangeOption}
+          html.div {key: 'buttons', class: 'row mb-2'}, [
+            html.div {key: 'upload', class: 'col-md-3'},
+              uploadButton {onupload: UploadGroups}
+            html.div {key: 'downolad', class: 'col-md-3'},
+              downloadButton {list: groups, filename: 'groups.csv', headers, disabled: mode == 'loading'}
+          ]
+          pageNav {page_info..., onpage: MovePage}
+        ]
+      if mode == 'loading'
+        html.p {}, text '読込中...'
+      else if groups.length == 0
+        html.p {}, text 'グループが存在しません。'
+      else
+        html.table {id: 'group-table', class: 'table'}, [
+          html.thead {},
+            html.tr {}, [
+              html.th {key: 'show'}, text ''
+              html.th {key: 'action'}, text 'アクション'
+              html.th {key: 'groupname'}, text 'グループ名'
+              html.th {key: 'label'}, text 'ラベル'
+              (providerTh({provider}) for provider in providers)...
+            ]
+          html.tbody {},
+            (for group in groups
+              [
+                groupTr({group, providers})
+                groupDetailTr({group, colspan: 4 + providers.length})
+              ]
+            ).flat()
+        ]
+    ]
 
-app {init, view, node}
+  node = document.getElementById('groups')
+
+  app {init, view, node}
+
+main()

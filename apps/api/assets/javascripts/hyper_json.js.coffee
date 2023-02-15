@@ -1,6 +1,6 @@
 # Createer functions for Hyperapp object and fetch api
 
-import {pick, pickType} from '/assets/utils.js'
+import {pick, pickType, identity} from '/assets/utils.js'
 import csrf from '/assets/csrf.js'
 
 import {fetchJson} from './fetch_json.js'
@@ -26,7 +26,7 @@ export createResponseAction = ({action, fallback = null}) ->
 
 # データを受け取るアクションからページ情報付きのレスポンスに対応した新しいアクションを作成する。
 # エラーの場合はページ情報を更新しない。
-export createResponseActionWithPage = (params) ->
+export createResponseActionSetPage = (params) ->
   responseAction = createResponseAction(params)
   runResponseAction = (dispatch, props) -> dispatch(responseAction, props)
   (state, response) ->
@@ -44,14 +44,13 @@ export createResponseActionWithPage = (params) ->
 
 # データを受け取るアクションでIDを更新するレスポンスに対応した新しいアクションを作成する。
 # エラーの場合はIDを更新しない
-export createResponseActionWithId = ({idKey = 'id', params...}) ->
+export createResponseActionSetId = ({idKey = 'id', params...}) ->
   responseAction = createResponseAction(params)
   runResponseAction = (dispatch, props) -> dispatch(responseAction, props)
   (state, response) ->
     if response.ok
       url = new URL(response.location)
-      # TODO: '/'で終わる場合を考慮すべき
-      last = url.pathname.split('/').at(-1)
+      last = url.pathname.split('/').reverse().find(identity)
       [
         {state..., [idKey]: last}
         [runResponseAction, response]
@@ -82,31 +81,37 @@ export createRunIndex = ({action, fallback = null, params...}) ->
 
 # GET /resources?page=x&per_page=y
 export createRunIndexWithPage = ({action, fallback = null, params...}) ->
-  responseAction = createResponseActionWithPage({action, fallback})
+  responseAction = createResponseActionSetPage({action, fallback})
   createRunResponse({params..., action: responseAction, method: 'GET'})
 
 # GET /resources/:id
 export createRunShowWithId = ({action, fallback = null, url, idKey = 'id', params...}) ->
-  responseAction = createResponseActionWithId({action, fallback, idKey})
+  responseAction = createResponseAction({action, fallback})
   url = "#{url}/:#{idKey}" unless url.includes(':#{idKey}')
   pathKeys = [idKey]
   createRunResponse({params..., action: responseAction, url, pathKeys, method: 'GET'})
 
 # POST /resources
-export createRunCreateWithId = ({action, fallback = null, idKey = 'id', params...}) ->
-  responseAction = createResponseActionWithId({action, fallback, idKey})
+export createRunCreateWithId = ({action, fallback = null, idKey = 'id', setId = false, params...}) ->
+  responseAction = if setId
+    createResponseActionSetId({action, fallback, idKey})
+  else
+    createResponseAction({action, fallback})
   createRunResponse({params..., action: responseAction, method: 'POST'})
 
 # PATCH /resources/:id
-export createRunUpdateWithId = ({action, fallback = null, url, idKey = 'id', params...}) ->
-  responseAction = createResponseActionWithId({action, fallback, idKey})
+export createRunUpdateWithId = ({action, fallback = null, url, idKey = 'id', setId = false, params...}) ->
+  responseAction = if setId
+    createResponseActionSetId({action, fallback, idKey})
+  else
+    createResponseAction({action, fallback})
   url = "#{url}/:#{idKey}" unless url.includes(':#{idKey}')
   pathKeys = [idKey]
   createRunResponse({params..., action: responseAction, url, pathKeys, method: 'PATCH'})
 
 # DELETE /resources/:id
 export createRunDestroyWithId = ({action, fallback = null, url, idKey = 'id', params...}) ->
-  responseAction = createResponseActionWithId({action, fallback, idKey})
+  responseAction = createResponseAction({action, fallback})
   url = "#{url}/:#{idKey}" unless url.includes(':#{idKey}')
   pathKeys = [idKey]
   createRunResponse({params..., action: responseAction, url, pathKeys, method: 'DELETE'})
@@ -178,7 +183,7 @@ export createRunDestroy = ({action, fallback = null, params...}) ->
 #   createRunResponseGet(responseAction, url, allowKeys)
 
 # export createRunGetPage = (action, url, allowKeys = []) ->
-#   responseAction = createResponseActionWithPage(action)
+#   responseAction = createResponseActionSetPage(action)
 #   createRunResponseGet(responseAction, url, [allowKeys..., 'page', 'per_page'])
 
 # export createRunName = (action, url, allowKeys = []) ->

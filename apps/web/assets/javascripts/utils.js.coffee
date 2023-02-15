@@ -11,6 +11,8 @@ export isBlank = (obj) -> isNil(obj) || isEmpty(obj)
 
 export isPresent = R.compose(R.not, isBlank)
 
+export identity = R.identity
+
 export presence = (obj) ->
   if isPresent(obj)
     obj

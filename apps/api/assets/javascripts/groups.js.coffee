@@ -3,6 +3,7 @@
 import {
   createRunIndexWithPage
   createRunShowWithId
+  createRunCreateWithId
   createRunUpdateWithId
   createRunDestroyWithId
 } from './hyper_json.js'
@@ -69,6 +70,14 @@ export createRunShowGroup = ({action = SetGroup, params...} = {}) ->
     params...
   })
 
+export createRunCreateGroup = ({action = SetGroup, params...} = {}) ->
+  createRunCreateWithId({
+    action
+    url: API_GROUPS
+    dataTypes: CREATE_GROUP_PARAM_TYPES
+    params...
+  })
+
 export createRunUpdateGroup = ({action = SetGroup, params...} = {}) ->
   createRunUpdateWithId({
     action
@@ -77,9 +86,10 @@ export createRunUpdateGroup = ({action = SetGroup, params...} = {}) ->
     params...
   })
 
-
-# Effecters
-
-export runIndexWithPageGroups = createRunIndexWithPageGroups()
-
-export runShowGroup = createRunShowGroup()
+export createRunDestroyGroup = ({action = SetGroup, params...} = {}) ->
+  createRunDestroyWithId({
+    action
+    url: API_GROUPS
+    dataTypes: DESTROY_GROUP_PARAM_TYPES
+    params...
+  })

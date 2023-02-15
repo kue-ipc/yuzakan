@@ -69,8 +69,26 @@ export createRunShowProvider = ({action = SetProvider, params...} = {}) ->
     params...
   })
 
-# Effecters
+export createRunCreateProvider = ({action = SetProvider, params...} = {}) ->
+  createRunCreateWithId({
+    action
+    url: API_PROVIDERS
+    dataTypes: CREATE_PROVIDER_PARAM_TYPES
+    params...
+  })
 
-export runIndexProviders = createRunIndexProviders()
+export createRunUpdateProvider = ({action = SetProvider, params...} = {}) ->
+  createRunUpdateWithId({
+    action
+    url: API_PROVIDERS
+    dataTypes: UPDATE_PROVIDER_PARAM_TYPES
+    params...
+  })
 
-export runShowProvider = createRunShowProvider()
+export createRunDestroyProvider = ({action = SetProvider, params...} = {}) ->
+  createRunDestroyWithId({
+    action
+    url: API_PROVIDERS
+    dataTypes: DESTROY_PROVIDER_PARAM_TYPES
+    params...
+  })
