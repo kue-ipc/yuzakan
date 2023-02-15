@@ -25,7 +25,7 @@ module Api
             optional(:attrs) { hash? }
             optional(:providers).each(:str?, :name?, max_size?: 255)
             optional(:clearance_level).filled(:int?)
-            optional(:reserved).filled(:bool?)
+            optional(:prohibited).filled(:bool?)
             optional(:note).maybe(:str?, max_size?: 4096)
           end
         end

@@ -20,7 +20,7 @@ module Api
             optional(:note).maybe(:str?, max_size?: 4096)
 
             optional(:primary).filled(:bool?)
-            optional(:obsoleted).filled(:bool?)
+            optional(:prohibited).filled(:bool?)
 
             optional(:deleted).filled(:bool?)
             optional(:deleted_at).maybe(:date_time?)

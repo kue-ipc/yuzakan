@@ -6,7 +6,7 @@ module Api
       module UserInteractor
         USER_BASE_INFO = [:username, :display_name, :email].freeze
         USER_PROVIDER_INFO = [:primary_group, :groups, :attrs].freeze
-        USER_REPOSITORY_INFO = [:clearance_level, :reserved, :note].freeze
+        USER_REPOSITORY_INFO = [:clearance_level, :prohibited, :note].freeze
 
         def initialize(config_repository: ConfigRepository.new,
                        provider_repository: ProviderRepository.new,

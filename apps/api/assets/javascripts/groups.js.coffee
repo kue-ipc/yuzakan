@@ -15,7 +15,7 @@ export GROUP_PROPERTIES = {
   display_name: 'string'
   note: 'string'
   primary: 'boolean'
-  obsoleted: 'boolean'
+  prohibited: 'boolean'
   deleted: 'boolean'
   deleted_at: 'datetime'
 }

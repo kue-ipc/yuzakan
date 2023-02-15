@@ -109,7 +109,7 @@ def let_mock_repositories
   let(:user_attributes) {
     {
       id: 42, username: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1,
-      reserved: false, deleted: false, deleted_at: nil, note: nil,
+      prohibited: false, deleted: false, deleted_at: nil, note: nil,
     }
   }
   let(:group_attributes) { {id: 42, username: 'group', display_name: 'グループ'} }
@@ -174,7 +174,7 @@ def let_mock_repositories
     [
       user_attributes,
       {**user_attributes, id: 1, username: 'admin', display_name: '管理者', email: 'admin@example.jp', clearance_level: 5},
-      {**user_attributes, id: 24, username: 'reserved', reserved: true},
+      {**user_attributes, id: 24, username: 'prohibited', prohibited: true},
       {**user_attributes, id: 19, username: 'deleted', deleted: true, deleted_at: Time.now - (24 * 60 * 60)},
     ]
   }

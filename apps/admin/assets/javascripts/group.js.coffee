@@ -74,9 +74,9 @@ basicInfo = ({mode, group}) ->
       if group.deleted
         html.span {class: 'text-failure'},
           text "削除済み(#{group.deleted_at})"
-      else if group.obsoleted
+      else if group.prohibited
         html.span {class: 'text-muted'},
-          text '廃止'
+          text '使用禁止'
       else
         html.span {class: 'text-success'},
           text '正常'

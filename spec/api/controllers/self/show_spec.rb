@@ -46,7 +46,7 @@ RSpec.describe Api::Controllers::Self::Show, type: :action do
       label: 'ユーザー',
       email: 'user@example.jp',
       note: nil,
-      reserved: false,
+      prohibited: false,
       deleted: false,
       deleted_at: nil,
       clearance_level: 1,

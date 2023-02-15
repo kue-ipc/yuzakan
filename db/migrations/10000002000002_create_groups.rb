@@ -10,7 +10,7 @@ Hanami::Model.migration do
       column :note, String, size: 4096
 
       column :primary, TrueClass, null: false, default: false
-      column :obsoleted, TrueClass, null: false, default: false
+      column :prohibited, TrueClass, null: false, default: false
 
       column :deleted, TrueClass, null: false, default: false
       column :deleted_at, DateTime

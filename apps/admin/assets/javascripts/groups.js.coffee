@@ -113,7 +113,7 @@ groupDetailTr = ({group, colspan}) ->
       html.div {key: 'properties'}, [
         html.span {}, text "表示名: #{group.display_name || '(無し)'}"
         html.span {class: 'ms-2 badge text-bg-primary'}, text 'プライマリー' if group.primary
-        html.span {class: 'ms-2 badge text-bg-warnig'}, text '廃止済み' if group.obsoleted
+        html.span {class: 'ms-2 badge text-bg-warnig'}, text '使用禁止' if group.prohibited
         html.span {class: 'ms-2 badge text-bg-danger'}, text '削除済み' if group.deleted
         html.span {class: 'ms-2'}, text "削除日: #{group.deleted_at}" if group.deleted_at
       ]

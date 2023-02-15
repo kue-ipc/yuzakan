@@ -25,13 +25,13 @@ class GroupRepository < Hanami::Repository
     filter(**filter).order(*order_attributes)
   end
 
-  def filter(query: nil, primary: nil, obsoleted: nil, deleted: nil)
+  def filter(query: nil, primary: nil, prohibited: nil, deleted: nil)
     q = groups
     q = q.where { groupname.ilike("%#{query}%") | display_name.ilike("%#{query}%") } if query&.size&.positive?
 
     q = q.where(primary: primary) unless primary.nil?
 
-    q = q.where(obsoleted: obsoleted) unless obsoleted.nil?
+    q = q.where(prohibited: prohibited) unless prohibited.nil?
 
     case deleted
     when true, false

@@ -30,8 +30,8 @@ class User < Hanami::Entity
     deleted
   end
 
-  def reseverd?
-    reserved
+  def prohibited?
+    prohibited
   end
 
   def to_s
