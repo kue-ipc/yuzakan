@@ -67,7 +67,7 @@ SetGroupInListOk = (state, group) ->
 
 ModGroup = (state, group) ->
   fallback = (state, error) ->
-    [SetGroupInList, {group..., action: 'ERR', error}]
+    [SetGroupInList, {group..., action: 'ERR', error, show_detail: true}]
   run = createRunUpdateGroup({action: SetGroupInListOk, fallback})
   [
     {state..., groups: updateGroupList({group..., action: 'ACT'}, state.groups)}
@@ -92,10 +92,12 @@ groupTr = ({group, providers}) ->
       'light'
   html.tr {
     key: "group[#{group.groupname}]"
-    class: ["table-#{color}"]
-    onclick: -> [SetGroupInList, {group..., show_detail: !group.show_detail}]
+    class: "table-#{color}"
   }, [
-    html.td {key: 'show'},
+    html.td {
+      key: 'show'
+      onclick: -> [SetGroupInList, {group..., show_detail: !group.show_detail}]
+    },
       if group.show_detail
         BsIcon {name: 'chevron-down'}
       else
@@ -103,8 +105,8 @@ groupTr = ({group, providers}) ->
     html.td {key: 'action'},
       switch group.action
         when 'ACT'
-          html.div {class: 'spinner-border', role: 'status'},
-            html.span {class: 'visually-hidden'}, text: '実行中'
+          html.div {class: 'spinner-border spinner-border-sm', role: 'status'},
+            html.span {class: 'visually-hidden'}, text '実行中'
         when 'MOD'
           html.button {
             class: 'btn btn-sm btn-info'
@@ -132,8 +134,16 @@ groupDetailTr = ({group, colspan}) ->
         html.span {class: 'ms-2 badge text-bg-danger'}, text '削除済み' if group.deleted
         html.span {class: 'ms-2'}, text "削除日: #{group.deleted_at}" if group.deleted_at
       ]
-      html.div {key: 'note', class: 'text-info'}, text group.note if group.note
-      html.div {key: 'error', class: 'text-danger'}, text group.error if group.error
+      if group.note
+        html.div {key: 'note'},
+          html.pre {class: 'mb-0 text-info'}, text group.note
+      if group.error
+        html.div {key: 'error'},
+          html.pre {class: 'mb-0 text-danger'},
+            text if typeof group.error == 'string'
+              group.error
+            else
+              JSON.stringify(group.error, null, 2)
     ]
 
 doAllActionButton = () ->
@@ -236,6 +246,7 @@ view = ({mode, groups, providers, page_info, search, option, order}) ->
           html.div {key: 'upload', class: 'col-md-3'},
             uploadButton {onupload: UploadGroups, disabled: true}
           html.div {key: 'download', class: 'col-md-3'},
+            # アップロードモードではヘッダを指定しない
             downloadButton {list: groups, filename: 'result_groups.csv'}
           html.div {key: 'do_all_action', class: 'col-md-3'},
             doAllActionButton {}

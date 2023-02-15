@@ -124,5 +124,11 @@ module Api
         end
       end
     end
+
+    # override handle
+    def handle_invalid_csrf_token
+      Hanami.logger.warn "CSRF attack: expected #{ session[:_csrf_token] }, was #{ params[:_csrf_token] }"
+      halt_json 400, errors: [I18n.t('errors.invalid_csrf_token')]
+    end
   end
 end

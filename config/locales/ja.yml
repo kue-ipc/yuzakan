@@ -78,6 +78,7 @@ ja:
         別の%{target}では%{action}時にエラーが発生し、処理が中断されました。
         実行されていない%{target}が存在する可能性があるため、
         再度%{action}を実行してください。
+    invalid_csrf_token: CSRFトークンが不正です。
   interactors:
     change_password: パスワード変更
     create_attr: 属性作成
