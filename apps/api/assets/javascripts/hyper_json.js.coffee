@@ -63,7 +63,7 @@ export createResponseActionWithId = ({idKey = 'id', params...}) ->
 export createRunResponse = ({action, url, pathKeys = [], dataTypes = [], params...}) ->
   (dispatch, props = {}) ->
     for key in pathKeys
-      unless props.hasOwnProperty(key)
+      unless key of props
         console.error 'given props does not have the property for path: %s', key
         return
       url = url.replace(":#{key}", props[key])
@@ -72,48 +72,59 @@ export createRunResponse = ({action, url, pathKeys = [], dataTypes = [], params.
     dispatch(action, response)
 
 # RESTful Resources
+# GET /resources
 export createRunIndex = ({action, fallback = null, params...}) ->
   responseAction = createResponseAction({action, fallback})
   createRunResponse({params..., action: responseAction, method: 'GET'})
 
+# GET /resources?page=x&per_page=y
 export createRunIndexWithPage = ({action, fallback = null, params...}) ->
   responseAction = createResponseActionWithPage({action, fallback})
   createRunResponse({params..., action: responseAction, method: 'GET'})
 
+# GET /resources/:id
 export createRunShowWithId = ({action, fallback = null, url, idKey = 'id', params...}) ->
   responseAction = createResponseActionWithId({action, fallback, idKey})
-  url = "#{url}/:id" unless url.includes(':id')
-  createRunResponse({params..., action: responseAction, url, method: 'GET'})
+  url = "#{url}/:#{idKey}" unless url.includes(':#{idKey}')
+  pathKeys = [idKey]
+  createRunResponse({params..., action: responseAction, url, pathKeys, method: 'GET'})
 
-export createRunCreateWithId = ({action, fallback = null, url, idKey = 'id', params...}) ->
+# POST /resources
+export createRunCreateWithId = ({action, fallback = null, idKey = 'id', params...}) ->
   responseAction = createResponseActionWithId({action, fallback, idKey})
-  url = url
-  createRunResponse({params..., action: responseAction, url, method: 'POST'})
+  createRunResponse({params..., action: responseAction, method: 'POST'})
 
+# PATCH /resources/:id
 export createRunUpdateWithId = ({action, fallback = null, url, idKey = 'id', params...}) ->
   responseAction = createResponseActionWithId({action, fallback, idKey})
-  url = "#{url}/:id" unless url.includes(':id')
-  createRunResponse({params..., action: responseAction, url, method: 'PATCH'})
+  url = "#{url}/:#{idKey}" unless url.includes(':#{idKey}')
+  pathKeys = [idKey]
+  createRunResponse({params..., action: responseAction, url, pathKeys, method: 'PATCH'})
 
-export createRunDestroyWithId = ({action, fallback = null, url, params...}) ->
+# DELETE /resources/:id
+export createRunDestroyWithId = ({action, fallback = null, url, idKey = 'id', params...}) ->
   responseAction = createResponseActionWithId({action, fallback, idKey})
-  url = "#{url}/:id" unless url.includes(':id')
-  createRunResponse({params..., action: responseAction, url, method: 'DELETE'})
+  url = "#{url}/:#{idKey}" unless url.includes(':#{idKey}')
+  pathKeys = [idKey]
+  createRunResponse({params..., action: responseAction, url, pathKeys, method: 'DELETE'})
 
 # RESTful Resource
+# GET /resource
 export createRunShow = ({action, fallback = null, params...}) ->
   responseAction = createResponseAction({action, fallback})
   createRunResponse({params..., action: responseAction, method: 'GET'})
 
+# POST /resource
 export createRunCreate = ({action, fallback = null, params...}) ->
   responseAction = createResponseAction({action, fallback, idKey})
-  url = path
   createRunResponse({params..., action: responseAction, method: 'POST'})
 
+# PATCH /resource
 export createRunUpdate = ({action, fallback = null, params...}) ->
   responseAction = createResponseAction({action, fallback, idKey})
   createRunResponse({params..., action: responseAction, method: 'PATCH'})
 
+# DELETE /resource
 export createRunDestroy = ({action, fallback = null, params...}) ->
   responseAction = createResponseAction({action, fallback, idKey})
   createRunResponse({params..., action: responseAction, method: 'DELETE'})
