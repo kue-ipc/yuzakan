@@ -4,7 +4,7 @@ import {pick, pickType, identity} from '/assets/utils.js'
 import csrf from '/assets/csrf.js'
 
 import {fetchJson} from './fetch_json.js'
-import {PAGINATION_KEY, DEFAULT_PAGE, DEFAULT_PER_PAGE} from './pagination.js'
+import {DEFAULT_PAGE, DEFAULT_PER_PAGE} from './pagination.js'
 # create Actions
 
 # データを受け取るアクションからレスポンスに対応した新しいアクションを作成する。
@@ -32,7 +32,7 @@ export createResponseActionSetPage = (params) ->
   (state, response) ->
     if response.ok
       [
-        {state..., [PAGINATION_KEY]: response[PAGINATION_KEY]}
+        {state..., pagination: response.pagination}
         [runResponseAction, response]
       ]
     else

@@ -3,7 +3,7 @@ import HttpLinkHeader from '/assets/vendor/http-link-header.js'
 import {isPresent, objToJson, toInteger} from '/assets/utils.js'
 import {formDataToJson, formDataToUrlencoded, objToUrlencoded} from '/assets/form_helper.js'
 
-import {PAGINATION_KEY, extractPagination} from './pagination.js'
+import {extractPagination} from './pagination.js'
 
 ALLOWED_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE']
 
@@ -107,7 +107,7 @@ parseResponse = (response) ->
   contentRange = response.headers.get('Content-Range')
   paginiationInfo =
     if contentRange?
-      {[PAGINATION_KEY]: extractPagination(contentRange, location)}
+      {paginiation: extractPagination(contentRange, location)}
     else
       {}
 
