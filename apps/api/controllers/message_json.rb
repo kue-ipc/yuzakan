@@ -47,7 +47,6 @@ module Api
         end
       case entity
       when Attr
-        data.merge!({label: entity.label})
         if assoc && entity.mappings
           mappings = entity.mappings.map do |mapping|
             {**convert_entity(mapping), provider: mapping.provider&.name}
@@ -55,10 +54,8 @@ module Api
           data.merge!({mappings: mappings})
         end
       when Provider
-        data.merge!({label: entity.label})
         data.merge!({params: entity.params}) if assoc && entity.params
       when User
-        data.merge!({label: entity.label})
         if assoc && entity.members
           data.merge!({
             primary_group: entity.primary_group&.groupname,
@@ -66,7 +63,6 @@ module Api
           })
         end
       when Group
-        data.merge!({label: entity.label})
         if assoc && entity.members
           data.merge!({
             users: entity.users&.map(&:username),
