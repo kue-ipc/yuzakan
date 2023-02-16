@@ -23,18 +23,18 @@ class UserRepository < Hanami::Repository
   end
 
   def find_with_groups(id)
-    aggregate(:groups, members: :groups).where(id: id).map_to(User).one
+    aggregate(members: :group).where(id: id).map_to(User).one
   end
 
   def find_with_groups_by_username(username)
-    aggregate(:groups, members: :groups).where(username: username).map_to(User).one
+    aggregate(members: :group).where(username: username).map_to(User).one
   end
 
   def set_primary_group(user, group)
-    primary_member = assoc(:members, user).where(primary: true).one
+    primary_member = assoc(:members, user).where(primary: true).to_a.first
     return primary_member if primary_member&.group_id == group.id
 
-    member = assoc(:members, user).where(group_id: group.id).one
+    member = assoc(:members, user).where(group_id: group.id).to_a.first
 
     assoc(:members, user).update(primary_member.id, primary: false) if primary_member
 
@@ -46,14 +46,14 @@ class UserRepository < Hanami::Repository
   end
 
   def add_group(user, group)
-    member = assoc(:members, user).where(group_id: group.id).one
+    member = assoc(:members, user).where(group_id: group.id).to_a.first
     return member if member
 
     assoc(:members, user).add(group_id: group.id)
   end
 
   def remove_group(user, group)
-    member = assoc(:members, user).where(group_id: group.id).one
+    member = assoc(:members, user).where(group_id: group.id).to_a.first
     return unless member
 
     assoc(:members, user).remove(member.id)

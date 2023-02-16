@@ -27,6 +27,7 @@ module Api
         private def set_user
           halt_json 400, errors: [params.errors] unless params.valid?
 
+          @username = params[:id]
           set_sync_user
 
           halt_json 404 if @user.nil?
