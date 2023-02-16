@@ -27,6 +27,7 @@ export INDEX_GROUPS_PARAM_TYPES = {
   order: 'string'
   query: 'string'
   primary_only: 'boolean'
+  hide_prohibited: 'boolean'
   show_deleted: 'boolean'
 }
 

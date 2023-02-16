@@ -24,13 +24,12 @@ module Api
               groupname
               display_name
               deleted_at
-              created_at
-              updated_at
             ].flat_map { |name| [name, "#{name}.asc", "#{name}.desc"] })
 
             optional(:query).maybe(:str?, max_size?: 255)
 
             optional(:primary_only).filled(:bool?)
+            optional(:hide_prohibited).filled(:bool?)
             optional(:show_deleted).filled(:bool?)
           end
         end
@@ -48,28 +47,22 @@ module Api
         def call(params)
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
-          if params[:sync]
-            get_groups_from_provider(params)
-          else
-            get_groups_from_repository(params)
-          end
-
-          groups =
-            if @groups_providers
-              @groups.map do |group|
-                {**convert_for_json(group), providers: @groups_providers[group.groupname]}
-              end
+          result =
+            if params[:sync]
+              get_groups_from_provider(params.to_h)
             else
-              @groups
+              get_groups_from_repository(params.to_h)
             end
 
           self.status = 200
-          headers.merge!(@pager.headers)
-          self.body = generate_json(groups)
+          headers.merge!(result[:headers])
+          self.body = generate_json(result[:groups])
         end
 
         # order
         def get_groups_from_repository(params)
+          params = params.to_h.except(:sync)
+
           order =
             if params[:order]
               name, asc_desc = params[:order].split('.', 2).map(&:intern)
@@ -81,19 +74,39 @@ module Api
           query = ("%#{params[:query]}%" if params[:query]&.size&.positive?)
 
           filter = {}
-          filter[:query] = query if query
+          filter[:query] = "%#{params[:query]}%" if params[:query]&.size&.positive?
           filter[:primary] = true if params[:primary_only]
+          filter[:prohibited] = false if params[:hide_prohibited]
           filter[:deleted] = false unless params[:show_deleted]
 
           relation = @group_repository.ordered_filter(order: order, filter: filter)
-          @pager = Yuzakan::Utils::Pager.new(relation, **params.to_h.slice(:page, :per_page)) do |link_params|
-            routes.url(:groups, **params.to_h, **link_params)
+
+          if params.key?(:page)
+            pager = Yuzakan::Utils::Pager.new(relation, **params.slice(:page, :per_page)) do |link_params|
+              routes.url(:groups, **params, **link_params)
+            end
+            {
+              groups: pager.page_items,
+              headers: pager.headers,
+            }
+          else
+            {
+              groups: relation.to_a,
+              headers: {'Content-Location' => routes.url(:groups, **params.except(:per_page))},
+            }
           end
-          @groups = @pager.page_items
         end
 
         def get_groups_from_provider(params)
-          @groups_providers = Hash.new { |hash, key| hash[key] = [] }
+          # syncモードでは無視される。
+          params = params.to_h.except(:primary_only, :hide_prohibited, :show_deleted)
+
+          if params.key?(:order) && !params[:key].start_with?('groupname')
+            # groupnameに対する順序以外は無視される。
+            params = params.except(:order)
+          end
+
+          groups_providers = Hash.new { |hash, key| hash[key] = [] }
           query = ("*#{params[:query]}*" if params[:query]&.size&.positive?)
 
           @provider_repository.ordered_all_with_adapter_by_operation(:group_read).each do |provider|
@@ -103,17 +116,28 @@ module Api
               else
                 provider.group_list
               end
-            items.each { |item| @groups_providers[item] << provider.name }
+            items.each { |item| groups_providers[item] << provider.name }
           end
 
-          all_groupnames = @groups_providers.keys
+          all_groupnames = groups_providers.keys
           all_groupnames.sort!
           all_groupnames.reverse! if params[:order] == 'groupname.desc'
 
-          @pager = Yuzakan::Utils::Pager.new(all_groupnames, **params.to_h.slice(:page, :per_page)) do |link_params|
+          pager = Yuzakan::Utils::Pager.new(all_groupnames, **params.slice(:page, :per_page)) do |link_params|
             routes.url(:groups, **params.to_h, **link_params)
           end
-          @groups = get_groups(@pager.page_items)
+
+          groups = get_groups(pager.page_items).map do |group|
+            {
+              **convert_for_json(group),
+              providers: groups_providers[group.groupname].map { |name| [name, true] },
+            }
+          end
+
+          {
+            groups: groups,
+            headers: pager.headers,
+          }
         end
 
         private def get_groups(groupnames)

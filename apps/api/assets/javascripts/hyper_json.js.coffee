@@ -3,7 +3,18 @@
 import {pick, pickType, identity} from '/assets/utils.js'
 import csrf from '/assets/csrf.js'
 
-import {fetchJson, DEFAULT_PAGE, DEFAULT_PER_PAGE} from './fetch_json.js'
+import {fetchJson} from './fetch_json.js'
+
+export DEFAULT_PAGE = 1
+export DEFAULT_PER_PAGE = 20
+export MIN_PAGE = 1
+export MAX_PAGE = 10000
+export MIN_PER_PAGE = 10
+export MAX_PER_PAGE = 100
+export PAGE_PARAMS_TYPES = {
+  page: 'integer'
+  per_page: 'integer'
+}
 
 # create Actions
 

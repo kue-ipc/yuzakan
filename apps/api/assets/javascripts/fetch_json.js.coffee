@@ -4,13 +4,6 @@ import {isPresent, objToJson, toInteger} from '/assets/utils.js'
 
 import {formDataToJson, formDataToUrlencoded, objToUrlencoded} from '/assets/form_helper.js'
 
-export DEFAULT_PAGE = 1
-export DEFAULT_PER_PAGE = 20
-export MIN_PAGE = 1
-export MAX_PAGE = 10000
-export MIN_PER_PAGE = 10
-export MAX_PER_PAGE = 100
-
 ALLOWED_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE']
 
 export fetchJson = ({url, method, data = null, type = 'json', params...}) ->

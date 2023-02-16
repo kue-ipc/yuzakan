@@ -58,11 +58,15 @@ module Yuzakan
         @all_items ||= @relation.to_a
       end
 
+      def location
+        @location ||= @create_link.call({page: page, per_page: per_page})
+      end
+
       def headers
         {
-          'Total-Count' => header_total_count,
           'Link' => header_link,
           'Content-Range' => header_content_range,
+          'Content-Location' => location,
         }.compact
       end
 
