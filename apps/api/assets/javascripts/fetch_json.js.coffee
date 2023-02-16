@@ -7,7 +7,32 @@ import {PAGINATION_KEY, extractPagination} from './pagination.js'
 
 ALLOWED_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE']
 
-export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
+export fetchJson = (params) ->
+  request = createRequest(params)
+  console.debug 'fetch request: %s %s', request.method, request.url
+  response = await fetch request
+  console.debug 'fetch response: %d %s', response.status, response.url
+  parseResponse(response)
+
+export fetchJsonGet = (params) ->
+  await fetchJson({method: 'GET', params...})
+
+export fetchJsonHead = (params) ->
+  await fetchJson({method: 'HEAD', params...})
+
+export fetchJsonPost = (params) ->
+  await fetchJson({method: 'POST', params...})
+
+export fetchJsonPut = (params) ->
+  await fetchJson({method: 'PUT', params...})
+
+export fetchJsonPatch = (params) ->
+  await fetchJson({method: 'PATCH', params...})
+
+export fetchJsonDelete = (params) ->
+  await fetchJson({method: 'DELETE', params...})
+
+createRequest = ({url, method, data = null, type = 'json', params...}) ->
   # create request
 
   method = method.toUpperCase()
@@ -63,16 +88,10 @@ export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
 
   init.headers = headers
 
-  request = new Request url, init
+  new Request(url, init)
 
-  # fetch
-
-  console.debug 'fetch %s %s', request.method, request.url
-  response = await fetch request
-
-  # parse response
-
-  location = response.headers.get('Content-Location') ? url
+parseResponse = (response) ->
+  location = response.headers.get('Content-Location') ? response.url
 
   contentType = response.headers.get('Content-Type')
   responseData =
@@ -86,19 +105,9 @@ export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
       throw new Error("Unknown or unsupported content type: #{contentType}")
 
   contentRange = response.headers.get('Content-Range')
-  pageInfo =
+  paginiationInfo =
     if contentRange?
       {[PAGINATION_KEY]: extractPagination(contentRange, location)}
-      # match = contentRange.match(/^items\s+(?<start>\d+)-(?<end>\d+)\/(?<total>\d+)$/)
-      # pickType(getQueryParamsFromUrl(location), PAGE_PARAMS_TYPES)
-
-      # {
-      #   page: toInteger(data.page ? DEFAULT_PAGE)
-      #   per_page: toInteger(data.per_page ? DEFAULT_PER_PAGE)
-      #   total: toInteger(match.groups.total)
-      #   start: toInteger(match.groups.start)
-      #   end: toInteger(match.groups.end)
-      # }
     else
       {}
 
@@ -114,24 +123,6 @@ export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
     code: toInteger(response.status)
     location
     responseData...
-    pageInfo...
+    paginiationInfo...
     linkInfo...
   }
-
-export fetchJsonGet = (params) ->
-  await fetchJson({method: 'GET', params...})
-
-export fetchJsonHead = (params) ->
-  await fetchJson({method: 'HEAD', params...})
-
-export fetchJsonPost = (params) ->
-  await fetchJson({method: 'POST', params...})
-
-export fetchJsonPut = (params) ->
-  await fetchJson({method: 'PUT', params...})
-
-export fetchJsonPatch = (params) ->
-  await fetchJson({method: 'PATCH', params...})
-
-export fetchJsonDelete = (params) ->
-  await fetchJson({method: 'DELETE', params...})

@@ -31,10 +31,6 @@ export createResponseActionSetPage = (params) ->
   runResponseAction = (dispatch, props) -> dispatch(responseAction, props)
   (state, response) ->
     if response.ok
-      # page_info = {
-      #   pick(response, ['page', 'per_page', 'total', 'start', 'end'])...
-      #   total_page: Math.ceil(response.total / response.per_page)
-      # }
       [
         {state..., [PAGINATION_KEY]: response[PAGINATION_KEY]}
         [runResponseAction, response]
