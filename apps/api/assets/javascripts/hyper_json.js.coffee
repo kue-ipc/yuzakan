@@ -4,18 +4,7 @@ import {pick, pickType, identity} from '/assets/utils.js'
 import csrf from '/assets/csrf.js'
 
 import {fetchJson} from './fetch_json.js'
-
-export DEFAULT_PAGE = 1
-export DEFAULT_PER_PAGE = 20
-export MIN_PAGE = 1
-export MAX_PAGE = 10000
-export MIN_PER_PAGE = 10
-export MAX_PER_PAGE = 100
-export PAGE_PARAMS_TYPES = {
-  page: 'integer'
-  per_page: 'integer'
-}
-
+import {PAGINATION_KEY, DEFAULT_PAGE, DEFAULT_PER_PAGE} from './pagination.js'
 # create Actions
 
 # データを受け取るアクションからレスポンスに対応した新しいアクションを作成する。
@@ -42,12 +31,12 @@ export createResponseActionSetPage = (params) ->
   runResponseAction = (dispatch, props) -> dispatch(responseAction, props)
   (state, response) ->
     if response.ok
-      page_info = {
-        pick(response, ['page', 'per_page', 'total', 'start', 'end'])...
-        total_page: Math.ceil(response.total / response.per_page)
-      }
+      # page_info = {
+      #   pick(response, ['page', 'per_page', 'total', 'start', 'end'])...
+      #   total_page: Math.ceil(response.total / response.per_page)
+      # }
       [
-        {state..., page_info}
+        {state..., [PAGINATION_KEY]: response[PAGINATION_KEY]}
         [runResponseAction, response]
       ]
     else

@@ -36,7 +36,7 @@ export compact = (obj) ->
 export pick = R.flip(R.pick)
 
 export pickType = (obj, keys) ->
-  Object.fromEntries([key, convertToType(obj[key], type)] for own key, type of keys when obj.hasOwnProperty(key))
+  Object.fromEntries([key, convertToType(obj[key], type)] for own key, type of keys when key of obj)
 
 TRUE_STRINGS = new Set([
   '1'
@@ -101,6 +101,8 @@ export convertToType = (val, type = 'string') ->
       toMap(val)
     when 'set'
       toSet(val)
+    when 'any'
+      val
     else
       console.warn "cannot convert to the unknown type: #{type}"
       undefined
@@ -138,10 +140,10 @@ export toDateTime = (val) ->
       else if val instanceof DateTime
         val
       else
-        console.warn "no datetime object: #{val}"
+        console.warn 'no datetime object: %s', val
         DateTime.fromJSDate(Date(val))
     else
-      console.warn "no datetime object: #{val}"
+      console.warn 'no datetime object: %s', val
       DateTime.fromJSDate(Date(val))
   dateTime?.toLocal()
 
@@ -153,12 +155,27 @@ export toList = (val) ->
   val = JSON.parse(val) if typeof val == 'string'
   return val if val instanceof Array
 
-  [val...]
+  if val[Symbol.iterator]?
+    [val...]
+  else if val.length?
+    (v for v in val)
+  else if typeof val == 'object'
+    Object.entries(val)
+  else
+    console.warn 'no list object: %s', val
+    []
+    
 
 export toMap = (val) ->
   return val if val instanceof Map
 
-  new Map(toList(val).map(toList))
+  new Map(toList(val).map((v) ->
+    if typeof v == 'string'
+      [v, true]
+    else
+      toList(v)
+    )
+  )
 
 export toSet = (val) ->
   return val if val instanceof Set

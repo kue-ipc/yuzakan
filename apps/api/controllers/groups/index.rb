@@ -124,13 +124,13 @@ module Api
           all_groupnames.reverse! if params[:order] == 'groupname.desc'
 
           pager = Yuzakan::Utils::Pager.new(all_groupnames, **params.slice(:page, :per_page)) do |link_params|
-            routes.url(:groups, **params.to_h, **link_params)
+            routes.path(:groups, **params.to_h, **link_params)
           end
 
           groups = get_groups(pager.page_items).map do |group|
             {
               **convert_for_json(group),
-              providers: groups_providers[group.groupname].map { |name| [name, true] },
+              providers: groups_providers[group.groupname],
             }
           end
 

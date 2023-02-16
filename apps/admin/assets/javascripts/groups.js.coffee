@@ -9,10 +9,13 @@ import ConfirmDialog from '/assets/confirm_dialog.js'
 import {fieldId} from '/assets/form_helper.js'
 
 import {
+  INDEX_WITH_PAGE_GROUPS_PARAM_TYPES, GROUP_PROPERTIES
+  normalizeGroup
   createRunIndexWithPageGroups, createRunUpdateGroup
-  INDEX_GROUPS_PARAM_TYPES, GROUP_PROPERTIES
 } from '/assets/api/groups.js'
 import {createRunIndexProviders} from '/assets/api/providers.js'
+import {PAGINATION_KEY} from '/assets/api/pagination.js'
+
 
 import pageNav from './page_nav.js'
 import searchForm from './search_form.js'
@@ -22,6 +25,13 @@ import {downloadButton, uploadButton} from './csv.js'
 # Functions
 
 updateGroupList = (group, groups) -> updateList(group, groups, 'groupname')
+
+normalizeGroupExpand = (group) -> normalizeGroup(group, {
+  action: 'string'
+  label: 'string'
+  show_detail: 'boolean'
+  error: 'any'
+})
 
 # dialog
 
@@ -44,6 +54,7 @@ indexGroupsOption = ({onchange: action, props...}) ->
     for key, val of {
       sync: 'プロバイダーと同期'
       primary_only: 'プライマリーのみ'
+      hide_prohibited: '使用禁止を隠す'
       show_deleted: '削除済みも表示'
     }
       id = "option-#{key}"
@@ -155,7 +166,7 @@ doAllActionButton = () ->
 SetGroupInList = (state, group) ->
   {
     state...
-    groups: updateGroupList(group, state.groups)
+    groups: updateGroupList(normalizeGroupExpand(group), state.groups)
   }
 
 ModGroup = (state, group) ->
@@ -173,52 +184,59 @@ ReloadIndexGroups = (state, data) ->
   console.debug 'reload index groups'
   newState = {state..., data...}
   params = pick({
-    newState.page_info...
+    newState[PAGINATION_KEY]...
     newState.search...
     newState.option...
     order: newState.order
-  }, Object.keys(INDEX_GROUPS_PARAM_TYPES))
+  }, Object.keys(INDEX_WITH_PAGE_GROUPS_PARAM_TYPES))
   [
     newState,
     [runPushHistory, params]
     [runIndexGroups, params]
   ]
 
-FinishIndexGroups = (state, groups) ->
+SetIndexGroups = (state, rawGroups) ->
   console.debug 'finish load groups'
+  groups = for group in rawGroups
+    normalizeGroupExpand({
+      group...
+      action: ''
+      show_detail: false
+      error: null
+    })
   {
     state...
     mode: 'loaded'
-    groups: ({action: '', group...} for group in groups)
+    groups
   }
 
 MovePage = (state, page) ->
   return state if state.page == page
 
-  [ReloadIndexGroups, {page_info: {state.page_info... , page}}]
+  [ReloadIndexGroups, {[PAGINATION_KEY]: {state[PAGINATION_KEY]... , page}}]
 
 Search = (state, query) ->
   return state if state.query == query
 
   # ページ情報を初期化
-  [ReloadIndexGroups, {page_info: {}, search: {query}}]
+  [ReloadIndexGroups, {[PAGINATION_KEY]: {}, search: {query}}]
 
 ChangeOption = (state, option) ->
   # ページ情報を初期化
-  [ReloadIndexGroups, {page_info: {}, option: {state.option..., option...}}]
+  [ReloadIndexGroups, {[PAGINATION_KEY]: {}, option: {state.option..., option...}}]
 
 SortOrder = (state, order) ->
   [ReloadIndexGroups, {order}]
 
 UploadGroups = (state, {list, filename}) ->
-  groups = for data in list
-    {
-      action: data.action?.toUpperCase()
-      pickType(data, GROUP_PROPERTIES)...
-      providers: (k for k, v of data.providers when toBoolean(v))
-      label: data.display_name || data.groupname
-    }
-
+  groups = for group in list
+    normalizeGroupExpand({
+      group...
+      action: group.action?.toUpperCase()
+      label: group.display_name || group.groupname
+      show_detail: false
+      error: null
+    })
   {
     state...
     mode: 'upload'
@@ -259,7 +277,7 @@ DoAllAction = (state) ->
 
 runIndexProviders = createRunIndexProviders()
 
-runIndexGroups = createRunIndexWithPageGroups({action: FinishIndexGroups})
+runIndexGroups = createRunIndexWithPageGroups({action: SetIndexGroups})
 
 runPushHistory = (dispatch, params) ->
   query = "?#{objToUrlencoded(params)}"
@@ -286,14 +304,13 @@ runDoAllAction = (dispatch) ->
 # main
 
 main = ->
-  queryParams = pickType(getQueryParamsFromUrl(location))
+  queryParams = pickType(getQueryParamsFromUrl(location), INDEX_WITH_PAGE_GROUPS_PARAM_TYPES)
 
   initState = {
     mode: 'loading'
     groups: []
     providers: []
-    total: 0
-    page_info: pick(queryParams, ['page', 'per_page'])
+    [PAGINATION_KEY]: pick(queryParams, ['page', 'per_page'])
     search: pick(queryParams, ['query'])
     option: pick(queryParams, ['sync', 'primary_only', 'show_deleted'])
     order: queryParams['order']
@@ -302,10 +319,10 @@ main = ->
   init = [
     initState
     [runIndexProviders, {has_groups: true}]
-    [runIndexGroups, pick(initState, Object.keys(INDEX_GROUPS_PARAM_TYPES))]
+    [runIndexGroups, pick(initState, Object.keys(INDEX_WITH_PAGE_GROUPS_PARAM_TYPES))]
   ]
 
-  view = ({mode, groups, providers, page_info, search, option, order}) ->
+  view = ({mode, groups, providers, search, option, order, params...}) ->
     html.div {}, [
       if mode == 'upload'
         html.div {}, [
@@ -335,7 +352,7 @@ main = ->
             html.div {key: 'downolad', class: 'col-md-3'},
               downloadButton {list: groups, filename: 'groups.csv', headers, disabled: mode == 'loading'}
           ]
-          pageNav {page_info..., onpage: MovePage}
+          pageNav {params[PAGINATION_KEY]..., onpage: MovePage}
         ]
       if mode == 'loading'
         html.p {}, text '読込中...'

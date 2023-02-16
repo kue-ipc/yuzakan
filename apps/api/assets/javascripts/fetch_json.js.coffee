@@ -1,12 +1,15 @@
 import HttpLinkHeader from '/assets/vendor/http-link-header.js'
 
 import {isPresent, objToJson, toInteger} from '/assets/utils.js'
-
 import {formDataToJson, formDataToUrlencoded, objToUrlencoded} from '/assets/form_helper.js'
+
+import {PAGINATION_KEY, extractPagination} from './pagination.js'
 
 ALLOWED_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE']
 
 export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
+  # create request
+
   method = method.toUpperCase()
   unless ALLOWED_METHODS.includes(method)
     throw new Error("Unknown or unsupported method: #{method}")
@@ -61,8 +64,15 @@ export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
   init.headers = headers
 
   request = new Request url, init
+
+  # fetch
+
   console.debug 'fetch %s %s', request.method, request.url
   response = await fetch request
+
+  # parse response
+
+  location = response.headers.get('Content-Location') ? url
 
   contentType = response.headers.get('Content-Type')
   responseData =
@@ -75,21 +85,20 @@ export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
     else
       throw new Error("Unknown or unsupported content type: #{contentType}")
 
-  totalCount = response.headers.get('Total-Count')
+  contentRange = response.headers.get('Content-Range')
   pageInfo =
-    if totalCount?
-      total = toInteger(totalCount)
-      contentRange = response.headers.get('Content-Range')
-      match = contentRange.match(/^items\s+(?<start>\d+)-(?<end>\d+)\/(?<total>\d+)$/)
-      if total != toInteger(match.groups.total)
-        console.warn "Do not match Total-Count(#{totalCount}) and size of Content-Range(#{contentRange})"
-      {
-        page: toInteger(data.page ? DEFAULT_PAGE)
-        per_page: toInteger(data.per_page ? DEFAULT_PER_PAGE)
-        total
-        start: toInteger(match.groups.start)
-        end: toInteger(match.groups.end)
-      }
+    if contentRange?
+      {[PAGINATION_KEY]: extractPagination(contentRange, location)}
+      # match = contentRange.match(/^items\s+(?<start>\d+)-(?<end>\d+)\/(?<total>\d+)$/)
+      # pickType(getQueryParamsFromUrl(location), PAGE_PARAMS_TYPES)
+
+      # {
+      #   page: toInteger(data.page ? DEFAULT_PAGE)
+      #   per_page: toInteger(data.per_page ? DEFAULT_PER_PAGE)
+      #   total: toInteger(match.groups.total)
+      #   start: toInteger(match.groups.start)
+      #   end: toInteger(match.groups.end)
+      # }
     else
       {}
 
@@ -103,7 +112,7 @@ export fetchJson = ({url, method, data = null, type = 'json', params...}) ->
   {
     ok: response.ok
     code: toInteger(response.status)
-    location: response.headers.get('Content-Location') ? url
+    location
     responseData...
     pageInfo...
     linkInfo...

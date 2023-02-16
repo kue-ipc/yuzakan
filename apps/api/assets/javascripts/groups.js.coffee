@@ -8,6 +8,10 @@ import {
   createRunDestroyWithId
 } from './hyper_json.js'
 
+import {PAGE_PARAMS_TYPES} from './pagination.js'
+
+import {pickType} from '/assets/utils.js'
+
 export API_GROUPS = '/api/groups'
 
 export GROUP_PROPERTIES = {
@@ -21,14 +25,17 @@ export GROUP_PROPERTIES = {
 }
 
 export INDEX_GROUPS_PARAM_TYPES = {
-  page: 'integer'
-  per_page: 'integer'
   sync: 'boolean'
   order: 'string'
   query: 'string'
   primary_only: 'boolean'
   hide_prohibited: 'boolean'
   show_deleted: 'boolean'
+}
+
+export INDEX_WITH_PAGE_GROUPS_PARAM_TYPES = {
+  PAGE_PARAMS_TYPES...
+  INDEX_GROUPS_PARAM_TYPES...
 }
 
 export SHOW_GROUP_PARAM_TYPES = {
@@ -47,6 +54,17 @@ export DESTROY_GROUP_PARAM_TYPES = {
   permanent: 'boolean'
 }
 
+# Functions
+
+export normalizeGroup = (group, types = {}) ->
+  pickType(group, {
+    GROUP_PROPERTIES...
+    data: 'map'
+    providers: 'map'
+    types...
+  })
+
+
 # Actions
 
 export SetGroups = (state, groups) -> {state..., groups}
@@ -59,8 +77,7 @@ export createRunIndexGroups = ({action = SetGroups, params...} = {}) ->
   createRunIndex({
     action
     url: API_GROUPS
-    dataTypes: omit(INDEX_GROUPS_PARAM_TYPES, ['page', 'per_page', 'sync'])
-    data: {page: 'all'}
+    dataTypes: INDEX_GROUPS_PARAM_TYPES
     params...
   })
 
@@ -68,7 +85,7 @@ export createRunIndexWithPageGroups = ({action = SetGroups, params...} = {}) ->
   createRunIndexWithPage({
     action
     url: API_GROUPS
-    dataTypes: INDEX_GROUPS_PARAM_TYPES
+    dataTypes: INDEX_WITH_PAGE_GROUPS_PARAM_TYPES
     params...
   })
 
