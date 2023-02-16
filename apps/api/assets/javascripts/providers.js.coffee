@@ -8,6 +8,10 @@ import {
   createRunDestroyWithId
 } from './hyper_json.js'
 
+import {pickType} from '/assets/utils.js'
+
+# Constants
+
 export API_PROVIDERS = '/api/providers'
 
 export PROVIDER_PROPERTIES = {
@@ -44,12 +48,25 @@ export UPDATE_PROVIDER_PARAM_TYPES = {
 export DESTROY_PROVIDER_PARAM_TYPES = {
 }
 
+# Functions
+
+export normalizeProvider = (provider, types = {}) ->
+  pickType(provider, {
+    PROVIDER_PROPERTIES...
+    types...
+  })
 
 # Actiosn
 
-export SetProviders = (state, providers) -> {state..., providers}
+export SetProviders = (state, providers) -> {
+  state...
+  providers: (normalizeProvider(provider) for provider in providers)
+}
 
-export SetProvider = (state, provider) -> {state..., provider}
+export SetProvider = (state, provider) -> {
+  state...
+  provider: normalizeProvider(provider)
+}
 
 # create Effecters
 

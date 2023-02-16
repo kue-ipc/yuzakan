@@ -58,14 +58,22 @@ export createResponseActionSetId = ({idKey = 'id', params...}) ->
 
 # レスポンスを直接渡すアクションを作成する。
 # pathKeys内の文字列はそれぞれ部分文字列になっていはいけない。
-export createRunResponse = ({action, url, pathKeys = [], dataTypes = [], method, data = {}, params...}) ->
+export createRunResponse = ({
+  action
+  url: defaultUrl, pathKeys = []
+  data: defaultData = {}, dataTypes = []
+  method
+  params...
+}) ->
   (dispatch, props = {}) ->
+    url = defaultUrl
     for key in pathKeys
       unless key of props
         console.error 'given props does not have the property for path: %s', key
         return
       url = url.replace(":#{key}", props[key])
-    data = {data..., pickType(props, dataTypes)...}
+
+    data = {defaultData..., pickType(props, dataTypes)...}
     if ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method.toUpperCase())
       data = {data..., csrf()...}
 

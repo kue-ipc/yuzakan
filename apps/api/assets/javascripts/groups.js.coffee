@@ -12,6 +12,8 @@ import {PAGINATION_PARAMS_TYPES} from './pagination.js'
 
 import {pickType} from '/assets/utils.js'
 
+# Contants
+
 export API_GROUPS = '/api/groups'
 
 export GROUP_PROPERTIES = {
@@ -64,12 +66,17 @@ export normalizeGroup = (group, types = {}) ->
     types...
   })
 
-
 # Actions
 
-export SetGroups = (state, groups) -> {state..., groups}
+export SetGroups = (state, groups) -> {
+  state...
+  groups: (normalizeGroup(group) for group in groups)
+}
 
-export SetGroup = (state, group) -> {state..., group}
+export SetGroup = (state, group) -> {
+  state...
+  group: normalizeGroup(group)
+}
 
 # create Effecters
 

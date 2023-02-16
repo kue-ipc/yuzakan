@@ -7,8 +7,16 @@ import InputTextDialog from '/assets/input_text_dialog.js'
 import {ATTR_TYPES, MAPPING_CONVERSIONS} from '/assets/definition.js'
 
 import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '/assets/api/fetch_json.js'
-import {runGetProviders} from '/assets/api/providers.js'
-import {createRunGetAttrs} from '/assets/api/attrs.js'
+import {createRunIndexProviders} from '/assets/api/providers.js'
+import {normalizeAttr, createRunIndexAttrs, createRunShowAttr} from '/assets/api/attrs.js'
+
+import {updateList} from '/assets/utils.js'
+
+# Functions
+
+updateAttrList = (attr, attrs) -> updateList(attr, attrs, 'name')
+
+# Dialogs
 
 deleteConfirm = new ConfirmDialog {
   id: 'attrs_confirm'
@@ -27,8 +35,10 @@ inputCode = new InputTextDialog {
   size: 4096
 }
 
+# Viwes
+
 providerTh = ({provider}) ->
-  html.th {}, text provider.label
+  html.th {}, text provider.display_name ? provider.name
 
 attrMappingTd = ({attr, provider}) ->
   unless attr.mappings?
@@ -86,9 +96,9 @@ attrTr = ({attr, index, providers}) ->
       html.input {
         class: 'form-control'
         type: 'text'
-        value: attr.label
+        value: attr.display_name
         required: true
-        oninput: (state, event) -> [attrAction, {name: attr.name, attr: {label: event.target.value}}]
+        oninput: (state, event) -> [attrAction, {name: attr.name, attr: {display_name: event.target.value}}]
       }
     ]
     html.td {class: 'table-primary'}, [
@@ -307,20 +317,38 @@ downAttrAction = (state, {name}) ->
     [updateAttrRunner, {attr: newAttr}]
   ]
 
-showAttrRunner = (dispatch, {attr}) ->
-  response = await fetchJsonGet({url: "/api/attrs/#{attr.name}"})
-  if response.ok
-    dispatch(attrAction, {attr: response.data})
-  else
-    console.error response
+
+# showAttrRunner = (dispatch, {attr}) ->
+#   response = await fetchJsonGet({url: "/api/attrs/#{attr.name}"})
+#   if response.ok
+#     dispatch(attrAction, {attr: response.data})
+#   else
+#     console.error response
+
+# Actions
 
 SetAttrsThenShow = (state, attrs) ->
+  newAttrs = (normalizeAttr(attr) for attr in attrs)
   [
-    {state..., attrs}
-    ([showAttrRunner, {attr}] for attr in attrs)...
+    {state..., attrs: newAttrs}
+    ([runShowAttr, {id: attr.name}] for attr in newAttrs)...
   ]
 
-runGetAttrsThenShow = createRunGetAttrs(SetAttrsThenShow)
+SetAttrInList = (state, attr) ->
+  {
+    state...
+    attrs: updateAttrList(normalizeAttr(attr), state.attrs)
+  }
+
+# Effecters
+
+runShowAttr = createRunShowAttr({action: SetAttrInList})
+
+runIndexAttrs = createRunIndexAttrs({action: SetAttrsThenShow})
+
+runIndexProviders = createRunIndexProviders()
+
+# Vars
 
 initNewAttr = {
   name: undefined
@@ -331,35 +359,36 @@ initNewAttr = {
   mappings: []
 }
 
-init = [
-  {
-    attrs: []
-    providers: []
-    newAttr: initNewAttr
-  }
-  [runGetAttrsThenShow]
-  [runGetProviders]
-]
+main = ->
 
-view = ({attrs, providers, newAttr}) ->
-  html.table {class: 'table'}, [
-    html.thead {}, [
-      html.tr {}, [
-        html.th {}, text '順番'
-        html.th {}, text '名前/表示名'
-        html.th {}, text '型/オプション'
-        html.th {}, text '操作'
-        (providerTh({provider}) for provider in providers)...
-      ]
-    ]
-    html.tbody {},
-      for attr, index in [attrs..., newAttr]
-        attrTr({attr, index, providers: providers})
+  init = [
+    {
+      attrs: []
+      providers: []
+      newAttr: initNewAttr
+    }
+    [runIndexProviders]
+    [runIndexAttrs]
   ]
 
-node = document.getElementById('attrs')
+  view = ({attrs, providers, newAttr}) ->
+    html.table {class: 'table'}, [
+      html.thead {}, [
+        html.tr {}, [
+          html.th {}, text '順番'
+          html.th {}, text '名前/表示名'
+          html.th {}, text '型/オプション'
+          html.th {}, text '操作'
+          (providerTh({provider}) for provider in providers)...
+        ]
+      ]
+      html.tbody {},
+        for attr, index in [attrs..., newAttr]
+          attrTr({attr, index, providers: providers})
+    ]
 
-app {init, view, node}
+  node = document.getElementById('attrs')
 
+  app {init, view, node}
 
-
+main()

@@ -283,8 +283,6 @@ runPushHistory = (dispatch, params) ->
   if (query != location.search)
     history.pushState(params, '', "#{location.pathname}#{query}")
 
-
-
 runDoAllActionWithConfirm = (dispatch) ->
   confirm = await doAllActionConfirm.showPromise({
     messages: [
