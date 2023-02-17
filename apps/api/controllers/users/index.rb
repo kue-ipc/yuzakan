@@ -15,42 +15,98 @@ module Api
           messages :i18n
 
           params do
-            optional(:page).filled(:int?, gteq?: 1, lteq?: 10000)
-            optional(:per_page).filled(:int?, gteq?: 10, lteq?: 100)
+            optional(:page).filled(:int?, included_in?: Yuzakan::Utils::Pager::PAGE_RANGE)
+            optional(:per_page).filled(:int?, included_in?: Yuzakan::Utils::Pager::PER_PAGE_RANGE)
 
             optional(:sync).filled(:bool?)
 
             optional(:order).filled(:str?, included_in?: %w[
-              groupname
+              username
               display_name
               deleted_at
             ].flat_map { |name| [name, "#{name}.asc", "#{name}.desc"] })
 
             optional(:query).maybe(:str?, max_size?: 255)
+            optional(:match).filled(:str?, included_in?: %w[
+              extract
+              partial
+              forward
+              backward
+            ])
 
-            optional(:primary_only).filled(:bool?)
             optional(:hide_prohibited).filled(:bool?)
             optional(:show_deleted).filled(:bool?)
-
-
-            optional(:query).maybe(:str?, max_size?: 255)
-            optional(:sync).maybe(:str?, included_in?: ['default', 'forced', 'no'])
           end
         end
 
         params Params
 
         def initialize(user_repository: UserRepository.new,
-                       provider_repository: ProviderRepository.new,
                        group_repository: GroupRepository.new,
+                       provider_repository: ProviderRepository.new,
                        **opts)
           super
           @user_repository ||= user_repository
+          @group_repository ||= group_repository
           @provider_repository ||= provider_repository
         end
 
         def call(params)
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
+
+          result =
+            if params[:sync]
+              get_users_from_provider(params.to_h)
+            else
+              get_users_from_repository(params.to_h)
+            end
+
+          self.status = 200
+          headers.merge!(result[:headers])
+          self.body = generate_json(result[:users])
+        end
+
+        # sync off
+        def get_users_from_repository(params)
+          params = params.to_h.except(:sync)
+
+          order =
+            if params[:order]
+              name, asc_desc = params[:order].split('.', 2).map(&:intern)
+              {name => asc_desc || :asc}
+            else
+              {username: :asc}
+            end
+
+          query = ("%#{params[:query]}%" if params[:query]&.size&.positive?)
+
+          filter = {}
+          filter[:query] = "%#{params[:query]}%" if params[:query]&.size&.positive?
+          filter[:prohibited] = false if params[:hide_prohibited]
+          filter[:deleted] = false unless params[:show_deleted]
+
+          relation = @user_repository.ordered_filter(order: order, filter: filter)
+
+          if params.key?(:page)
+            pager = Yuzakan::Utils::Pager.new(relation, **params.slice(:page, :per_page)) do |link_params|
+              routes.url(:users, **params, **link_params)
+            end
+            {
+              users: pager.page_items,
+              headers: pager.headers,
+            }
+          else
+            {
+              users: relation.to_a,
+              headers: {'Content-Location' => routes.url(:users, **params.except(:per_page))},
+            }
+          end
+        end
+
+        # sync on
+        def get_users_form_provider(params)
+          # syncモードでは無視される。
+          params = params.to_h.except(:primary_only, :hide_prohibited, :show_deleted)
 
           query = (params[:query] if params[:query]&.size&.positive?)
 

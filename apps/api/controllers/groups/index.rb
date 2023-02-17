@@ -59,7 +59,7 @@ module Api
           self.body = generate_json(result[:groups])
         end
 
-        # order
+        # sync off
         def get_groups_from_repository(params)
           params = params.to_h.except(:sync)
 
@@ -97,6 +97,7 @@ module Api
           end
         end
 
+        # sync on
         def get_groups_from_provider(params)
           # syncモードでは無視される。
           params = params.to_h.except(:primary_only, :hide_prohibited, :show_deleted)

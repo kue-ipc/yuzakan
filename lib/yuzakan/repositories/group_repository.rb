@@ -25,8 +25,26 @@ class GroupRepository < Hanami::Repository
     filter(**filter).order(*order_attributes)
   end
 
-  def filter(query: nil, primary: nil, prohibited: nil, deleted: nil)
+  def search(query: nil, match: :partial)
+    return groups if query.nil? || query.empty?
+
+    sql_query =
+      case match
+      when :extract
+        query
+      when :forward
+        "#{query}%"
+      when :backward
+        "%#{query}"
+      when :partial
+        "%#{query}%"
+      end
+    groups.where { groupname.ilike(sql_query) | display_name.ilike(sql_query) }
+  end
+
+  def filter(search: nil, primary: nil, prohibited: nil, deleted: nil)
     q = groups
+    search(**search) if search
     q = q.where { groupname.ilike("%#{query}%") | display_name.ilike("%#{query}%") } if query&.size&.positive?
 
     q = q.where(primary: primary) unless primary.nil?
