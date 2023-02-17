@@ -11,8 +11,8 @@ module Yuzakan
       MAX_PAGE = 10000
       MIN_PER_PAGE = 10
       MAX_PER_PAGE = 100
-      PAGE_RANGE = (MIN_PAGE..MAX_PAGE)
-      PER_PAGE_RANGE = (MIN_PER_PAGE..MAX_PER_PAGE)
+      PAGE_RANGE = (MIN_PAGE..MAX_PAGE).freeze
+      PER_PAGE_RANGE = (MIN_PER_PAGE..MAX_PER_PAGE).freeze
 
       attr_reader :page, :per_page
 
