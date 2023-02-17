@@ -105,9 +105,9 @@ parseResponse = (response) ->
       throw new Error("Unknown or unsupported content type: #{contentType}")
 
   contentRange = response.headers.get('Content-Range')
-  paginiationInfo =
+  paginationInfo =
     if contentRange?
-      {paginiation: extractPagination(contentRange, location)}
+      {pagination: extractPagination(contentRange, location)}
     else
       {}
 
@@ -123,6 +123,6 @@ parseResponse = (response) ->
     code: toInteger(response.status)
     location
     responseData...
-    paginiationInfo...
+    paginationInfo...
     linkInfo...
   }

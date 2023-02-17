@@ -28,11 +28,11 @@ module Api
 
             optional(:query).maybe(:str?, max_size?: 255)
             optional(:match).filled(:str?, included_in?: %w[
-              extract
-              partial
-              forward
-              backward
-            ])
+                                      extract
+                                      partial
+                                      forward
+                                      backward
+                                    ])
 
             optional(:hide_prohibited).filled(:bool?)
             optional(:show_deleted).filled(:bool?)

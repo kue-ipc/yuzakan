@@ -27,6 +27,12 @@ module Api
             ].flat_map { |name| [name, "#{name}.asc", "#{name}.desc"] })
 
             optional(:query).maybe(:str?, max_size?: 255)
+            optional(:match).filled(:str?, included_in?: %w[
+                                      extract
+                                      partial
+                                      forward
+                                      backward
+                                    ])
 
             optional(:primary_only).filled(:bool?)
             optional(:hide_prohibited).filled(:bool?)
@@ -71,10 +77,7 @@ module Api
               {groupname: :asc}
             end
 
-          query = ("%#{params[:query]}%" if params[:query]&.size&.positive?)
-
-          filter = {}
-          filter[:query] = "%#{params[:query]}%" if params[:query]&.size&.positive?
+          filter = params.slice(:query, :match)
           filter[:primary] = true if params[:primary_only]
           filter[:prohibited] = false if params[:hide_prohibited]
           filter[:deleted] = false unless params[:show_deleted]

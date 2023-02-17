@@ -25,6 +25,23 @@ class GroupRepository < Hanami::Repository
     filter(**filter).order(*order_attributes)
   end
 
+  def filter(query: nil, match: :partial, primary: nil, prohibited: nil, deleted: nil)
+    q = search(query: query, match: match)
+
+    q = q.where(primary: primary) unless primary.nil?
+
+    q = q.where(prohibited: prohibited) unless prohibited.nil?
+
+    case deleted
+    when true, false
+      q = q.where(deleted: deleted)
+    when Range
+      q = q.where(deleted: true).where(deleted_at: deleted)
+    end
+
+    q
+  end
+
   def search(query: nil, match: :partial)
     return groups if query.nil? || query.empty?
 
@@ -40,25 +57,6 @@ class GroupRepository < Hanami::Repository
         "%#{query}%"
       end
     groups.where { groupname.ilike(sql_query) | display_name.ilike(sql_query) }
-  end
-
-  def filter(search: nil, primary: nil, prohibited: nil, deleted: nil)
-    q = groups
-    search(**search) if search
-    q = q.where { groupname.ilike("%#{query}%") | display_name.ilike("%#{query}%") } if query&.size&.positive?
-
-    q = q.where(primary: primary) unless primary.nil?
-
-    q = q.where(prohibited: prohibited) unless prohibited.nil?
-
-    case deleted
-    when true, false
-      q = q.where(deleted: deleted)
-    when Range
-      q = q.where(deleted: true).where(deleted_at: deleted)
-    end
-
-    q
   end
 
   def by_groupname(groupname)

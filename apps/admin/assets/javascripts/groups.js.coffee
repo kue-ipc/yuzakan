@@ -87,7 +87,7 @@ providerTh = ({provider}) ->
 groupProviderTd = ({group, provider}) ->
   html.td {key: "group[#{group.groupname}]"},
     valueDisplay {
-      value: group.providers?.includes(provider.name)
+      value: group.providers?.get(provider.name)
       type: 'boolean'
     }
 
@@ -194,7 +194,7 @@ ReloadIndexGroups = (state, data) ->
   console.debug 'reload index groups'
   newState = {state..., data...}
   params = pick({
-    newState.paginitaion...
+    newState.pagination...
     newState.search...
     newState.option...
     order: newState.order
@@ -223,17 +223,17 @@ SetIndexGroups = (state, rawGroups) ->
 MovePage = (state, page) ->
   return state if state.page == page
 
-  [ReloadIndexGroups, {paginitaion: {state.paginitaion... , page}}]
+  [ReloadIndexGroups, {pagination: {state.pagination... , page}}]
 
 Search = (state, query) ->
   return state if state.query == query
 
   # ページ情報を初期化
-  [ReloadIndexGroups, {paginitaion: {}, search: {query}}]
+  [ReloadIndexGroups, {pagination: {}, search: {query}}]
 
 ChangeOption = (state, option) ->
   # ページ情報を初期化
-  [ReloadIndexGroups, {paginitaion: {}, option: {state.option..., option...}}]
+  [ReloadIndexGroups, {pagination: {}, option: {state.option..., option...}}]
 
 SortOrder = (state, order) ->
   [ReloadIndexGroups, {order}]
@@ -315,7 +315,7 @@ main = ->
     mode: 'loading'
     groups: []
     providers: []
-    paginitaion: pick(queryParams, ['page', 'per_page'])
+    pagination: pick(queryParams, ['page', 'per_page'])
     search: pick(queryParams, ['query'])
     option: pick(queryParams, ['sync', 'primary_only', 'show_deleted'])
     order: queryParams['order']
@@ -327,7 +327,7 @@ main = ->
     [runIndexGroups, pick(initState, Object.keys(INDEX_WITH_PAGE_GROUPS_PARAM_TYPES))]
   ]
 
-  view = ({mode, groups, providers, paginiation, search, option, order}) ->
+  view = ({mode, groups, providers, pagination, search, option, order}) ->
     html.div {}, [
       if mode == 'upload'
         html.div {}, [
@@ -357,7 +357,7 @@ main = ->
             html.div {key: 'downolad', class: 'col-md-3'},
               downloadButton {list: groups, filename: 'groups.csv', headers, disabled: mode == 'loading'}
           ]
-          pageNav {paginiation..., onpage: MovePage}
+          pageNav {pagination..., onpage: MovePage}
         ]
       if mode == 'loading'
         html.p {}, text '読込中...'
