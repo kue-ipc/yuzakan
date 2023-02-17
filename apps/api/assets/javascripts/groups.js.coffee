@@ -1,6 +1,7 @@
 # /api/groups
 
 import {
+  createRunIndex
   createRunIndexWithPage
   createRunShowWithId
   createRunCreateWithId
@@ -58,6 +59,9 @@ export DESTROY_GROUP_PARAM_TYPES = {
 
 # Functions
 
+export normalizeGroups = (groups, type ={}) ->
+  normalizeGroup(group, type) for group in groups
+
 export normalizeGroup = (group, types = {}) ->
   pickType(group, {
     GROUP_PROPERTIES...
@@ -66,19 +70,16 @@ export normalizeGroup = (group, types = {}) ->
     types...
   })
 
-export normalizeGroups = (groups, type ={}) ->
-  normalizeGroup(group, type) for group in groups
-
 # Actions
 
 export SetGroups = (state, groups) -> {
   state...
-  groups: (normalizeGroup(group) for group in groups)
+  groups
 }
 
 export SetGroup = (state, group) -> {
   state...
-  group: normalizeGroup(group)
+  group
 }
 
 # create Effecters

@@ -50,9 +50,13 @@ export DESTROY_PROVIDER_PARAM_TYPES = {
 
 # Functions
 
+export normalizeProviders = (providers, type ={}) ->
+  normalizeProvider(provider, type) for provider in providers
+
 export normalizeProvider = (provider, types = {}) ->
   pickType(provider, {
     PROVIDER_PROPERTIES...
+    params: 'map'
     types...
   })
 
@@ -60,51 +64,56 @@ export normalizeProvider = (provider, types = {}) ->
 
 export SetProviders = (state, providers) -> {
   state...
-  providers: (normalizeProvider(provider) for provider in providers)
+  providers
 }
 
 export SetProvider = (state, provider) -> {
   state...
-  provider: normalizeProvider(provider)
+  provider
 }
 
 # create Effecters
 
-export createRunIndexProviders = ({action = SetProviders, params...} = {}) ->
+export createRunIndexProviders = (params = {}) ->
   createRunIndex({
-    action
+    action: SetProviders
+    normalizer: normalizeProviders
     url: API_PROVIDERS
     dataTypes: INDEX_PROVIDERS_PARAM_TYPES
     params...
   })
 
-export createRunShowProvider = ({action = SetProvider, params...} = {}) ->
+export createRunShowProvider = (params = {}) ->
   createRunShowWithId({
-    action
+    action: SetProvider
+    normalizer: normalizeProvider
     url: API_PROVIDERS
     dataTypes: SHOW_PROVIDER_PARAM_TYPES
     params...
   })
 
-export createRunCreateProvider = ({action = SetProvider, params...} = {}) ->
+export createRunCreateProvider = (params = {}) ->
   createRunCreateWithId({
-    action
+    action: SetProvider
+    normalizer: normalizeProvider
     url: API_PROVIDERS
     dataTypes: CREATE_PROVIDER_PARAM_TYPES
     params...
   })
 
-export createRunUpdateProvider = ({action = SetProvider, params...} = {}) ->
+export createRunUpdateProvider = (params = {}) ->
   createRunUpdateWithId({
-    action
+    action: SetProvider
+    normalizer: normalizeProvider
     url: API_PROVIDERS
     dataTypes: UPDATE_PROVIDER_PARAM_TYPES
     params...
   })
 
-export createRunDestroyProvider = ({action = SetProvider, params...} = {}) ->
+export createRunDestroyProvider = (params = {}) ->
   createRunDestroyWithId({
-    action
+    action: SetProvider
+    normalizer: normalizeProvider
     url: API_PROVIDERS
     dataTypes: DESTROY_PROVIDER_PARAM_TYPES
     params...

@@ -23,7 +23,6 @@ export ATTR_PROPERTIES = {
   readonly: 'boolean'
   code: 'string'
   description: 'string'
-  mappings: 'list'
 }
 
 export INDEX_ATTRS_PARAM_TYPES = {
@@ -45,9 +44,13 @@ export DESTROY_ATTR_PARAM_TYPES = {
 
 # Functions
 
+export normalizeAttrs = (attrs, type ={}) ->
+  normalizeAttr(attr, type) for attr in attrs
+
 export normalizeAttr = (attr, types = {}) ->
   pickType(attr, {
     ATTR_PROPERTIES...
+    mappings: 'list'
     types...
   })
 
@@ -55,65 +58,57 @@ export normalizeAttr = (attr, types = {}) ->
 
 export SetAttrs = (state, attrs) -> {
   state...
-  attrs: (normalizeAttr(attr) for attr in attrs)
+  attrs
 }
 
 export SetAttr = (state, attr) -> {
   state...
-  attr: normalizeAttr(attr)
+  attr
 }
 
 # create Effecters
 
-export createRunIndexAttrs = ({action = SetAttrs, params...} = {}) ->
+export createRunIndexAttrs = (params = {}) ->
   createRunIndex({
-    action
+    action: SetAttrs
+    normalizer: normalizeAttrs
     url: API_ATTRS
     dataTypes: INDEX_ATTRS_PARAM_TYPES
     params...
   })
 
-export createRunShowAttr = ({action = SetAttr, params...} = {}) ->
+export createRunShowAttr = (params = {}) ->
   createRunShowWithId({
-    action
+    action: SetAttr
+    normalizer: normalizeAttr
     url: API_ATTRS
     dataTypes: SHOW_ATTR_PARAM_TYPES
     params...
   })
 
-export createRunCreateAttr = ({action = SetAttr, params...} = {}) ->
+export createRunCreateAttr = (params = {}) ->
   createRunCreateWithId({
-    action
+    action: SetAttr
+    normalizer: normalizeAttr
     url: API_ATTRS
     dataTypes: CREATE_ATTR_PARAM_TYPES
     params...
   })
 
-export createRunUpdateAttr = ({action = SetAttr, params...} = {}) ->
+export createRunUpdateAttr = (params = {}) ->
   createRunUpdateWithId({
-    action
+    action: SetAttr
+    normalizer: normalizeAttr
     url: API_ATTRS
     dataTypes: UPDATE_ATTR_PARAM_TYPES
     params...
   })
 
-export createRunDestroyAttr = ({action = SetAttr, params...} = {}) ->
+export createRunDestroyAttr = (params = {}) ->
   createRunDestroyWithId({
-    action
+    action: SetAttr
+    normalizer: normalizeAttr
     url: API_ATTRS
     dataTypes: DESTROY_ATTR_PARAM_TYPES
     params...
   })
-
-
-# import {createRunGet} from './run_json.js'
-
-# export API_ATTRS = '/api/attrs'
-
-# export SetAttrs = (state, attrs) -> {state..., attrs}
-
-# export createRunGetAttrs = (action = SetAttrs) -> createRunGet(action, API_ATTRS)
-
-# export runGetAttrs = createRunGetAttrs()
-
-# export GetAttrs = (state) -> [state, runGetAttrs]
