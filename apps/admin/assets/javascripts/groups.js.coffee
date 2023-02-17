@@ -2,7 +2,7 @@ import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
 import BsIcon from '/assets/bs_icon.js'
-import {pick, pickType, toBoolean, updateList, getQueryParamsFromUrl} from '/assets/utils.js'
+import {pick, pickType, updateList, getQueryParamsFromUrl, entityLabel} from '/assets/utils.js'
 import {objToUrlencoded} from '/assets/form_helper.js'
 import valueDisplay from '/assets/value_display.js'
 import ConfirmDialog from '/assets/confirm_dialog.js'
@@ -25,14 +25,25 @@ import {downloadButton, uploadButton} from './csv.js'
 
 updateGroupList = (group, groups) -> updateList(group, groups, 'groupname')
 
-normalizeGroupExpand = (group) -> normalizeGroup(group, {
-  action: 'string'
-  label: 'string'
-  show_detail: 'boolean'
-  error: 'any'
-})
+normalizeGroupUploaded = ({action, group...}) ->
+  action = action?.slice(0, 3)?.toUpperCase() ? ''
+  error = switch action
+    when '', 'MOD'
+      null
+    when 'ADD', 'DEL'
+      'この処理は対応していません。'
+    when 'ERR', 'SUC', 'ACT'
+      '処理中または処理済みです。'
+    else
+      action = 'ERR'
+      '指定した処理が不正です。'
+  {
+    action
+    error
+    normalizeGroup(group)...
+  }
 
-# dialog
+# Dialogs
 
 doAllActionConfirm = new ConfirmDialog {
   id: fieldId('do_all_action', ['modal', 'confirm', 'group'])
@@ -71,7 +82,7 @@ indexGroupsOption = ({onchange: action, props...}) ->
         ]
 
 providerTh = ({provider}) ->
-  html.th {key: "provider[#{provider.name}]"}, text provider.label
+  html.th {key: "provider[#{provider.name}]"}, text entityLabel(provider)
 
 groupProviderTd = ({group, provider}) ->
   html.td {key: "group[#{group.groupname}]"},
@@ -124,7 +135,7 @@ groupTr = ({group, providers}) ->
           html.a {href: "/admin/groups/#{group.groupname}"}, text '閲覧'
     html.td {key: 'groupname'}, text group.groupname
     html.td {key: 'label'}, [
-      html.span {}, text group.label
+      html.span {}, text entityLabel(group)
       html.span {class: 'ms-2 badge text-bg-primary'}, text 'プライマリー' if group.primary
       html.span {class: 'ms-2 badge text-bg-warning'}, text '使用禁止' if group.prohibited
       html.span {class: 'ms-2 badge text-bg-danger'}, text '削除済み' if group.deleted
@@ -165,7 +176,7 @@ doAllActionButton = () ->
 SetGroupInList = (state, group) ->
   {
     state...
-    groups: updateGroupList(normalizeGroupExpand(group), state.groups)
+    groups: updateGroupList(group, state.groups)
   }
 
 ModGroup = (state, group) ->
@@ -197,12 +208,12 @@ ReloadIndexGroups = (state, data) ->
 SetIndexGroups = (state, rawGroups) ->
   console.debug 'finish load groups'
   groups = for group in rawGroups
-    normalizeGroupExpand({
-      group...
+    {
       action: ''
       show_detail: false
       error: null
-    })
+      group...
+    }
   {
     state...
     mode: 'loaded'
@@ -229,13 +240,10 @@ SortOrder = (state, order) ->
 
 UploadGroups = (state, {list, filename}) ->
   groups = for group in list
-    normalizeGroupExpand({
-      group...
-      action: group.action?.toUpperCase()
-      label: group.display_name || group.groupname
+    {
       show_detail: false
-      error: null
-    })
+      normalizeGroupUploaded(group)...
+    }
   {
     state...
     mode: 'upload'

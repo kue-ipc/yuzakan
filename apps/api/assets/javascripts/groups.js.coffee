@@ -66,6 +66,9 @@ export normalizeGroup = (group, types = {}) ->
     types...
   })
 
+export normalizeGroups = (groups, type ={}) ->
+  normalizeGroup(group, type) for group in groups
+
 # Actions
 
 export SetGroups = (state, groups) -> {
@@ -80,49 +83,55 @@ export SetGroup = (state, group) -> {
 
 # create Effecters
 
-export createRunIndexGroups = ({action = SetGroups, params...} = {}) ->
+export createRunIndexGroups = (params = {}) ->
   createRunIndex({
-    action
+    action: SetGroups
+    normalizer: normalizeGroups
     url: API_GROUPS
     dataTypes: INDEX_GROUPS_PARAM_TYPES
     params...
   })
 
-export createRunIndexWithPageGroups = ({action = SetGroups, params...} = {}) ->
+export createRunIndexWithPageGroups = (params = {}) ->
   createRunIndexWithPage({
-    action
+    action: SetGroups
+    normalizer: normalizeGroups
     url: API_GROUPS
     dataTypes: INDEX_WITH_PAGE_GROUPS_PARAM_TYPES
     params...
   })
 
-export createRunShowGroup = ({action = SetGroup, params...} = {}) ->
+export createRunShowGroup = (params = {}) ->
   createRunShowWithId({
-    action
+    action: SetGroup
+    normalizer: normalizeGroup
     url: API_GROUPS
     dataTypes: SHOW_GROUP_PARAM_TYPES
     params...
   })
 
-export createRunCreateGroup = ({action = SetGroup, params...} = {}) ->
+export createRunCreateGroup = (params = {}) ->
   createRunCreateWithId({
-    action
+    action: SetGroup
+    normalizer: normalizeGroup
     url: API_GROUPS
     dataTypes: CREATE_GROUP_PARAM_TYPES
     params...
   })
 
-export createRunUpdateGroup = ({action = SetGroup, params...} = {}) ->
+export createRunUpdateGroup = (params = {}) ->
   createRunUpdateWithId({
-    action
+    action: SetGroup
+    normalizer: normalizeGroup
     url: API_GROUPS
     dataTypes: UPDATE_GROUP_PARAM_TYPES
     params...
   })
 
-export createRunDestroyGroup = ({action = SetGroup, params...} = {}) ->
+export createRunDestroyGroup = (params = {}) ->
   createRunDestroyWithId({
-    action
+    action: SetGroup
+    normalizer: normalizeGroup
     url: API_GROUPS
     dataTypes: DESTROY_GROUP_PARAM_TYPES
     params...
