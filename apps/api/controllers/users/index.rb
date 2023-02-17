@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../../../lib/yuzakan/utils/pager'
+
 module Api
   module Controllers
     module Users
@@ -15,6 +17,22 @@ module Api
           params do
             optional(:page).filled(:int?, gteq?: 1, lteq?: 10000)
             optional(:per_page).filled(:int?, gteq?: 10, lteq?: 100)
+
+            optional(:sync).filled(:bool?)
+
+            optional(:order).filled(:str?, included_in?: %w[
+              groupname
+              display_name
+              deleted_at
+            ].flat_map { |name| [name, "#{name}.asc", "#{name}.desc"] })
+
+            optional(:query).maybe(:str?, max_size?: 255)
+
+            optional(:primary_only).filled(:bool?)
+            optional(:hide_prohibited).filled(:bool?)
+            optional(:show_deleted).filled(:bool?)
+
+
             optional(:query).maybe(:str?, max_size?: 255)
             optional(:sync).maybe(:str?, included_in?: ['default', 'forced', 'no'])
           end

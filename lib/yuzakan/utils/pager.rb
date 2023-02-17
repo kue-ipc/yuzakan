@@ -5,13 +5,20 @@
 module Yuzakan
   module Utils
     class Pager
+      DEFAULT_PAGE = 1
       DEFAULT_PER_PAGE = 20
+      MIN_PAGE = 1
+      MAX_PAGE = 10000
+      MIN_PER_PAGE = 10
+      MAX_PER_PAGE = 100
+      PAGE_RANGE = (MIN_PAGE..MAX_PAGE)
+      PER_PAGE_RANGE = (MIN_PER_PAGE..MAX_PER_PAGE)
 
       attr_reader :page, :per_page
 
-      def initialize(relation, page: 1, per_page: DEFAULT_PER_PAGE, create_link: nil, &block)
-        @page = page
-        @per_page = per_page
+      def initialize(relation, page: DEFAULT_PAGE, per_page: DEFAULT_PER_PAGE, create_link: nil, &block)
+        @page = page.clamp(PAGE_RANGE)
+        @per_page = per_page.clamp(PER_PAGE_RANGE)
         @create_link = create_link || block
         @relation = relation
       end

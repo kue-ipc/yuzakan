@@ -1,5 +1,7 @@
 # pagination
 
+# see lib/yuzakan/utils/pager.rb
+
 import {pickType, getQueryParamsFromUrl} from '/assets/utils.js'
 
 export DEFAULT_PAGE = 1

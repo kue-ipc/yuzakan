@@ -15,8 +15,8 @@ module Api
           messages :i18n
 
           params do
-            optional(:page).filled(:int?, gteq?: 1, lteq?: 10000)
-            optional(:per_page).filled(:int?, gteq?: 10, lteq?: 100)
+            optional(:page).filled(:int?, included_in?: Yuzakan::Utils::Pager::PAGE_RANGE)
+            optional(:per_page).filled(:int?, included_in?: Yuzakan::Utils::Pager::PER_PAGE_RANGE)
 
             optional(:sync).filled(:bool?)
 
