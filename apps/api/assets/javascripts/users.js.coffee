@@ -18,7 +18,7 @@ import {pickType} from '/assets/utils.js'
 export API_USERS = '/api/users'
 
 export USER_PROPERTIES = {
-  # username: 'string'
+  # name: 'string'
   # display_name: 'string'
   # note: 'string'
   # primary: 'boolean'

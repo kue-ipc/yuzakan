@@ -18,7 +18,7 @@ import {pickType} from '/assets/utils.js'
 export API_GROUPS = '/api/groups'
 
 export GROUP_PROPERTIES = {
-  groupname: 'string'
+  name: 'string'
   display_name: 'string'
   note: 'string'
   primary: 'boolean'

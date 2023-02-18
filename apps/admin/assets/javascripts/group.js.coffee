@@ -21,7 +21,7 @@ basicInfo = ({mode, group}) ->
     html.dt {class: dtClasses},
       text 'グループ名'
     html.dd {class: ddClasses},
-      text group.groupname
+      text group.name
     html.dt {class: dtClasses},
       text '表示名'
     html.dd {class: ddClasses},
@@ -67,7 +67,7 @@ providerReg = ({mode, group, providers}) ->
       ]
     html.tbody {},
       for {name, label, type} in [
-        {name: 'groupname', label: 'グループ名', type: 'string'}
+        {name: 'name', label: 'グループ名', type: 'string'}
         {name: 'display_name', label: '表示名', type: 'string'}
         {name: 'primary', label: 'プライマリ', type: 'boolean'}
       ]

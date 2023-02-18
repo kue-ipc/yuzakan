@@ -7,17 +7,17 @@ import {createEventValueAction} from '/assets/input_event.js'
 
 import {CalcUserAttrs} from './user_attrs.js'
 
-SetUserUsername = (state, username) ->
+SetUserUsername = (state, name) ->
   email =
-    if !state.user.email || state.user.email == "#{state.user.username}@#{state.system.domain}"
-      if username
-        "#{username}@#{state.system.domain}"
+    if !state.user.email || state.user.email == "#{state.user.name}@#{state.system.domain}"
+      if name
+        "#{name}@#{state.system.domain}"
       else
         ''
     else
       state.user.email
 
-  [CalcUserAttrs, {user: {state.user..., username, email}}]
+  [CalcUserAttrs, {user: {state.user..., name, email}}]
 SetUserUsernameByEvent = createEventValueAction(SetUserUsername)
 
 SetUserDisplayName = (state, display_name) -> [CalcUserAttrs, {user: {state.user..., display_name}}]
@@ -37,28 +37,28 @@ export default basicInfo = ({mode, user, groups}) ->
     html.h4 {}, text '基本情報'
     dlh.dl {}, [
       dlh.dt {},
-        html.label {class: 'form-label', for: 'user-username'}, text 'ユーザー名'
+        html.label {class: 'form-label', for: 'user-name'}, text 'ユーザー名'
       dlh.dd {},
         switch mode
           when 'new'
             html.input {
-              id: 'user-username'
+              id: 'user-name'
               class: 'form-control'
               type: 'text'
               required: true
-              value: user.username ? ''
+              value: user.name ? ''
               oninput: SetUserUsernameByEvent
             }
           when 'edit'
             html.input {
-              id: 'user-username'
+              id: 'user-name'
               class: 'form-control-plaintext'
               readonly: true
               type: 'text'
-              value: user.username ? ''
+              value: user.name ? ''
             }
           when 'show'
-            text user.username
+            text user.name
       dlh.dt {},
         text '表示名'
       dlh.dd {},
@@ -107,11 +107,11 @@ export default basicInfo = ({mode, user, groups}) ->
       dlh.dd {},
         if mode == 'show'
           if user.primary_group
-            primary_group = groups.find (group) -> group.groupname == user.primary_group
+            primary_group = groups.find (group) -> group.name == user.primary_group
             text if primary_group.display_name
-              "#{primary_group.display_name} (#{primary_group.groupname})"
+              "#{primary_group.display_name} (#{primary_group.name})"
             else
-              primary_group.groupname
+              primary_group.name
           else
             text "(無し)"
         else
@@ -126,9 +126,9 @@ export default basicInfo = ({mode, user, groups}) ->
             (
               for group in groups
                 html.option {
-                  value: group.groupname
-                  selected: group.groupname == user.primary_group
-                }, text if group.display_name then "#{group.display_name} (#{group.groupname})" else group.groupname
+                  value: group.name
+                  selected: group.name == user.primary_group
+                }, text if group.display_name then "#{group.display_name} (#{group.name})" else group.name
             )...
           ]
     ]

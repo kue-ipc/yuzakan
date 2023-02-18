@@ -116,7 +116,7 @@ userProviderTd = ({user, provider}) ->
 userTr = ({user, providers}) ->
   html.tr {}, [
     html.td {},
-      html.a {href: "/admin/users/#{user.username}"}, text user.username
+      html.a {href: "/admin/users/#{user.name}"}, text user.name
     html.td {}, text user.display_name
     html.td {}, text user.email ? ''
     html.td {}, text user.clearance_level

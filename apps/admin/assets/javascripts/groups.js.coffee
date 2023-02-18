@@ -23,7 +23,7 @@ import {downloadButton, uploadButton} from './csv.js'
 
 # Functions
 
-updateGroupList = (group, groups) -> updateList(group, groups, 'groupname')
+updateGroupList = (group, groups) -> updateList(group, groups, 'name')
 
 normalizeGroupUploaded = ({action, group...}) ->
   action = action?.slice(0, 3)?.toUpperCase() ? ''
@@ -85,7 +85,7 @@ providerTh = ({provider}) ->
   html.th {key: "provider[#{provider.name}]"}, text entityLabel(provider)
 
 groupProviderTd = ({group, provider}) ->
-  html.td {key: "group[#{group.groupname}]"},
+  html.td {key: "group[#{group.name}]"},
     valueDisplay {
       value: group.providers?.get(provider.name)
       type: 'boolean'
@@ -108,7 +108,7 @@ groupTr = ({group, providers}) ->
     else
       'light'
   html.tr {
-    key: "group[#{group.groupname}]"
+    key: "group[#{group.name}]"
     class: "table-#{color}"
   }, [
     html.td {
@@ -132,8 +132,8 @@ groupTr = ({group, providers}) ->
         when 'ERR'
           html.div {}, text 'エラー'
         else
-          html.a {href: "/admin/groups/#{group.groupname}"}, text '閲覧'
-    html.td {key: 'groupname'}, text group.groupname
+          html.a {href: "/admin/groups/#{group.name}"}, text '閲覧'
+    html.td {key: 'name'}, text group.name
     html.td {key: 'label'}, [
       html.span {}, text entityLabel(group)
       html.span {class: 'ms-2 badge text-bg-primary'}, text 'プライマリー' if group.primary
@@ -145,7 +145,7 @@ groupTr = ({group, providers}) ->
 
 groupDetailTr = ({group, colspan}) ->
   html.tr {
-    key: "group-detail[#{group.groupname}]"
+    key: "group-detail[#{group.name}]"
     class: {collapse: true, show: group.show_detail}
   },
     html.td {colspan}, [
@@ -187,7 +187,7 @@ ModGroup = (state, group) ->
   run = createRunUpdateGroup({action, fallback})
   [
     {state..., groups: updateGroupList({group..., action: 'ACT'}, state.groups)}
-    [run, {group..., id: group.groupname}]
+    [run, {group..., id: group.name}]
   ]
 
 ReloadIndexGroups = (state, data) ->
@@ -270,7 +270,7 @@ ModGroupNextAll = (state, group) ->
   run = createRunUpdateGroup({action, fallback})
   [
     {state..., groups: updateGroupList({group..., action: 'ACT'}, state.groups)}
-    [run, {group..., id: group.groupname}]
+    [run, {group..., id: group.name}]
   ]
 
 DoAllAction = (state) ->
@@ -369,7 +369,7 @@ main = ->
             html.tr {}, [
               html.th {key: 'show'}, text ''
               html.th {key: 'action'}, text 'アクション'
-              html.th {key: 'groupname'}, text 'グループ名'
+              html.th {key: 'name'}, text 'グループ名'
               html.th {key: 'label'}, text 'ラベル'
               (providerTh({provider}) for provider in providers)...
             ]

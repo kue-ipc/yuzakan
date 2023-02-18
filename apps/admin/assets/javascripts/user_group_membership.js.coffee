@@ -1,17 +1,17 @@
 import {text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
-RemoveGroup = (state, groupname) ->
+RemoveGroup = (state, name
   {
     state...
     user: {
       state.user...
-      groups: (group for group in state.user.groups when group != groupname)
+      groups: (group for group in state.user.groups when group != name)
     }
   }
 
-groupLi = ({groupname, groups, removable = false}) ->
-  group = groups.find (item) -> item.name == groupname
+groupLi = ({name, groups, removable = false}) ->
+  group = groups.find (item) -> item.name == name
   html.li {class: 'list-inline-item border border-success rounded px-1 mb-1'}, [
     text "#{group.display_name} (#{group.name})"
     if removable
@@ -19,7 +19,7 @@ groupLi = ({groupname, groups, removable = false}) ->
         html.a {
           href: '#'
           class: 'btn-close'
-          onclick: [RemoveGroup, groupname]
+          onclick: [RemoveGroup, name]
         }
     else
       text ''
@@ -32,7 +32,7 @@ export default groupMembership = ({mode, user, groups}) ->
       html.p {}, text '所属しているグループはありません。'
     else
       html.ul {class: 'list-inline'},
-        for groupname in user.groups
-          groupLi({groupname, groups, removable: groupname != user.primary_group})
+        for name in user.groups
+          groupLi({name, groups, removable: name != user.primary_group})
     html.button {class: 'btn btn-primary'}, text '追加'
   ]

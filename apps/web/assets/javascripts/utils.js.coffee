@@ -204,7 +204,7 @@ export basename = (path) ->
   path.split('/').reverse().find(identity) || '/'
 
 export entityLabel = (entity) ->
-  entity.display_name || entity.name || entity.username || entity.groupname || ''
+  entity.display_name || entity.name || ''
 
 
 # TODO

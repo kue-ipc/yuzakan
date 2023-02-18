@@ -2,7 +2,7 @@ import {fetchJsonGet} from '/assets/api/fetch_json.js'
 import {InitUserAttrs} from './user_attrs.js'
 
 newUser = {
-  username: ''
+  name: ''
   clearance_level: 1
   userdata: {attrs: {}}
   provider_userdatas: []

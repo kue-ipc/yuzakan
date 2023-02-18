@@ -11,10 +11,10 @@ export getAttrDefaultValue = ({user, attrs, code}) ->
     else
       "return #{code};"
 
-  func = new Function('{username, display_name, email, primary_group, attrs, tools}', code)
+  func = new Function('{name, display_name, email, primary_group, attrs, tools}', code)
   try
     result = func {
-      username: user.username
+      name: user.name
       display_name: user.display_name
       email: user.email
       primary_group: user.primary_group

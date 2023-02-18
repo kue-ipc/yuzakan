@@ -68,7 +68,7 @@ export default class LoginInfo extends ModalDialog
         dlh.dt {}, text 'ユーザー名'
         dlh.dd {},
           html.code {class: 'login-info'},
-            text user.username.replace(/ /g, '\u2423')
+            text user.name.replace(/ /g, '\u2423')
 
         dlh.dt {}, text '初期パスワード'
         dlh.dd {},
