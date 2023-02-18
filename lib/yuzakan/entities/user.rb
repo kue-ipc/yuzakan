@@ -9,21 +9,16 @@
 # 0: guest
 
 class User < Hanami::Entity
-  def name
-    Hanami.logger.warn('call User#name')
-    username
-  end
-
   def label_name
     if display_name
-      "#{display_name} (#{username})"
+      "#{display_name} (#{name})"
     else
-      username
+      name
     end
   end
 
   def label
-    display_name || username
+    display_name || name
   end
 
   def deleted?
@@ -35,7 +30,7 @@ class User < Hanami::Entity
   end
 
   def to_s
-    username
+    name
   end
 
   def primary_group

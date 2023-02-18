@@ -6,19 +6,19 @@ class UserRepository < Hanami::Repository
     has_many :groups, through: :members
   end
 
-  def by_username(username)
-    users.where(username: username)
+  def by_name(name)
+    users.where(name: name)
   end
 
-  def find_by_username(username)
-    by_username(username).one
+  def find_by_name(name)
+    by_name(name).one
   end
 
   def offset(offset)
     users.offset(offset)
   end
 
-  def count(_)
+  def count(_ = nil)
     users.count
   end
 
@@ -26,8 +26,8 @@ class UserRepository < Hanami::Repository
     aggregate(members: :group).where(id: id).map_to(User).one
   end
 
-  def find_with_groups_by_username(username)
-    aggregate(members: :group).where(username: username).map_to(User).one
+  def find_with_groups_by_name(name)
+    aggregate(members: :group).where(name: name).map_to(User).one
   end
 
   def set_primary_group(user, group)

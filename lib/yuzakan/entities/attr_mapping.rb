@@ -32,10 +32,6 @@ class AttrMapping < Hanami::Entity
   E2J_DICT = E2J_LIST.to_h
   J2E_DICT = E2J_LIST.map(&:reverse).to_h
 
-  def attr_name
-    attr.name
-  end
-
   # Adapter data -> Ruby data
   def convert_value(value)
     return if value.nil?

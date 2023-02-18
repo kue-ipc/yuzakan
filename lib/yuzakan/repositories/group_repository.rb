@@ -7,11 +7,11 @@ class GroupRepository < Hanami::Repository
   end
 
   def ordered_all
-    groups.order(:groupname).to_a
+    groups.order(:name).to_a
   end
 
-  def ordered_filter(order: {groupname: :asc}, filter: {})
-    order = {groupname: :asc} if order.nil? || order.empty?
+  def ordered_filter(order: {name: :asc}, filter: {})
+    order = {name: :asc} if order.nil? || order.empty?
 
     order_attributes = order.map do |key, value|
       case value.downcase.intern
@@ -56,23 +56,19 @@ class GroupRepository < Hanami::Repository
       when :partial
         "%#{query}%"
       end
-    groups.where { groupname.ilike(sql_query) | display_name.ilike(sql_query) }
+    groups.where { name.ilike(sql_query) | display_name.ilike(sql_query) }
   end
 
-  def by_groupname(groupname)
-    groups.where(groupname: groupname)
+  private def by_name(name)
+    groups.where(name: name)
   end
 
-  def all_by_groupname(groupnames)
-    by_groupname(groupnames).to_a
+  def find_by_name(name)
+    by_name(name).one
   end
 
-  def find_by_groupname(groupname)
-    by_groupname(groupname).one
-  end
-
-  def find_or_create_by_groupname(groupname)
-    find_by_groupname(groupname) || create({groupname: groupname})
+  def find_or_create_by_name(name)
+    find_by_name(name) || create({name: name})
   end
 
   def add_user(group, user)

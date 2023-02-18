@@ -162,7 +162,7 @@ class Provider < Hanami::Entity
 
     attr_mappings.to_h do |mapping|
       raw_value = raw_attrs[mapping.name] || raw_attrs[mapping.name.downcase]
-      [mapping.attr_name, mapping.convert_value(raw_value)]
+      [mapping.key, mapping.convert_value(raw_value)]
     end.compact
   end
 
