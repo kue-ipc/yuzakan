@@ -46,16 +46,16 @@ attrMappingTd = ({attr, provider}) ->
 
   mapping = attr.mappings.find (mapping) ->
     mapping.provider == provider.name
-  mapping ?= {name: '', conversion: null}
+  mapping ?= {key: '', conversion: null}
 
   html.td {}, [
     html.input {
       class: 'form-control mb-1'
       type: 'text'
-      value: mapping.name
+      value: mapping.key
       oninput: (state, event) -> [
         attrMappingAction
-        {name: attr.name, mapping: {name: event.target.value, provider: provider.name}}
+        {name: attr.name, mapping: {key: event.target.value, provider: provider.name}}
       ]
     }
     html.select {
@@ -208,7 +208,7 @@ replaceAttrMapping = (mappings, mapping) ->
   if replaced
     new_attr_mappings
   else
-    [new_attr_mappings..., {name: '', conversion: null, mapping...}]
+    [new_attr_mappings..., {key: '', conversion: null, mapping...}]
 
 attrMappingAction = (state, {name, mapping}) ->
   if name
