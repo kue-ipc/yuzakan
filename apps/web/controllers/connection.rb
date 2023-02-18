@@ -46,7 +46,7 @@ module Web
       @log_info = {
         uuid: uuid,
         client: client,
-        username: current_user&.username,
+        username: current_user&.name,
         action: self.class.name,
         method: request.request_method,
         path: request.path,
