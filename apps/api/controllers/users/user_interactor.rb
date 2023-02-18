@@ -21,54 +21,43 @@ module Api
           @group_repository ||= group_repository
         end
 
+        private def call_interacttor(interactor, params)
+          result = interactor.call(params)
+          halt_json 500, errors: result.errors if result.failure?
+
+          result
+        end
+
         private def sync_user(params)
           @sync_user ||= SyncUser.new(provider_repository: @provider_repository,
                                       user_repository: @user_repository,
                                       group_repository: @group_repository)
-          result = @sync_user.call(params)
-          halt_json 500, errors: result.errors if result.failure?
-
-          result
+          call_interacttor(@sync_user, params)
         end
 
-        private def create_user(params)
-          @create_user ||= ProviderCreateUser.new(provider_repository: @provider_repository)
-          result = @create_user.call(params)
-          halt_json 500, errors: result.errors if result.failure?
-
-          result
+        private def provider_create_user(params)
+          @provider_create_user ||= ProviderCreateUser.new(provider_repository: @provider_repository)
+          call_interacttor(@provider_create_user, params)
         end
 
-        private def read_user(params)
-          @read_user ||= ProviderReadUser.new(provider_repository: @provider_repository)
-          result = @read_user.call(params)
-          halt_json 500, errors: result.errors if result.failure?
-
-          result
+        private def provider_read_user(params)
+          @provider_read_user ||= ProviderReadUser.new(provider_repository: @provider_repository)
+          call_interacttor(@provider_read_user, params)
         end
 
-        private def update_user(params)
-          @update_user ||= ProviderUpdateUser.new(provider_repository: @provider_repository)
-          result = @update_user.call(params)
-          halt_json 500, errors: result.errors if result.failure?
-
-          result
+        private def provider_update_user(params)
+          @provider_update_user ||= ProviderUpdateUser.new(provider_repository: @provider_repository)
+          call_interacttor(@provider_update_user, params)
         end
 
-        private def delete_user(params)
-          @delete_user ||= ProviderDeleteUser.new(provider_repository: @provider_repository)
-          result = @delete_user.call(params)
-          halt_json 500, errors: result.errors if result.failure?
-
-          result
+        private def provider_delete_user(params)
+          @provider_delete_user ||= ProviderDeleteUser.new(provider_repository: @provider_repository)
+          call_interacttor(@provider_delete_user, params)
         end
 
         private def generate_password(params = {})
           @generate_password ||= GeneratePassword.new(config_repository: @config_repository)
-          result = @generate_password.call(params)
-          halt_json 500, errors: result.errors if result.failure?
-
-          result
+          call_interacttor(@generate_password, params)
         end
 
         private def set_sync_user

@@ -116,12 +116,12 @@ module Admin
         private def setup_admin(admin_user)
           return true if @user_repository.find_by_username(admin_user[:username])
 
-          create_user = ProviderCreateUser.new(provider_repository: @provider_repository)
-          result = create_user.call({
-            **admin_user,
-            providers: ['local'],
-            display_name: 'ローカル管理者',
-          })
+          result = ProviderCreateUser.new(provider_repository: @provider_repository)
+            .call({
+              **admin_user,
+              providers: ['local'],
+              display_name: 'ローカル管理者',
+            })
           if result.failure?
             flash[:errors].concat(result.errors)
             return false

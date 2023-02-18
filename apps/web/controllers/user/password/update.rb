@@ -9,10 +9,11 @@ module Web
           expose :data
 
           def call(params)
-            @change_password = ProviderChangePassword.new(config: current_config,
-                                                  user: current_user,
-                                                  client: client)
-            result = @change_password.call(params[:user][:password])
+
+            result = ProviderChangePassword.new(config: current_config,
+              user: current_user,
+              client: client)
+            .call(params[:user][:password])
 
             case format
             when :html
