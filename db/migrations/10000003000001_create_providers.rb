@@ -7,6 +7,7 @@ Hanami::Model.migration do
 
       column :name, String, null: false
       column :display_name, String
+      column :description, String, size: 4096
 
       column :adapter_name, String, null: false
       column :order, Integer, null: false
@@ -22,8 +23,6 @@ Hanami::Model.migration do
 
       column :individual_password, TrueClass, null: false, default: false
       column :self_management, TrueClass, null: false, default: false
-
-      column :description, String, size: 4096
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

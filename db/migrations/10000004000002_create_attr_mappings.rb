@@ -8,7 +8,7 @@ Hanami::Model.migration do
       foreign_key :provider_id, :providers, on_delete: :cascade, null: false
       foreign_key :attr_id, :attrs, on_delete: :cascade, null: false
 
-      column :name, String, null: false
+      column :key, String, null: false
       column :conversion, String
 
       column :created_at, DateTime, null: false

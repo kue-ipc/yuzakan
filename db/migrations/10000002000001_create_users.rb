@@ -5,7 +5,7 @@ Hanami::Model.migration do
     create_table :users do
       primary_key :id
 
-      column :username, String, null: false
+      column :name, String, null: false
       column :display_name, String
       column :email, String
       column :note, String, size: 4096
@@ -20,7 +20,7 @@ Hanami::Model.migration do
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
 
-      index :username, unique: true
+      index :name, unique: true
       index :email
     end
   end
