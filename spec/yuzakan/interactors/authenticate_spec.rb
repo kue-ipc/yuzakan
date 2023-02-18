@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Authenticate do
-  # let(:interactor) { Authenticate.new(client: '::1', app: 'test') }
+RSpec.describe ProviderAuthenticate do
+  # let(:interactor) { ProviderAuthenticate.new(client: '::1', app: 'test') }
   # let(:params) {
   #   {username: 'admin',
   #    password: 'pass',}

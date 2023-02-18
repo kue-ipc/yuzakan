@@ -3,7 +3,7 @@
 require 'hanami/interactor'
 require 'hanami/validations'
 
-class Authenticate
+class ProviderAuthenticate
   include Hanami::Interactor
 
   class Validator

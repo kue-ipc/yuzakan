@@ -5,7 +5,7 @@ RSpec.describe Admin::Controllers::Home::Index do
   #   let(:action) { Admin::Controllers::Home::Index.new }
   #   let(:params) { {'rack.session' => session} }
   #   let(:session) { {user_id: user_id, access_time: Time.now} }
-  #   let(:user_id) { Authenticate.new(client: '::1', app: 'test').call(auth).user&.id }
+  #   let(:user_id) { ProviderAuthenticate.new(client: '::1', app: 'test').call(auth).user&.id }
   #   let(:auth) { {username: 'admin', password: 'pass'} }
 
   #   before { UpdateConfig.new.call(admin_networks: '192.168.1.0/24') }

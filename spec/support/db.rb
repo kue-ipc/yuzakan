@@ -46,7 +46,7 @@ def db_initialize
                         email: 'user@example.jp')
   user_repository.create(usenrname: 'admin', clearance_level: 5)
   config_repository.current_create({title: 'テストサイト', maintenace: false})
-  Authenticate.new(client: '::1', app: 'test').call({username: 'user', password: 'word'})
+  ProviderAuthenticate.new(client: '::1', app: 'test').call({username: 'user', password: 'word'})
 end
 
 def db_reset

@@ -62,15 +62,15 @@ module Api
             halt_json 403, errors: [I18n.t('session.errors.too_many_failure')]
           end
 
-          authenticate = Authenticate.new(provider_repository: @provider_repository)
-          authenticate_result = authenticate.call(params)
+          provider_authenticate = ProviderAuthenticate.new(provider_repository: @provider_repository)
+          provider_authenticate_result = provider_authenticate.call(params)
 
-          if authenticate_result.failure?
+          if provider_authenticate_result.failure?
             @auth_log_repository.create(**auth_log_params, result: 'error')
-            halt_json 500, errors: authenticate_result.errors
+            halt_json 500, errors: provider_authenticate_result.errors
           end
 
-          provider = authenticate_result.provider
+          provider = provider_authenticate_result.provider
           if provider.nil?
             @auth_log_repository.create(**auth_log_params, result: 'failure')
             halt_json 422, errors: [I18n.t('session.errors.incorrect')]
