@@ -58,20 +58,20 @@ module Api
       when User
         if assoc && entity.members
           data.merge!({
-            primary_group: entity.primary_group&.groupname,
-            groups: entity.groups&.map(&:groupname),
+            primary_group: entity.primary_group&.name,
+            groups: entity.groups&.map(&:name),
           })
         end
       when Group
         if assoc && entity.members
           data.merge!({
-            users: entity.users&.map(&:username),
+            users: entity.users&.map(&:name),
           })
         end
       when Member
         if assoc
-          data.merge!(user: entity.user.username) if entity.user
-          data.merge!(user: entity.group.groupname) if entity.group
+          data.merge!(user: entity.user.name) if entity.user
+          data.merge!(user: entity.group.name) if entity.group
         end
       else
         data
