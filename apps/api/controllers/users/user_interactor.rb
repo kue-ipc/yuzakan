@@ -32,7 +32,7 @@ module Api
         end
 
         private def create_user(params)
-          @create_user ||= CreateUser.new(provider_repository: @provider_repository)
+          @create_user ||= ProviderCreateUser.new(provider_repository: @provider_repository)
           result = @create_user.call(params)
           halt_json 500, errors: result.errors if result.failure?
 
@@ -40,7 +40,7 @@ module Api
         end
 
         private def read_user(params)
-          @read_user ||= ReadUser.new(provider_repository: @provider_repository)
+          @read_user ||= ProviderReadUser.new(provider_repository: @provider_repository)
           result = @read_user.call(params)
           halt_json 500, errors: result.errors if result.failure?
 
@@ -48,7 +48,7 @@ module Api
         end
 
         private def update_user(params)
-          @update_user ||= UpdateUser.new(provider_repository: @provider_repository)
+          @update_user ||= ProviderUpdateUser.new(provider_repository: @provider_repository)
           result = @update_user.call(params)
           halt_json 500, errors: result.errors if result.failure?
 
@@ -56,7 +56,7 @@ module Api
         end
 
         private def delete_user(params)
-          @delete_user ||= DeleteUser.new(provider_repository: @provider_repository)
+          @delete_user ||= ProviderDeleteUser.new(provider_repository: @provider_repository)
           result = @delete_user.call(params)
           halt_json 500, errors: result.errors if result.failure?
 

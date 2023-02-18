@@ -4,7 +4,7 @@ require 'hanami/interactor'
 require 'hanami/validations'
 require_relative '../predicates/name_predicates'
 
-class ReadGroup
+class ProviderReadGroup
   include Hanami::Interactor
 
   class Validator

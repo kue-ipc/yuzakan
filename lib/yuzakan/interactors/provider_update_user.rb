@@ -3,8 +3,7 @@
 require 'hanami/interactor'
 require 'hanami/validations/form'
 
-# プロバイダーにユーザーを作成する
-class CreateUser
+class ProviderUpdateUser
   include Hanami::Interactor
 
   class Validator
@@ -14,7 +13,6 @@ class CreateUser
 
     validations do
       required(:username).filled(:str?, :name?, max_size?: 255)
-      optional(:password).filled(:str?, max_size?: 255)
       optional(:display_name).filled(:str?, max_size?: 255)
       optional(:email).filled(:str?, :email?, max_size?: 255)
       optional(:primary_group).filled(:str?, :name?, max_size?: 255)
@@ -31,7 +29,6 @@ class CreateUser
 
   def call(params)
     username = params[:username]
-    password = params[:password]
     userdata = params.slice(:username, :display_name, :email, :primary_group).merge({
       attrs: params[:attrs] || {},
     })
@@ -39,14 +36,14 @@ class CreateUser
     @providers = {}
 
     get_providers(params[:providers]).each do |provider|
-      @providers[provider.name] = provider.user_create(username, password, **userdata)
+      @providers[provider.name] = provider.user_update(username, **userdata)
     rescue => e
       Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
       Hanami.logger.error e
-      error(I18n.t('errors.action.error', action: I18n.t('interactors.create_user'), target: provider.label))
+      error(I18n.t('errors.action.error', action: I18n.t('interactors.update_user'), target: provider.label))
       if @providers.values.any?
         error(I18n.t('errors.action.stopped_after_some',
-                     action: I18n.t('interactors.create_user'),
+                     action: I18n.t('interactors.update_user'),
                      target: I18n.t('entities.provider')))
       end
       fail!
@@ -65,7 +62,7 @@ class CreateUser
   end
 
   private def get_providers(provider_names = nil)
-    operation = :user_create
+    operation = :user_update
     if provider_names
       provider_names.map do |provider_name|
         provider = @provider_repository.find_with_adapter_by_name(provider_name)

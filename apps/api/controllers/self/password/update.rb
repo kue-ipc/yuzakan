@@ -72,7 +72,7 @@ module Api
 
             halt_json(422, errors: [param_errors]) unless param_errors.empty?
 
-            change_password = ChangePassword.new(provider_repository: @provider_repository)
+            change_password = ProviderChangePassword.new(provider_repository: @provider_repository)
             result = change_password.call(username: current_user.name, password: params[:password])
 
             halt_json 500, errors: result.errors if result.failure?

@@ -32,7 +32,7 @@ module Api
         # end
 
         private def provider_read_group(params)
-          @provider_read_group ||= ReadGroup.new(provider_repository: @provider_repository)
+          @provider_read_group ||= ProviderReadGroup.new(provider_repository: @provider_repository)
           result = @provider_read_group.call(params)
           halt_json 500, errors: result.errors if result.failure?
 

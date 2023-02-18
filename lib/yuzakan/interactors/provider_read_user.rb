@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'hanami/interactor'
-require 'hanami/validations/form'
+require 'hanami/validations'
 
-class DeleteUser
+class ProviderReadUser
   include Hanami::Interactor
 
   class Validator
@@ -13,9 +13,11 @@ class DeleteUser
 
     validations do
       required(:username).filled(:str?, :name?, max_size?: 255)
+      optional(:providers).each(:str?, :name?, max_size?: 255)
     end
   end
 
+  expose :userdata
   expose :providers
 
   def initialize(provider_repository: ProviderRepository.new)
@@ -25,19 +27,23 @@ class DeleteUser
   def call(params)
     username = params[:username]
 
+    @userdata = {attrs: {}, groups: []}
     @providers = {}
 
     get_providers(params[:providers]).each do |provider|
-      @providers[provider.name] = provider.user_delete(username)
+      userdata = provider.user_read(username)
+      @providers[provider.name] = userdata
+      if userdata
+        %i[username display_name email primary_group].each do |name|
+          @userdata[name] ||= userdata[name] unless userdata[name].nil?
+        end
+        @userdata[:groups] |= userdata[:groups] unless userdata[:groups].nil?
+        @userdata[:attrs] = userdata[:attrs].merge(@userdata[:attrs]) unless userdata[:attrs].nil?
+      end
     rescue => e
       Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
       Hanami.logger.error e
-      error(I18n.t('errors.action.error', action: I18n.t('interactors.delete_user'), target: provider.label))
-      if @providers.values.any?
-        error(I18n.t('errors.action.stopped_after_some',
-                     action: I18n.t('interactors.delete_user'),
-                     target: I18n.t('entities.provider')))
-      end
+      error(I18n.t('errors.action.error', action: I18n.t('interactors.read_user'), target: provider.label))
       fail!
     end
   end
@@ -54,7 +60,7 @@ class DeleteUser
   end
 
   private def get_providers(provider_names = nil)
-    operation = :user_delete
+    operation = :user_read
     if provider_names
       provider_names.map do |provider_name|
         provider = @provider_repository.find_with_adapter_by_name(provider_name)

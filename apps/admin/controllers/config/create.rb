@@ -116,7 +116,7 @@ module Admin
         private def setup_admin(admin_user)
           return true if @user_repository.find_by_username(admin_user[:username])
 
-          create_user = CreateUser.new(provider_repository: @provider_repository)
+          create_user = ProviderCreateUser.new(provider_repository: @provider_repository)
           result = create_user.call({
             **admin_user,
             providers: ['local'],

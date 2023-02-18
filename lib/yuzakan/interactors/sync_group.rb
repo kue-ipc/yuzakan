@@ -29,10 +29,10 @@ class SyncGroup
   end
 
   def call(params)
-    read_group_result = ReadGroup.new(provider_repository: @provider_repository)
+    read_group_result = ProviderReadGroup.new(provider_repository: @provider_repository)
       .call({groupname: params[:groupname]})
     if read_group_result.failure?
-      Hanami.logger.error "[#{self.class.name}] Failed to call ReadGroup"
+      Hanami.logger.error "[#{self.class.name}] Failed to call ProviderReadGroup"
       Hanami.logger.error read_group_result.errors
       error(I18n.t('errors.action.fail', action: I18n.t('interactors.read_group')))
       read_group_result.errors.each { |msg| error(msg) }

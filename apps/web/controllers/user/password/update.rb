@@ -9,7 +9,7 @@ module Web
           expose :data
 
           def call(params)
-            @change_password = ChangePassword.new(config: current_config,
+            @change_password = ProviderChangePassword.new(config: current_config,
                                                   user: current_user,
                                                   client: client)
             result = @change_password.call(params[:user][:password])

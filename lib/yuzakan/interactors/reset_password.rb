@@ -31,7 +31,7 @@ class ResetPassword
     @username = params[:username]
     @password = generate_password
 
-    change_password = ChangePassword.new(provider_repository: @provider_repository)
+    change_password = ProviderChangePassword.new(provider_repository: @provider_repository)
     result = change_password.call({password: @password, **params})
     if result.failure?
       error(I18n.t('errors.action.fail', action: I18n.t('interactors.change_password')))

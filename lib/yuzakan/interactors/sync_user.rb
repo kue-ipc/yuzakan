@@ -34,10 +34,10 @@ class SyncUser
   def call(params)
     @username = params[:username]
 
-    read_user_result = ReadUser.new(provider_repository: @provider_repository)
+    read_user_result = ProviderReadUser.new(provider_repository: @provider_repository)
       .call({username: @username})
     if read_user_result.failure?
-      Hanami.logger.error "[#{self.class.name}] Failed to call ReadUser"
+      Hanami.logger.error "[#{self.class.name}] Failed to call ProviderReadUser"
       Hanami.logger.error read_user_result.errors
       error(I18n.t('errors.action.fail', action: I18n.t('interactors.read_user')))
       read_user_result.errors.each { |msg| error(msg) }
