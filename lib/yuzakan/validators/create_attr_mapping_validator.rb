@@ -12,7 +12,7 @@ class CreateAttrMappingValidator
 
   validations do
     required(:provider).filled(:str?, :name?, max_size?: 255)
-    required(:name).filled(:str?, max_size?: 255)
+    required(:key).filled(:str?, max_size?: 255)
     optional(:conversion).maybe(included_in?: AttrMapping::CONVERSIONS)
   end
 end

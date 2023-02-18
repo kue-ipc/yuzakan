@@ -198,10 +198,10 @@ module Admin
             data[:order] = idx * 8
 
             data[:attr_mappings] = data[:attr_mappings]
-              &.reject { |am_params| am_params[:name].nil? || am_params[:name].empty? }
+              &.reject { |am_params| am_params[:key].nil? || am_params[:key].empty? }
               &.map do |am_params|
                 {
-                  **am_params.slice(:name, :conversion),
+                  **am_params.slice(:key, :conversion),
                   provider_id: provider_id_by_name(am_params[:provider]).id,
                 }
               end

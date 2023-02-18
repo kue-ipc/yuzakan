@@ -29,7 +29,7 @@ module Api
               schema do
                 predicates NamePredicates
                 required(:provider).filled(:str?, :name?, max_size?: 255)
-                required(:name).maybe(:str?, max_size?: 255)
+                required(:key).maybe(:str?, max_size?: 255)
                 optional(:conversion) { none? | included_in?(AttrMapping::CONVERSIONS) }
               end
             end
@@ -55,7 +55,7 @@ module Api
           end
 
           mapping_errors = {}
-          mapping_params = (params[:mappings] || []).each_with_index.map do |mapping, idx|
+          mappings_params = (params[:mappings] || []).each_with_index.map do |mapping, idx|
             provider = provider_by_name(mapping[:provider])
             if provider.nil?
               mapping_errors[idx] = {provider: [I18n.t('errors.found?')]}
@@ -68,17 +68,17 @@ module Api
 
           @attr_repository.update(@attr.id, params.to_h.except(:id, :mappings))
 
-          mapping_params.each do |m_params|
-            current_mapping = @attr.mapping_by_provider_id(m_params[:provider_id])
+          mappings_params.each do |mapping_params|
+            current_mapping = @attr.mapping_by_provider_id(mapping_params[:provider_id])
             if current_mapping
-              if current_mapping.name == m_params[:name] &&
-                 (!m_params.key?(:conversion) || current_mapping.conversion == m_params[:conversion])
+              if current_mapping.key == mapping_params[:key] &&
+                 (!mapping_params.key?(:conversion) || current_mapping.conversion == mapping_params[:conversion])
                 next
               end
 
               @attr_repository.delete_mapping(@attr, current_mapping.id)
             end
-            @attr_repository.add_mapping(@attr, m_params) if m_params[:name]&.size&.positive?
+            @attr_repository.add_mapping(@attr, mapping_params) if mapping_params[:key]&.size&.positive?
           end
 
           @attr = @attr_repository.find_with_mappings(@attr.id)

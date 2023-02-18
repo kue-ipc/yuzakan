@@ -118,7 +118,7 @@ attrs:
   code: ''
   attr_mappings:
   - provider: ldap
-    name: displayName
+    key: displayName
     conversion: 
 - name: family_name
   display_name: 姓(日本語)
@@ -128,7 +128,7 @@ attrs:
   code: display_name?.split(/\s/)?.at(0)
   attr_mappings:
   - provider: ldap
-    name: sn;lang-ja
+    key: sn;lang-ja
     conversion: 
 - name: given_name
   display_name: 名(日本語)
@@ -138,7 +138,7 @@ attrs:
   code: display_name?.split(/\s/)?.at(1)
   attr_mappings:
   - provider: ldap
-    name: givenName;lang-ja
+    key: givenName;lang-ja
     conversion: 
 - name: family_name_latin
   display_name: 姓(ローマ字)
@@ -148,7 +148,7 @@ attrs:
   code: attrs.display_name_latin?.split(/\s/)?.at(0)
   attr_mappings:
   - provider: ldap
-    name: sn
+    key: sn
     conversion: 
 - name: given_name_latin
   display_name: 名(ローマ字)
@@ -158,7 +158,7 @@ attrs:
   code: attrs.display_name_latin?.split(/\s/)?.at(1)
   attr_mappings:
   - provider: ldap
-    name: givenName
+    key: givenName
     conversion: 
 - name: uid
   display_name: ユーザーID
@@ -168,7 +168,7 @@ attrs:
   code: ''
   attr_mappings:
   - provider: posix_samba
-    name: uidNumber
+    key: uidNumber
     conversion: 
 - name: cn
   display_name: キャラクター名
@@ -178,10 +178,10 @@ attrs:
   code: username
   attr_mappings:
   - provider: posix_samba
-    name: cn
+    key: cn
     conversion: 
   - provider: ldap
-    name: cn
+    key: cn
     conversion: 
 - name: samba_sid
   display_name: Samba SID
@@ -191,7 +191,7 @@ attrs:
   code: ''
   attr_mappings:
   - provider: posix_samba
-    name: sambaSID
+    key: sambaSID
     conversion: 
 - name: home
   display_name: ホームディレクトリ
@@ -201,5 +201,5 @@ attrs:
   code: "`/home/${username}`"
   attr_mappings:
   - provider: posix_samba
-    name: homeDirectory
+    key: homeDirectory
     conversion: 

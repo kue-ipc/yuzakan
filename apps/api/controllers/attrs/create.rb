@@ -24,7 +24,7 @@ module Api
               schema do
                 predicates NamePredicates
                 required(:provider).filled(:str?, :name?, max_size?: 255)
-                required(:name).maybe(:str?, max_size?: 255)
+                required(:key).maybe(:str?, max_size?: 255)
                 optional(:conversion).maybe(:str?, included_in?: AttrMapping::CONVERSIONS)
               end
             end

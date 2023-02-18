@@ -83,9 +83,9 @@ RSpec.describe AttrRepository do
     end
 
     it 'add_mapping' do
-      attr_mapping = attr_repository.add_mapping(@attr_fuga, {provider_id: @provider_hoge.id, name: 'fuga_hoge'})
+      attr_mapping = attr_repository.add_mapping(@attr_fuga, {provider_id: @provider_hoge.id, key: 'fuga_hoge'})
       expect(attr_mapping).to be_instance_of AttrMapping
-      expect(attr_mapping.name).to eq 'fuga_hoge'
+      expect(attr_mapping.key).to eq 'fuga_hoge'
       expect(attr_mapping_repository.all.count).to eq 3
     end
 

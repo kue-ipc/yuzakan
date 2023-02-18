@@ -79,7 +79,7 @@ module Admin
             attr_data[:attr_mappings] = attr.attr_mappings.map do |attr_mapping|
               {
                 provider: provider_ids[attr_mapping.provider_id].name,
-                name: attr_mapping.name,
+                key: attr_mapping.key,
                 conversion: attr_mapping.conversion,
               }
             end
