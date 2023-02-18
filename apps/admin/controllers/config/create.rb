@@ -51,9 +51,6 @@ module Admin
             redirect_to Web.routes.path(:root)
           end
 
-          @config = params[:config]&.except(:admin_user) || {}
-          @admin_user = params[:config]&.[](:admin_user) || {}
-
           unless params.valid?
             flash[:errors] << params.errors
             flash[:failure] = '設定に失敗しました。'
@@ -63,8 +60,8 @@ module Admin
 
           setup_network &&
             setup_local_provider &&
-            setup_admin(@admin_user) &&
-            setup_config(@config)
+            setup_admin(params[:config][:admin_user].to_h) &&
+            setup_config(params[:config].except(:admin_user).to_h)
 
           unless flash[:errors].empty?
             flash[:failure] = '設定に失敗しました。'
@@ -82,14 +79,18 @@ module Admin
         private def setup_network
           return true if @network_repository.count.positive?
 
-          ['127.0.0.0/8',
-           '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16',
-           '::1',
-           'fc00::/7',].each do |address|
-            @network_repository.create_or_update_by_address(address, {clearance_level: 5, trusted: true})
-          end
-          ['0.0.0.0/0', '::/0'].each do |address|
-            @network_repository.create_or_update_by_address(address, {clearance_level: 1, trusted: false})
+          @network_repository.transaction do
+            [
+              '127.0.0.0/8',
+              '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16',
+              '::1',
+              'fc00::/7',
+            ].each do |address|
+              @network_repository.create_or_update_by_address(address, {clearance_level: 5, trusted: true})
+            end
+            ['0.0.0.0/0', '::/0'].each do |address|
+              @network_repository.create_or_update_by_address(address, {clearance_level: 1, trusted: false})
+            end
           end
 
           true
@@ -113,39 +114,49 @@ module Admin
           true
         end
 
-        private def setup_admin(admin_user)
-          return true if @user_repository.find_by_username(admin_user[:username])
-
-          result = ProviderCreateUser.new(provider_repository: @provider_repository)
-            .call({
-              **admin_user,
-              providers: ['local'],
-              display_name: 'ローカル管理者',
-            })
-          if result.failure?
-            flash[:errors].concat(result.errors)
-            return false
-          end
+        private def setup_admin(admin_user_params)
+          # return true if @user_repository.find_by_name(admin_user_params[:username])
 
           sync_user = SyncUser.new(provider_repository: @provider_repository,
                                    user_repository: @user_repository,
                                    group_repository: @group_repository)
-          result = sync_user.call(admin_user.slice(:username))
-          if result.failure?
-            flash[:errors].concat(result.errors)
+
+          sync_result = sync_user.call(admin_user_params.slice(:username))
+          if sync_result.failure?
+            sync_result[:errors].concat(sync_result.errors)
             return false
           end
 
-          admin_user = result.user
-          @user_repository.update(admin_user.id, clearance_level: 5)
+          admin_user = sync_result.user
+
+          unless admin_user
+            create_result = ProviderCreateUser.new(provider_repository: @provider_repository)
+              .call({
+                **admin_user_params.slice(:username, :password),
+                providers: ['local'],
+                display_name: 'ローカル管理者',
+              })
+            if create_result.failure?
+              flash[:errors].concat(create_result.errors)
+              return false
+            end
+            sync_result = sync_user.call(admin_user_params.slice(:username))
+            if sync_result.failure?
+              sync_result[:errors].concat(sync_result.errors)
+              return false
+            end
+            admin_user = result.user
+          end
+
+          @user_repository.update(admin_user.id, clearance_level: 5) if admin_user.clearance_level < 5
 
           true
         end
 
-        private def setup_config(config)
+        private def setup_config(config_params)
           return true if @config_repository.current
 
-          @config_repository.current_create({**config, maintenace: false})
+          @config_repository.current_create({**config_params, maintenace: false})
           true
         end
       end

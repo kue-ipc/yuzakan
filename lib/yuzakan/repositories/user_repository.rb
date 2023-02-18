@@ -18,7 +18,7 @@ class UserRepository < Hanami::Repository
     users.offset(offset)
   end
 
-  def count(_ = nil)
+  def count
     users.count
   end
 

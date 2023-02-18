@@ -77,7 +77,7 @@ module Api
 
           @auth_log_repository.create(**auth_log_params, result: "success:#{provider.name}")
 
-          user = @user_repository.find_by_username(params[:username])
+          user = @user_repository.find_by_name(params[:username])
           if user.nil?
             sync_user = SyncUser.new(provider_repository: @provider_repository,
                                      user_repository: @user_repository,

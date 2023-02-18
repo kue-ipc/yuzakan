@@ -32,11 +32,13 @@ class RegisterUser
 
   def call(params)
     username = params[:username]
-    data = params.slice(:username, :display_name, :email).merge({
+    data = {
+      name: params[:username],
+      **params.slice(:display_name, :email),
       deleted: false,
       deleted_at: nil,
-    })
-    user_id = @user_repository.find_by_username(username)&.id
+    }
+    user_id = @user_repository.find_by_name(username)&.id
 
     @user =
       if user_id
@@ -50,11 +52,11 @@ class RegisterUser
     @user_repository.set_primary_group(@user, get_group(params[:primary_group])) if params[:primary_group]
 
     if params[:groups]
-      existing_groups = @user.supplementary_groups.to_h { |group| [group.groupname, group] }
+      existing_groups = @user.supplementary_groups.to_h { |group| [group.name, group] }
       groups = [params[:primary_group], *params[:groups]].compact.uniq.map { |groupname| get_group(groupname) }
 
       groups.each do |group|
-        cerrent_group = existing_groups.delete(group.groupname)
+        cerrent_group = existing_groups.delete(group.name)
         @user_repository.add_group(@user, group) unless cerrent_group
       end
       existing_groups.each_value do |group|
@@ -80,6 +82,6 @@ class RegisterUser
     return unless groupname
 
     @groups ||= {}
-    @groups[groupname] ||= @group_repository.find_or_create_by_groupname(groupname)
+    @groups[groupname] ||= @group_repository.find_or_create_by_name(groupname)
   end
 end

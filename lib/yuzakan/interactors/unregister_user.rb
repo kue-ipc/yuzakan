@@ -29,7 +29,7 @@ class UnregisterUser
   end
 
   def call(params)
-    @user = @user_repository.find_by_username(params[:username])
+    @user = @user_repository.find_by_name(params[:username])
     if @user
       @user_repository.update(@user.id,
                               deleted: true,
