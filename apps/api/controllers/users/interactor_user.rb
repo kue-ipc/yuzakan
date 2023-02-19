@@ -59,22 +59,6 @@ module Api
           @generate_password ||= GeneratePassword.new(config_repository: @config_repository)
           call_interacttor(@generate_password, params)
         end
-
-        private def set_sync_user
-          result = sync_user({username: @username})
-          @user = result.user
-          @userdata = result.userdata
-          @providers = result.providers
-        end
-
-        private def user_json(**data)
-          generate_json({
-            **convert_for_json(@user, assoc: true),
-            userdata: @userdata,
-            provider_userdatas: @providers.compact.map { |k, v| {provider: k, userdata: v} },
-            **data,
-          })
-        end
       end
     end
   end

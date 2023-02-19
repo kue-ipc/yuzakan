@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require_relative './user_interactor'
+require_relative './entity_user'
 
 module Api
   module Controllers
     module Users
       class Create
         include Api::Action
-        include UserInteractor
+        include EntityUser
 
         security_level 4
 

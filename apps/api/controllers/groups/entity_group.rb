@@ -14,8 +14,8 @@ module Api
           @group_repository ||= group_repository
         end
 
-        private def load_group
-          if @sync
+        private def load_group(sync: false)
+          if sync
             result = sync_group({groupname: @name})
             @group = result.group
             @data = result.data
@@ -30,7 +30,7 @@ module Api
         private def group_json
           hash = convert_for_json(@group, assoc: true).dup
           hash[:data] = @data unless @data.nil?
-          hash[:providers] = @providers unless @providers.nil?
+          hash[:providers] = @providers.to_a unless @providers.nil?
           generate_json(hash)
         end
       end

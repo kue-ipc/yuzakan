@@ -14,8 +14,8 @@ module Api
           @user_repository ||= user_repository
         end
 
-        private def load_user
-          if @sync
+        private def load_user(sync: false)
+          if sync
             result = sync_user({username: @name})
             @user = result.user
             @data = result.data
@@ -30,7 +30,7 @@ module Api
         private def user_json
           hash = convert_for_json(@user, assoc: true).dup
           hash[:data] = @data unless @data.nil?
-          hash[:providers] = @providers unless @providers.nil?
+          hash[:providers] = @providers.to_a unless @providers.nil?
           generate_json(hash)
         end
       end

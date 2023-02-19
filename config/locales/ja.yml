@@ -134,6 +134,16 @@ ja:
       deny_network: '現在のネットワークからのログインは許可されていません。'
   attributes:
     user:
-      username: ユーザー名
+      name: ユーザー名
+      display_name: 表示名
     group:
-      groupname: グループ名
+      name: グループ名
+      display_name: 表示名
+    provider:
+      name: プロバイダー名
+      display_name: 表示名
+    adapter:
+      name: アダプター名
+      display_name: 表示名
+    attr:
+      name: 属性名

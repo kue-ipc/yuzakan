@@ -29,8 +29,7 @@ module Api
           halt_json 400, errors: [params.errors] unless params.valid?
 
           @name = params[:id]
-          @sync = params[:sync] | nil
-          load_group
+          load_group(sync: !!params[:sync])
 
           halt_json 404 if @group.nil?
         end

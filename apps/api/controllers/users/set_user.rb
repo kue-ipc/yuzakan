@@ -14,6 +14,7 @@ module Api
 
           params do
             required(:id).filled(:str?, :name?, max_size?: 255)
+            optional(:sync).filled(:bool?)
           end
         end
 
@@ -27,8 +28,8 @@ module Api
         private def set_user
           halt_json 400, errors: [params.errors] unless params.valid?
 
-          @username = params[:id]
-          set_sync_user
+          @name = params[:id]
+          load_user(sync: !!pramas[:sync])
 
           halt_json 404 if @user.nil?
         end
