@@ -21,7 +21,7 @@ module Api
             optional(:sync).filled(:bool?)
 
             optional(:order).filled(:str?, included_in?: %w[
-              groupname
+              name
               display_name
               deleted_at
             ].flat_map { |name| [name, "#{name}.asc", "#{name}.desc"] })
@@ -74,7 +74,7 @@ module Api
               name, asc_desc = params[:order].split('.', 2).map(&:intern)
               {name => asc_desc || :asc}
             else
-              {groupname: :asc}
+              {name: :asc}
             end
 
           filter = params.slice(:query, :match)
@@ -105,8 +105,8 @@ module Api
           # syncモードでは無視される。
           params = params.to_h.except(:primary_only, :hide_prohibited, :show_deleted)
 
-          if params.key?(:order) && !params[:key].start_with?('groupname')
-            # groupnameに対する順序以外は無視される。
+          if params.key?(:order) && !params[:key].start_with?('name')
+            # nameに対する順序以外は無視される。
             params = params.except(:order)
           end
 
@@ -125,7 +125,7 @@ module Api
 
           all_groupnames = groups_providers.keys
           all_groupnames.sort!
-          all_groupnames.reverse! if params[:order] == 'groupname.desc'
+          all_groupnames.reverse! if params[:order] == 'name.desc'
 
           pager = Yuzakan::Utils::Pager.new(all_groupnames, **params.slice(:page, :per_page)) do |link_params|
             routes.path(:groups, **params.to_h, **link_params)
@@ -134,7 +134,7 @@ module Api
           groups = get_groups(pager.page_items).map do |group|
             {
               **convert_for_json(group),
-              providers: groups_providers[group.groupname],
+              providers: groups_providers[group.name],
             }
           end
 
@@ -145,7 +145,7 @@ module Api
         end
 
         private def get_groups(groupnames)
-          group_entities = @group_repository.all_by_groupname(groupnames).to_h { |group| [group.groupname, group] }
+          group_entities = @group_repository.all_by_name(groupnames).to_h { |group| [group.name, group] }
           groupnames.map do |groupname|
             group_entities[groupname] || create_group(groupname)
           end

@@ -13,19 +13,19 @@ module Api
           @group_repository ||= group_repository
         end
 
-        private def provider_sync_group(params)
-          @provider_sync_group ||= SyncGroup.new(provider_repository: @provider_repository,
-                                                 group_repository: @group_repository)
-          result = @provider_sync_group.call(params)
+        private def sync_group(params)
+          @sync_group ||= SyncGroup.new(provider_repository: @provider_repository,
+                                        group_repository: @group_repository)
+          result = @sync_group.call(params)
           halt_json 500, errors: result.errors if result.failure?
 
           result
         end
 
-        # TODO: 今は未実装
-        # private def create_group(params)
-        #   @create_group ||= CreateGroup.new(provider_repository: @provider_repository)
-        #   result = @create_group.call(params)
+        # TODO: 未実装
+        # private def provider_create_group(params)
+        #   @provider_create_group ||= CreateGroup.new(provider_repository: @provider_repository)
+        #   result = @provider_create_group.call(params)
         #   halt_json 500, errors: result.errors if result.failure?
 
         #   result
@@ -39,19 +39,19 @@ module Api
           result
         end
 
-        # TODO: 今は未実装
-        # private def update_group(params)
-        #   @update_group ||= UpdateGroup.new(provider_repository: @provider_repository)
-        #   result = @update_group.call(params)
+        # TODO: 未実装
+        # private def provider_update_group(params)
+        #   @provider_update_group ||= UpdateGroup.new(provider_repository: @provider_repository)
+        #   result = @provider_update_group.call(params)
         #   halt_json 500, errors: result.errors if result.failure?
 
         #   result
         # end
 
-        # TODO: 今は未実装
-        # private def delete_group(params)
-        #   @delete_group ||= DeleteGroup.new(provider_repository: @provider_repository)
-        #   result = @delete_group.call(params)
+        # TODO: 未実装
+        # private def provider_delete_group(params)
+        #   @provider_delete_group ||= DeleteGroup.new(provider_repository: @provider_repository)
+        #   result = @provider_delete_group.call(params)
         #   halt_json 500, errors: result.errors if result.failure?
 
         #   result

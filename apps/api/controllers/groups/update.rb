@@ -13,9 +13,8 @@ module Api
 
           params do
             required(:id).filled(:str?, :name?, max_size?: 255)
-            optional(:sync).filled(:bool?)
 
-            optional(:groupname).filled(:str?, :name?, max_size?: 255)
+            optional(:name).filled(:str?, :name?, max_size?: 255)
             optional(:display_name).maybe(:str?, max_size?: 255)
             optional(:note).maybe(:str?, max_size?: 4096)
 
@@ -36,13 +35,13 @@ module Api
         end
 
         def call(params)
-          if @group.groupname != params[:groupname]
+          if params[:name] && @group.name != params[:name]
             halt_json 422, errors: {
-              groupname: I18n.t('errors.unchangeabl', name: I18n.t('attributes.group.groupname')),
+              name: I18n.t('errors.unchangeable', name: I18n.t('attributes.group.name')),
             }
           end
 
-          @group = @group_repository.update(@group.id, params.to_h.except(:id, :sync, :groupname))
+          @group = @group_repository.update(@group.id, params.to_h.except(:id, :sync, :name))
           self.body = group_json
         end
       end

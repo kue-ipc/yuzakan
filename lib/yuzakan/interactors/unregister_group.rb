@@ -25,7 +25,7 @@ class UnregisterGroup
   end
 
   def call(params)
-    @group = @group_repository.find_by_groupname(params[:groupname])
+    @group = @group_repository.find_by_name(params[:groupname])
     @group_repository.update(group.id, deleted: true, deleted_at: Time.now) if @group
   end
 

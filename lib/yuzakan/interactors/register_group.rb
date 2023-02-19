@@ -27,11 +27,13 @@ class RegisterGroup
   expose :group
 
   def call(params)
-    data = params.slice(:groupname, :display_name, :primary).merge({
+    data = {
+      name: params[:groupname],
+      **params.slice(:display_name, :primary),
       deleted: false,
       deleted_at: nil,
-    })
-    group_id = @group_repository.find_by_groupname(params[:groupname])&.id
+    }
+    group_id = @group_repository.find_by_name(params[:groupname])&.id
     @group =
       if group_id
         @group_repository.update(group_id, data)

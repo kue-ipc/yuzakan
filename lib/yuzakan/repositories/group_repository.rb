@@ -63,6 +63,10 @@ class GroupRepository < Hanami::Repository
     groups.where(name: name)
   end
 
+  def all_by_name(name)
+    by_name(name).to_a
+  end
+
   def find_by_name(name)
     by_name(name).one
   end

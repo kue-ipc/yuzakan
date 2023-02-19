@@ -19,7 +19,7 @@ class SyncGroup
   end
 
   expose :group
-  expose :groupdata
+  expose :data
   expose :providers
 
   def initialize(provider_repository: ProviderRepository.new,
@@ -39,17 +39,17 @@ class SyncGroup
       fail!
     end
 
-    @groupdata = read_group_result.groupdata
+    @data = read_group_result.data
     @providers = read_group_result.providers
 
     if @providers.values.any?
-      if @groupdata[:groupname] != params[:groupname]
-        Hanami.logger.error "[#{self.class.name}] Do not match groupname: #{@groupdata[:groupname]}"
+      if @data[:groupname] != params[:groupname]
+        Hanami.logger.error "[#{self.class.name}] Do not match groupname: #{@data[:groupname]}"
         error!(I18n.t('errors.eql?', left: I18n.t('attributes.group.groupname')))
       end
 
       register_group_result = RegisterGroup.new(group_repository: @group_repository)
-        .call(@groupdata.slice(:groupname, :display_name, :primary))
+        .call(@data.slice(:groupname, :display_name, :primary))
       if register_group_result.failure?
         Hanami.logger.error "[#{self.class.name}] Failed to call RegisterGroup"
         error(I18n.t('errors.action.fail', action: I18n.t('interactors.register_group')))

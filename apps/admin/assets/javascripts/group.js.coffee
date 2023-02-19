@@ -3,7 +3,7 @@
 import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
-import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl} from '/assets/utils.js'
+import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from '/assets/utils.js'
 import {objToUrlencoded} from '/assets/form_helper.js'
 import {dlClasses, dtClasses, ddClasses} from '/assets/dl_horizontal.js'
 import BsIcon from '/assets/bs_icon.js'
@@ -63,7 +63,7 @@ providerReg = ({mode, group, providers}) ->
       html.tr {}, [
         html.th {}, text '名前'
         # html.th {}, text '値'
-        (html.th({}, text provider.label) for provider in providers)...
+        (html.th({}, text entityLabel(provider)) for provider in providers)...
       ]
     html.tbody {},
       for {name, label, type} in [

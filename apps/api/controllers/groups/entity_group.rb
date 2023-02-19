@@ -14,34 +14,25 @@ module Api
           @group_repository ||= group_repository
         end
 
-        private def load_group(groupname: @groupname, sync: @sync)
-          if sync
-            result = provider_sync_group({groupname: groupname})
+        private def load_group
+          if @sync
+            result = sync_group({groupname: @name})
             @group = result.group
-            @groupdata = result.groupdata
+            @data = result.data
             @providers = result.providers
           else
-            @group = @group_repository.find_by_groupname(groupname)
-            @groupdate = nil
+            @group = @group_repository.find_by_name(@name)
+            @date = nil
             @providers = nil
           end
-          {
-            group: @group,
-            groupdata: @groupdate,
-            providers: @providers,
-          }
         end
 
-        private def group_data(group: @group, groupdata: @gorupdata, providers: @providers)
-          {
-            **convert_for_json(group, assoc: true),
-            groupdata: groupdata,
-            providers: providers&.compact&.to_a,
-          }
-        end
-
-        private def group_json(**opts)
-          generate_json(group_data(**opts))
+        private def group_json
+          generate_json({
+            **convert_for_json(@group, assoc: true),
+            data: @data,
+            providers: @providers&.compact&.to_a,
+          })
         end
       end
     end

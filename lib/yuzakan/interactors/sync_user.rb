@@ -18,9 +18,8 @@ class SyncUser
     end
   end
 
-  expose :username
   expose :user
-  expose :userdata
+  expose :data
   expose :providers
 
   def initialize(provider_repository: ProviderRepository.new,
@@ -44,17 +43,17 @@ class SyncUser
       fail!
     end
 
-    @userdata = read_user_result.userdata
+    @data = read_user_result.data
     @providers = read_user_result.providers
 
     if @providers.values.any?
-      if @userdata[:username] != @username
-        Hanami.logger.error "[#{self.class.name}] Do not match username: #{@userdata[:username]}"
+      if @data[:username] != @username
+        Hanami.logger.error "[#{self.class.name}] Do not match username: #{@data[:username]}"
         error!(I18n.t('errors.eql?', left: I18n.t('attributes.user.username')))
       end
 
       register_user_result = RegisterUser.new(user_repository: @user_repository, group_repository: @group_repository)
-        .call(@userdata.slice(:username, :display_name, :email, :primary_group, :groups))
+        .call(@data.slice(:username, :display_name, :email, :primary_group, :groups))
       if register_user_result.failure?
         Hanami.logger.error "[#{self.class.name}] Failed to call RegisterUser"
         error(I18n.t('errors.action.fail', action: I18n.t('interactors.register_user')))

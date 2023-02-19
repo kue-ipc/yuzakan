@@ -28,7 +28,7 @@ module Api
         private def set_group
           halt_json 400, errors: [params.errors] unless params.valid?
 
-          @groupname = params[:id]
+          @name = params[:id]
           @sync = params[:sync] | nil
           load_group
 
