@@ -3,7 +3,7 @@
 module Api
   module Controllers
     module Groups
-      module ProviderGroup
+      module InteractorGroup
         def initialize(provider_repository: ProviderRepository.new,
                        group_repository: GroupRepository.new,
                        **opts)

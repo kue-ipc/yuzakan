@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require_relative './provider_group'
+require_relative './interactor_group'
 
 module Api
   module Controllers
     module Groups
       module EntityGroup
-        include ProviderGroup
+        include InteractorGroup
 
         def initialize(group_repository: GroupRepository.new,
                        **opts)
