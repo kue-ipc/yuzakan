@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require_relative './user_interactor'
+require_relative './entity_user'
 
 module Api
   module Controllers
     module Users
       module SetUser
-        include UserInteractor
+        include EntityUser
 
         class Params < Hanami::Action::Params
           predicates NamePredicates

@@ -3,7 +3,7 @@
 module Api
   module Controllers
     module Users
-      module UserInteractor
+      module InteractorUser
         USER_BASE_INFO = [:username, :display_name, :email].freeze
         USER_PROVIDER_INFO = [:primary_group, :groups, :attrs].freeze
         USER_REPOSITORY_INFO = [:clearance_level, :prohibited, :note].freeze
