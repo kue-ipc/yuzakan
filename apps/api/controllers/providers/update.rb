@@ -82,11 +82,12 @@ module Api
             end
           end
 
-          @provider = @provider_repository.find_with_params(@provider.id)
+          @provider_name = params[:name] if change_name
+          load_provider
 
           self.status = 200
-          headers['Content-Location'] = routes.provider_path(@provider.name) if change_name
-          self.body = generate_json(@provider, assoc: true)
+          headers['Content-Location'] = routes.provider_path(@provider_name) if change_name
+          self.body = provider_json
         end
       end
     end

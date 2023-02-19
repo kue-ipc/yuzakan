@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
+require_relative './entity_provider'
+
 module Api
   module Controllers
     module Providers
       module SetProvider
+        include EntityProvider
+
         def self.included(action)
           action.class_eval do
             params IdParams
@@ -19,7 +23,8 @@ module Api
         private def set_provider
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
-          @provider = @provider_repository.find_with_params_by_name(params[:id])
+          @provider_name = params[:id]
+          load_provider
 
           halt_json 404 if @provider.nil?
         end

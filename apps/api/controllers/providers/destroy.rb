@@ -20,7 +20,7 @@ module Api
           @provider_repository.delete(@provider.id)
 
           self.status = 200
-          self.body = generate_json(@provider, assoc: true)
+          self.body = provider_json
         end
       end
     end

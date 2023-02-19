@@ -25,7 +25,7 @@ destroyConfirm = new ConfirmDialog {
   id: fieldId('destroy', ['modal', 'confirm', parentNames...])
   status: 'alert'
   title: 'プロバイダーの削除'
-  message: 'プロバイダーを削除してもよろしいですか？'
+  messages: ['プロバイダーを削除してもよろしいですか？']
   action: {
     color: 'danger'
     label: '削除'

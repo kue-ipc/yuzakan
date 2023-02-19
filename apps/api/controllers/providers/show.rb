@@ -11,7 +11,7 @@ module Api
 
         def call(params) # rubocop:disable Lint/UnusedMethodArgument
           self.status = 200
-          self.body = generate_json(@provider, assoc: current_level >= 5)
+          self.body = provider_json
         end
       end
     end

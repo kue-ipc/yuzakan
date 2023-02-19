@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
+require_relative './entity_provider'
+
 module Api
   module Controllers
     module Providers
       class Create
         include Api::Action
+        include EntityProvider
 
         security_level 5
 
@@ -47,23 +50,24 @@ module Api
           provider_params = params.to_h.dup
           provider_params_params = provider_params.delete(:params)
           provider_params[:order] ||= @provider_repository.last_order + 8
-          @provider = @provider_repository.create(provider_params)
+          provider = @provider_repository.create(provider_params)
 
           if provider_params_params
-            @provider.adapter_param_types.each do |param_type|
+            provider.adapter_param_types.each do |param_type|
               value = param_type.convert_value(provider_params_params[param_type.name])
               next if value.nil?
 
               data = {name: param_type.name.to_s, value: param_type.dump_value(value)}
-              @provider_repository.add_param(@provider, data)
+              @provider_repository.add_param(provider, data)
             end
           end
 
-          @provider = @provider_repository.find_with_params(@provider.id)
+          @provider_name = params[:name]
+          load_provider
 
           self.status = 201
-          headers['Content-Location'] = routes.provider_path(@provider.name)
-          self.body = generate_json(@provider, assoc: true)
+          headers['Content-Location'] = routes.provider_path(@provider_name)
+          self.body = provider_json
         end
       end
     end
