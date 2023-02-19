@@ -23,7 +23,7 @@ module Api
         private def set_provider
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
-          @provider_name = params[:id]
+          @name = params[:id]
           load_provider
 
           halt_json 404 if @provider.nil?

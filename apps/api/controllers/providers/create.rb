@@ -62,11 +62,11 @@ module Api
             end
           end
 
-          @provider_name = params[:name]
+          @name = params[:name]
           load_provider
 
           self.status = 201
-          headers['Content-Location'] = routes.provider_path(@provider_name)
+          headers['Content-Location'] = routes.provider_path(@name)
           self.body = provider_json
         end
       end

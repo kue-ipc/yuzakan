@@ -82,11 +82,11 @@ module Api
             end
           end
 
-          @provider_name = params[:name] if change_name
+          @name = params[:name] if change_name
           load_provider
 
           self.status = 200
-          headers['Content-Location'] = routes.provider_path(@provider_name) if change_name
+          headers['Content-Location'] = routes.provider_path(@name) if change_name
           self.body = provider_json
         end
       end

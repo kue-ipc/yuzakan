@@ -12,7 +12,7 @@ module Api
         end
 
         private def load_provider
-          @provider = @provider_repository.find_with_params_by_name(@provider_name)
+          @provider = @provider_repository.find_with_params_by_name(@name)
         end
 
         private def provider_json
