@@ -27,7 +27,7 @@ import {downloadButton, uploadButton} from './csv.js'
 
 updateGroupList = (group, groups) -> updateList(group, groups, 'name')
 
-normalizeGroupUploaded = ({action, group...}) ->
+normalizeGroupUploaded = ({action, error, group...}) ->
   action = action?.slice(0, 3)?.toUpperCase() ? ''
   error = switch action
     when '', 'MOD'
@@ -35,7 +35,7 @@ normalizeGroupUploaded = ({action, group...}) ->
     when 'ADD', 'DEL'
       'この処理は対応していません。'
     when 'ERR', 'SUC', 'ACT'
-      '処理中または処理済みです。'
+      error
     else
       action = 'ERR'
       '指定した処理が不正です。'
@@ -180,14 +180,12 @@ batchProccessing = ({mode, groups, providers}) ->
     'result_groups.csv'
   else
     'groups.csv'
-  headers = if mode == 'upload'
-    null
-  else
-    [
-      'action'
-      Object.keys(GROUP_PROPERTIES)...
-      ("provider[#{provider.name}]" for provider in providers)...
-    ]
+  headers = [
+    'action'
+    Object.keys(GROUP_PROPERTIES)...
+    ("provider[#{provider.name}]" for provider in providers)...
+    'error'
+  ]
 
   html.div {key: 'batch-processing', class: 'row mb-2'}, [
     html.div {key: 'upload', class: 'col-md-3'},
@@ -210,23 +208,6 @@ doAllActionButton = () ->
   }, text 'すべて実行'
 
 # Actions
-
-SetGroupInList = (state, group) ->
-  {
-    state...
-    groups: updateGroupList(group, state.groups)
-  }
-
-ModGroup = (state, group) ->
-  action = (_, data) ->
-    [SetGroupInList, {group..., data..., action: 'SUC', error: null}]
-  fallback = (_, error) ->
-    [SetGroupInList, {group..., action: 'ERR', error, show_detail: true}]
-  run = createRunUpdateGroup({action, fallback})
-  [
-    {state..., groups: updateGroupList({group..., action: 'ACT'}, state.groups)}
-    [run, {group..., id: group.name}]
-  ]
 
 ReloadIndexGroups = (state, data) ->
   console.debug 'reload index groups'
@@ -286,6 +267,12 @@ UploadGroups = (state, {list, filename}) ->
 DoAllActionWithConfirm = (state) ->
   [state, runDoAllActionWithConfirm]
 
+SetGroupInList = (state, group) ->
+  {
+    state...
+    groups: updateGroupList(group, state.groups)
+  }
+
 SetGroupInListNextAll = (state, group) ->
   [
     {
@@ -295,11 +282,28 @@ SetGroupInListNextAll = (state, group) ->
     runDoAllAction
   ]
 
+ModGroup = (state, group) ->
+  action = (_, data) ->
+    if data?
+      [SetGroupInList, {group..., data..., action: 'SUC', error: null}]
+    else
+      [SetGroupInList, {group..., action: 'ERR', error: '存在しません。'}]
+  fallback = (_, error) ->
+    [SetGroupInList, {group..., action: 'ERR', error, show_detail: true}]
+  run = createRunUpdateGroup({action, fallback})
+  [
+    {state..., groups: updateGroupList({group..., action: 'ACT'}, state.groups)}
+    [run, {group..., id: group.name}]
+  ]
+
 ModGroupNextAll = (state, group) ->
   action = (_, data) ->
-    [SetGroupInListNextAll, {group..., data..., action: 'SUC', error: null}]
+    if data?
+      [SetGroupInListNextAll, {group..., data..., action: 'SUC', error: null}]
+    else
+      [SetGroupInList, {group..., action: 'ERR', error: '存在しません。'}]
   fallback = (_, error) ->
-    [SetGroupInListNextAll, {group..., action: 'ERR', error, show_detail: true}]
+    [SetGroupInList, {group..., action: 'ERR', error, show_detail: true}]
   run = createRunUpdateGroup({action, fallback})
   [
     {state..., groups: updateGroupList({group..., action: 'ACT'}, state.groups)}
