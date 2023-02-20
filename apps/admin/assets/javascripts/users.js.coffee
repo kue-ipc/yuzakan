@@ -194,21 +194,36 @@ main = ->
 
   view = ({mode, users, providers, pagination, search, option, order}) ->
     html.div {}, [
-      search({query})
-      pagination({page, per_page, total})
-      if query && total == 0
-        html.p {}, text '該当するユーザーはいません。'
+      batchProccessing({mode, users, providers})
+      if mode != 'upload'
+        html.div {key: 'index-params'}, [
+          searchForm {search..., onsearch: Search}
+          indexGroupsOption {option..., onchange: ChangeOption}
+          pageNav {pagination..., onpage: MovePage}
+        ]
+      if mode == 'loading'
+        html.p {}, text '読込中...'
+      else if users.length == 0
+        html.p {}, text 'ユーザーが存在しません。'
       else
         html.table {class: 'table'}, [
           html.thead {},
             html.tr {}, [
-              html.th {}, text 'ユーザー名'
-              html.th {}, text '表示名'
-              html.th {}, text 'メールアドレス'
-              html.th {}, text '権限レベル'
+              html.th {key: 'show'}, text ''
+              html.th {key: 'action'}, text 'アクション'
+              html.th {key: 'name'}, text 'ユーザー名'
+              html.th {key: 'label'}, text 'ラベル'
+              html.th {key: 'email'}, text 'メールアドレス'
+              html.th {key: 'clearance-level'}, text '権限レベル'
               (providerTh({provider}) for provider in providers)...
             ]
-          html.tbody {}, (userTr({user, providers}) for user in users)
+          html.tbody {},
+            (for user in users
+              [
+                userTr({user, providers})
+                userDetailTr({user, colspan: 6 + providers.length})
+              ]
+            ).flat()
         ]
     ]
 

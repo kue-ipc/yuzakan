@@ -317,6 +317,15 @@ DoAllAction = (state) ->
   else
     state
 
+PopState = (state, params) ->
+  data = {
+    pagination: {state.pagination..., pickType(params, PAGINATION_PARAM_TYPES)...}
+    search: {state.search..., pickType(params, SEARCH_PARAM_TYPES)...}
+    option: {state.option..., pickType(params, INDEX_GROUPS_OPTION_PARAM_TYPES)...}
+    order: {state.order..., pickType(params, ORDER_PARAM_TYPES)...}
+  }
+  [ReloadIndexGroups, data]
+
 # Effecters
 
 runIndexProviders = createRunIndexProviders()
@@ -342,6 +351,13 @@ runDoAllActionWithConfirm = (dispatch) ->
 
 runDoAllAction = (dispatch) ->
   dispatch(DoAllAction)
+
+# Subscribers
+
+onPopstateSubscriber = (dispatch) ->
+  listener = (event) -> dispatch(PopState, event.state)
+  window.addEventListener 'popstate', listener
+  -> window.removeEventListener 'popstate', listener
 
 # main
 
@@ -378,7 +394,7 @@ main = ->
       else if groups.length == 0
         html.p {}, text 'グループが存在しません。'
       else
-        html.table {id: 'group-table', class: 'table'}, [
+        html.table {class: 'table'}, [
           html.thead {},
             html.tr {}, [
               html.th {key: 'show'}, text ''
@@ -399,6 +415,12 @@ main = ->
 
   node = document.getElementById('groups')
 
-  app {init, view, node}
+  subscriptions = (state) ->
+    if state.mode != 'upload'
+      [[onPopstateSubscriber]]
+    else
+      []
+
+  app {init, view, node, subscriptions}
 
 main()
