@@ -126,7 +126,6 @@ module Admin
             sync_result[:errors].concat(sync_result.errors)
             return false
           end
-
           admin_user = sync_result.user
 
           unless admin_user
@@ -140,12 +139,13 @@ module Admin
               flash[:errors].concat(create_result.errors)
               return false
             end
+
             sync_result = sync_user.call(admin_user_params.slice(:username))
             if sync_result.failure?
               sync_result[:errors].concat(sync_result.errors)
               return false
             end
-            admin_user = result.user
+            admin_user = sync_result.user
           end
 
           @user_repository.update(admin_user.id, clearance_level: 5) if admin_user.clearance_level < 5

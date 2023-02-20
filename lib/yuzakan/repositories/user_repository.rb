@@ -31,13 +31,17 @@ class UserRepository < Hanami::Repository
   end
 
   def set_primary_group(user, group)
+    #  既存のプライマリーグループを確認し、設定済みならメンバーを返す
     primary_member = assoc(:members, user).where(primary: true).to_a.first
-    return primary_member if primary_member&.group_id == group.id
+    return primary_member if primary_member&.group_id == group&.id
 
-    member = assoc(:members, user).where(group_id: group.id).to_a.first
-
+    # 既存のプライマリーグループを格下げ
     assoc(:members, user).update(primary_member.id, primary: false) if primary_member
 
+    # プライマリーグループがない場合はそのまま終了
+    return if group.nil?
+
+    member = assoc(:members, user).where(group_id: group.id).to_a.first
     if member
       assoc(:members, user).update(member.id, primary: true)
     else
@@ -57,5 +61,9 @@ class UserRepository < Hanami::Repository
     return unless member
 
     assoc(:members, user).remove(member.id)
+  end
+
+  def clear_group(user)
+    assoc(:members, user).delete
   end
 end

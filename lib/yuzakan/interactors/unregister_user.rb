@@ -30,15 +30,12 @@ class UnregisterUser
 
   def call(params)
     @user = @user_repository.find_by_name(params[:username])
-    if @user
-      @user_repository.update(@user.id,
-                              deleted: true,
-                              deleted_at: Time.now)
-    end
-    @user_repository.set_primary_group(@user, nil)
-    current_groups = @user_repository.find_with_groups(@user.id).groups
-    current_groups.groups.each do |current_group|
-      @user_repository.remove_group(user, group) if groups.none? { |group| group.groupname == current_group.groupname }
+    return if @user.nil?
+    return if @user.deleted
+
+    @user_repository.transaction do
+      @user_repository.update(@user.id, deleted: true, deleted_at: Time.now)
+      @user_repository.clear_group(@user)
     end
   end
 
