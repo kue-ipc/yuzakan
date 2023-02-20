@@ -112,6 +112,38 @@ import {downloadButton, uploadButton} from './csv.js'
 #       text "#{(page - 1) * per_page + 1} - #{Math.min(page * per_page, total)} / #{total} ユーザー"
 #   ]
 
+# Functions
+
+updateUserList = (user, users) -> updateList(user, users, 'name')
+
+normalizeUserUploaded = ({action, user...}) ->
+  action = action?.slice(0, 3)?.toUpperCase() ? ''
+  error = switch action
+    when '', 'ADD', 'MOD', 'DEL'
+      null
+    when 'LOC', 'UNL', 'RES'
+      'この処理は対応していません。'
+    when 'ERR', 'SUC', 'ACT'
+      '処理中または処理済みです。'
+    else
+      action = 'ERR'
+      '指定した処理が不正です。'
+  {
+    action
+    error
+    normalizeUser(user)...
+  }
+
+indexOptionFromState = (state) ->
+  pick({
+    state.pagination...
+    state.search...
+    state.option...
+    state.order...
+  }, Object.keys(INDEX_WITH_PAGE_USERS_PARAM_TYPES))
+
+# Views
+
 providerTh = ({provider}) ->
   html.th {}, text provider.label
 
@@ -142,31 +174,25 @@ runPageUsersHistory = (dispatch, {page, per_page, query}) ->
 
 # main
 main = ->
-  queryParams = pickType(getQueryParamsFromUrl(location), INDEX_WITH_PAGE_USERS_PARAM_TYPES)
-  # params = new URLSearchParams(location.search)
+  queryParams = getQueryParamsFromUrl(location)
 
   initState = {
     mode: 'loading'
     users: []
     providers: []
-    pagination: pick(queryParams, ['page', 'per_page'])
-    search: pick(queryParams, ['query'])
-    option: pick(queryParams, ['sync', 'show_deleted'])
-    order: queryParams['order']
-
-
-    page: parseInt(params.get('page') || '1')
-    per_page: parseInt(params.get('per_page') || '50') || 50
-    query: params.get('query') || ''
+    pagination: pickType(queryParams, PAGINATION_PARAM_TYPES)
+    search: pickType(queryParams, SEARCH_PARAM_TYPES)
+    option: pickType(queryParams, INDEX_USERS_OPTION_PARAM_TYPES)
+    order: pickType(queryParams, ORDER_PARAM_TYPES)
   }
 
   init = [
     initState
     [runGetProviders]
-    [runPageUsersHistory, initState]
+    [runPageUsersHistory, indexOptionFromState(initState)]
   ]
 
-  view = ({users, providers, page, per_page, total, query}) ->
+  view = ({mode, users, providers, pagination, search, option, order}) ->
     html.div {}, [
       search({query})
       pagination({page, per_page, total})

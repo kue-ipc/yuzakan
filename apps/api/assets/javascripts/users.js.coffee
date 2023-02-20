@@ -10,6 +10,8 @@ import {
 } from './hyper_json.js'
 
 import {PAGINATION_PARAM_TYPES} from './pagination.js'
+import {SEARCH_PARAM_TYPES} from './search.js'
+import {ORDER_PARAM_TYPES} from './order.js'
 
 import {pickType} from '/assets/utils.js'
 
@@ -27,12 +29,16 @@ export USER_PROPERTIES = {
   # deleted_at: 'datetime'
 }
 
-export INDEX_USERS_PARAM_TYPES = {
+export INDEX_USERS_OPTION_PARAM_TYPES = {
   sync: 'boolean'
-  order: 'string'
-  query: 'string'
   hide_prohibited: 'boolean'
   show_deleted: 'boolean'
+}
+
+export INDEX_USERS_PARAM_TYPES = {
+  SEARCH_PARAM_TYPES...
+  ORDER_PARAM_TYPES...
+  INDEX_USERS_OPTION_PARAM_TYPES...
 }
 
 export INDEX_WITH_PAGE_USERS_PARAM_TYPES = {

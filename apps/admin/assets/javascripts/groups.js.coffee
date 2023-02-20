@@ -175,6 +175,34 @@ groupDetailTr = ({group, colspan}) ->
               JSON.stringify(group.error, null, 2)
     ]
 
+batchProccessing = ({mode, groups, providers}) ->
+  filename = if mode == 'upload'
+    'result_groups.csv'
+  else
+    'groups.csv'
+  headers = if mode == 'upload'
+    null
+  else
+    [
+      'action'
+      Object.keys(GROUP_PROPERTIES)...
+      ("provider[#{provider.name}]" for provider in providers)...
+    ]
+
+  html.div {key: 'batch-processing', class: 'row mb-2'}, [
+    html.div {key: 'upload', class: 'col-md-3'},
+      uploadButton {onupload: UploadGroups, disabled: mode == 'upload'}
+    html.div {key: 'download', class: 'col-md-3'},
+      downloadButton {
+        list: groups
+        filename
+        headers
+        disabled: mode == 'loading'
+      }
+    html.div {key: 'do_all_action', class: 'col-md-3'},
+      doAllActionButton {} if mode == 'upload'
+  ]
+
 doAllActionButton = () ->
   html.button {
     class: 'btn btn-danger'
@@ -334,34 +362,11 @@ main = ->
 
   view = ({mode, groups, providers, pagination, search, option, order}) ->
     html.div {}, [
-      if mode == 'upload'
-        html.div {}, [
-          html.div {class: 'mb-2'}, text 'アップロードモード'
-          html.div {key: 'buttons', class: 'row mb-2'}, [
-            html.div {key: 'upload', class: 'col-md-3'},
-              uploadButton {onupload: UploadGroups, disabled: true}
-            html.div {key: 'download', class: 'col-md-3'},
-              # アップロードモードではヘッダを指定しない
-              downloadButton {list: groups, filename: 'result_groups.csv'}
-            html.div {key: 'do_all_action', class: 'col-md-3'},
-              doAllActionButton {}
-          ]
-        ]
-      else
-        headers = [
-          'action'
-          Object.keys(GROUP_PROPERTIES)...
-          ("provider[#{provider.name}]" for provider in providers)...
-        ]
-        html.div {}, [
+      batchProccessing({mode, groups, providers})
+      if mode != 'upload'
+        html.div {key: 'index-params'}, [
           searchForm {search..., onsearch: Search}
           indexGroupsOption {option..., onchange: ChangeOption}
-          html.div {key: 'buttons', class: 'row mb-2'}, [
-            html.div {key: 'upload', class: 'col-md-3'},
-              uploadButton {onupload: UploadGroups}
-            html.div {key: 'downolad', class: 'col-md-3'},
-              downloadButton {list: groups, filename: 'groups.csv', headers, disabled: mode == 'loading'}
-          ]
           pageNav {pagination..., onpage: MovePage}
         ]
       if mode == 'loading'
