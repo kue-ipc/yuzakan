@@ -10,7 +10,7 @@ export MIN_PAGE = 1
 export MAX_PAGE = 10000
 export MIN_PER_PAGE = 10
 export MAX_PER_PAGE = 100
-export PAGINATION_PARAMS_TYPES = {
+export PAGINATION_PARAM_TYPES = {
   page: 'integer'
   per_page: 'integer'
 }
@@ -26,7 +26,7 @@ export extractPagination = (contentRange, location) ->
   match = CONTENT_RANGE_REGEXP.exec(contentRange)
   if match
     {
-      pickType(getQueryParamsFromUrl(new URL(location, globalThis.location)), PAGINATION_PARAMS_TYPES)...
+      pickType(getQueryParamsFromUrl(new URL(location, globalThis.location)), PAGINATION_PARAM_TYPES)...
       pickType(match.groups, CONTENT_RANGE_TYPES)...
     }
   else

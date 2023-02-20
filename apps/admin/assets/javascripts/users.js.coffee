@@ -1,106 +1,116 @@
 import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
-import {PageUsers} from '/assets/api/users.js'
-import {runGetProviders} from '/assets/api/providers.js'
-
 import BsIcon from '/assets/bs_icon.js'
 import {objToUrlencoded} from '/assets/form_helper.js'
 
-searchAction = (state, {query}) ->
-  return state if state.query == query
+import {
+  INDEX_WITH_PAGE_USRERS_PARAM_TYPES, USER_PROPERTIES
+  normalizeGroup
+  createRunIndexWithPageUser
+  createRunShowUser, createRunCreatUser, createRunUpdateUser, createRunDestroyUser
+} from '/assets/api/users.js'
+import {createRunIndexProviders} from '/assets/api/providers.js'
 
-  # ページを初期化
-  newState = {state..., page: 1, query}
-  [
-    newState
-    [runPageUsersHistory, newState]
-  ]
+import pageNav from './page_nav.js'
+import searchForm from './search_form.js'
+import {downloadButton, uploadButton} from './csv.js'
 
-search = ({query}) ->
-  searchInput = html.input {
-    class: 'form-control'
-    type: 'search'
-    placeholder: '検索...'
-    onkeypress: (state, event) ->
-      if event.keyCode == 13
-        [searchAction, {query: event.target.value}]
-      else
-        state
-  }
 
-  html.div {class: 'row mb-3'}, [
-    html.div {class: 'col-md-3'},
-      html.div {class: 'input-group'}, [
-        searchInput
-        html.button {
-          type: 'button'
-          class: 'btn btn-outline-secondary'
-          onclick: (state) -> [searchAction, {query: searchInput.node.value}]
-        }, BsIcon({name: 'search'})
-      ]
-    html.div {class: 'col-md-3'},
-      html.input {
-        id: 'search-query'
-        type: 'text'
-        class: 'form-control-plaintext'
-        value: query
-      }
-  ]
+# searchAction = (state, {query}) ->
+#   return state if state.query == query
 
-pageAction = (state, props) ->
-  newState = {state..., props...}
-  [
-    newState
-    [runPageUsersHistory, newState]
-  ]
+#   # ページを初期化
+#   newState = {state..., page: 1, query}
+#   [
+#     newState
+#     [runPageUsersHistory, newState]
+#   ]
 
-pageItem = ({content, page, active = false, disabled = false}) ->
-  liClass = ['page-item']
-  liClass.push 'active' if active
-  liClass.push 'disabled' if disabled
-  html.li {class: liClass},
-    html.button {
-      type: 'button'
-      class: 'page-link'
-      onclick: (state) -> [pageAction, {page: page}]
-    }, text content
+# search = ({query}) ->
+#   searchInput = html.input {
+#     class: 'form-control'
+#     type: 'search'
+#     placeholder: '検索...'
+#     onkeypress: (state, event) ->
+#       if event.keyCode == 13
+#         [searchAction, {query: event.target.value}]
+#       else
+#         state
+#   }
 
-pageEllipsis = ({content = '...'}) ->
-  liClass = ['page-item', 'disabled']
-  html.li {class: liClass},
-    html.span {class: 'page-link'}, text content
+#   html.div {class: 'row mb-3'}, [
+#     html.div {class: 'col-md-3'},
+#       html.div {class: 'input-group'}, [
+#         searchInput
+#         html.button {
+#           type: 'button'
+#           class: 'btn btn-outline-secondary'
+#           onclick: (state) -> [searchAction, {query: searchInput.node.value}]
+#         }, BsIcon({name: 'search'})
+#       ]
+#     html.div {class: 'col-md-3'},
+#       html.input {
+#         id: 'search-query'
+#         type: 'text'
+#         class: 'form-control-plaintext'
+#         value: query
+#       }
+#   ]
 
-pagination = ({page, per_page, total}) ->
-  first_page = 1
-  last_page = Math.floor(total / per_page) + 1
-  total_page = last_page - first_page + 1
+# pageAction = (state, props) ->
+#   newState = {state..., props...}
+#   [
+#     newState
+#     [runPageUsersHistory, newState]
+#   ]
 
-  list = []
-  list.push(pageItem {content: '最初', page: first_page, disabled: page == first_page})
-  list.push(pageItem {content: '前', page: page - 1, disabled: page == first_page})
+# pageItem = ({content, page, active = false, disabled = false}) ->
+#   liClass = ['page-item']
+#   liClass.push 'active' if active
+#   liClass.push 'disabled' if disabled
+#   html.li {class: liClass},
+#     html.button {
+#       type: 'button'
+#       class: 'page-link'
+#       onclick: (state) -> [pageAction, {page: page}]
+#     }, text content
 
-  if last_page <= 5
-    list.push(pageItem {content: num, page: num, active: page == num}) for num in [first_page..last_page]
-  else if page <= 3
-    list.push(pageItem {content: num, page: num, active: page == num}) for num in [first_page..5]
-    list.push(pageEllipsis {})
-  else if last_page - page <= 2
-    list.push(pageEllipsis {})
-    list.push(pageItem {content: num, page: num, active: page == num}) for num in [(last_page - 4)..last_page]
-  else
-    list.push(pageEllipsis {})
-    list.push(pageItem {content: num, page: num, active: page == num}) for num in [(page - 2)..(page + 2)]
-    list.push(pageEllipsis {})
+# pageEllipsis = ({content = '...'}) ->
+#   liClass = ['page-item', 'disabled']
+#   html.li {class: liClass},
+#     html.span {class: 'page-link'}, text content
 
-  list.push(pageItem {content: '次', page: page + 1, disabled: page == last_page})
-  list.push(pageItem {content: '最後', page: last_page, disabled: page == last_page})
+# pagination = ({page, per_page, total}) ->
+#   first_page = 1
+#   last_page = Math.floor(total / per_page) + 1
+#   total_page = last_page - first_page + 1
 
-  html.nav {class: 'd-flex', 'aria-label': 'ページナビゲーション'}, [
-    html.ul {class: 'pagination'}, list
-    html.p {class: 'ms-2 mt-2'},
-      text "#{(page - 1) * per_page + 1} - #{Math.min(page * per_page, total)} / #{total} ユーザー"
-  ]
+#   list = []
+#   list.push(pageItem {content: '最初', page: first_page, disabled: page == first_page})
+#   list.push(pageItem {content: '前', page: page - 1, disabled: page == first_page})
+
+#   if last_page <= 5
+#     list.push(pageItem {content: num, page: num, active: page == num}) for num in [first_page..last_page]
+#   else if page <= 3
+#     list.push(pageItem {content: num, page: num, active: page == num}) for num in [first_page..5]
+#     list.push(pageEllipsis {})
+#   else if last_page - page <= 2
+#     list.push(pageEllipsis {})
+#     list.push(pageItem {content: num, page: num, active: page == num}) for num in [(last_page - 4)..last_page]
+#   else
+#     list.push(pageEllipsis {})
+#     list.push(pageItem {content: num, page: num, active: page == num}) for num in [(page - 2)..(page + 2)]
+#     list.push(pageEllipsis {})
+
+#   list.push(pageItem {content: '次', page: page + 1, disabled: page == last_page})
+#   list.push(pageItem {content: '最後', page: last_page, disabled: page == last_page})
+
+#   html.nav {class: 'd-flex', 'aria-label': 'ページナビゲーション'}, [
+#     html.ul {class: 'pagination'}, list
+#     html.p {class: 'ms-2 mt-2'},
+#       text "#{(page - 1) * per_page + 1} - #{Math.min(page * per_page, total)} / #{total} ユーザー"
+#   ]
 
 providerTh = ({provider}) ->
   html.th {}, text provider.label
@@ -130,54 +140,65 @@ runPageUsersHistory = (dispatch, {page, per_page, query}) ->
     history.pushState(data, 'users', "/admin/users?#{objToUrlencoded(data)}")
   dispatch(PageUsers)
 
-params = new URLSearchParams(location.search)
+# main
+main = ->
+  queryParams = pickType(getQueryParamsFromUrl(location), INDEX_WITH_PAGE_USERS_PARAM_TYPES)
+  # params = new URLSearchParams(location.search)
 
-initState = {
-  users: []
-  providers: []
-  total: 0
-  page: parseInt(params.get('page') || '1')
-  per_page: parseInt(params.get('per_page') || '50') || 50
-  query: params.get('query') || ''
-}
+  initState = {
+    mode: 'loading'
+    users: []
+    providers: []
+    pagination: pick(queryParams, ['page', 'per_page'])
+    search: pick(queryParams, ['query'])
+    option: pick(queryParams, ['sync', 'show_deleted'])
+    order: queryParams['order']
 
-init = [
-  initState
-  [runGetProviders]
-  [runPageUsersHistory, initState]
-]
 
-view = ({users, providers, page, per_page, total, query}) ->
-  html.div {}, [
-    search({query})
-    pagination({page, per_page, total})
-    if query && total == 0
-      html.p {}, text '該当するユーザーはいません。'
-    else
-      html.table {class: 'table'}, [
-        html.thead {},
-          html.tr {}, [
-            html.th {}, text 'ユーザー名'
-            html.th {}, text '表示名'
-            html.th {}, text 'メールアドレス'
-            html.th {}, text '権限レベル'
-            (providerTh({provider}) for provider in providers)...
-          ]
-        html.tbody {}, (userTr({user, providers}) for user in users)
-      ]
+    page: parseInt(params.get('page') || '1')
+    per_page: parseInt(params.get('per_page') || '50') || 50
+    query: params.get('query') || ''
+  }
+
+  init = [
+    initState
+    [runGetProviders]
+    [runPageUsersHistory, initState]
   ]
 
-node = document.getElementById('users')
+  view = ({users, providers, page, per_page, total, query}) ->
+    html.div {}, [
+      search({query})
+      pagination({page, per_page, total})
+      if query && total == 0
+        html.p {}, text '該当するユーザーはいません。'
+      else
+        html.table {class: 'table'}, [
+          html.thead {},
+            html.tr {}, [
+              html.th {}, text 'ユーザー名'
+              html.th {}, text '表示名'
+              html.th {}, text 'メールアドレス'
+              html.th {}, text '権限レベル'
+              (providerTh({provider}) for provider in providers)...
+            ]
+          html.tbody {}, (userTr({user, providers}) for user in users)
+        ]
+    ]
 
-onPopstateSubscriber = (dispatch) ->
-  window.addEventListener 'popstate', (event) ->
-    dispatch(pageAction, event.state)
+  node = document.getElementById('users')
 
-onPopstate = ->
-  [onPopstateSubscriber]
+  onPopstateSubscriber = (dispatch) ->
+    window.addEventListener 'popstate', (event) ->
+      dispatch(pageAction, event.state)
 
-subscriptions = (state) -> [
-  onPopstate()
-]
+  onPopstate = ->
+    [onPopstateSubscriber]
 
-app {init, view, node, subscriptions}
+  subscriptions = (state) -> [
+    onPopstate()
+  ]
+
+  app {init, view, node, subscriptions}
+
+main()

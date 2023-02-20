@@ -9,16 +9,18 @@ import ConfirmDialog from '/assets/confirm_dialog.js'
 import {fieldId} from '/assets/form_helper.js'
 
 import {
+  INDEX_GROUPS_OPTION_PARAM_TYPES
   INDEX_WITH_PAGE_GROUPS_PARAM_TYPES, GROUP_PROPERTIES
   normalizeGroup
   createRunIndexWithPageGroups, createRunUpdateGroup
 } from '/assets/api/groups.js'
 import {createRunIndexProviders} from '/assets/api/providers.js'
-
+import {PAGINATION_PARAM_TYPES} from '/assets/api/pagination.js'
+import {SEARCH_PARAM_TYPES} from '/assets/api/search.js'
+import {ORDER_PARAM_TYPES} from '/assets/api/order.js'
 
 import pageNav from './page_nav.js'
 import searchForm from './search_form.js'
-
 import {downloadButton, uploadButton} from './csv.js'
 
 # Functions
@@ -42,6 +44,14 @@ normalizeGroupUploaded = ({action, group...}) ->
     error
     normalizeGroup(group)...
   }
+
+indexOptionFromState = (state) ->
+  pick({
+    state.pagination...
+    state.search...
+    state.option...
+    state.order...
+  }, Object.keys(INDEX_WITH_PAGE_GROUPS_PARAM_TYPES))
 
 # Dialogs
 
@@ -192,13 +202,8 @@ ModGroup = (state, group) ->
 
 ReloadIndexGroups = (state, data) ->
   console.debug 'reload index groups'
-  newState = {state..., data...}
-  params = pick({
-    newState.pagination...
-    newState.search...
-    newState.option...
-    order: newState.order
-  }, Object.keys(INDEX_WITH_PAGE_GROUPS_PARAM_TYPES))
+  newState = {state..., data..., mode: 'loading'}
+  params = indexOptionFromState(newState)
   [
     newState,
     [runPushHistory, params]
@@ -229,11 +234,11 @@ Search = (state, query) ->
   return state if state.query == query
 
   # ページ情報を初期化
-  [ReloadIndexGroups, {pagination: {}, search: {query}}]
+  [ReloadIndexGroups, {pagination: {state.pagination... , page: 1}, search: {query}}]
 
 ChangeOption = (state, option) ->
   # ページ情報を初期化
-  [ReloadIndexGroups, {pagination: {}, option: {state.option..., option...}}]
+  [ReloadIndexGroups, {pagination: {state.pagination... , page: 1}, option: {state.option..., option...}}]
 
 SortOrder = (state, order) ->
   [ReloadIndexGroups, {order}]
@@ -309,22 +314,22 @@ runDoAllAction = (dispatch) ->
 # main
 
 main = ->
-  queryParams = pickType(getQueryParamsFromUrl(location), INDEX_WITH_PAGE_GROUPS_PARAM_TYPES)
+  queryParams = getQueryParamsFromUrl(location)
 
   initState = {
     mode: 'loading'
     groups: []
     providers: []
-    pagination: pick(queryParams, ['page', 'per_page'])
-    search: pick(queryParams, ['query'])
-    option: pick(queryParams, ['sync', 'primary_only', 'show_deleted'])
-    order: queryParams['order']
+    pagination: pickType(queryParams, PAGINATION_PARAM_TYPES)
+    search: pickType(queryParams, SEARCH_PARAM_TYPES)
+    option: pickType(queryParams, INDEX_GROUPS_OPTION_PARAM_TYPES)
+    order: pickType(queryParams, ORDER_PARAM_TYPES)
   }
 
   init = [
     initState
     [runIndexProviders, {has_groups: true}]
-    [runIndexGroups, pick(initState, Object.keys(INDEX_WITH_PAGE_GROUPS_PARAM_TYPES))]
+    [runIndexGroups, indexOptionFromState(initState)]
   ]
 
   view = ({mode, groups, providers, pagination, search, option, order}) ->

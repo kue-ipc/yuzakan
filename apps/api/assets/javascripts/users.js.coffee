@@ -9,7 +9,7 @@ import {
   createRunDestroyWithId
 } from './hyper_json.js'
 
-import {PAGINATION_PARAMS_TYPES} from './pagination.js'
+import {PAGINATION_PARAM_TYPES} from './pagination.js'
 
 import {pickType} from '/assets/utils.js'
 
@@ -36,7 +36,7 @@ export INDEX_USERS_PARAM_TYPES = {
 }
 
 export INDEX_WITH_PAGE_USERS_PARAM_TYPES = {
-  PAGINATION_PARAMS_TYPES...
+  PAGINATION_PARAM_TYPES...
   INDEX_USERS_PARAM_TYPES...
 }
 
