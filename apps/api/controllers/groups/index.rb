@@ -86,7 +86,7 @@ module Api
 
           if params.key?(:page)
             pager = Yuzakan::Utils::Pager.new(relation, **params.slice(:page, :per_page)) do |link_params|
-              routes.url(:groups, **params, **link_params)
+              routes.path(:groups, **params, **link_params)
             end
             {
               groups: pager.page_items,
@@ -95,7 +95,7 @@ module Api
           else
             {
               groups: relation.to_a,
-              headers: {'Content-Location' => routes.url(:groups, **params.except(:per_page))},
+              headers: {'Content-Location' => routes.path(:groups, **params.except(:per_page))},
             }
           end
         end
@@ -123,11 +123,11 @@ module Api
             items.each { |item| groups_providers[item] << provider.name }
           end
 
-          all_groupnames = groups_providers.keys
-          all_groupnames.sort!
-          all_groupnames.reverse! if params[:order] == 'name.desc'
+          all_items = groups_providers.keys
+          all_items.sort!
+          all_items.reverse! if params[:order] == 'name.desc'
 
-          pager = Yuzakan::Utils::Pager.new(all_groupnames, **params.slice(:page, :per_page)) do |link_params|
+          pager = Yuzakan::Utils::Pager.new(all_items, **params.slice(:page, :per_page)) do |link_params|
             routes.path(:groups, **params.to_h, **link_params)
           end
 
@@ -147,11 +147,11 @@ module Api
         private def get_groups(groupnames)
           group_entities = @group_repository.all_by_name(groupnames).to_h { |group| [group.name, group] }
           groupnames.map do |groupname|
-            group_entities[groupname] || create_group(groupname)
+            group_entities[groupname] || get_sync_group(groupname)
           end
         end
 
-        private def create_group(groupname)
+        private def get_sync_group(groupname)
           @sync_group ||= SyncGroup.new(provider_repository: @provider_repository, group_repository: @group_repository)
           result = @sync_group.call({groupname: groupname})
           if result.failure?

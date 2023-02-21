@@ -143,9 +143,9 @@ class Provider < Hanami::Entity
     # 読み取り専用の属性は除外する
     attr_mappings.to_h do |mapping|
       if mapping.attr.readonly
-        [mapping.name, nil]
+        [mapping.key, nil]
       else
-        [mapping.name, mapping.map_value(attrs[mapping.attr_name.intern])]
+        [mapping.key, mapping.map_value(attrs[mapping.attr.name.intern])]
       end
     end.compact
   end
@@ -161,7 +161,7 @@ class Provider < Hanami::Entity
     return {} if raw_attrs.nil?
 
     attr_mappings.to_h do |mapping|
-      raw_value = raw_attrs[mapping.name] || raw_attrs[mapping.name.downcase]
+      raw_value = raw_attrs[mapping.key] || raw_attrs[mapping.key.downcase]
       [mapping.key, mapping.convert_value(raw_value)]
     end.compact
   end

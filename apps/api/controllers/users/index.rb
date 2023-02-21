@@ -86,7 +86,7 @@ module Api
 
           if params.key?(:page)
             pager = Yuzakan::Utils::Pager.new(relation, **params.slice(:page, :per_page)) do |link_params|
-              routes.url(:users, **params, **link_params)
+              routes.path(:users, **params, **link_params)
             end
             {
               users: pager.page_items,
@@ -95,75 +95,59 @@ module Api
           else
             {
               users: relation.to_a,
-              headers: {'Content-Location' => routes.url(:users, **params.except(:per_page))},
+              headers: {'Content-Location' => routes.path(:users, **params.except(:per_page))},
             }
           end
         end
 
         # sync on
-        def get_users_form_provider(params)
+        def get_users_from_provider(params)
           # syncモードでは無視される。
-          params = params.to_h.except(:primary_only, :hide_prohibited, :show_deleted)
+          params = params.to_h.except(:hide_prohibited, :show_deleted)
 
-          query = (params[:query] if params[:query]&.size&.positive?)
-
-          sync =
-            if params[:sync]&.size&.positive?
-              params[:sync].intern
-            else
-              :default
-            end
-
-          user_provider_names = Hash.new { |hash, key| hash[key] = [] }
-          @provider_repository.ordered_all_with_adapter_by_operation(:user_read).each do |provider|
-            items = if query then provider.user_search("*#{query}*") else provider.user_list end
-            items.each do |item|
-              user_provider_names[item] << provider.name
-            end
+          if params.key?(:order) && !params[:key].start_with?('name')
+            # nameに対する順序以外は無視される。
+            params = params.except(:order)
           end
-          all_items = user_provider_names.keys.sort
 
-          @pager = Yuzakan::Utils::Pager.new(routes, :users, params, all_items)
+          users_providers = Hash.new { |hash, key| hash[key] = [] }
+          query = ("*#{params[:query]}*" if params[:query]&.size&.positive?)
 
-          @users = get_users(@pager.page_items, sync: sync).map do |user|
+          @provider_repository.ordered_all_with_adapter_by_operation(:user_read).each do |provider|
+            items =
+              if query
+                provider.user_search(query)
+              else
+                provider.user_list
+              end
+            items.each { |item| users_providers[item] << provider.name }
+          end
+          all_items = users_providers.keys.sort
+          all_items.sort!
+          all_items.reverse! if params[:order] == 'name.desc'
+
+          pager = Yuzakan::Utils::Pager.new(all_items, **params.slice(:page, :per_page)) do |link_params|
+            routes.path(:users, **params.to_h, **link_params)
+          end
+
+          users = get_users(pager.page_items).map do |user|
             {
               **convert_for_json(user),
-              synced_at: user.created_at,
-              provider_names: user_provider_names[user.username],
+              providers: users_providers[user.name],
             }
           end
 
-          self.status = 200
-          headers.merge!(@pager.headers)
-          self.body = generate_json(@users)
+          {
+            users: users,
+            headers: pager.headers,
+          }
         end
 
-        private def get_users(usernames, sync: :default)
-          case sync
-          when :default
-            # DBに存在しない場合のみ同期する
-            user_entities = get_user_entities(usernames)
-            usernames.map do |username|
-              user_entities[username] || get_sync_user(username)
-            end
-          when :forced
-            # DBに存在しても同期する
-            usernames.map do |username|
-              get_sync_user(username)
-            end
-          when :no
-            # DBに存在しない場合でも同期しない
-            user_entities = get_user_entities(usernames)
-            usernames.map do |username|
-              user_entities[username] || User.new({username: username})
-            end
-          else
-            raise "Unknown sync: #{sync}"
+        private def get_users(usernames)
+          user_entities = @user_repository.all_by_name(usernames).to_h { |user| [user.name, user] }
+          usernames.map do |username|
+            user_entities[username] || get_sync_user(username)
           end
-        end
-
-        private def get_user_entities(usernames)
-          @user_repository.by_username(usernames).to_a.to_h { |user| [user.username, user] }
         end
 
         private def get_sync_user(username)
@@ -172,7 +156,7 @@ module Api
                                       group_repository: @group_repository)
           result = @sync_user.call({username: username})
           if result.failure?
-            Hanami.logger.error "failed sync user: #{username} - #{result.errors}"
+            Hanami.logger.error "[#{self.class.name}] failed sync user: #{username} - #{result.errors}"
             halt_json 500, errors: result.errors
           end
           result.user
