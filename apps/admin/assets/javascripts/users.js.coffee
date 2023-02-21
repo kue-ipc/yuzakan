@@ -1,3 +1,5 @@
+# /admin/users
+
 import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
@@ -7,10 +9,11 @@ import {objToUrlencoded} from '/assets/form_helper.js'
 import valueDisplay from '/assets/value_display.js'
 
 import {
-  INDEX_WITH_PAGE_USRERS_PARAM_TYPES, USER_PROPERTIES
+  INDEX_USERS_OPTION_PARAM_TYPES
+  INDEX_WITH_PAGE_USERS_PARAM_TYPES, USER_PROPERTIES
   normalizeUser
-  createRunIndexWithPageUser
-  createRunShowUser, createRunCreatUser, createRunUpdateUser, createRunDestroyUser
+  createRunIndexWithPageUsers
+  createRunShowUser, createRunCreateUser, createRunUpdateUser, createRunDestroyUser
 } from '/assets/api/users.js'
 import {createRunIndexProviders} from '/assets/api/providers.js'
 import {PAGINATION_PARAM_TYPES} from '/assets/api/pagination.js'
@@ -19,7 +22,7 @@ import {ORDER_PARAM_TYPES} from '/assets/api/order.js'
 
 import pageNav from './page_nav.js'
 import searchForm from './search_form.js'
-import {downloadButton, uploadButton} from './csv.js'
+import {batchOperation, runDoNextAction, runStopAllAction} from './batch_operation.js'
 
 # mode
 #   loading: 読込中
@@ -324,7 +327,7 @@ main = ->
     [runIndexUsers, indexOptionFromState(initState)]
   ]
 
-  view = ({mode, users, providers, pagination, search, option, order}) ->
+  view = ({mode, users, providers, pagination, search, option, order, filename}) ->
     html.div {}, [
       batchOperation {
         mode
@@ -342,7 +345,7 @@ main = ->
       if mode != 'upload'
         html.div {key: 'index-params'}, [
           searchForm {search..., onsearch: Search}
-          indexUserOption {option..., onchange: ChangeOption}
+          indexUsersOption {option..., onchange: ChangeOption}
           pageNav {pagination..., onpage: MovePage}
         ]
       if mode == 'loading'

@@ -1,3 +1,5 @@
+# /admin/gorups
+
 import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
