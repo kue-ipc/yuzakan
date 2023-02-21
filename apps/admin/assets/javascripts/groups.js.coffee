@@ -12,7 +12,7 @@ import {
   INDEX_GROUPS_OPTION_PARAM_TYPES
   INDEX_WITH_PAGE_GROUPS_PARAM_TYPES, GROUP_PROPERTIES
   normalizeGroup
-  createRunIndexWithPageGroups, createRunUpdateGroup
+  createRunIndexWithPageGroups, createRunShowGroup, createRunUpdateGroup
 } from '/assets/api/groups.js'
 import {createRunIndexProviders} from '/assets/api/providers.js'
 import {PAGINATION_PARAM_TYPES} from '/assets/api/pagination.js'
@@ -37,9 +37,9 @@ updateGroupList = (group, groups) -> updateList(group, groups, 'name')
 normalizeGroupUploaded = ({action, error, group...}) ->
   action = action?.slice(0, 3)?.toUpperCase() ? ''
   error = switch action
-    when '', 'MOD'
+    when '', 'MOD', 'SYN'
       null
-    when 'ADD', 'DEL', 'SYC'
+    when 'ADD', 'DEL'
       'この処理は対応していません。'
     when 'ERR', 'SUC', 'ACT'
       error
@@ -110,6 +110,8 @@ groupTr = ({group, providers}) ->
       'success'
     when 'ACT'
       'secondary'
+    when 'SYN'
+      'light'
     else
       'light'
   html.tr {
@@ -125,9 +127,9 @@ groupTr = ({group, providers}) ->
         when 'ACT'
           html.div {class: 'spinner-border spinner-border-sm', role: 'status'},
             html.span {class: 'visually-hidden'}, text '実行中'
-        when 'MOD'
+        when 'MOD', 'SYN'
           html.button {
-            class: 'btn btn-sm btn-info'
+            class: "btn btn-sm btn-#{color}"
             onclick: -> [DoActionGroup, group]
           }, text '変更'
         when 'ERR'
@@ -151,8 +153,14 @@ groupDetailTr = ({group, colspan}) ->
   },
     html.td {colspan}, [
       html.div {key: 'properties'}, [
-        html.span {}, text "表示名: #{group.display_name || '(無し)'}"
-        html.span {class: 'ms-2'}, text "削除日: #{group.deleted_at}" if group.deleted_at
+        unless group.action
+          html.button {
+            key: 'sync'
+            class: 'btn btn-sm btn-light'
+            onclick: -> [SyncGroup, group]
+          }, text '同期'
+        html.span {key: 'display_name'}, text "表示名: #{group.display_name || '(無し)'}"
+        html.span {key: 'deleted_at', class: 'ms-2'}, text "削除日: #{group.deleted_at}" if group.deleted_at
       ]
       if group.note
         html.div {key: 'note'},
@@ -235,7 +243,6 @@ SetGroupInListNextIfDoAll = (state, group) ->
   [
     {
       state...
-      mode: if state.mode == 'do_all' then 'do_all' else 'result'
       groups
     }
     if group.action == 'ERR'
@@ -248,11 +255,13 @@ DoActionGroup = (state, group) ->
   switch group.action
     when 'MOD'
       [ModGroup, group]
+    when 'SYN'
+      [SyncGroup, group]
     else
       console.warn 'not implemented action: %s', group.action
       state
 
-createActionGroup = (createEffecter) ->
+createActionGroup = (createEffecter, props = {}) ->
   (state, group) ->
     action = (_, data) ->
       if data?
@@ -265,13 +274,15 @@ createActionGroup = (createEffecter) ->
     [
       {
         state...
-        mode: if state.mode == 'do_all' then 'do_all' else 'running'
+        mode: if state.mode == 'file' then 'result' else state.mode
         groups: updateGroupList({group..., action: 'ACT'}, state.groups)
       }
-      [run, {group..., id: group.name}]
+      [run, {props..., group..., id: group.name}]
     ]
 
 ModGroup = createActionGroup(createRunUpdateGroup)
+
+SyncGroup = createActionGroup(createRunShowGroup, {sync: true})
 
 PopState = (state, params) ->
   data = {

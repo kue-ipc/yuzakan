@@ -25,23 +25,22 @@ export batchOperation = ({mode, list, headers, filename, onupload, action}) ->
   filename = "#{basename(filename, '.*')}_#{DateTime.now().toFormat('yyyyMMddHHmmss')}.csv"
 
   html.div {key: 'batch_operation', class: 'row mb-2'}, [
-    html.div {key: 'upload', class: 'col-md-3'},
+    html.div {key: 'upload', class: 'col-md-2'},
       uploadButton {
         onupload
-        disabled: ['loading', 'running', 'result'].includes(mode)
+        disabled: ['loading', 'result'].includes(mode)
       }
-    html.div {key: 'download', class: 'col-md-3'},
+    html.div {key: 'download', class: 'col-md-2'},
       downloadButton {
         list
         filename
         headers
-        # running 中も停止した場合にダウンロードは出来るようにしておく
         disabled: ['loading', 'file'].includes(mode)
       }
-    html.div {key: 'do_all_action', class: 'col-md-3'},
+    html.div {key: 'do_all_action', class: 'col-md-2'},
       # result の場合は、既に実行したエントリー(エラー含む)を除いて実行
       unless ['loading', 'loaded'].includes(mode)
-        startAllActionButton {list, action, disbaled: ['do_all', 'running'].includes(mode)}
+        startAllActionButton {list, action, disbaled: mode == 'do_all'}
   ]
 
 startAllActionButton = ({disabled, props...}) ->

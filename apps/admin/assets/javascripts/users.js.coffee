@@ -38,9 +38,9 @@ updateUserList = (user, users) -> updateList(user, users, 'name')
 normalizeUserUploaded = ({action, error, user...}) ->
   action = action?.slice(0, 3)?.toUpperCase() ? ''
   error = switch action
-    when '', 'ADD', 'MOD', 'DEL'
+    when '', 'ADD', 'MOD', 'DEL', 'SYN'
       null
-    when 'LOC', 'UNL', 'RES', 'SYC'
+    when 'LOC', 'UNL', 'PAS'
       'この処理は対応していません。'
     when 'ERR', 'SUC', 'ACT'
       error
@@ -110,6 +110,8 @@ userTr = ({user, providers}) ->
       'success'
     when 'ACT'
       'secondary'
+    when 'SYN'
+      'light'
     else
       'light'
   html.tr {
@@ -125,7 +127,7 @@ userTr = ({user, providers}) ->
         when 'ACT'
           html.div {class: 'spinner-border spinner-border-sm', role: 'status'},
             html.span {class: 'visually-hidden'}, text '実行中'
-        when 'ADD', 'MOD', 'UNL', 'DEL', 'LOC'
+        when 'ADD', 'MOD', 'SYN', 'DEL', 'LOC', 'UNL' 
           html.button {
             class: "btn btn-sm btn-#{color}"
             onclick: -> [DoActionUser, user]
@@ -153,8 +155,14 @@ userDetailTr = ({user, colspan}) ->
   },
     html.td {colspan}, [
       html.div {key: 'properties'}, [
-        html.span {}, text "表示名: #{user.display_name || '(無し)'}"
-        html.span {class: 'ms-2'}, text "削除日: #{user.deleted_at}" if user.deleted_at
+        unless user.action
+          html.button {
+            key: 'sync'
+            class: 'btn btn-sm btn-light'
+            onclick: -> [SyncUser, user]
+          }, text '同期'
+        html.span {key: 'display_name'}, text "表示名: #{user.display_name || '(無し)'}"
+        html.span {key: 'deleted_at', class: 'ms-2'}, text "削除日: #{user.deleted_at}" if user.deleted_at
       ]
       if user.note
         html.div {key: 'note'},
@@ -237,7 +245,6 @@ SetUserInListNextIfDoAll = (state, user) ->
   [
     {
       state...
-      mode: if state.mode == 'do_all' then 'do_all' else 'result'
       users
     }
     if user.action == 'ERR'
@@ -250,11 +257,13 @@ DoActionUser = (state, user) ->
   switch user.action
     when 'MOD'
       [ModUser, user]
+    when 'SYN'
+      [SyncUser, user]
     else
       console.warn 'not implemented action: %s', user.action
       state
 
-createActionUser = (createEffecter) ->
+createActionUser = (createEffecter, props = {}) ->
   (state, user) ->
     action = (_, data) ->
       if data?
@@ -267,13 +276,15 @@ createActionUser = (createEffecter) ->
     [
       {
         state...
-        mode: if state.mode == 'do_all' then 'do_all' else 'running'
+        mode: if state.mode == 'file' then 'result' else state.mode
         users: updateUserList({user..., action: 'ACT'}, state.users)
       }
-      [run, {user..., id: user.name}]
+      [run, {props..., user..., id: user.name}]
     ]
 
 ModUser = createActionUser(createRunUpdateUser)
+
+SyncUser = createActionUser(createRunShowUser, {sync: true})
 
 PopState = (state, params) ->
   data = {
