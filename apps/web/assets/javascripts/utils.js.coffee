@@ -198,10 +198,20 @@ export getBasenameFromUrl = (url) ->
 export getQueryParamsFromUrl = (url) ->
   Object.fromEntries(new URLSearchParams(url.search))
 
-export basename = (path) ->
+export basename = (path, suffix = '') ->
   return '' unless path
 
-  path.split('/').reverse().find(identity) || '/'
+  base = path.split('/').reverse().find(identity) || '/'
+
+  return base unless suffix
+
+  lastDot = base.lastIndexOf('.')
+  return base if lastDot <= 0
+
+  if suffix == '.*' || suffix == base.slice(lastDot)
+    base.slice(0, lastDot)
+  else
+    base
 
 export entityLabel = (entity) ->
   entity.display_name || entity.name || ''

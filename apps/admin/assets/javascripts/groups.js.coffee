@@ -5,8 +5,6 @@ import BsIcon from '/assets/bs_icon.js'
 import {pick, pickType, updateList, getQueryParamsFromUrl, entityLabel} from '/assets/utils.js'
 import {objToUrlencoded} from '/assets/form_helper.js'
 import valueDisplay from '/assets/value_display.js'
-import ConfirmDialog from '/assets/confirm_dialog.js'
-import {fieldId} from '/assets/form_helper.js'
 
 import {
   INDEX_GROUPS_OPTION_PARAM_TYPES
@@ -21,7 +19,14 @@ import {ORDER_PARAM_TYPES} from '/assets/api/order.js'
 
 import pageNav from './page_nav.js'
 import searchForm from './search_form.js'
-import {downloadButton, uploadButton} from './csv.js'
+import {batchOperation, runDoNextAction, runStopAllAction} from './batch_operation.js'
+
+# mode
+#   loading: 読込中
+#   loaded: 読込完了
+#   file: アップロードされたファイル
+#   do_all: 全て実行中
+#   result: 実行結果(全てとは限らない)
 
 # Functions
 
@@ -32,7 +37,7 @@ normalizeGroupUploaded = ({action, error, group...}) ->
   error = switch action
     when '', 'MOD'
       null
-    when 'ADD', 'DEL'
+    when 'ADD', 'DEL', 'SYC'
       'この処理は対応していません。'
     when 'ERR', 'SUC', 'ACT'
       error
@@ -52,18 +57,6 @@ indexOptionFromState = (state) ->
     state.option...
     state.order...
   }, Object.keys(INDEX_WITH_PAGE_GROUPS_PARAM_TYPES))
-
-# Dialogs
-
-doAllActionConfirm = new ConfirmDialog {
-  id: fieldId('do_all_action', ['modal', 'confirm', 'group'])
-  states: 'alert'
-  title: 'すべて実行'
-  action: {
-    color: 'danger'
-    label: 'すべて実行'
-  }
-}
 
 # Views
 
@@ -137,7 +130,7 @@ groupTr = ({group, providers}) ->
         when 'MOD'
           html.button {
             class: 'btn btn-sm btn-info'
-            onclick: -> [ModGroup, group]
+            onclick: -> [DoActionGroup, group]
           }, text '変更'
         when 'ERR'
           html.div {}, text 'エラー'
@@ -174,38 +167,6 @@ groupDetailTr = ({group, colspan}) ->
             else
               JSON.stringify(group.error, null, 2)
     ]
-
-batchProccessing = ({mode, groups, providers}) ->
-  filename = if mode == 'upload'
-    'result_groups.csv'
-  else
-    'groups.csv'
-  headers = [
-    'action'
-    Object.keys(GROUP_PROPERTIES)...
-    ("provider[#{provider.name}]" for provider in providers)...
-    'error'
-  ]
-
-  html.div {key: 'batch-processing', class: 'row mb-2'}, [
-    html.div {key: 'upload', class: 'col-md-3'},
-      uploadButton {onupload: UploadGroups, disabled: mode == 'upload'}
-    html.div {key: 'download', class: 'col-md-3'},
-      downloadButton {
-        list: groups
-        filename
-        headers
-        disabled: mode == 'loading'
-      }
-    html.div {key: 'do_all_action', class: 'col-md-3'},
-      doAllActionButton {} if mode == 'upload'
-  ]
-
-doAllActionButton = () ->
-  html.button {
-    class: 'btn btn-danger'
-    onclick: DoAllActionWithConfirm
-  }, text 'すべて実行'
 
 # Actions
 
@@ -260,12 +221,10 @@ UploadGroups = (state, {list, filename}) ->
     }
   {
     state...
-    mode: 'upload'
+    mode: 'file'
     groups
+    filename
   }
-
-DoAllActionWithConfirm = (state) ->
-  [state, runDoAllActionWithConfirm]
 
 SetGroupInList = (state, group) ->
   {
@@ -273,49 +232,48 @@ SetGroupInList = (state, group) ->
     groups: updateGroupList(group, state.groups)
   }
 
-SetGroupInListNextAll = (state, group) ->
+SetGroupInListNextIfDoAll = (state, group) ->
+  groups = updateGroupList(group, state.groups)
   [
     {
       state...
-      groups: updateGroupList(group, state.groups)
+      mode: if state.mode == 'do_all' then 'do_all' else 'result'
+      groups
     }
-    runDoAllAction
+    if group.action == 'ERR'
+      runStopAllAction
+    else if state.mode == 'do_all'
+      [runDoNextAction, {list: groups, action: DoActionGroup}]
   ]
 
-ModGroup = (state, group) ->
-  action = (_, data) ->
-    if data?
-      [SetGroupInList, {group..., data..., action: 'SUC', error: null}]
+DoActionGroup = (state, group) ->
+  switch group.action
+    when 'MOD'
+      [ModGroup, group]
     else
-      [SetGroupInList, {group..., action: 'ERR', error: '存在しません。'}]
-  fallback = (_, error) ->
-    [SetGroupInList, {group..., action: 'ERR', error, show_detail: true}]
-  run = createRunUpdateGroup({action, fallback})
-  [
-    {state..., groups: updateGroupList({group..., action: 'ACT'}, state.groups)}
-    [run, {group..., id: group.name}]
-  ]
+      console.warn 'not implemented action: %s', group.action
+      state
 
-ModGroupNextAll = (state, group) ->
-  action = (_, data) ->
-    if data?
-      [SetGroupInListNextAll, {group..., data..., action: 'SUC', error: null}]
-    else
-      [SetGroupInList, {group..., action: 'ERR', error: '存在しません。'}]
-  fallback = (_, error) ->
-    [SetGroupInList, {group..., action: 'ERR', error, show_detail: true}]
-  run = createRunUpdateGroup({action, fallback})
-  [
-    {state..., groups: updateGroupList({group..., action: 'ACT'}, state.groups)}
-    [run, {group..., id: group.name}]
-  ]
+createActionGroup = (createEffecter) ->
+  (state, group) ->
+    action = (_, data) ->
+      if data?
+        [SetGroupInListNextIfDoAll, {group..., data..., action: 'SUC', error: null}]
+      else
+        [SetGroupInListNextIfDoAll, {group..., action: 'ERR', error: '存在しません。', show_detail: true}]
+    fallback = (_, error) ->
+      [SetGroupInListNextIfDoAll, {group..., action: 'ERR', error, show_detail: true}]
+    run = createEffecter({action, fallback})
+    [
+      {
+        state...
+        mode: if state.mode == 'do_all' then 'do_all' else 'running'
+        groups: updateGroupList({group..., action: 'ACT'}, state.groups)
+      }
+      [run, {group..., id: group.name}]
+    ]
 
-DoAllAction = (state) ->
-  doActionGroup = state.groups.find (group) -> group.action == 'MOD'
-  if doActionGroup
-    [ModGroupNextAll, doActionGroup]
-  else
-    state
+ModGroup = createActionGroup(createRunUpdateGroup)
 
 PopState = (state, params) ->
   data = {
@@ -337,27 +295,16 @@ runPushHistory = (dispatch, params) ->
   if (query != location.search)
     history.pushState(params, '', "#{location.pathname}#{query}")
 
-runDoAllActionWithConfirm = (dispatch) ->
-  confirm = await doAllActionConfirm.showPromise({
-    messages: [
-      'すべての処理を実行します。'
-      '処理は途中で停止することはできません。'
-      'ブラウザーを閉じると処理が中断されます。決して、閉じないでください。'
-      '予期せぬ中断を避けるために、スリープは無効にしておいてください。'
-      'すべての処理を実行してもよろしいですか？']
-  })
-  if confirm
-    dispatch(DoAllAction)
-
-runDoAllAction = (dispatch) ->
-  dispatch(DoAllAction)
-
 # Subscribers
 
-onPopstateSubscriber = (dispatch) ->
-  listener = (event) -> dispatch(PopState, event.state)
+onPopstateSubscriber = (dispatch, action) ->
+  listener = (event) -> dispatch(action, event.state)
   window.addEventListener 'popstate', listener
   -> window.removeEventListener 'popstate', listener
+
+# create Subscriver
+onPopstate = (action)->
+  [onPopstateSubscriber, action]
 
 # main
 
@@ -372,6 +319,7 @@ main = ->
     search: pickType(queryParams, SEARCH_PARAM_TYPES)
     option: pickType(queryParams, INDEX_GROUPS_OPTION_PARAM_TYPES)
     order: pickType(queryParams, ORDER_PARAM_TYPES)
+    filename: 'groups.csv'
   }
 
   init = [
@@ -380,9 +328,21 @@ main = ->
     [runIndexGroups, indexOptionFromState(initState)]
   ]
 
-  view = ({mode, groups, providers, pagination, search, option, order}) ->
+  view = ({mode, groups, providers, pagination, search, option, order, filename}) ->
     html.div {}, [
-      batchProccessing({mode, groups, providers})
+      batchOperation {
+        mode
+        list: groups
+        headers: [
+          'action'
+          Object.keys(GROUP_PROPERTIES)...
+          ("provider[#{provider.name}]" for provider in providers)...
+          'error'
+        ]
+        filename
+        onupload: UploadGroups
+        action: DoActionGroup
+      }
       if mode != 'upload'
         html.div {key: 'index-params'}, [
           searchForm {search..., onsearch: Search}
@@ -415,11 +375,10 @@ main = ->
 
   node = document.getElementById('groups')
 
-  subscriptions = (state) ->
-    if state.mode != 'upload'
-      [[onPopstateSubscriber]]
-    else
-      []
+  subscriptions = ({mode}) ->
+    [
+      onPopstate(PopState) if ['loading', 'loaded'].includes(mode)
+    ]
 
   app {init, view, node, subscriptions}
 
