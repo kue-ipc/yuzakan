@@ -27,18 +27,14 @@ class GroupRepository < Hanami::Repository
 
   def filter(query: nil, match: :partial, primary: nil, prohibited: nil, deleted: nil)
     q = search(query: query, match: match)
-
     q = q.where(primary: primary) unless primary.nil?
-
     q = q.where(prohibited: prohibited) unless prohibited.nil?
-
     case deleted
     when true, false
       q = q.where(deleted: deleted)
     when Range
       q = q.where(deleted: true).where(deleted_at: deleted)
     end
-
     q
   end
 
@@ -76,20 +72,24 @@ class GroupRepository < Hanami::Repository
   end
 
   def add_user(group, user)
-    member = member_for(group, user).one
+    member = member_for(group, user)
     return if member
 
     assoc(:members, group).add(user_id: user.id)
   end
 
   def remove_user(group, user)
-    member = member_for(group, user).one
+    member = member_for(group, user)
     return unless member
 
     assoc(:members, group).remove(member.id)
   end
 
   private def member_for(group, user)
-    assoc(:members, group).where(user_id: user.id)
+    assoc(:members, group).where(user_id: user.id).to_a.first
+  end
+
+  def clear_user(group)
+    assoc(:members, group).delete
   end
 end

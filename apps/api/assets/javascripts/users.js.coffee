@@ -20,13 +20,14 @@ import {pickType} from '/assets/utils.js'
 export API_USERS = '/api/users'
 
 export USER_PROPERTIES = {
-  # name: 'string'
-  # display_name: 'string'
-  # note: 'string'
-  # primary: 'boolean'
-  # prohibited: 'boolean'
-  # deleted: 'boolean'
-  # deleted_at: 'datetime'
+  name: 'string'
+  display_name: 'string'
+  email: 'string'
+  note: 'string'
+  clearance_level: 'integer'
+  prohibited: 'boolean'
+  deleted: 'boolean'
+  deleted_at: 'datetime'
 }
 
 export INDEX_USERS_OPTION_PARAM_TYPES = {

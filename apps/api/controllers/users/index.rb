@@ -21,7 +21,7 @@ module Api
             optional(:sync).filled(:bool?)
 
             optional(:order).filled(:str?, included_in?: %w[
-              username
+              name
               display_name
               deleted_at
             ].flat_map { |name| [name, "#{name}.asc", "#{name}.desc"] })
@@ -75,13 +75,10 @@ module Api
               name, asc_desc = params[:order].split('.', 2).map(&:intern)
               {name => asc_desc || :asc}
             else
-              {username: :asc}
+              {name: :asc}
             end
 
-          query = ("%#{params[:query]}%" if params[:query]&.size&.positive?)
-
-          filter = {}
-          filter[:query] = "%#{params[:query]}%" if params[:query]&.size&.positive?
+          filter = params.slice(:query, :match)
           filter[:prohibited] = false if params[:hide_prohibited]
           filter[:deleted] = false unless params[:show_deleted]
 
