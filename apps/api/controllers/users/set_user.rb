@@ -29,7 +29,7 @@ module Api
           halt_json 400, errors: [params.errors] unless params.valid?
 
           @name = params[:id]
-          load_user(sync: !!pramas[:sync])
+          load_user(sync: !!params[:sync])
 
           halt_json 404 if @user.nil?
         end
