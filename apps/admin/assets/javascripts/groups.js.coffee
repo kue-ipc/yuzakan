@@ -79,7 +79,7 @@ indexGroupsOption = ({onchange: action, props...}) ->
             name: key
             type: 'checkbox'
             checked: props[key]
-            onchange: onchange
+            onchange
           }
           html.label {class: 'form-check-label', for: id}, text val
         ]
@@ -88,7 +88,7 @@ providerTh = ({provider}) ->
   html.th {key: "provider[#{provider.name}]"}, text entityLabel(provider)
 
 groupProviderTd = ({group, provider}) ->
-  html.td {key: "group[#{group.name}]"},
+  html.td {key: "provider[#{provider.name}]"},
     valueDisplay {
       value: group.providers?.get(provider.name)
       type: 'boolean'
@@ -117,11 +117,7 @@ groupTr = ({group, providers}) ->
     html.td {
       key: 'show'
       onclick: -> [SetGroupInList, {group..., show_detail: !group.show_detail}]
-    },
-      if group.show_detail
-        BsIcon {name: 'chevron-down'}
-      else
-        BsIcon {name: 'chevron-right'}
+    }, BsIcon {name: if group.show_detail then 'chevron-down' else 'chevron-right'}
     html.td {key: 'action'},
       switch group.action
         when 'ACT'
