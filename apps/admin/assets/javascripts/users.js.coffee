@@ -127,7 +127,7 @@ userTr = ({user, providers}) ->
         when 'ACT'
           html.div {class: 'spinner-border spinner-border-sm', role: 'status'},
             html.span {class: 'visually-hidden'}, text '実行中'
-        when 'ADD', 'MOD', 'SYN', 'DEL', 'LOC', 'UNL' 
+        when 'ADD', 'MOD', 'SYN', 'DEL', 'LOC', 'UNL'
           html.button {
             class: "btn btn-sm btn-#{color}"
             onclick: -> [DoActionUser, user]
