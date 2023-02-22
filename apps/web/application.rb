@@ -49,6 +49,7 @@ module Web
       assets do
         javascript_compressor Yuzakan::Utils::UglifierEsCompressor.new
         stylesheet_compressor :sass
+        nested true
         sources << [
           'assets',
         ]

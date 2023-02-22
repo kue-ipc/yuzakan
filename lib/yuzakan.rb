@@ -3,6 +3,7 @@
 require_relative 'yuzakan/adapters'
 require_relative 'yuzakan/helpers'
 require_relative 'yuzakan/suppression'
+require_relative 'yuzakan/monkey_patch'
 
 module Yuzakan
   NAME = 'Yuzakan'
