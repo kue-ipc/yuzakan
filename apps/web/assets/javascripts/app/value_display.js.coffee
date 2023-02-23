@@ -1,8 +1,8 @@
 import {text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
-import BsIcon from './bs_icon.js'
-import {convertToType, objToJson} from './utils.js'
+import BsIcon from '/assets/app/bs_icon.js'
+import {convertToType, objToJson} from '/assets/common/utils.js'
 
 export default valueDisplay = ({value, type = 'string', color = 'body', na = false}) ->
   unless value?

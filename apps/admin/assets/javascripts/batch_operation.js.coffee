@@ -2,8 +2,8 @@ import {DateTime} from '/assets/vendor/luxon.js'
 import {text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
-import ConfirmDialog from '/assets/confirm_dialog.js'
-import {basename} from '/assets/utils.js'
+import ConfirmDialog from '/assets/app/confirm_dialog.js'
+import {basename} from '/assets/common/utils.js'
 
 import {downloadButton, uploadButton} from './csv.js'
 

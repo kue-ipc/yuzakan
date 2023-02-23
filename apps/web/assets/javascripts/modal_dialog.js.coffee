@@ -8,7 +8,7 @@ import {focus} from '/assets/vendor/hyperapp-dom.js'
 
 import {Modal} from '/assets/vendor/bootstrap.js'
 
-import {modalDialog} from './modal.js'
+import {modalDialog} from '/assets/app/modal.js'
 
 export default class ModalDialog
   MESSAGE_EVENT = 'modaldialog.message'

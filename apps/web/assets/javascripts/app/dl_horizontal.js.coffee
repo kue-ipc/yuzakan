@@ -1,5 +1,5 @@
 import * as html from '/assets/vendor/hyperapp-html.js'
-import {join} from './class_prop.js'
+import {join} from '/assets/common/class_prop.js'
 
 cols = {
   xs: 12

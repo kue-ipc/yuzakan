@@ -1,6 +1,6 @@
 # /api/system
 
-import {fetchJsonGet} from './fetch_json.js'
+import {fetchJsonGet} from '/assets/api/fetch_json.js'
 
 export SetSystem = (state, system) -> {state..., system}
 

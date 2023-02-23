@@ -2,15 +2,15 @@ import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
 import csrf from '/assets/csrf.js'
-import ConfirmDialog from '/assets/confirm_dialog.js'
-import InputTextDialog from '/assets/input_text_dialog.js'
+import ConfirmDialog from '/assets/app/confirm_dialog.js'
+import InputTextDialog from '/assets/app/input_text_dialog.js'
 import {ATTR_TYPES, MAPPING_CONVERSIONS} from '/assets/definition.js'
 
 import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '/assets/api/fetch_json.js'
 import {createRunIndexProviders} from '/assets/api/providers.js'
 import {normalizeAttr, createRunIndexAttrs, createRunShowAttr} from '/assets/api/attrs.js'
 
-import {updateList} from '/assets/utils.js'
+import {updateList} from '/assets/common/utils.js'
 
 # Functions
 

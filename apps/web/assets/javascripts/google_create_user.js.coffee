@@ -1,7 +1,7 @@
 # 現在のところ使用していない
 
 import {h, text, app} from '/assets/vendor/hyperapp.js'
-import WebPostJson from './web_post_json.js'
+import WebPostJson from '/assets/app/web_post_json.js'
 
 agreementCheck = (state, agreement) -> {
   state...

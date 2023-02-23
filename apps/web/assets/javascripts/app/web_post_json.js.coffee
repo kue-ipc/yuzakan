@@ -4,7 +4,7 @@
 
 import {h, text, app} from '/assets/vendor/hyperapp.js'
 import {Modal} from '/assets/vendor/bootstrap.js'
-import BsIcon from './bs_icon.js'
+import BsIcon from '/assets/app/bs_icon.js'
 
 export default class WebPostJson
   MESSAGE_EVENT = 'webpostjson.message'

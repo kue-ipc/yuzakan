@@ -3,11 +3,11 @@
 import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
-import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from '/assets/utils.js'
-import {objToUrlencoded} from '/assets/form_helper.js'
-import {dlClasses, dtClasses, ddClasses} from '/assets/dl_horizontal.js'
-import BsIcon from '/assets/bs_icon.js'
-import valueDisplay from '/assets/value_display.js'
+import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from '/assets/common/utils.js'
+import {objToUrlencoded} from '/assets/common/form_helper.js'
+import {dlClasses, dtClasses, ddClasses} from '/assets/app/dl_horizontal.js'
+import BsIcon from '/assets/app/bs_icon.js'
+import valueDisplay from '/assets/common/value_display.js'
 
 import {createRunIndexProviders} from '/assets/api/providers.js'
 import {createRunShowGroup} from '/assets/api/groups.js'

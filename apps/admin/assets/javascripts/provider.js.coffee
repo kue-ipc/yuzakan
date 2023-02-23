@@ -4,12 +4,12 @@
 import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 import {fetchJsonGet} from '/assets/api/fetch_json.js'
-import {fieldName, fieldId} from '/assets/form_helper.js'
+import {fieldName, fieldId} from '/assets/common/form_helper.js'
 import csrf from '/assets/csrf.js'
 
 import providerParams from './provider_params.js'
-import WebData from '/assets/web_data.js'
-import ConfirmDialog from '/assets/confirm_dialog.js'
+import WebData from '/assets/app/web_data.js'
+import ConfirmDialog from '/assets/app/confirm_dialog.js'
 
 parentNames = ['provider']
 

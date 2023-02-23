@@ -3,8 +3,8 @@ import * as html from '/assets/vendor/hyperapp-html.js'
 import {DateTime} from '/assets/vendor/luxon.js'
 
 import ModalDialog from './modal_dialog.js'
-import BsIcon from './bs_icon.js'
-import * as dlh from './dl_horizontal.js'
+import BsIcon from '/assets/app/bs_icon.js'
+import * as dlh from '/assets/app/dl_horizontal.js'
 
 import {runGetSystem} from './api/get_system.js'
 

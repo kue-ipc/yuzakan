@@ -1,7 +1,7 @@
 import {text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
-import BsIcon from '/assets/bs_icon.js'
+import BsIcon from '/assets/app/bs_icon.js'
 
 export default searchForm = ({query, onsearch}) ->
   searchInput = html.input {

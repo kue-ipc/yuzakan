@@ -1,9 +1,9 @@
 # Createer functions for Hyperapp object and fetch api
 
-import {pick, pickType, identity} from '/assets/utils.js'
+import {pick, pickType, identity} from '/assets/common/utils.js'
 import csrf from '/assets/csrf.js'
 
-import {fetchJson} from './fetch_json.js'
+import {fetchJson} from '/assets/api/fetch_json.js'
 import {DEFAULT_PAGE, DEFAULT_PER_PAGE} from './pagination.js'
 # create Actions
 

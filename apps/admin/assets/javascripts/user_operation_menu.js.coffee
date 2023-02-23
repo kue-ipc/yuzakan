@@ -2,10 +2,10 @@ import {text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 import {DateTime} from '/assets/vendor/luxon.js'
 
-import {fieldName, fieldId} from '/assets/form_helper.js'
+import {fieldName, fieldId} from '/assets/common/form_helper.js'
 import csrf from '/assets/csrf.js'
-import WebData from '/assets/web_data.js'
-import ConfirmDialog from '/assets/confirm_dialog.js'
+import WebData from '/assets/app/web_data.js'
+import ConfirmDialog from '/assets/app/confirm_dialog.js'
 import LoginInfo from '/assets/login_info.js'
 
 import {runGetUserWithInit} from './user_get_user.js'
