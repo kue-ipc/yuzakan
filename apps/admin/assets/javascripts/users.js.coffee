@@ -6,7 +6,7 @@ import * as html from '/assets/vendor/hyperapp-html.js'
 import BsIcon from '/assets/app/bs_icon.js'
 import {pick, pickType, updateList, getQueryParamsFromUrl, entityLabel} from '/assets/common/utils.js'
 import {objToUrlencoded} from '/assets/common/form_helper.js'
-import valueDisplay from '/assets/common/value_display.js'
+import valueDisplay from '/assets/app/value_display.js'
 
 import {
   INDEX_USERS_OPTION_PARAM_TYPES

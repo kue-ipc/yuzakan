@@ -7,7 +7,7 @@ import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} 
 import {objToUrlencoded} from '/assets/common/form_helper.js'
 import {dlClasses, dtClasses, ddClasses} from '/assets/app/dl_horizontal.js'
 import BsIcon from '/assets/app/bs_icon.js'
-import valueDisplay from '/assets/common/value_display.js'
+import valueDisplay from '/assets/app/value_display.js'
 
 import {createRunIndexProviders} from '/assets/api/providers.js'
 import {createRunShowGroup} from '/assets/api/groups.js'

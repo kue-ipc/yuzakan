@@ -5,7 +5,8 @@ import * as html from '/assets/vendor/hyperapp-html.js'
 import ConfirmDialog from '/assets/app/confirm_dialog.js'
 import {basename} from '/assets/common/utils.js'
 
-import {downloadButton, uploadButton} from './csv.js'
+import downloadButton from '/assets/app/download_button.js'
+import uploadButton from '/assets/app/upload_button.js'
 
 # Dialogs
 

@@ -1,7 +1,4 @@
-import {text} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
 import {parse, stringify, transform} from '/assets/vendor/csv.js'
-import FileSaver from '/assets/vendor/file-saver.js'
 
 # async csv and records utilities
 
@@ -81,63 +78,3 @@ export csvToList = (csv) ->
   records = await csvToRecords(csv)
   list = await transformRecords(records, recordsToObj)
   list
-
-# Download
-
-# Downolad button view
-# {list: データ, filaname: ファイル名}
-export downloadButton = ({disabled = false, props...})->
-  html.button {
-    class: 'btn btn-secondary'
-    disabled
-    onclick: -> [DownloadCsv, props]
-  }, text 'ダウンロード'
-
-DownloadCsv = (state, props) -> [state, [runDownloadCsv, props]]
-
-runDownloadCsv = (dispatch, {list, filename, headers}) ->
-  console.debug 'download: %s', filename
-  csv = await listToCsv(list, {headers})
-  blob = new Blob [csv], {type: 'text/csv'}
-  FileSaver.saveAs(blob, filename)
-
-# Upload button view
-# {onupload: アップロード完了後に実行されるアクション}
-# アクションのprops
-#   list: データ(配列)
-#   filename: ファイル名
-export uploadButton = ({disabled = false, onupload}) ->
-  inputFile = html.input {
-    class: 'visually-hidden'
-    type: 'file'
-    accept: '.csv,text/csv'
-    onchange: (state, event) -> [UploadCsv, {file: event.target.files?[0], action: onupload}]
-  }
-  html.div {}, [
-    inputFile
-    html.button {
-      class: 'btn btn-warning'
-      disabled
-      onclick: -> [ClickUploadButton, inputFile.node]
-    }, text 'アップロード'
-  ]
-
-UploadCsv = (state, {file, action}) ->
-  return state unless file
-
-  [state, [runUploadCsv, {file, action}]]
-
-runUploadCsv = (dispatch, {action, file}) ->
-  filename = file.name
-  console.debug 'upload: %s', filename
-  csv = await file.text()
-  list = await csvToList(csv)
-  dispatch(action, {list, filename})
-
-ClickUploadButton = (state, input) ->  [state, [runClickInput, input]]
-
-runClickInput = (dispatch, input) ->
-  input.click()
-
-
-
