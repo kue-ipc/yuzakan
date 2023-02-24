@@ -19,8 +19,8 @@ export default downloadButton = ({disabled = false, props...})->
 DownloadCsv = (state, props) -> [state, [runDownloadCsv, props]]
 
 # Dwnload CSV effecter
-runDownloadCsv = (dispatch, {list, filename, headers}) ->
+runDownloadCsv = (dispatch, {list, filename, header}) ->
   console.debug 'download: %s', filename
-  csv = await listToCsv(list, {headers})
+  csv = await listToCsv(list, {header})
   blob = new Blob [csv], {type: 'text/csv'}
   FileSaver.saveAs(blob, filename)

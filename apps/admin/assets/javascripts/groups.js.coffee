@@ -30,6 +30,13 @@ import {batchOperation, runDoNextAction, runStopAllAction} from './batch_operati
 #   do_all: 全て実行中
 #   result: 実行結果(全てとは限らない)
 
+# Cnostants
+
+GROUP_HEADERS = [
+  'action'
+  Object.keys(GROUP_PROPERTIES)...
+]
+
 # Functions
 
 updateGroupList = (group, groups) -> updateList(group, groups, 'name')
@@ -60,23 +67,6 @@ indexOptionFromState = (state) ->
     state.order...
   }, Object.keys(INDEX_WITH_PAGE_GROUPS_PARAM_TYPES))
 
-groupHeaders = ({providers}) ->
-  [
-    'action'
-    Object.keys(GROUP_PROPERTIES)...
-    (listToParamName('providers', provider.name) for provider in providers)...
-    'error'
-  ]
-
-groupAllHeaders = ({providers}) ->
-  [
-    groupHeaders({providers})...
-    (listToParamName('data', name) for name, type of GROUP_DATA_PROPERTIES)...
-    (for provider in providers
-      for name, type of GROUP_DATA_PROPERTIES
-        listToParamName('providers', provider.name, name)
-    ).flat()...
-  ]
 
 # Views
 
@@ -110,7 +100,7 @@ providerTh = ({provider}) ->
 groupProviderTd = ({group, provider}) ->
   html.td {key: "provider[#{provider.name}]"},
     valueDisplay {
-      value: group.providers?.get(provider.name)
+      value: group.providers?.includes(provider.name)
       type: 'boolean'
     }
 
@@ -365,7 +355,10 @@ main = ->
       batchOperation {
         mode
         list: groups
-        headers: if mode == 'result' then groupAllHeaders({providers}) else groupHeaders({providers})
+        header: {
+          includes: GROUP_HEADERS
+          excludes: ['show_detail']
+        }
         filename
         onupload: UploadGroups
         action: DoActionGroup

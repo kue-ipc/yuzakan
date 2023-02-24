@@ -22,7 +22,7 @@ startAllActionConfirm = new ConfirmDialog {
 
 # Views
 
-export batchOperation = ({mode, list, headers, filename, onupload, action}) ->
+export batchOperation = ({mode, list, header, filename, onupload, action}) ->
   filename = "#{basename(filename, '.*')}_#{DateTime.now().toFormat('yyyyMMddHHmmss')}.csv"
 
   html.div {key: 'batch_operation', class: 'row mb-2'}, [
@@ -35,7 +35,7 @@ export batchOperation = ({mode, list, headers, filename, onupload, action}) ->
       downloadButton {
         list
         filename
-        headers
+        header
         disabled: ['loading', 'file'].includes(mode)
       }
     html.div {key: 'do_all_action', class: 'col-md-2'},

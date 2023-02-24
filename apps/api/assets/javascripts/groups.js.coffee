@@ -75,36 +75,23 @@ export normalizeGroups = (groups, type ={}) ->
   normalizeGroup(group, type) for group in groups
 
 export normalizeGroup = (group, types = {}) ->
-  data = pickType(group.data, GROUP_DATA_PROPERTIES) if group.data?
-  providers = new Map(
-    for provider in group.providers
-      if provider instanceof Array
-        [
-          provider[0]
-          if provider[1]? && typeof provider[1] == 'object'
-            pickType(provider[1], GROUP_DATA_PROPERTIES)
-          else
-            provider[1]
-        ]
-      else
-        [provider, true]
-  ) if group.providers?
+  providersData =
+    if !group.providers?
+      {}
+    else if group.providers instanceof Array
+      {providers: group.providers}
+    else
+      {
+        providers: (provider for provider, data of group.providers when data?)
+        providers_data: new Map(
+          [provider, pickType(data, GROUP_DATA_PROPERTIES)] for provider, data of group.providers when data?
+        )
+      }
 
   {
     pickType(group, {GROUP_PROPERTIES..., types...})...
-    data
-    providers
+    providersData...
   }
-  # group.data = pickType(group.data, GROUP_DATA_PROPERTIES) if group.data?
-  # if group.providers
-  #   group.providers = new Map(
-  #     for [key, value] from group.providers
-  #       if typeof value == 'object'
-  #         [key, pickType(value, GROUP_DATA_PROPERTIES)]
-  #       else
-  #         [key, value]
-  #   )
-  # group
 
 # Actions
 

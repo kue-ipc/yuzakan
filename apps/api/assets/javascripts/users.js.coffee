@@ -41,7 +41,7 @@ export USER_DATA_PROPERTIES = {
   locked: 'boolean'
   unmanageable: 'boolean'
   mfa: 'boolean'
-  attrs: 'object'
+  attrs: 'map'
 }
 
 export INDEX_USERS_OPTION_PARAM_TYPES = {
@@ -83,18 +83,14 @@ export normalizeUsers = (users, type ={}) ->
   normalizeUser(user, type) for user in users
 
 export normalizeUser = (user, types = {}) ->
-  data = pickType(user.data, USER_DATA_PROPERTIES) if user.data?
-  providers = new Map(
-    for provider in user.providers
-      if provider instanceof Array
-        [provider[0], pickType(provider[1], USER_DATA_PROPERTIES)]
-      else
-        [provider, true]
-  ) if user.providers?
+  providers =
+    if user.providers? && typeof user.providers == 'object' && !(user.proivder instanceof Array)
+      new Map([provider, pickType(data, USER_DATA_PROPERTIES)] for provider, data of user.providers when data?)
+    else
+      user.providers
 
   {
     pickType(user, {USER_PROPERTIES..., types...})...
-    data
     providers
   }
 
