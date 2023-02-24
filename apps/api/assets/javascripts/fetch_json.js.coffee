@@ -1,6 +1,6 @@
 import HttpLinkHeader from '/assets/vendor/http-link-header.js'
 
-import {isPresent, objToJson, toInteger} from '/assets/common/utils.js'
+import {isPresent, objToJson, toInteger} from '/assets/common/helper.js'
 import {formDataToJson, formDataToUrlencoded, objToUrlencoded} from '/assets/common/form_helper.js'
 
 import {extractPagination} from './pagination.js'

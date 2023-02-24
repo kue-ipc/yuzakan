@@ -13,7 +13,7 @@ import {PAGINATION_PARAM_TYPES} from './pagination.js'
 import {SEARCH_PARAM_TYPES} from './search.js'
 import {ORDER_PARAM_TYPES} from './order.js'
 
-import {pickType} from '/assets/common/utils.js'
+import {pickType} from '/assets/common/helper.js'
 
 # Contants
 

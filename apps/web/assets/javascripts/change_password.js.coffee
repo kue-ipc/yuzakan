@@ -2,7 +2,7 @@ import {h, text, app} from '/assets/vendor/hyperapp.js'
 import zxcvbn from '/assets/vendor/zxcvbn.js'
 
 import BsIcon from '/assets/app/bs_icon.js'
-import {camelize} from '/assets/common/string_utils.js'
+import {camelize} from '/assets/common/string_helper.js'
 import {fieldName, fieldId} from '/assets/common/form_helper.js'
 import WebPostJson from '/assets/app/web_post_json.js'
 

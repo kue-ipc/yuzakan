@@ -1,6 +1,6 @@
 # form helper
 
-import {listToKebab} from '/assets/common/string_utils.js'
+import {listToKebab} from '/assets/common/string_helper.js'
 
 export listToField = (list...) ->
   (list[0] ? '') + ("[#{str}]" for str in list[1..]).join('')

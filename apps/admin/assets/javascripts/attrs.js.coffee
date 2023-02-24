@@ -10,7 +10,7 @@ import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '/ass
 import {createRunIndexProviders} from '/assets/api/providers.js'
 import {normalizeAttr, createRunIndexAttrs, createRunShowAttr} from '/assets/api/attrs.js'
 
-import {updateList} from '/assets/common/utils.js'
+import {updateList} from '/assets/common/helper.js'
 
 # Functions
 

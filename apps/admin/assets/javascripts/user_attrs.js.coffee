@@ -1,5 +1,5 @@
 import {toRomaji, toKatakana, toHiragana} from '/assets/app/ja_conv.js'
-import {capitalize} from '/assets/common/string_utils.js'
+import {capitalize} from '/assets/common/string_helper.js'
 import {xxh32, xxh64} from '/assets/common/hash.js'
 
 export getAttrDefaultValue = ({user, attrs, code}) ->

@@ -1,6 +1,6 @@
 # Createer functions for Hyperapp object and fetch api
 
-import {pick, pickType, identity} from '/assets/common/utils.js'
+import {pick, pickType, identity} from '/assets/common/helper.js'
 import csrf from '/assets/csrf.js'
 
 import {fetchJson} from '/assets/api/fetch_json.js'

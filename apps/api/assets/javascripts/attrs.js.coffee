@@ -8,7 +8,7 @@ import {
   createRunDestroyWithId
 } from './hyper_json.js'
 
-import {pickType} from '/assets/common/utils.js'
+import {pickType} from '/assets/common/helper.js'
 
 # Constants
 

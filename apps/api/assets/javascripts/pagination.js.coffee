@@ -2,7 +2,7 @@
 
 # see lib/yuzakan/utils/pager.rb
 
-import {pickType, getQueryParamsFromUrl} from '/assets/common/utils.js'
+import {pickType, getQueryParamsFromUrl} from '/assets/common/helper.js'
 
 export DEFAULT_PAGE = 1
 export DEFAULT_PER_PAGE = 20
