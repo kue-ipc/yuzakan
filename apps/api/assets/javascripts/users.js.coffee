@@ -28,6 +28,20 @@ export USER_PROPERTIES = {
   prohibited: 'boolean'
   deleted: 'boolean'
   deleted_at: 'datetime'
+  primary_group: 'string'
+  groups: 'list'
+}
+
+export USER_DATA_PROPERTIES = {
+  username: 'string'
+  display_name: 'string'
+  email: 'string'
+  primary_group: 'string'
+  groups: 'list'
+  locked: 'boolean'
+  unmanageable: 'boolean'
+  mfa: 'boolean'
+  attrs: 'object'
 }
 
 export INDEX_USERS_OPTION_PARAM_TYPES = {
@@ -69,12 +83,20 @@ export normalizeUsers = (users, type ={}) ->
   normalizeUser(user, type) for user in users
 
 export normalizeUser = (user, types = {}) ->
-  pickType(user, {
-    USER_PROPERTIES...
-    data: 'map'
-    providers: 'map'
-    types...
-  })
+  data = pickType(user.data, USER_DATA_PROPERTIES) if user.data?
+  providers = new Map(
+    for provider in user.providers
+      if provider instanceof Array
+        [provider[0], pickType(provider[1], USER_DATA_PROPERTIES)]
+      else
+        [provider, true]
+  ) if user.providers?
+
+  {
+    pickType(user, {USER_PROPERTIES..., types...})...
+    data
+    providers
+  }
 
 # Actions
 
