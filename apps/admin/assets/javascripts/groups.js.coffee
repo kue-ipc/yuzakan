@@ -75,10 +75,8 @@ groupAllHeaders = ({providers}) ->
     (for provider in providers
       for name, type of GROUP_DATA_PROPERTIES
         listToParamName('providers', provider.name, name)
-    )...
+    ).flat()...
   ]
-
-
 
 # Views
 
@@ -363,7 +361,6 @@ main = ->
   ]
 
   view = ({mode, groups, providers, pagination, search, option, order, filename}) ->
-    console.log groups
     html.div {}, [
       batchOperation {
         mode
