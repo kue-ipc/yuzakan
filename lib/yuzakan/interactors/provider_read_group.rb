@@ -18,7 +18,6 @@ class ProviderReadGroup
     end
   end
 
-  expose :data
   expose :providers
 
   def initialize(provider_repository: ProviderRepository.new)
@@ -26,18 +25,8 @@ class ProviderReadGroup
   end
 
   def call(params)
-    @data = {primary: false}
-    @providers = {}
-
-    get_providers(params[:providers]).each do |provider|
-      data = provider.group_read(params[:groupname])
-      @providers[provider.name] = data
-      if data
-        %i[groupname display_name].each do |name|
-          @data[name] ||= data[name] unless data[name].nil?
-        end
-        @data[:primary] = true if data[:primary]
-      end
+    @providers = get_providers(params[:providers]).to_h do |provider|
+      [provider.name, provider.group_read(params[:groupname])]
     rescue => e
       Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{params[:groupname]}"
       Hanami.logger.error e

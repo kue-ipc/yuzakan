@@ -9,8 +9,8 @@ import {objToUrlencoded} from '/assets/common/convert.js'
 import valueDisplay from '/assets/app/value_display.js'
 
 import {
-  INDEX_USERS_OPTION_PARAM_TYPES
-  INDEX_WITH_PAGE_USERS_PARAM_TYPES, USER_PROPERTIES
+  USER_PROPERTIES, USER_DATA_PROPERTIES
+  INDEX_USERS_OPTION_PARAM_TYPES, INDEX_WITH_PAGE_USERS_PARAM_TYPES
   normalizeUser
   createRunIndexWithPageUsers
   createRunShowUser, createRunCreateUser, createRunUpdateUser, createRunDestroyUser
@@ -60,6 +60,25 @@ indexOptionFromState = (state) ->
     state.option...
     state.order...
   }, Object.keys(INDEX_WITH_PAGE_USERS_PARAM_TYPES))
+
+userHeaders = ({providers}) ->
+  [
+    'action'
+    Object.keys(USER_PROPERTIES)...
+    (listToParamName('providers', provider.name) for provider in providers)...
+    'error'
+  ]
+
+userAllHeaders = ({providers}) ->
+  [
+    userHeaders({providers})...
+    (listToParamName('data', name) for name, type of USER_DATA_PROPERTIES)...
+    (for provider in providers
+      for name, type of USER_DATA_PROPERTIES
+        listToParamName('providers', provider.name, name)
+    ).flat()...
+  ]
+
 
 # Views
 

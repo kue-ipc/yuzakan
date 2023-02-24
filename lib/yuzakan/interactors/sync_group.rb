@@ -39,25 +39,17 @@ class SyncGroup
       fail!
     end
 
-    @data = read_group_result.data
-    @providers = read_group_result.providers
-
-    if @providers.values.any?
-      if @data[:groupname] != params[:groupname]
-        Hanami.logger.error "[#{self.class.name}] Do not match groupname: #{@data[:groupname]}"
-        error!(I18n.t('errors.eql?', left: I18n.t('attributes.group.groupname')))
+    @providers = read_group_result.providers.compact
+ 
+    @data = {primary: false}
+    @providers.each_value do |data|
+      %i[groupname display_name].each do |name|
+        @data[name] ||= data[name] unless data[name].nil?
       end
+      @data[:primary] = true if data[:primary]
+    end
 
-      register_group_result = RegisterGroup.new(group_repository: @group_repository)
-        .call(@data.slice(:groupname, :display_name, :primary))
-      if register_group_result.failure?
-        Hanami.logger.error "[#{self.class.name}] Failed to call RegisterGroup"
-        error(I18n.t('errors.action.fail', action: I18n.t('interactors.register_group')))
-        register_group_result.errors.each { |msg| error(msg) }
-        fail!
-      end
-      @group = register_group_result.group
-    else
+    if @providers.empty?
       unregister_group_result = UnregisterGroup.new(group_repository: @group_repository)
         .call(groupname: params[:groupname])
       if unregister_group_result.failure?
@@ -67,6 +59,16 @@ class SyncGroup
         fail!
       end
       @group = unregister_group_result.group
+    else
+      register_group_result = RegisterGroup.new(group_repository: @group_repository)
+        .call(@data.slice(:groupname, :display_name, :primary))
+      if register_group_result.failure?
+        Hanami.logger.error "[#{self.class.name}] Failed to call RegisterGroup"
+        error(I18n.t('errors.action.fail', action: I18n.t('interactors.register_group')))
+        register_group_result.errors.each { |msg| error(msg) }
+        fail!
+      end
+      @group = register_group_result.group
     end
   end
 
