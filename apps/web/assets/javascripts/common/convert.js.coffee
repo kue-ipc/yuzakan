@@ -202,25 +202,6 @@ export objToJson = (obj) ->
 
 export objToRecord = (obj) ->
   toObject(objToParams(obj))
-  # obj = Object.fromEntries(obj) if obj instanceof Map
-  # record = {}
-  # for own key, value of obj
-  #   if typeof value == 'object'
-  #     if value instanceof Array
-  #       for nest_key in value
-  #         record["#{key}[#{nest_key}]"] = true
-  #     else if value instanceof Set
-  #       for nest_key from value
-  #         record["#{key}[#{nest_key}]"] = true
-  #     else if value instanceof Map
-  #       for [nest_key, nest_value] from value
-  #         record["#{key}[#{nest_key}]"] = nest_value
-  #     else
-  #       for own nest_key, nest_value of value
-  #         record["#{key}[#{nest_key}]"] = nest_value
-  #   else
-  #     record[key] = value
-  # record
 
 export objToParams = (obj, parents = []) ->
   obj = Object.fromEntries(obj) if obj instanceof Map
@@ -234,7 +215,7 @@ export objToParams = (obj, parents = []) ->
       else
         params.push(objToParams(value, [parents..., key])...)
     else
-    params.push([listToParamName(parents..., key), value])
+      params.push([listToParamName(parents..., key), value])
   params
 
 export objToUrlencoded = (obj) ->
