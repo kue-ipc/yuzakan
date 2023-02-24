@@ -11,7 +11,7 @@ export formId = (name, parents = []) ->
 export formDataToObj = (formData) ->
   obj = {}
   for [key, value] from formData
-    names = filedToList(key)
+    names = ParamNameToList(key)
     curObj = obj
     for name in names[0..-2]
       curObj[name] ?= {}

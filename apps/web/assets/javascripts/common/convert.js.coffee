@@ -146,7 +146,7 @@ export toObject = (val) ->
 export strToList = (str) ->
   str.replace(/[A-Z]+/g, '_$&').toLowerCase().split(/[-_\s]+/)
 
-export filedToList = (str) ->
+export ParamNameToList = (str) ->
   list = []
   list.push str.match(/^([^\[]*)/)[0]
   list.push ...str.matchAll(/\[[^\]]*\]/g)
@@ -244,6 +244,11 @@ valueToUrlencoded = (value) ->
 export recordToObj = (record) ->
   obj = {}
   for key, value of record
+    keyList = ParamNameToList(key)
+    for subKey in keyList
+      # TODO: 配列や入れ子のを物を作ること
+
+
     match = key.match(/^(.+)\[([^\]]+)\]$/)
     if match
       obj[match[1]] ||= {}
