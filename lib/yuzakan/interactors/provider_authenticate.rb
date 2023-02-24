@@ -26,12 +26,8 @@ class ProviderAuthenticate
   def call(params)
     providers = @provider_repository.ordered_all_with_adapter_by_operation(:user_auth)
 
-    @provider = nil
-    providers.each do |provider|
-      if provider.user_auth(params[:username], params[:password])
-        @provider = provider
-        break
-      end
+    @provider = providers.find do |provider|
+      provider.user_auth(params[:username], params[:password])
     rescue => e
       Hanami.logger.error e
       error!("認証処理でエラーが発生しました。(#{provider.label})")

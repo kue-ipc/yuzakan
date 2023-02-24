@@ -28,10 +28,8 @@ class ProviderChangePassword
     username = params[:username]
     password = params[:password]
 
-    @providers = {}
-
-    get_providers(params[:providers]).each do |provider|
-      @providers[provider.name] = provider.user_change_password(username, password)
+    @providers = get_providers(params[:providers]).to_h do |provider|
+      [provider.name, provider.user_change_password(username, password)]
     rescue => e
       Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
       Hanami.logger.error e

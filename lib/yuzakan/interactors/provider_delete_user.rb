@@ -25,10 +25,8 @@ class ProviderDeleteUser
   def call(params)
     username = params[:username]
 
-    @providers = {}
-
-    get_providers(params[:providers]).each do |provider|
-      @providers[provider.name] = provider.user_delete(username)
+    @providers = get_providers(params[:providers]).to_h do |provider|
+      [provider.name, provider.user_delete(username)]
     rescue => e
       Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
       Hanami.logger.error e

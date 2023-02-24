@@ -25,10 +25,12 @@ class ProviderReadGroup
   end
 
   def call(params)
+    groupname = params[:groupname]
+
     @providers = get_providers(params[:providers]).to_h do |provider|
-      [provider.name, provider.group_read(params[:groupname])]
+      [provider.name, provider.group_read(groupname)]
     rescue => e
-      Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{params[:groupname]}"
+      Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{groupname}"
       Hanami.logger.error e
       error(I18n.t('errors.action.error', action: I18n.t('interactors.read_group'), target: provider.label))
       error(e.message)
