@@ -43,25 +43,18 @@ class SyncUser
       fail!
     end
 
-    @data = read_user_result.data
-    @providers = read_user_result.providers
+    @providers = read_user_result.providers.compact
 
-    if @providers.values.any?
-      if @data[:username] != @username
-        Hanami.logger.error "[#{self.class.name}] Do not match username: #{@data[:username]}"
-        error!(I18n.t('errors.eql?', left: I18n.t('attributes.user.username')))
+    @data = {attrs: {}, groups: []}
+    @providers.each_value do |data|
+      %i[username display_name email primary_group].each do |name|
+        @data[name] ||= data[name] unless data[name].nil?
       end
+      @data[:groups] |= data[:groups] unless data[:groups].nil?
+      @data[:attrs] = data[:attrs].merge(@data[:attrs]) unless data[:attrs].nil?
+    end
 
-      register_user_result = RegisterUser.new(user_repository: @user_repository, group_repository: @group_repository)
-        .call(@data.slice(:username, :display_name, :email, :primary_group, :groups))
-      if register_user_result.failure?
-        Hanami.logger.error "[#{self.class.name}] Failed to call RegisterUser"
-        error(I18n.t('errors.action.fail', action: I18n.t('interactors.register_user')))
-        register_user_result.errors.each { |msg| error(msg) }
-        fail!
-      end
-      @user = register_user_result.user
-    else
+    if @providers.empty?
       unregister_user_result = UnregisterUser.new(user_repository: @user_repository)
         .call(username: @username)
       if unregister_user_result.failure?
@@ -71,6 +64,16 @@ class SyncUser
         fail!
       end
       @user = unregister_user_result.user
+    else
+      register_user_result = RegisterUser.new(user_repository: @user_repository, group_repository: @group_repository)
+        .call(@data.slice(:username, :display_name, :email, :primary_group, :groups))
+      if register_user_result.failure?
+        Hanami.logger.error "[#{self.class.name}] Failed to call RegisterUser"
+        error(I18n.t('errors.action.fail', action: I18n.t('interactors.register_user')))
+        register_user_result.errors.each { |msg| error(msg) }
+        fail!
+      end
+      @user = register_user_result.user
     end
   end
 

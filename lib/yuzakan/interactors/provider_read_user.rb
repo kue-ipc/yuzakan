@@ -17,7 +17,6 @@ class ProviderReadUser
     end
   end
 
-  expose :data
   expose :providers
 
   def initialize(provider_repository: ProviderRepository.new)
@@ -25,21 +24,8 @@ class ProviderReadUser
   end
 
   def call(params)
-    username = params[:username]
-
-    @data = {attrs: {}, groups: []}
-    @providers = {}
-
-    get_providers(params[:providers]).each do |provider|
-      data = provider.user_read(username)
-      @providers[provider.name] = data
-      if data
-        %i[username display_name email primary_group].each do |name|
-          @data[name] ||= data[name] unless data[name].nil?
-        end
-        @data[:groups] |= data[:groups] unless data[:groups].nil?
-        @data[:attrs] = data[:attrs].merge(@data[:attrs]) unless data[:attrs].nil?
-      end
+    @providers = get_providers(params[:providers]).to_h do |provider|
+      [provider.name, provider.user_read(params[:username])]
     rescue => e
       Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
       Hanami.logger.error e
