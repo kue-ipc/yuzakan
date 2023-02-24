@@ -5,7 +5,7 @@ import * as html from '/assets/vendor/hyperapp-html.js'
 
 import BsIcon from '/assets/app/bs_icon.js'
 import {pick, pickType, updateList, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
-import {objToUrlencoded} from '/assets/common/form_helper.js'
+import {objToUrlencoded} from '/assets/common/convert.js'
 import valueDisplay from '/assets/app/value_display.js'
 
 import {

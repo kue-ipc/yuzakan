@@ -1,21 +1,6 @@
 import Pluralize from '/assets/vendor/pluralize.js'
 
-# abcDef_ghi-jkl -> abc def ghi jkl
-export strToList = (str) ->
-  str.replace(/[A-Z]+/g, '_$&').toLowerCase().split(/[-_\s]+/)
-
-export listToCamel = (list...) ->
-  (list[0]?.toLowerCase() ? '') +
-    (capitalize(str) for str in list[1..]).join('')
-
-export listToPascal = (list...) ->
-  (capitalize(str) for str in list).join('')
-
-export listToSnake = (list...) ->
-  (str.toLowerCase().replace(/-/g, '_') for str in list).join('_')
-
-export listToKebab = (list...) ->
-  (str.toLowerCase().replace(/_/g, '-') for str in list).join('-')
+import {listToCamelCase, listToPascalCase, listToSnakeCase, listToKebabCase} from '/assets/common/convert.js'
 
 # Capitalize
 export capitalize = (str) ->
@@ -23,19 +8,19 @@ export capitalize = (str) ->
 
 # camelCase
 export camelize = (str) ->
-  listToCamel(strToList(str)...)
+  listToCamelCase(strToList(str)...)
 
 # PascalCase
 export pascalize = (str) ->
-  listToPascal(strToList(str)...)
+  listToPascalCase(strToList(str)...)
 
 # snake_case
 export snakize = (str) ->
-  listToSnake(strToList(str)...)
+  listToSnakeCase(strToList(str)...)
 
 # kebab-case
 export kebabize = (str) ->
-  listToKebab(strToList(str)...)
+  listToKebabCase(strToList(str)...)
 
 # names
 export pluralize = (str) ->

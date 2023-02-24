@@ -1,5 +1,5 @@
 import * as html from '/assets/vendor/hyperapp-html.js'
-import {join} from '/assets/common/class_prop.js'
+import {classConcat} from '/assets/common/class_prop.js'
 
 cols = {
   xs: 12
@@ -51,23 +51,23 @@ export ddSubClasses = Object.freeze calcDdSubClasses()
 export dl = (props, children) ->
   html.dl {
     props...
-    class: join(dlClasses, props.class)
+    class: classConcat(dlClasses, props.class)
   }, children
 
 export dt = (props, children) ->
   html.dt {
     props...
-    class: join(dtClasses, props.class)
+    class: classConcat(dtClasses, props.class)
   }, children
 
 export dd = (props, children) ->
   html.dd {
     props...
-    class: join(ddClasses, props.class)
+    class: classConcat(ddClasses, props.class)
   }, children
 
 export ddSub = (props, children) ->
   html.dd {
     props...
-    class: join(ddSubClasses, props.class)
+    class: classConcat(ddSubClasses, props.class)
   }, children

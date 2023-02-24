@@ -2,7 +2,7 @@ import {text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 import {DateTime} from '/assets/vendor/luxon.js'
 
-import {fieldName, fieldId} from '/assets/common/form_helper.js'
+import {formName, formId} from '/assets/common/form_helper.js'
 import csrf from '/assets/csrf.js'
 import WebData from '/assets/app/web_data.js'
 import ConfirmDialog from '/assets/app/confirm_dialog.js'
@@ -15,7 +15,7 @@ parentNames = ['user']
 # Confirm Dialog
 
 destroyConfirm = new ConfirmDialog {
-  id: fieldId('destroy', ['modal', 'confirm', parentNames...])
+  id: formId('destroy', ['modal', 'confirm', parentNames...])
   status: 'alert'
   title: 'ユーザーの削除'
   action: {
@@ -25,7 +25,7 @@ destroyConfirm = new ConfirmDialog {
 }
 
 createPasswordConfirm = new ConfirmDialog {
-  id: fieldId('create', ['modal', 'confirm', parentNames..., 'password'])
+  id: formId('create', ['modal', 'confirm', parentNames..., 'password'])
   status: 'warn'
   title: 'パスワードのリセット'
   action: {
@@ -35,7 +35,7 @@ createPasswordConfirm = new ConfirmDialog {
 }
 
 createLockConfirm = new ConfirmDialog {
-  id: fieldId('create', ['modal', 'confirm', parentNames..., 'lock'])
+  id: formId('create', ['modal', 'confirm', parentNames..., 'lock'])
   status: 'info'
   title: 'ユーザーのロック'
   action: {
@@ -45,7 +45,7 @@ createLockConfirm = new ConfirmDialog {
 }
 
 destroyLockConfirm = new ConfirmDialog {
-  id: fieldId('destroy', ['modal', 'confirm', parentNames..., 'lock'])
+  id: formId('destroy', ['modal', 'confirm', parentNames..., 'lock'])
   status: 'info'
   title: 'ユーザーのアンロック'
   action: {
@@ -57,7 +57,7 @@ destroyLockConfirm = new ConfirmDialog {
 # Web Data
 
 createWebData = new WebData {
-  id: fieldId('create', ['modal', 'web', parentNames...])
+  id: formId('create', ['modal', 'web', parentNames...])
   title: 'ユーザーの作成'
   method: 'POST'
   url: '/api/users'
@@ -67,7 +67,7 @@ createWebData = new WebData {
 }
 
 updateWebData = new WebData {
-  id: fieldId('update', ['modal', 'web', parentNames...])
+  id: formId('update', ['modal', 'web', parentNames...])
   title: 'ユーザーの更新'
   method: 'PATCH'
   codeActions: new Map [
@@ -76,7 +76,7 @@ updateWebData = new WebData {
 }
 
 destroyWebData = new WebData {
-  id: fieldId('destroy', ['modal', 'web', parentNames...])
+  id: formId('destroy', ['modal', 'web', parentNames...])
   title: 'ユーザーの削除'
   method: 'DELETE'
   codeActions: new Map [
@@ -85,7 +85,7 @@ destroyWebData = new WebData {
 }
 
 createPasswordWebData = new WebData {
-  id: fieldId('create', ['modal', 'web', parentNames..., 'password'])
+  id: formId('create', ['modal', 'web', parentNames..., 'password'])
   title: 'パスワードのリセット'
   method: 'POST'
   codeActions: new Map [
@@ -94,7 +94,7 @@ createPasswordWebData = new WebData {
 }
 
 createLockWebData = new WebData {
-  id: fieldId('create', ['modal', 'web', parentNames..., 'lock'])
+  id: formId('create', ['modal', 'web', parentNames..., 'lock'])
   title: 'ユーザーのロック'
   method: 'POST'
   codeActions: new Map [
@@ -103,7 +103,7 @@ createLockWebData = new WebData {
 }
 
 destroyLockWebData = new WebData {
-  id: fieldId('destroy', ['modal', 'web', parentNames..., 'lock'])
+  id: formId('destroy', ['modal', 'web', parentNames..., 'lock'])
   title: 'ユーザーのアンロック'
   method: 'DELETE'
   codeActions: new Map [
@@ -112,7 +112,7 @@ destroyLockWebData = new WebData {
 }
 
 loginInfo = new LoginInfo {
-  id: fieldId('login_inof', ['modal', 'login_info', parentNames...])
+  id: formId('login_inof', ['modal', 'login_info', parentNames...])
 }
 
 # Effecters

@@ -1,5 +1,7 @@
 import {parse, stringify, transform} from '/assets/vendor/csv.js'
 
+import {objToRecord, recordToObj} from '/assets/common/convert.js'
+
 # async csv and records utilities
 
 recordsToCsv = (records, {headers} = {}) ->
@@ -37,38 +39,6 @@ transformRecords = (records, handler) ->
       else
         resolve(output)
 
-objToRecord = (obj) ->
-  obj = Object.fromEntries(obj) if obj instanceof Map
-  record = {}
-  for own key, value of obj
-    if typeof value == 'object'
-      if value instanceof Array
-        for nest_key in value
-          record["#{key}[#{nest_key}]"] = true
-      else if value instanceof Set
-        for nest_key from value
-          record["#{key}[#{nest_key}]"] = true
-      else if value instanceof Map
-        for [nest_key, nest_value] from value
-          record["#{key}[#{nest_key}]"] = nest_value
-      else
-        for own nest_key, nest_value of value
-          record["#{key}[#{nest_key}]"] = nest_value
-    else
-      record[key] = value
-  record
-
-recordsToObj = (record) ->
-  obj = {}
-  for key, value of record
-    match = key.match(/^(.+)\[([^\]]+)\]$/)
-    if match
-      obj[match[1]] ||= {}
-      obj[match[1]][match[2]] = value
-    else
-      obj[key] = value
-  obj
-
 export listToCsv = (list, {headers} = {}) ->
   records = await transformRecords(list, objToRecord)
   csv = await recordsToCsv(records, {headers})
@@ -76,5 +46,5 @@ export listToCsv = (list, {headers} = {}) ->
 
 export csvToList = (csv) ->
   records = await csvToRecords(csv)
-  list = await transformRecords(records, recordsToObj)
+  list = await transformRecords(records, recordToObj)
   list

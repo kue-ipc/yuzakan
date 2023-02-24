@@ -3,7 +3,7 @@ import zxcvbn from '/assets/vendor/zxcvbn.js'
 
 import BsIcon from '/assets/app/bs_icon.js'
 import {camelize} from '/assets/common/string_helper.js'
-import {fieldName, fieldId} from '/assets/common/form_helper.js'
+import {formName, formId} from '/assets/common/form_helper.js'
 import WebPostJson from '/assets/app/web_post_json.js'
 
 changePasswordNode = document.getElementById('change-password')
@@ -76,8 +76,8 @@ StrengthIndicator = ({score, strength}) ->
 class PasswordInputGenerator
   constructor: ({@name, @label, error = null} ) ->
     @camelName = camelize(@name)
-    @idName = fieldId(@name, changePasswordData.parents)
-    @fieldName = fieldName(@name, changePasswordData.parents)
+    @idName = formId(@name, changePasswordData.parents)
+    @formName = formName(@name, changePasswordData.parents)
 
   init: ->
     state = {
@@ -159,7 +159,7 @@ class PasswordInputGenerator
         h 'div', {class: "input-group"}, [
           h 'input', {
             id: @idName
-            name: @fieldName
+            name: @formName
             class: "form-control #{validState}"
             type: if visible then 'text' else 'password'
             disabled: disabled

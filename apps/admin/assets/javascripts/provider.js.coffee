@@ -4,7 +4,7 @@
 import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 import {fetchJsonGet} from '/assets/api/fetch_json.js'
-import {fieldName, fieldId} from '/assets/common/form_helper.js'
+import {formName, formId} from '/assets/common/form_helper.js'
 import csrf from '/assets/csrf.js'
 
 import providerParams from './provider_params.js'
@@ -22,7 +22,7 @@ abilities = [
 ]
 
 destroyConfirm = new ConfirmDialog {
-  id: fieldId('destroy', ['modal', 'confirm', parentNames...])
+  id: formId('destroy', ['modal', 'confirm', parentNames...])
   status: 'alert'
   title: 'プロバイダーの削除'
   messages: ['プロバイダーを削除してもよろしいですか？']
@@ -33,7 +33,7 @@ destroyConfirm = new ConfirmDialog {
 }
 
 createWebData = new WebData {
-  id: fieldId('create', ['modal', 'web', parentNames...])
+  id: formId('create', ['modal', 'web', parentNames...])
   title: 'プロバイダーの作成'
   method: 'POST'
   url: '/api/providers'
@@ -43,7 +43,7 @@ createWebData = new WebData {
 }
 
 updateWebData = new WebData {
-  id: fieldId('update', ['modal', 'web', parentNames...])
+  id: formId('update', ['modal', 'web', parentNames...])
   title: 'プロバイダーの更新'
   method: 'PATCH'
   codeActions: new Map [
@@ -52,7 +52,7 @@ updateWebData = new WebData {
 }
 
 destroyWebData = new WebData {
-  id: fieldId('destroy', ['modal', 'web', parentNames...])
+  id: formId('destroy', ['modal', 'web', parentNames...])
   title: 'プロバイダーの削除'
   method: 'DELETE'
   codeActions: new Map [

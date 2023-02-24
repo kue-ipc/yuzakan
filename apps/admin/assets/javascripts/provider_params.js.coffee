@@ -2,7 +2,7 @@
 
 import {text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
-import {fieldName, fieldId} from '/assets/common/form_helper.js'
+import {formName, formId} from '/assets/common/form_helper.js'
 
 parentNames = ['provider', 'params']
 
@@ -12,7 +12,7 @@ inputControlPropKeys = [
 ]
 
 inputControl = (props) ->
-  id = fieldId(props.name, parentNames)
+  id = formId(props.name, parentNames)
   describeId = "#{id}-help"
 
   inputControlProps = Object.fromEntries([key, props[key]] for key in inputControlPropKeys when props[key]?)
@@ -21,7 +21,7 @@ inputControl = (props) ->
     html.label {class: 'form-label', for: id}, text props.label
     html.input {
       id: id
-      name: fieldName(props.name, parentNames)
+      name: formName(props.name, parentNames)
       type: props.inputType
       class: 'form-control'
       value: props.value ? (if props.encrypted? then props.default else '')
@@ -34,13 +34,13 @@ inputControl = (props) ->
   ]
 
 inputCheckbox = (props) ->
-  id = fieldId(props.name, parentNames)
+  id = formId(props.name, parentNames)
   describeId = "#{id}-help"
 
   html.div {class: 'form-check'}, [
     html.input {
       id: id
-      name: fieldName(props.name, parentNames)
+      name: formName(props.name, parentNames)
       type: 'checkbox'
       class: 'form-check-input'
       'aria-describedby': describeId
@@ -54,7 +54,7 @@ inputCheckbox = (props) ->
 inputTextareaPropKeys = ['required', 'placeholder', 'maxlength', 'minlength', 'cols', 'rows']
 
 inputTextarea = (props) ->
-  id = fieldId(props.name, parentNames)
+  id = formId(props.name, parentNames)
   describeId = "#{id}-help"
 
   inputTextareaProps = Object.fromEntries([key, props[key]] for key in inputTextareaPropKeys when props[key]?)
@@ -63,7 +63,7 @@ inputTextarea = (props) ->
     html.label {class: 'form-label', for: id}, text props.label
     html.textarea {
       id: id
-      name: fieldName(props.name, parentNames)
+      name: formName(props.name, parentNames)
       class: 'form-control'
       value: props.value ? (if props.encrypted? then props.default else '')
       'aria-edscribedby': describeId
@@ -75,7 +75,7 @@ inputTextarea = (props) ->
   ]
 
 inputList = (props) ->
-  id = fieldId(props.name, parentNames)
+  id = formId(props.name, parentNames)
   describeId = "#{id}-help"
 
   selected = props.value ? props.default
@@ -85,7 +85,7 @@ inputList = (props) ->
     html.select {
       id: id
       class: 'form-select'
-      name: fieldName(props.name, parentNames)
+      name: formName(props.name, parentNames)
       'aria-describedby': describeId
       oninput: (state, event) -> [props.action, {name: props.name, value: event.target.value}]
     },
