@@ -18,19 +18,19 @@ module Api
           if sync
             result = sync_user({username: @name})
             @user = result.user
-            @data = result.data
+            @attrs = result.data[:attrs]
             @providers = result.providers
           else
             @user = @user_repository.find_by_name(@name)
-            @date = nil
+            @attrs = nil
             @providers = nil
           end
         end
 
         private def user_json
           hash = convert_for_json(@user, assoc: true).dup
-          hash[:data] = @data unless @data.nil?
-          hash[:providers] = @providers.to_a unless @providers.nil?
+          hash[:providers] = @providers unless @providers.nil?
+          hash[:attrs] = @attrs unless @attrs.nil?
           generate_json(hash)
         end
       end
