@@ -50,7 +50,7 @@ export convertToType = (val, type = 'string') ->
       toMap(val)
     when 'set'
       toSet(val)
-    when 'objct'
+    when 'object'
       toObject(val)
     when 'any'
       val
@@ -136,7 +136,7 @@ export toObject = (val) ->
   if typeof val == 'string'
     JSON.parse(val) 
   else if val[Symbol.iterator]?
-    Object.fromEntrise(val)
+    Object.fromEntries(val)
   else
     Object(val)
 

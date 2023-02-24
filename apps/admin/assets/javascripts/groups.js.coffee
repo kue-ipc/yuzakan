@@ -338,16 +338,17 @@ main = ->
   ]
 
   view = ({mode, groups, providers, pagination, search, option, order, filename}) ->
+    console.log groups
     html.div {}, [
       batchOperation {
         mode
         list: groups
-        headers: [
-          'action'
-          Object.keys(GROUP_PROPERTIES)...
-          ("providers[#{provider.name}]" for provider in providers)...
-          'error'
-        ]
+        # headers: [
+        #   'action'
+        #   Object.keys(GROUP_PROPERTIES)...
+        #   ("providers[#{provider.name}]" for provider in providers)...
+        #   'error'
+        # ]
         filename
         onupload: UploadGroups
         action: DoActionGroup

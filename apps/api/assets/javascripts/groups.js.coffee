@@ -29,6 +29,12 @@ export GROUP_PROPERTIES = {
   deleted_at: 'datetime'
 }
 
+export GROUP_DATA_PROPERTIES = {
+  groupname: 'string'
+  display_name: 'string'
+  primary: 'boolean'
+}
+
 export INDEX_GROUPS_OPTION_PARAM_TYPES = {
   sync: 'boolean'
   primary_only: 'boolean'
@@ -69,12 +75,30 @@ export normalizeGroups = (groups, type ={}) ->
   normalizeGroup(group, type) for group in groups
 
 export normalizeGroup = (group, types = {}) ->
-  pickType(group, {
-    GROUP_PROPERTIES...
-    data: 'map'
-    providers: 'map'
-    types...
-  })
+  data = pickType(group.data, GROUP_DATA_PROPERTIES) if group.data?
+  providers = new Map(
+    for provider in group.providers
+      if provider instanceof Array
+        [provider[0], pickType(provider[1], GROUP_DATA_PROPERTIES)]
+      else
+        [provider, true]
+  ) if group.providers?
+
+  {
+    pickType(group, {GROUP_PROPERTIES..., types...})...
+    data
+    providers
+  }
+  # group.data = pickType(group.data, GROUP_DATA_PROPERTIES) if group.data?
+  # if group.providers
+  #   group.providers = new Map(
+  #     for [key, value] from group.providers
+  #       if typeof value == 'object'
+  #         [key, pickType(value, GROUP_DATA_PROPERTIES)]
+  #       else
+  #         [key, value]
+  #   )
+  # group
 
 # Actions
 
