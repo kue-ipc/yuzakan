@@ -79,7 +79,13 @@ export normalizeGroup = (group, types = {}) ->
   providers = new Map(
     for provider in group.providers
       if provider instanceof Array
-        [provider[0], pickType(provider[1], GROUP_DATA_PROPERTIES)]
+        [
+          provider[0]
+          if provider[1]? && typeof provider[1] == 'object'
+            pickType(provider[1], GROUP_DATA_PROPERTIES)
+          else
+            provider[1]
+        ]
       else
         [provider, true]
   ) if group.providers?

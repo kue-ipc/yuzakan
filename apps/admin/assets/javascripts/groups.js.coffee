@@ -5,12 +5,12 @@ import * as html from '/assets/vendor/hyperapp-html.js'
 
 import BsIcon from '/assets/app/bs_icon.js'
 import {pick, pickType, updateList, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
-import {objToUrlencoded} from '/assets/common/convert.js'
+import {objToUrlencoded, listToParamName} from '/assets/common/convert.js'
 import valueDisplay from '/assets/app/value_display.js'
 
 import {
-  INDEX_GROUPS_OPTION_PARAM_TYPES
-  INDEX_WITH_PAGE_GROUPS_PARAM_TYPES, GROUP_PROPERTIES
+  GROUP_PROPERTIES, GROUP_DATA_PROPERTIES,
+  INDEX_GROUPS_OPTION_PARAM_TYPES, INDEX_WITH_PAGE_GROUPS_PARAM_TYPES,
   normalizeGroup
   createRunIndexWithPageGroups, createRunShowGroup, createRunUpdateGroup
 } from '/assets/api/groups.js'
@@ -59,6 +59,26 @@ indexOptionFromState = (state) ->
     state.option...
     state.order...
   }, Object.keys(INDEX_WITH_PAGE_GROUPS_PARAM_TYPES))
+
+groupHeaders = ({providers}) ->
+  [
+    'action'
+    Object.keys(GROUP_PROPERTIES)...
+    (listToParamName('providers', provider.name) for provider in providers)...
+    'error'
+  ]
+
+groupAllHeaders = ({providers}) ->
+  [
+    groupHeaders({providers})...
+    (listToParamName('data', name) for name, type of GROUP_DATA_PROPERTIES)...
+    (for provider in providers
+      for name, type of GROUP_DATA_PROPERTIES
+        listToParamName('providers', provider.name, name)
+    )...
+  ]
+
+
 
 # Views
 
@@ -127,11 +147,16 @@ groupTr = ({group, providers}) ->
         when 'ACT'
           html.div {class: 'spinner-border spinner-border-sm', role: 'status'},
             html.span {class: 'visually-hidden'}, text '実行中'
-        when 'MOD', 'SYN'
+        when 'MOD'
           html.button {
             class: "btn btn-sm btn-#{color}"
             onclick: -> [DoActionGroup, group]
-          }, text '変更'
+          }, text '変更/同期'
+        when 'SYN'
+          html.button {
+            class: "btn btn-sm btn-dark"
+            onclick: -> [DoActionGroup, group]
+          }, text '同期'
         when 'ERR'
           html.div {}, text 'エラー'
         else
@@ -343,12 +368,7 @@ main = ->
       batchOperation {
         mode
         list: groups
-        # headers: [
-        #   'action'
-        #   Object.keys(GROUP_PROPERTIES)...
-        #   ("providers[#{provider.name}]" for provider in providers)...
-        #   'error'
-        # ]
+        headers: if mode == 'result' then groupAllHeaders({providers}) else groupHeaders({providers})
         filename
         onupload: UploadGroups
         action: DoActionGroup

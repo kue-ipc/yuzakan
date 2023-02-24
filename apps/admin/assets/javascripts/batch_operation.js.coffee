@@ -65,7 +65,7 @@ StopAllAction = (state) ->
   {state..., mode: 'result'}
 
 DoNextAction = (state, {list, action}) ->
-  target = list.find (item) -> ['ADD', 'MOD', 'DEL', 'SYC', 'LOC', 'UNL'].includes(item.action)
+  target = list.find (item) -> ['ADD', 'MOD', 'DEL', 'SYN', 'LOC', 'UNL'].includes(item.action)
 
   if target
     [action, target]
