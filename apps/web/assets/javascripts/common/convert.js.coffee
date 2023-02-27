@@ -146,10 +146,10 @@ export toObject = (val) ->
 export strToList = (str) ->
   str.replace(/[A-Z]+/g, '_$&').toLowerCase().split(/[-_\s]+/)
 
-export ParamNameToList = (str) ->
+export paramNameToList = (str) ->
   list = []
   list.push str.match(/^([^\[]*)/)[0]
-  list.push ...str.matchAll(/\[[^\]]*\]/g)
+  list.push (r[1] for r from str.matchAll(/\[([^\]]*)\]/g))...
   list
 
 # list -> string
@@ -242,17 +242,21 @@ valueToUrlencoded = (value) ->
 # other -> object
 
 export recordToObj = (record) ->
-  obj = {}
+  root = {}
   for key, value of record
-    keyList = ParamNameToList(key)
-    for subKey in keyList
-      # TODO: 配列や入れ子のを物を作ること
-
-
-    match = key.match(/^(.+)\[([^\]]+)\]$/)
-    if match
-      obj[match[1]] ||= {}
-      obj[match[1]][match[2]] = value
-    else
-      obj[key] = value
-  obj
+    keyList = paramNameToList(key)
+    obj = root
+    while subKey = keyList.shift()
+      if keyList.length == 0
+        obj[subKey] = value
+      else
+        if keyList[0] == ''
+          throw 'Empty key must be last' unless keyList.length == 1
+          obj[subKey] == Array(value)
+        else if keyList[0].match(/^\d+$/)
+          obj[subKey] ?= []
+        else
+          obj[subKey] ?= {}
+        obj = obj[subKey]
+    
+  root

@@ -24,6 +24,7 @@ csvToRecords = (csv) ->
     parse csv, {
       bom: true
       columns: true
+      group_columns_by_name: true
     }, (err, records) ->
       if err?
         reject(err)

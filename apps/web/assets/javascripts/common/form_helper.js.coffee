@@ -9,14 +9,25 @@ export formId = (name, parents = []) ->
   listToKebabCase(parents..., name)
 
 export formDataToObj = (formData) ->
-  obj = {}
+  root = {}
   for [key, value] from formData
-    names = ParamNameToList(key)
-    curObj = obj
-    for name in names[0..-2]
-      curObj[name] ?= {}
-      curObj = curObj[name]
-    curObj[names[-1]] = value
+    keyList = paramNameToList(key)
+    obj = root
+    while subKey = keyList.shift()
+      if keyList.length == 0
+        obj[subKey] = value
+      else
+        if keyList[0] == ''
+          throw 'Empty key must be last' unless keyList.length == 1
+          obj[subKey] ?= []
+          obj[subKey].push value
+        else if keyList[0].match(/^\d+$/)
+          obj[subKey] ?= []
+        else
+          obj[subKey] ?= {}
+        obj = obj[subKey]
+
+  root
 
 export formDataToJson = (formData) ->
   JSON.stringify(formDataToObj(formData))
