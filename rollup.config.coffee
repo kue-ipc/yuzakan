@@ -26,6 +26,7 @@ targets = [
   {name: 'ramda', ext: 'coffee'}
   {name: 'xxhashjs', ext: 'coffee'}
   {name: 'zxcvbn', ext: 'coffee'}
+  {name: 'highlight', ext: 'coffee'}
 ]
 
 export default targets.map (target) -> {

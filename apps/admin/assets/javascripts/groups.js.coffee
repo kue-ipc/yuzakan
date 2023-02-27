@@ -2,6 +2,7 @@
 
 import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
+import hljs from '/assets/vendor/highlight.js'
 
 import BsIcon from '/assets/app/bs_icon.js'
 import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
