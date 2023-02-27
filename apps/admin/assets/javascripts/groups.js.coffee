@@ -86,7 +86,7 @@ indexGroupsOption = ({onchange: action, props...}) ->
 
   html.div {class: 'row mb-2'},
     for key, val of {
-      sync: 'プロバイダーから取得'
+      sync: 'プロバイダーと同期'
       primary_only: 'プライマリーのみ'
       hide_prohibited: '使用禁止を隠す'
       show_deleted: '削除済みも表示'

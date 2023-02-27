@@ -93,7 +93,7 @@ export normalizeUser = (user, types = {}) ->
       {
         providers: (provider for provider, data of user.providers when data?)
         providers_data: new Map(
-          [provider, pickType(data, GROUP_DATA_PROPERTIES)] for provider, data of user.providers when data?
+          [provider, pickType(data, USER_DATA_PROPERTIES)] for provider, data of user.providers when data?
         )
       }
   {

@@ -132,7 +132,7 @@ module Api
 
           users = get_users(pager.page_items).map do |user|
             {
-              **convert_for_json(user),
+              **convert_for_json(user, assoc: true),
               providers: users_providers[user.name],
             }
           end
