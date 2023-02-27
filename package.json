@@ -6,7 +6,6 @@
     "@hyperapp/svg": "^2.0.0",
     "@hyperapp/time": "^1.0.0",
     "@popperjs/core": "^2.11.6",
-    "@typopro/web-iosevka": "^3.7.5",
     "bootstrap": "^5.2.3",
     "bootstrap-icons": "^1.10.3",
     "csv": "^6.2.7",

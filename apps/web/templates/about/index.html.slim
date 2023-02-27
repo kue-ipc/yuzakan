@@ -51,15 +51,32 @@ pre.border.rounded.bg-light.p-2
 / = javascript 'opal_test', type: 'module'
 
 / フォントテスト用
-- ['Fira Code', 'Fira Code VF', 'Source Code Pro', 'Source Code Variable', 'TypoPRO Iosevka Term', 'TypoPRO Iosevka Term Slab'].each do |name|
-  p = name
-  pre
-    code style="font-family: '#{name}'"
-      - ("\u0020".."\u007E").each_with_index do |c, idx|
-        = c
-        - if idx % 16 == 15
-          = "\n"
-        - else
-          = ' '
+/ pre
+/   code
+/     - ("\u0020".."\u007E").each_with_index do |c, idx|
+/       = c
+/       - if idx % 16 == 15
+/         = "\n"
+/       - else
+/         = ' '
+/     = "\n"
+/     |
+/       日本語交じりのEnglishと0123
+/       1234 abcd efgh
+
+/ - ['BIZ UDGothic', 'Noto Mono', 'monospace', 'Cascadia Code', 'Cascadia Mono', 'Fira Code', 'Fira Code VF', 'Source Code Pro', 'Source Code Variable'].each do |name|
+/   p = name
+/   pre
+/     code style="font-family: '#{name}'"
+/       - ("\u0020".."\u007E").each_with_index do |c, idx|
+/         = c
+/         - if idx % 16 == 15
+/           = "\n"
+/         - else
+/           = ' '
+/       = "\n"
+/       |
+/         日本語交じりのEnglishと0123
+/         1234 abcd efgh
 
 
