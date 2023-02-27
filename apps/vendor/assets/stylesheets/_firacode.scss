@@ -12,21 +12,21 @@ $fira-code-fonts: (
     @each $key, $value in $attr {
       font-#{$key}: $value;
     }
-    src: url("./FiraCode-#{$name}.woff2") format("woff2"),
-         url("./FiraCode-#{$name}.woff") format("woff");
+    src: url("/assets/vendor/FiraCode-#{$name}.woff2") format("woff2"),
+         url("/assets/vendor/FiraCode-#{$name}.woff") format("woff");
   }
 }
 
 $fira-code-variable-fonts: (
   "VF": ("weight": 300 700, "style": normal));
 
-@each $name, $attr in $source-code-variable-fonts {
+@each $name, $attr in $fira-code-variable-fonts {
   @font-face {
     font-family: "Fira Code VF";
     @each $key, $value in $attr {
       font-#{$key}: $value;
     }
-    src: url("./FiraCode-#{$name}.woff2") format("woff2"),
-         url("./FiraCode-#{$name}.woff") format("woff");
+    src: url("/assets/vendor/FiraCode-#{$name}.woff2") format("woff2"),
+         url("/assets/vendor/FiraCode-#{$name}.woff") format("woff");
   }
 }

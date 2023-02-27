@@ -34,14 +34,14 @@ $typopro-iosevka-term-fonts: (
   }
 }
 
-// @each $name, $attr in $typopro-iosevka-term-fonts {
-//   @font-face {
-//     font-family: "TypoPRO Iosevka Term Slab";
-//     font-stretch: normal;
-//     font-variant: normal;
-//     @each $key, $value in $attr {
-//       font-#{$key}: $value;
-//     }
-//     src: url("./TypoPRO-iosevka-term-slab-#{$name}.woff") format("woff");
-//   }
-// }
+@each $name, $attr in $typopro-iosevka-term-fonts {
+  @font-face {
+    font-family: "TypoPRO Iosevka Term Slab";
+    font-stretch: normal;
+    font-variant: normal;
+    @each $key, $value in $attr {
+      font-#{$key}: $value;
+    }
+    src: url("/assets/vendor/TypoPRO-iosevka-term-slab-#{$name}.woff") format("woff");
+  }
+}

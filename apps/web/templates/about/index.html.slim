@@ -49,3 +49,17 @@ pre.border.rounded.bg-light.p-2
 / Opalテスト用
 / #test
 / = javascript 'opal_test', type: 'module'
+
+/ フォントテスト用
+- ['Fira Code', 'Fira Code VF', 'Source Code Pro', 'Source Code Variable', 'TypoPRO Iosevka Term', 'TypoPRO Iosevka Term Slab'].each do |name|
+  p = name
+  pre
+    code style="font-family: '#{name}'"
+      - ("\u0020".."\u007E").each_with_index do |c, idx|
+        = c
+        - if idx % 16 == 15
+          = "\n"
+        - else
+          = ' '
+
+
