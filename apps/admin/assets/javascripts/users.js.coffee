@@ -5,7 +5,7 @@ import * as html from '/assets/vendor/hyperapp-html.js'
 
 import BsIcon from '/assets/app/bs_icon.js'
 import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
-import {objToUrlencoded, listToParamName} from '/assets/common/convert.js'
+import {objToUrlencoded, objToJson, listToParamName} from '/assets/common/convert.js'
 import valueDisplay from '/assets/app/value_display.js'
 import {updateList, findList} from '/assets/common/list_helper.js'
 
@@ -114,15 +114,36 @@ indexUsersOption = ({onchange: action, props...}) ->
           html.label {class: 'form-check-label', for: id}, text val
         ]
 
+usersTable = ({users, groups, providers}) ->
+  html.table {key: 'table', class: 'table'}, [
+    usersThead({providers})
+    usersTbody({users, groups, providers})
+  ]
+
+usersThead = ({providers}) ->
+  html.thead {key: 'thead'},
+    html.tr {key: 'head'}, [
+      html.th {key: 'show'}, text ''
+      html.th {key: 'action'}, text 'アクション'
+      html.th {key: 'name'}, text 'ユーザー名'
+      html.th {key: 'label'}, text 'ラベル'
+      html.th {key: 'email'}, text 'メールアドレス'
+      html.th {key: 'clearance-level'}, text '権限レベル'
+      html.th {key: 'primary-group'}, text 'プライマリグループ'
+      (providerTh({provider}) for provider in providers)...
+    ]
+
 providerTh = ({provider}) ->
   html.th {key: "provider[#{provider.name}]"}, text entityLabel(provider)
 
-userProviderTd = ({user, provider}) ->
-  html.td {key: "provider[#{provider.name}]"},
-    valueDisplay {
-      value: user.providers?.includes(provider.name)
-      type: 'boolean'
-    }
+usersTbody = ({users, groups, providers}) ->
+  html.tbody {key: 'tbody'},
+    (for user in users
+      [
+        userTr({user, groups, providers})
+        userDetailTr({user, providers})
+      ]
+    ).flat()
 
 userTr = ({user, groups, providers}) ->
   color = switch user.action
@@ -189,34 +210,50 @@ userTr = ({user, groups, providers}) ->
     (userProviderTd({user, provider}) for provider in providers)...
   ]
 
-userDetailTr = ({user, colspan}) ->
+userProviderTd = ({user, provider}) ->
+  html.td {key: "provider[#{provider.name}]"},
+    valueDisplay {
+      value: user.providers?.includes(provider.name)
+      type: 'boolean'
+    }
+
+userDetailTr = ({user, providers}) ->
   console.log user if user.name == 'user01'
   html.tr {
     key: "user-detail[#{user.name}]"
     class: {collapse: true, show: user.show_detail}
-  },
-    html.td {colspan}, [
+  }, [
+    html.td {key: 'space'}
+    html.td {key: 'detail', colspan: 5}, [
       html.div {key: 'properties'}, [
-        unless user.action
-          html.button {
-            key: 'sync'
-            class: 'btn btn-sm btn-light'
-            onclick: -> [SyncUser, user]
-          }, text '同期'
         html.span {key: 'display_name'}, text "表示名: #{user.display_name || '(無し)'}"
         html.span {key: 'deleted_at', class: 'ms-2'}, text "削除日: #{user.deleted_at}" if user.deleted_at
       ]
+      if user.attrs?
+        html.div {key: 'attrs'},
+          html.pre {class: 'small'},
+            html.code {class: 'text-dark'},
+              text objToJson(user.attrs, 2)
       if user.note
         html.div {key: 'note'},
           html.pre {class: 'mb-0 text-info'}, text user.note
       if user.error
         html.div {key: 'error'},
           html.pre {class: 'mb-0 text-danger'},
-            text if typeof user.error == 'string'
-              user.error
-            else
-              JSON.stringify(user.error, null, 2)
+            html.code {class: 'text-danger'}
+            text objToJson(user.error, ' ')
     ]
+    html.td {key: 'groups'},
+      html.div {}, text user.groups?.join() ? ''
+    (userProviderDataTd({user, provider}) for provider in providers)...
+  ]
+
+userProviderDataTd = ({user, provider}) ->
+  html.td {key: "provider-data[#{provider.name}]"},
+    if user.providers_data?.has(provider.name)
+      html.pre {class: 'small'},
+        html.code {class: 'text-secondary'},
+          text objToJson(user.providers_data.get(provider.name), 2)
 
 # Actions
 
@@ -412,26 +449,7 @@ main = ->
       else if users.length == 0
         html.p {}, text 'ユーザーが存在しません。'
       else
-        html.table {class: 'table'}, [
-          html.thead {},
-            html.tr {}, [
-              html.th {key: 'show'}, text ''
-              html.th {key: 'action'}, text 'アクション'
-              html.th {key: 'name'}, text 'ユーザー名'
-              html.th {key: 'label'}, text 'ラベル'
-              html.th {key: 'email'}, text 'メールアドレス'
-              html.th {key: 'clearance-level'}, text '権限レベル'
-              html.th {key: 'email'}, text 'プライマリグループ'
-              (providerTh({provider}) for provider in providers)...
-            ]
-          html.tbody {},
-            (for user in users
-              [
-                userTr({user, groups, providers})
-                userDetailTr({user, colspan: 7 + providers.length})
-              ]
-            ).flat()
-        ]
+        usersTable({users, groups, providers})
     ]
 
   node = document.getElementById('users')

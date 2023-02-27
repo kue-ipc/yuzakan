@@ -5,7 +5,7 @@ import * as html from '/assets/vendor/hyperapp-html.js'
 
 import BsIcon from '/assets/app/bs_icon.js'
 import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
-import {objToUrlencoded, listToParamName} from '/assets/common/convert.js'
+import {objToUrlencoded, objToJson, listToParamName} from '/assets/common/convert.js'
 import valueDisplay from '/assets/app/value_display.js'
 import {updateList} from '/assets/common/list_helper.js'
 
@@ -105,15 +105,34 @@ indexGroupsOption = ({onchange: action, props...}) ->
           html.label {class: 'form-check-label', for: id}, text val
         ]
 
+
+groupsTable = ({groups, providers}) ->
+  html.table {key: 'table', class: 'table'}, [
+    groupsThead({providers})
+    groupsTbody({groups, providers})
+  ]
+
+groupsThead = ({providers}) ->
+  html.thead {key: 'thead'},
+    html.tr {key: 'head'}, [
+      html.th {key: 'show'}, text ''
+      html.th {key: 'action'}, text 'アクション'
+      html.th {key: 'name'}, text 'グループ名'
+      html.th {key: 'label'}, text 'ラベル'
+      (providerTh({provider}) for provider in providers)...
+    ]
+
 providerTh = ({provider}) ->
   html.th {key: "provider[#{provider.name}]"}, text entityLabel(provider)
 
-groupProviderTd = ({group, provider}) ->
-  html.td {key: "provider[#{provider.name}]"},
-    valueDisplay {
-      value: group.providers?.includes(provider.name)
-      type: 'boolean'
-    }
+groupsTbody = ({groups, providers}) ->
+  html.tbody {key: 'tbody'},
+    (for group in groups
+      [
+        groupTr({group, providers})
+        groupDetailTr({group, providers})
+      ]
+    ).flat()
 
 groupTr = ({group, providers}) ->
   color = switch group.action
@@ -173,19 +192,21 @@ groupTr = ({group, providers}) ->
     (groupProviderTd({group, provider}) for provider in providers)...
   ]
 
-groupDetailTr = ({group, colspan}) ->
+groupProviderTd = ({group, provider}) ->
+  html.td {key: "provider[#{provider.name}]"},
+    valueDisplay {
+      value: group.providers?.includes(provider.name)
+      type: 'boolean'
+    }
+
+groupDetailTr = ({group, providers}) ->
   html.tr {
     key: "group-detail[#{group.name}]"
     class: {collapse: true, show: group.show_detail}
-  },
-    html.td {colspan}, [
+  }, [
+    html.td {key: 'space'}
+    html.td {key: 'detail', colspan: 3}, [
       html.div {key: 'properties'}, [
-        unless group.action
-          html.button {
-            key: 'sync'
-            class: 'btn btn-sm btn-light'
-            onclick: -> [SyncGroup, group]
-          }, text '同期'
         html.span {key: 'display_name'}, text "表示名: #{group.display_name || '(無し)'}"
         html.span {key: 'deleted_at', class: 'ms-2'}, text "削除日: #{group.deleted_at}" if group.deleted_at
       ]
@@ -195,15 +216,16 @@ groupDetailTr = ({group, colspan}) ->
       if group.error
         html.div {key: 'error'},
           html.pre {class: 'mb-0 text-danger'},
-            text if typeof group.error == 'string'
-              group.error
-            else
-              JSON.stringify(group.error, null, 2)
-      if group.providers_data?
-        html.div {key: 'providers_data', class: 'small text-secondary'},
-          for [provider, data] from group.providers_data
-            html.div {key: provider}, text "#{provider}: #{JSON.stringify(data)}"
+            text objToJson(group.error)
     ]
+    (groupProviderDataTd({group, provider}) for provider in providers)...
+  ]
+
+groupProviderDataTd = ({group, provider}) ->
+  html.td {key: "provider-data[#{provider.name}]"},
+    if group.providers_data?.has(provider.name)
+      html.div {class: 'small text-secondary'},
+        text objToJson(group.providers_data.get(provider.name))
 
 # Actions
 
@@ -388,27 +410,11 @@ main = ->
           pageNav {pagination..., onpage: MovePage}
         ]
       if mode == 'loading'
-        html.p {}, text '読込中...'
+        html.p {key: 'loading'}, text '読込中...'
       else if groups.length == 0
-        html.p {}, text 'グループが存在しません。'
+        html.p {key: 'not-found'}, text 'グループが存在しません。'
       else
-        html.table {class: 'table'}, [
-          html.thead {},
-            html.tr {}, [
-              html.th {key: 'show'}, text ''
-              html.th {key: 'action'}, text 'アクション'
-              html.th {key: 'name'}, text 'グループ名'
-              html.th {key: 'label'}, text 'ラベル'
-              (providerTh({provider}) for provider in providers)...
-            ]
-          html.tbody {},
-            (for group in groups
-              [
-                groupTr({group, providers})
-                groupDetailTr({group, colspan: 4 + providers.length})
-              ]
-            ).flat()
-        ]
+        groupsTable({groups, providers})
     ]
 
   node = document.getElementById('groups')

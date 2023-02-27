@@ -184,21 +184,25 @@ export listToParamName = (list...) ->
 
 # object -> other
 
-export objToJson = (obj) ->
-  JSON.stringify obj, (key, value) ->
-    switch typeof value
-      when 'bigint'
-        # 精度落ち
-        Number(value)
-      when 'object'
-        if value instanceof Map
-          Object.fromEntries([value...])
-        else if value instanceof Set
-          [value...]
-        else
-          value
+export objToJson = (obj, space = undefined) ->
+  JSON.stringify obj, jsonReplacer, space
+
+# bigint, Map, Set
+jsonReplacer = (key, value) ->
+  switch typeof value
+    when 'bigint'
+      # 精度落ち
+      Number(value)
+    when 'object'
+      if value instanceof Map
+        Object.fromEntries([value...])
+      else if value instanceof Set
+        [value...]
       else
         value
+    else
+      value
+
 
 export objToRecord = (obj) ->
   toObject(objToParams(obj))
