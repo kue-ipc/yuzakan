@@ -185,6 +185,10 @@ groupDetailTr = ({group, colspan}) ->
               group.error
             else
               JSON.stringify(group.error, null, 2)
+      if group.providers_data?
+        html.div {key: 'providers_data', class: 'small text-secondary'},
+          for [provider, data] from group.providers_data
+            html.div {key: provider}, text "#{provider}: #{JSON.stringify(data)}"
     ]
 
 # Actions
