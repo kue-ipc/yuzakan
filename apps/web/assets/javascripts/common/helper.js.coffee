@@ -57,15 +57,9 @@ export basename = (path, suffix = '') ->
     base
 
 export entityLabel = (entity) ->
-  entity.display_name || entity.name || ''
+  return undefined unless entity?
 
-export updateList = (item, list, sameKey = 'id') ->
-  keyValue = item[sameKey]
-  for v in list
-    if v[sameKey] == keyValue
-      {v..., item...}
-    else
-      v
+  entity.display_name || entity.name || ''
 
 # URLから最後の文字列を取り出す。
 # 空文字列しかない場合は undefined を返す

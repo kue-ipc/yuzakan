@@ -4,9 +4,10 @@ import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
 import BsIcon from '/assets/app/bs_icon.js'
-import {pick, pickType, updateList, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
-import {objToUrlencoded} from '/assets/common/convert.js'
+import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
+import {objToUrlencoded, listToParamName} from '/assets/common/convert.js'
 import valueDisplay from '/assets/app/value_display.js'
+import {updateList, findList} from '/assets/common/list_helper.js'
 
 import {
   USER_PROPERTIES, USER_DATA_PROPERTIES
@@ -15,7 +16,11 @@ import {
   createRunIndexWithPageUsers
   createRunShowUser, createRunCreateUser, createRunUpdateUser, createRunDestroyUser
 } from '/assets/api/users.js'
+
+import {createRunIndexGroups} from '/assets/api/groups.js'
 import {createRunIndexProviders} from '/assets/api/providers.js'
+import {createRunIndexAttrs} from '/assets/api/attrs.js'
+
 import {PAGINATION_PARAM_TYPES} from '/assets/api/pagination.js'
 import {SEARCH_PARAM_TYPES} from '/assets/api/search.js'
 import {ORDER_PARAM_TYPES} from '/assets/api/order.js'
@@ -33,7 +38,7 @@ import {batchOperation, runDoNextAction, runStopAllAction} from './batch_operati
 
 # Functions
 
-updateUserList = (user, users) -> updateList(user, users, 'name')
+updateUserList = (users, user) -> updateList(users, user.name, user, {key: 'name'})
 
 normalizeUserUploaded = ({action, error, user...}) ->
   action = action?.slice(0, 3)?.toUpperCase() ? ''
@@ -61,24 +66,12 @@ indexOptionFromState = (state) ->
     state.order...
   }, Object.keys(INDEX_WITH_PAGE_USERS_PARAM_TYPES))
 
-userHeaders = ({providers}) ->
+userHeaders = ({attrs}) ->
   [
     'action'
     Object.keys(USER_PROPERTIES)...
-    (listToParamName('providers', provider.name) for provider in providers)...
-    'error'
+    (listToParamName('attrs', attr.name) for attr in attrs)...
   ]
-
-userAllHeaders = ({providers}) ->
-  [
-    userHeaders({providers})...
-    (listToParamName('data', name) for name, type of USER_DATA_PROPERTIES)...
-    (for provider in providers
-      for name, type of USER_DATA_PROPERTIES
-        listToParamName('providers', provider.name, name)
-    ).flat()...
-  ]
-
 
 # Views
 
@@ -115,7 +108,7 @@ userProviderTd = ({user, provider}) ->
       type: 'boolean'
     }
 
-userTr = ({user, providers}) ->
+userTr = ({user, groups, providers}) ->
   color = switch user.action
     when 'ADD'
       'primary'
@@ -153,6 +146,8 @@ userTr = ({user, providers}) ->
           }, text user.action
         when 'ERR'
           html.div {}, text 'エラー'
+        when 'SUC'
+          html.div {}, text '成功'
         else
           html.a {href: "/admin/users/#{user.name}"}, text '閲覧'
     html.td {key: 'name'}, text user.name
@@ -161,13 +156,19 @@ userTr = ({user, providers}) ->
       html.span {class: 'ms-2 badge text-bg-warning'}, text '使用禁止' if user.prohibited
       html.span {class: 'ms-2 badge text-bg-danger'}, text '削除済み' if user.deleted
     ]
-    html.td {key: 'label'}, text user.display_name
     html.td {key: 'email'}, text user.email ? ''
     html.td {key: 'clearance_level'}, text user.clearance_level
+    html.td {key: 'primary_group'},
+      if user.primary_group
+        html.a {href: "/admin/groups/#{user.primary_group}"},
+          text entityLabel(findList(groups, user.primary_group, {key: 'name'})) ? user.primary_group
+      else
+        undefined
     (userProviderTd({user, provider}) for provider in providers)...
   ]
 
 userDetailTr = ({user, colspan}) ->
+  console.log user if user.name == 'user01'
   html.tr {
     key: "user-detail[#{user.name}]"
     class: {collapse: true, show: user.show_detail}
@@ -256,11 +257,11 @@ UploadUsers = (state, {list, filename}) ->
 SetUserInList = (state, user) ->
   {
     state...
-    users: updateUserList(user, state.users)
+    users: updateUserList(state.users, user)
   }
 
 SetUserInListNextIfDoAll = (state, user) ->
-  users = updateUserList(user, state.users)
+  users = updateUserList(state.users, user)
   [
     {
       state...
@@ -296,7 +297,7 @@ createActionUser = (createEffecter, props = {}) ->
       {
         state...
         mode: if state.mode == 'file' then 'result' else state.mode
-        users: updateUserList({user..., action: 'ACT'}, state.users)
+        users: updateUserList(state.users, {user..., action: 'ACT'})
       }
       [run, {props..., user..., id: user.name}]
     ]
@@ -316,7 +317,11 @@ PopState = (state, params) ->
 
 # Effecters
 
+runIndexGroups = createRunIndexGroups()
+
 runIndexProviders = createRunIndexProviders()
+
+runIndexAttrs = createRunIndexAttrs()
 
 runIndexUsers = createRunIndexWithPageUsers({action: SetIndexUsers})
 
@@ -343,7 +348,9 @@ main = ->
   initState = {
     mode: 'loading'
     users: []
+    groups: []
     providers: []
+    attrs: []
     pagination: pickType(queryParams, PAGINATION_PARAM_TYPES)
     search: pickType(queryParams, SEARCH_PARAM_TYPES)
     option: pickType(queryParams, INDEX_USERS_OPTION_PARAM_TYPES)
@@ -353,21 +360,21 @@ main = ->
 
   init = [
     initState
+    [runIndexGroups]
     [runIndexProviders]
+    [runIndexAttrs]
     [runIndexUsers, indexOptionFromState(initState)]
   ]
 
-  view = ({mode, users, providers, pagination, search, option, order, filename}) ->
+  view = ({mode, users, groups, providers, attrs, pagination, search, option, order, filename}) ->
     html.div {}, [
       batchOperation {
         mode
         list: users
-        headers: [
-          'action'
-          Object.keys(USER_PROPERTIES)...
-          ("providers[#{provider.name}]" for provider in providers)...
-          'error'
-        ]
+        header: {
+          includes: userHeaders({attrs})
+          excludes: ['show_detail']
+        }
         filename
         onupload: UploadUsers
         action: DoActionUser
@@ -392,13 +399,14 @@ main = ->
               html.th {key: 'label'}, text 'ラベル'
               html.th {key: 'email'}, text 'メールアドレス'
               html.th {key: 'clearance-level'}, text '権限レベル'
+              html.th {key: 'email'}, text 'プライマリグループ'
               (providerTh({provider}) for provider in providers)...
             ]
           html.tbody {},
             (for user in users
               [
-                userTr({user, providers})
-                userDetailTr({user, colspan: 6 + providers.length})
+                userTr({user, groups, providers})
+                userDetailTr({user, colspan: 7 + providers.length})
               ]
             ).flat()
         ]

@@ -4,9 +4,10 @@ import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
 import BsIcon from '/assets/app/bs_icon.js'
-import {pick, pickType, updateList, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
+import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
 import {objToUrlencoded, listToParamName} from '/assets/common/convert.js'
 import valueDisplay from '/assets/app/value_display.js'
+import {updateList} from '/assets/common/list_helper.js'
 
 import {
   GROUP_PROPERTIES, GROUP_DATA_PROPERTIES,
@@ -37,9 +38,19 @@ GROUP_HEADERS = [
   Object.keys(GROUP_PROPERTIES)...
 ]
 
+ACTIONS = new Map([
+  ['ADD', '追加']
+  ['MOD', '変更']
+  ['DEL', '削除']
+  ['ERR', 'エラー']
+  ['SUC', '成功']
+  ['ACT', '実行中']
+  ['SYN', '同期']
+])
+
 # Functions
 
-updateGroupList = (group, groups) -> updateList(group, groups, 'name')
+updateGroupList = (groups, group) -> updateList(groups, group.name, group, {key: 'name'})
 
 normalizeGroupUploaded = ({action, error, group...}) ->
   action = action?.slice(0, 3)?.toUpperCase() ? ''
@@ -75,7 +86,7 @@ indexGroupsOption = ({onchange: action, props...}) ->
 
   html.div {class: 'row mb-2'},
     for key, val of {
-      sync: 'プロバイダーと同期'
+      sync: 'プロバイダーから取得'
       primary_only: 'プライマリーのみ'
       hide_prohibited: '使用禁止を隠す'
       show_deleted: '削除済みも表示'
@@ -132,24 +143,27 @@ groupTr = ({group, providers}) ->
     }, BsIcon {name: if group.show_detail then 'chevron-down' else 'chevron-right'}
     html.td {key: 'action'},
       switch group.action
+        when ''
+          html.button {
+            class: "btn btn-sm btn-outline-dark"
+            onclick: -> [SyncGroup, group]
+          }, text '取得'
         when 'ACT'
           html.div {class: 'spinner-border spinner-border-sm', role: 'status'},
             html.span {class: 'visually-hidden'}, text '実行中'
-        when 'MOD'
+        when 'MOD', 'SYN'
           html.button {
             class: "btn btn-sm btn-#{color}"
-            onclick: -> [DoActionGroup, group]
-          }, text '変更/同期'
-        when 'SYN'
-          html.button {
-            class: "btn btn-sm btn-dark"
-            onclick: -> [DoActionGroup, group]
-          }, text '同期'
+            onclick: -> [DoActionUser, group]
+          }, text ACTIONS.get(group.action)
         when 'ERR'
           html.div {}, text 'エラー'
+        when 'SUC'
+          html.div {}, text '成功'
         else
-          html.a {href: "/admin/groups/#{group.name}"}, text '閲覧'
-    html.td {key: 'name'}, text group.name
+          html.div {}, text '？'
+    html.td {key: 'name'},
+      html.a {href: "/admin/groups/#{group.name}"}, text group.name
     html.td {key: 'label'}, [
       html.span {}, text entityLabel(group)
       html.span {class: 'ms-2 badge text-bg-primary'}, text 'プライマリー' if group.primary
@@ -252,11 +266,11 @@ UploadGroups = (state, {list, filename}) ->
 SetGroupInList = (state, group) ->
   {
     state...
-    groups: updateGroupList(group, state.groups)
+    groups: updateGroupList(state.groups, group)
   }
 
 SetGroupInListNextIfDoAll = (state, group) ->
-  groups = updateGroupList(group, state.groups)
+  groups = updateGroupList(state.groups, group)
   [
     {
       state...
@@ -292,7 +306,7 @@ createActionGroup = (createEffecter, props = {}) ->
       {
         state...
         mode: if state.mode == 'file' then 'result' else state.mode
-        groups: updateGroupList({group..., action: 'ACT'}, state.groups)
+        groups: updateGroupList(state.groups, {group..., action: 'ACT'})
       }
       [run, {props..., group..., id: group.name}]
     ]

@@ -10,11 +10,11 @@ import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '/ass
 import {createRunIndexProviders} from '/assets/api/providers.js'
 import {normalizeAttr, createRunIndexAttrs, createRunShowAttr} from '/assets/api/attrs.js'
 
-import {updateList} from '/assets/common/helper.js'
+import {updateList} from '/assets/common/list_helper.js'
 
 # Functions
 
-updateAttrList = (attr, attrs) -> updateList(attr, attrs, 'name')
+updateAttrList = (attrs, attr) -> updateList(attrs, attr.name, attr, {key: 'name'})
 
 # Dialogs
 
@@ -337,7 +337,7 @@ SetAttrsThenShow = (state, attrs) ->
 SetAttrInList = (state, attr) ->
   {
     state...
-    attrs: updateAttrList(normalizeAttr(attr), state.attrs)
+    attrs: updateAttrList(state.attrs, normalizeAttr(attr))
   }
 
 # Effecters
