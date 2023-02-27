@@ -36,6 +36,23 @@ import {batchOperation, runDoNextAction, runStopAllAction} from './batch_operati
 #   do_all: 全て実行中
 #   result: 実行結果(全てとは限らない)
 
+# Cnostants
+
+USER_HEADERS = [
+  'action'
+  Object.keys(USER_PROPERTIES)...
+]
+
+ACTIONS = new Map([
+  ['ADD', '追加']
+  ['MOD', '変更']
+  ['DEL', '削除']
+  ['ERR', 'エラー']
+  ['SUC', '成功']
+  ['ACT', '実行中']
+  ['SYN', '同期']
+])
+
 # Functions
 
 updateUserList = (users, user) -> updateList(users, user.name, user, {key: 'name'})
@@ -68,8 +85,7 @@ indexOptionFromState = (state) ->
 
 userHeaders = ({attrs}) ->
   [
-    'action'
-    Object.keys(USER_PROPERTIES)...
+    USER_HEADERS...
     (listToParamName('attrs', attr.name) for attr in attrs)...
   ]
 
@@ -104,7 +120,7 @@ providerTh = ({provider}) ->
 userProviderTd = ({user, provider}) ->
   html.td {key: "provider[#{provider.name}]"},
     valueDisplay {
-      value: user.providers?.get(provider.name)
+      value: user.providers?.includes(provider.name)
       type: 'boolean'
     }
 
@@ -136,6 +152,11 @@ userTr = ({user, groups, providers}) ->
     }, BsIcon {name: if user.show_detail then 'chevron-down' else 'chevron-right'}
     html.td {key: 'action'},
       switch user.action
+        when ''
+          html.button {
+            class: "btn btn-sm btn-outline-dark"
+            onclick: -> [SyncUser, user]
+          }, text '取得'
         when 'ACT'
           html.div {class: 'spinner-border spinner-border-sm', role: 'status'},
             html.span {class: 'visually-hidden'}, text '実行中'
@@ -143,14 +164,15 @@ userTr = ({user, groups, providers}) ->
           html.button {
             class: "btn btn-sm btn-#{color}"
             onclick: -> [DoActionUser, user]
-          }, text user.action
+          }, text ACTIONS.get(user.action)
         when 'ERR'
           html.div {}, text 'エラー'
         when 'SUC'
           html.div {}, text '成功'
         else
           html.a {href: "/admin/users/#{user.name}"}, text '閲覧'
-    html.td {key: 'name'}, text user.name
+    html.td {key: 'name'},
+      html.a {href: "/admin/users/#{user.name}"}, text user.name
     html.td {key: 'label'}, [
       html.span {}, text entityLabel(user)
       html.span {class: 'ms-2 badge text-bg-warning'}, text '使用禁止' if user.prohibited

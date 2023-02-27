@@ -30,6 +30,7 @@ export USER_PROPERTIES = {
   deleted_at: 'datetime'
   primary_group: 'string'
   groups: 'list'
+  attrs: 'map'
 }
 
 export USER_DATA_PROPERTIES = {
@@ -83,15 +84,21 @@ export normalizeUsers = (users, type ={}) ->
   normalizeUser(user, type) for user in users
 
 export normalizeUser = (user, types = {}) ->
-  providers =
-    if user.providers? && typeof user.providers == 'object' && !(user.proivder instanceof Array)
-      new Map([provider, pickType(data, USER_DATA_PROPERTIES)] for provider, data of user.providers when data?)
+  providersData =
+    if !user.providers?
+      {}
+    else if user.providers instanceof Array
+      {providers: user.providers}
     else
-      user.providers
-
+      {
+        providers: (provider for provider, data of user.providers when data?)
+        providers_data: new Map(
+          [provider, pickType(data, GROUP_DATA_PROPERTIES)] for provider, data of user.providers when data?
+        )
+      }
   {
     pickType(user, {USER_PROPERTIES..., types...})...
-    providers
+    providersData...
   }
 
 # Actions

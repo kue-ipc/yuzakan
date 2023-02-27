@@ -20,12 +20,8 @@ class UnregisterUser
 
   expose :user
 
-  def initialize(user_repository: UserRepository.new,
-                 group_repository: GroupRepository.new,
-                 member_repository: MemberRepository.new)
+  def initialize(user_repository: UserRepository.new)
     @user_repository = user_repository
-    @group_repository = group_repository
-    @member_repository = member_repository
   end
 
   def call(params)

@@ -144,7 +144,7 @@ module Api
         end
 
         private def get_users(usernames)
-          user_entities = @user_repository.all_by_name(usernames).to_h { |user| [user.name, user] }
+          user_entities = @user_repository.all_with_groups_by_name(usernames).to_h { |user| [user.name, user] }
           usernames.map do |username|
             user_entities[username] || get_sync_user(username)
           end

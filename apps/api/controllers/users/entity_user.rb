@@ -21,7 +21,7 @@ module Api
             @attrs = result.data[:attrs]
             @providers = result.providers
           else
-            @user = @user_repository.find_by_name(@name)
+            @user = @user_repository.find_with_groups_by_name(@name)
             @attrs = nil
             @providers = nil
           end

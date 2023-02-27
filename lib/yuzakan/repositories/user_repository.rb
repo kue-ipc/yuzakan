@@ -66,13 +66,29 @@ class UserRepository < Hanami::Repository
     by_name(name).one
   end
 
+  # with groups
+
+  def all_with_groups
+    aggregate(members: :group).map_to(User).to_a
+  end
+
   def find_with_groups(id)
     aggregate(members: :group).where(id: id).map_to(User).one
   end
 
-  def find_with_groups_by_name(name)
-    aggregate(members: :group).where(name: name).map_to(User).one
+  private def with_groups_by_name(name)
+    aggregate(members: :group).where(name: name).map_to(User)
   end
+
+  def all_with_groups_by_name(name)
+    with_groups_by_name(name).to_a
+  end
+
+  def find_with_groups_by_name(name)
+    with_groups_by_name(name).one
+  end
+
+  # operation group
 
   def set_primary_group(user, group)
     #  既存のプライマリーグループを確認し、設定済みならメンバーを返す
