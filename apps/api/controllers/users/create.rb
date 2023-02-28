@@ -57,15 +57,14 @@ module Api
             # どのプロバイダーにも登録しない削除済みユーザーの作成する。
             # プロバイダーの指定は無視する。
             # 削除日時が指定されていない場合は現在の日時を削除日時とする。
-            @user = @user_repository.create({deleted: Time.now, **params.to_h})
+            @user = @user_repository.create({deleted_at: Time.now, **params.to_h.except(:id)})
           elsif params[:providers]&.size&.positive?
+            @user = @user_repository.create(params.to_h.except(:id))
             provider_create_user({
               **params.to_h,
               username: @name,
               password: password,
             })
-            load_user
-            @user_repository.update(@user.id, {**params.to_h, deleted: false, deleted_at: nil})
           else
             halt_json 422, errors: {providers: [I18n.t('errors.min_size?', num: 1)]}
           end

@@ -17,56 +17,71 @@ module Api
 
           params do
             required(:id).filled(:str?, :name?, max_size?: 255)
-            required(:username).filled(:str?, :name?, max_size?: 255)
+            optional(:name).filled(:str?, :name?, max_size?: 255)
             optional(:display_name).maybe(:str?, max_size?: 255)
             optional(:email).maybe(:str?, :email?, max_size?: 255)
-            optional(:primary_group).maybe(:str?, :name?, max_size?: 255)
-            optional(:groups).each(:str?, :name?, max_size?: 255)
-            optional(:attrs) { hash? }
-            optional(:providers).each(:str?, :name?, max_size?: 255)
+
+            optional(:note).maybe(:str?, max_size?: 4096)
             optional(:clearance_level).filled(:int?)
             optional(:prohibited).filled(:bool?)
-            optional(:note).maybe(:str?, max_size?: 4096)
+            optional(:deleted).filled(:bool?)
+            optional(:deleted_at).filled(:date_time?)
+
+            optional(:primary_group).maybe(:str?, :name?, max_size?: 255)
+            optional(:groups).each(:str?, :name?, max_size?: 255)
+
+            optional(:attrs) { hash? }
+
+            optional(:providers).each(:str?, :name?, max_size?: 255)
           end
         end
 
         params Params
 
         def call(params)
-          halt_json 422, errors: {username: 'ユーザー名は変更できません。'} if @user.username != params[:username]
+          if params[:name] && @user.name != params[:name]
+            halt_json 422, errors: {
+              name: I18n.t('errors.unchangeable', name: I18n.t('attributes.user.name')),
+            }
+          end
+
+          @user_repository.update(@user.id, params.to_h.except(:id))
 
           current_providers = @providers.compact.keys
           if params[:providers]
             add_providers = params[:providers] - current_providers
-            del_providers = current_providers - params[:providers]
             mod_providers = params[:providers] & current_providers
+            del_providers = current_providers - params[:providers]
           else
             add_providers = []
-            del_providers = []
             mod_providers = current_providers
+            del_providers = []
           end
 
-          if add_providers.size.positve?
+          unless add_providers.empty?
             provider_create_user({
-              **params.slice(*USER_BASE_INFO, *USER_PROVIDER_INFO),
+              **params.to_h,
+              username: @name,
               providers: add_providers,
             })
           end
 
-          if mod_providers.size.positve?
+          unless mod_providers.empty?
             provider_update_user({
-              **params.slice(*USER_BASE_INFO, *USER_PROVIDER_INFO),
+              **params.to_h,
+              username: @name,
               providers: mod_providers,
             })
           end
 
-          provider_delete_user({username: @user.username, providers: del_providers}) if del_providers.size.positive?
-
-          set_sync_user
-
-          if USER_REPOSITORY_INFO.any? { |name| params.key?(name) }
-            @user = @user_repository.update(@user.id, params.slice(*USER_REPOSITORY_INFO))
+          unless del_providers.empty?
+            provider_delete_user({
+              username: @name,
+              providers: del_providers,
+            })
           end
+
+          load_user
 
           self.body = user_json
         end
