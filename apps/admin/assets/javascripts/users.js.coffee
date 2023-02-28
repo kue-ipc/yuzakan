@@ -111,7 +111,7 @@ indexUsersOption = ({onchange: action, props...}) ->
 
   html.div {class: 'row mb-2'},
     for key, val of {
-      sync: 'プロバイダーと同期'
+      no_sync: 'プロバイダーと同期しない'
       hide_prohibited: '使用禁止を隠す'
       show_deleted: '削除済みも表示'
     }
@@ -385,7 +385,7 @@ ModUser = createActionUser(createRunUpdateUser)
 
 DelUser = createActionUser(createRunDestroyUser)
 
-SyncUser = createActionUser(createRunShowUser, {sync: true})
+SyncUser = createActionUser(createRunShowUser)
 
 PopState = (state, params) ->
   data = {

@@ -47,7 +47,7 @@ export USER_DATA_PROPERTIES = {
 }
 
 export INDEX_USERS_OPTION_PARAM_TYPES = {
-  sync: 'boolean'
+  no_sync: 'boolean'
   hide_prohibited: 'boolean'
   show_deleted: 'boolean'
 }
@@ -64,7 +64,6 @@ export INDEX_WITH_PAGE_USERS_PARAM_TYPES = {
 }
 
 export SHOW_USER_PARAM_TYPES = {
-  sync: 'boolean'
 }
 
 export CREATE_USER_PARAM_TYPES = {
@@ -118,12 +117,13 @@ export SetUser = (state, user) -> {
 
 # create Effecters
 
-export createRunIndexUsers = (params = {}) ->
+export createRunIndexUsersNoSync = ({data = {}, params...} = {}) ->
   createRunIndex({
     action: SetUsers
     normalizer: normalizeUsers
     url: API_USERS
     dataTypes: INDEX_USERS_PARAM_TYPES
+    data: {no_sync: true, data...}
     params...
   })
 

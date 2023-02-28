@@ -18,8 +18,6 @@ module Api
             optional(:page).filled(:int?, included_in?: Yuzakan::Utils::Pager::PAGE_RANGE)
             optional(:per_page).filled(:int?, included_in?: Yuzakan::Utils::Pager::PER_PAGE_RANGE)
 
-            optional(:sync).filled(:bool?)
-
             optional(:order).filled(:str?, included_in?: %w[
               name
               display_name
@@ -34,6 +32,7 @@ module Api
                                       backward
                                     ])
 
+            optional(:no_sync).filled(:bool?)
             optional(:hide_prohibited).filled(:bool?)
             optional(:show_deleted).filled(:bool?)
           end
@@ -55,10 +54,10 @@ module Api
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
           result =
-            if params[:sync]
-              get_users_from_provider(params.to_h)
-            else
+            if params[:no_sync]
               get_users_from_repository(params.to_h)
+            else
+              get_users_from_provider(params.to_h)
             end
 
           self.status = 200
@@ -68,7 +67,7 @@ module Api
 
         # sync off
         def get_users_from_repository(params)
-          params = params.to_h.except(:sync)
+          params = params.to_h
 
           order =
             if params[:order]
@@ -103,7 +102,7 @@ module Api
         # sync on
         def get_users_from_provider(params)
           # syncモードでは無視される。
-          params = params.to_h.except(:hide_prohibited, :show_deleted)
+          params = params.to_h.except(:no_sync, :hide_prohibited, :show_deleted)
 
           if params.key?(:order) && !params[:key].start_with?('name')
             # nameに対する順序以外は無視される。

@@ -8,23 +8,11 @@ module Api
       module EntityUser
         include InteractorUser
 
-        def initialize(user_repository: UserRepository.new,
-                       **opts)
-          super
-          @user_repository ||= user_repository
-        end
-
-        private def load_user(sync: false)
-          if sync
-            result = sync_user({username: @name})
-            @user = result.user
-            @attrs = result.data[:attrs]
-            @providers = result.providers
-          else
-            @user = @user_repository.find_with_groups_by_name(@name)
-            @attrs = nil
-            @providers = nil
-          end
+        private def load_user
+          result = sync_user({username: @name})
+          @user = result.user
+          @attrs = result.data[:attrs]
+          @providers = result.providers
         end
 
         private def user_json(**data)

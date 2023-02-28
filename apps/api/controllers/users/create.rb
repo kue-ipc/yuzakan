@@ -48,7 +48,7 @@ module Api
           halt_json 400, errors: [params.errors] unless params.valid?
 
           @name = params[:name]
-          load_user(sync: true)
+          load_user
           halt_json 422, errors: {name: [I18n.t('errors.uniq?')]} if @user
 
           password = params[:password] || generate_password.password
@@ -58,19 +58,19 @@ module Api
             # プロバイダーの指定は無視する。
             # 削除日時が指定されていない場合は現在の日時を削除日時とする。
             @user = @user_repository.create({deleted: Time.now, **params.to_h})
-            @user = @user_repository.find_with_groups(@user.id)
           elsif params[:providers]&.size&.positive?
             provider_create_user({
               **params.to_h,
               username: @name,
               password: password,
             })
-            load_user(sync: true)
+            load_user
             @user_repository.update(@user.id, {**params.to_h, deleted: false, deleted_at: nil})
-            @user = @user_repository.find_with_groups(@user.id)
           else
             halt_json 422, errors: {providers: [I18n.t('errors.min_size?', num: 1)]}
           end
+
+          load_user
 
           self.status = 201
           headers['Content-Location'] = routes.user_path(@user.name)
