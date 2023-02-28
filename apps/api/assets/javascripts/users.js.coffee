@@ -69,10 +69,12 @@ export SHOW_USER_PARAM_TYPES = {
 
 export CREATE_USER_PARAM_TYPES = {
   USER_PROPERTIES...
+  providers: 'list'
 }
 
 export UPDATE_USER_PARAM_TYPES = {
   USER_PROPERTIES...
+  providers: 'list'
 }
 
 export DESTROY_USER_PARAM_TYPES = {

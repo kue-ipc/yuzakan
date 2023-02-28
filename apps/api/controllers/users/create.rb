@@ -20,12 +20,19 @@ module Api
             optional(:password).maybe(:str?, max_size?: 255)
             optional(:display_name).maybe(:str?, max_size?: 255)
             optional(:email).maybe(:str?, :email?, max_size?: 255)
-            optional(:primary_group).maybe(:str?, :name?, max_size?: 255)
-            optional(:attrs) { hash? }
-            optional(:providers).each(:str?, :name?, max_size?: 255)
+
+            optional(:note).maybe(:str?, max_size?: 4096)
             optional(:clearance_level).filled(:int?)
             optional(:prohibited).filled(:bool?)
-            optional(:note).maybe(:str?, max_size?: 4096)
+            optional(:deleted).filled(:bool?)
+            optional(:deleted_at).filled(:date_time?)
+
+            optional(:primary_group).maybe(:str?, :name?, max_size?: 255)
+            optional(:groups).each(:str?, :name?, max_size?: 255)
+
+            optional(:attrs) { hash? }
+
+            optional(:providers).each(:str?, :name?, max_size?: 255)
           end
         end
 
@@ -46,17 +53,23 @@ module Api
 
           password = params[:password] || generate_password.password
 
-          create_user({
-            password: password,
-            **params.slice(*USER_BASE_INFO, *USER_PROVIDER_INFO, :providers),
-          })
-
-          set_sync_user
-
-          if @user.nil?
-            @user = @user_repository.create(params.slice(*USER_BASE_INFO, *USER_REPOSITORY_INFO))
-          elsif USER_REPOSITORY_INFO.any? { |name| params.key?(name) }
-            @user = @user_repository.update(@user.id, params.slice(*USER_REPOSITORY_INFO))
+          if params[:deleted]
+            # どのプロバイダーにも登録しない削除済みユーザーの作成する。
+            # プロバイダーの指定は無視する。
+            # 削除日時が指定されていない場合は現在の日時を削除日時とする。
+            @user = @user_repository.create({deleted: Time.now, **params.to_h})
+            @user = @user_repository.find_with_groups(@user.id)
+          elsif params[:providers]&.size&.positive?
+            provider_create_user({
+              **params.to_h,
+              username: @name,
+              password: password,
+            })
+            load_user(sync: true)
+            @user_repository.update(@user.id, {**params.to_h, deleted: false, deleted_at: nil})
+            @user = @user_repository.find_with_groups(@user.id)
+          else
+            halt_json 422, errors: {providers: [I18n.t('errors.min_size?', num: 1)]}
           end
 
           self.status = 201

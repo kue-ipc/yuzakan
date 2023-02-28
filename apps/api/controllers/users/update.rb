@@ -47,20 +47,20 @@ module Api
           end
 
           if add_providers.size.positve?
-            create_user({
+            provider_create_user({
               **params.slice(*USER_BASE_INFO, *USER_PROVIDER_INFO),
               providers: add_providers,
             })
           end
 
           if mod_providers.size.positve?
-            update_user({
+            provider_update_user({
               **params.slice(*USER_BASE_INFO, *USER_PROVIDER_INFO),
               providers: mod_providers,
             })
           end
 
-          delete_user({username: @user.username, providers: del_providers}) if del_providers.size.positive?
+          provider_delete_user({username: @user.username, providers: del_providers}) if del_providers.size.positive?
 
           set_sync_user
 
