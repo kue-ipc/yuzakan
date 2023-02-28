@@ -3,11 +3,13 @@
 import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
-import BsIcon from '/assets/app/bs_icon.js'
 import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
 import {objToUrlencoded, objToJson, listToParamName} from '/assets/common/convert.js'
-import valueDisplay from '/assets/app/value_display.js'
 import {updateList, findList} from '/assets/common/list_helper.js'
+
+import BsIcon from '/assets/app/bs_icon.js'
+import valueDisplay from '/assets/app/value_display.js'
+import preCode from '/assets/app/pre_code.js'
 
 import {
   USER_PROPERTIES, USER_DATA_PROPERTIES
@@ -218,7 +220,6 @@ userProviderTd = ({user, provider}) ->
     }
 
 userDetailTr = ({user, providers}) ->
-  console.log user if user.name == 'user01'
   html.tr {
     key: "user-detail[#{user.name}]"
     class: {collapse: true, show: user.show_detail}
@@ -230,18 +231,14 @@ userDetailTr = ({user, providers}) ->
         html.span {key: 'deleted_at', class: 'ms-2'}, text "削除日: #{user.deleted_at}" if user.deleted_at
       ]
       if user.attrs?
-        html.div {key: 'attrs'},
-          html.pre {class: 'small'},
-            html.code {class: 'text-dark'},
-              text objToJson(user.attrs, 2)
+        html.div {key: 'attrs', class: 'small'},
+          preCode {code: objToJson(user.attrs, 2), language: 'json'}
       if user.note
-        html.div {key: 'note'},
+        html.div {key: 'note', class: 'small'},
           html.pre {class: 'mb-0 text-info'}, text user.note
       if user.error
-        html.div {key: 'error'},
-          html.pre {class: 'mb-0 text-danger'},
-            html.code {class: 'text-danger'}
-            text objToJson(user.error, ' ')
+        html.div {key: 'error', class: 'small'},
+          preCode {code: objToJson(user.error, 2), language: 'json'}
     ]
     html.td {key: 'groups'},
       html.div {}, text user.groups?.join() ? ''
@@ -251,9 +248,8 @@ userDetailTr = ({user, providers}) ->
 userProviderDataTd = ({user, provider}) ->
   html.td {key: "provider-data[#{provider.name}]"},
     if user.providers_data?.has(provider.name)
-      html.pre {class: 'small'},
-        html.code {class: 'text-secondary'},
-          text objToJson(user.providers_data.get(provider.name), 2)
+      html.div {key: 'data', class: 'small'},
+        preCode {code: objToJson(user.providers_data.get(provider.name), 2), language: 'json'}
 
 # Actions
 

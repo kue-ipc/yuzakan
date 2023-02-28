@@ -2,7 +2,6 @@
 
 import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
-import hljs from '/assets/vendor/hljs.js'
 
 import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
 import {objToUrlencoded, objToJson, listToParamName} from '/assets/common/convert.js'
@@ -214,14 +213,11 @@ groupDetailTr = ({group, providers}) ->
         html.span {key: 'deleted_at', class: 'ms-2'}, text "削除日: #{group.deleted_at}" if group.deleted_at
       ]
       if group.note
-        html.div {key: 'note'},
+        html.div {key: 'note', class: 'small'},
           html.pre {class: 'mb-0 text-info'}, text group.note
       if group.error
-        html.div {key: 'error'},
-          preCode {
-            code: objToJson(group.error, 2)
-            language: 'json'
-          }
+        html.div {key: 'error', class: 'small'},
+          preCode {code: objToJson(group.error, 2), language: 'json'}
     ]
     (groupProviderDataTd({group, provider}) for provider in providers)...
   ]
@@ -229,10 +225,8 @@ groupDetailTr = ({group, providers}) ->
 groupProviderDataTd = ({group, provider}) ->
   html.td {key: "provider-data[#{provider.name}]"},
     if group.providers_data?.has(provider.name)
-      preCode {
-        code: objToJson(group.providers_data.get(provider.name), 2)
-        language: 'json'
-      }
+      html.div {key: 'data', class: 'small'},
+        preCode {code: objToJson(group.providers_data.get(provider.name), 2), language: 'json'}
 
 # Actions
 
