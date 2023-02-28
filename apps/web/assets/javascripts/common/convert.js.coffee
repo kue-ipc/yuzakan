@@ -255,12 +255,21 @@ export recordToObj = (record) ->
         obj[subKey] = value
       else
         if keyList[0] == ''
-          throw 'Empty key must be last' unless keyList.length == 1
+          unless keyList.length == 1
+            console.error 'empty key must be last: %s', key
+            throw 'ilegal subkey: empty key must be last'
           obj[subKey] == Array(value)
         else if keyList[0].match(/^\d+$/)
           obj[subKey] ?= []
+          unless obj[subKey] instanceof Array
+            console.warn 'mix numbers and words on object: %s', key
         else
           obj[subKey] ?= {}
+          unless typeof obj[subKey] == 'object'
+            console.error 'parent is not object: %s', key
+            throw 'ilegal subkey: parent is not object'
+          if obj[subKey] instanceof Array
+            console.warn 'mix numbers and words on array: %s', key
         obj = obj[subKey]
     
   root

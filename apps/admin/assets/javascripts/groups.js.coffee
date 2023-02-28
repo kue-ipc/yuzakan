@@ -35,10 +35,8 @@ import {batchOperation, runDoNextAction, runStopAllAction} from './batch_operati
 
 # Cnostants
 
-GROUP_HEADERS = [
-  'action'
-  Object.keys(GROUP_PROPERTIES)...
-]
+GROUP_HEADERS = ['action']
+  .concat(key for key, type of GROUP_PROPERTIES when !(['list', 'map', 'set', 'object'].includes(type)))
 
 ACTIONS = new Map([
   ['ADD', '追加']

@@ -40,10 +40,8 @@ import {batchOperation, runDoNextAction, runStopAllAction} from './batch_operati
 
 # Cnostants
 
-USER_HEADERS = [
-  'action'
-  Object.keys(USER_PROPERTIES)...
-]
+USER_HEADERS = ['action']
+  .concat(key for key, type of USER_PROPERTIES when !(['list', 'map', 'set', 'object'].includes(type)))
 
 ACTIONS = new Map([
   ['ADD', '追加']
@@ -241,7 +239,7 @@ userDetailTr = ({user, providers}) ->
           preCode {code: objToJson(user.error, 2), language: 'json'}
     ]
     html.td {key: 'groups'},
-      html.div {}, text user.groups?.join() ? ''
+      html.div {}, text user.groups?.join(', ') ? ''
     (userProviderDataTd({user, provider}) for provider in providers)...
   ]
 

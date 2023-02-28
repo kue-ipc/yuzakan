@@ -21,6 +21,7 @@ export API_USERS = '/api/users'
 
 export USER_PROPERTIES = {
   name: 'string'
+  password: 'string'
   display_name: 'string'
   email: 'string'
   note: 'string'
