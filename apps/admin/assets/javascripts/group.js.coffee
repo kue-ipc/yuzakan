@@ -16,94 +16,88 @@ import {SHOW_GROUP_PARAM_TYPES} from '/assets/api/groups.js'
 # Views
 
 basicInfo = ({mode, group}) ->
-  html.h4 {}, text '基本情報'
-  html.dl {class: dlClasses}, [
-    html.dt {class: dtClasses},
-      text 'グループ名'
-    html.dd {class: ddClasses},
-      text group.name
-    html.dt {class: dtClasses},
-      text '表示名'
-    html.dd {class: ddClasses},
-      text group.display_name ? ''
-    html.dt {class: dtClasses},
-      text 'プライマリ'
-    html.dd {class: ddClasses},
-      if group.primary
-        html.span {class: 'text-success'},
-          BsIcon({name: 'check-square'})
-      else
-        html.span {class: 'text-muted'},
-          BsIcon({name: 'square'})
-    html.dt {class: dtClasses},
-      text '状態'
-    html.dd {class: ddClasses},
-      if group.deleted
-        html.span {class: 'text-failure'},
-          text "削除済み(#{group.deleted_at})"
-      else if group.prohibited
-        html.span {class: 'text-muted'},
-          text '使用禁止'
-      else
-        html.span {class: 'text-success'},
-          text '正常'
-    html.dt {class: dtClasses},
-      text '備考'
-    html.dd {class: ddClasses},
-      text group.note ? ''
+  html.div {}, [
+    html.h4 {}, text '基本情報'
+    html.dl {class: dlClasses}, [
+      html.dt {class: dtClasses},
+        text 'グループ名'
+      html.dd {class: ddClasses},
+        text group.name
+      html.dt {class: dtClasses},
+        text '表示名'
+      html.dd {class: ddClasses},
+        text group.display_name ? ''
+      html.dt {class: dtClasses},
+        text 'プライマリ'
+      html.dd {class: ddClasses},
+        if group.primary
+          html.span {class: 'text-success'},
+            BsIcon({name: 'check-square'})
+        else
+          html.span {class: 'text-muted'},
+            BsIcon({name: 'square'})
+      html.dt {class: dtClasses},
+        text '状態'
+      html.dd {class: ddClasses},
+        if group.deleted
+          html.span {class: 'text-failure'},
+            text "削除済み(#{group.deleted_at})"
+        else if group.prohibited
+          html.span {class: 'text-muted'},
+            text '使用禁止'
+        else
+          html.span {class: 'text-success'},
+            text '正常'
+      html.dt {class: dtClasses},
+        text '備考'
+      html.dd {class: ddClasses},
+        text group.note ? ''
+    ]
   ]
 
 providerReg = ({mode, group, providers}) ->
-  group_providers = new Map(group.providers)
-
-  html.h4 {}, text '登録状況'
-
-  html.table {class: 'table'}, [
-    html.thead {},
-      html.tr {}, [
-        html.th {}, text '名前'
-        # html.th {}, text '値'
-        (html.th({}, text entityLabel(provider)) for provider in providers)...
-      ]
-    html.tbody {},
-      for {name, label, type} in [
-        {name: 'name', label: 'グループ名', type: 'string'}
-        {name: 'display_name', label: '表示名', type: 'string'}
-        {name: 'primary', label: 'プライマリ', type: 'boolean'}
-      ]
+  console.log group
+  html.div {}, [
+    html.h4 {}, text '登録状況'
+    html.table {class: 'table'}, [
+      html.thead {},
         html.tr {}, [
-          html.td {}, text label
-          # html.td {}, valueDisplay {value: group[name], type}
-          (for provider in providers
-            groupdata = group_providers.get(provider.name)
-            html.td {},
-              valueDisplay {
-                value: groupdata?[name]
-                type
-                color: if group[name]
-                  if group[name] == groupdata?[name]
-                    'success'
-                  else
-                    'danger'
-                else
-                  'body'
-              }
-          )...
+          html.th {}, text '名前'
+          # html.th {}, text '値'
+          (html.th({}, text entityLabel(provider)) for provider in providers)...
         ]
+      html.tbody {},
+        for {name, label, type} in [
+          {name: 'name', label: 'グループ名', type: 'string'}
+          {name: 'display_name', label: '表示名', type: 'string'}
+          {name: 'primary', label: 'プライマリ', type: 'boolean'}
+        ]
+          html.tr {}, [
+            html.td {}, text label
+            # html.td {}, valueDisplay {value: group[name], type}
+            (for provider in providers
+              groupdata = group.providers_data?.get(provider.name)
+              html.td {},
+                valueDisplay {
+                  value: groupdata?[name]
+                  type
+                  color: if group[name]
+                    if group[name] == groupdata?[name]
+                      'success'
+                    else
+                      'danger'
+                  else
+                    'body'
+                }
+            )...
+          ]
+    ]
   ]
 
 operationMenu = ({option}) ->
   html.div {}, [
-    if option?.sync
-      html.button {
-        class: 'btn btn-primary'
-        disbled: true
-      }, text 'プロバイダーと同期'
-    else
-      html.button {
-        class: 'btn btn-primary'
-        onclick: -> [ChangeOption, {sync: true}]
-      }, text 'プロバイダーと同期'
+    html.h4 {}, text '操作メニュー'
+    html.p {}, text '準備中...'
   ]
 
 ReloadShowGroup = (state, data) ->
