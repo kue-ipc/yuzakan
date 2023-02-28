@@ -145,7 +145,7 @@ attrs:
   type: string
   hidden: false
   readonly: false
-  code: attrs.display_name_latin?.split(/\s/)?.at(0)
+  code: attrs.get("display_name_latin")?.split(/\s/)?.at(0)
   attr_mappings:
   - provider: ldap
     key: sn
@@ -155,7 +155,7 @@ attrs:
   type: string
   hidden: false
   readonly: false
-  code: attrs.display_name_latin?.split(/\s/)?.at(1)
+  code: attrs.get("display_name_latin")?.split(/\s/)?.at(1)
   attr_mappings:
   - provider: ldap
     key: givenName
@@ -175,7 +175,7 @@ attrs:
   type: string
   hidden: false
   readonly: false
-  code: username
+  code: name
   attr_mappings:
   - provider: posix_samba
     key: cn
@@ -198,7 +198,7 @@ attrs:
   type: string
   hidden: false
   readonly: false
-  code: "`/home/${username}`"
+  code: "`/home/${name}`"
   attr_mappings:
   - provider: posix_samba
     key: homeDirectory
