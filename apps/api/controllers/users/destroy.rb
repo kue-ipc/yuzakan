@@ -17,7 +17,7 @@ module Api
 
           params do
             required(:id).filled(:str?, :name?, max_size?: 255)
-            optional(:erase).maybe(:bool?)
+            optional(:permanent).maybe(:bool?)
           end
         end
 
@@ -30,9 +30,9 @@ module Api
         end
 
         def call(params)
-          delete_user({username: @username}) unless @user.deleted?
+          provider_delete_user({username: @username}) unless @user.deleted?
 
-          set_sync_user
+          load_user(sync: true)
 
           @user_repository.delete(@user.id) if params[:erase] && @user.deleted?
 
