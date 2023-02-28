@@ -8,22 +8,10 @@ module Api
       module EntityGroup
         include InteractorGroup
 
-        def initialize(group_repository: GroupRepository.new,
-                       **opts)
-          super
-          @group_repository ||= group_repository
-        end
-
-        private def load_group(sync: false)
-          if sync
-            result = sync_group({groupname: @name})
-            @group = result.group
-            @providers = result.providers
-          else
-            @group = @group_repository.find_by_name(@name)
-            @date = nil
-            @providers = nil
-          end
+        private def load_group
+          result = sync_group({groupname: @name})
+          @group = result.group
+          @providers = result.providers
         end
 
         private def group_json(**data)

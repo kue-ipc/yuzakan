@@ -19,7 +19,7 @@ import {
   createRunShowUser, createRunCreateUser, createRunUpdateUser, createRunDestroyUser
 } from '/assets/api/users.js'
 
-import {createRunIndexGroups} from '/assets/api/groups.js'
+import {createRunIndexGroupsNoSnyc} from '/assets/api/groups.js'
 import {createRunIndexProviders} from '/assets/api/providers.js'
 import {createRunIndexAttrs} from '/assets/api/attrs.js'
 import {createRunShowSystem} from '/assets/api/system.js'
@@ -398,7 +398,7 @@ PopState = (state, params) ->
 
 ## Effecters
 
-runIndexGroups = createRunIndexGroups()
+runIndexGroups = createRunIndexGroupsNoSnyc()
 
 runIndexProviders = createRunIndexProviders()
 

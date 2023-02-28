@@ -61,8 +61,10 @@ export createResponseActionSetId = ({idKey = 'id', params...}) ->
 # pathKeys内の文字列はそれぞれ部分文字列になっていはいけない。
 export createRunResponse = ({
   action
-  url: defaultUrl, pathKeys = []
-  data: defaultData = {}, dataTypes = {}
+  url: defaultUrl
+  pathKeys = []
+  data: defaultData = {}
+  dataTypes = {}
   method
   params...
 }) ->

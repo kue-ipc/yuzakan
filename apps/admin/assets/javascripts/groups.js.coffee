@@ -86,7 +86,7 @@ indexGroupsOption = ({onchange: action, props...}) ->
 
   html.div {class: 'row mb-2'},
     for key, val of {
-      sync: 'プロバイダーと同期'
+      no_sync: 'プロバイダーと同期しない'
       primary_only: 'プライマリーのみ'
       hide_prohibited: '使用禁止を隠す'
       show_deleted: '削除済みも表示'
@@ -337,7 +337,7 @@ createActionGroup = (createEffecter, props = {}) ->
 
 ModGroup = createActionGroup(createRunUpdateGroup)
 
-SyncGroup = createActionGroup(createRunShowGroup, {sync: true})
+SyncGroup = createActionGroup(createRunShowGroup)
 
 PopState = (state, params) ->
   data = {

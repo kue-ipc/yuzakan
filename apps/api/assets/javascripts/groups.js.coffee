@@ -36,7 +36,7 @@ export GROUP_DATA_PROPERTIES = {
 }
 
 export INDEX_GROUPS_OPTION_PARAM_TYPES = {
-  sync: 'boolean'
+  no_sync: 'boolean'
   primary_only: 'boolean'
   hide_prohibited: 'boolean'
   show_deleted: 'boolean'
@@ -54,7 +54,6 @@ export INDEX_WITH_PAGE_GROUPS_PARAM_TYPES = {
 }
 
 export SHOW_GROUP_PARAM_TYPES = {
-  sync: 'boolean'
 }
 
 export CREATE_GROUP_PARAM_TYPES = {
@@ -107,12 +106,13 @@ export SetGroup = (state, group) -> {
 
 # create Effecters
 
-export createRunIndexGroups = (params = {}) ->
+export createRunIndexGroupsNoSnyc = ({data = {}, params...} = {}) ->
   createRunIndex({
     action: SetGroups
     normalizer: normalizeGroups
     url: API_GROUPS
     dataTypes: INDEX_GROUPS_PARAM_TYPES
+    data: {no_sync: true, data...}
     params...
   })
 
