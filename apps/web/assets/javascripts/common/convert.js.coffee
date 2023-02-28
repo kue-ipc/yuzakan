@@ -247,7 +247,7 @@ valueToUrlencoded = (value) ->
 
 export recordToObj = (record) ->
   root = {}
-  for key, value of record
+  for key, value of record when value? && value != ''
     keyList = paramNameToList(key)
     obj = root
     while subKey = keyList.shift()

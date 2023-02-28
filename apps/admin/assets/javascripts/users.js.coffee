@@ -202,8 +202,8 @@ userTr = ({user, groups, providers}) ->
       html.span {class: 'ms-2 badge text-bg-danger'}, text '削除済み' if user.deleted
     ]
     html.td {key: 'email'}, text user.email ? ''
-    html.td {key: 'clearance_level'}, text user.clearance_level
-    html.td {key: 'primary_group'},
+    html.td {key: 'clearance-level'}, text user.clearance_level ? ''
+    html.td {key: 'primary-group'},
       if user.primary_group
         html.a {href: "/admin/groups/#{user.primary_group}"},
           text entityLabel(findList(groups, user.primary_group, {key: 'name'})) ? user.primary_group
