@@ -2,13 +2,15 @@
 
 import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
-import hljs from '/assets/vendor/highlight.js'
+import hljs from '/assets/vendor/hljs.js'
 
-import BsIcon from '/assets/app/bs_icon.js'
 import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
 import {objToUrlencoded, objToJson, listToParamName} from '/assets/common/convert.js'
-import valueDisplay from '/assets/app/value_display.js'
 import {updateList} from '/assets/common/list_helper.js'
+
+import BsIcon from '/assets/app/bs_icon.js'
+import valueDisplay from '/assets/app/value_display.js'
+import preCode from '/assets/app/pre_code.js'
 
 import {
   GROUP_PROPERTIES, GROUP_DATA_PROPERTIES,
@@ -216,8 +218,10 @@ groupDetailTr = ({group, providers}) ->
           html.pre {class: 'mb-0 text-info'}, text group.note
       if group.error
         html.div {key: 'error'},
-          html.pre {class: 'mb-0 text-danger'},
-            text objToJson(group.error)
+          preCode {
+            code: objToJson(group.error, 2)
+            language: 'json'
+          }
     ]
     (groupProviderDataTd({group, provider}) for provider in providers)...
   ]
@@ -225,8 +229,10 @@ groupDetailTr = ({group, providers}) ->
 groupProviderDataTd = ({group, provider}) ->
   html.td {key: "provider-data[#{provider.name}]"},
     if group.providers_data?.has(provider.name)
-      html.div {class: 'small text-secondary'},
-        text objToJson(group.providers_data.get(provider.name))
+      preCode {
+        code: objToJson(group.providers_data.get(provider.name), 2)
+        language: 'json'
+      }
 
 # Actions
 
