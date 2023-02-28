@@ -89,7 +89,9 @@ userHeaders = ({attrs}) ->
     (listToParamName('attrs', attr.name) for attr in attrs)...
   ]
 
-# Views
+# Hyperapp Components
+
+## Views
 
 indexUsersOption = ({onchange: action, props...}) ->
   onchange = (state, event) -> [action, {[event.target.name]: event.target.checked}]
@@ -152,7 +154,7 @@ userTr = ({user, groups, providers}) ->
     when 'MOD', 'UNL'
       'info'
     when 'DEL', 'LOC'
-      'waring'
+      'warning'
     when 'ERR'
       'danger'
     when 'SUC'
@@ -236,7 +238,10 @@ userDetailTr = ({user, providers}) ->
           html.pre {class: 'mb-0 text-info'}, text user.note
       if user.error
         html.div {key: 'error', class: 'small'},
-          preCode {code: objToJson(user.error, 2), language: 'json'}
+          if typeof user.error == 'string'
+            preCode {code: user.error, language: 'text'}
+          else
+            preCode {code: objToJson(user.error, 2), language: 'json'}
     ]
     html.td {key: 'groups'},
       html.div {}, text user.groups?.join(', ') ? ''
@@ -249,7 +254,28 @@ userProviderDataTd = ({user, provider}) ->
       html.div {key: 'data', class: 'small'},
         preCode {code: objToJson(user.providers_data.get(provider.name), 2), language: 'json'}
 
-# Actions
+## Action Creaters
+
+createActionUser = (createEffecter, props = {}) ->
+  (state, user) ->
+    action = (_, data) ->
+      if data?
+        [SetUserInListNextIfDoAll, {user..., data..., action: 'SUC', error: null}]
+      else
+        [SetUserInListNextIfDoAll, {user..., action: 'ERR', error: '存在しません。', show_detail: true}]
+    fallback = (_, error) ->
+      [SetUserInListNextIfDoAll, {user..., action: 'ERR', error, show_detail: true}]
+    run = createEffecter({action, fallback})
+    [
+      {
+        state...
+        mode: if state.mode == 'file' then 'result' else state.mode
+        users: updateUserList(state.users, {user..., action: 'ACT'})
+      }
+      [run, {props..., user..., id: user.name}]
+    ]
+
+## Actions
 
 ReloadIndexUsers = (state, data) ->
   console.debug 'reload index users'
@@ -328,34 +354,23 @@ SetUserInListNextIfDoAll = (state, user) ->
 
 DoActionUser = (state, user) ->
   switch user.action
+    when 'ADD'
+      [AddUser, user]
     when 'MOD'
       [ModUser, user]
+    when 'DEL'
+      [DelUser, user]
     when 'SYN'
       [SyncUser, user]
     else
       console.warn 'not implemented action: %s', user.action
       state
 
-createActionUser = (createEffecter, props = {}) ->
-  (state, user) ->
-    action = (_, data) ->
-      if data?
-        [SetUserInListNextIfDoAll, {user..., data..., action: 'SUC', error: null}]
-      else
-        [SetUserInListNextIfDoAll, {user..., action: 'ERR', error: '存在しません。', show_detail: true}]
-    fallback = (_, error) ->
-      [SetUserInListNextIfDoAll, {user..., action: 'ERR', error, show_detail: true}]
-    run = createEffecter({action, fallback})
-    [
-      {
-        state...
-        mode: if state.mode == 'file' then 'result' else state.mode
-        users: updateUserList(state.users, {user..., action: 'ACT'})
-      }
-      [run, {props..., user..., id: user.name}]
-    ]
+AddUser = createActionUser(createRunCreateUser)
 
 ModUser = createActionUser(createRunUpdateUser)
+
+DelUser = createActionUser(createRunDestroyUser)
 
 SyncUser = createActionUser(createRunShowUser, {sync: true})
 
@@ -368,7 +383,7 @@ PopState = (state, params) ->
   }
   [ReloadIndexUsers, data]
 
-# Effecters
+## Effecters
 
 runIndexGroups = createRunIndexGroups()
 
@@ -383,14 +398,14 @@ runPushHistory = (dispatch, params) ->
   if (query != location.search)
     history.pushState(params, '', "#{location.pathname}#{query}")
 
-# Subscribers
+## Subscribers
 
 onPopstateSubscriber = (dispatch, action) ->
   listener = (event) -> dispatch(action, event.state)
   window.addEventListener 'popstate', listener
   -> window.removeEventListener 'popstate', listener
 
-# create Subscriver
+## Subscription Generators
 onPopstate = (action)->
   [onPopstateSubscriber, action]
 

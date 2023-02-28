@@ -16,7 +16,7 @@ module Api
           messages :i18n
 
           params do
-            required(:username).filled(:str?, :name?, max_size?: 255)
+            required(:name).filled(:str?, :name?, max_size?: 255)
             optional(:password).maybe(:str?, max_size?: 255)
             optional(:display_name).maybe(:str?, max_size?: 255)
             optional(:email).maybe(:str?, :email?, max_size?: 255)
@@ -40,9 +40,9 @@ module Api
         def call(params)
           halt_json 400, errors: [params.errors] unless params.valid?
 
-          @username = params[:username]
-          set_sync_user
-          halt_json 422, errors: {username: [I18n.t('errors.uniq?')]} if @user
+          @name = params[:name]
+          load_user(sync: true)
+          halt_json 422, errors: {name: [I18n.t('errors.uniq?')]} if @user
 
           password = params[:password] || generate_password.password
 
@@ -60,7 +60,7 @@ module Api
           end
 
           self.status = 201
-          headers['Content-Location'] = routes.user_path(@user.username)
+          headers['Content-Location'] = routes.user_path(@user.name)
           self.body = user_json(password: password)
         end
       end

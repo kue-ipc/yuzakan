@@ -27,10 +27,11 @@ module Api
           end
         end
 
-        private def user_json
+        private def user_json(**data)
           hash = convert_for_json(@user, assoc: true).dup
           hash[:providers] = @providers unless @providers.nil?
           hash[:attrs] = @attrs unless @attrs.nil?
+          hash.merge!(data)
           generate_json(hash)
         end
       end

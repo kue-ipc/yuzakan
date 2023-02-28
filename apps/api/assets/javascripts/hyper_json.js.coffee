@@ -20,7 +20,7 @@ export createResponseAction = ({action, fallback, normalizer}) ->
     else
       console.error response
       if fallback?
-        [fallback, normalizer(response.data)]
+        [fallback, response.data]
       else
         # do nothing
         state

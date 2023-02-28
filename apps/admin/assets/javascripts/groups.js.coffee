@@ -215,7 +215,10 @@ groupDetailTr = ({group, providers}) ->
           html.pre {class: 'mb-0 text-info'}, text group.note
       if group.error
         html.div {key: 'error', class: 'small'},
-          preCode {code: objToJson(group.error, 2), language: 'json'}
+          if typeof group.error == 'string'
+            preCode {code: group.error, language: 'text'}
+          else
+            preCode {code: objToJson(group.error, 2), language: 'json'}
     ]
     (groupProviderDataTd({group, provider}) for provider in providers)...
   ]

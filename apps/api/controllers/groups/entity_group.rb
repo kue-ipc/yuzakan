@@ -26,9 +26,10 @@ module Api
           end
         end
 
-        private def group_json
+        private def group_json(**data)
           hash = convert_for_json(@group, assoc: true).dup
           hash[:providers] = @providers unless @providers.nil?
+          hash.merge!(data)
           generate_json(hash)
         end
       end
