@@ -162,24 +162,19 @@ class Provider < Hanami::Entity
 
     attr_mappings.to_h do |mapping|
       raw_value = raw_attrs[mapping.key] || raw_attrs[mapping.key.downcase]
-      [mapping.key, mapping.convert_value(raw_value)]
+      [mapping.attr.name, mapping.convert_value(raw_value)]
     end.compact
   end
 
   def convert_userdata(raw_userdata)
     return if raw_userdata.nil?
 
-    if group
-      {
-        **raw_userdata,
-        attrs: convert_attrs(raw_userdata[:attrs]),
-      }
-    else
-      {
-        **raw_userdata.reject { |k, _v| k == :groups },
-        attrs: convert_attrs(raw_userdata[:attrs]),
-      }
-    end
+    raw_userdata = raw_userdata.except(:primary_group, :groups) unless group
+
+    {
+      **raw_userdata,
+      attrs: convert_attrs(raw_userdata[:attrs]),
+    }
   end
 
   def need_adapter!

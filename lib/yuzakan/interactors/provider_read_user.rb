@@ -34,6 +34,7 @@ class ProviderReadUser
       error(I18n.t('errors.action.error', action: I18n.t('interactors.read_user'), target: provider.label))
       fail!
     end
+    # pp @providers
   end
 
   private def valid?(params)
