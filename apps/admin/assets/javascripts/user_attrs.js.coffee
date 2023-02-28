@@ -1,15 +1,11 @@
-import {toRomaji, toKatakana, toHiragana} from '/assets/app/ja_conv.js'
+import {toRomaji, toKatakana, toHiragana} from '/assets/common/ja_conv.js'
 import {capitalize} from '/assets/common/string_helper.js'
 import {xxh32, xxh64} from '/assets/common/hash.js'
 
-export getAttrDefaultValue = ({user, attrs, code}) ->
+calcUserAttrValue = ({user, attrs, code}) ->
   return unless code
 
-  code =
-    if /\breturn\b/.test(code)
-      code
-    else
-      "return #{code};"
+  code = "return #{code};" unless /\breturn\b/.test(code)
 
   func = new Function('{name, display_name, email, primary_group, attrs, tools}', code)
   try
@@ -22,7 +18,7 @@ export getAttrDefaultValue = ({user, attrs, code}) ->
       tools: {toRomaji, toKatakana, toHiragana, capitalize, xxh32, xxh64}
     }
   catch error
-    console.warn({msg: 'Failed to getAttrDefaultValue', code: code, error: error})
+    console.warn({msg: 'Failed to calcUserAttrValue', code: code, error: error})
     return
 
   result
@@ -35,7 +31,7 @@ export CalcUserAttrs = (state, {user, attrs}) ->
   attrDefaults = {}
 
   for attr in attrs when attr.code
-    attrDefaults[attr.name] = getAttrDefaultValue({user, attrs: attrValues, code: attr.code})
+    attrDefaults[attr.name] = calcUserAttrValue({user, attrs: attrValues, code: attr.code})
     if user.attrSettings[attr.name] == 'default'
       attrValues[attr.name] = attrDefaults[attr.name]
 
@@ -56,7 +52,7 @@ export InitUserAttrs = (state, {user, attrs}) ->
       attrSettings[attr.name] = 'input'
       continue
 
-    attrDefaults[attr.name] = getAttrDefaultValue({user, attrs: user.userdata.attrs, code: attr.code})
+    attrDefaults[attr.name] = calcUserAttrValue({user, attrs: user.userdata.attrs, code: attr.code})
 
     if state.mode == 'new' ||
         !user.userdata.attrs[attr.name]? ||
@@ -68,3 +64,18 @@ export InitUserAttrs = (state, {user, attrs}) ->
       attrValues[attr.name] = user.userdata.attrs[attr.name]
 
   {state..., user: {user..., attrs: attrValues, attrSettings, attrDefaults}, attrs}
+
+export setUserAttrsDefault = ({user, attrs}) ->
+  userAttrs = new Map(user.attrs?.entries())
+
+  for attr in attrs
+    if userAttrs.has(attr.name)
+      continue
+    else if !attr.code
+      # not add
+      continue
+    else
+      defaultValue = calcUserAttrValue({user, attrs: userAttrs, code: attr.code})
+      userAttrs.set(attr.name, defaultValue)
+
+  {user..., attrs: userAttrs}

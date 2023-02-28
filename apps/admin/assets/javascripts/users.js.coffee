@@ -27,9 +27,11 @@ import {PAGINATION_PARAM_TYPES} from '/assets/api/pagination.js'
 import {SEARCH_PARAM_TYPES} from '/assets/api/search.js'
 import {ORDER_PARAM_TYPES} from '/assets/api/order.js'
 
-import pageNav from './page_nav.js'
-import searchForm from './search_form.js'
-import {batchOperation, runDoNextAction, runStopAllAction} from './batch_operation.js'
+import pageNav from '/assets/admin/page_nav.js'
+import searchForm from '/assets/admin/search_form.js'
+import {batchOperation, runDoNextAction, runStopAllAction} from '/assets/admin/batch_operation.js'
+import {setUserAttrsDefault} from '/assets/admin/user_attrs.js'
+
 
 # mode
 #   loading: 読込中
@@ -74,6 +76,13 @@ normalizeUserUploaded = ({action, error, user...}) ->
     error
     normalizeUser(user)...
   }
+
+setAttrsAddOrModUsers = ({users, attrs}) ->
+  for user in users
+    if user.action == 'ADD' || user.action == 'MOD'
+      setUserAttrsDefault({user, attrs})
+    else
+      user
 
 indexOptionFromState = (state) ->
   pick({
@@ -329,7 +338,7 @@ UploadUsers = (state, {list, filename}) ->
   {
     state...
     mode: 'file'
-    users
+    users: setAttrsAddOrModUsers({users, attrs: state.attrs})
     filename
   }
 
