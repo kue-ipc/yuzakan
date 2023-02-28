@@ -296,7 +296,7 @@ class Provider < Hanami::Entity
     need_group!
     @cache_store.fetch(group_key(groupname)) do
       groupdata = @adapter.group_read(groupname)
-      groupdata = {primary: true}.merge(groupdata) if groupdata && @adapter.class.has_primary_group?
+      groupdata = {primary: true}.merge(groupdata) if groupdata && has_primary_group?
       @cache_store[group_key(groupname)] = groupdata
     end
   end
@@ -351,5 +351,14 @@ class Provider < Hanami::Entity
     else
       raise "不明な操作です。#{operation}"
     end
+  end
+
+  def has_group?
+    group
+  end
+
+  def has_primary_group?
+    need_adapter!
+    @adapter.class.has_primary_group?
   end
 end

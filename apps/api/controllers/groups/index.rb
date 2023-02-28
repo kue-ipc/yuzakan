@@ -101,8 +101,9 @@ module Api
 
         # sync on
         def get_groups_from_provider(params)
-          # syncモードでは無視される。
-          params = params.to_h.except(:no_sync, :primary_only, :hide_prohibited, :show_deleted)
+          params = params.to_h
+
+          # , :primary_only, :hide_prohibited, :show_deleted)
 
           if params.key?(:order) && !params[:key].start_with?('name')
             # nameに対する順序以外は無視される。
@@ -113,6 +114,9 @@ module Api
           query = ("*#{params[:query]}*" if params[:query]&.size&.positive?)
 
           @provider_repository.ordered_all_with_adapter_by_operation(:group_read).each do |provider|
+            # プライマリグループがある場合のみ検索
+            next if params[:primary_only] && !provider.has_primary_group?
+
             items =
               if query
                 provider.group_search(query)
@@ -123,6 +127,18 @@ module Api
           end
 
           all_items = groups_providers.keys
+
+          # prohibitedなグループは隠す
+          all_items -= @group_repository.filter(prohibited: true).map(:name) if params[:hide_prohibited]
+
+          # プロバイダーにないグループもすべて取り出す
+          if params[:show_deleted]
+            filter = params.slice(:query, :match)
+            filter[:primary] = true if params[:primary_only]
+            filter[:prohibited] = false if params[:hide_prohibited]
+            all_items |= @group_repository.filter(**filter).map(:name)
+          end
+
           all_items.sort!
           all_items.reverse! if params[:order] == 'name.desc'
 
@@ -131,9 +147,11 @@ module Api
           end
 
           groups = get_groups(pager.page_items).map do |group|
+            # プロバイダーから削除しされているが、レポジトリ―では残っている場合は同期する。
+            group = get_sync_group(group.name) if !group.deleted && !groups_providers.key?(group.name)
             {
               **convert_for_json(group),
-              providers: groups_providers[group.name],
+              providers: groups_providers[group.name] || [],
             }
           end
 
