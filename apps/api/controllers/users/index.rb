@@ -101,8 +101,7 @@ module Api
 
         # sync on
         def get_users_from_provider(params)
-          # syncモードでは無視される。
-          params = params.to_h.except(:no_sync, :hide_prohibited, :show_deleted)
+          params = params.to_h
 
           if params.key?(:order) && !params[:key].start_with?('name')
             # nameに対する順序以外は無視される。
@@ -122,6 +121,18 @@ module Api
             items.each { |item| users_providers[item] << provider.name }
           end
           all_items = users_providers.keys.sort
+
+          # prohibitedなユーザーは隠す
+          all_items -= @user_repository.filter(prohibited: true).map(:name) if params[:hide_prohibited]
+
+          # プロバイダーにないユーザーもすべて取り出す
+          if params[:show_deleted]
+            filter = params.slice(:query, :match)
+            filter[:prohibited] = false if params[:hide_prohibited]
+            filter[:deleted] = false unless params[:show_deleted]
+            all_items |= @user_repository.filter(**filter).map(:name)
+          end
+
           all_items.sort!
           all_items.reverse! if params[:order] == 'name.desc'
 
@@ -130,6 +141,8 @@ module Api
           end
 
           users = get_users(pager.page_items).map do |user|
+            # プロバイダーから削除しされているが、レポジトリ―では残っている場合は同期する。
+            user = get_sync_user(user.name) if !user.deleted && !users_providers.key?(user.name)
             {
               **convert_for_json(user, assoc: true),
               providers: users_providers[user.name],

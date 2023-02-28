@@ -103,8 +103,6 @@ module Api
         def get_groups_from_provider(params)
           params = params.to_h
 
-          # , :primary_only, :hide_prohibited, :show_deleted)
-
           if params.key?(:order) && !params[:key].start_with?('name')
             # nameに対する順序以外は無視される。
             params = params.except(:order)
@@ -125,7 +123,6 @@ module Api
               end
             items.each { |item| groups_providers[item] << provider.name }
           end
-
           all_items = groups_providers.keys
 
           # prohibitedなグループは隠す
