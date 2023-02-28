@@ -62,7 +62,7 @@ export createResponseActionSetId = ({idKey = 'id', params...}) ->
 export createRunResponse = ({
   action
   url: defaultUrl, pathKeys = []
-  data: defaultData = {}, dataTypes = []
+  data: defaultData = {}, dataTypes = {}
   method
   params...
 }) ->

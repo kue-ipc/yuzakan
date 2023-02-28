@@ -22,6 +22,7 @@ import {
 import {createRunIndexGroups} from '/assets/api/groups.js'
 import {createRunIndexProviders} from '/assets/api/providers.js'
 import {createRunIndexAttrs} from '/assets/api/attrs.js'
+import {createRunShowSystem} from '/assets/api/system.js'
 
 import {PAGINATION_PARAM_TYPES} from '/assets/api/pagination.js'
 import {SEARCH_PARAM_TYPES} from '/assets/api/search.js'
@@ -77,10 +78,13 @@ normalizeUserUploaded = ({action, error, user...}) ->
     normalizeUser(user)...
   }
 
-setAttrsAddOrModUsers = ({users, attrs}) ->
+fillAddOrModUsers = ({users, attrs, domain}) ->
   for user in users
     if user.action == 'ADD' || user.action == 'MOD'
-      setUserAttrsDefault({user, attrs})
+      {
+        setUserAttrsDefault({user, attrs})...
+        email: user.email ? "#{user.name}@#{domain}"
+      }
     else
       user
 
@@ -338,7 +342,7 @@ UploadUsers = (state, {list, filename}) ->
   {
     state...
     mode: 'file'
-    users: setAttrsAddOrModUsers({users, attrs: state.attrs})
+    users: fillAddOrModUsers({users, attrs: state.attrs, domain: state.system?.domain})
     filename
   }
 
@@ -400,6 +404,8 @@ runIndexProviders = createRunIndexProviders()
 
 runIndexAttrs = createRunIndexAttrs()
 
+runShowSystem = createRunShowSystem()
+
 runIndexUsers = createRunIndexWithPageUsers({action: SetIndexUsers})
 
 runPushHistory = (dispatch, params) ->
@@ -440,6 +446,7 @@ main = ->
     [runIndexGroups]
     [runIndexProviders]
     [runIndexAttrs]
+    [runShowSystem]
     [runIndexUsers, indexOptionFromState(initState)]
   ]
 
