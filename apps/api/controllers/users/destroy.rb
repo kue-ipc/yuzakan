@@ -30,11 +30,12 @@ module Api
         end
 
         def call(params)
-          provider_delete_user({username: @username}) unless @user.deleted?
+          unless @user.deleted?
+            provider_delete_user({username: @name}) unless @user.deleted?
+            sync_user({usnername: @name})
+          end
 
-          load_user(sync: true)
-
-          @user_repository.delete(@user.id) if params[:erase] && @user.deleted?
+          @user_repository.delete(@user.id) if params[:permanent]
 
           self.body = user_json
         end
