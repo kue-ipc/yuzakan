@@ -240,6 +240,14 @@ module Yuzakan
 
       group true
 
+      def initialize(params, logger: Logger.new($stderr))
+        super
+
+        @username_map = {}
+        @groupname_map = {}
+        @dn_entries = {}
+      end
+
       def check
         opts = {
           base: @params[:base_dn],
@@ -306,14 +314,14 @@ module Yuzakan
         # グループの追加と削除
         return unless userdata[:groups]
 
-        cur_list = user_group_list(username)
-        new_list = [userdata[:primary_group], *userdata[:groups]].compact.uniq
-        (new_list - cur_list).each do |groupname|
-          member_add(groupname, username)
+        remains = Set.new(user_group_list(username))
+        remains.delete(userdata[:primary_group])
+        userdata[:groups].ecah do |groupname|
+          next if groupname == userdata[:primary_group]
+
+          member_add(groupname, username) unless remains.delete?(groupname)
         end
-        (cur_list - new_list).each do |groupname|
-          member_remove(groupname, username)
-        end
+        remains.each { |groupname| member_remove(groupname, username) }
       end
 
       def user_delete(username)
@@ -602,7 +610,23 @@ module Yuzakan
         end
       end
 
+      # TODO: キャッシュの持たせ方を工夫すべき
+      private def get_dn(dn)
+        dn_str = dn.to_s.downcase
+        entry = @dn_entries[dn_str]
+        return entry if entry
+
+        opts = search_user_opts('*', base: dn,
+                                     scope: Net::LDAP::SearchScope_BaseObject)
+        entry = ldap_search(opts).first
+        @dn_entries[dn_str] = entry
+      end
+
       private def get_user_dn(user_dn)
+        user_dn_str = user_dn.to_s.downcase
+        user = @dn_entries[user_dn_str]
+        return user if user
+
         user_dn = Net::LDAP::DN.new(user_dn) if user_dn.is_a?(String)
         unless scope_in?(user_dn, base: user_search_base_dn,
                                   scope: user_search_scope)
@@ -611,10 +635,15 @@ module Yuzakan
 
         opts = search_user_opts('*', base: user_dn,
                                      scope: Net::LDAP::SearchScope_BaseObject)
-        ldap_search(opts).first
+        user = ldap_search(opts).first
+        @dn_entries[user_dn_str] = user
       end
 
       private def get_group_dn(group_dn)
+        group_dn_str = group_dn.to_s.downcase
+        group = @dn_entries[group_dn_str]
+        return @dn_entries[user_dn_str] if @dn_entries.key?(user_dn_str)
+
         group_dn = Net::LDAP::DN.new(group_dn) if group_dn.is_a?(String)
         unless scope_in?(group_dn, base: group_search_base_dn,
                                    scope: group_search_scope)
@@ -623,7 +652,7 @@ module Yuzakan
 
         opts = search_group_opts('*', base: group_dn,
                                       scope: Net::LDAP::SearchScope_BaseObject)
-        ldap_search(opts).first
+        @dn_entries[group_dn_str] = ldap_search(opts).first
       end
 
       private def generate_filter(filter)
@@ -771,14 +800,26 @@ module Yuzakan
       end
 
       private def get_user_entry(username)
+        user = @dn_entries[@username_map[username]]
+        return user if user
+
         opts = search_user_opts(username)
-        ldap_search(opts).first
+        user = ldap_search(opts).first
+        user_dn_str = user.dn.to_s.downcase
+        @username_map[username] = user_dn_str
+        @dn_entries[user_dn_str] = user
       end
 
       private def get_group_entry(groupname)
+        group = @dn_entries[@groupname_map[groupname]]
+        return group if group
+
         groupname += @params[:group_name_suffix] if @params[:group_name_suffix]&.size&.positive?
         opts = search_group_opts(groupname)
-        ldap_search(opts).first
+        group = ldap_search(opts).first
+        group_dn_str = group.dn.to_s.downcase
+        @groupname_map[groupname] = group_dn_str
+        @dn_entries[group_dn_str] = group
       end
 
       private def get_user_name(user)
