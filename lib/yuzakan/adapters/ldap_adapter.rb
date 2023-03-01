@@ -321,8 +321,17 @@ module Yuzakan
         return if user.nil?
         return if user_entry_unmanageable?(user)
 
+        data = user_entry_to_data(user)
+
+        run_before_user_delete(username)
+
         ldap_delete(user.dn)
-        user_entry_to_data(user)
+
+        data
+      end
+
+      private def run_before_user_delete(username)
+        # do nothing
       end
 
       def user_auth(username, password)

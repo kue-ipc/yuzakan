@@ -77,6 +77,19 @@ module Yuzakan
       group :primary
 
       # override
+      private def run_before_user_delete(username)
+        super
+
+        user = get_user_entry(username)
+        return if user.nil?
+
+        # 通常のメンバーのみ削除する
+        get_memberuid_groups(user).each do |group|
+          remove_member(group, user)
+        end
+      end
+
+      # override
       private def create_user_attributes(username, **userdata)
         attributes = super
 
@@ -161,7 +174,7 @@ module Yuzakan
 
       # override
       private def remove_member(group, user)
-        return false unless group['memberUid']&.incldue?(user.uid.first)
+        return false unless group['memberUid']&.include?(user.uid.first)
 
         operations = [operation_delete(:memberuid, user.uid.first)]
         ldap_modify(group.dn, operations)
