@@ -43,11 +43,13 @@ module Api
         def initialize(user_repository: UserRepository.new,
                        group_repository: GroupRepository.new,
                        provider_repository: ProviderRepository.new,
+                       member_repository: MemberRepository.new,
                        **opts)
           super
           @user_repository ||= user_repository
           @group_repository ||= group_repository
           @provider_repository ||= provider_repository
+          @member_repository ||= member_repository
         end
 
         def call(params)
@@ -165,7 +167,8 @@ module Api
         private def get_sync_user(username)
           @sync_user ||= SyncUser.new(provider_repository: @provider_repository,
                                       user_repository: @user_repository,
-                                      group_repository: @group_repository)
+                                      group_repository: @group_repository,
+                                      member_repository: @member_repository)
           result = @sync_user.call({username: username})
           if result.failure?
             Hanami.logger.error "[#{self.class.name}] failed sync user: #{username} - #{result.errors}"

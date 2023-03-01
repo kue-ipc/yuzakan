@@ -24,12 +24,14 @@ module Api
                        provider_repository: ProviderRepository.new,
                        auth_log_repository: AuthLogRepository.new,
                        group_repository: GroupRepository.new,
+                       member_repository: MemberRepository.new,
                        **opts)
           super
           @user_repository ||= user_repository
           @provider_repository ||= provider_repository
           @auth_log_repository ||= auth_log_repository
           @group_repository ||= group_repository
+          @member_repository ||= member_repository
         end
 
         def call(params)
@@ -81,7 +83,8 @@ module Api
           if user.nil?
             sync_user = SyncUser.new(provider_repository: @provider_repository,
                                      user_repository: @user_repository,
-                                     group_repository: @group_repository)
+                                     group_repository: @group_repository,
+                                     member_repository: @member_repository)
             sync_user_result = sync_user.call({username: params[:username]})
             halt_json 500, errors: sync_user_result.errors if sync_user_result.failure?
 

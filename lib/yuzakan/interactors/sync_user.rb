@@ -24,10 +24,12 @@ class SyncUser
 
   def initialize(provider_repository: ProviderRepository.new,
                  user_repository: UserRepository.new,
-                 group_repository: GroupRepository.new)
+                 group_repository: GroupRepository.new,
+                 member_repository: MemberRepository.new)
     @provider_repository = provider_repository
     @user_repository = user_repository
     @group_repository = group_repository
+    @member_repository = member_repository
   end
 
   def call(params)
@@ -55,7 +57,8 @@ class SyncUser
     end
 
     if @providers.empty?
-      unregister_user_result = UnregisterUser.new(user_repository: @user_repository)
+      unregister_user_result = UnregisterUser.new(user_repository: @user_repository,
+                                                  member_repository: @member_repository)
         .call(username: @username)
       if unregister_user_result.failure?
         Hanami.logger.error "[#{self.class.name}] Failed to call UnregisterUser"
@@ -65,7 +68,8 @@ class SyncUser
       end
       @user = unregister_user_result.user
     else
-      register_user_result = RegisterUser.new(user_repository: @user_repository, group_repository: @group_repository)
+      register_user_result = RegisterUser.new(user_repository: @user_repository, group_repository: @group_repository,
+                                              member_repository: @member_repository)
         .call(@data.slice(:username, :display_name, :email, :primary_group, :groups))
       if register_user_result.failure?
         Hanami.logger.error "[#{self.class.name}] Failed to call RegisterUser"

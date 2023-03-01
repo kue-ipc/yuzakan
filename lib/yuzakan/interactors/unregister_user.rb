@@ -20,8 +20,10 @@ class UnregisterUser
 
   expose :user
 
-  def initialize(user_repository: UserRepository.new)
+  def initialize(user_repository: UserRepository.new,
+                 member_repository: MemberRepository.new)
     @user_repository = user_repository
+    @member_repository = member_repository
   end
 
   def call(params)
@@ -31,7 +33,7 @@ class UnregisterUser
 
     @user_repository.transaction do
       @user_repository.update(@user.id, deleted: true, deleted_at: Time.now)
-      @user_repository.clear_group(@user)
+      @member_repository.clear_of_user(@user)
     end
   end
 

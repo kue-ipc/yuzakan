@@ -45,7 +45,13 @@ def let_mock_repositories
   let(:auth_log_repository_stubs) { {} }
   let(:config_repository_stubs) { {current: config} }
   let(:group_repository_stubs) { {find_or_create_by_groupname: groups} }
-  let(:member_repository_stubs) { {} }
+  let(:member_repository_stubs) {
+    {
+      set_groups_for_user: [Member.new],
+      set_primary_group_for_user: Member.new,
+      clear_of_user: nil,
+    }
+  }
   let(:network_repository_stubs) { {all: networks} }
   let(:provider_param_repository_stubs) { {} }
   let(:provider_repository_stubs) {
@@ -59,9 +65,6 @@ def let_mock_repositories
       find: user,
       find_by_username: user,
       find_with_groups: user_with_groups,
-      set_primary_group: Member.new,
-      add_group: Member.new,
-      remove_group: Member.new,
     }
   }
 

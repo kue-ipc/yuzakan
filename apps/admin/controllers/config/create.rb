@@ -34,6 +34,7 @@ module Admin
                        provider_repository: ProviderRepository.new,
                        user_repository: UserRepository.new,
                        group_repository: GroupRepository.new,
+                       member_repository: MemberRepository.new,
                        **opts)
           super
           @config_repository ||= config_repository
@@ -41,6 +42,7 @@ module Admin
           @provider_repository ||= provider_repository
           @user_repository ||= user_repository
           @group_repository ||= group_repository
+          @member_repository ||= member_repository
         end
 
         def call(params)
@@ -119,7 +121,8 @@ module Admin
 
           sync_user = SyncUser.new(provider_repository: @provider_repository,
                                    user_repository: @user_repository,
-                                   group_repository: @group_repository)
+                                   group_repository: @group_repository,
+                                   member_repository: @member_repository)
 
           sync_result = sync_user.call(admin_user_params.slice(:username))
           if sync_result.failure?

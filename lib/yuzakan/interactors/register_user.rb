@@ -25,9 +25,11 @@ class RegisterUser
   expose :user
 
   def initialize(user_repository: UserRepository.new,
-                 group_repository: GroupRepository.new)
+                 group_repository: GroupRepository.new,
+                 member_repository: MemberRepository.new)
     @user_repository = user_repository
     @group_repository = group_repository
+    @member_repository = member_repository
   end
 
   def call(params)
@@ -40,27 +42,19 @@ class RegisterUser
     }
     user_id = @user_repository.find_by_name(username)&.id
 
-    @user =
-      if user_id
-        @user_repository.update(user_id, data)
-      else
-        @user_repository.create(data)
-      end
+    @user_repository.transaction do
+      @user =
+        if user_id
+          @user_repository.update(user_id, data)
+        else
+          @user_repository.create(data)
+        end
 
-    @user = @user_repository.find_with_groups(@user.id)
+      @member_repository.set_primary_group_for_user(@user, get_group(params[:primary_group])) if params[:primary_group]
 
-    @user_repository.set_primary_group(@user, get_group(params[:primary_group])) if params[:primary_group]
-
-    if params[:groups]
-      existing_groups = @user.supplementary_groups.to_h { |group| [group.name, group] }
-      groups = [params[:primary_group], *params[:groups]].compact.uniq.map { |groupname| get_group(groupname) }
-
-      groups.each do |group|
-        cerrent_group = existing_groups.delete(group.name)
-        @user_repository.add_group(@user, group) unless cerrent_group
-      end
-      existing_groups.each_value do |group|
-        @user_repository.remove_group(@user, group)
+      if params[:groups]
+        groups = [params[:primary_group], *params[:groups]].compact.uniq.map { |groupname| get_group(groupname) }
+        @member_repository.set_groups_for_user(@user, groups)
       end
     end
 
