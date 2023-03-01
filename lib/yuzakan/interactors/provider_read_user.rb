@@ -31,7 +31,7 @@ class ProviderReadUser
     rescue => e
       Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
       Hanami.logger.error e
-      error(I18n.t('errors.action.error', action: I18n.t('interactors.read_user'), target: provider.label))
+      error(I18n.t('errors.action.error', action: I18n.t('interactors.provider_read_user'), target: provider.label))
       fail!
     end
     # pp @providers
@@ -58,7 +58,7 @@ class ProviderReadUser
           error!(I18n.t('errors.not_found', name: I18n.t('entities.provider')))
         end
 
-        unless provider.can_do?(:user_change_password)
+        unless provider.can_do?(operation)
           Hanami.logger.warn "[#{self.class.name}] No ability: #{provider.name}, #{operation}"
           error!(I18n.t('errors.no_ability', name: provider.label, action: I18n.t(operation, scope: 'operations')))
         end

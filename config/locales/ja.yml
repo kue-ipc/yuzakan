@@ -80,19 +80,26 @@ ja:
         再度%{action}を実行してください。
     invalid_csrf_token: CSRFトークンが不正です。
   interactors:
-    change_password: パスワード変更
-    create_attr: 属性作成
-    create_user: ユーザー作成
-    delete_user: ユーザー削除
-    generate_password: 'パスワード生成'
-    lock_user: ユーザーロック
-    read_user: ユーザー取得
+    decrypt: 復号化
+    encrypt: 暗号化
+    find_network: ネットワーク検索
+    generate_password: パスワード生成
+    pcovider_authenticate: プロバイダーユーザー認証
+    pcovider_lock_user: プロバイダーユーザーロック
+    provider_change_password: プロバイダーパスワード変更
+    provider_create_user: プロバイダーユーザー作成
+    provider_delete_user: プロバイダーユーザー削除
+    provider_read_group: プロバイダーグループ読取
+    provider_read_user: プロバイダーユーザー読取
+    provider_unlock_user: プロバイダーユーザーアンロック
+    provider_update_user: プロバイダーユーザー更新
+    register_group: グループ登録
     register_user: ユーザー登録
     reset_password: パスワードリセット
+    sync_group: グループ同期
     sync_user: ユーザー同期
-    unlock_user: ユーザーアンロック
+    unregister_group: グループ解除
     unregister_user: ユーザー解除
-    update_user: ユーザー更新
   operations:
     user_create: ユーザー作成
     user_update: ユーザー更新

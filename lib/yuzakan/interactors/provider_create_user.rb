@@ -24,6 +24,7 @@ class ProviderCreateUser
   end
 
   expose :providers
+  expose :changed
 
   def initialize(provider_repository: ProviderRepository.new)
     @provider_repository = provider_repository
@@ -36,16 +37,18 @@ class ProviderCreateUser
       attrs: params[:attrs] || {},
     })
 
+    @changed = false
     @providers = get_providers(params[:providers]).to_h do |provider|
-      [provider.name, provider.user_create(username, password, **userdata)]
+      data = provider.user_create(username, password, **userdata)
+      @changed = true if data
+      [provider.name, data]
     rescue => e
       Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
       Hanami.logger.error e
-      error(I18n.t('errors.action.error', action: I18n.t('interactors.create_user'), target: provider.label))
-      if @providers.values.any?
-        error(I18n.t('errors.action.stopped_after_some',
-                     action: I18n.t('interactors.create_user'),
-                     target: I18n.t('entities.provider')))
+      error(I18n.t('errors.action.error', action: I18n.t('interactors.provider_create_user'), target: provider.label))
+      if @changed
+        error(I18n.t('errors.action.stopped_after_some', action: I18n.t('interactors.provider_create_user'),
+                                                         target: I18n.t('entities.provider')))
       end
       fail!
     end
@@ -72,7 +75,7 @@ class ProviderCreateUser
           error!(I18n.t('errors.not_found', name: I18n.t('entities.provider')))
         end
 
-        unless provider.can_do?(:user_change_password)
+        unless provider.can_do?(operation)
           Hanami.logger.warn "[#{self.class.name}] No ability: #{provider.name}, #{operation}"
           error!(I18n.t('errors.no_ability', name: provider.label, action: I18n.t(operation, scope: 'operations')))
         end

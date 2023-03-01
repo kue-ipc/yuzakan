@@ -32,7 +32,7 @@ module Api
         def call(params)
           unless @user.deleted?
             provider_delete_user({username: @name}) unless @user.deleted?
-            sync_user({usnername: @name})
+            sync_user({username: @name})
           end
 
           @user_repository.delete(@user.id) if params[:permanent]

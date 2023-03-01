@@ -372,7 +372,7 @@ DoActionUser = (state, user) ->
     when 'MOD'
       [ModUser, user]
     when 'DEL'
-      [DelUser, user]
+      [DelUser, {user..., permanent: user.deleted}]
     when 'SYN'
       [SyncUser, user]
     else
