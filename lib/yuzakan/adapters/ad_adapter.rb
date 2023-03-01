@@ -77,6 +77,8 @@ module Yuzakan
 
       private def run_after_user_create(username, password = nil, **userdata)
         super
+
+        # デフォルトUACの適用
         user = get_user_entry(username)
         uac = user_entry_uac(user)
         uac.add(AccountControl::DEFAULT_USER_FLAGS)

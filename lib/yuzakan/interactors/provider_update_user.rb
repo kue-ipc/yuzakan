@@ -16,6 +16,7 @@ class ProviderUpdateUser
       optional(:display_name).filled(:str?, max_size?: 255)
       optional(:email).filled(:str?, :email?, max_size?: 255)
       optional(:primary_group).filled(:str?, :name?, max_size?: 255)
+      optional(:groups).each(:str?, :name?, max_size?: 255)
       optional(:providers).each(:str?, :name?, max_size?: 255)
       optional(:attrs) { hash? }
     end
@@ -30,7 +31,7 @@ class ProviderUpdateUser
 
   def call(params)
     username = params[:username]
-    userdata = params.slice(:username, :display_name, :email, :primary_group).merge({
+    userdata = params.slice(:username, :display_name, :email, :primary_group, :groups).merge({
       attrs: params[:attrs] || {},
     })
 

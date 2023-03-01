@@ -261,16 +261,18 @@ module Yuzakan
         attributes = create_user_attributes(username, **userdata)
         dn_attr = @params[:create_user_dn_attr]
         dn = "#{dn_attr}=#{attributes[dn_attr.intern]},#{@params[:create_user_ou_dn]}"
-
         ldap_add(dn, attributes)
+
         run_after_user_create(username, password, **userdata)
 
         user_read(username)
       end
 
       private def run_after_user_create(username, password = nil, **userdata)
+        # パスワード変更
         user_change_password(username, password) if password
-        member_add(userdata[:primary_group], username) if userdata[:primary_group]
+
+        # グループの追加
         [userdata[:primary_group], *userdata[:groups]].compact.uniq.each do |groupname|
           member_add(groupname, username) if userdata[:primary_group]
         end
@@ -292,10 +294,26 @@ module Yuzakan
         operations = update_operations(user, attributes)
         ldap_modify(user.dn, operations) unless operations.empty?
 
-        # primary_group がある場合は追加する
-        member_add(userdata[:primary_group], username) if userdata[:primary_group]
+        run_after_user_update(username, **userdata)
 
         user_read(username)
+      end
+
+      private def run_after_user_update(username, **userdata)
+        # プリマリーグループがあれば、無条件で追加する。
+        member_add(userdata[:primary_group], username) if userdata[:primary_group]
+
+        # グループの追加と削除
+        return unless userdata[:groups]
+
+        cur_list = user_group_list(username)
+        new_list = [userdata[:primary_group], *userdata[:groups]].compact.uniq
+        (new_list - cur_list).each do |groupname|
+          member_add(groupname, username)
+        end
+        (cur_list - new_list).each do |groupname|
+          member_remove(groupname, username)
+        end
       end
 
       def user_delete(username)
