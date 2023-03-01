@@ -114,14 +114,14 @@ module Yuzakan
           else
             'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
           end
-        operations << operation_add_or_replace('sambaNTPAssword', nt_password)
+        operations << operation_add_or_replace('sambaNTPAssword', nt_password, user)
         lm_password =
           if @params[:samba_lm_password]
             generate_lm_password(password)
           else
             'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
           end
-        operations << operation_add_or_replace('sambaLMPAssword', lm_password)
+        operations << operation_add_or_replace('sambaLMPAssword', lm_password, user)
         operations
       end
 
