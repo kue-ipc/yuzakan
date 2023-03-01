@@ -271,6 +271,9 @@ module Yuzakan
       private def run_after_user_create(username, password = nil, **userdata)
         user_change_password(username, password) if password
         member_add(userdata[:primary_group], username) if userdata[:primary_group]
+        [userdata[:primary_group], *userdata[:groups]].compact.uniq.each do |groupname|
+          member_add(groupname, username) if userdata[:primary_group]
+        end
       end
 
       def user_read(username)
@@ -820,7 +823,7 @@ module Yuzakan
 
       # LDAP操作後のフック
       private def after_ldap_action(action, result)
-        return unless result.nil?
+        return if result
 
         ldap_error_message = ldap.get_operation_result.error_message
         @logger.error "LDAP #{action} error: #{ldap_error_message}"
@@ -858,7 +861,7 @@ module Yuzakan
 
       private def ldap_rename(olddn, newrdn)
         @logger.debug "LDAP rename: #{oldnd} -> #{newrdn}"
-        result = ldap.delete({olddn: olddn, newrdn: newrdn})
+        result = ldap.rename({olddn: olddn, newrdn: newrdn})
         after_ldap_action(:rename, result)
         result
       end
