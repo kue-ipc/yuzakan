@@ -140,8 +140,9 @@ module Yuzakan
       end
 
       # override
+      # プライマリーグループはいれない
       private def get_memberof_groups(user)
-        (get_gidnumber_groups(user) + get_memberuid_groups(user)).compact.uniq
+        get_memberuid_groups(user)
       end
 
       # override

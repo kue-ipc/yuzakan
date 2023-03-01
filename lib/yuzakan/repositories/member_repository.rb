@@ -6,45 +6,50 @@ class MemberRepository < Hanami::Repository
     belongs_to :group
   end
 
-  def find_primary_of_user(user)
-    members.where(user_id: user.id, primary: true).one
-  end
-
   def find_of_user_group(user, group)
     members.where(user_id: user.id, group_id: group.id).one
   end
 
-  def all_of_user(user)
-    members.where(user_id: user.id).to_a
+  private def primary_of_user(user)
+    members.where(user_id: user.id, primary: true)
+  end
+
+  private def of_user(user)
+    members.where(user_id: user.id)
   end
 
   def clear_of_user(user)
-    members.where(user_id: user.id).delete
+    of_user(user).delete
   end
 
   def set_primary_group_for_user(user, group)
-    primary_member = find_primary_of_user(user)
+    primary = nil
+    primary_of_user(user).each do |member|
+      if member.group_id == group&.id
+        primary = member
+      else
+        # 既存を格下げ
+        update(member.id, {primary: false})
+      end
+    end
 
-    # 既存が設定済みの場合はそのまま終了する。
-    return primary_member if primary_member&.group_id == group&.id
+    # 既存が設定済みの場合は終了。
+    return primary if primary
 
-    # 既存を格下げ
-    update(primary_member.id, {primary: false}) if primary_member
-
-    # プライマリーグループがない場合はそのまま終了
+    # プライマリーグループがない場合は終了。
     return if group.nil?
 
     # 既存がある場合は更新、無ければ作成
     member = find_of_user_group(user, group)
     if member
-      update(primary_member.id, {primary: true})
+      update(member.id, {primary: true})
     else
       create({user_id: user.id, group_id: group.id, primary: true})
     end
   end
 
   def set_groups_for_user(user, groups)
-    remains = all_of_user(user).to_h { |member| [member.group_id, member] }
+    remains = of_user(user).to_a.to_h { |member| [member.group_id, member] }
     members = []
     groups.each do |group|
       members << (remains.delete(group.id) || create({user_id: user.id, group_id: group.id}))
