@@ -818,7 +818,7 @@ module Yuzakan
       end
 
       private def remove_member(group, user)
-        return false if user.memberof.exclude?(group.dn)
+        return false unless user['memberOf'].include?(group.dn)
 
         operations = [operation_delete(:member, user.dn)]
         ldap_modify(group.dn, operations)

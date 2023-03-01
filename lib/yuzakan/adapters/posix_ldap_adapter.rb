@@ -77,6 +77,18 @@ module Yuzakan
       group :primary
 
       # override
+      private def run_after_user_update(username, **userdata)
+        super
+
+        user = get_user_entry(username)
+        return if user.nil?
+
+        # プライマリーグループは通常のメンバーから削除する
+        primary_group = get_primary_group(user)
+        remove_member(primary_group, user)
+      end
+
+      # override
       private def run_before_user_delete(username)
         super
 
