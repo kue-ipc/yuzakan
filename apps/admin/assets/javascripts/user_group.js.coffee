@@ -14,15 +14,15 @@ groupLi = ({name, groups, removable = false}) ->
   group = groups.find (item) -> item.name == name
   html.li {class: 'list-inline-item border border-success rounded px-1 mb-1'}, [
     text "#{group.display_name} (#{group.name})"
-    if removable
-      html.span {class: 'px-1 rounded-3 ms-1 border boder-dark'},
-        html.a {
-          href: '#'
-          class: 'btn-close'
-          onclick: [RemoveGroup, name]
-        }
-    else
-      text ''
+    # if removable
+    #   html.span {class: 'px-1 rounded-3 ms-1 border boder-dark'},
+    #     html.a {
+    #       href: '#'
+    #       class: 'btn-close'
+    #       onclick: [RemoveGroup, name]
+    #     }
+    # else
+    #   text ''
   ]
 
 export default userGroup = ({mode, user, groups}) ->

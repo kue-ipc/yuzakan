@@ -1,6 +1,8 @@
 import {text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
+import {entityLabel} from '/assets/common/helper.js'
+
 import valueDisplay from '/assets/app/value_display.js'
 
 import {CalcUserAttrs} from '/assets/admin/user_attrs.js'
@@ -108,11 +110,13 @@ attrSettingTd = ({mode, user, attr}) ->
 
 attrDefaultTd = ({user, attr}) ->
   html.td {},
-    valueDisplay {value: user.attrDefaults[attr.name], type: attr.type}
+    # valueDisplay {value: user.attrDefaults[attr.name], type: attr.type}
+    valueDisplay {value: undefined, type: attr.type}
 
 attrValueTd = ({mode, user, attr}) ->
-  defaultValue = user.attrDefaults[attr.name]
-  value = user.attrs[attr.name]
+  # defaultValue = user.attrDefaults[attr.name]
+  defaultValue = null #TODO
+  value = user.attrs.get(attr.name)
   html.td {},
     attrValue {
       attr_name: attr.name
@@ -131,22 +135,23 @@ attrValueTd = ({mode, user, attr}) ->
 providerTd = ({user, attr, provider}) ->
   return html.td {} unless user.providers.includes(provider.name)
 
-  provider_userdata = (user.provider_userdatas.find (data) -> data.provider.name == provider.name)
-  return html.td {} unless provider_userdata?
+  data = user.providers_data.get(provider.name)
+  # provider_userdata = (user.provider_userdatas.find (data) -> data.provider.name == provider.name)
+  return html.td {} unless data?
 
-  provider_value = provider_userdata.userdata.attrs[attr.name]
+  provider_value = data.attrs.get(attr.name)
 
   html.td {},
     valueDisplay {
-      value: provider_userdata.userdata.attrs[attr.name]
+      value: provider_value
       type: attr.type
-      color: if provider_value == user.attrs[attr.name] then 'success' else 'danger'
+      color: if provider_value == user.attrs.get(attr.name) then 'success' else 'danger'
     }
 
 export default userAttr = ({mode, user, providers, attrs}) ->
-  provider_userdatas =
-  for provider in providers
-    (user.provider_userdatas.find (data) -> data.provider.name == provider.name)?.userdata
+  # provider_userdatas =
+  # for provider in providers
+  #   (user.provider_userdatas.find (data) -> data.provider.name == provider.name)?.userdata
 
   html.div {}, [
     html.h4 {}, text '属性一覧'
@@ -155,17 +160,17 @@ export default userAttr = ({mode, user, providers, attrs}) ->
       html.thead {},
         html.tr {}, [
           html.th {}, text '属性名'
-          html.th {}, text 'デフォルト値'
-          html.th {}, text 'デファルト'
+          # html.th {}, text 'デフォルト値'
+          # html.th {}, text 'デファルト'
           html.th {}, text '設定値'
-          (html.th({}, text provider.label) for provider in providers)...
+          (html.th({}, text entityLabel(provider)) for provider in providers)...
         ]
       html.tbody {},
         for attr in attrs
           html.tr {}, [
-            html.td {}, text attr.label
-            attrDefaultTd {user, attr}
-            attrSettingTd {mode, user, attr}
+            html.td {}, text entityLabel(attr)
+            # attrDefaultTd {user, attr}
+            # attrSettingTd {mode, user, attr}
             attrValueTd {mode, user, attr}
             (providerTd {user, attr, provider} for provider in providers)...
           ]

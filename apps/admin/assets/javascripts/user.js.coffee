@@ -63,7 +63,7 @@ main = ->
       userGroup {mode, user, groups}
       userOperation {mode, user}
       userProvider {mode, user, providers}
-      # userAttr {mode, user, providers, attrs}
+      userAttr {mode, user, providers, attrs}
     ]
 
   node = document.getElementById('user')
