@@ -76,13 +76,9 @@ module Yuzakan
       SAMAB_NO_PASSWORD = 'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
 
       # override
-      def user_auth(username, password)
+      def ldap_user_auth(user, password)
         return true if super
         return false unless @params[:auth_nt_password]
-
-        user = ldap_user_read(username)
-        return false if user.nil?
-        return false if user_entry_sac(user).intersect?(SambaAccountControl::LOCKED_FLAGS)
 
         user.first('sambaNTPassword') == generate_nt_password(password)
       end

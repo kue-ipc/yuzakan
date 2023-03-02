@@ -306,18 +306,15 @@ module Yuzakan
         return false if user.nil?
         return false if user_entry_locked?(user)
 
-        @logger.debug "LDAP bind: #{user.dn}"
-        # 認証のbindには別のLDAPインスタンスを使用します。
-        generate_ldap.bind(method: :simple, username: user.dn, password: password)
+        ldap_user_auth(user, password)
       end
 
       def user_change_password(username, password)
         user = ldap_user_read(username)
         return false if user.nil?
         return false if user_entry_unmanageable?(user)
-        return false if user_entry_unmanageable?(user)
 
-        ldap_modify(user.dn, change_password_operations(user, password, locked: user_entry_locked?(user)))
+        ldap_user_change_password(user, password)
       end
 
       def user_lock(username)
@@ -363,7 +360,9 @@ module Yuzakan
 
       def group_read(groupname)
         group = ldap_group_read(groupname)
-        group && group_entry_to_data(group)
+        return if group.nil?
+
+        group_entry_to_data(group)
       end
 
       def group_list
@@ -387,7 +386,7 @@ module Yuzakan
         group = ldap_group_read(groupname)
         return if group.nil?
 
-        get_member_users(group).map { |user| user_entry_name(user) }
+        ldap_member_list(group).map { |user| user_entry_name(user) }
       end
 
       def member_add(groupname, username)
@@ -443,10 +442,20 @@ module Yuzakan
         user
       end
 
-      def ldap_user_delete(user)
+      private def ldap_user_delete(user)
         ldap_delete(user.dn)
 
         user
+      end
+
+      private def ldap_user_auth(user, password)
+        @logger.debug "LDAP bind: #{user.dn}"
+        # 認証のbindには別のLDAPインスタンスを使用します。
+        generate_ldap.bind(method: :simple, username: user.dn, password: password)
+      end
+
+      private def ldap_user_change_password(user, password)
+        ldap_modify(user.dn, change_password_operations(user, password, locked: user_entry_locked?(user)))
       end
 
       private def ldap_user_group_list(user)
@@ -455,10 +464,20 @@ module Yuzakan
         ldap_search(opts).to_a
       end
 
+      private def ldap_primary_group(_user)
+        nil
+      end
+
       private def ldap_group_read(groupname)
         groupname += @params[:group_name_suffix] if @params[:group_name_suffix]&.size&.positive?
         opts = search_group_opts(groupname)
         ldap_search(opts).first
+      end
+
+      private def ldap_member_list(group)
+        filter = Net::LDAP::Filter.eq('memberOf', group.dn)
+        opts = search_user_opts('*', filter: filter)
+        ldap_search(opts).to_a
       end
 
       private def ldap_member_add(group, user)
@@ -853,16 +872,6 @@ module Yuzakan
           @logger.warn "no suffix group name: #{name}"
         end
         name
-      end
-
-      private def ldap_primary_group(_user)
-        nil
-      end
-
-      private def get_member_users(group)
-        filter = Net::LDAP::Filter.eq('memberOf', group.dn)
-        opts = search_user_opts('*', filter: filter)
-        ldap_search(opts).to_a
       end
 
       private def value_to_str(value)

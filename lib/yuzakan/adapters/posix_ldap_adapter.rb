@@ -180,7 +180,7 @@ module Yuzakan
       end
 
       # override
-      private def get_member_users(group)
+      private def ldap_member_list(group)
         (get_gidnumber_users(group) + get_memberuid_users(group)).uniq
       end
 
