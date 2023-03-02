@@ -50,10 +50,13 @@ main = ->
   ]
 
   view = ({mode, id, user, providers, attrs, groups, system, option}) ->
-    console.log {mode, id, user, providers, attrs, groups, system, option}
     if mode == 'none'
       return html.div {},
         html.strong {}, text 'ユーザーが見つかりませんでした。'
+
+    if mode == 'new'
+      return html.div {},
+        html.strong {}, text '準備中です。'
 
     unless user? && providers? && attrs? && groups? && system?
       return html.div {}, text '読み込み中...'
