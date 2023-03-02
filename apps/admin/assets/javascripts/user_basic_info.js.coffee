@@ -5,7 +5,7 @@ import * as dlh from '/assets/app/dl_horizontal.js'
 import {CLEARANCE_LEVELS} from '/assets/definition.js'
 import {createEventValueAction} from '/assets/input_event.js'
 
-import {CalcUserAttrs} from './user_attrs.js'
+import {CalcUserAttrs} from '/assets/admin/user_attrs.js'
 
 SetUserUsername = (state, name) ->
   email =

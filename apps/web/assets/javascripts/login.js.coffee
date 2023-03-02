@@ -4,7 +4,7 @@ import {focus} from '/assets/vendor/hyperapp-dom.js'
 import {delay} from '/assets/vendor/hyperapp-time.js'
 import WebData from '/assets/app/web_data.js'
 import BsIcon from '/assets/app/bs_icon.js'
-import csrf from './csrf.js'
+import csrf from '/assets/csrf.js'
 
 webData = new WebData {
   id: 'login'

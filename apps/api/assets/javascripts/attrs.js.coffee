@@ -6,7 +6,7 @@ import {
   createRunCreateWithId
   createRunUpdateWithId
   createRunDestroyWithId
-} from './hyper_json.js'
+} from '/assets/api/hyper_json.js'
 
 import {pickType} from '/assets/common/helper.js'
 

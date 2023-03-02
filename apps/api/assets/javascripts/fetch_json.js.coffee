@@ -4,7 +4,7 @@ import {isPresent} from '/assets/common/helper.js'
 import {formDataToJson, formDataToUrlencoded} from '/assets/common/form_helper.js'
 import {objToJson, objToUrlencoded, toInteger} from '/assets/common/convert.js'
 
-import {extractPagination} from './pagination.js'
+import {extractPagination} from '/assets/api/pagination.js'
 
 ALLOWED_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE']
 

@@ -5,23 +5,31 @@ import * as html from '/assets/vendor/hyperapp-html.js'
 
 import {fetchJsonGet} from '/assets/api/fetch_json.js'
 
-import {runGetSystem} from '/assets/api/get_system.js'
-import {createRunGetAttrs} from '/assets/api/attrs.js'
-import {runGetProviders} from '/assets/api/providers.js'
-import {runGetGroups} from '/assets/api/groups.js'
+import {createRunShowSystem} from '/assets/api/system.js'
+import {createRunIndexAttrs} from '/assets/api/attrs.js'
+import {createRunIndexProviders} from '/assets/api/providers.js'
+import {createRunIndexGroupsNoSnyc} from '/assets/api/groups.js'
 
-import basicInfo from './user_basic_info.js'
-import operationMenu from './user_operation_menu.js'
-import groupMembership from './user_group_membership.js'
-import providerReg from './user_provider_reg.js'
-import attrList from './user_attr_list.js'
-import {runGetUserWithInit} from './user_get_user.js'
+import basicInfo from '/assets/admin/user_basic_info.js'
+import operationMenu from '/assets/admin/user_operation_menu.js'
+import groupMembership from '/assets/admin/user_group_membership.js'
+import providerReg from '/assets/admin/user_provider_reg.js'
+import attrList from '/assets/admin/user_attr_list.js'
+import {runGetUserWithInit} from '/assets/admin/user_get_user.js'
 
-import {InitUserAttrs} from './user_attrs.js'
+import {InitUserAttrs} from '/assets/admin/user_attrs.js'
 
 SetAttrsWithInit = (state, attrs) -> [InitUserAttrs, {attrs}]
 
-runGetAttrsWithInit = createRunGetAttrs(SetAttrsWithInit)
+## Effecters
+
+runIndexGroups = createRunIndexGroupsNoSnyc()
+
+runIndexProviders = createRunIndexProviders()
+
+runShowSystem = createRunShowSystem()
+
+runIndexAttrsWithInit = createRunIndexAttrs(SetAttrsWithInit)
 
 name = location.pathname.split('/').at(-1)
 name = undefined if name == '*'
@@ -29,10 +37,10 @@ mode = if name? then 'show' else 'new'
 
 init = [
   {mode, name, user: null, providers: null, attrs: null, groups: null}
-  [runGetSystem]
-  [runGetProviders]
-  [runGetAttrsWithInit]
-  [runGetGroups]
+  [runShowSystem]
+  [runIndexProviders]
+  [runIndexAttrsWithInit]
+  [runIndexGroups]
   [runGetUserWithInit, {name}]
 ]
 

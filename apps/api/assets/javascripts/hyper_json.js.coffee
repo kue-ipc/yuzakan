@@ -4,7 +4,7 @@ import {pick, pickType, identity} from '/assets/common/helper.js'
 import csrf from '/assets/csrf.js'
 
 import {fetchJson} from '/assets/api/fetch_json.js'
-import {DEFAULT_PAGE, DEFAULT_PER_PAGE} from './pagination.js'
+import {DEFAULT_PAGE, DEFAULT_PER_PAGE} from '/assets/api/pagination.js'
 # create Actions
 
 # データを受け取るアクションからレスポンスに対応した新しいアクションを作成する。

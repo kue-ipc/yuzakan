@@ -2,11 +2,11 @@ import {app, text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 import {DateTime} from '/assets/vendor/luxon.js'
 
-import ModalDialog from './modal_dialog.js'
+import ModalDialog from '/assets/app/modal_dialog.js'
 import BsIcon from '/assets/app/bs_icon.js'
 import * as dlh from '/assets/app/dl_horizontal.js'
 
-import {runGetSystem} from './api/get_system.js'
+import {runShowSystem} from '/assets/api/system.js'
 
 export default class LoginInfo extends ModalDialog
   constructor: ({service = {}, props...}) ->
@@ -24,7 +24,7 @@ export default class LoginInfo extends ModalDialog
     @service = service
 
   # override
-  appInit: => [@initState({}), runGetSystem]
+  appInit: => [@initState({}), runShowSystem]
 
   # override
   modalAction: (state) ->

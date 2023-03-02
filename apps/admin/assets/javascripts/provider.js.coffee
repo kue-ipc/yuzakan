@@ -7,9 +7,10 @@ import {fetchJsonGet} from '/assets/api/fetch_json.js'
 import {formName, formId} from '/assets/common/form_helper.js'
 import csrf from '/assets/csrf.js'
 
-import providerParams from './provider_params.js'
 import WebData from '/assets/app/web_data.js'
 import ConfirmDialog from '/assets/app/confirm_dialog.js'
+
+import providerParams from '/assets/admin/provider_params.js'
 
 parentNames = ['provider']
 

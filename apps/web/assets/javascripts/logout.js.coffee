@@ -2,7 +2,7 @@ import {app, text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 import WebData from '/assets/app/web_data.js'
 import BsIcon from '/assets/app/bs_icon.js'
-import csrf from './csrf.js'
+import csrf from '/assets/csrf.js'
 
 webData = new WebData {
   id: 'logout'

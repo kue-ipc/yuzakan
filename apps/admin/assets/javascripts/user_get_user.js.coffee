@@ -1,5 +1,6 @@
 import {fetchJsonGet} from '/assets/api/fetch_json.js'
-import {InitUserAttrs} from './user_attrs.js'
+
+import {InitUserAttrs} from '/assets/admin/user_attrs.js'
 
 newUser = {
   name: ''

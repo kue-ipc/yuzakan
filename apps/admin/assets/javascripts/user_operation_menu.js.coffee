@@ -8,7 +8,7 @@ import WebData from '/assets/app/web_data.js'
 import ConfirmDialog from '/assets/app/confirm_dialog.js'
 import LoginInfo from '/assets/login_info.js'
 
-import {runGetUserWithInit} from './user_get_user.js'
+import {runGetUserWithInit} from '/assets/admin/user_get_user.js'
 
 parentNames = ['user']
 

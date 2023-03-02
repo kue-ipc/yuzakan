@@ -2,7 +2,7 @@
 
 import {
   createRunShow
-} from './hyper_json.js'
+} from '/assets/api/hyper_json.js'
 
 import {pickType} from '/assets/common/helper.js'
 
@@ -54,3 +54,7 @@ export createRunShowSystem = (params = {}) ->
     url: API_SYSTEM
     params...
   })
+
+# Effecters
+
+export runShowSystem = createRunShowSystem()

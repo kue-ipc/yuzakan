@@ -1,4 +1,4 @@
-# /api/groups
+# /api/groupscreateRunCreateWithId
 
 import {
   createRunIndex
@@ -7,11 +7,11 @@ import {
   createRunCreateWithId
   createRunUpdateWithId
   createRunDestroyWithId
-} from './hyper_json.js'
+} from '/assets/api/hyper_json.js'
 
-import {PAGINATION_PARAM_TYPES} from './pagination.js'
-import {SEARCH_PARAM_TYPES} from './search.js'
-import {ORDER_PARAM_TYPES} from './order.js'
+import {PAGINATION_PARAM_TYPES} from '/assets/api/pagination.js'
+import {SEARCH_PARAM_TYPES} from '/assets/api/search.js'
+import {ORDER_PARAM_TYPES} from '/assets/api/order.js'
 
 import {pickType} from '/assets/common/helper.js'
 
