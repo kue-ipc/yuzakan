@@ -17,7 +17,7 @@ import {
   normalizeGroup
   createRunIndexWithPageGroups, createRunShowGroup, createRunUpdateGroup
 } from '/assets/api/groups.js'
-import {createRunIndexProviders} from '/assets/api/providers.js'
+import {runIndexProviders} from '/assets/api/providers.js'
 import {PAGINATION_PARAM_TYPES} from '/assets/api/pagination.js'
 import {SEARCH_PARAM_TYPES} from '/assets/api/search.js'
 import {ORDER_PARAM_TYPES} from '/assets/api/order.js'
@@ -349,8 +349,6 @@ PopState = (state, params) ->
   [ReloadIndexGroups, data]
 
 # Effecters
-
-runIndexProviders = createRunIndexProviders()
 
 runIndexGroups = createRunIndexWithPageGroups({action: SetIndexGroups})
 

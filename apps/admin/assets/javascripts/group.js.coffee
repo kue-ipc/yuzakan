@@ -9,8 +9,8 @@ import {dlClasses, dtClasses, ddClasses} from '/assets/app/dl_horizontal.js'
 import BsIcon from '/assets/app/bs_icon.js'
 import valueDisplay from '/assets/app/value_display.js'
 
-import {createRunIndexProviders} from '/assets/api/providers.js'
-import {createRunShowGroup} from '/assets/api/groups.js'
+import {runIndexProviders} from '/assets/api/providers.js'
+import {runShowGroup} from '/assets/api/groups.js'
 import {SHOW_GROUP_PARAM_TYPES} from '/assets/api/groups.js'
 
 # Views
@@ -56,7 +56,6 @@ basicInfo = ({mode, group}) ->
   ]
 
 providerReg = ({mode, group, providers}) ->
-  console.log group
   html.div {}, [
     html.h4 {}, text '登録状況'
     html.table {class: 'table'}, [
@@ -116,10 +115,6 @@ ChangeOption = (state, option) ->
   [ReloadShowGroup, {option: {state.option..., option...}}]
 
 # Effectors
-
-runIndexProviders = createRunIndexProviders()
-
-runShowGroup = createRunShowGroup()
 
 runPushHistory = (dispatch, params) ->
   query = "?#{objToUrlencoded(params)}"

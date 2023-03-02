@@ -18,11 +18,10 @@ import {
   createRunIndexWithPageUsers
   createRunShowUser, createRunCreateUser, createRunUpdateUser, createRunDestroyUser
 } from '/assets/api/users.js'
-
-import {createRunIndexGroupsNoSnyc} from '/assets/api/groups.js'
-import {createRunIndexProviders} from '/assets/api/providers.js'
-import {createRunIndexAttrs} from '/assets/api/attrs.js'
-import {createRunShowSystem} from '/assets/api/system.js'
+import {runIndexGroupsNoSync} from '/assets/api/groups.js'
+import {runIndexProviders} from '/assets/api/providers.js'
+import {runIndexAttrs} from '/assets/api/attrs.js'
+import {runShowSystem} from '/assets/api/system.js'
 
 import {PAGINATION_PARAM_TYPES} from '/assets/api/pagination.js'
 import {SEARCH_PARAM_TYPES} from '/assets/api/search.js'
@@ -398,14 +397,6 @@ PopState = (state, params) ->
 
 ## Effecters
 
-runIndexGroups = createRunIndexGroupsNoSnyc()
-
-runIndexProviders = createRunIndexProviders()
-
-runIndexAttrs = createRunIndexAttrs()
-
-runShowSystem = createRunShowSystem()
-
 runIndexUsers = createRunIndexWithPageUsers({action: SetIndexUsers})
 
 runPushHistory = (dispatch, params) ->
@@ -443,10 +434,10 @@ main = ->
 
   init = [
     initState
-    [runIndexGroups]
+    [runShowSystem]
     [runIndexProviders]
     [runIndexAttrs]
-    [runShowSystem]
+    [runIndexGroupsNoSync]
     [runIndexUsers, indexOptionFromState(initState)]
   ]
 

@@ -1,5 +1,10 @@
 # /api/users
 
+import {pickType} from '/assets/common/helper.js'
+
+import {PAGINATION_PARAM_TYPES} from '/assets/api/pagination.js'
+import {SEARCH_PARAM_TYPES} from '/assets/api/search.js'
+import {ORDER_PARAM_TYPES} from '/assets/api/order.js'
 import {
   createRunIndex
   createRunIndexWithPage
@@ -8,12 +13,6 @@ import {
   createRunUpdateWithId
   createRunDestroyWithId
 } from '/assets/api/hyper_json.js'
-
-import {PAGINATION_PARAM_TYPES} from '/assets/api/pagination.js'
-import {SEARCH_PARAM_TYPES} from '/assets/api/search.js'
-import {ORDER_PARAM_TYPES} from '/assets/api/order.js'
-
-import {pickType} from '/assets/common/helper.js'
 
 # Contants
 
@@ -171,3 +170,12 @@ export createRunDestroyUser = (params = {}) ->
     dataTypes: DESTROY_USER_PARAM_TYPES
     params...
   })
+
+# Effecters
+
+export runIndexUsersNoSync = createRunIndexUsersNoSync()
+export runIndexWithPageUsers = createRunIndexWithPageUsers()
+export runShowUser = createRunShowUser()
+export runCreateUser = createRunCreateUser()
+export runUpdateUser = createRunUpdateUser()
+export runDestroyUser = createRunDestroyUser()

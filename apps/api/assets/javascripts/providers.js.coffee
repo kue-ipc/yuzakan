@@ -118,3 +118,11 @@ export createRunDestroyProvider = (params = {}) ->
     dataTypes: DESTROY_PROVIDER_PARAM_TYPES
     params...
   })
+
+# Effecters
+
+export runIndexProviders = createRunIndexProviders()
+export runShowProvider = createRunShowProvider()
+export runCreateProvider = createRunCreateProvider()
+export runUpdateProvider = createRunUpdateProvider()
+export runDestroyProvider = createRunDestroyProvider()

@@ -112,3 +112,11 @@ export createRunDestroyAttr = (params = {}) ->
     dataTypes: DESTROY_ATTR_PARAM_TYPES
     params...
   })
+
+# Effecters
+
+export runIndexAttrs = createRunIndexAttrs()
+export runShowAttr = createRunShowAttr()
+export runCreateAttr = createRunCreateAttr()
+export runUpdateAttr = createRunUpdateAttr()
+export runDestroyAttr = createRunDestroyAttr()

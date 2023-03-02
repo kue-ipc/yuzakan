@@ -8,7 +8,7 @@ import {fetchJsonGet} from '/assets/api/fetch_json.js'
 import {createRunShowSystem} from '/assets/api/system.js'
 import {createRunIndexAttrs} from '/assets/api/attrs.js'
 import {createRunIndexProviders} from '/assets/api/providers.js'
-import {createRunIndexGroupsNoSnyc} from '/assets/api/groups.js'
+import {createRunIndexGroupsNoSync} from '/assets/api/groups.js'
 
 import basicInfo from '/assets/admin/user_basic_info.js'
 import operationMenu from '/assets/admin/user_operation_menu.js'
@@ -23,7 +23,7 @@ SetAttrsWithInit = (state, attrs) -> [InitUserAttrs, {attrs}]
 
 ## Effecters
 
-runIndexGroups = createRunIndexGroupsNoSnyc()
+runIndexGroups = createRunIndexGroupsNoSync()
 
 runIndexProviders = createRunIndexProviders()
 

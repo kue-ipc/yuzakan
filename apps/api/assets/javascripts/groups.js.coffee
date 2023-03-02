@@ -106,7 +106,7 @@ export SetGroup = (state, group) -> {
 
 # create Effecters
 
-export createRunIndexGroupsNoSnyc = ({data = {}, params...} = {}) ->
+export createRunIndexGroupsNoSync = ({data = {}, params...} = {}) ->
   createRunIndex({
     action: SetGroups
     normalizer: normalizeGroups
@@ -160,3 +160,11 @@ export createRunDestroyGroup = (params = {}) ->
     dataTypes: DESTROY_GROUP_PARAM_TYPES
     params...
   })
+
+# Effecters
+export runIndexGroupsNoSync = createRunIndexGroupsNoSync()
+export runIndexWithPageGroups = createRunIndexWithPageGroups()
+export runShowGroup = createRunShowGroup()
+export runCreateGroup = createRunCreateGroup()
+export runUpdateGroup = createRunUpdateGroup()
+export runDestroyGroup = createRunDestroyGroup()
