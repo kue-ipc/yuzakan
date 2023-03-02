@@ -75,6 +75,7 @@ module Yuzakan
 
       group true
 
+      # override
       private def run_after_user_create(user, **userdata)
         super
 

@@ -77,6 +77,23 @@ module Yuzakan
       group :primary
 
       # override
+      private def ldap_member_add(group, user)
+        return false if group['memberUid']&.include?(user.uid.first)
+        return false if user.gidNumber.first == group.gidNumber.first
+
+        operations = [operation_add(:memberuid, user.uid.first)]
+        ldap_modify(group.dn, operations)
+      end
+
+      # override
+      private def ldap_member_remove(group, user)
+        return false unless group['memberUid']&.include?(user.uid.first)
+
+        operations = [operation_delete(:memberuid, user.uid.first)]
+        ldap_modify(group.dn, operations)
+      end
+
+      # override
       private def run_after_user_update(username, **userdata)
         super
 
@@ -85,7 +102,7 @@ module Yuzakan
 
         # プライマリーグループは通常のメンバーから削除する
         primary_group = get_primary_group(user)
-        remove_member(primary_group, user)
+        ldap_member_remove(primary_group, user)
       end
 
       # override
@@ -97,7 +114,7 @@ module Yuzakan
 
         # 通常のメンバーのみ削除する
         get_memberuid_groups(user).each do |group|
-          remove_member(group, user)
+          ldap_member_remove(group, user)
         end
       end
 
@@ -168,23 +185,6 @@ module Yuzakan
       # override
       private def get_member_users(group)
         (get_gidnumber_users(group) + get_memberuid_users(group)).uniq
-      end
-
-      # override
-      private def ldap_member_add(group, user)
-        return false if group['memberUid']&.include?(user.uid.first)
-        return false if user.gidNumber.first == group.gidNumber.first
-
-        operations = [operation_add(:memberuid, user.uid.first)]
-        ldap_modify(group.dn, operations)
-      end
-
-      # override
-      private def remove_member(group, user)
-        return false unless group['memberUid']&.include?(user.uid.first)
-
-        operations = [operation_delete(:memberuid, user.uid.first)]
-        ldap_modify(group.dn, operations)
       end
 
       # override

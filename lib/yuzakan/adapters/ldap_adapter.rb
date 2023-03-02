@@ -240,6 +240,8 @@ module Yuzakan
 
       group true
 
+      # = 標準メソッド(抽象クラスの上書き)
+
       def check
         opts = {
           base: @params[:base_dn],
@@ -256,7 +258,7 @@ module Yuzakan
       end
 
       def user_create(username, password = nil, **userdata)
-        return nil if user_read(username)
+        return nil if ldap_user_read(username)
 
         user = ldap_user_create(**userdata, username: username, passward: password)
 
@@ -264,31 +266,6 @@ module Yuzakan
         user = ldap_get(user.dn) if run_after_user_create(user, **userdata)
 
         user_entry_to_data(user)
-      end
-
-      private def ldap_user_create(**userdata)
-        attributes = create_user_attributes(**userdata)
-
-        dn_attr = @params[:create_user_dn_attr]
-        attribute_name(@params[:create_user_dn_attr])
-        dn = "#{dn_attr}=#{attributes[dn_attr.intern]},#{@params[:create_user_ou_dn]}"
-        ldap_add(dn, attributes)
-
-        ldap_get(dn)
-      end
-
-      private def run_after_user_create(user, primary_group: nil, groups: [], **userdata)
-        changed = false
-
-        # グループの追加
-        [primary_group, *groups].compact.uniq.each do |groupname|
-          group = ldap_group_read(groupname)
-          next unless group
-
-          changed = true if ldap_member_add(group, user)
-        end
-
-        changed
       end
 
       def user_read(username)
@@ -453,10 +430,65 @@ module Yuzakan
         user = ldap_user_read(username)
         return if user.nil?
 
-        remove_member(group, user)
+        ldap_member_remove(group, user)
       end
 
-      ## プライベートメソッド
+      # = プライベートメソッド
+
+      # == LDAPの実体メソッド
+
+      private def ldap_user_create(**userdata)
+        attributes = create_user_attributes(**userdata)
+
+        dn_attr = @params[:create_user_dn_attr]
+        attribute_name(@params[:create_user_dn_attr])
+        dn = "#{dn_attr}=#{attributes[dn_attr.intern]},#{@params[:create_user_ou_dn]}"
+        ldap_add(dn, attributes)
+
+        ldap_get(dn)
+      end
+
+      private def ldap_user_read(username)
+        opts = search_user_opts(username)
+        ldap_search(opts).first
+      end
+
+      private def ldap_group_read(groupname)
+        groupname += @params[:group_name_suffix] if @params[:group_name_suffix]&.size&.positive?
+        opts = search_group_opts(groupname)
+        ldap_search(opts).first
+      end
+
+      private def ldap_member_add(group, user)
+        return false if user['memberOf'].include?(group.dn)
+
+        operations = [operation_add(:member, user.dn)]
+        ldap_modify(group.dn, operations)
+      end
+
+      private def ldap_member_remove(group, user)
+        return false unless user['memberOf'].include?(group.dn)
+
+        operations = [operation_delete(:member, user.dn)]
+        ldap_modify(group.dn, operations)
+      end
+
+      # == 処理の実行前後
+
+      private def run_after_user_create(user, primary_group: nil, groups: [], **userdata)
+        changed = false
+
+        # グループの追加
+        [primary_group, *groups].compact.uniq.each do |groupname|
+          group = ldap_group_read(groupname)
+          next unless group
+
+          changed = true if ldap_member_add(group, user)
+        end
+
+        changed
+      end
+
 
       # 値をLDAP上の値に変換する
       private def convert_ldap_value(value)
@@ -769,17 +801,6 @@ module Yuzakan
         Net::LDAP::Entry.attribute_name(name)
       end
 
-      private def ldap_user_read(username)
-        opts = search_user_opts(username)
-        ldap_search(opts).first
-      end
-
-      private def ldap_group_read(groupname)
-        groupname += @params[:group_name_suffix] if @params[:group_name_suffix]&.size&.positive?
-        opts = search_group_opts(groupname)
-        ldap_search(opts).first
-      end
-
       private def get_user_name(user)
         user.first(@params[:user_name_attr]).downcase
       end
@@ -807,20 +828,6 @@ module Yuzakan
         filter = Net::LDAP::Filter.eq('memberOf', group.dn)
         opts = search_user_opts('*', filter: filter)
         ldap_search(opts).to_a
-      end
-
-      private def ldap_member_add(group, user)
-        return false if user['memberOf'].include?(group.dn)
-
-        operations = [operation_add(:member, user.dn)]
-        ldap_modify(group.dn, operations)
-      end
-
-      private def remove_member(group, user)
-        return false unless user['memberOf'].include?(group.dn)
-
-        operations = [operation_delete(:member, user.dn)]
-        ldap_modify(group.dn, operations)
       end
 
       private def value_to_str(value)
