@@ -1,7 +1,7 @@
 import {text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
-import BsIcon from '/assets/app/bs_icon.js'
+import bsIcon from '/assets/app/bs_icon.js'
 
 export default searchForm = ({query, onsearch}) ->
   searchInput = html.input {
@@ -24,7 +24,7 @@ export default searchForm = ({query, onsearch}) ->
           type: 'button'
           class: 'btn btn-outline-secondary'
           onclick: (state) -> [onsearch, searchInput.node.value]
-        }, BsIcon({name: 'search'})
+        }, bsIcon({name: 'search'})
       ]
     html.div {class: 'col-md-3'}, [
       html.input {

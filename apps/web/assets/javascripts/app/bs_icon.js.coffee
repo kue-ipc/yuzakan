@@ -2,7 +2,7 @@
 
 import * as svg from '/assets/vendor/hyperapp-svg.js'
 
-export default BsIcon = ({name, size = 24, alt, props...}) ->
+export default bsIcon = ({name, size = 24, alt, props...}) ->
   svg_props = {
     class: ['bi']
     width: size

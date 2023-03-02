@@ -6,7 +6,7 @@ import * as html from '/assets/vendor/hyperapp-html.js'
 import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
 import {objToUrlencoded} from '/assets/common/convert.js'
 import {dlClasses, dtClasses, ddClasses} from '/assets/app/dl_horizontal.js'
-import BsIcon from '/assets/app/bs_icon.js'
+import bsIcon from '/assets/app/bs_icon.js'
 import valueDisplay from '/assets/app/value_display.js'
 
 import {runIndexProviders} from '/assets/api/providers.js'
@@ -32,10 +32,10 @@ basicInfo = ({mode, group}) ->
       html.dd {class: ddClasses},
         if group.primary
           html.span {class: 'text-success'},
-            BsIcon({name: 'check-square'})
+            bsIcon({name: 'check-square'})
         else
           html.span {class: 'text-muted'},
-            BsIcon({name: 'square'})
+            bsIcon({name: 'square'})
       html.dt {class: dtClasses},
         text '状態'
       html.dd {class: ddClasses},

@@ -1,7 +1,7 @@
 import {text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
-import BsIcon from '/assets/app/bs_icon.js'
+import bsIcon from '/assets/app/bs_icon.js'
 import valueDisplay from '/assets/app/value_display.js'
 
 PROVIDER_REG_ITEMS = [
@@ -51,10 +51,10 @@ providerCheck = ({provider_name, checked, edit = false}) ->
   else
     if checked
       html.span {class: "text-success"},
-        BsIcon({name: 'check-square'})
+        bsIcon({name: 'check-square'})
     else
       html.span {class: "text-muted"},
-        BsIcon({name: 'square'})
+        bsIcon({name: 'square'})
 
 providerRegProviderTd = ({user, provider, name, type}) ->
   return html.td {} unless user.providers.includes(provider.name)

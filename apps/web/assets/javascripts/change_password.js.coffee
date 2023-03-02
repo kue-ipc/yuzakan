@@ -1,7 +1,7 @@
 import {h, text, app} from '/assets/vendor/hyperapp.js'
 import zxcvbn from '/assets/vendor/zxcvbn.js'
 
-import BsIcon from '/assets/app/bs_icon.js'
+import bsIcon from '/assets/app/bs_icon.js'
 import {camelize} from '/assets/common/string_helper.js'
 import {formName, formId} from '/assets/common/form_helper.js'
 import WebPostJson from '/assets/app/web_post_json.js'
@@ -174,7 +174,7 @@ class PasswordInputGenerator
             onmouseup: [@showPassword, {visible: false}]
             onmouseleave: [@showPassword, {visible: false}]
           },
-            BsIcon {size: 16, name: if visible then 'eye' else 'eye-slash'}
+            bsIcon {size: 16, name: if visible then 'eye' else 'eye-slash'}
           h 'div', {class: 'valid-feedback'}, text message
           h 'div', {class: 'invalid-feedback'}, text message
         ]

@@ -4,7 +4,7 @@
 
 import {h, text, app} from '/assets/vendor/hyperapp.js'
 import {Modal} from '/assets/vendor/bootstrap.js'
-import BsIcon from '/assets/app/bs_icon.js'
+import bsIcon from '/assets/app/bs_icon.js'
 
 export default class WebPostJson
   MESSAGE_EVENT = 'webpostjson.message'
@@ -212,7 +212,7 @@ StatusIcon = ({status}) ->
       h 'span', {class: 'visually-hidden'}, text '読込中...'
   {color, icon} = STATUS_LEVELS.get(status)
   h 'span', {class: ["text-#{color}", 'align-text-bottom']},
-    BsIcon {name: icon, size: 24}
+    bsIcon {name: icon, size: 24}
 
 MessageList = ({messages}) ->
   messages = [messages] unless messages instanceof Array

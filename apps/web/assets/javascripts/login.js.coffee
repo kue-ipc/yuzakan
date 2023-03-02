@@ -3,7 +3,7 @@ import * as html from '/assets/vendor/hyperapp-html.js'
 import {focus} from '/assets/vendor/hyperapp-dom.js'
 import {delay} from '/assets/vendor/hyperapp-time.js'
 import WebData from '/assets/app/web_data.js'
-import BsIcon from '/assets/app/bs_icon.js'
+import bsIcon from '/assets/app/bs_icon.js'
 import csrf from '/assets/csrf.js'
 
 webData = new WebData {
@@ -86,7 +86,7 @@ view = ({username, password, disabled}) ->
         disabled: not submittable({username, password, disabled})
         onclick: (state, event) -> [{state..., disabled: true}, login(state)]
       }, [
-        BsIcon {name: 'box-arrow-in-left', class: 'flex-shrink-0 me-1'}
+        bsIcon {name: 'box-arrow-in-left', class: 'flex-shrink-0 me-1'}
         text 'ログイン'
       ]
   ]

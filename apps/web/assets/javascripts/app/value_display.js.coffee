@@ -1,7 +1,7 @@
 import {text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
-import BsIcon from '/assets/app/bs_icon.js'
+import bsIcon from '/assets/app/bs_icon.js'
 import {convertToType, objToJson} from '/assets/common/convert.js'
 
 export default valueDisplay = ({value, type = 'string', color = 'body', na = false}) ->
@@ -14,7 +14,7 @@ export default valueDisplay = ({value, type = 'string', color = 'body', na = fal
       when 'string', 'text', 'date', 'time'
         text value
       when 'boolean'
-        if value then BsIcon({name: 'check-square'}) else BsIcon({name: 'square'})
+        if value then bsIcon({name: 'check-square'}) else bsIcon({name: 'square'})
       when 'integer', 'float', 'datatime'
         text String(value)
       when 'date', 'time'

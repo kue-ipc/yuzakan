@@ -3,7 +3,7 @@ import * as html from '/assets/vendor/hyperapp-html.js'
 import {DateTime} from '/assets/vendor/luxon.js'
 
 import ModalDialog from '/assets/app/modal_dialog.js'
-import BsIcon from '/assets/app/bs_icon.js'
+import bsIcon from '/assets/app/bs_icon.js'
 import * as dlh from '/assets/app/dl_horizontal.js'
 
 import {runShowSystem} from '/assets/api/system.js'
@@ -82,7 +82,7 @@ export default class LoginInfo extends ModalDialog
             href: site.url
           }, [
             text site.name
-            BsIcon {name: 'box-arrow-up-right', class: 'ms-1 d-print-none', size: 16}
+            bsIcon {name: 'box-arrow-up-right', class: 'ms-1 d-print-none', size: 16}
           ]
         dlh.dd {class: 'd-none d-print-block'},
           text site.name

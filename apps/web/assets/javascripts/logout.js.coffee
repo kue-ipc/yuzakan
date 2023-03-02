@@ -1,7 +1,7 @@
 import {app, text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 import WebData from '/assets/app/web_data.js'
-import BsIcon from '/assets/app/bs_icon.js'
+import bsIcon from '/assets/app/bs_icon.js'
 import csrf from '/assets/csrf.js'
 
 webData = new WebData {
@@ -24,7 +24,7 @@ view = (state) ->
     onclick: (state, event) ->
       [state, [logout]]
   }, [
-    BsIcon {name: 'box-arrow-right', class: 'flex-shrink-0 me-1'}
+    bsIcon {name: 'box-arrow-right', class: 'flex-shrink-0 me-1'}
     html.span {class: 'd-none d-md-inline'}, text 'ログアウト'
   ]
 

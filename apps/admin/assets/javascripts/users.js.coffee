@@ -7,7 +7,7 @@ import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '/assets/common
 import {objToUrlencoded, objToJson, listToParamName} from '/assets/common/convert.js'
 import {updateList, findList} from '/assets/common/list_helper.js'
 
-import BsIcon from '/assets/app/bs_icon.js'
+import bsIcon from '/assets/app/bs_icon.js'
 import valueDisplay from '/assets/app/value_display.js'
 import preCode from '/assets/app/pre_code.js'
 
@@ -184,7 +184,7 @@ userTr = ({user, groups, providers}) ->
     html.td {
       key: 'show'
       onclick: -> [SetUserInList, {user..., show_detail: !user.show_detail}]
-    }, BsIcon {name: if user.show_detail then 'chevron-down' else 'chevron-right'}
+    }, bsIcon {name: if user.show_detail then 'chevron-down' else 'chevron-right'}
     html.td {key: 'action'},
       switch user.action
         when ''
