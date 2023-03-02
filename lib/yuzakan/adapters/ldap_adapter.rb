@@ -285,7 +285,7 @@ module Yuzakan
           group = ldap_group_read(groupname)
           next unless group
 
-          changed ||= ldap_member_add(group, user)
+          changed = true if ldap_member_add(group, user)
         end
 
         changed
