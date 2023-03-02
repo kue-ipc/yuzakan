@@ -247,19 +247,20 @@ valueToUrlencoded = (value) ->
 
 export recordToObj = (record) ->
   root = {}
-  for key, value of record when value? && value != ''
+  for key, value of record
+    value = undefined if value == ''
     keyList = paramNameToList(key)
     obj = root
     while subKey = keyList.shift()
       if keyList.length == 0
-        obj[subKey] = value
+        obj[subKey] = value if value?
       else
         if keyList[0] == ''
           unless keyList.length == 1
             console.error 'empty key must be last: %s', key
             throw 'ilegal subkey: empty key must be last'
-          obj[subKey] == Array(value)
-        else if keyList[0].match(/^\d+$/)
+          obj[subKey] == (v for v in Array(value) when v? && v != '')
+        else if /^\d+$/.test(keyList[0])
           obj[subKey] ?= []
           unless obj[subKey] instanceof Array
             console.warn 'mix numbers and words on object: %s', key
