@@ -5,7 +5,7 @@ import bsIcon from '/assets/app/bs_icon.js'
 import valueDisplay from '/assets/app/value_display.js'
 
 PROVIDER_REG_ITEMS = [
-  {name: 'name', label: 'ユーザー名', type: 'string'}
+  {name: 'username', label: 'ユーザー名', type: 'string'}
   {name: 'display_name', label: '表示名', type: 'string'}
   {name: 'email', label: 'メールアドレス', type: 'string'}
   {name: 'locked', label: 'ロック', type: 'boolean'}
@@ -59,15 +59,15 @@ providerCheck = ({provider_name, checked, edit = false}) ->
 providerRegProviderTd = ({user, provider, name, type}) ->
   return html.td {} unless user.providers.includes(provider.name)
 
-  provider_userdata = (user.provider_userdatas.find (data) -> data.provider.name == provider.name)
+  data = user.providers_data.get(provider.name)
 
   html.td {},
     valueDisplay {
-      value: provider_userdata?.userdata?[name]
+      value: data?[name]
       type
       color:
         if user[name]
-          if user[name] == provider_userdata?.userdata?[name]
+          if user[name] == data?[name]
             'success'
           else
             'danger'
@@ -78,7 +78,6 @@ providerRegProviderTd = ({user, provider, name, type}) ->
 providerRegTr = ({user, providers, name, label, type}) ->
   html.tr {}, [
     html.th {}, text label
-    # html.td {}, valueDisplay {value: user.userdata[name], type}
     (providerRegProviderTd {user, provider, name, type} for provider in providers)...
   ]
 

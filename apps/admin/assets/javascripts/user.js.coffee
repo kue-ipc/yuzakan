@@ -62,7 +62,7 @@ main = ->
       userInfo {mode, user, groups}
       userGroup {mode, user, groups}
       userOperation {mode, user}
-      # userProvider {mode, user, providers}
+      userProvider {mode, user, providers}
       # userAttr {mode, user, providers, attrs}
     ]
 
