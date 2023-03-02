@@ -10,75 +10,9 @@ import valueDisplay from '/assets/app/value_display.js'
 import {runIndexProviders} from '/assets/api/providers.js'
 import {SHOW_GROUP_PARAM_TYPES, runShowGroup} from '/assets/api/groups.js'
 
-import groupBasicInfo from '/assets/admin/group_basic_info.js'
-
-# Views
-
-providerReg = ({mode, group, providers}) ->
-  html.div {}, [
-    html.h4 {}, text '登録状況'
-    html.table {class: 'table'}, [
-      html.thead {},
-        html.tr {}, [
-          html.th {}, text '名前'
-          # html.th {}, text '値'
-          (html.th({}, text entityLabel(provider)) for provider in providers)...
-        ]
-      html.tbody {},
-        for {name, label, type} in [
-          {name: 'name', label: 'グループ名', type: 'string'}
-          {name: 'display_name', label: '表示名', type: 'string'}
-          {name: 'primary', label: 'プライマリ', type: 'boolean'}
-        ]
-          html.tr {}, [
-            html.td {}, text label
-            # html.td {}, valueDisplay {value: group[name], type}
-            (for provider in providers
-              groupdata = group.providers_data?.get(provider.name)
-              html.td {},
-                valueDisplay {
-                  value: groupdata?[name]
-                  type
-                  color: if group[name]
-                    if group[name] == groupdata?[name]
-                      'success'
-                    else
-                      'danger'
-                  else
-                    'body'
-                }
-            )...
-          ]
-    ]
-  ]
-
-operationMenu = ({option}) ->
-  html.div {}, [
-    html.h4 {}, text '操作メニュー'
-    html.p {}, text '準備中...'
-  ]
-
-ReloadShowGroup = (state, data) ->
-  console.debug 'reload show group'
-  newState = {state..., data...}
-  params = pick({
-    newState.option...
-  }, Object.keys(SHOW_GROUP_PARAM_TYPES))
-  [
-    newState,
-    [runPushHistory, params]
-    [runShowGroup, {id: state.id, params...}]
-  ]
-
-ChangeOption = (state, option) ->
-  [ReloadShowGroup, {option: {state.option..., option...}}]
-
-# Effectors
-
-runPushHistory = (dispatch, params) ->
-  query = "?#{objToUrlencoded(params)}"
-  if (query != location.search)
-    history.pushState(params, '', "#{location.pathname}#{query}")
+import groupInfo from '/assets/admin/group_info.js'
+import groupProvider from '/assets/admin/group_provider.js'
+import groupOperation from '/assets/admin/group_operation.js'
 
 # main
 
@@ -108,9 +42,9 @@ main = ->
       return html.div {}, text '読み込み中...'
 
     html.div {}, [
-      groupBasicInfo {mode, group}
-      operationMenu {option}
-      providerReg {mode, group, providers}
+      groupInfo {mode, group}
+      groupOperation {option}
+      groupProvider {mode, group, providers}
     ]
 
   node = document.getElementById('group')

@@ -8,8 +8,8 @@ import bsIcon from '/assets/app/bs_icon.js'
 
 # Views
 
-export default groupBasicInfo = ({mode, group}) ->
-  html.div {}, [
+export default groupInfo = ({mode, group}) ->
+  html.div {key: 'group-info'}, [
     html.h4 {}, text '基本情報'
     dlh.dl {}, [
       dlh.dt {},
