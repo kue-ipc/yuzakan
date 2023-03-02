@@ -143,7 +143,7 @@ providerTd = ({user, attr, provider}) ->
       color: if provider_value == user.attrs[attr.name] then 'success' else 'danger'
     }
 
-export default attrList = ({mode, user, providers, attrs}) ->
+export default userAttr = ({mode, user, providers, attrs}) ->
   provider_userdatas =
   for provider in providers
     (user.provider_userdatas.find (data) -> data.provider.name == provider.name)?.userdata

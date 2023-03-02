@@ -13,11 +13,11 @@ import {runIndexGroupsNoSync} from '/assets/api/groups.js'
 import {createRunIndexAttrs} from '/assets/api/attrs.js'
 import {SHOW_USER_PARAM_TYPES, createRunShowUser} from '/assets/api/users.js'
 
-import userBasicInfo from '/assets/admin/user_basic_info.js'
-import operationMenu from '/assets/admin/user_operation_menu.js'
-import groupMembership from '/assets/admin/user_group_membership.js'
-import providerReg from '/assets/admin/user_provider_reg.js'
-import attrList from '/assets/admin/user_attr_list.js'
+import userInfo from '/assets/admin/user_info.js'
+import userOperation from '/assets/admin/user_operation.js'
+import userGroup from '/assets/admin/user_group.js'
+import userProvider from '/assets/admin/user_provider.js'
+import userAttr from '/assets/admin/user_attr.js'
 
 import {runGetUserWithInit} from '/assets/admin/user_get_user.js'
 
@@ -59,11 +59,11 @@ main = ->
       return html.div {}, text '読み込み中...'
 
     html.div {}, [
-      userBasicInfo {mode, user, groups}
-      groupMembership {mode, user, groups}
-      operationMenu {mode, user}
-      # providerReg {mode, user, providers}
-      # attrList {mode, user, providers, attrs}
+      userInfo {mode, user, groups}
+      userGroup {mode, user, groups}
+      userOperation {mode, user}
+      # userProvider {mode, user, providers}
+      # userAttr {mode, user, providers, attrs}
     ]
 
   node = document.getElementById('user')

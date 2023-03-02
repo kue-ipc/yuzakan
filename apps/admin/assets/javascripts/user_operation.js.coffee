@@ -226,56 +226,61 @@ ChangeUserName = (state, name) ->
   history.pushState(null, null, "/admin/users/#{name}") if name? && name != state.name
   {state..., name}
 
-
-export default operationMenu = ({mode}) ->
-  html.div {}, [
+export default userOperation = ({option}) ->
+  html.div {key: 'group-operation'}, [
     html.h4 {}, text '操作メニュー'
-    html.div {class: 'form-check form-switch'}, [
-      html.input {
-        id: 'user-mode-edit'
-        class: 'form-check-input'
-        type: 'checkbox'
-        role: 'switch'
-        checked: mode != 'show'
-        disabled: mode == 'new'
-        onchange: [ChangeMode, if mode == 'show' then 'edit' else 'show']
-      }
-      html.label {
-        class: 'form-check-label'
-        for: 'user-mode-edit'
-      }, text '編集モード'
-    ]
-    switch mode
-      when 'new'
-        html.div {},
-          html.button {
-            class: 'btn btn-primary'
-            onclick: CreateUser
-          }, text '作成'
-      when 'edit'
-        html.div {}, [
-          html.button {
-            class: 'btn btn-warning'
-            onclick: UreateUser
-          }, text '更新'
-          html.button {
-            class: 'ms-1 btn btn-danger'
-            onclick: DestroyUser
-          }, text '削除'
-        ]
-      when 'show'
-        html.div {}, [
-          html.button {
-            class: 'btn btn-warning'
-            onclick: CreatPasswordUser
-          }, text 'パスワードリセット'
-          html.button {
-            class: 'btn btn-primary ms-2'
-            onclick: CreatLockUser
-          }, text 'ロック'
-          html.button {
-            class: 'btn btn-secondary ms-2'
-            onclick: DestroyLockUser
-          }, text 'アンロック'
-        ]
+    html.p {}, text '準備中...'
   ]
+
+# export default userOperation = ({mode}) ->
+#   html.div {}, [
+#     html.h4 {}, text '操作メニュー'
+#     html.div {class: 'form-check form-switch'}, [
+#       html.input {
+#         id: 'user-mode-edit'
+#         class: 'form-check-input'
+#         type: 'checkbox'
+#         role: 'switch'
+#         checked: mode != 'show'
+#         disabled: mode == 'new'
+#         onchange: [ChangeMode, if mode == 'show' then 'edit' else 'show']
+#       }
+#       html.label {
+#         class: 'form-check-label'
+#         for: 'user-mode-edit'
+#       }, text '編集モード'
+#     ]
+#     switch mode
+#       when 'new'
+#         html.div {},
+#           html.button {
+#             class: 'btn btn-primary'
+#             onclick: CreateUser
+#           }, text '作成'
+#       when 'edit'
+#         html.div {}, [
+#           html.button {
+#             class: 'btn btn-warning'
+#             onclick: UreateUser
+#           }, text '更新'
+#           html.button {
+#             class: 'ms-1 btn btn-danger'
+#             onclick: DestroyUser
+#           }, text '削除'
+#         ]
+#       when 'show'
+#         html.div {}, [
+#           html.button {
+#             class: 'btn btn-warning'
+#             onclick: CreatPasswordUser
+#           }, text 'パスワードリセット'
+#           html.button {
+#             class: 'btn btn-primary ms-2'
+#             onclick: CreatLockUser
+#           }, text 'ロック'
+#           html.button {
+#             class: 'btn btn-secondary ms-2'
+#             onclick: DestroyLockUser
+#           }, text 'アンロック'
+#         ]
+#   ]

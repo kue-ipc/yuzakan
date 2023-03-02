@@ -90,7 +90,7 @@ providerCheckTd = ({mode, user, provider}) ->
       edit: mode != 'show'
     }
 
-export default providerReg = ({mode, user, providers}) ->
+export default userProvider = ({mode, user, providers}) ->
   html.div {}, [
     html.h4 {}, text 'プロバイダー登録状況'
     html.table {class: 'table'}, [

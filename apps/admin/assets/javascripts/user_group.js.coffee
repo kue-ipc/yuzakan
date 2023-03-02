@@ -25,7 +25,7 @@ groupLi = ({name, groups, removable = false}) ->
       text ''
   ]
 
-export default groupMembership = ({mode, user, groups}) ->
+export default userGroup = ({mode, user, groups}) ->
   html.div {}, [
     html.h4 {}, text '所属グループ'
     if user.groups.length == 0
@@ -34,5 +34,5 @@ export default groupMembership = ({mode, user, groups}) ->
       html.ul {class: 'list-inline'},
         for name in user.groups
           groupLi({name, groups, removable: name != user.primary_group})
-    html.button {class: 'btn btn-primary'}, text '追加'
+    # html.button {class: 'btn btn-primary'}, text '追加'
   ]
