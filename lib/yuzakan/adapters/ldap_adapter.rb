@@ -294,9 +294,9 @@ module Yuzakan
 
         data = user_entry_to_data(user)
 
-        run_before_user_delete(username)
+        run_before_user_delete(user)
 
-        ldap_delete(user.dn)
+        ldap_user_delete(user)
 
         data
       end
@@ -443,6 +443,12 @@ module Yuzakan
         user
       end
 
+      def ldap_user_delete(user)
+        ldap_delete(user.dn)
+
+        user
+      end
+
       private def ldap_user_group_list(user)
         filter = Net::LDAP::Filter.eq('member', user.dn)
         opts = search_group_opts('*', filter: filter)
@@ -521,7 +527,7 @@ module Yuzakan
         changed
       end
 
-      private def run_before_user_delete(_username)
+      private def run_before_user_delete(_user)
         false
       end
 

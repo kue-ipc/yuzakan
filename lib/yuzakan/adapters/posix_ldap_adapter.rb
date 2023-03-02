@@ -112,15 +112,12 @@ module Yuzakan
       end
 
       # override
-      private def run_before_user_delete(username)
-        super
-
-        user = ldap_user_read(username)
-        return if user.nil?
+      private def run_before_user_delete(user)
+        changed = super
 
         # 通常のメンバーのみ削除する
         get_memberuid_groups(user).each do |group|
-          ldap_member_remove(group, user)
+          changed = true if ldap_member_remove(group, user)
         end
       end
 
