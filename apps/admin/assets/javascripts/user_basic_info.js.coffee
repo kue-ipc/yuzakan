@@ -32,7 +32,7 @@ SetUserClearanceLevelByEvent = createEventValueAction(SetUserClearanceLevel, {ty
 SetUserPrimaryGroup = (state, primary_group) -> [CalcUserAttrs, {user: {state.user..., primary_group}}]
 SetUserPrimaryGroupByEvent = createEventValueAction(SetUserPrimaryGroup)
 
-export default basicInfo = ({mode, user, groups}) ->
+export default userBasicInfo = ({mode, user, groups}) ->
   html.div {}, [
     html.h4 {}, text '基本情報'
     dlh.dl {}, [

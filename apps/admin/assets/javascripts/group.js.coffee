@@ -5,55 +5,14 @@ import * as html from '/assets/vendor/hyperapp-html.js'
 
 import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
 import {objToUrlencoded} from '/assets/common/convert.js'
-import {dlClasses, dtClasses, ddClasses} from '/assets/app/dl_horizontal.js'
-import bsIcon from '/assets/app/bs_icon.js'
 import valueDisplay from '/assets/app/value_display.js'
 
 import {runIndexProviders} from '/assets/api/providers.js'
-import {runShowGroup} from '/assets/api/groups.js'
-import {SHOW_GROUP_PARAM_TYPES} from '/assets/api/groups.js'
+import {SHOW_GROUP_PARAM_TYPES, runShowGroup} from '/assets/api/groups.js'
+
+import groupBasicInfo from '/assets/admin/group_basic_info.js'
 
 # Views
-
-basicInfo = ({mode, group}) ->
-  html.div {}, [
-    html.h4 {}, text '基本情報'
-    html.dl {class: dlClasses}, [
-      html.dt {class: dtClasses},
-        text 'グループ名'
-      html.dd {class: ddClasses},
-        text group.name
-      html.dt {class: dtClasses},
-        text '表示名'
-      html.dd {class: ddClasses},
-        text group.display_name ? ''
-      html.dt {class: dtClasses},
-        text 'プライマリ'
-      html.dd {class: ddClasses},
-        if group.primary
-          html.span {class: 'text-success'},
-            bsIcon({name: 'check-square'})
-        else
-          html.span {class: 'text-muted'},
-            bsIcon({name: 'square'})
-      html.dt {class: dtClasses},
-        text '状態'
-      html.dd {class: ddClasses},
-        if group.deleted
-          html.span {class: 'text-failure'},
-            text "削除済み(#{group.deleted_at})"
-        else if group.prohibited
-          html.span {class: 'text-muted'},
-            text '使用禁止'
-        else
-          html.span {class: 'text-success'},
-            text '正常'
-      html.dt {class: dtClasses},
-        text '備考'
-      html.dd {class: ddClasses},
-        text group.note ? ''
-    ]
-  ]
 
 providerReg = ({mode, group, providers}) ->
   html.div {}, [
@@ -149,7 +108,7 @@ main = ->
       return html.div {}, text '読み込み中...'
 
     html.div {}, [
-      basicInfo {mode, group}
+      groupBasicInfo {mode, group}
       operationMenu {option}
       providerReg {mode, group, providers}
     ]
