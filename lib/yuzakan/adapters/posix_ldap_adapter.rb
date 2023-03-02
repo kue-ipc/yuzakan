@@ -77,6 +77,12 @@ module Yuzakan
       group :primary
 
       # override
+      # プライマリーグループはいれない
+      private def ldap_user_group_list(user)
+        get_memberuid_groups(user)
+      end
+
+      # override
       private def ldap_member_add(group, user)
         return false if group['memberUid']&.include?(user.uid.first)
         return false if user.gidNumber.first == group.gidNumber.first
@@ -94,15 +100,15 @@ module Yuzakan
       end
 
       # override
-      private def run_after_user_update(username, **userdata)
-        super
-
-        user = ldap_user_read(username)
-        return if user.nil?
+      private def run_after_user_update(user, **userdata)
+        changed = super
 
         # プライマリーグループは通常のメンバーから削除する
-        primary_group = get_primary_group(user)
-        ldap_member_remove(primary_group, user)
+        ldap_primary_group(user)&.then do |group|
+          changed = true if ldap_member_remove(group, user)
+        end
+
+        changed
       end
 
       # override
@@ -172,14 +178,8 @@ module Yuzakan
       end
 
       # override
-      private def get_primary_group(user)
+      private def ldap_primary_group(user)
         get_gidnumber_groups(user).first
-      end
-
-      # override
-      # プライマリーグループはいれない
-      private def get_memberof_groups(user)
-        get_memberuid_groups(user)
       end
 
       # override

@@ -359,6 +359,6 @@ class Provider < Hanami::Entity
 
   def has_primary_group?
     need_adapter!
-    @adapter.class.has_primary_group?
+    @adapter.has_primary_group?
   end
 end

@@ -141,6 +141,14 @@ module Yuzakan
         @logger = logger
       end
 
+      def has_group?
+        self.class.has_group?
+      end
+
+      def has_primary_group?
+        self.class.has_primary_group?
+      end
+
       def check
         raise NotImplementedError
       end

@@ -258,7 +258,7 @@ module Yuzakan
       end
 
       def user_create(username, password = nil, **userdata)
-        return nil if ldap_user_read(username)
+        return if ldap_user_read(username)
 
         user = ldap_user_create(**userdata, username: username, passward: password)
 
@@ -280,30 +280,11 @@ module Yuzakan
         return if user.nil?
         return if user_entry_unmanageable?(user)
 
-        attributes = update_user_attributes(**userdata)
-        operations = update_operations(user, attributes)
-        ldap_modify(user.dn, operations) unless operations.empty?
+        user = ldap_user_update(user, **userdata)
 
-        run_after_user_update(username, **userdata)
+        user = ldap_get(user.dn) if run_after_user_update(user, **userdata)
 
-        user_read(username)
-      end
-
-      private def run_after_user_update(username, **userdata)
-        # プリマリーグループがあれば、無条件で追加する。
-        member_add(userdata[:primary_group], username) if userdata[:primary_group]
-
-        # グループの追加と削除
-        return unless userdata[:groups]
-
-        cur_list = user_group_list(username)
-        new_list = [userdata[:primary_group], *userdata[:groups]].compact.uniq
-        (new_list - cur_list).each do |groupname|
-          member_add(groupname, username)
-        end
-        (cur_list - new_list).each do |groupname|
-          member_remove(groupname, username)
-        end
+        user_entry_to_data(user)
       end
 
       def user_delete(username)
@@ -318,10 +299,6 @@ module Yuzakan
         ldap_delete(user.dn)
 
         data
-      end
-
-      private def run_before_user_delete(username)
-        # do nothing
       end
 
       def user_auth(username, password)
@@ -364,7 +341,7 @@ module Yuzakan
 
       def user_list
         opts = search_user_opts('*')
-        ldap_search(opts).map { |user| get_user_name(user) }
+        ldap_search(opts).map { |user| user_entry_name(user) }
       end
 
       def user_search(query)
@@ -376,12 +353,12 @@ module Yuzakan
         end
 
         opts = search_user_opts('*', filter: filter)
-        ldap_search(opts).map { |user| get_user_name(user) }
+        ldap_search(opts).map { |user| user_entry_name(user) }
       end
 
       def user_group_list(username)
         user = ldap_user_read(username)
-        get_memberof_groups(user).map { |group| get_group_name(group) }
+        ldap_user_group_list(user).map { |group| group_entry_name(group) }
       end
 
       def group_read(groupname)
@@ -391,7 +368,7 @@ module Yuzakan
 
       def group_list
         opts = search_group_opts('*')
-        ldap_search(opts).map { |group| get_group_name(group) }
+        ldap_search(opts).map { |group| group_entry_name(group) }
       end
 
       def group_search(query)
@@ -403,14 +380,14 @@ module Yuzakan
         end
 
         opts = search_group_opts('*', filter: filter)
-        ldap_search(opts).map { |user| get_group_name(user) }
+        ldap_search(opts).map { |user| group_entry_name(user) }
       end
 
       def member_list(groupname)
         group = ldap_group_read(groupname)
         return if group.nil?
 
-        get_member_users(group).map { |user| get_user_name(user) }
+        get_member_users(group).map { |user| user_entry_name(user) }
       end
 
       def member_add(groupname, username)
@@ -443,6 +420,7 @@ module Yuzakan
         dn_attr = @params[:create_user_dn_attr]
         attribute_name(@params[:create_user_dn_attr])
         dn = "#{dn_attr}=#{attributes[dn_attr.intern]},#{@params[:create_user_ou_dn]}"
+
         ldap_add(dn, attributes)
 
         ldap_get(dn)
@@ -451,6 +429,24 @@ module Yuzakan
       private def ldap_user_read(username)
         opts = search_user_opts(username)
         ldap_search(opts).first
+      end
+
+      private def ldap_user_update(user, **userdata)
+        attributes = update_user_attributes(**userdata)
+        operations = update_operations(user, attributes)
+
+        unless operations.empty?
+          ldap_modify(user.dn, operations)
+          user = ldap_get(user.dn)
+        end
+
+        user
+      end
+
+      private def ldap_user_group_list(user)
+        filter = Net::LDAP::Filter.eq('member', user.dn)
+        opts = search_group_opts('*', filter: filter)
+        ldap_search(opts).to_a
       end
 
       private def ldap_group_read(groupname)
@@ -475,20 +471,59 @@ module Yuzakan
 
       # == 処理の実行前後
 
-      private def run_after_user_create(user, primary_group: nil, groups: [], **userdata)
+      private def run_after_user_create(user, primary_group: nil, groups: nil, **_userdata)
         changed = false
 
-        # グループの追加
-        [primary_group, *groups].compact.uniq.each do |groupname|
-          group = ldap_group_read(groupname)
-          next unless group
+        # プライマリーグループを管理しない場合は、通常のグループとして処理する
+        groups = [primary_group, *groups] unless has_primary_group?
 
-          changed = true if ldap_member_add(group, user)
+        # グループの追加
+        groups.compact.uniq.each do |groupname|
+          ldap_group_read(groupname)&.then do |group|
+            changed = true if ldap_member_add(group, user)
+          end
         end
 
         changed
       end
 
+      private def run_after_user_update(user, primary_group: nil, groups: nil, **_userdata)
+        changed = false
+
+        # グループのチェック
+        if primary_group || groups
+          remains = ldap_user_group_list(user).to_h { |group| [group_entry_name(group), group] }
+
+          # プライマリーグループを管理しない場合は、プリマリーグループを無条件で追加する。
+          # 管理している場合は追加しない
+          if !has_primary_group? && primary_group && remains.delete(primary_group).nil?
+            ldap_group_read(primary_group)&.then do |group|
+              changed = true if ldap_member_add(group, user)
+            end
+          end
+
+          # その他のグループがある場合のみ追加と削除を行う。
+          if groups
+            groups.each do |groupname|
+              next if groupname == primary_group
+              next if remains.delete(groupname)
+
+              ldap_group_read(groupname)&.then do |group|
+                changed = true if ldap_member_add(group, user)
+              end
+            end
+            remains.each_value do |group|
+              changed = true if ldap_member_remove(group, user)
+            end
+          end
+        end
+
+        changed
+      end
+
+      private def run_before_user_delete(_username)
+        false
+      end
 
       # 値をLDAP上の値に変換する
       private def convert_ldap_value(value)
@@ -741,7 +776,7 @@ module Yuzakan
       end
 
       private def user_entry_to_data(user)
-        name = get_user_name(user)
+        name = user_entry_name(user)
 
         attrs = {}
         user.each do |key, value|
@@ -756,8 +791,8 @@ module Yuzakan
             end
         end
 
-        primary_group = get_primary_group(user)&.then { |group| get_group_name(group) }
-        groups = get_memberof_groups(user).map { |group| get_group_name(group) }
+        primary_group = ldap_primary_group(user)&.then { |group| group_entry_name(group) }
+        groups = ldap_user_group_list(user).map { |group| group_entry_name(group) }
 
         {
           username: name,
@@ -773,7 +808,7 @@ module Yuzakan
       end
 
       private def group_entry_to_data(group)
-        name = get_group_name(group)
+        name = group_entry_name(group)
 
         # 属性は渡さない
         # attrs = {}
@@ -801,11 +836,11 @@ module Yuzakan
         Net::LDAP::Entry.attribute_name(name)
       end
 
-      private def get_user_name(user)
+      private def user_entry_name(user)
         user.first(@params[:user_name_attr]).downcase
       end
 
-      private def get_group_name(group)
+      private def group_entry_name(group)
         name = group.first(@params[:group_name_attr]).downcase
         if @params[:group_name_suffix]&.size&.positive? &&
            name.delete_suffix!(@params[:group_name_suffix].downcase).nil?
@@ -814,14 +849,8 @@ module Yuzakan
         name
       end
 
-      private def get_primary_group(_user)
+      private def ldap_primary_group(_user)
         nil
-      end
-
-      private def get_memberof_groups(user)
-        filter = Net::LDAP::Filter.eq('member', user.dn)
-        opts = search_group_opts('*', filter: filter)
-        ldap_search(opts).to_a
       end
 
       private def get_member_users(group)
