@@ -80,7 +80,7 @@ module Yuzakan
       private def run_after_user_update(username, **userdata)
         super
 
-        user = get_user_entry(username)
+        user = ldap_user_read(username)
         return if user.nil?
 
         # プライマリーグループは通常のメンバーから削除する
@@ -92,7 +92,7 @@ module Yuzakan
       private def run_before_user_delete(username)
         super
 
-        user = get_user_entry(username)
+        user = ldap_user_read(username)
         return if user.nil?
 
         # 通常のメンバーのみ削除する
@@ -102,7 +102,7 @@ module Yuzakan
       end
 
       # override
-      private def create_user_attributes(username, **userdata)
+      private def create_user_attributes(primary_group: nil, **userdata)
         attributes = super
 
         # object class
@@ -117,12 +117,7 @@ module Yuzakan
 
         # gid number
         unless attributes.key?(attribute_name('gidNumber'))
-          gid_number =
-            if userdata[:primary_group]
-              get_gidnumber(userdata[:primary_group])
-            else
-              @params[:user_gid_number]
-            end
+          gid_number = (primary_group && get_gidnumber(primary_group)) || @params[:user_gid_number]
           attributes[attribute_name('gidNumber')] = convert_ldap_value(gid_number)
         end
 
@@ -176,7 +171,7 @@ module Yuzakan
       end
 
       # override
-      private def add_member(group, user)
+      private def ldap_member_add(group, user)
         return false if group['memberUid']&.include?(user.uid.first)
         return false if user.gidNumber.first == group.gidNumber.first
 
@@ -249,12 +244,12 @@ module Yuzakan
       # NIS互換属性からの各情報
 
       private def get_uidnumber(username)
-        user = get_user_entry(username)
+        user = ldap_user_read(username)
         user.first('uidNumber')&.to_i
       end
 
       private def get_gidnumber(groupname)
-        group = get_group_entry(groupname)
+        group = ldap_group_read(groupname)
         group.first('gidNumber')&.to_i
       end
 

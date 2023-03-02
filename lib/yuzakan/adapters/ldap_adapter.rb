@@ -258,35 +258,48 @@ module Yuzakan
       def user_create(username, password = nil, **userdata)
         return nil if user_read(username)
 
-        attributes = create_user_attributes(username, **userdata)
+        user = ldap_user_create(**userdata, username: username, passward: password)
+
+        # パスワードは渡さない
+        user = ldap_get(user.dn) if run_after_user_create(user, **userdata)
+
+        user_entry_to_data(user)
+      end
+
+      private def ldap_user_create(**userdata)
+        attributes = create_user_attributes(**userdata)
+
         dn_attr = @params[:create_user_dn_attr]
+        attribute_name(@params[:create_user_dn_attr])
         dn = "#{dn_attr}=#{attributes[dn_attr.intern]},#{@params[:create_user_ou_dn]}"
         ldap_add(dn, attributes)
 
-        run_after_user_create(username, password, **userdata)
-
-        user_read(username)
+        ldap_get(dn)
       end
 
-      private def run_after_user_create(username, password = nil, **userdata)
-        # パスワード変更
-        user_change_password(username, password) if password
+      private def run_after_user_create(user, primary_group: nil, groups: [], **userdata)
+        changed = false
 
         # グループの追加
-        [userdata[:primary_group], *userdata[:groups]].compact.uniq.each do |groupname|
-          member_add(groupname, username) if userdata[:primary_group]
+        [primary_group, *groups].compact.uniq.each do |groupname|
+          group = ldap_group_read(groupname)
+          next unless group
+
+          changed ||= ldap_member_add(group, user)
         end
+
+        changed
       end
 
       def user_read(username)
-        user = get_user_entry(username)
+        user = ldap_user_read(username)
         return if user.nil?
 
         user_entry_to_data(user)
       end
 
       def user_update(username, **userdata)
-        user = get_user_entry(username)
+        user = ldap_user_read(username)
         return if user.nil?
         return if user_entry_unmanageable?(user)
 
@@ -317,7 +330,7 @@ module Yuzakan
       end
 
       def user_delete(username)
-        user = get_user_entry(username)
+        user = ldap_user_read(username)
         return if user.nil?
         return if user_entry_unmanageable?(user)
 
@@ -335,7 +348,7 @@ module Yuzakan
       end
 
       def user_auth(username, password)
-        user = get_user_entry(username)
+        user = ldap_user_read(username)
         return false if user.nil?
         return false if user_entry_locked?(user)
 
@@ -345,7 +358,7 @@ module Yuzakan
       end
 
       def user_change_password(username, password)
-        user = get_user_entry(username)
+        user = ldap_user_read(username)
         return false if user.nil?
         return false if user_entry_unmanageable?(user)
         return false if user_entry_unmanageable?(user)
@@ -354,7 +367,7 @@ module Yuzakan
       end
 
       def user_lock(username)
-        user = get_user_entry(username)
+        user = ldap_user_read(username)
         return false if user.nil?
         return false if user_entry_unmanageable?(user)
 
@@ -363,7 +376,7 @@ module Yuzakan
       end
 
       def user_unlock(username, password = nil)
-        user = get_user_entry(username)
+        user = ldap_user_read(username)
         return false if user.nil?
         return false if user_entry_unmanageable?(user)
         return true if user_entry_locked?(user) && password.nil?
@@ -390,12 +403,12 @@ module Yuzakan
       end
 
       def user_group_list(username)
-        user = get_user_entry(username)
+        user = ldap_user_read(username)
         get_memberof_groups(user).map { |group| get_group_name(group) }
       end
 
       def group_read(groupname)
-        group = get_group_entry(groupname)
+        group = ldap_group_read(groupname)
         group && group_entry_to_data(group)
       end
 
@@ -417,31 +430,33 @@ module Yuzakan
       end
 
       def member_list(groupname)
-        group = get_group_entry(groupname)
+        group = ldap_group_read(groupname)
         return if group.nil?
 
         get_member_users(group).map { |user| get_user_name(user) }
       end
 
       def member_add(groupname, username)
-        group = get_group_entry(groupname)
+        group = ldap_group_read(groupname)
         return if group.nil?
 
-        user = get_user_entry(username)
+        user = ldap_user_read(username)
         return if user.nil?
 
-        add_member(group, user)
+        ldap_member_add(group, user)
       end
 
       def member_remove(groupname, username)
-        group = get_group_entry(groupname)
+        group = ldap_group_read(groupname)
         return if group.nil?
 
-        user = get_user_entry(username)
+        user = ldap_user_read(username)
         return if user.nil?
 
         remove_member(group, user)
       end
+
+      ## プライベートメソッド
 
       # 値をLDAP上の値に変換する
       private def convert_ldap_value(value)
@@ -465,23 +480,31 @@ module Yuzakan
         end
       end
 
-      private def create_user_attributes(username, **userdata)
+      private def create_user_attributes(username:, password: nil, display_name: nil, email: nil, **userdata)
         attributes = userdata[:attrs].transform_keys { |key| attribute_name(key) }
         attributes.transform_values! { |value| convert_ldap_value(value) }
 
         attributes[attribute_name('objectClass')] = @params[:create_user_object_classes].split(',').map(&:strip)
 
-        attributes[attribute_name(@params[:user_name_attr])] = username
         attributes[attribute_name(@params[:create_user_dn_attr])] = username
-
-        [:display_name, :email].each do |name|
-          attr_name = @params["user_#{name}_attr".intern]
-          if attr_name&.size&.positive? && (userdata[name])
-            attributes[attribute_name(@params["user_#{name}_attr".intern])] = userdata[name]
-          end
+        unless @params[:user_name_attr].casecmp?(@params[:create_user_dn_attr])
+          attributes[attribute_name(@params[:user_name_attr])] = username
         end
 
+        if @params[:user_display_name_attr]&.size&.positive? && display_name&.size&.positive?
+          attributes[attribute_name(@params[:user_display_name_attr])] = display_name
+        end
+        if @params[:user_email_attr]&.size&.positive? && email&.size&.positive?
+          attributes[attribute_name(@params[:user_email_attr])] = email
+        end
+
+        attributes.merge!(create_user_password_attributes(password)) if password
+
         attributes
+      end
+
+      private def create_user_password_attributes(password)
+        {attribute_name('userPassword') => generate_password(password)}
       end
 
       private def update_user_attributes(**userdata)
@@ -600,30 +623,6 @@ module Yuzakan
         when Net::LDAP::SearchScope_WholeSubtree
           true
         end
-      end
-
-      private def get_user_dn(user_dn)
-        user_dn = Net::LDAP::DN.new(user_dn) if user_dn.is_a?(String)
-        unless scope_in?(user_dn, base: user_search_base_dn,
-                                  scope: user_search_scope)
-          return nil
-        end
-
-        opts = search_user_opts('*', base: user_dn,
-                                     scope: Net::LDAP::SearchScope_BaseObject)
-        ldap_search(opts).first
-      end
-
-      private def get_group_dn(group_dn)
-        group_dn = Net::LDAP::DN.new(group_dn) if group_dn.is_a?(String)
-        unless scope_in?(group_dn, base: group_search_base_dn,
-                                   scope: group_search_scope)
-          return nil
-        end
-
-        opts = search_group_opts('*', base: group_dn,
-                                      scope: Net::LDAP::SearchScope_BaseObject)
-        ldap_search(opts).first
       end
 
       private def generate_filter(filter)
@@ -770,12 +769,12 @@ module Yuzakan
         Net::LDAP::Entry.attribute_name(name)
       end
 
-      private def get_user_entry(username)
+      private def ldap_user_read(username)
         opts = search_user_opts(username)
         ldap_search(opts).first
       end
 
-      private def get_group_entry(groupname)
+      private def ldap_group_read(groupname)
         groupname += @params[:group_name_suffix] if @params[:group_name_suffix]&.size&.positive?
         opts = search_group_opts(groupname)
         ldap_search(opts).first
@@ -810,7 +809,7 @@ module Yuzakan
         ldap_search(opts).to_a
       end
 
-      private def add_member(group, user)
+      private def ldap_member_add(group, user)
         return false if user['memberOf'].include?(group.dn)
 
         operations = [operation_add(:member, user.dn)]
@@ -855,6 +854,11 @@ module Yuzakan
         ldap_error_message = ldap.get_operation_result.error_message
         @logger.error "LDAP #{action} error: #{ldap_error_message}"
         raise LdapAdapterError, ldap_error_message
+      end
+
+      private def ldap_get(dn)
+        opts = {base: dn, scope: Net::LDAP::SearchScope_BaseObject}
+        ldap_search(opts).first
       end
 
       private def ldap_search(opts)

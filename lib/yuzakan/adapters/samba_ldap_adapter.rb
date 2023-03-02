@@ -73,12 +73,14 @@ module Yuzakan
 
       group :primary
 
+      SAMAB_NO_PASSWORD = 'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
+
       # override
       def user_auth(username, password)
         return true if super
         return false unless @params[:auth_nt_password]
 
-        user = get_user_entry(username)
+        user = ldap_user_read(username)
         return false if user.nil?
         return false if user_entry_sac(user).intersect?(SambaAccountControl::LOCKED_FLAGS)
 
@@ -86,7 +88,7 @@ module Yuzakan
       end
 
       # override
-      private def create_user_attributes(username, **userdata)
+      private def create_user_attributes(**userdata)
         attributes = super
 
         # object class
@@ -99,8 +101,21 @@ module Yuzakan
           attributes[attribute_name('sambaSID')] = convert_ldap_value(samba_sid)
         end
 
+        # samba SAC
         attributes[attribute_name(SambaAccountControl::ATTRIBUTE_NAME)] =
           convert_ldap_value(SambaAccountControl.new.to_s)
+
+        attributes
+      end
+
+      ## パスワード関連
+
+      # override
+      private def create_user_password_attributes(password)
+        attributes = super
+
+        attributes[attribute_name('sambaNTPAssword')] = generate_nt_password(password) if @params[:samba_nt_password]
+        attributes[attribute_name('sambaLMPAssword')] = generate_lm_password(password) if @params[:samba_lm_password]
 
         attributes
       end
@@ -112,14 +127,14 @@ module Yuzakan
           if @params[:samba_nt_password]
             generate_nt_password(password)
           else
-            'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
+            SAMAB_NO_PASSWORD
           end
         operations << operation_add_or_replace('sambaNTPAssword', nt_password, user)
         lm_password =
           if @params[:samba_lm_password]
             generate_lm_password(password)
           else
-            'NO PASSWORDXXXXXXXXXXXXXXXXXXXXX'
+            SAMAB_NO_PASSWORD
           end
         operations << operation_add_or_replace('sambaLMPAssword', lm_password, user)
         operations

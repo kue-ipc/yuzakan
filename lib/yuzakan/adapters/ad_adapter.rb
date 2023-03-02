@@ -75,15 +75,18 @@ module Yuzakan
 
       group true
 
-      private def run_after_user_create(username, password = nil, **userdata)
+      private def run_after_user_create(user, **userdata)
         super
 
         # デフォルトUACの適用
-        user = get_user_entry(username)
+        # 作成時には適用でいないため、作成後にする必要がある。
         uac = user_entry_uac(user)
         uac.add(AccountControl::DEFAULT_USER_FLAGS)
         operations = [operation_replace(AccountControl::ATTRIBUTE_NAME, convert_ldap_value(uac.flags))]
         ldap_modify(user.dn, operations)
+
+        # 必ず変更がある
+        true
       end
 
       private def user_entry_uac(user)
@@ -102,8 +105,15 @@ module Yuzakan
         super || @params[:bind_username].casecmp?(user.first('userPrincipalName').to_s)
       end
 
-      # ADではunicodePwdに平文パスワードを設定することで変更できる。
-      # 古いパスワードはわからないため、常にreplaceで行うこと。
+      # パスワード関連
+      # ADではunicodePwdに平文パスワードを設定する。
+
+      # override
+      private def create_user_password_attributes(password)
+        {attribute_name('unicodePwd') => generate_unicode_password(password)}
+      end
+
+      # 古いパスワードは取得できないため、常にreplaceで行うこと。
       # override
       private def change_password_operations(user, password, locked: false) # rubocop:disable Lint/UnusedMethodArgument
         [operation_replace('unicodePwd', generate_unicode_password(password))]
@@ -114,8 +124,10 @@ module Yuzakan
         "\"#{password}\"".encode(Encoding::UTF_16LE).bytes.pack('c*')
       end
 
-      # ACCOUNTDISABLE のフラグを立てる
-      # LOCKOUTはそのまま
+      # ロック関連
+      # ACCOUNTDISABLE のフラグで管理する。
+      # LOCKOUTは無視する。
+
       # override
       private def lock_operations(user)
         uac = user_entry_uac(user)
