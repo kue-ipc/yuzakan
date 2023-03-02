@@ -1,6 +1,8 @@
 import {text} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
 
+import {entityLabel} from '/assets/common/helper.js'
+
 import bsIcon from '/assets/app/bs_icon.js'
 import valueDisplay from '/assets/app/value_display.js'
 
@@ -56,7 +58,7 @@ providerCheck = ({provider_name, checked, edit = false}) ->
       html.span {class: "text-muted"},
         bsIcon({name: 'square'})
 
-providerRegProviderTd = ({user, provider, name, type}) ->
+providerTd = ({user, provider, name, type}) ->
   return html.td {} unless user.providers.includes(provider.name)
 
   data = user.providers_data.get(provider.name)
@@ -75,10 +77,10 @@ providerRegProviderTd = ({user, provider, name, type}) ->
           'body'
     }
 
-providerRegTr = ({user, providers, name, label, type}) ->
+providerTr = ({user, providers, name, label, type}) ->
   html.tr {}, [
     html.th {}, text label
-    (providerRegProviderTd {user, provider, name, type} for provider in providers)...
+    (providerTd {user, provider, name, type} for provider in providers)...
   ]
 
 providerCheckTd = ({mode, user, provider}) ->
@@ -96,14 +98,14 @@ export default userProvider = ({mode, user, providers}) ->
       html.thead {},
         html.tr {}, [
           html.th {}, text ''
-          (html.th({}, text provider.label) for provider in providers)...
+          (html.th({}, text entityLabel(provider)) for provider in providers)...
         ]
       html.tbody {}, [
         html.tr {}, [
           html.th {}, text '登録'
           (providerCheckTd({mode, user, provider}) for provider in providers)...
         ]
-        (if mode != 'new' then (providerRegTr {user, providers, item...} for item in PROVIDER_REG_ITEMS) else [])...
+        (if mode != 'new' then (providerTr {user, providers, item...} for item in PROVIDER_REG_ITEMS) else [])...
       ]
     ]
   ]

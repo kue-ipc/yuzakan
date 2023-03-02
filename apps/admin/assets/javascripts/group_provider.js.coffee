@@ -14,8 +14,7 @@ export default groupProvider = ({mode, group, providers}) ->
     html.table {class: 'table'}, [
       html.thead {},
         html.tr {}, [
-          html.th {}, text '名前'
-          # html.th {}, text '値'
+          html.th {}, text ''
           (html.th({}, text entityLabel(provider)) for provider in providers)...
         ]
       html.tbody {},
