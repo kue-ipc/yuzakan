@@ -403,7 +403,7 @@ main = ->
         onupload: UploadGroups
         action: DoActionGroup
       }
-      if mode != 'upload'
+      if mode != 'file'
         html.div {key: 'index-params'}, [
           searchForm {search..., onsearch: Search}
           indexGroupsOption {option..., onchange: ChangeOption}
