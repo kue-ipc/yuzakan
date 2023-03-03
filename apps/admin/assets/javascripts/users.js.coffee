@@ -2,6 +2,7 @@
 
 import {text, app} from '/assets/vendor/hyperapp.js'
 import * as html from '/assets/vendor/hyperapp-html.js'
+import {DateTime} from '/assets/vendor/luxon.js'
 
 import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
 import {objToUrlencoded, objToJson, listToParamName} from '/assets/common/convert.js'
@@ -10,6 +11,7 @@ import {updateList, findList} from '/assets/common/list_helper.js'
 import bsIcon from '/assets/app/bs_icon.js'
 import valueDisplay from '/assets/app/value_display.js'
 import preCode from '/assets/app/pre_code.js'
+import LoginInfo from '/assets/app/login_info.js'
 
 import {
   USER_PROPERTIES, USER_DATA_PROPERTIES
@@ -100,6 +102,12 @@ userHeaders = ({attrs}) ->
     USER_HEADERS...
     (listToParamName('attrs', attr.name) for attr in attrs)...
   ]
+
+# Dialogs
+
+loginInfo = new LoginInfo {
+  id: 'users-login_info'
+}
 
 # Hyperapp Components
 
@@ -203,7 +211,13 @@ userTr = ({user, groups, providers}) ->
         when 'ERR'
           html.div {}, text 'エラー'
         when 'SUC'
-          html.div {}, text '成功'
+          if user.password
+            html.button {
+              class: "btn btn-sm btn-primary"
+              onclick: (state) -> [state, [runShowLoginInfo, {user}]]
+            }, text '情報'
+          else
+            html.div {}, text '成功'
         else
           html.a {href: "/admin/users/#{user.name}"}, text '閲覧'
     html.td {key: 'name'},
@@ -288,6 +302,9 @@ createActionUser = (createEffecter, props = {}) ->
     ]
 
 ## Actions
+
+runShowLoginInfo = (_dispatch, {user, dateTime = DateTime.now()}) ->
+  loginInfo.showPromise {user, dateTime, site: {}}
 
 ReloadIndexUsers = (state, data) ->
   console.debug 'reload index users'
