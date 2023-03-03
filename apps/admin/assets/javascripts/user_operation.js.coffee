@@ -168,15 +168,15 @@ runDestroyUser = (dispatch, {name}) ->
     else
       console.error response
 
-runCreatePasswordUser = (dispatch, {name}) ->
+runCreatePasswordUser = (dispatch, {user}) ->
   confirm = await createPasswordConfirm.showPromise({
-    messages: ["ユーザー「#{name}」のパスワードをリセットしてもよろしいですか？"]
+    messages: ["ユーザー「#{user.name}」のパスワードをリセットしてもよろしいですか？"]
   })
   if confirm
-    response = await createPasswordWebData.submitPromise {url: "/api/users/#{name}/password", data: csrf()}
+    response = await createPasswordWebData.submitPromise {url: "/api/users/#{user.name}/password", data: csrf()}
     if response.ok
       dispatch (state) ->
-        [state, [runShowLoginInfo, {user: response.data, dateTime: response.dateTime ? DateTime.now()}]]
+        [state, [runShowLoginInfo, {user: {user..., response.data...}, dateTime: response.dateTime ? DateTime.now()}]]
     else
       console.error response
 
@@ -214,7 +214,7 @@ UreateUser = (state) -> [state, [runUpdateUser, {name: state.name, user: state.u
 
 DestroyUser = (state) -> [state, [runDestroyUser, {name: state.name}]]
 
-CreatPasswordUser = (state) -> [state, [runCreatePasswordUser, {name: state.name}]]
+CreatPasswordUser = (state) -> [state, [runCreatePasswordUser, {user: state.user}]]
 
 CreatLockUser = (state) -> [state, [runCreateLockUser, {name: state.name}]]
 
@@ -229,7 +229,13 @@ ChangeUserName = (state, name) ->
 export default userOperation = ({option}) ->
   html.div {key: 'group-operation'}, [
     html.h4 {}, text '操作メニュー'
-    html.p {}, text '準備中...'
+    html.div {}, [
+      html.button {
+        class: 'btn btn-warning'
+        onclick: CreatPasswordUser
+      }, text 'パスワードリセット'
+    ]
+    html.p {}, text 'その他は準備中です...'
   ]
 
 # export default userOperation = ({mode}) ->
