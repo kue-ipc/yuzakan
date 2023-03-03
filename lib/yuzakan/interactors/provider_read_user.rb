@@ -32,6 +32,7 @@ class ProviderReadUser
       Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
       Hanami.logger.error e
       error(I18n.t('errors.action.error', action: I18n.t('interactors.provider_read_user'), target: provider.label))
+      error(e.message)
       fail!
     end
     # pp @providers

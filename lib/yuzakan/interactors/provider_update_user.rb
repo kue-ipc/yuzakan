@@ -44,6 +44,7 @@ class ProviderUpdateUser
       Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
       Hanami.logger.error e
       error(I18n.t('errors.action.error', action: I18n.t('interactors.provider_update_user'), target: provider.label))
+      error(e.message)
       if @changed
         error(I18n.t('errors.action.stopped_after_some', action: I18n.t('interactors.provider_update_user'),
                                                          target: I18n.t('entities.provider')))

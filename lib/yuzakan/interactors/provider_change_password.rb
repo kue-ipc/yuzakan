@@ -39,6 +39,7 @@ class ProviderChangePassword
       Hanami.logger.error e
       error(I18n.t('errors.action.error', action: I18n.t('interactors.provider_change_password'),
                                           target: provider.label))
+      error(e.message)
       if @changed
         error(I18n.t('errors.action.stopped_after_some', action: I18n.t('interactors.provider_change_password'),
                                                          target: I18n.t('entities.provider')))

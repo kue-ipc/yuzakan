@@ -33,6 +33,7 @@ class ProviderReadGroup
       Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{groupname}"
       Hanami.logger.error e
       error(I18n.t('errors.action.error', action: I18n.t('interactors.provider_read_group'), target: provider.label))
+      error(e.message)
       fail!
     end
   end
