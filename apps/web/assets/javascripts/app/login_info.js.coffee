@@ -65,13 +65,13 @@ export default class LoginInfo extends ModalDialog
       html.h3 {}, text "#{site.name} ログイン情報 通知書"
 
       dlh.dl {}, [
-        dlh.dt {}, text 'ユーザー名'
-        dlh.dd {},
+        dlh.dt {class: 'mt-2'}, text 'ユーザー名'
+        dlh.dd {class: 'mt-2'},
           html.code {class: 'login-info'},
             text user.name.replace(/ /g, '\u2423')
 
-        dlh.dt {}, text '初期パスワード'
-        dlh.dd {},
+        dlh.dt {class: 'mb-2'}, text '初期パスワード'
+        dlh.dd {class: 'mb-2'},
           html.code {class: 'login-info'},
             text user.password.replace(/ /g, '\u2423')
 
@@ -190,7 +190,10 @@ export default class LoginInfo extends ModalDialog
             text 'a b c d e f g h i j k l m n o p q r s t u v w x y z'
         dlh.dt {}, text '記号'
         dlh.dd {class: 'mb-0'},
-          html.code {class: 'sample'},
-            text '\u2423 ! " # $ % & \' ( ) * + , - . / : ; < = > ? @ [ \\ ] ^ _ ` { | } ~'
+          html.code {class: 'sample'}, [
+            text '\u2423 ! " # $ % & \' ( ) * + , - . / : ; < = > ?'
+            html.br {}
+            text '@ [ \\ ] ^ _ ` { | } ~'
+          ]
       ]
     ]
