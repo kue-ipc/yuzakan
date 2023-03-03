@@ -137,44 +137,41 @@ class Provider < Hanami::Entity
   end
 
   # Ruby attrs -> Adapter aatrs
-  def map_attrs(attrs)
+  private def map_attrs(attrs)
     return {} if attrs.nil?
 
-    # 読み取り専用の属性は除外する
-    attr_mappings.to_h do |mapping|
-      if mapping.attr.readonly
-        [mapping.key, nil]
-      else
-        [mapping.key, mapping.map_value(attrs[mapping.attr.name.intern])]
-      end
-    end.compact
+    attr_mappings
+      .reject { |mapping| mapping.attr.readonly } # 読み取り専用の属性は除外する
+      .to_h { |mapping| [mapping.key, mapping.map_value(attrs[mapping.attr.name.intern])] }
+      .compact # 値がnilの場合は除外する
   end
 
-  def map_userdata(userdata)
+  # Ruby userdata -> Adatper userdata
+  private def map_userdata(userdata)
     return if userdata.nil?
+
+    userdata = userdata.except(:primary_group, :groups) unless has_group?
 
     {**userdata, attrs: map_attrs(userdata[:attrs])}
   end
 
   # Adapter attrs -> Ruby attrs
-  def convert_attrs(raw_attrs)
+  private def convert_attrs(raw_attrs)
     return {} if raw_attrs.nil?
 
     attr_mappings.to_h do |mapping|
       raw_value = raw_attrs[mapping.key] || raw_attrs[mapping.key.downcase]
       [mapping.attr.name, mapping.convert_value(raw_value)]
-    end.compact
+    end.compact # 値がnilの場合は除外する
   end
 
-  def convert_userdata(raw_userdata)
+  # Adapter userdata -> Ruby userdata
+  private def convert_userdata(raw_userdata)
     return if raw_userdata.nil?
 
-    raw_userdata = raw_userdata.except(:primary_group, :groups) unless group
+    raw_userdata = raw_userdata.except(:primary_group, :groups) unless has_group?
 
-    {
-      **raw_userdata,
-      attrs: convert_attrs(raw_userdata[:attrs]),
-    }
+    {**raw_userdata, attrs: convert_attrs(raw_userdata[:attrs])}
   end
 
   def need_adapter!
