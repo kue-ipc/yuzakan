@@ -260,7 +260,7 @@ module Yuzakan
       def user_create(username, password = nil, **userdata)
         return if ldap_user_read(username)
 
-        user = ldap_user_create(**userdata, username: username, passward: password)
+        user = ldap_user_create(**userdata, username: username, password: password)
 
         # パスワードは渡さない
         user = ldap_get(user.dn) if run_after_user_create(user, **userdata)
