@@ -25,7 +25,7 @@ main = ->
 
   init = [
     {mode, id, group: null, providers: [], option: queryParams}
-    [runIndexProviders, {has_groups: true}]
+    [runIndexProviders, {has_group: true}]
     [runShowGroup, {id, queryParams...}]
   ]
 

@@ -31,7 +31,7 @@ export PROVIDER_PROPERTIES = {
 }
 
 export INDEX_PROVIDERS_PARAM_TYPES = {
-  has_groups: 'boolean'
+  has_group: 'boolean'
 }
 
 export SHOW_PROVIDER_PARAM_TYPES = {

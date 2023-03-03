@@ -11,7 +11,7 @@ module Api
           messages :i18n
 
           params do
-            optional(:has_groups).filled(:bool?)
+            optional(:has_group).filled(:bool?)
           end
         end
 
@@ -26,7 +26,7 @@ module Api
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
           @providers =
-            if params[:has_groups]
+            if params[:has_group]
               @provider_repository.ordered_all_group
             else
               @provider_repository.ordered_all

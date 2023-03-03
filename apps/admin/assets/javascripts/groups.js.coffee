@@ -386,7 +386,7 @@ main = ->
 
   init = [
     initState
-    [runIndexProviders, {has_groups: true}]
+    [runIndexProviders, {has_group: true}]
     [runIndexGroups, indexOptionFromState(initState)]
   ]
 
