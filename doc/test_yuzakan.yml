@@ -61,7 +61,7 @@ providers:
     group_search_filter: "(objectclass=posixGroup)"
     password_scheme: "{CRYPT}"
     crypt_salt_format: "$6$%.16s"
-    create_user_dn_attr: cn
+    create_user_dn_attr: uid
     create_user_ou_dn: ou=people,dc=example,dc=jp
     create_user_object_classes: account
     shadow_account: true
