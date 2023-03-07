@@ -44,7 +44,7 @@ def let_mock_repositories
   }
   let(:auth_log_repository_stubs) { {} }
   let(:config_repository_stubs) { {current: config} }
-  let(:group_repository_stubs) { {find_or_create_by_groupname: groups} }
+  let(:group_repository_stubs) { {find_or_create_by_name: groups} }
   let(:member_repository_stubs) {
     {
       set_groups_for_user: [Member.new],
@@ -63,7 +63,7 @@ def let_mock_repositories
     {
       update: user,
       find: user,
-      find_by_username: user,
+      find_by_name: user,
       find_with_groups: user_with_groups,
     }
   }
@@ -93,8 +93,8 @@ def let_mock_repositories
     [
       primary_group && Member.new(primary: true, group: primary_group),
       *supplementary_groups
-        .reject { |g| g.groupname == primary_group.groupname }
-        .map { |g| Memebr.new(primary: false, group: g) },
+        .reject { |group| group.name == primary_group.name }
+        .map { |group| Memebr.new(primary: false, group: group) },
     ].compact
   }
   let(:primary_group) { group }
@@ -107,15 +107,15 @@ def let_mock_repositories
       hidden: false, readonly: false, code: nil, description: nil,
     }
   }
-  let(:activity_log_attributes) { {uuid: uuid, client: client, username: user.username} }
+  let(:activity_log_attributes) { {uuid: uuid, client: client, username: user.name} }
   let(:config_attributes) { {title: 'title', session_timeout: 3600, domain: 'example.jp'} }
   let(:user_attributes) {
     {
-      id: 42, username: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1,
+      id: 42, name: 'user', display_name: 'ユーザー', email: 'user@example.jp', clearance_level: 1,
       prohibited: false, deleted: false, deleted_at: nil, note: nil,
     }
   }
-  let(:group_attributes) { {id: 42, username: 'group', display_name: 'グループ'} }
+  let(:group_attributes) { {id: 42, name: 'group', display_name: 'グループ'} }
   let(:provider_attriubtes) {
     {
       id: 42, name: 'provider42', display_name: 'プロバイダー42', adapter_name: 'dummy', order: 8,
@@ -176,9 +176,9 @@ def let_mock_repositories
   let(:users_attributes) {
     [
       user_attributes,
-      {**user_attributes, id: 1, username: 'admin', display_name: '管理者', email: 'admin@example.jp', clearance_level: 5},
-      {**user_attributes, id: 24, username: 'prohibited', prohibited: true},
-      {**user_attributes, id: 19, username: 'deleted', deleted: true, deleted_at: Time.now - (24 * 60 * 60)},
+      {**user_attributes, id: 1, name: 'admin', display_name: '管理者', email: 'admin@example.jp', clearance_level: 5},
+      {**user_attributes, id: 24, name: 'prohibited', prohibited: true},
+      {**user_attributes, id: 19, name: 'deleted', deleted: true, deleted_at: Time.now - (24 * 60 * 60)},
     ]
   }
   let(:providers_attributes) {
