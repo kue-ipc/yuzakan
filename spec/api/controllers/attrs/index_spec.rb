@@ -13,7 +13,7 @@ RSpec.describe Api::Controllers::Attrs::Index, type: :action do
     expect_json = attrs_attributes
       .sort_by { |data| data[:name] }
       .sort_by { |data| data[:order] }
-      .map { |data| {**data.except(:id), label: data[:display_name] || data[:name]} }
+      .map { |data| data.except(:id) }
     expect(json).to eq expect_json
   end
 

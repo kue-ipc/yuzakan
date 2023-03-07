@@ -78,7 +78,7 @@ RSpec.describe Api::Controllers::Providers::Create, type: :action do
       response = action.call(params)
       expect(response[0]).to eq 201
       expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
-      expect(response[1]['Location']).to eq "/api/providers/#{provider_with_params.id}"
+      expect(response[1]['Content-Location']).to eq "/api/providers/#{provider_with_params.id}"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         **provider_params,
@@ -91,7 +91,7 @@ RSpec.describe Api::Controllers::Providers::Create, type: :action do
       response = action.call(params.except(:order))
       expect(response[0]).to eq 201
       expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
-      expect(response[1]['Location']).to eq "/api/providers/#{provider_with_params.id}"
+      expect(response[1]['Content-Location']).to eq "/api/providers/#{provider_with_params.id}"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         **provider_params,

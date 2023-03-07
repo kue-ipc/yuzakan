@@ -20,8 +20,8 @@ RSpec.describe Api::Controllers::Session::Create, type: :action do
     Rack::Utils::HTTP_STATUS_CODES[303] = 'Hoge'
     response = action.call(params)
     expect(response[0]).to eq 303
-    expect(response[1]['Location']).to eq '/api/session'
     expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+    expect(response[1]['Content-Location']).to eq '/api/session'
     json = JSON.parse(response[2].first, symbolize_names: true)
     expect(json).to eq({
       code: 303,

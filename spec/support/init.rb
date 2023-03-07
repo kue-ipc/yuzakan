@@ -137,10 +137,10 @@ def let_mock_repositories
   }
   let(:attr_mappings_attributes) {
     [
-      {provider: 'provider42', name: 'map42', conversion: nil},
-      {provider: 'provider1', name: 'path', conversion: 'path'},
-      {provider: 'provider2', name: 'e2j', conversion: 'e2j'},
-      {provider: 'provider3', name: 'j2e', conversion: 'j2e'},
+      {provider: 'provider42', key: 'map42', conversion: nil},
+      {provider: 'provider1', key: 'path', conversion: 'path'},
+      {provider: 'provider2', key: 'e2j', conversion: 'e2j'},
+      {provider: 'provider3', key: 'j2e', conversion: 'j2e'},
     ]
   }
   let(:networks_attributes) {

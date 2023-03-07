@@ -48,7 +48,7 @@ module Api
 
           mapping_errors = {}
           attr_mappings = (params[:mappings] || []).each_with_index.map do |mapping, idx|
-            next if mapping[:name].nil? || mapping[:name].empty?
+            next if mapping[:key].nil? || mapping[:key].empty?
 
             provider = provider_by_name(mapping[:provider])
             if provider.nil?

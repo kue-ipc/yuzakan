@@ -37,19 +37,18 @@ RSpec.describe Api::Controllers::Attrs::Update, type: :action do
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         **attr_attributes.except(:id),
-        label: attr_attributes[:display_name] || attr_attributes[:name],
         mappings: attr_mappings_attributes,
       })
     end
 
     it 'is successful with different' do
-      response = action.call({**params, name: 'hoge', label: 'ほげ'})
+      response = action.call({**params, name: 'hoge', display_name: 'ほげ'})
       expect(response[0]).to eq 200
       expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+      expect(response[1]['Content-Location']).to eq '/api/attrs/hoge'
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         **attr_attributes.except(:id),
-        label: attr_attributes[:display_name] || attr_attributes[:name],
         mappings: attr_mappings_attributes,
       })
     end
@@ -81,25 +80,23 @@ RSpec.describe Api::Controllers::Attrs::Update, type: :action do
         json = JSON.parse(response[2].first, symbolize_names: true)
         expect(json).to eq({
           **attr_attributes.except(:id),
-          label: attr_attributes[:display_name] || attr_attributes[:name],
           mappings: attr_mappings_attributes,
         })
       end
 
-      it 'is successful with diffrent only label' do
-        response = action.call({**params, labal: 'ほげ'})
+      it 'is successful with diffrent only display_name' do
+        response = action.call({**params, display_name: 'ほげ'})
         expect(response[0]).to eq 200
         expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
         expect(json).to eq({
           **attr_attributes.except(:id),
-          label: attr_attributes[:display_name] || attr_attributes[:name],
           mappings: attr_mappings_attributes,
         })
       end
 
       it 'is failure with different' do
-        response = action.call({**params, name: 'hoge', label: 'ほげ'})
+        response = action.call({**params, name: 'hoge', display_name: 'ほげ'})
         expect(response[0]).to eq 422
         expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)

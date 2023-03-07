@@ -45,7 +45,6 @@ RSpec.describe Api::Controllers::Attrs::Destroy, type: :action do
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         **attr_attributes.except(:id),
-        label: attr_attributes[:display_name] || attr_attributes[:name],
         mappings: attr_mappings_attributes,
       })
     end

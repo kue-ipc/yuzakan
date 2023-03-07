@@ -27,11 +27,10 @@ RSpec.describe Api::Controllers::Attrs::Create, type: :action do
       response = action.call(params)
       expect(response[0]).to eq 201
       expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
-      expect(response[1]['Location']).to eq "/api/attrs/#{attr_with_mappings.id}"
+      expect(response[1]['Content-Location']).to eq "/api/attrs/#{attr_with_mappings.name}"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         **attr_attributes.except(:id),
-        label: attr_attributes[:display_name] || attr_attributes[:name],
         mappings: attr_mappings_attributes,
       })
     end
@@ -40,11 +39,10 @@ RSpec.describe Api::Controllers::Attrs::Create, type: :action do
       response = action.call(params.except(:order))
       expect(response[0]).to eq 201
       expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
-      expect(response[1]['Location']).to eq "/api/attrs/#{attr_with_mappings.id}"
+      expect(response[1]['Content-Location']).to eq "/api/attrs/#{attr_with_mappings.name}"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         **attr_attributes.except(:id),
-        label: attr_attributes[:display_name] || attr_attributes[:name],
         mappings: attr_mappings_attributes,
       })
     end
@@ -101,8 +99,8 @@ RSpec.describe Api::Controllers::Attrs::Create, type: :action do
         message: 'Bad Request',
         errors: [{
           mappings: {
-            '0': {provider: ['入力が必須です。']},
-            '1': {provider: ['存在しません。']},
+            '0': {provider: ['入力が必須です。'], key: ['存在しません。']},
+            '1': {provider: ['存在しません。'], key: ['存在しません。']},
           },
         }],
       })

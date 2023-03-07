@@ -11,10 +11,7 @@ RSpec.describe Api::Controllers::Attrs::Show, type: :action do
     expect(response[0]).to eq 200
     expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    expect(json).to eq({
-      **attr_attributes.except(:id),
-      label: attr_attributes[:display_name] || attr_attributes[:name],
-    })
+    expect(json).to eq(attr_attributes.except(:id))
   end
 
   describe 'admin' do
@@ -28,7 +25,6 @@ RSpec.describe Api::Controllers::Attrs::Show, type: :action do
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         **attr_attributes.except(:id),
-        label: attr_attributes[:display_name] || attr_attributes[:name],
         mappings: attr_mappings_attributes,
       })
     end

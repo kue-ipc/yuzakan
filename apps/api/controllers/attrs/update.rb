@@ -84,7 +84,7 @@ module Api
           @attr = @attr_repository.find_with_mappings(@attr.id)
 
           self.status = 200
-          headers['Content-Location'] = routes.provider_path(@provider.name) if change_name
+          headers['Content-Location'] = routes.attr_path(params[:name]) if change_name
           self.body = generate_json(@attr, assoc: true)
         end
 
