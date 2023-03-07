@@ -12,7 +12,7 @@ RSpec.describe Api::Controllers::Session::Show, type: :action do
     expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
     expect(json[:uuid]).to eq uuid
-    expect(json[:current_user]).to eq({**user.to_h.except(:id), label: user.label})
+    expect(json[:current_user]).to eq(user.to_h.except(:id))
     created_at = Time.iso8601(json[:created_at])
     expect(created_at).to eq session[:created_at].floor
     updated_at = Time.iso8601(json[:updated_at])

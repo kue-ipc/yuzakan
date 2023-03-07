@@ -35,7 +35,6 @@ class ProviderReadUser
       error(e.message)
       fail!
     end
-    # pp @providers
   end
 
   private def valid?(params)

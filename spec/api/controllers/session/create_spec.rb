@@ -11,7 +11,7 @@ RSpec.describe Api::Controllers::Session::Create, type: :action do
   }
   let(:format) { 'application/json' }
   let(:action_params) { {username: 'user', password: 'pass'} }
-  let(:user_repository) { instance_double('UserRepository', find: user, find_by_username: user, update: user) }
+  let(:user_repository) { instance_double('UserRepository', find: user, find_by_name: user, update: user) }
   let(:providers) { [create_mock_provider(params: {username: 'user', password: 'pass'})] }
   let(:provider_repository) { instance_double('ProviderRepository', ordered_all_with_adapter_by_operation: providers) }
   let(:auth_log_repository) { instance_double('AuthLogRepository', create: AuthLog.new, recent_by_username: []) }
@@ -20,8 +20,8 @@ RSpec.describe Api::Controllers::Session::Create, type: :action do
     Rack::Utils::HTTP_STATUS_CODES[303] = 'Hoge'
     response = action.call(params)
     expect(response[0]).to eq 303
+    expect(response[1]['Location']).to eq '/api/session'
     expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
-    expect(response[1]['Content-Location']).to eq '/api/session'
     json = JSON.parse(response[2].first, symbolize_names: true)
     expect(json).to eq({
       code: 303,
@@ -41,7 +41,7 @@ RSpec.describe Api::Controllers::Session::Create, type: :action do
       expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json[:uuid]).to eq uuid
-      expect(json[:current_user]).to eq({**user.to_h.except(:id), label: user.label})
+      expect(json[:current_user]).to eq(user.to_h.except(:id))
       created_at = Time.iso8601(json[:created_at])
       expect(created_at).to be >= begin_time
       expect(created_at).to be <= end_time
@@ -180,7 +180,7 @@ RSpec.describe Api::Controllers::Session::Create, type: :action do
       expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json[:uuid]).to match(/\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/)
-      expect(json[:current_user]).to eq({**user.to_h.except(:id), label: user.label})
+      expect(json[:current_user]).to eq(user.to_h.except(:id))
       created_at = Time.iso8601(json[:created_at])
       expect(created_at).to be >= begin_time
       expect(created_at).to be <= end_time

@@ -19,7 +19,6 @@ module Api
           @name = current_user.name
           load_user
           halt_json 404 unless @user
-          pp @providers
 
           self.body = user_json
         end
