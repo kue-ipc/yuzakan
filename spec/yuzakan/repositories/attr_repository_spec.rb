@@ -44,9 +44,9 @@ RSpec.describe AttrRepository do
       @provider_fuga = provider_repository.create(name: 'fuga', display_name: 'ふが', adapter_name: 'dummy', order: 16)
 
       @attr_mapping_hoge_hoge = attr_mapping_repository.create(attr_id: @attr_hoge.id, provider_id: @provider_hoge.id,
-                                                               name: 'hoge_hoge')
+                                                               key: 'hoge_hoge')
       @attr_mapping_hoge_fuga = attr_mapping_repository.create(attr_id: @attr_hoge.id, provider_id: @provider_fuga.id,
-                                                               name: 'hoge_fuga', conversion: 'e2j')
+                                                               key: 'hoge_fuga', conversion: 'e2j')
     end
 
     after do
@@ -58,26 +58,26 @@ RSpec.describe AttrRepository do
       all = attr_repository.ordered_all_with_mappings
       expect(all).to be_instance_of Array
       expect(all.map(&:name)).to eq ['hoge', 'piyo', 'fuga']
-      expect(all.first.attr_mappings.first.name).to eq 'hoge_hoge'
+      expect(all.first.attr_mappings.first.key).to eq 'hoge_hoge'
     end
 
     it 'find_with_mappings' do
       attr_with_mappings = attr_repository.find_with_mappings(@attr_hoge.id)
       expect(attr_with_mappings).to be_instance_of Attr
       expect(attr_with_mappings.name).to eq 'hoge'
-      expect(attr_with_mappings.attr_mappings.first.name).to eq 'hoge_hoge'
+      expect(attr_with_mappings.attr_mappings.first.key).to eq 'hoge_hoge'
     end
 
     it 'create_with_mappings' do
       attr_with_mappings = attr_repository.create_with_mappings(
         name: 'moe', display_name: 'もえ', type: 'string', order: 40, hidden: false,
         attr_mappings: [
-          {provider_id: @provider_hoge.id, name: 'moe_hoge'},
-          {provider_id: @provider_fuga.id, name: 'moe_fuga', conversion: 'e2j'},
+          {provider_id: @provider_hoge.id, key: 'moe_hoge'},
+          {provider_id: @provider_fuga.id, key: 'moe_fuga', conversion: 'e2j'},
         ])
       expect(attr_with_mappings).to be_instance_of Attr
       expect(attr_with_mappings.name).to eq 'moe'
-      expect(attr_with_mappings.attr_mappings.first.name).to eq 'moe_hoge'
+      expect(attr_with_mappings.attr_mappings.first.key).to eq 'moe_hoge'
       expect(attr_repository.all.count).to eq 4
       expect(attr_mapping_repository.all.count).to eq 4
     end
