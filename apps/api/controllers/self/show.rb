@@ -17,9 +17,9 @@ module Api
 
         def call(params) # rubocop:disable Lint/UnusedMethodArgument
           @name = current_user.name
-          @sync = false # no sync
           load_user
           halt_json 404 unless @user
+          pp @providers
 
           self.body = user_json
         end

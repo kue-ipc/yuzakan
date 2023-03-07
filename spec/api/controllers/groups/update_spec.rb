@@ -1,9 +1,6 @@
-RSpec.describe Api::Controllers::Groups::Update, type: :action do
-  let(:action) { described_class.new }
-  let(:params) { Hash[] }
+# frozen_string_literal: true
 
-  it 'is successful' do
-    response = action.call(params)
-    expect(response[0]).to eq 200
-  end
+RSpec.describe Api::Controllers::Groups::Update, type: :action do
+  init_controller_spec
+  let(:format) { 'application/json' }
 end

@@ -84,19 +84,17 @@ RSpec.describe Api::Controllers::Providers::Update, type: :action do
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         **provider_params,
-        label: provider_params[:display_name],
         params: provider_params_attributes_params,
       })
     end
 
     it 'is successful with different' do
-      response = action.call({**params, name: 'hoge', label: 'ほげ'})
+      response = action.call({**params, name: 'hoge', display_name: 'ほげ'})
       expect(response[0]).to eq 200
       expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         **provider_params,
-        label: provider_params[:display_name],
         params: provider_params_attributes_params,
       })
     end
@@ -138,25 +136,23 @@ RSpec.describe Api::Controllers::Providers::Update, type: :action do
         json = JSON.parse(response[2].first, symbolize_names: true)
         expect(json).to eq({
           **provider_params,
-          label: provider_params[:display_name],
           params: provider_params_attributes_params,
         })
       end
 
-      it 'is successful with diffrent only label' do
-        response = action.call({**params, labal: 'ほげ'})
+      it 'is successful with diffrent only display_name' do
+        response = action.call({**params, display_name: 'ほげ'})
         expect(response[0]).to eq 200
         expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
         expect(json).to eq({
           **provider_params,
-          label: provider_params[:display_name],
           params: provider_params_attributes_params,
         })
       end
 
       it 'is failure with different' do
-        response = action.call({**params, name: 'hoge', label: 'ほげ'})
+        response = action.call({**params, name: 'hoge', display_name: 'ほげ'})
         expect(response[0]).to eq 422
         expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)

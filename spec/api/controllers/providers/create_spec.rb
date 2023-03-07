@@ -59,6 +59,7 @@ RSpec.describe Api::Controllers::Providers::Create, type: :action do
                     last_order: 16,
                     create: provider_without_params,
                     find_with_params: provider_with_params,
+                    find_with_params_by_name: provider_with_params,
                     add_param: ProviderParam.new)
   }
 
@@ -78,11 +79,10 @@ RSpec.describe Api::Controllers::Providers::Create, type: :action do
       response = action.call(params)
       expect(response[0]).to eq 201
       expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
-      expect(response[1]['Content-Location']).to eq "/api/providers/#{provider_with_params.id}"
+      expect(response[1]['Content-Location']).to eq "/api/providers/#{provider_with_params.name}"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         **provider_params,
-        label: provider_params[:display_name],
         params: provider_params_attributes_params,
       })
     end
@@ -91,11 +91,10 @@ RSpec.describe Api::Controllers::Providers::Create, type: :action do
       response = action.call(params.except(:order))
       expect(response[0]).to eq 201
       expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
-      expect(response[1]['Content-Location']).to eq "/api/providers/#{provider_with_params.id}"
+      expect(response[1]['Content-Location']).to eq "/api/providers/#{provider_with_params.name}"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         **provider_params,
-        label: provider_params[:display_name],
         params: provider_params_attributes_params,
       })
     end

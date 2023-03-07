@@ -51,7 +51,6 @@ RSpec.describe Api::Controllers::Providers::Show, type: :action do
     json = JSON.parse(response[2].first, symbolize_names: true)
     expect(json).to eq({
       **provider_params,
-      label: provider_params[:display_name],
     })
   end
 
@@ -66,7 +65,6 @@ RSpec.describe Api::Controllers::Providers::Show, type: :action do
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         **provider_params,
-        label: provider_params[:display_name],
         params: provider_params_attributes_params,
       })
     end

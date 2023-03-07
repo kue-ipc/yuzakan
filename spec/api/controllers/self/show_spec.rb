@@ -4,12 +4,18 @@ require 'yaml'
 
 RSpec.describe Api::Controllers::Self::Show, type: :action do
   init_controller_spec
-  let(:action_opts) { {provider_repository: provider_repository} }
+  let(:action_opts) {
+    {provider_repository: provider_repository,
+     user_repository: user_repository,
+     member_repository: member_repository,
+     group_repository: group_repository,}
+  }
   let(:format) { 'application/json' }
 
   let(:providers) {
     [create_mock_provider(
       name: 'provider',
+      group: true,
       params: {
         username: 'user', display_name: 'ユーザー', email: 'user@example.jp',
         primary_group: 'group',
@@ -17,7 +23,7 @@ RSpec.describe Api::Controllers::Self::Show, type: :action do
         attrs: YAML.dump({'jaDisplayName' => '表示ユーザー'}),
       },
       attr_mappings: [{
-        name: 'jaDisplayName', conversion: nil,
+        key: 'jaDisplayName', conversion: nil,
         attr: {name: 'ja_display_name', display_name: '日本語表示名', type: 'string', hidden: false},
       }])]
   }
@@ -25,25 +31,25 @@ RSpec.describe Api::Controllers::Self::Show, type: :action do
   let(:user_with_groups) {
     User.new(**user.to_h,
       members: [
-        Member.new(primary: true, group: Group.new(groupname: 'group')),
-        Member.new(primary: false, group: Group.new(groupname: 'admin')),
-        Member.new(primary: false, group: Group.new(groupname: 'staff')),
+        Member.new(primary: true, group: Group.new(name: 'group')),
+        Member.new(primary: false, group: Group.new(name: 'admin')),
+        Member.new(primary: false, group: Group.new(name: 'staff')),
       ])
   }
 
   it 'is successful' do
-    allow(user_repository).to receive(:find_by_username).and_return(user)
+    allow(user_repository).to receive(:find_by_name).and_return(user)
     allow(user_repository).to receive(:update).and_return(user)
     allow(user_repository).to receive(:find_with_groups).and_return(user_with_groups)
+    allow(user_repository).to receive(:transaction).and_yield
 
     response = action.call(params)
     expect(response[0]).to eq 200
     expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
     expect(json).to eq({
-      username: 'user',
+      name: 'user',
       display_name: 'ユーザー',
-      label: 'ユーザー',
       email: 'user@example.jp',
       note: nil,
       prohibited: false,
@@ -52,17 +58,9 @@ RSpec.describe Api::Controllers::Self::Show, type: :action do
       clearance_level: 1,
       primary_group: 'group',
       groups: ['group', 'admin', 'staff'],
-      userdata: {
-        username: 'user',
-        display_name: 'ユーザー',
-        email: 'user@example.jp',
-        primary_group: 'group',
-        groups: [],
-        attrs: {ja_display_name: '表示ユーザー'},
-      },
-      provider_userdatas: [{
-        provider: 'provider',
-        userdata: {
+      attrs: {ja_display_name: '表示ユーザー'},
+      providers: {
+        provider: {
           username: 'user',
           display_name: 'ユーザー',
           email: 'user@example.jp',
@@ -70,9 +68,10 @@ RSpec.describe Api::Controllers::Self::Show, type: :action do
           unmanageable: false,
           mfa: false,
           primary_group: 'group',
+          groups: ['admin', 'staff'],
           attrs: {ja_display_name: '表示ユーザー'},
         },
-      }],
+      },
     })
   end
 

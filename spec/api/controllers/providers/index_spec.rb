@@ -24,7 +24,7 @@ RSpec.describe Api::Controllers::Providers::Index, type: :action do
     expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
     expect(json).to eq(providers_attributes.map do |provider|
-      provider.except(:id).merge(label: provider[:display_name] || provider[:name])
+      provider.except(:id)
     end)
   end
 

@@ -40,7 +40,7 @@ class SyncUser
     if read_user_result.failure?
       Hanami.logger.error "[#{self.class.name}] Failed to call ProviderReadUser"
       Hanami.logger.error read_user_result.errors
-      error(I18n.t('errors.action.fail', action: I18n.t('interactors.read_user')))
+      error(I18n.t('errors.action.fail', action: I18n.t('interactors.provider_read_user')))
       read_user_result.errors.each { |msg| error(msg) }
       fail!
     end
