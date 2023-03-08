@@ -7,6 +7,7 @@ require_relative './controllers/connection'
 require_relative '../web/controllers/configuration'
 require_relative '../web/controllers/authentication'
 require_relative '../web/controllers/authorization'
+require_relative '../web/controllers/handle_exception'
 
 require_relative '../../lib/yuzakan/params/id_params'
 require_relative '../../lib/yuzakan/predicates/name_predicates'
@@ -78,7 +79,9 @@ module Admin
         include Web::Configuration
         include Web::Authentication
         include Web::Authorization
+        include Web::HandleException
         cache_control :private, :no_cache
+        handle_exception StandardError => :handle_standard_error
       end
 
       view.prepare do

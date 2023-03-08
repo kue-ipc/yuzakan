@@ -8,6 +8,7 @@ require_relative './controllers/connection'
 require_relative './controllers/configuration'
 require_relative './controllers/authentication'
 require_relative './controllers/authorization'
+require_relative './controllers/handle_exception'
 require_relative './controllers/message_json'
 
 require_relative './views/accept_json'
@@ -86,7 +87,9 @@ module Api
         include Api::Authentication
         include Api::Authorization
         include Api::MessageJson
+        include Api::HandleException
         cache_control :private, :no_cache
+        handle_exception StandardError => :handle_standard_error
         accept :json
       end
 
