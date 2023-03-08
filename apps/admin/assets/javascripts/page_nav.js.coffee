@@ -13,7 +13,7 @@ export default pageNav = ({page, per_page, total, start, end, onpage}) ->
     html.ul {class: 'pagination'},
       pageList {page, total_page, onpage}
     html.p {class: 'ms-2 mt-2'},
-      text "#{start} - #{end} / #{total} (#{page} / #{total_page} ページ)"
+      text "#{start + 1} - #{end + 1} / #{total} (#{page} / #{total_page} ページ)"
   ]
 
 pageList = ({page, total_page, onpage}) ->
