@@ -47,17 +47,12 @@ module Api
 
           @user_repository.update(@user.id, params.to_h.except(:id))
 
-          if params[:attrs] && (params[:primary_group] || params[:groups])
+          if params[:providers]&.size&.positive?
             current_providers = @providers.compact.keys
-            if params[:providers]
-              add_providers = params[:providers] - current_providers
-              mod_providers = params[:providers] & current_providers
-              del_providers = current_providers - params[:providers]
-            else
-              add_providers = []
-              mod_providers = current_providers
-              del_providers = []
-            end
+
+            add_providers = params[:providers] - current_providers
+            mod_providers = params[:providers] & current_providers
+            del_providers = current_providers - params[:providers]
 
             unless add_providers.empty?
               provider_create_user({
