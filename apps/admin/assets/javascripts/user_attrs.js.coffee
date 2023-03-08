@@ -7,8 +7,8 @@ calcUserAttrValue = ({user, attrs, code}) ->
 
   code = "return #{code};" unless /\breturn\b/.test(code)
 
-  func = new Function('{name, display_name, email, primary_group, attrs, tools}', code)
   try
+    func = new Function('{name, display_name, email, primary_group, attrs, tools}', code)
     result = func {
       name: user.name
       display_name: user.display_name
