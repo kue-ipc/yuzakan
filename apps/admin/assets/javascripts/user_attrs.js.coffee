@@ -5,7 +5,7 @@ import {xxh32, xxh64} from '/assets/common/hash.js'
 calcUserAttrValue = ({user, attrs, code}) ->
   return unless code
 
-  code = "return #{code};" unless /\breturn\b/.test(code)
+  code = "return (#{code});" unless /\breturn\b/.test(code)
 
   try
     func = new Function('{name, display_name, email, primary_group, attrs, tools}', code)
@@ -77,6 +77,6 @@ export setUserAttrsDefault = ({user, attrs}) ->
       continue
     else
       defaultValue = calcUserAttrValue({user, attrs: userAttrs, code: attr.code})
-      userAttrs.set(attr.name, defaultValue)
+      userAttrs.set(attr.name, defaultValue) if defaultValue?
 
   {user..., attrs: userAttrs}
