@@ -47,38 +47,40 @@ module Api
 
           @user_repository.update(@user.id, params.to_h.except(:id))
 
-          current_providers = @providers.compact.keys
-          if params[:providers]
-            add_providers = params[:providers] - current_providers
-            mod_providers = params[:providers] & current_providers
-            del_providers = current_providers - params[:providers]
-          else
-            add_providers = []
-            mod_providers = current_providers
-            del_providers = []
-          end
+          if params[:attrs] && (params[:primary_group] || params[:groups])
+            current_providers = @providers.compact.keys
+            if params[:providers]
+              add_providers = params[:providers] - current_providers
+              mod_providers = params[:providers] & current_providers
+              del_providers = current_providers - params[:providers]
+            else
+              add_providers = []
+              mod_providers = current_providers
+              del_providers = []
+            end
 
-          unless add_providers.empty?
-            provider_create_user({
-              **params.to_h,
-              username: @name,
-              providers: add_providers,
-            })
-          end
+            unless add_providers.empty?
+              provider_create_user({
+                **params.to_h,
+                username: @name,
+                providers: add_providers,
+              })
+            end
 
-          unless mod_providers.empty?
-            provider_update_user({
-              **params.to_h,
-              username: @name,
-              providers: mod_providers,
-            })
-          end
+            unless mod_providers.empty?
+              provider_update_user({
+                **params.to_h,
+                username: @name,
+                providers: mod_providers,
+              })
+            end
 
-          unless del_providers.empty?
-            provider_delete_user({
-              username: @name,
-              providers: del_providers,
-            })
+            unless del_providers.empty?
+              provider_delete_user({
+                username: @name,
+                providers: del_providers,
+              })
+            end
           end
 
           load_user

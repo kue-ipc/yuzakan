@@ -6,6 +6,8 @@ module Admin
       class Show
         include Admin::Action
 
+        security_level 5
+
         class Params < Hanami::Action::Params
           predicates NamePredicates
           messages :i18n

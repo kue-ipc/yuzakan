@@ -65,8 +65,9 @@ export InitUserAttrs = (state, {user, attrs}) ->
 
   {state..., user: {user..., attrs: attrValues, attrSettings, attrDefaults}, attrs}
 
+# user.attrs Map として必ず存在すること
 export setUserAttrsDefault = ({user, attrs}) ->
-  userAttrs = new Map(user.attrs?.entries())
+  userAttrs = new Map(user.attrs.entries())
 
   for attr in attrs
     if userAttrs.has(attr.name)

@@ -81,13 +81,9 @@ normalizeUserUploaded = ({action, error, user...}) ->
 
 fillAddOrModUsers = ({users, attrs, domain}) ->
   for user in users
-    if user.action == 'ADD' || user.action == 'MOD'
-      {
-        setUserAttrsDefault({user, attrs})...
-        email: user.email ? "#{user.name}@#{domain}"
-      }
-    else
-      user
+    user = setUserAttrsDefault({user, attrs}) if user.attrs? && ['ADD', 'MOD'].includes(user.action)
+    user = {user..., email: "#{user.name}@#{domain}"} if user.action == 'ADD' && !user.email
+    user
 
 indexOptionFromState = (state) ->
   pick({
