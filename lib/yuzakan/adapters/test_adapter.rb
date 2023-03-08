@@ -7,7 +7,7 @@ require_relative 'abstract_adapter'
 module Yuzakan
   module Adapters
     class TestAdapter < AbstractAdapter
-      self.hidden_adapter = true if Hanami.env == 'production'
+      hidden true if Hanami.env == 'production'
 
       self.name = 'test'
       self.display_name = 'テスト'

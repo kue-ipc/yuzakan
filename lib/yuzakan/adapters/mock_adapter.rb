@@ -13,7 +13,7 @@ module Yuzakan
       class MockAdapterError < Yuzakan::Adapters::AbstractAdapter::AdapterError
       end
 
-      self.hidden_adapter = true if Hanami.env == 'production'
+      hidden true if Hanami.env == 'production'
 
       self.name = 'mock'
       self.display_name = 'モック'
