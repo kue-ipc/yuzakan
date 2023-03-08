@@ -40,7 +40,8 @@ namespace :vendor do
   desc 'ベンダーファイル生成'
   task build: [:build_js, :build_font, :build_image]
 
-  task build_js: [:build_js_rollup, :build_js_hyperapp, :build_js_opal]
+  # task build_js: [:build_js_rollup, :build_js_hyperapp, :build_js_opal]
+  task build_js: [:build_js_rollup, :build_js_hyperapp]
 
   task build_js_rollup: ['rollup.config.mjs', 'node_modules/.bin/rollup'] do
     sh 'npx rollup -c'
