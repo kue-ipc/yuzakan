@@ -62,6 +62,10 @@ module Yuzakan
             default: 'user',
             fixed: true,
           }, {
+            name: :group_name_attr,
+            default: 'sAMAccountName',
+            fixed: true,
+          }, {
             name: :password_scheme,
             delete: true,
           }, {
