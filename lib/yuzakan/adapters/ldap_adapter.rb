@@ -449,7 +449,7 @@ module Yuzakan
       end
 
       private def ldap_user_auth(user, password)
-        @logger.debug "LDAP bind: #{user.dn}"
+        @logger.info "LDAP bind: #{user.dn}"
         # 認証のbindには別のLDAPインスタンスを使用します。
         generate_ldap.bind(method: :simple, username: user.dn, password: password)
       end
@@ -913,14 +913,14 @@ module Yuzakan
       end
 
       private def ldap_search(opts)
-        @logger.debug "LDAP search: #{opts}"
+        @logger.info "LDAP search: #{opts}"
         result = ldap.search(opts)
         after_ldap_action(:search, result)
         result
       end
 
       private def ldap_add(dn, attributes)
-        @logger.debug "LDAP add: #{dn}"
+        @logger.info "LDAP add: #{dn}"
         str_attrs = attributes.transform_values { |value| value_to_str(value) }
         result = ldap.add({dn: dn, attributes: str_attrs})
         after_ldap_action(:add, result)
@@ -928,21 +928,21 @@ module Yuzakan
       end
 
       private def ldap_modify(dn, operations)
-        @logger.debug "LDAP modify: #{dn}"
+        @logger.info "LDAP modify: #{dn}"
         result = ldap.modify({dn: dn, operations: operations})
         after_ldap_action(:modify, result)
         result
       end
 
       private def ldap_delete(dn)
-        @logger.debug "LDAP delete: #{dn}"
+        @logger.info "LDAP delete: #{dn}"
         result = ldap.delete({dn: dn})
         after_ldap_action(:delete, result)
         result
       end
 
       private def ldap_rename(olddn, newrdn)
-        @logger.debug "LDAP rename: #{oldnd} -> #{newrdn}"
+        @logger.info "LDAP rename: #{oldnd} -> #{newrdn}"
         result = ldap.rename({olddn: olddn, newrdn: newrdn})
         after_ldap_action(:rename, result)
         result
