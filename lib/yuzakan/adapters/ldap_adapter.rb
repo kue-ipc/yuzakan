@@ -499,6 +499,9 @@ module Yuzakan
       # == 処理の実行前後
 
       private def run_after_user_create(user, primary_group: nil, groups: nil, **_userdata)
+        # グループを管理しない場合は何もしない。
+        return false unless has_group?
+
         changed = false
 
         # プライマリーグループを管理しない場合は、通常のグループとして処理する
@@ -515,6 +518,9 @@ module Yuzakan
       end
 
       private def run_after_user_update(user, primary_group: nil, groups: nil, **_userdata)
+        # グループを管理しない場合は何もしない。
+        return false unless has_group?
+
         changed = false
 
         # グループのチェック
@@ -820,8 +826,15 @@ module Yuzakan
             end
         end
 
-        primary_group = ldap_primary_group(user)&.then { |group| group_entry_name(group) }
-        groups = ldap_user_group_list(user).map { |group| group_entry_name(group) }
+        group_data =
+          if has_group?
+            {
+              primary_group: ldap_primary_group(user)&.then { |group| group_entry_name(group) },
+              groups: ldap_user_group_list(user).map { |group| group_entry_name(group) },
+            }
+          else
+            {}
+          end
 
         {
           username: name,
@@ -830,8 +843,7 @@ module Yuzakan
           locked: user_entry_locked?(user),
           unmanageable: user_entry_unmanageable?(user),
           mfa: user_entry_mfa?(user),
-          primary_group: primary_group,
-          groups: groups,
+          **group_data,
           attrs: attrs,
         }
       end

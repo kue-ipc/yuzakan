@@ -136,17 +136,18 @@ module Yuzakan
 
       abstract true
 
-      def initialize(params, logger: Logger.new($stderr))
+      def initialize(params, group: false, logger: Logger.new($stderr))
         @params = params
+        @group = group
         @logger = logger
       end
 
       def has_group?
-        self.class.has_group?
+        @group && self.class.has_group?
       end
 
       def has_primary_group?
-        self.class.has_primary_group?
+        has_group? && self.class.has_primary_group?
       end
 
       def check
