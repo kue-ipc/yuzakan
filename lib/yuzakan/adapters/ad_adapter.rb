@@ -80,14 +80,16 @@ module Yuzakan
       group true
 
       # override
-      private def run_after_user_create(user, **userdata)
+      private def run_after_user_create(user, password: nil, **userdata)
         super
 
+        # 作成時にパスワードは設定されていないため、パスワード変更を行う
+        ldap_user_change_password(user, password) if password
+
         # デフォルトUACの適用
-        # 作成時には適用でいないため、作成後にする必要がある。
-        uac = user_entry_uac(user)
-        uac.add(AccountControl::DEFAULT_USER_FLAGS)
-        operations = [operation_replace(AccountControl::ATTRIBUTE_NAME, convert_ldap_value(uac.to_i))]
+        # 作成時には適用できないため、作成後にする必要がある。
+        default_uac = AccountControl.new
+        operations = [operation_replace(AccountControl::ATTRIBUTE_NAME, convert_ldap_value(default_uac.to_i))]
         ldap_modify(user.dn, operations)
 
         # 必ず変更がある
@@ -113,9 +115,10 @@ module Yuzakan
       # パスワード関連
       # ADではunicodePwdに平文パスワードを設定する。
 
+      # ADでは作成時にパスワードを設定しても反映されない
       # override
       private def create_user_password_attributes(password)
-        {attribute_name('unicodePwd') => generate_unicode_password(password)}
+        {}
       end
 
       # 古いパスワードは取得できないため、常にreplaceで行うこと。

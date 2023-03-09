@@ -262,8 +262,8 @@ module Yuzakan
 
         user = ldap_user_create(**userdata, username: username, password: password)
 
-        # パスワードは渡さない
-        user = ldap_get(user.dn) if run_after_user_create(user, **userdata)
+        # パスワードも渡す。
+        user = ldap_get(user.dn) if run_after_user_create(user, **userdata, password: password)
 
         user_entry_to_data(user)
       end
