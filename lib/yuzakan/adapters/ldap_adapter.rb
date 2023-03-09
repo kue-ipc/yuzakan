@@ -226,8 +226,8 @@ module Yuzakan
           label: 'ユーザー作成時のオブジェクトクラス',
           description: 'オブジェクトクラスをカンマ区切りで入力してください。',
           type: :string,
-          default: 'inetOrgPerson,nsMemberOf',
-          placeholder: 'inetOrgPerson,nsMemberOf',
+          default: 'inetOrgPerson',
+          placeholder: 'inetOrgPerson',
         },
       ]
 
@@ -415,6 +415,8 @@ module Yuzakan
 
       private def ldap_user_create(**userdata)
         attributes = create_user_attributes(**userdata)
+        # objectClassが重複している場合はエラーになるため、重複をなくしておく
+        attributes[attribute_name('objectClass')].uniq!
 
         dn_attr = @params[:create_user_dn_attr]
         attribute_name(@params[:create_user_dn_attr])
@@ -576,7 +578,9 @@ module Yuzakan
         attributes = userdata[:attrs].transform_keys { |key| attribute_name(key) }
         attributes.transform_values! { |value| convert_ldap_value(value) }
 
-        attributes[attribute_name('objectClass')] = @params[:create_user_object_classes].split(',').map(&:strip)
+        # OpenLDAP環境では"top"が自動的に付与されないため、"top"を付けて置く
+        attributes[attribute_name('objectClass')] = ['top']
+        attributes[attribute_name('objectClass')].concat(@params[:create_user_object_classes].split(',').map(&:strip))
 
         attributes[attribute_name(@params[:create_user_dn_attr])] = username
         unless @params[:user_name_attr].casecmp?(@params[:create_user_dn_attr])
