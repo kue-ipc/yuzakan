@@ -226,8 +226,8 @@ module Yuzakan
           label: 'ユーザー作成時のオブジェクトクラス',
           description: 'オブジェクトクラスをカンマ区切りで入力してください。',
           type: :string,
-          default: 'inetOrgPerson,nsMemberOf',
-          placeholder: 'inetOrgPerson,nsMemberOf',
+          default: 'inetOrgPerson',
+          placeholder: 'inetOrgPerson',
         },
       ]
 
@@ -262,8 +262,8 @@ module Yuzakan
 
         user = ldap_user_create(**userdata, username: username, password: password)
 
-        # パスワードは渡さない
-        user = ldap_get(user.dn) if run_after_user_create(user, **userdata)
+        # パスワードも渡す。
+        user = ldap_get(user.dn) if run_after_user_create(user, **userdata, password: password)
 
         user_entry_to_data(user)
       end
@@ -415,6 +415,8 @@ module Yuzakan
 
       private def ldap_user_create(**userdata)
         attributes = create_user_attributes(**userdata)
+        # objectClassが重複している場合はエラーになるため、重複をなくしておく
+        attributes[attribute_name('objectClass')].uniq!
 
         dn_attr = @params[:create_user_dn_attr]
         attribute_name(@params[:create_user_dn_attr])
@@ -497,6 +499,9 @@ module Yuzakan
       # == 処理の実行前後
 
       private def run_after_user_create(user, primary_group: nil, groups: nil, **_userdata)
+        # グループを管理しない場合は何もしない。
+        return false unless has_group?
+
         changed = false
 
         # プライマリーグループを管理しない場合は、通常のグループとして処理する
@@ -513,6 +518,9 @@ module Yuzakan
       end
 
       private def run_after_user_update(user, primary_group: nil, groups: nil, **_userdata)
+        # グループを管理しない場合は何もしない。
+        return false unless has_group?
+
         changed = false
 
         # グループのチェック
@@ -576,7 +584,9 @@ module Yuzakan
         attributes = userdata[:attrs].transform_keys { |key| attribute_name(key) }
         attributes.transform_values! { |value| convert_ldap_value(value) }
 
-        attributes[attribute_name('objectClass')] = @params[:create_user_object_classes].split(',').map(&:strip)
+        # OpenLDAP環境では"top"が自動的に付与されないため、"top"を付けて置く
+        attributes[attribute_name('objectClass')] = ['top']
+        attributes[attribute_name('objectClass')].concat(@params[:create_user_object_classes].split(',').map(&:strip))
 
         attributes[attribute_name(@params[:create_user_dn_attr])] = username
         unless @params[:user_name_attr].casecmp?(@params[:create_user_dn_attr])
@@ -816,8 +826,15 @@ module Yuzakan
             end
         end
 
-        primary_group = ldap_primary_group(user)&.then { |group| group_entry_name(group) }
-        groups = ldap_user_group_list(user).map { |group| group_entry_name(group) }
+        group_data =
+          if has_group?
+            {
+              primary_group: ldap_primary_group(user)&.then { |group| group_entry_name(group) },
+              groups: ldap_user_group_list(user).map { |group| group_entry_name(group) },
+            }
+          else
+            {}
+          end
 
         {
           username: name,
@@ -826,8 +843,7 @@ module Yuzakan
           locked: user_entry_locked?(user),
           unmanageable: user_entry_unmanageable?(user),
           mfa: user_entry_mfa?(user),
-          primary_group: primary_group,
-          groups: groups,
+          **group_data,
           attrs: attrs,
         }
       end

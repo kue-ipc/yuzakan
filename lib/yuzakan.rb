@@ -7,7 +7,7 @@ require_relative 'yuzakan/monkey_patch'
 
 module Yuzakan
   NAME = 'Yuzakan'
-  VERSION = '0.6.0'
+  VERSION = '0.6.1'
   LICENSE = -File.read(File.join(__dir__, '..', 'LICENSE'))
 
   def self.name

@@ -103,6 +103,9 @@ module Yuzakan
       private def run_after_user_update(user, **userdata)
         changed = super
 
+        # グループを管理しない場合は何もしない。
+        return change unless has_group?
+
         # プライマリーグループは通常のメンバーから削除する
         ldap_primary_group(user)&.then do |group|
           changed = true if ldap_member_remove(group, user)
@@ -114,6 +117,9 @@ module Yuzakan
       # override
       private def run_before_user_delete(user)
         changed = super
+
+        # グループを管理しない場合は何もしない。
+        return change unless has_group?
 
         # 通常のメンバーのみ削除する
         get_memberuid_groups(user).each do |group|
@@ -137,7 +143,12 @@ module Yuzakan
 
         # gid number
         unless attributes.key?(attribute_name('gidNumber'))
-          gid_number = (primary_group && get_gidnumber(primary_group)) || @params[:user_gid_number]
+          gid_number =
+            if has_group?
+              (primary_group && get_gidnumber(primary_group)) || @params[:user_gid_number]
+            else
+              @params[:user_gid_number]
+            end
           attributes[attribute_name('gidNumber')] = convert_ldap_value(gid_number)
         end
 
@@ -148,14 +159,14 @@ module Yuzakan
       private def update_user_attributes(**userdata)
         attributes = super
 
+        # グループを管理しない場合はスキップ
+        return attributes unless has_group?
+
         # gid number
-        gid_number =
-          if userdata[:primary_group]
-            get_gidnumber(userdata[:primary_group])
-          else
-            @params[:user_gid_number]
-          end
-        attributes[attribute_name('gidNumber')] = convert_ldap_value(gid_number)
+        if userdata[:primary_group]
+          gid_number = get_gidnumber(userdata[:primary_group])
+          attributes[attribute_name('gidNumber')] = convert_ldap_value(gid_number)
+        end
 
         attributes
       end
