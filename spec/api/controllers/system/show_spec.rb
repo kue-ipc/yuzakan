@@ -14,7 +14,7 @@ RSpec.describe Api::Controllers::System::Show, type: :action do
       title: 'title',
       domain: 'example.jp',
       contact: {name: nil, email: nil, phone: nil},
-      app: {name: 'Yuzakan', version: '0.6.0',
+      app: {name: 'Yuzakan', version: Yuzakan::VERSION,
             license: File.read(File.join(__dir__, '../../../../LICENSE')),},
     })
   end
@@ -35,7 +35,7 @@ RSpec.describe Api::Controllers::System::Show, type: :action do
         title: 'title2',
         domain: 'example.jp',
         contact: {name: 'admin', email: 'admin@example.jp', phone: '00-0000-0000'},
-        app: {name: 'Yuzakan', version: '0.6.0',
+        app: {name: 'Yuzakan', version: Yuzakan::VERSION,
               license: File.read(File.join(__dir__, '../../../../LICENSE')),},
       })
     end
@@ -54,7 +54,7 @@ RSpec.describe Api::Controllers::System::Show, type: :action do
         title: 'title',
         domain: 'example.jp',
         contact: {name: nil, email: nil, phone: nil},
-        app: {name: 'Yuzakan', version: '0.6.0',
+        app: {name: 'Yuzakan', version: Yuzakan::VERSION,
               license: File.read(File.join(__dir__, '../../../../LICENSE')),},
       })
     end
