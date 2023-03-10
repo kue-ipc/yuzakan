@@ -508,7 +508,7 @@ module Yuzakan
         groups = [primary_group, *groups] unless has_primary_group?
 
         # グループの追加
-        groups.compact.uniq.each do |groupname|
+        groups&.compact&.uniq&.each do |groupname|
           ldap_group_read(groupname)&.then do |group|
             changed = true if ldap_member_add(group, user)
           end
@@ -521,33 +521,34 @@ module Yuzakan
         # グループを管理しない場合は何もしない。
         return false unless has_group?
 
+        # プライマリーグループもグループもない場合は何もしない
+        return false unless primary_group || groups
+
         changed = false
 
         # グループのチェック
-        if primary_group || groups
-          remains = ldap_user_group_list(user).to_h { |group| [group_entry_name(group), group] }
+        remains = ldap_user_group_list(user).to_h { |group| [group_entry_name(group), group] }
 
-          # プライマリーグループを管理しない場合は、プリマリーグループを無条件で追加する。
-          # 管理している場合は追加しない
-          if !has_primary_group? && primary_group && remains.delete(primary_group).nil?
-            ldap_group_read(primary_group)&.then do |group|
+        # プライマリーグループを管理しない場合は、プリマリーグループを無条件で追加する。
+        # 管理している場合は追加しない
+        if !has_primary_group? && primary_group && remains.delete(primary_group).nil?
+          ldap_group_read(primary_group)&.then do |group|
+            changed = true if ldap_member_add(group, user)
+          end
+        end
+
+        # その他のグループがある場合のみ追加と削除を行う。
+        if groups
+          groups.each do |groupname|
+            next if groupname == primary_group
+            next if remains.delete(groupname)
+
+            ldap_group_read(groupname)&.then do |group|
               changed = true if ldap_member_add(group, user)
             end
           end
-
-          # その他のグループがある場合のみ追加と削除を行う。
-          if groups
-            groups.each do |groupname|
-              next if groupname == primary_group
-              next if remains.delete(groupname)
-
-              ldap_group_read(groupname)&.then do |group|
-                changed = true if ldap_member_add(group, user)
-              end
-            end
-            remains.each_value do |group|
-              changed = true if ldap_member_remove(group, user)
-            end
+          remains.each_value do |group|
+            changed = true if ldap_member_remove(group, user)
           end
         end
 
