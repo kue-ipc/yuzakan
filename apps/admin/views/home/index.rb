@@ -35,13 +35,13 @@ module Admin
             },
             {
               name: 'ユーザー一覧',
-              url: routes.path(:users),
+              url: routes.path(:users, no_sync: 1),
               description: 'ユーザーの一覧です。',
               color: 'secondary',
             },
             {
               name: 'グループ一覧',
-              url: routes.path(:groups),
+              url: routes.path(:groups, no_snyc: 1),
               description: 'グループの一覧です。',
               color: 'secondary',
             },
