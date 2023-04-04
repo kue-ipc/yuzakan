@@ -58,7 +58,7 @@ module Api
 
           # グループがない場合は@userのグループに設定
           params[:primary_group] ||= @user.primary_group&.name
-          params[:groups] ||= @user.groups.map(&name)
+          params[:groups] ||= @user.groups.map(&:name)
 
           # グループと属性を各プロバイダーに反映
           if params[:providers]
