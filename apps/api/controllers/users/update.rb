@@ -56,6 +56,10 @@ module Api
           # ユーザー属性の変更
           @user_repository.update(@user.id, params.except(:id))
 
+          # グループがない場合は@userのグループに設定
+          params[:primary_group] ||= @user.primary_group&.name
+          params[:groups] ||= @user.groups.map(&name)
+
           # グループと属性を各プロバイダーに反映
           if params[:providers]
             current_providers = @providers.compact.keys
@@ -65,10 +69,7 @@ module Api
             del_providers = current_providers - params[:providers]
 
             unless add_providers.empty?
-              # paramsにグループがない場合は@userのグループを使用
               provider_create_user({
-                primary_group: @user.primary_group&.name,
-                groups: @user.groups.map(&name),
                 **params,
                 username: @name,
                 providers: add_providers,
