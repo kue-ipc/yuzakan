@@ -129,10 +129,10 @@ def let_mock_repositories
   let(:attrs_attributes) {
     [
       attr_attributes,
-      {**attr_attributes, id: 19, name: 'attr19', display_name: '属性19', type: 'boolean', order: 24},
-      {**attr_attributes, id: 24, name: 'attr24', display_name: nil, type: 'integer', order: 16, code: '"hoge"'},
-      {**attr_attributes, id: 27, name: 'attr27', display_name: '属性27', type: 'string', order: 64, hidden: true},
-      {**attr_attributes, id: 28, name: 'attr28', display_name: nil, type: 'string', order: 32, readonly: true},
+      {**attr_attributes, id: 19, name: 'attr_bool', display_name: '真偽値属性', type: 'boolean', order: 24},
+      {**attr_attributes, id: 24, name: 'attr_int', display_name: nil, type: '整数属性', order: 16, code: '"hoge"'},
+      {**attr_attributes, id: 27, name: 'attr_str', display_name: '文字列属性', type: 'string', order: 64, hidden: true},
+      {**attr_attributes, id: 28, name: 'attr_noname', display_name: nil, type: 'string', order: 32, readonly: true},
     ]
   }
   let(:attr_mappings_attributes) {
@@ -189,6 +189,15 @@ def let_mock_repositories
       {**provider_attriubtes, id: 3, name: 'provider3', display_name: nil, order: 16},
       {**provider_attriubtes, id: 4, name: 'self_management_provider', self_management: true},
     ]
+  }
+
+  # other
+  let(:user_attrs) {
+    {
+      attr_bool: true,
+      attr_int: 42,
+      attr_str: 'hoge',
+    }
   }
 
   let(:uuid) { 'ffffffff-ffff-4fff-bfff-ffffffffffff' }

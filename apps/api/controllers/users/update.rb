@@ -25,7 +25,7 @@ module Api
             optional(:clearance_level).filled(:int?)
             optional(:prohibited).filled(:bool?)
             optional(:deleted).filled(:bool?)
-            optional(:deleted_at).filled(:date_time?)
+            optional(:deleted_at).maybe(:date_time?)
 
             optional(:primary_group).maybe(:str?, :name?, max_size?: 255)
             optional(:groups).each(:str?, :name?, max_size?: 255)
