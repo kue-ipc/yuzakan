@@ -45,9 +45,19 @@ module Api
             }
           end
 
-          @user_repository.update(@user.id, params.to_h.except(:id))
+          if params[:providers] && params[:attrs].nil?
+            halt_json 422, errors: {
+              attrs: I18n.t('errors.filled?'),
+            }
+          end
 
-          if params[:providers]&.size&.positive?
+          params = params.to_h
+
+          # ユーザー属性の変更
+          @user_repository.update(@user.id, params.except(:id))
+
+          # グループと属性を各プロバイダーに反映
+          if params[:providers]
             current_providers = @providers.compact.keys
 
             add_providers = params[:providers] - current_providers
@@ -55,8 +65,11 @@ module Api
             del_providers = current_providers - params[:providers]
 
             unless add_providers.empty?
+              # paramsにグループがない場合は@userのグループを使用
               provider_create_user({
-                **params.to_h,
+                primary_group: @user.primary_group&.name,
+                groups: @user.groups.map(&name),
+                **params,
                 username: @name,
                 providers: add_providers,
               })
@@ -64,7 +77,7 @@ module Api
 
             unless mod_providers.empty?
               provider_update_user({
-                **params.to_h,
+                **params,
                 username: @name,
                 providers: mod_providers,
               })
@@ -76,6 +89,12 @@ module Api
                 providers: del_providers,
               })
             end
+          elsif !@providers.empty?
+            provider_update_user({
+              **params,
+              username: @name,
+              providers: @providers.keys,
+            })
           end
 
           load_user

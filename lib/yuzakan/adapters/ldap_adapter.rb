@@ -490,7 +490,7 @@ module Yuzakan
       end
 
       private def ldap_member_remove(group, user)
-        return false unless user['memberOf'].include?(group.dn)
+        return false unless group['member'].include?(user.dn)
 
         operations = [operation_delete(:member, user.dn)]
         ldap_modify(group.dn, operations)
@@ -522,7 +522,7 @@ module Yuzakan
         return false unless has_group?
 
         # プライマリーグループもグループもない場合は何もしない
-        return false unless primary_group || groups
+        return false if primary_group.nil? && groups.nil?
 
         changed = false
 
