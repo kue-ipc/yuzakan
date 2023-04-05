@@ -28,6 +28,42 @@ providers:
   self_management: false
   group: false
   params: {}
+- name: ldap
+  display_name: 普通のLDAP
+  adapter_name: ldap
+  readable: true
+  writable: true
+  authenticatable: true
+  password_changeable: true
+  individual_password: false
+  lockable: true
+  self_management: false
+  group: true
+  params:
+    host: localhost
+    port: 
+    protocol: ldap
+    certificate_check: true
+    base_dn: dc=example,dc=jp
+    bind_username: cn=admin,dc=example,dc=jp
+    bind_password: admin_password
+    user_name_attr: cn
+    user_display_name_attr: displayName;lang-ja
+    user_email_attr: mail
+    user_search_base_dn: ou=User,dc=example,dc=jp
+    user_search_scope: sub
+    user_search_filter: "(objectclass=*)"
+    group_name_attr: cn
+    group_name_suffix: 
+    group_display_name_attr: description
+    group_search_base_dn: ou=Group,dc=example,dc=jp
+    group_search_scope: sub
+    group_search_filter: "(objectclass=*)"
+    password_scheme: "{SSHA512}"
+    crypt_salt_format: "$6$%.16s"
+    create_user_dn_attr: cn
+    create_user_ou_dn: ou=User,dc=example,dc=jp
+    create_user_object_classes: inetOrgPerson,eduPerson,mozillaAbPersonAlpha
 - name: posix_samba
   display_name: PosixとSamba
   adapter_name: samba_ldap
@@ -73,42 +109,6 @@ providers:
     samba_nt_password: true
     samba_lm_password: false
     auth_nt_password: false
-- name: ldap
-  display_name: 普通のLDAP
-  adapter_name: ldap
-  readable: true
-  writable: true
-  authenticatable: true
-  password_changeable: true
-  individual_password: false
-  lockable: true
-  self_management: false
-  group: true
-  params:
-    host: localhost
-    port: 
-    protocol: ldap
-    certificate_check: true
-    base_dn: dc=example,dc=jp
-    bind_username: cn=admin,dc=example,dc=jp
-    bind_password: admin_password
-    user_name_attr: cn
-    user_display_name_attr: displayName;lang-ja
-    user_email_attr: mail
-    user_search_base_dn: ou=User,dc=example,dc=jp
-    user_search_scope: sub
-    user_search_filter: "(objectclass=*)"
-    group_name_attr: cn
-    group_name_suffix: 
-    group_display_name_attr: description
-    group_search_base_dn: ou=Group,dc=example,dc=jp
-    group_search_scope: sub
-    group_search_filter: "(objectclass=*)"
-    password_scheme: "{SSHA512}"
-    crypt_salt_format: "$6$%.16s"
-    create_user_dn_attr: cn
-    create_user_ou_dn: ou=User,dc=example,dc=jp
-    create_user_object_classes: inetOrgPerson,nsMemberOf
 attrs:
 - name: display_name_latin
   display_name: 表示名(ローマ字)
@@ -202,4 +202,54 @@ attrs:
   attr_mappings:
   - provider: posix_samba
     key: homeDirectory
+    conversion: 
+- name: use_html_mail
+  display_name: 
+  type: boolean
+  hidden: false
+  readonly: false
+  code: 'false'
+  attr_mappings:
+  - provider: ldap
+    key: mozillaUseHtmlMail
+    conversion: 
+- name: affiliation
+  display_name: 
+  type: string
+  hidden: false
+  readonly: false
+  code: 
+  attr_mappings:
+  - provider: ldap
+    key: eduPersonAffiliation
+    conversion: 
+- name: password_last_change
+  display_name: パスワード変更日
+  type: date
+  hidden: false
+  readonly: true
+  code: 
+  attr_mappings:
+  - provider: posix_samba
+    key: shadowLastChange
+    conversion: posix_date
+- name: password_min_day
+  display_name: パスワード変更不可日数
+  type: integer
+  hidden: false
+  readonly: false
+  code: '0'
+  attr_mappings:
+  - provider: posix_samba
+    key: shadowMin
+    conversion: 
+- name: password_max_day
+  display_name: パスワード変更有効日数
+  type: integer
+  hidden: false
+  readonly: false
+  code: '99999'
+  attr_mappings:
+  - provider: posix_samba
+    key: shadowMax
     conversion: 
