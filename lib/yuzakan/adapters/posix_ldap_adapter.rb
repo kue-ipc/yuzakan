@@ -64,7 +64,7 @@ module Yuzakan
               {name: :random, label: 'ランダム', value: 'random'},
             ],
           }, {
-            name: :user_gid_nuber,
+            name: :user_gid_number,
             label: 'ユーザーのGID番号',
             description: 'プライマリーグループが指定されなかった場合に設定されるユーザーのGID番号です。',
             type: :integer,
