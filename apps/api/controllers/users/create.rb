@@ -51,6 +51,8 @@ module Api
           load_user
           halt_json 422, errors: {name: [I18n.t('errors.uniq?')]} if @user
 
+          halt_json 422, errors: {attrs: I18n.t('errors.filled?')} if params[:providers] && params[:attrs].nil?
+
           password = params[:password] || generate_password.password
 
           if params[:deleted]

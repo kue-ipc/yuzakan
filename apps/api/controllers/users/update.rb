@@ -45,11 +45,7 @@ module Api
             }
           end
 
-          if params[:providers] && params[:attrs].nil?
-            halt_json 422, errors: {
-              attrs: I18n.t('errors.filled?'),
-            }
-          end
+          halt_json 422, errors: {attrs: I18n.t('errors.filled?')} if params[:providers] && params[:attrs].nil?
 
           params = params.to_h
 
