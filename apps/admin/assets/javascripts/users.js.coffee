@@ -5,7 +5,7 @@ import * as html from '/assets/vendor/hyperapp-html.js'
 import {DateTime} from '/assets/vendor/luxon.js'
 
 import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
-import {objToUrlencoded, objToJson, listToParamName} from '/assets/common/convert.js'
+import {convertToType, objToUrlencoded, objToJson, listToParamName} from '/assets/common/convert.js'
 import {updateList, findList} from '/assets/common/list_helper.js'
 
 import bsIcon from '/assets/app/bs_icon.js'
@@ -78,6 +78,11 @@ normalizeUserUploaded = ({action, error, user...}) ->
     error
     normalizeUser(user)...
   }
+
+normalizeUserAttrs = (userAttrs, {attrs}) ->
+  newAttrs = for attr in attrs when attr.name of userAttrs
+    [attr.name, convertToType(userAttrs[attr.name], attr.type)]
+  new Map(newAttrs)
 
 fillAddOrModUsers = ({users, attrs, domain}) ->
   for user in users
@@ -350,7 +355,9 @@ UploadUsers = (state, {list, filename}) ->
     {
       show_detail: false
       normalizeUserUploaded(user)...
+      attrs: normalizeUserAttrs(user.attrs, {attrs: state.attrs})
     }
+  
   {
     state...
     mode: 'file'
