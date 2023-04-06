@@ -59,7 +59,7 @@ providers:
     group_search_base_dn: ou=Group,dc=example,dc=jp
     group_search_scope: sub
     group_search_filter: "(objectclass=*)"
-    password_scheme: "{SSHA512}"
+    password_scheme: "{SSHA}"
     crypt_salt_format: "$6$%.16s"
     create_user_dn_attr: cn
     create_user_ou_dn: ou=User,dc=example,dc=jp
