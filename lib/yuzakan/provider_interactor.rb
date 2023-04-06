@@ -1,16 +1,14 @@
 # frozen_string_literal: true
 
 require 'hanami/interactor'
-require 'hanami/validations'
 require 'hanami/utils/string'
 
 module Yuzakan
   module ProviderInteractor
-    include Hanami::Interactor
-
     def self.included(interactor)
       if interactor.is_a?(Class)
         interactor.class_eval do
+          include Hanami::Interactor
           expose :providers
           expose :changed
         end
