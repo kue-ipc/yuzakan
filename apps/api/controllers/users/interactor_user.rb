@@ -58,6 +58,16 @@ module Api
           call_interacttor(@provider_delete_user, params)
         end
 
+        private def provider_lock_user(params)
+          @provider_lock_user ||= ProviderLockUser.new(provider_repository: @provider_repository)
+          call_interacttor(@provider_lock_user, params)
+        end
+
+        private def provider_unlock_user(params)
+          @provider_unlock_user ||= ProviderUnlockUser.new(provider_repository: @provider_repository)
+          call_interacttor(@provider_unlock_user, params)
+        end
+
         private def generate_password(params = {})
           @generate_password ||= GeneratePassword.new(config_repository: @config_repository)
           call_interacttor(@generate_password, params)

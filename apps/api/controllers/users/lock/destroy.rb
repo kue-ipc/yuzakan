@@ -1,16 +1,24 @@
 # frozen_string_literal: true
 
+require_relative '../set_user'
+
 module Api
   module Controllers
     module Users
       module Lock
         class Destroy
           include Api::Action
+          include SetUser
 
           security_level 3
 
-          def call(_params)
-            self.body = {}.to_json
+          def call(params) # rubocop:disable Lint/UnusedMethodArgument
+            provider_unlock_user({username: @name})
+
+            load_user
+            self.status = 201
+            headers['Content-Location'] = routes.user_path(@user.name)
+            self.body = user_json
           end
         end
       end
