@@ -352,11 +352,16 @@ SortOrder = (state, order) ->
 
 UploadUsers = (state, {list, filename}) ->
   users = for user in list
+    userAttrs = if user.attrs?
+      {attrs: normalizeUserAttrs(user.attrs, {attrs: state.attrs})}
+    else
+      {}
     {
       show_detail: false
       normalizeUserUploaded(user)...
-      attrs: normalizeUserAttrs(user.attrs, {attrs: state.attrs})
+      userAttrs...
     }
+
   
   {
     state...
