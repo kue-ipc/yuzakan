@@ -331,6 +331,8 @@ class Provider < Hanami::Entity
 
   def self.operation_ability(operation)
     case operation
+    when :check
+      {}
     when :user_create, :user_update, :user_delete
       {writable: true}
     when :user_read, :user_list, :user_seacrh
