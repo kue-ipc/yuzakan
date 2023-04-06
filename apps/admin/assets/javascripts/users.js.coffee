@@ -55,6 +55,8 @@ ACTIONS = new Map([
   ['SUC', '成功']
   ['ACT', '実行中']
   ['SYN', '同期']
+  ['LOC', 'ロック']
+  ['ULO', 'アンロック']
 ])
 
 # Functions
@@ -64,9 +66,9 @@ updateUserList = (users, user) -> updateList(users, user.name, user, {key: 'name
 normalizeUserUploaded = ({action, error, user...}) ->
   action = action?.slice(0, 3)?.toUpperCase() ? ''
   error = switch action
-    when '', 'ADD', 'MOD', 'DEL', 'SYN'
+    when '', 'ADD', 'MOD', 'DEL', 'SYN', 'LOC', 'UNL'
       null
-    when 'LOC', 'UNL', 'PAS'
+    when 'PAS'
       'この処理は対応していません。'
     when 'ERR', 'SUC', 'ACT'
       error
@@ -399,6 +401,10 @@ DoActionUser = (state, user) ->
       [DelUser, {user..., permanent: user.deleted}]
     when 'SYN'
       [SyncUser, user]
+    when 'LOC'
+      [LockUser, user]
+    when 'UNL'
+      [UnlockUser, user]
     else
       console.warn 'not implemented action: %s', user.action
       state
@@ -410,6 +416,10 @@ ModUser = createActionUser(createRunUpdateUser)
 DelUser = createActionUser(createRunDestroyUser)
 
 SyncUser = createActionUser(createRunShowUser)
+
+LockUser = createActionUser(createRunCreateUserLock)
+
+UnlockUser = createActionUser(createRunDestroyUserLock)
 
 PopState = (state, params) ->
   data = {
