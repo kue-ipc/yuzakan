@@ -40,6 +40,7 @@ export INDEX_GROUPS_OPTION_PARAM_TYPES = {
   primary_only: 'boolean'
   hide_prohibited: 'boolean'
   show_deleted: 'boolean'
+  all: 'boolean'
 }
 
 export INDEX_GROUPS_PARAM_TYPES = {

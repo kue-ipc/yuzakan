@@ -49,6 +49,7 @@ export INDEX_USERS_OPTION_PARAM_TYPES = {
   no_sync: 'boolean'
   hide_prohibited: 'boolean'
   show_deleted: 'boolean'
+  all: 'boolean'
 }
 
 export INDEX_USERS_PARAM_TYPES = {
