@@ -89,7 +89,7 @@ createPasswordWebData = new WebData {
   title: 'パスワードのリセット'
   method: 'POST'
   codeActions: new Map [
-    [201, {status: 'success', message: 'パスワードをリセットしました。', autoCloseTime: 1}]
+    [200, {status: 'success', message: 'パスワードをリセットしました。', autoCloseTime: 1}]
   ]
 }
 
@@ -98,7 +98,7 @@ createLockWebData = new WebData {
   title: 'ユーザーのロック'
   method: 'POST'
   codeActions: new Map [
-    [201, {status: 'success', message: 'ユーザーをロックしました。'}]
+    [200, {status: 'success', message: 'ユーザーをロックしました。'}]
   ]
 }
 
