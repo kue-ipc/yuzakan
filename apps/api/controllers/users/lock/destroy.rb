@@ -27,7 +27,7 @@ module Api
           def call(params)
             halt_json 400, errors: [params.errors] unless params.valid?
 
-            result = call_interacttor(ProviderUnlocUser.new(provider_repository: @provider_repository),
+            result = call_interacttor(ProviderUnlockUser.new(provider_repository: @provider_repository),
                                       {username: params[:user_id]})
 
             providers = result.providers.compact.transform_values { |v| {lock: !v} }
