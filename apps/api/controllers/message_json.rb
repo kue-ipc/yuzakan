@@ -5,6 +5,12 @@ require 'hanami/http/status'
 
 module Api
   module MessageJson
+    # override handle
+    def handle_invalid_csrf_token
+      Hanami.logger.warn "CSRF attack: expected #{session[:_csrf_token]}, was #{params[:_csrf_token]}"
+      halt_json 400, errors: [I18n.t('errors.invalid_csrf_token')]
+    end
+
     private def halt_json(code, message = nil, **others)
       halt(code, generate_json({
         code: code,
@@ -121,10 +127,11 @@ module Api
       end
     end
 
-    # override handle
-    def handle_invalid_csrf_token
-      Hanami.logger.warn "CSRF attack: expected #{ session[:_csrf_token] }, was #{ params[:_csrf_token] }"
-      halt_json 400, errors: [I18n.t('errors.invalid_csrf_token')]
+    private def call_interacttor(interactor, params)
+      result = interactor.call(params)
+      halt_json(500, errors: result.errors) if result.failure?
+
+      result
     end
   end
 end
