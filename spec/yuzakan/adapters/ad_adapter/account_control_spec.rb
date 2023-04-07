@@ -9,7 +9,6 @@ RSpec.describe Yuzakan::Adapters::AdAdapter::AccountControl do
     expect(ac.to_i).to eq 0x10200
     expect(ac.accountdisable).to eq false
     expect(ac.accountdisable?).to eq false
-    expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq false
   end
 
   it 'enable' do
@@ -17,7 +16,6 @@ RSpec.describe Yuzakan::Adapters::AdAdapter::AccountControl do
     expect(ac.to_i).to eq 0x10200
     expect(ac.accountdisable).to eq false
     expect(ac.accountdisable?).to eq false
-    expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq false
   end
 
   it 'disable' do
@@ -25,7 +23,6 @@ RSpec.describe Yuzakan::Adapters::AdAdapter::AccountControl do
     expect(ac.to_i).to eq 0x10202
     expect(ac.accountdisable).to eq true
     expect(ac.accountdisable?).to eq true
-    expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq true
   end
 
   it 'new array' do
@@ -56,7 +53,6 @@ RSpec.describe Yuzakan::Adapters::AdAdapter::AccountControl do
       expect(ac.to_i).to eq 0x10202
       expect(ac.accountdisable).to eq true
       expect(ac.accountdisable?).to eq true
-      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq true
     end
 
     it 'enable' do
@@ -64,7 +60,6 @@ RSpec.describe Yuzakan::Adapters::AdAdapter::AccountControl do
       expect(ac.to_i).to eq 0x10200
       expect(ac.accountdisable).to eq false
       expect(ac.accountdisable?).to eq false
-      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq false
     end
 
     it 'disable' do
@@ -72,68 +67,6 @@ RSpec.describe Yuzakan::Adapters::AdAdapter::AccountControl do
       expect(ac.to_i).to eq 0x10202
       expect(ac.accountdisable).to eq true
       expect(ac.accountdisable?).to eq true
-      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq true
-    end
-  end
-
-  describe 'locked user' do
-    let(:flags) {
-      Yuzakan::Adapters::AdAdapter::AccountControl::DEFAULT_USER_FLAGS |
-        Yuzakan::Adapters::AdAdapter::AccountControl::Flag::LOCKOUT
-    }
-
-    it 'user flags' do
-      expect(ac.to_i).to eq 0x10210
-      expect(ac.accountdisable).to eq false
-      expect(ac.accountdisable?).to eq false
-      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq true
-    end
-
-    it 'enable' do
-      ac.accountdisable = false
-      expect(ac.to_i).to eq 0x10210
-      expect(ac.accountdisable).to eq false
-      expect(ac.accountdisable?).to eq false
-      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq true
-    end
-
-    it 'disable' do
-      ac.accountdisable = true
-      expect(ac.to_i).to eq 0x10212
-      expect(ac.accountdisable).to eq true
-      expect(ac.accountdisable?).to eq true
-      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq true
-    end
-  end
-
-  describe 'disabled and locked user' do
-    let(:flags) {
-      Yuzakan::Adapters::AdAdapter::AccountControl::DEFAULT_USER_FLAGS |
-        Yuzakan::Adapters::AdAdapter::AccountControl::Flag::ACCOUNTDISABLE |
-        Yuzakan::Adapters::AdAdapter::AccountControl::Flag::LOCKOUT
-    }
-
-    it 'user flags' do
-      expect(ac.to_i).to eq 0x10212
-      expect(ac.accountdisable).to eq true
-      expect(ac.accountdisable?).to eq true
-      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq true
-    end
-
-    it 'enable' do
-      ac.accountdisable = false
-      expect(ac.to_i).to eq 0x10210
-      expect(ac.accountdisable).to eq false
-      expect(ac.accountdisable?).to eq false
-      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq true
-    end
-
-    it 'disable' do
-      ac.accountdisable = true
-      expect(ac.to_i).to eq 0x10212
-      expect(ac.accountdisable).to eq true
-      expect(ac.accountdisable?).to eq true
-      expect(ac.intersect?(Yuzakan::Adapters::AdAdapter::AccountControl::LOCKED_FLAGS)).to eq true
     end
   end
 end

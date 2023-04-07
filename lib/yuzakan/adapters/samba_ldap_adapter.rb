@@ -141,7 +141,7 @@ module Yuzakan
         # ロックがかかっていないのであればかかっていない
         return false unless super
 
-        user_entry_sac(user).intersect?(SambaAccountControl::LOCKED_FLAGS)
+        user_entry_sac(user).accountdisable?
       end
 
       # override
@@ -149,7 +149,7 @@ module Yuzakan
         operations = super
  
         sac = user_entry_sac(user)
-        unless sac.accountdisable
+        unless sac.accountdisable?
           sac.accountdisable = true
           operations << operation_add_or_replace(SambaAccountControl::ATTRIBUTE_NAME, sac.to_s, user)
         end
@@ -162,7 +162,7 @@ module Yuzakan
         operations = super
 
         sac = user_entry_sac(user)
-        if sac.accountdisable
+        if sac.accountdisable?
           sac.accountdisable = false
           operations << operation_add_or_replace(SambaAccountControl::ATTRIBUTE_NAME, sac.to_s, user)
         end

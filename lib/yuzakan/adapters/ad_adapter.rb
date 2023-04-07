@@ -100,12 +100,6 @@ module Yuzakan
         AccountControl.new(user.first(AccountControl::ATTRIBUTE_NAME).to_i)
       end
 
-      # ACCOUNTDISABLED と LOCKOUT 両方をチェックする
-      # override
-      private def user_entry_locked?(user)
-        user_entry_uac(user).intersect?(AccountControl::LOCKED_FLAGS)
-      end
-
       # userPrincipalName についてもチェックする
       # override
       private def user_entry_unmanageable?(user)
@@ -137,11 +131,16 @@ module Yuzakan
       # LOCKOUTは無視する。
 
       # override
+      private def user_entry_locked?(user)
+        user_entry_uac(user).accountdisable?
+      end
+
+      # override
       private def lock_operations(user)
         operations = []
 
         uac = user_entry_uac(user)
-        unless uac.accountdisable
+        unless uac.accountdisable?
           uac.accountdisable = true
           operations << operation_replace('userAccountControl', convert_ldap_value(uac.to_i))
         end
@@ -154,7 +153,7 @@ module Yuzakan
         operations = []
 
         uac = user_entry_uac(user)
-        if uac.accountdisable
+        if uac.accountdisable?
           uac.accountdisable = false
           operations << operation_replace('userAccountControl', convert_ldap_value(uac.to_i))
         end

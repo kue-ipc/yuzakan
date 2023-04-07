@@ -34,7 +34,6 @@ module Yuzakan
           PARTIAL_SECRETS_ACCOUNT        = 0x04000000 # 67108864
         end
         DEFAULT_USER_FLAGS = Flag::NORMAL_ACCOUNT | Flag::DONT_EXPIRE_PASSWORD
-        LOCKED_FLAGS = Flag::ACCOUNTDISABLE | Flag::LOCKOUT
 
         ATTRIBUTE_NAME = 'userAccountControl'
 
