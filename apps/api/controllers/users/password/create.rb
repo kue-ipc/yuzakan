@@ -49,8 +49,7 @@ module Api
             #   description: 'パスワードをリセットしました。',
             # }
 
-            self.status = 201
-            headers['Content-Location'] = routes.user_password_path(result.username)
+            self.status = 200
             self.body = generate_json({password: result.password})
           end
         end
