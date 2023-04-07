@@ -84,11 +84,11 @@ ja:
     encrypt: 暗号化
     find_network: ネットワーク検索
     generate_password: パスワード生成
-    pcovider_authenticate: プロバイダーユーザー認証
-    pcovider_lock_user: プロバイダーユーザーロック
+    provider_authenticate: プロバイダーユーザー認証
     provider_change_password: プロバイダーパスワード変更
     provider_create_user: プロバイダーユーザー作成
     provider_delete_user: プロバイダーユーザー削除
+    provider_lock_user: プロバイダーユーザーロック
     provider_read_group: プロバイダーグループ読取
     provider_read_user: プロバイダーユーザー読取
     provider_unlock_user: プロバイダーユーザーアンロック
