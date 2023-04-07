@@ -29,13 +29,13 @@
 # user_update(username, **userdata) -> userdata? [writeable]
 # user_delete(username) -> userdata? [writable]
 #
-# user_auth(username, password) -> bool [authenticatable]
+# user_auth(username, password) -> bool? [authenticatable]
 #
-# user_change_password(username, password) -> bool [password_changeable]
+# user_change_password(username, password) -> bool? [password_changeable]
 # user_generate_code(username) -> codes? [password_changeable]
 #
-# user_lock(username) -> bool [lockable]
-# user_unlock(username, password = nil) -> bool [lockable]
+# user_lock(username) -> bool? [lockable]
+# user_unlock(username, password = nil) -> bool? [lockable]
 #
 # user_list -> Array[username] [readable]
 # user_search(query) -> Array[username] [readable]
@@ -92,11 +92,11 @@ module Yuzakan
         end
 
         def abstract?
-          nil | @abstract_adapter
+          !!@abstract_adapter
         end
 
         def hidden?
-          nil | @hidden_adapter
+          !!@hidden_adapter
         end
 
         def selectable?
@@ -104,7 +104,7 @@ module Yuzakan
         end
 
         def has_group?
-          nil | @group
+          !!@group
         end
 
         def has_primary_group?

@@ -303,7 +303,7 @@ module Yuzakan
 
       def user_auth(username, password)
         user = ldap_user_read(username)
-        return false if user.nil?
+        return if user.nil?
         return false if user_entry_locked?(user)
 
         ldap_user_auth(user, password)
@@ -311,7 +311,7 @@ module Yuzakan
 
       def user_change_password(username, password)
         user = ldap_user_read(username)
-        return false if user.nil?
+        return if user.nil?
         return false if user_entry_unmanageable?(user)
 
         ldap_user_change_password(user, password)
@@ -319,21 +319,26 @@ module Yuzakan
 
       def user_lock(username)
         user = ldap_user_read(username)
-        return false if user.nil?
-        return false if user_entry_unmanageable?(user)
+        return if user.nil?
+        # 管理不可のユーザーは変更せずに、ロックがかかっていれば真を返す。
+        return user_entry_locked?(user) if user_entry_unmanageable?(user)
 
-        # ロックが既にかかっていても変更を実施する
-        ldap_modify(user.dn, lock_operations(user))
+        operations = lock_operations(user)
+        return true if operations.empty?
+
+        ldap_modify(user.dn, operations)
       end
 
       def user_unlock(username, password = nil)
         user = ldap_user_read(username)
-        return false if user.nil?
-        return false if user_entry_unmanageable?(user)
-        return true if user_entry_locked?(user) && password.nil?
+        return if user.nil?
+        # 管理不可のユーザーは変更せずに、ロックがかかっていれば偽を返す。
+        return !user_entry_locked?(user) if user_entry_unmanageable?(user)
 
-        # ロックが既に外れていても変更を実施する
-        ldap_modify(user.dn, unlock_operations(user, password))
+        operations = unlock_operations(user, password)
+        return true if operations.empty?
+
+        ldap_modify(user.dn, operations)
       end
 
       def user_list
@@ -969,7 +974,7 @@ module Yuzakan
         password = user.first('userPassword')
         return false if password.nil?
 
-        password.start_with?(/\{[\w-]+\}!/)
+        locked_password?(password)
       end
 
       private def user_entry_unmanageable?(user)
@@ -994,29 +999,36 @@ module Yuzakan
       end
 
       private def lock_operations(user)
-        old_password = user.first('userPassword')
-        if old_password
-          new_password = lock_password(old_password)
-          [operation_replace('userPassword', new_password)]
-        else
-          # 何もしない
-          []
+        operations = []
+
+        current_password = user.first('userPassword')
+        if current_password.nil?
+          operations << operation_add('userPassword', lock_password(''))
+        elsif !locked_password?(current_password)
+          operations << operation_replace('userPassword', lock_password(current_password))
         end
+
+        operations
       end
 
       private def unlock_operations(user, password = nil)
+        operations = []
+
         if password
-          change_password_operations(user, password)
+          operations << change_password_operations(user, password)
         else
-          old_password = user.first('userPassword')
-          if old_password
-            new_password = unlock_password(old_password)
-            [operation_replace('userPassword', new_password)]
-          else
-            # 何もしない
-            []
+          current_password = user.first('userPassword')
+          if current_password && locked_password?(current_password)
+            new_password = unlock_password(current_password)
+            operations << if new_password.empty?
+                            operation_delete('userPassword', current_password)
+                          else
+                            operation_replace('userPassword', new_password)
+                          end
           end
         end
+
+        operations
       end
 
       # https://trac.tools.ietf.org/id/draft-stroeder-hashed-userpassword-values-00.html
@@ -1064,6 +1076,7 @@ module Yuzakan
           value = m[2]
           if value.start_with?('!')
             # 既にロックされているため変更しない
+            @logger.info('password has locked')
             str
           else
             "{#{scheme}}!#{value}"
@@ -1089,6 +1102,10 @@ module Yuzakan
           @logger.warn('cleartext password')
           str
         end
+      end
+
+      private def locked_password?(str)
+        str.start_with?(/\{[\w-]+\}!/)
       end
     end
   end

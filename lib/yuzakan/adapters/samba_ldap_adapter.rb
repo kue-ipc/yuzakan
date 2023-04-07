@@ -147,18 +147,26 @@ module Yuzakan
       # override
       private def lock_operations(user)
         operations = super
+ 
         sac = user_entry_sac(user)
-        sac.accountdisable = true
-        operations << operation_add_or_replace(SambaAccountControl::ATTRIBUTE_NAME, sac.to_s, user)
+        unless sac.accountdisable
+          sac.accountdisable = true
+          operations << operation_add_or_replace(SambaAccountControl::ATTRIBUTE_NAME, sac.to_s, user)
+        end
+
         operations
       end
 
       # override
       private def unlock_operations(user, password = nil)
         operations = super
+
         sac = user_entry_sac(user)
-        sac.accountdisable = false
-        operations << operation_add_or_replace(SambaAccountControl::ATTRIBUTE_NAME, sac.to_s, user)
+        if sac.accountdisable
+          sac.accountdisable = false
+          operations << operation_add_or_replace(SambaAccountControl::ATTRIBUTE_NAME, sac.to_s, user)
+        end
+
         operations
       end
 

@@ -117,7 +117,7 @@ module Yuzakan
 
       # ADでは作成時にパスワードを設定しても反映されない
       # override
-      private def create_user_password_attributes(password)
+      private def create_user_password_attributes(_password)
         {}
       end
 
@@ -138,19 +138,29 @@ module Yuzakan
 
       # override
       private def lock_operations(user)
+        operations = []
+
         uac = user_entry_uac(user)
-        uac.accountdisable = true
-        [operation_replace('userAccountControl', convert_ldap_value(uac.to_i))]
+        unless uac.accountdisable
+          uac.accountdisable = true
+          operations << operation_replace('userAccountControl', convert_ldap_value(uac.to_i))
+        end
+
+        operations
       end
 
-      # ACCOUNTDISABLE のフラグを解除する
-      # LOCKOUTはそのまま
       # override
       private def unlock_operations(user, password = nil)
+        operations = []
+
         uac = user_entry_uac(user)
-        uac.accountdisable = false
-        operations = [operation_replace('userAccountControl', convert_ldap_value(uac.to_i))]
+        if uac.accountdisable
+          uac.accountdisable = false
+          operations << operation_replace('userAccountControl', convert_ldap_value(uac.to_i))
+        end
+
         operations.concat(change_password_operations(user, password)) if password
+
         operations
       end
     end
