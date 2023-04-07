@@ -30,7 +30,7 @@ module Api
             result = call_interacttor(ProviderUnlockUser.new(provider_repository: @provider_repository),
                                       {username: params[:user_id]})
 
-            providers = result.providers.compact.transform_values { |v| {lock: !v} }
+            providers = result.providers.compact.transform_values { |v| {locked: !v} }
             self.status = 200
             self.body = generate_json({providers: providers})
           end
