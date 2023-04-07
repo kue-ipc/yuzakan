@@ -5,17 +5,9 @@ require 'bcrypt'
 class LocalUser < Hanami::Entity
   class << self
     def create_hashed_password(password)
-      return '*' if password.nil?
+      return nil if password.nil?
 
       BCrypt::Password.create(password)
-    end
-
-    def lock_password(password)
-      "!!#{password}"
-    end
-
-    def unlock_password(password)
-      password[2..]
     end
   end
 
@@ -33,6 +25,6 @@ class LocalUser < Hanami::Entity
   end
 
   def locked?
-    hashed_password.start_with?('!!')
+    locked
   end
 end
