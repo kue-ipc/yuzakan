@@ -35,6 +35,8 @@ module Api
             optional(:no_sync).filled(:bool?)
             optional(:hide_prohibited).filled(:bool?)
             optional(:show_deleted).filled(:bool?)
+
+            optional(:all).filled(:bool?)
           end
         end
 
@@ -56,7 +58,9 @@ module Api
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
           result =
-            if params[:no_sync]
+            if params[:all]
+              get_users_all
+            elsif params[:no_sync]
               get_users_from_repository(params.to_h)
             else
               get_users_from_provider(params.to_h)
@@ -65,6 +69,21 @@ module Api
           self.status = 200
           headers.merge!(result[:headers])
           self.body = generate_json(result[:users])
+        end
+
+        # all
+        def get_users_all
+          all_users = []
+          all_users.concat(@user_repository.all.map(&:name))
+          @provider_repository.ordered_all_with_adapter_by_operation(:user_read).each do |provider|
+            all_users.concat(provider.user_list)
+          end
+          all_users.uniq!
+          all_users.sort!
+          {
+            users: all_users.map { |name| {name: name} },
+            headers: {'Content-Location' => routes.path(:users, all: true)},
+          }
         end
 
         # sync off
