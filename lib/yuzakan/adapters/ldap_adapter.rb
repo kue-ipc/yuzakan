@@ -994,7 +994,7 @@ module Yuzakan
       end
 
       private def lock_operations(user)
-        old_password = user.frist('userPassword')
+        old_password = user.first('userPassword')
         if old_password
           new_password = lock_password(old_password)
           [operation_replace('userPassword', new_password)]

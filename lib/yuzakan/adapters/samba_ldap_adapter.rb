@@ -149,7 +149,7 @@ module Yuzakan
         operations = super
         sac = user_entry_sac(user)
         sac.accountdisable = true
-        operations << operation_add_or_replace(SmabaAccountControl::ATTRIBUTE_NAME, sac.to_s, user)
+        operations << operation_add_or_replace(SambaAccountControl::ATTRIBUTE_NAME, sac.to_s, user)
         operations
       end
 
@@ -158,14 +158,14 @@ module Yuzakan
         operations = super
         sac = user_entry_sac(user)
         sac.accountdisable = false
-        operations << operation_add_or_replace(SmabaAccountControl::ATTRIBUTE_NAME, sac.to_s, user)
+        operations << operation_add_or_replace(SambaAccountControl::ATTRIBUTE_NAME, sac.to_s, user)
         operations
       end
 
       # Samba
       private def user_entry_sac(user)
         SambaAccountControl.new(
-          user.first(SmabaAccountControl::ATTRIBUTE_NAME) || SmabaAccountControl::DEFAULT_USER_FLAGS)
+          user.first(SambaAccountControl::ATTRIBUTE_NAME) || SambaAccountControl::DEFAULT_USER_FLAGS)
       end
 
       private def generate_samba_sid(uid_number)
