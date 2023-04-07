@@ -90,6 +90,8 @@ Style/SymbolArray:
   MinSize: 8
 Style/WordArray:
   MinSize: 8
+Style/DoubleNegation:
+  Enabled: false
 
 Lint/EmptyBlock:
   Exclude:
