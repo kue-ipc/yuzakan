@@ -1,53 +1,42 @@
-# /api/users
+# /api/users/:user_id/lock
 
-# import {pickType} from '/assets/common/helper.js'
+import {
+  createRunCreate
+  createRunDestroy
+} from '/assets/api/hyper_json.js'
 
-# import {PAGINATION_PARAM_TYPES} from '/assets/api/pagination.js'
-# import {SEARCH_PARAM_TYPES} from '/assets/api/search.js'
-# import {ORDER_PARAM_TYPES} from '/assets/api/order.js'
-# import {
-#   createRunIndex
-#   createRunIndexWithPage
-#   createRunShowWithId
-#   createRunCreateWithId
-#   createRunUpdateWithId
-#   createRunDestroyWithId
-# } from '/assets/api/hyper_json.js'
-
-
+import {SetUser, normalizeUser} from '/assets/api/users.js'
 
 # Contants
 
-export API_USERS_LOCK = '/api/users/:user_id/lock'
+export USER_ID_KEY_USERS_LOCK = 'user_id'
+export API_USERS_LOCK = "/api/users/:#{USER_ID_KEY_USERS_LOCK}/lock"
 
 # Functions
 
 # Actions
 
-export SetUserLock = (state, ) -> {
-  state...
-  providers: 
-}
-
 # create Effecters
 
 export createRunCreateUserLock = (params = {}) ->
-  createRunCreateWithId({
+  createRunCreate({
     action: SetUser
     normalizer: normalizeUser
-    url: API_USERS
-    dataTypes: CREATE_USER_PARAM_TYPES
+    url: API_USERS_LOCK
+    pathKeys: [USER_ID_KEY_USERS_LOCK]
     params...
   })
 
-
-
+export createRunDestroyUserLock = (params = {}) ->
+  createRunDestroy({
+    action: SetUser
+    normalizer: normalizeUser
+    url: API_USERS_LOCK
+    pathKeys: [USER_ID_KEY_USERS_LOCK]
+    params...
+  })
 
 # Effecters
 
-export runIndexUsersNoSync = createRunIndexUsersNoSync()
-export runIndexWithPageUsers = createRunIndexWithPageUsers()
-export runShowUser = createRunShowUser()
-export runCreateUser = createRunCreateUser()
-export runUpdateUser = createRunUpdateUser()
-export runDestroyUser = createRunDestroyUser()
+export runCreateUserLock = createRunCreateUserLock()
+export runDestroyUserLock = createRunDestroyUserLock()

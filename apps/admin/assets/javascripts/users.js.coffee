@@ -20,6 +20,7 @@ import {
   createRunIndexWithPageUsers
   createRunShowUser, createRunCreateUser, createRunUpdateUser, createRunDestroyUser
 } from '/assets/api/users.js'
+import {createRunCreateUserLock, createRunDestroyUserLock} from '/assets/api/users_lock.js'
 import {runIndexGroupsNoSync} from '/assets/api/groups.js'
 import {runIndexProviders} from '/assets/api/providers.js'
 import {runIndexAttrs} from '/assets/api/attrs.js'
@@ -301,7 +302,7 @@ createActionUser = (createEffecter, props = {}) ->
         mode: if state.mode == 'file' then 'result' else state.mode
         users: updateUserList(state.users, {user..., action: 'ACT'})
       }
-      [run, {props..., user..., id: user.name}]
+      [run, {props..., user..., id: user.name, user_id: user.name}]
     ]
 
 ## Actions
