@@ -57,7 +57,7 @@ ACTIONS = new Map([
   ['ACT', '実行中']
   ['SYN', '同期']
   ['LOC', 'ロック']
-  ['ULO', 'アンロック']
+  ['UNL', 'アンロック']
 ])
 
 # Functions
