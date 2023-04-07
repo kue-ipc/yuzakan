@@ -29,7 +29,6 @@ runLogin = (dispatch, payload) ->
     {
       state...
       disabled: false
-      username: null
       password: null
     }
     focus('session-username')
