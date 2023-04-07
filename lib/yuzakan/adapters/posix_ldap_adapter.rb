@@ -175,7 +175,7 @@ module Yuzakan
       private def change_password_operations(user, password, locked: false)
         operations = super
         if @params[:shadow_account] && user['objectClass'].include?('shadowAccount')
-          epoch_date = Time.now.to_i / 24 / 60 / 60
+          epoch_date = Time.now.to_i / 86400 # 86400 = 24 * 60 * 60
           operations << if user.first('shadowLastChange')
                           operation_replace('shadowLastChange', epoch_date.to_s)
                         else
