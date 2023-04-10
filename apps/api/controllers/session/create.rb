@@ -97,6 +97,12 @@ module Api
             halt_json 403, errors: [I18n.t('session.errors.prohibited')]
           end
 
+          # クリアランスレベルを確認
+          if user.clearance_level.zero?
+            @auth_log_repository.create(**auth_log_params, result: "no_clearance")
+            halt_json 403, errors: [I18n.t('session.errors.no_clearance')]
+          end
+
           # セッション情報を保存
           session[:user_id] = user.id
           session[:created_at] = current_time
