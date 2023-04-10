@@ -117,7 +117,7 @@ loginInfo = new LoginInfo {
 
 ## Views
 
-indexUsersOption = ({onchange: action, props...}) ->
+indexUsersOption = ({onchange: action, readonly = false, props...}) ->
   onchange = (state, event) -> [action, {[event.target.name]: event.target.checked}]
 
   html.div {class: 'row mb-2'},
@@ -135,6 +135,7 @@ indexUsersOption = ({onchange: action, props...}) ->
             name: key
             type: 'checkbox'
             checked: props[key]
+            disabled: readonly
             onchange
           }
           html.label {class: 'form-check-label', for: id}, text val
@@ -490,11 +491,11 @@ main = ->
         onupload: UploadUsers
         action: DoActionUser
       }
-      if mode != 'file'
+      if mode == 'loaded' || mode == 'loading'
         html.div {key: 'index-params'}, [
-          searchForm {search..., onsearch: Search}
-          indexUsersOption {option..., onchange: ChangeOption}
-          pageNav {pagination..., onpage: MovePage}
+          searchForm {search..., onsearch: Search, readonly: mode == 'loading'}
+          indexUsersOption {option..., onchange: ChangeOption, readonly: mode == 'loading'}
+          pageNav {pagination..., onpage: MovePage, readonly: mode == 'loading'}
         ]
       if mode == 'loading'
         html.p {}, text '読込中...'

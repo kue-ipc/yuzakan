@@ -81,7 +81,7 @@ indexOptionFromState = (state) ->
 
 # Views
 
-indexGroupsOption = ({onchange: action, props...}) ->
+indexGroupsOption = ({onchange: action, readonly = false, props...}) ->
   onchange = (state, event) -> [action, {[event.target.name]: event.target.checked}]
 
   html.div {class: 'row mb-2'},
@@ -100,6 +100,7 @@ indexGroupsOption = ({onchange: action, props...}) ->
             name: key
             type: 'checkbox'
             checked: props[key]
+            disabled: readonly
             onchange
           }
           html.label {class: 'form-check-label', for: id}, text val
@@ -403,11 +404,11 @@ main = ->
         onupload: UploadGroups
         action: DoActionGroup
       }
-      if mode != 'file'
+      if mode == 'loaded' || mode == 'loading'
         html.div {key: 'index-params'}, [
-          searchForm {search..., onsearch: Search}
-          indexGroupsOption {option..., onchange: ChangeOption}
-          pageNav {pagination..., onpage: MovePage}
+          searchForm {search..., onsearch: Search, readonly: mode == 'loading'}
+          indexGroupsOption {option..., onchange: ChangeOption, readonly: mode == 'loading'}
+          pageNav {pagination..., onpage: MovePage, readonly: mode == 'loading'}
         ]
       if mode == 'loading'
         html.p {key: 'loading'}, text '読込中...'
