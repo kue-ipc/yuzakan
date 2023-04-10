@@ -216,6 +216,8 @@ export objToParams = (obj, parents = []) ->
         params.push(objToParams(toObject(value), [parents..., key])...)
       else if value instanceof Set
         params.push(objToParams(toList(value), [parents..., key])...)
+      else if value instanceof DateTime
+        params.push([listToParamName(parents..., key), value.toString()])
       else
         params.push(objToParams(value, [parents..., key])...)
     else
