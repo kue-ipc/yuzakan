@@ -14,6 +14,7 @@ webData = new WebData {
   codeActions: new Map [
     [201, {status: 'success', message: 'ログインに成功しました。', redirectTo: '/'}]
     [400, {status: 'failure', message: 'ログインに失敗しました。'}]
+    [403, {status: 'error', message: 'アクセスする権限がありません。'}]
     [422, {status: 'failure', message: 'ログインに失敗しました。'}]
   ]
 }
