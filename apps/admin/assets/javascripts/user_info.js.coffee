@@ -131,5 +131,21 @@ export default userInfo = ({mode, user, groups}) ->
                 }, text if group.display_name then "#{group.display_name} (#{group.name})" else group.name
             )...
           ]
+      dlh.dt {},
+        text '状態'
+      dlh.dd {},
+        if user.deleted
+          html.span {class: 'text-danger'},
+            text "削除済み (#{user.deleted_at})"
+        else if user.prohibited
+          html.span {class: 'text-muted'},
+            text '使用禁止'
+        else
+          html.span {class: 'text-success'},
+            text '正常'
+      dlh.dt {},
+        text '備考'
+      dlh.dd {},
+        text user.note ? ''
     ]
   ]

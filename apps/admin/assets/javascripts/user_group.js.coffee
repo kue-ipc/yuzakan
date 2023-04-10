@@ -28,11 +28,11 @@ groupLi = ({name, groups, removable = false}) ->
 export default userGroup = ({mode, user, groups}) ->
   html.div {}, [
     html.h4 {}, text '所属グループ'
-    if user.groups.length == 0
-      html.p {}, text '所属しているグループはありません。'
-    else
+    if user.groups?.length
       html.ul {class: 'list-inline'},
         for name in user.groups
           groupLi({name, groups, removable: name != user.primary_group})
+    else
+      html.p {}, text '所属しているグループはありません。'
     # html.button {class: 'btn btn-primary'}, text '追加'
   ]

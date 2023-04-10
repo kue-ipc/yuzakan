@@ -33,8 +33,8 @@ export default groupInfo = ({mode, group}) ->
         text '状態'
       dlh.dd {},
         if group.deleted
-          html.span {class: 'text-failure'},
-            text "削除済み(#{group.deleted_at})"
+          html.span {class: 'text-danger'},
+            text "削除済み (#{group.deleted_at})"
         else if group.prohibited
           html.span {class: 'text-muted'},
             text '使用禁止'
