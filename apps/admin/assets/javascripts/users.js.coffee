@@ -191,6 +191,7 @@ userTr = ({user, groups, providers}) ->
     else
       'light'
   html.tr {
+    id: "user_tr-#{user.name}"
     key: "user[#{user.name}]"
     class: "table-#{color}"
   }, [
@@ -394,6 +395,7 @@ SetUserInListNextIfDoAll = (state, user) ->
   ]
 
 DoActionUser = (state, user) ->
+  document.getElementById("user_tr-#{user.name}")?.scrollIntoView({block: 'center'})
   switch user.action
     when 'ADD'
       [AddUser, user]

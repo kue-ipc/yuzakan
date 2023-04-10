@@ -154,6 +154,7 @@ groupTr = ({group, providers}) ->
     else
       'light'
   html.tr {
+    id: "group_tr-#{group.name}"
     key: "group[#{group.name}]"
     class: "table-#{color}"
   }, [
@@ -308,6 +309,7 @@ SetGroupInListNextIfDoAll = (state, group) ->
   ]
 
 DoActionGroup = (state, group) ->
+  document.getElementById("group_tr-#{group.name}")?.scrollIntoView({block: 'center'})
   switch group.action
     when 'MOD'
       [ModGroup, group]
