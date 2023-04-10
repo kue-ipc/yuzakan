@@ -482,19 +482,22 @@ module Yuzakan
       end
 
       private def ldap_member_list(group)
+        # memberOf が operation attribute であっても検索は可能
         filter = Net::LDAP::Filter.eq('memberOf', group.dn)
         opts = search_user_opts('*', filter: filter)
         ldap_search(opts).to_a
       end
 
       private def ldap_member_add(group, user)
-        return false if user['memberOf'].include?(group.dn)
+        # memberOf が operation attribute である可能性があるため、member で調べる
+        return false if group['member'].include?(user.dn)
 
         operations = [operation_add(:member, user.dn)]
         ldap_modify(group.dn, operations)
       end
 
       private def ldap_member_remove(group, user)
+        # memberOf が operation attribute である可能性があるため、member で調べる
         return false unless group['member'].include?(user.dn)
 
         operations = [operation_delete(:member, user.dn)]
