@@ -173,7 +173,7 @@ groupTr = ({group, providers}) ->
         when 'MOD', 'SYN'
           html.button {
             class: "btn btn-sm btn-#{color}"
-            onclick: -> [DoActionUser, group]
+            onclick: -> [DoActionGroup, group]
           }, text ACTIONS.get(group.action)
         when 'ERR'
           html.div {}, text 'エラー'
