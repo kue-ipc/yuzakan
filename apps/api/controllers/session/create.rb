@@ -91,6 +91,12 @@ module Api
             user = sync_user_result.user
           end
 
+          # 使用禁止を確認
+          if user.prohibited
+            @auth_log_repository.create(**auth_log_params, result: "prohibited")
+            halt_json 403, errors: [I18n.t('session.errors.prohibited')]
+          end
+
           # セッション情報を保存
           session[:user_id] = user.id
           session[:created_at] = current_time
