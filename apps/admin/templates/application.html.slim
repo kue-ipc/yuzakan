@@ -8,6 +8,7 @@ html lang="ja"
       = current_config&.title || '未初期化'
     = favicon
     = stylesheet 'application'
+    = importmap
     = javascript 'application', type: 'module'
   body
     = render partial: 'partial/header'

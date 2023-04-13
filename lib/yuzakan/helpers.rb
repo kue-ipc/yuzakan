@@ -7,6 +7,7 @@ require_relative 'helpers/grid_helper'
 require_relative 'helpers/icon_helper'
 require_relative 'helpers/menu_helper'
 require_relative 'helpers/pattern_helper'
+require_relative 'helpers/importmap_helper'
 
 module Yuzakan
   module Helpers
@@ -19,6 +20,7 @@ module Yuzakan
         include Yuzakan::Helpers::IconHelper
         include Yuzakan::Helpers::MenuHelper
         include Yuzakan::Helpers::PatternHelper
+        include Yuzakan::Helpers::ImportmapHelper
       end
     end
   end
