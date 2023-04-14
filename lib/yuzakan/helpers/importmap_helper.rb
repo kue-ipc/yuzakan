@@ -17,9 +17,7 @@ module Yuzakan
 
       private def importmap
         html.script(type: 'importmap') do
-          raw({
-            imports: imports_assets,
-          }.to_json)
+          raw({imports: imports_assets}.to_json)
         end
       end
 
