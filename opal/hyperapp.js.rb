@@ -7,7 +7,7 @@ puts 'hyperapp2'
 module Hyperapp
   JSModule = JS.import('./hyperapp.js').__await__
 
-  @@view_stack = []
+  @@view_stack = [] # rubocop: disable Style/ClassVars
 
   module_function def h(tag, **props, &block)
     children =
@@ -42,7 +42,7 @@ module Hyperapp
   end
 end
 
-include Hyperapp
+include Hyperapp # rubocop: disable Style/MixinUsage
 
 view = lambda { |_state|
   h('div') { text('テスト') }
@@ -79,12 +79,3 @@ app(
 
 # class Hyperapp
 # end
-
-# `
-# const view = (state, actions) => /*#__PURE__*/
-# React.createElement("main", null, /*#__PURE__*/React.createElement("h1", null, state.count), /*#__PURE__*/React.createElement("button", {
-#   onclick: actions.down
-# }, "-"), /*#__PURE__*/React.createElement("button", {
-#   onclick: actions.up
-# }, "+"));
-# `

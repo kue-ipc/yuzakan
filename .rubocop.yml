@@ -20,6 +20,10 @@ Layout/SpaceInsideHashLiteralBraces:
 # double size metrics
 Metrics/AbcSize:
   Max: 30
+  AllowedMethods:
+    - call
+  Exclude:
+    - spec/support/*.rb
 Metrics/BlockLength:
   Max: 50
   AllowedMethods:
@@ -34,14 +38,22 @@ Metrics/ClassLength:
   Max: 200
 Metrics/CyclomaticComplexity:
   Max: 12
+  AllowedMethods:
+    - call
 Metrics/MethodLength:
   Max: 20
+  AllowedMethods:
+    - call
+  Exclude:
+    - spec/support/*.rb
 Metrics/ModuleLength:
   Max: 200
 Metrics/ParameterLists:
   Max: 10
 Metrics/PerceivedComplexity:
   Max: 14
+  AllowedMethods:
+    - call
 
 Naming/MethodParameterName:
   AllowedNames:
