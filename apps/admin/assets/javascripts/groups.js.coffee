@@ -24,7 +24,7 @@ import {ORDER_PARAM_TYPES} from '~/api/order.js'
 
 import pageNav from '~/admin/page_nav.js'
 import searchForm from '~/admin/search_form.js'
-import {batchOperation, runDoNextAction, runStopAllAction} from '~/admin//batch_operation.js'
+import {batchOperation, runDoNextAction, runStopAllAction} from '~/admin/batch_operation.js'
 
 # mode
 #   loading: 読込中
