@@ -62,7 +62,7 @@ module Admin
         frame-ancestors 'self';
         base-uri 'self';
         default-src 'self';
-        script-src 'self' 'unsafe-eval';
+        script-src 'self' 'unsafe-eval' 'unsafe-inline';
         connect-src 'self';
         img-src 'self' https: data:;
         style-src 'self' 'unsafe-inline' https:;
