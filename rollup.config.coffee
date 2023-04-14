@@ -13,7 +13,9 @@ distDirs = [
 targets = [
   {name: 'bootstrap', ext: 'coffee'}
   {name: 'csv', ext: 'coffee'}
+  {name: 'es-module-shims', ext: 'coffee'}
   {name: 'file-saver', ext: 'coffee'}
+  {name: 'hljs', ext: 'coffee'}
   {name: 'http-link-header', ext: 'coffee'}
   {name: 'hyperapp-dom', ext: 'coffee'}
   {name: 'hyperapp-events', ext: 'coffee'}
@@ -26,7 +28,6 @@ targets = [
   {name: 'ramda', ext: 'coffee'}
   {name: 'xxhashjs', ext: 'coffee'}
   {name: 'zxcvbn', ext: 'coffee'}
-  {name: 'hljs', ext: 'coffee'}
 ]
 
 export default targets.map (target) -> {

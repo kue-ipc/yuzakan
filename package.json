@@ -9,6 +9,7 @@
     "bootstrap": "^5.2.3",
     "bootstrap-icons": "^1.10.4",
     "csv": "^6.2.8",
+    "es-module-shims": "^1.7.1",
     "file-saver": "^2.0.5",
     "firacode": "^6.2.0",
     "highlight.js": "^11.7.0",
