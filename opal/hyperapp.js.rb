@@ -9,9 +9,7 @@ module Hyperapp
 
   @@view_stack = []
 
-  module_function
-
-  def h(tag, **props, &block)
+  module_function def h(tag, **props, &block)
     children =
       if block_given?
         @@view_stack.push([])
@@ -23,13 +21,13 @@ module Hyperapp
     view
   end
 
-  def text(content)
+  module_function def text(content)
     view = JSModule.JS.text(content)
     @@view_stack.last&.push(view)
     view
   end
 
-  def app(init: {}, view: nil, node: nil, subscriptions: nil, dispatch: :itself.to_proc)
+  module_function def app(init: {}, view: nil, node: nil, subscriptions: nil, dispatch: :itself.to_proc)
     JSModule.JS.app({
       init: init,
       view: view,
@@ -39,7 +37,7 @@ module Hyperapp
     }.to_n)
   end
 
-  def memo(view, data = nil)
+  module_function def memo(view, data = nil)
     JSModule.memo(view, data)
   end
 end

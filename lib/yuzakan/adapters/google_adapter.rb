@@ -43,7 +43,7 @@ module Yuzakan
           type: :text,
           rows: 20,
           required: true,
-          placeholder: <<~'PLACE_H',
+          placeholder: <<~PLACE_H,
             {
               "type": "service_account",
               "project_id": "yuzakan-...

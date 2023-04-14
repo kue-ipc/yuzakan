@@ -95,7 +95,7 @@ class UnlockUser
     rescue => e
       Hanami.logger.error e
       unless @user_datas.empty?
-        error <<~'ERROR_MESSAGE'
+        error <<~ERROR_MESSAGE
           一部のシステムについてはロックが解除されましたが、
           別のシステムでのロック解除時にエラーが発生し、処理が中断されました。
           ロックが解除されていないシステムが存在する可能性があるため、

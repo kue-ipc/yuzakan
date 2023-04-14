@@ -30,7 +30,7 @@ class AttrMapping < Hanami::Entity
     ['organization', '組織'],
   ].freeze
   E2J_DICT = E2J_LIST.to_h
-  J2E_DICT = E2J_LIST.map(&:reverse).to_h
+  J2E_DICT = E2J_LIST.to_h(&:reverse)
 
   # Adapter data -> Ruby data
   def convert_value(value)

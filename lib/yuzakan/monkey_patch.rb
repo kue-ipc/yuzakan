@@ -7,17 +7,15 @@ require 'hanami/assets/compiler'
 module Hanami
   module Assets
     class Compiler
-      private
-
       # https://github.com/hanami/assets/issues/114
       # ネストされたパスの場合、パス内に'/'があるため、拡張子の除去に失敗する。
       # @since 1.3.0
       # @api private
-      def destination_name
+      private def destination_name
         result = destination_path
 
         if compile?
-          result.scan(%r{\A[[[:alnum:]][\-_/]]*\.\w*}).first || result
+          result.scan(%r{\A[[[:alnum:]][-_/]]*\.\w*}).first || result
         else
           result
         end
