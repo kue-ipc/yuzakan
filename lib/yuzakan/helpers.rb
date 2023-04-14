@@ -5,9 +5,9 @@ require_relative 'helpers/error_helper'
 require_relative 'helpers/escape_helper'
 require_relative 'helpers/grid_helper'
 require_relative 'helpers/icon_helper'
+require_relative 'helpers/importmap_helper'
 require_relative 'helpers/menu_helper'
 require_relative 'helpers/pattern_helper'
-require_relative 'helpers/importmap_helper'
 
 module Yuzakan
   module Helpers
@@ -18,9 +18,9 @@ module Yuzakan
         include Yuzakan::Helpers::EscapeHelper
         include Yuzakan::Helpers::GridHelper
         include Yuzakan::Helpers::IconHelper
+        include Yuzakan::Helpers::ImportmapHelper
         include Yuzakan::Helpers::MenuHelper
         include Yuzakan::Helpers::PatternHelper
-        include Yuzakan::Helpers::ImportmapHelper
       end
     end
   end
