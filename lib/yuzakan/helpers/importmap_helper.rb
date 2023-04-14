@@ -39,7 +39,7 @@ module Yuzakan
           assets_map = assets_json
             .select { |path, _| path.end_with?('.js') }
             .to_h { |path, obj| [path.gsub(%r{^/assets/}, '~/'), obj['target']] }
-          js_libraries_map = JS_LIBRARIES_MAP.transform_vale { |path| assets_json[path] || path }
+          js_libraries_map = JS_LIBRARIES_MAP.transform_values { |path| assets_json.dig(path, 'target') || path }
           ASSETS_MAP.merge(assets_map, js_libraries_map)
         else
           ASSETS_MAP.merge(JS_LIBRARIES_MAP)
