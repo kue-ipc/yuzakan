@@ -17,6 +17,7 @@ begin
   RSpec::Core::RakeTask.new(:spec)
   task default: :spec
 rescue LoadError
+  # do nothing
 end
 
 desc 'ファイル生成'

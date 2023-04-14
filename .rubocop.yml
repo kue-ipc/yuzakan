@@ -22,6 +22,9 @@ Metrics/AbcSize:
   Max: 30
 Metrics/BlockLength:
   Max: 50
+  AllowedMethods:
+    - refine
+    - configure
   Exclude:
     - spec/**/*_spec.rb
     - Rakefile

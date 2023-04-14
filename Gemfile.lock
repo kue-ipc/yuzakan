@@ -156,6 +156,7 @@ GEM
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     inflecto (0.0.2)
+    json (2.6.3)
     jwt (2.7.0)
     mail (2.8.1)
       mini_mime (>= 0.1.1)
@@ -185,6 +186,7 @@ GEM
       ast (>= 2.3.0)
       parser (~> 3.0, >= 3.0.3.2)
     os (1.1.4)
+    parallel (1.22.1)
     parser (3.2.2.0)
       ast (~> 2.4.1)
     pry (0.14.2)
@@ -197,6 +199,7 @@ GEM
     rack (2.2.6.4)
     rack-test (2.1.0)
       rack (>= 1.3)
+    rainbow (3.1.1)
     rake (13.0.6)
     readthis (2.2.0)
       connection_pool (~> 2.1)
@@ -249,6 +252,19 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
     rspec-support (3.12.0)
+    rubocop (1.50.1)
+      json (~> 2.3)
+      parallel (~> 1.10)
+      parser (>= 3.2.0.0)
+      rainbow (>= 2.2.2, < 4.0)
+      regexp_parser (>= 1.8, < 3.0)
+      rexml (>= 3.2.5, < 4.0)
+      rubocop-ast (>= 1.28.0, < 2.0)
+      ruby-progressbar (~> 1.7)
+      unicode-display_width (>= 2.4.0, < 3.0)
+    rubocop-ast (1.28.0)
+      parser (>= 3.2.1.0)
+    ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     sassc (2.4.0)
       ffi (~> 1.9)
@@ -273,6 +289,7 @@ GEM
     trailblazer-option (0.1.2)
     transproc (1.1.1)
     uber (0.1.0)
+    unicode-display_width (2.4.2)
     url_mount (0.2.1)
       rack
     webrick (1.8.1)
@@ -307,6 +324,7 @@ DEPENDENCIES
   readthis
   redis-rack
   rspec
+  rubocop
   sassc
   sd_notify
   shotgun
