@@ -147,7 +147,7 @@ module Yuzakan
       # override
       private def lock_operations(user)
         operations = super
- 
+
         sac = user_entry_sac(user)
         unless sac.accountdisable?
           sac.accountdisable = true

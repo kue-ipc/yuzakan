@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def level_matrix
   describe 'level matrix' do
     6.times do |user_level|

@@ -40,7 +40,7 @@ class SyncGroup
     end
 
     @providers = read_group_result.providers.compact
- 
+
     @data = {primary: false}
     @providers.each_value do |data|
       %i[groupname display_name].each do |name|

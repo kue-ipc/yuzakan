@@ -4,7 +4,6 @@ module Api
   module Controllers
     module Providers
       module EntityProvider
-
         def initialize(provider_repository: ProviderRepository.new,
                        **opts)
           super

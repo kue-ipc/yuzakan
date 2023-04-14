@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # await: true
 
 puts 'hyperapp2'
@@ -44,7 +46,7 @@ end
 
 include Hyperapp
 
-view = lambda { |state|
+view = lambda { |_state|
   h('div') { text('テスト') }
 }
 

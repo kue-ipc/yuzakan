@@ -1,9 +1,9 @@
+# frozen_string_literal: true
+
 # use_strict: true
 # await: true
 
 # JSModule = Native.import('./hyperapp.js').__await__
-
- 
 
 # %x{
 #   console.log('hoge');
@@ -18,7 +18,6 @@ JS.import('./rb_hyperapp.js').__await__
 # puts 'hello opal!!!'
 # win = Native(`window`)
 
-
 # require 'js'
 # require 'native'
 # puts JS
@@ -26,7 +25,6 @@ JS.import('./rb_hyperapp.js').__await__
 # # puts $global
 # `console`.JS.log(JS[:document].JS.getElementById('test'))
 # `console`.JS.log($$.document.getElementById('test').to_n)
-
 
 # `
 # var test = {

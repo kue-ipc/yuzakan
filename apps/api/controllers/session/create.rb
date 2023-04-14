@@ -93,13 +93,13 @@ module Api
 
           # 使用禁止を確認
           if user.prohibited
-            @auth_log_repository.create(**auth_log_params, result: "prohibited")
+            @auth_log_repository.create(**auth_log_params, result: 'prohibited')
             halt_json 403, errors: [I18n.t('session.errors.prohibited')]
           end
 
           # クリアランスレベルを確認
           if user.clearance_level.zero?
-            @auth_log_repository.create(**auth_log_params, result: "no_clearance")
+            @auth_log_repository.create(**auth_log_params, result: 'no_clearance')
             halt_json 403, errors: [I18n.t('session.errors.no_clearance')]
           end
 

@@ -52,7 +52,6 @@ class ProviderAuthenticate
     operation = :user_create
     @provider_repository.ordered_all_with_adapter_by_operation(:user_auth)
 
-
     operation = :user_auth
     if providers
       providers.map do |provider_name|

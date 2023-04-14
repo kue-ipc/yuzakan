@@ -27,8 +27,8 @@ module Web
           provider = ProviderRepository.new.first_google_with_adapter
 
           result = ProviderCreateUser.new(user: current_user, client: client,
-                                  config: current_config,
-                                  providers: [provider])
+                                          config: current_config,
+                                          providers: [provider])
             .call(params.get(:google_create))
 
           if result.failure?

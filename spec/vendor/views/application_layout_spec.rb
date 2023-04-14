@@ -1,4 +1,6 @@
-require "spec_helper"
+# frozen_string_literal: true
+
+require 'spec_helper'
 
 # RSpec.describe Vendor::Views::ApplicationLayout, type: :view do
 #   let(:layout)   { Vendor::Views::ApplicationLayout.new({ format: :html }, "contents") }
