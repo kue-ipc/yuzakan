@@ -1,7 +1,7 @@
 # /admin/user/*
 
-import {text, app} from '~/vendor/hyperapp.js'
-import * as html from '~/vendor/hyperapp-html.js'
+import {text, app} from 'hyperapp'
+import * as html from '@hyperapp/html'
 
 import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from '~/common/helper.js'
 

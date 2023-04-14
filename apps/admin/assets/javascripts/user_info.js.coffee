@@ -1,5 +1,5 @@
-import {text} from '~/vendor/hyperapp.js'
-import * as html from '~/vendor/hyperapp-html.js'
+import {text} from 'hyperapp'
+import * as html from '@hyperapp/html'
 
 import * as dlh from '~/app/dl_horizontal.js'
 import {CLEARANCE_LEVELS} from '~/definition.js'

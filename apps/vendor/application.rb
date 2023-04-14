@@ -17,6 +17,7 @@ module Vendor
       assets do
         javascript_compressor Yuzakan::Utils::TerserCompressor.new
         stylesheet_compressor :sass
+        nested true
         sources << [
           'assets',
           '../../vendor/assets',

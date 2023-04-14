@@ -1,6 +1,6 @@
 import {DateTime} from '~/vendor/luxon.js'
-import {text} from '~/vendor/hyperapp.js'
-import * as html from '~/vendor/hyperapp-html.js'
+import {text} from 'hyperapp'
+import * as html from '@hyperapp/html'
 
 import ConfirmDialog from '~/app/confirm_dialog.js'
 import {basename} from '~/common/helper.js'

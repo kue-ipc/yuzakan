@@ -37,6 +37,15 @@ rule 'public/errors' do
 end
 
 namespace :vendor do
+  root_dir = 'vendor/assets'
+  js_dir = "#{root_dir}/javascripts"
+  image_dir = "#{root_dir}/images"
+  font_dir = "#{root_dir}/fonts"
+  directory root_dir
+  directory js_dir
+  directory image_dir
+  directory font_dir
+
   desc 'ベンダーファイル生成'
   task build: [:build_js, :build_font, :build_image]
 
@@ -54,22 +63,17 @@ namespace :vendor do
     sh 'npm install'
   end
 
-  task build_js_hyperapp: ['html', 'svg'].map { |name| "vendor/assets/javascripts/hyperapp-#{name}.js" }
+  directory "#{js_dir}/@hyperapp"
 
-  rule %r{^vendor/assets/javascripts/hyperapp-.*\.js$} => 'node_modules/@hyperapp/%{hyperapp-,}n/index.js' do |t|
-    js_data = File.read(t.source)
-    [
-      '(\b(?:im|ex)port\b[\s\w,*{}]*\bfrom\b\s*)"([^"]*)"',
-      '(\bimport\b\s*)"([^"]*)"',
-      '(\bimport\b\s*\(\s*)"([^"]*)"(\s*\))',
-    ].each do |re_str|
-      js_data.gsub!(Regexp.compile(re_str), '\1"~/vendor/\2.js"\3')
-      js_data.gsub!(Regexp.compile(re_str.tr('"', "'")), '\1\'~/vendor/\2.js\'\3')
-    end
-    File.write(t.name, js_data)
+  hyperapp_pkgs = ['dom', 'events', 'html', 'svg', 'time']
+
+  task build_js_hyperapp: hyperapp_pkgs.map { |name| "#{js_dir}/@hyperapp/#{name}.js" }
+
+  rule %r{^#{js_dir}/@hyperapp/.*\.js$} => ['node_modules/@hyperapp/%n/index.js', "#{js_dir}/@hyperapp"] do |t|
+    cp t.source, t.name
   end
 
-  task build_js_opal: ['vendor/assets/javascripts'] do
+  task build_js_opal: [js_dir] do
     stdlibs = %w[
       js
       native
@@ -99,39 +103,29 @@ namespace :vendor do
     end
   end
 
-  task build_font: ['vendor/assets/fonts'] do
-    fonts_dir = 'vendor/assets/fonts'
+  task build_font: [font_dir] do
     bootstrap_icons_dir = 'node_modules/bootstrap-icons/font'
-    cp Dir.glob("#{bootstrap_icons_dir}/fonts/*.{woff,woff2}"), fonts_dir
+    cp Dir.glob("#{bootstrap_icons_dir}/fonts/*.{woff,woff2}"), font_dir
 
     source_code_pro_dir = 'node_modules/source-code-pro'
     ['OTF', 'VAR'].each do |type|
       ['woff', 'woff2'].each do |ext|
         Dir.glob("#{source_code_pro_dir}/#{ext.upcase}/#{type}/*.otf.#{ext}").each do |path|
-          cp path, "#{fonts_dir}/#{File.basename(path, ".otf.#{ext}")}.#{ext}"
+          cp path, "#{font_dir}/#{File.basename(path, ".otf.#{ext}")}.#{ext}"
         end
       end
     end
 
     firacode_dir = 'node_modules/firacode'
-    cp Dir.glob("#{firacode_dir}/distr/woff/*.woff"), fonts_dir
-    cp Dir.glob("#{firacode_dir}/distr/woff2/*.woff2"), fonts_dir
+    cp Dir.glob("#{firacode_dir}/distr/woff/*.woff"), font_dir
+    cp Dir.glob("#{firacode_dir}/distr/woff2/*.woff2"), font_dir
 
     typopro_web_iosevka_dir = 'node_modules/@typopro/web-iosevka'
-    cp Dir.glob("#{typopro_web_iosevka_dir}/*.woff"), fonts_dir
+    cp Dir.glob("#{typopro_web_iosevka_dir}/*.woff"), font_dir
   end
 
-  rule 'vendor/assets/fonts' do
-    mkdir_p 'vendor/assets/fonts'
-  end
-
-  task build_image: ['vendor/assets/images'] do
-    images_dir = 'vendor/assets/images'
+  task build_image: [image_dir] do
     bootstrap_icons_dir = 'node_modules/bootstrap-icons'
-    cp "#{bootstrap_icons_dir}/bootstrap-icons.svg", images_dir
-  end
-
-  rule 'vendor/assets/images' do
-    mkdir_p 'vendor/assets/images'
+    cp "#{bootstrap_icons_dir}/bootstrap-icons.svg", image_dir
   end
 end

@@ -2,7 +2,7 @@
 # 受け取ったJSONをメッセージとして表示する。
 # その際、modalを使用する。
 
-import {h, text, app} from '~/vendor/hyperapp.js'
+import {h, text, app} from 'hyperapp'
 import {Modal} from '~/vendor/bootstrap.js'
 import bsIcon from '~/app/bs_icon.js'
 

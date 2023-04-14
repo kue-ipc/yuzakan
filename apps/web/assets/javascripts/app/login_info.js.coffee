@@ -1,5 +1,5 @@
-import {app, text} from '~/vendor/hyperapp.js'
-import * as html from '~/vendor/hyperapp-html.js'
+import {app, text} from 'hyperapp'
+import * as html from '@hyperapp/html'
 import {DateTime} from '~/vendor/luxon.js'
 
 import ModalDialog from '~/app/modal_dialog.js'

@@ -1,7 +1,7 @@
 # /admin/gorups
 
-import {text, app} from '~/vendor/hyperapp.js'
-import * as html from '~/vendor/hyperapp-html.js'
+import {text, app} from 'hyperapp'
+import * as html from '@hyperapp/html'
 
 import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '~/common/helper.js'
 import {objToUrlencoded, objToJson, listToParamName} from '~/common/convert.js'

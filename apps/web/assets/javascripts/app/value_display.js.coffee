@@ -1,5 +1,5 @@
-import {text} from '~/vendor/hyperapp.js'
-import * as html from '~/vendor/hyperapp-html.js'
+import {text} from 'hyperapp'
+import * as html from '@hyperapp/html'
 
 import bsIcon from '~/app/bs_icon.js'
 import {convertToType, objToJson} from '~/common/convert.js'

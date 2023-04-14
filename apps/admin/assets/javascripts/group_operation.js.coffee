@@ -1,7 +1,7 @@
 # グループ
 
-import {text} from '~/vendor/hyperapp.js'
-import * as html from '~/vendor/hyperapp-html.js'
+import {text} from 'hyperapp'
+import * as html from '@hyperapp/html'
 
 import {entityLabel} from '~/common/helper.js'
 

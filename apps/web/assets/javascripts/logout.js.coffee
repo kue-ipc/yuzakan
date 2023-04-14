@@ -1,5 +1,5 @@
-import {app, text} from '~/vendor/hyperapp.js'
-import * as html from '~/vendor/hyperapp-html.js'
+import {app, text} from 'hyperapp'
+import * as html from '@hyperapp/html'
 import WebData from '~/app/web_data.js'
 import bsIcon from '~/app/bs_icon.js'
 import csrf from '~/csrf.js'

@@ -2,9 +2,9 @@
 # モーダルダイアログを表示するベースクラス
 # 拡張して使用する
 
-import {app, text} from '~/vendor/hyperapp.js'
-import * as html from '~/vendor/hyperapp-html.js'
-import {focus} from '~/vendor/hyperapp-dom.js'
+import {app, text} from 'hyperapp'
+import * as html from '@hyperapp/html'
+import {focus} from '@hyperapp/dom'
 
 import {Modal} from '~/vendor/bootstrap.js'
 

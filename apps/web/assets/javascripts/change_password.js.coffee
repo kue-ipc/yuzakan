@@ -1,4 +1,4 @@
-import {h, text, app} from '~/vendor/hyperapp.js'
+import {h, text, app} from 'hyperapp'
 import zxcvbn from '~/vendor/zxcvbn.js'
 
 import bsIcon from '~/app/bs_icon.js'

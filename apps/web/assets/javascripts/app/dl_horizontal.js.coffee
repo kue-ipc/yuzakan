@@ -1,4 +1,4 @@
-import * as html from '~/vendor/hyperapp-html.js'
+import * as html from '@hyperapp/html'
 import {classConcat} from '~/common/class_prop.js'
 
 cols = {

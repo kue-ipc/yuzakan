@@ -1,9 +1,9 @@
 # データをJSONとしてfetchし、受け取ったJSONをメッセージとして表示する。
 # その際、modalを使用する。
 
-import {app, text} from '~/vendor/hyperapp.js'
-import * as html from '~/vendor/hyperapp-html.js'
-import {focus} from '~/vendor/hyperapp-dom.js'
+import {app, text} from 'hyperapp'
+import * as html from '@hyperapp/html'
+import {focus} from '@hyperapp/dom'
 import {Modal} from '~/vendor/bootstrap.js'
 import {StatusIcon, statusInfo} from '~/app/status.js'
 import {fetchJson} from '~/api/fetch_json.js'
