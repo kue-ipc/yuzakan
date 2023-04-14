@@ -368,7 +368,7 @@ onPopstateSubscriber = (dispatch, action) ->
   -> window.removeEventListener 'popstate', listener
 
 # create Subscriver
-onPopstate = (action)->
+onPopstate = (action) ->
   [onPopstateSubscriber, action]
 
 # main

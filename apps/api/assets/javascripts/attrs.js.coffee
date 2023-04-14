@@ -44,7 +44,7 @@ export DESTROY_ATTR_PARAM_TYPES = {
 
 # Functions
 
-export normalizeAttrs = (attrs, type ={}) ->
+export normalizeAttrs = (attrs, type = {}) ->
   normalizeAttr(attr, type) for attr in attrs
 
 export normalizeAttr = (attr, types = {}) ->

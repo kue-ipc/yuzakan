@@ -100,7 +100,7 @@ export toDateTime = (val) ->
 
 export toDate = (val) -> toDateTime(val)?.toISODate()
 
-export toTime = (val) -> toDateTime(val)?.toISOTime(includeOffset: false)
+export toTime = (val) -> toDateTime(val)?.toISOTime({includeOffset: false})
 
 export toList = (val) ->
   val = JSON.parse(val) if typeof val == 'string'
@@ -134,7 +134,7 @@ export toSet = (val) ->
 
 export toObject = (val) ->
   if typeof val == 'string'
-    JSON.parse(val) 
+    JSON.parse(val)
   else if val[Symbol.iterator]?
     Object.fromEntries(val)
   else

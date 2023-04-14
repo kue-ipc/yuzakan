@@ -50,7 +50,7 @@ export DESTROY_PROVIDER_PARAM_TYPES = {
 
 # Functions
 
-export normalizeProviders = (providers, type ={}) ->
+export normalizeProviders = (providers, type = {}) ->
   normalizeProvider(provider, type) for provider in providers
 
 export normalizeProvider = (provider, types = {}) ->

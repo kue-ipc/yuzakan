@@ -8,7 +8,7 @@ import {listToCsv} from '~/common/csv_helper.js'
 # @param {boolean} disabled - 無効にする
 # @param {object[]} list - データ
 # @param {string} filename - ダウンロードするファイルのファイル名
-export default downloadButton = ({disabled = false, props...})->
+export default downloadButton = ({disabled = false, props...}) ->
   html.button {
     class: 'btn btn-secondary'
     disabled

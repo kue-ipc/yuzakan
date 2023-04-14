@@ -137,5 +137,5 @@ headerNav = ({system, session}) ->
 #     runGetSession
 #   ]
 #   view
-#   node: 
+#   node:
 # }

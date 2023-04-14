@@ -71,7 +71,7 @@ export DESTROY_GROUP_PARAM_TYPES = {
 
 # Functions
 
-export normalizeGroups = (groups, type ={}) ->
+export normalizeGroups = (groups, type = {}) ->
   normalizeGroup(group, type) for group in groups
 
 export normalizeGroup = (group, types = {}) ->

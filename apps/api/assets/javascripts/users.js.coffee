@@ -82,7 +82,7 @@ export DESTROY_USER_PARAM_TYPES = {
 
 # Functions
 
-export normalizeUsers = (users, type ={}) ->
+export normalizeUsers = (users, type = {}) ->
   normalizeUser(user, type) for user in users
 
 export normalizeUser = (user, types = {}) ->
