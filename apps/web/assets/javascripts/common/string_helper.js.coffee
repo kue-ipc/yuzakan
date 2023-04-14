@@ -1,6 +1,6 @@
-import Pluralize from '/assets/vendor/pluralize.js'
+import Pluralize from '~/vendor/pluralize.js'
 
-import {listToCamelCase, listToPascalCase, listToSnakeCase, listToKebabCase} from '/assets/common/convert.js'
+import {listToCamelCase, listToPascalCase, listToSnakeCase, listToKebabCase} from '~/common/convert.js'
 
 # Capitalize
 export capitalize = (str) ->

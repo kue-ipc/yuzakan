@@ -1,8 +1,8 @@
 # utils
 
-import * as R from '/assets/vendor/ramda.js'
+import * as R from '~/vendor/ramda.js'
 
-import {convertToType} from '/assets/common/convert.js'
+import {convertToType} from '~/common/convert.js'
 
 export isNil = R.isNil
 

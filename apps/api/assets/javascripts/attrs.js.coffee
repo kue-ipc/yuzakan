@@ -6,9 +6,9 @@ import {
   createRunCreateWithId
   createRunUpdateWithId
   createRunDestroyWithId
-} from '/assets/api/hyper_json.js'
+} from '~/api/hyper_json.js'
 
-import {pickType} from '/assets/common/helper.js'
+import {pickType} from '~/common/helper.js'
 
 # Constants
 

@@ -1,10 +1,10 @@
-import {h, text, app} from '/assets/vendor/hyperapp.js'
-import zxcvbn from '/assets/vendor/zxcvbn.js'
+import {h, text, app} from '~/vendor/hyperapp.js'
+import zxcvbn from '~/vendor/zxcvbn.js'
 
-import bsIcon from '/assets/app/bs_icon.js'
-import {camelize} from '/assets/common/string_helper.js'
-import {formName, formId} from '/assets/common/form_helper.js'
-import WebPostJson from '/assets/app/web_post_json.js'
+import bsIcon from '~/app/bs_icon.js'
+import {camelize} from '~/common/string_helper.js'
+import {formName, formId} from '~/common/form_helper.js'
+import WebPostJson from '~/app/web_post_json.js'
 
 changePasswordNode = document.getElementById('change-password')
 changePasswordData = JSON.parse(changePasswordNode.getAttribute(

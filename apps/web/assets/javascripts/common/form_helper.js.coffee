@@ -1,6 +1,6 @@
 # form helper
 
-import {listToKebabCase, listToParamName} from '/assets/common/convert.js'
+import {listToKebabCase, listToParamName} from '~/common/convert.js'
 
 export formName = (name, parents = []) ->
   listToParamName(parents..., name)

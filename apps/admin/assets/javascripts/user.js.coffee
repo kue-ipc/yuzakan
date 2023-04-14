@@ -1,27 +1,27 @@
 # /admin/user/*
 
-import {text, app} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
+import {text, app} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
 
-import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
+import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from '~/common/helper.js'
 
-import {fetchJsonGet} from '/assets/api/fetch_json.js'
+import {fetchJsonGet} from '~/api/fetch_json.js'
 
-import {runShowSystem} from '/assets/api/system.js'
-import {runIndexProviders} from '/assets/api/providers.js'
-import {runIndexGroupsNoSync} from '/assets/api/groups.js'
-import {createRunIndexAttrs} from '/assets/api/attrs.js'
-import {SHOW_USER_PARAM_TYPES, createRunShowUser} from '/assets/api/users.js'
+import {runShowSystem} from '~/api/system.js'
+import {runIndexProviders} from '~/api/providers.js'
+import {runIndexGroupsNoSync} from '~/api/groups.js'
+import {createRunIndexAttrs} from '~/api/attrs.js'
+import {SHOW_USER_PARAM_TYPES, createRunShowUser} from '~/api/users.js'
 
-import userInfo from '/assets/admin/user_info.js'
-import userOperation from '/assets/admin/user_operation.js'
-import userGroup from '/assets/admin/user_group.js'
-import userProvider from '/assets/admin/user_provider.js'
-import userAttr from '/assets/admin/user_attr.js'
+import userInfo from '~/admin/user_info.js'
+import userOperation from '~/admin/user_operation.js'
+import userGroup from '~/admin/user_group.js'
+import userProvider from '~/admin/user_provider.js'
+import userAttr from '~/admin/user_attr.js'
 
-import {runGetUserWithInit} from '/assets/admin/user_get_user.js'
+import {runGetUserWithInit} from '~/admin/user_get_user.js'
 
-import {InitUserAttrs} from '/assets/admin/user_attrs.js'
+import {InitUserAttrs} from '~/admin/user_attrs.js'
 
 SetAttrsWithInit = (state, attrs) -> [InitUserAttrs, {attrs}]
 

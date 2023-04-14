@@ -1,10 +1,10 @@
-import {text} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
+import {text} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
 
-import {entityLabel} from '/assets/common/helper.js'
+import {entityLabel} from '~/common/helper.js'
 
-import bsIcon from '/assets/app/bs_icon.js'
-import valueDisplay from '/assets/app/value_display.js'
+import bsIcon from '~/app/bs_icon.js'
+import valueDisplay from '~/app/value_display.js'
 
 PROVIDER_REG_ITEMS = [
   {name: 'username', label: 'ユーザー名', type: 'string'}

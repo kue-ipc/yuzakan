@@ -1,8 +1,8 @@
 # convert from/to primitive vaule and Object, Array, Map, Set, DateTime, etc...
 
-import {DateTime} from '/assets/vendor/luxon.js'
+import {DateTime} from '~/vendor/luxon.js'
 
-import {capitalize} from '/assets/common/string_helper.js'
+import {capitalize} from '~/common/string_helper.js'
 
 TRUE_STRINGS = new Set([
   '1'

@@ -1,10 +1,10 @@
 # グループ
 
-import {text, app} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
+import {text, app} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
 
-import * as dlh from '/assets/app/dl_horizontal.js'
-import bsIcon from '/assets/app/bs_icon.js'
+import * as dlh from '~/app/dl_horizontal.js'
+import bsIcon from '~/app/bs_icon.js'
 
 # Views
 

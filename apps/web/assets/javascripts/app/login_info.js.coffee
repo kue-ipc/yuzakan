@@ -1,12 +1,12 @@
-import {app, text} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
-import {DateTime} from '/assets/vendor/luxon.js'
+import {app, text} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
+import {DateTime} from '~/vendor/luxon.js'
 
-import ModalDialog from '/assets/app/modal_dialog.js'
-import bsIcon from '/assets/app/bs_icon.js'
-import * as dlh from '/assets/app/dl_horizontal.js'
+import ModalDialog from '~/app/modal_dialog.js'
+import bsIcon from '~/app/bs_icon.js'
+import * as dlh from '~/app/dl_horizontal.js'
 
-import {runShowSystem} from '/assets/api/system.js'
+import {runShowSystem} from '~/api/system.js'
 
 export default class LoginInfo extends ModalDialog
   constructor: ({service = {}, props...}) ->

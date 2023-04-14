@@ -1,7 +1,7 @@
-import {text} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
+import {text} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
 
-import {compact} from '/assets/common/helper.js'
+import {compact} from '~/common/helper.js'
 
 # page navigatino view
 export default pageNav = ({page, per_page, total, start, end, onpage, readonly = false}) ->

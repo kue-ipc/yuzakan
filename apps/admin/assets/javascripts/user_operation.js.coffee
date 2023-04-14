@@ -1,14 +1,14 @@
-import {text} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
-import {DateTime} from '/assets/vendor/luxon.js'
+import {text} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
+import {DateTime} from '~/vendor/luxon.js'
 
-import {formName, formId} from '/assets/common/form_helper.js'
-import csrf from '/assets/csrf.js'
-import WebData from '/assets/app/web_data.js'
-import ConfirmDialog from '/assets/app/confirm_dialog.js'
-import LoginInfo from '/assets/app/login_info.js'
+import {formName, formId} from '~/common/form_helper.js'
+import csrf from '~/csrf.js'
+import WebData from '~/app/web_data.js'
+import ConfirmDialog from '~/app/confirm_dialog.js'
+import LoginInfo from '~/app/login_info.js'
 
-import {runGetUserWithInit} from '/assets/admin/user_get_user.js'
+import {runGetUserWithInit} from '~/admin/user_get_user.js'
 
 parentNames = ['user']
 

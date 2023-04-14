@@ -1,6 +1,6 @@
-import {toRomaji, toKatakana, toHiragana} from '/assets/common/ja_conv.js'
-import {capitalize} from '/assets/common/string_helper.js'
-import {xxh32, xxh64} from '/assets/common/hash.js'
+import {toRomaji, toKatakana, toHiragana} from '~/common/ja_conv.js'
+import {capitalize} from '~/common/string_helper.js'
+import {xxh32, xxh64} from '~/common/hash.js'
 
 calcUserAttrValue = ({user, attrs, code}) ->
   return unless code

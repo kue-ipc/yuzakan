@@ -1,17 +1,17 @@
 # /admin/users
 
-import {text, app} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
-import {DateTime} from '/assets/vendor/luxon.js'
+import {text, app} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
+import {DateTime} from '~/vendor/luxon.js'
 
-import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
-import {convertToType, objToUrlencoded, objToJson, listToParamName} from '/assets/common/convert.js'
-import {updateList, findList} from '/assets/common/list_helper.js'
+import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '~/common/helper.js'
+import {convertToType, objToUrlencoded, objToJson, listToParamName} from '~/common/convert.js'
+import {updateList, findList} from '~/common/list_helper.js'
 
-import bsIcon from '/assets/app/bs_icon.js'
-import valueDisplay from '/assets/app/value_display.js'
-import preCode from '/assets/app/pre_code.js'
-import LoginInfo from '/assets/app/login_info.js'
+import bsIcon from '~/app/bs_icon.js'
+import valueDisplay from '~/app/value_display.js'
+import preCode from '~/app/pre_code.js'
+import LoginInfo from '~/app/login_info.js'
 
 import {
   USER_PROPERTIES, USER_DATA_PROPERTIES
@@ -19,21 +19,21 @@ import {
   normalizeUser
   createRunIndexWithPageUsers
   createRunShowUser, createRunCreateUser, createRunUpdateUser, createRunDestroyUser
-} from '/assets/api/users.js'
-import {createRunCreateUserLock, createRunDestroyUserLock} from '/assets/api/users_lock.js'
-import {runIndexGroupsNoSync} from '/assets/api/groups.js'
-import {runIndexProviders} from '/assets/api/providers.js'
-import {runIndexAttrs} from '/assets/api/attrs.js'
-import {runShowSystem} from '/assets/api/system.js'
+} from '~/api/users.js'
+import {createRunCreateUserLock, createRunDestroyUserLock} from '~/api/users_lock.js'
+import {runIndexGroupsNoSync} from '~/api/groups.js'
+import {runIndexProviders} from '~/api/providers.js'
+import {runIndexAttrs} from '~/api/attrs.js'
+import {runShowSystem} from '~/api/system.js'
 
-import {PAGINATION_PARAM_TYPES} from '/assets/api/pagination.js'
-import {SEARCH_PARAM_TYPES} from '/assets/api/search.js'
-import {ORDER_PARAM_TYPES} from '/assets/api/order.js'
+import {PAGINATION_PARAM_TYPES} from '~/api/pagination.js'
+import {SEARCH_PARAM_TYPES} from '~/api/search.js'
+import {ORDER_PARAM_TYPES} from '~/api/order.js'
 
-import pageNav from '/assets/admin/page_nav.js'
-import searchForm from '/assets/admin/search_form.js'
-import {batchOperation, runDoNextAction, runStopAllAction} from '/assets/admin/batch_operation.js'
-import {setUserAttrsDefault} from '/assets/admin/user_attrs.js'
+import pageNav from '~/admin/page_nav.js'
+import searchForm from '~/admin/search_form.js'
+import {batchOperation, runDoNextAction, runStopAllAction} from '~/admin/batch_operation.js'
+import {setUserAttrsDefault} from '~/admin/user_attrs.js'
 
 
 # mode

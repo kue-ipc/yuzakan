@@ -1,9 +1,9 @@
 # path: /admin/providers
 # node: providers
 
-import {text, app} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
-import {fetchJsonGet} from '/assets/api/fetch_json.js'
+import {text, app} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
+import {fetchJsonGet} from '~/api/fetch_json.js'
 
 providerTr = ({provider}) ->
   html.tr {}, [

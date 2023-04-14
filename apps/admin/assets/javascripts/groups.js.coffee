@@ -1,30 +1,30 @@
 # /admin/gorups
 
-import {text, app} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
+import {text, app} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
 
-import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
-import {objToUrlencoded, objToJson, listToParamName} from '/assets/common/convert.js'
-import {updateList} from '/assets/common/list_helper.js'
+import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '~/common/helper.js'
+import {objToUrlencoded, objToJson, listToParamName} from '~/common/convert.js'
+import {updateList} from '~/common/list_helper.js'
 
-import bsIcon from '/assets/app/bs_icon.js'
-import valueDisplay from '/assets/app/value_display.js'
-import preCode from '/assets/app/pre_code.js'
+import bsIcon from '~/app/bs_icon.js'
+import valueDisplay from '~/app/value_display.js'
+import preCode from '~/app/pre_code.js'
 
 import {
   GROUP_PROPERTIES, GROUP_DATA_PROPERTIES,
   INDEX_GROUPS_OPTION_PARAM_TYPES, INDEX_WITH_PAGE_GROUPS_PARAM_TYPES,
   normalizeGroup
   createRunIndexWithPageGroups, createRunShowGroup, createRunUpdateGroup
-} from '/assets/api/groups.js'
-import {runIndexProviders} from '/assets/api/providers.js'
-import {PAGINATION_PARAM_TYPES} from '/assets/api/pagination.js'
-import {SEARCH_PARAM_TYPES} from '/assets/api/search.js'
-import {ORDER_PARAM_TYPES} from '/assets/api/order.js'
+} from '~/api/groups.js'
+import {runIndexProviders} from '~/api/providers.js'
+import {PAGINATION_PARAM_TYPES} from '~/api/pagination.js'
+import {SEARCH_PARAM_TYPES} from '~/api/search.js'
+import {ORDER_PARAM_TYPES} from '~/api/order.js'
 
-import pageNav from '/assets/admin/page_nav.js'
-import searchForm from '/assets/admin/search_form.js'
-import {batchOperation, runDoNextAction, runStopAllAction} from '/assets/admin//batch_operation.js'
+import pageNav from '~/admin/page_nav.js'
+import searchForm from '~/admin/search_form.js'
+import {batchOperation, runDoNextAction, runStopAllAction} from '~/admin//batch_operation.js'
 
 # mode
 #   loading: 読込中

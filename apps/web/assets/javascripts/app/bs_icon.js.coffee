@@ -1,6 +1,6 @@
 # Bootstrap Icons for hyperapp
 
-import * as svg from '/assets/vendor/hyperapp-svg.js'
+import * as svg from '~/vendor/hyperapp-svg.js'
 
 export default bsIcon = ({name, size = 24, alt, props...}) ->
   svg_props = {

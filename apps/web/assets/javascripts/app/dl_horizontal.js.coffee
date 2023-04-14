@@ -1,5 +1,5 @@
-import * as html from '/assets/vendor/hyperapp-html.js'
-import {classConcat} from '/assets/common/class_prop.js'
+import * as html from '~/vendor/hyperapp-html.js'
+import {classConcat} from '~/common/class_prop.js'
 
 cols = {
   xs: 12

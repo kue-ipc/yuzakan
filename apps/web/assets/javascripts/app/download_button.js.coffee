@@ -1,8 +1,8 @@
-import {text} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
-import FileSaver from '/assets/vendor/file-saver.js'
+import {text} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
+import FileSaver from '~/vendor/file-saver.js'
 
-import {listToCsv} from '/assets/common/csv_helper.js'
+import {listToCsv} from '~/common/csv_helper.js'
 
 # Downolad button view
 # @param {boolean} disabled - 無効にする

@@ -1,8 +1,8 @@
-import {app, text} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
-import WebData from '/assets/app/web_data.js'
-import bsIcon from '/assets/app/bs_icon.js'
-import csrf from '/assets/csrf.js'
+import {app, text} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
+import WebData from '~/app/web_data.js'
+import bsIcon from '~/app/bs_icon.js'
+import csrf from '~/csrf.js'
 
 webData = new WebData {
   id: 'logout'

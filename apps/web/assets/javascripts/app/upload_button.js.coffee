@@ -1,7 +1,7 @@
-import {text} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
+import {text} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
 
-import {csvToList} from '/assets/common/csv_helper.js'
+import {csvToList} from '~/common/csv_helper.js'
 
 # Upload button view
 # @param {boolean} disabled - 無効にする

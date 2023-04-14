@@ -1,11 +1,11 @@
 # グループ
 
-import {text} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
+import {text} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
 
-import {entityLabel} from '/assets/common/helper.js'
+import {entityLabel} from '~/common/helper.js'
 
-import valueDisplay from '/assets/app/value_display.js'
+import valueDisplay from '~/app/value_display.js'
 
 # Views
 

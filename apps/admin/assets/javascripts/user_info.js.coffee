@@ -1,11 +1,11 @@
-import {text} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
+import {text} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
 
-import * as dlh from '/assets/app/dl_horizontal.js'
-import {CLEARANCE_LEVELS} from '/assets/definition.js'
-import {createEventValueAction} from '/assets/input_event.js'
+import * as dlh from '~/app/dl_horizontal.js'
+import {CLEARANCE_LEVELS} from '~/definition.js'
+import {createEventValueAction} from '~/input_event.js'
 
-import {CalcUserAttrs} from '/assets/admin/user_attrs.js'
+import {CalcUserAttrs} from '~/admin/user_attrs.js'
 
 SetUserUsername = (state, name) ->
   email =

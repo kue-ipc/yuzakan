@@ -1,6 +1,6 @@
-import {parse, stringify, transform} from '/assets/vendor/csv.js'
+import {parse, stringify, transform} from '~/vendor/csv.js'
 
-import {objToRecord, recordToObj} from '/assets/common/convert.js'
+import {objToRecord, recordToObj} from '~/common/convert.js'
 
 # async csv and records utilities
 

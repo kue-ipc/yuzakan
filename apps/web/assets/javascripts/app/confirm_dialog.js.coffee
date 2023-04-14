@@ -1,7 +1,7 @@
-import {text} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
+import {text} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
 
-import ModalDialog from '/assets/app/modal_dialog.js'
+import ModalDialog from '~/app/modal_dialog.js'
 
 export default class ConfirmDialog extends ModalDialog
   constructor: ({

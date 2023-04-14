@@ -1,13 +1,13 @@
 # データをJSONとしてfetchし、受け取ったJSONをメッセージとして表示する。
 # その際、modalを使用する。
 
-import {app, text} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
-import {focus} from '/assets/vendor/hyperapp-dom.js'
-import {Modal} from '/assets/vendor/bootstrap.js'
-import {StatusIcon, statusInfo} from '/assets/app/status.js'
-import {fetchJson} from '/assets/api/fetch_json.js'
-import {modalDialog} from '/assets/app/modal.js'
+import {app, text} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
+import {focus} from '~/vendor/hyperapp-dom.js'
+import {Modal} from '~/vendor/bootstrap.js'
+import {StatusIcon, statusInfo} from '~/app/status.js'
+import {fetchJson} from '~/api/fetch_json.js'
+import {modalDialog} from '~/app/modal.js'
 
 export default class WebData
   MESSAGE_EVENT = 'webdata.message'

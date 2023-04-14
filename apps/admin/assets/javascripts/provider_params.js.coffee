@@ -1,8 +1,8 @@
 # プロバイダーのパラメーター
 
-import {text} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
-import {formName, formId} from '/assets/common/form_helper.js'
+import {text} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
+import {formName, formId} from '~/common/form_helper.js'
 
 parentNames = ['provider', 'params']
 

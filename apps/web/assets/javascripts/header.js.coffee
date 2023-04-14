@@ -2,10 +2,10 @@
 
 # TODO
 
-import {app, text} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
+import {app, text} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
 
-import {fetchJsonGet} from '/assets/api/fetch_json.js'
+import {fetchJsonGet} from '~/api/fetch_json.js'
 
 USER_MENU = {path: '/', name: '利用者メニュー'}
 ADMIN_MENU = {path: '/admin', name: '管理者メニュー'}

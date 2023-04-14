@@ -1,6 +1,6 @@
 # class in props
 
-import {uniq, compact} from '/assets/common/helper.js'
+import {uniq, compact} from '~/common/helper.js'
 
 export parseClassProp = (obj) ->
   if !obj?

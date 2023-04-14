@@ -1,1 +1,1 @@
-import '/assets/application.js'
+import '~/application.js'

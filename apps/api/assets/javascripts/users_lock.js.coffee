@@ -3,9 +3,9 @@
 import {
   createRunCreate
   createRunDestroy
-} from '/assets/api/hyper_json.js'
+} from '~/api/hyper_json.js'
 
-import {SetUser, normalizeUser} from '/assets/api/users.js'
+import {SetUser, normalizeUser} from '~/api/users.js'
 
 # Contants
 

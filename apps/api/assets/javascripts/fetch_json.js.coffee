@@ -1,10 +1,10 @@
-import HttpLinkHeader from '/assets/vendor/http-link-header.js'
+import HttpLinkHeader from '~/vendor/http-link-header.js'
 
-import {isPresent} from '/assets/common/helper.js'
-import {formDataToJson, formDataToUrlencoded} from '/assets/common/form_helper.js'
-import {objToJson, objToUrlencoded, toInteger} from '/assets/common/convert.js'
+import {isPresent} from '~/common/helper.js'
+import {formDataToJson, formDataToUrlencoded} from '~/common/form_helper.js'
+import {objToJson, objToUrlencoded, toInteger} from '~/common/convert.js'
 
-import {extractPagination} from '/assets/api/pagination.js'
+import {extractPagination} from '~/api/pagination.js'
 
 ALLOWED_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE']
 

@@ -1,11 +1,11 @@
-import {text} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
+import {text} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
 
-import {entityLabel} from '/assets/common/helper.js'
+import {entityLabel} from '~/common/helper.js'
 
-import valueDisplay from '/assets/app/value_display.js'
+import valueDisplay from '~/app/value_display.js'
 
-import {CalcUserAttrs} from '/assets/admin/user_attrs.js'
+import {CalcUserAttrs} from '~/admin/user_attrs.js'
 
 SetUserAttr = (state, {attr_name, value}) ->
   user = {state.user..., attrs: {state.user.attrs..., [attr_name]: value}}

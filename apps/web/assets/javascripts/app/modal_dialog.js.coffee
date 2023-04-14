@@ -2,13 +2,13 @@
 # モーダルダイアログを表示するベースクラス
 # 拡張して使用する
 
-import {app, text} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
-import {focus} from '/assets/vendor/hyperapp-dom.js'
+import {app, text} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
+import {focus} from '~/vendor/hyperapp-dom.js'
 
-import {Modal} from '/assets/vendor/bootstrap.js'
+import {Modal} from '~/vendor/bootstrap.js'
 
-import {modalDialog} from '/assets/app/modal.js'
+import {modalDialog} from '~/app/modal.js'
 
 export default class ModalDialog
   MESSAGE_EVENT = 'modaldialog.message'

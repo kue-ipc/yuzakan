@@ -1,12 +1,12 @@
-import {DateTime} from '/assets/vendor/luxon.js'
-import {text} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
+import {DateTime} from '~/vendor/luxon.js'
+import {text} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
 
-import ConfirmDialog from '/assets/app/confirm_dialog.js'
-import {basename} from '/assets/common/helper.js'
+import ConfirmDialog from '~/app/confirm_dialog.js'
+import {basename} from '~/common/helper.js'
 
-import downloadButton from '/assets/app/download_button.js'
-import uploadButton from '/assets/app/upload_button.js'
+import downloadButton from '~/app/download_button.js'
+import uploadButton from '~/app/upload_button.js'
 
 # Dialogs
 

@@ -7,13 +7,13 @@ import {
   createRunCreateWithId
   createRunUpdateWithId
   createRunDestroyWithId
-} from '/assets/api/hyper_json.js'
+} from '~/api/hyper_json.js'
 
-import {PAGINATION_PARAM_TYPES} from '/assets/api/pagination.js'
-import {SEARCH_PARAM_TYPES} from '/assets/api/search.js'
-import {ORDER_PARAM_TYPES} from '/assets/api/order.js'
+import {PAGINATION_PARAM_TYPES} from '~/api/pagination.js'
+import {SEARCH_PARAM_TYPES} from '~/api/search.js'
+import {ORDER_PARAM_TYPES} from '~/api/order.js'
 
-import {pickType} from '/assets/common/helper.js'
+import {pickType} from '~/common/helper.js'
 
 # Contants
 

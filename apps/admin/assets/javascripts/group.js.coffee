@@ -1,18 +1,18 @@
 # グループ
 
-import {text, app} from '/assets/vendor/hyperapp.js'
-import * as html from '/assets/vendor/hyperapp-html.js'
+import {text, app} from '~/vendor/hyperapp.js'
+import * as html from '~/vendor/hyperapp-html.js'
 
-import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from '/assets/common/helper.js'
-import {objToUrlencoded} from '/assets/common/convert.js'
-import valueDisplay from '/assets/app/value_display.js'
+import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from '~/common/helper.js'
+import {objToUrlencoded} from '~/common/convert.js'
+import valueDisplay from '~/app/value_display.js'
 
-import {runIndexProviders} from '/assets/api/providers.js'
-import {SHOW_GROUP_PARAM_TYPES, runShowGroup} from '/assets/api/groups.js'
+import {runIndexProviders} from '~/api/providers.js'
+import {SHOW_GROUP_PARAM_TYPES, runShowGroup} from '~/api/groups.js'
 
-import groupInfo from '/assets/admin/group_info.js'
-import groupProvider from '/assets/admin/group_provider.js'
-import groupOperation from '/assets/admin/group_operation.js'
+import groupInfo from '~/admin/group_info.js'
+import groupProvider from '~/admin/group_provider.js'
+import groupOperation from '~/admin/group_operation.js'
 
 # main
 
