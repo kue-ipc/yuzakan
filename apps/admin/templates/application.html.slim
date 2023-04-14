@@ -8,7 +8,6 @@ html lang="ja"
       = current_config&.title || '未初期化'
     = favicon
     = stylesheet 'application'
-    = javascript '../vendor/es-module-shims', async: true
     = importmap
     = javascript 'application', type: 'module'
   body

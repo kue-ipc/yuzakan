@@ -17,6 +17,11 @@ ul
       - if browser[:note]&.size&.positive?
         small.text-muted<
           = browser[:note]
+      - if browser[:admin] && current_level > 1
+        | *
+= if current_level > 1
+  p
+    | 管理者用ページは * がついているブラウザーのみサポート対象です。
 
 h3 サポートしていないブラウザー (レガシーブラウザー)
 p

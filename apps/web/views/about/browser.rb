@@ -11,10 +11,12 @@ module Web
             {
               name: 'Google Chrome',
               url: 'https://www.google.co.jp/intl/ja/chrome/',
+              admin: true,
             },
             {
               name: 'Microsoft Edge',
               url: 'https://www.microsoft.com/ja-jp/edge',
+              admin: true,
             },
             {
               name: 'Mozilla Firefox',
