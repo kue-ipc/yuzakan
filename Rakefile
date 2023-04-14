@@ -63,8 +63,8 @@ namespace :vendor do
       '(\bimport\b\s*)"([^"]*)"',
       '(\bimport\b\s*\(\s*)"([^"]*)"(\s*\))',
     ].each do |re_str|
-      js_data.gsub!(Regexp.compile(re_str), '\1"./\2.js"\3')
-      js_data.gsub!(Regexp.compile(re_str.tr('"', "'")), '\1\'./\2.js\'\3')
+      js_data.gsub!(Regexp.compile(re_str), '\1"~/vendor/\2.js"\3')
+      js_data.gsub!(Regexp.compile(re_str.tr('"', "'")), '\1\'~/vendor/\2.js\'\3')
     end
     File.write(t.name, js_data)
   end
