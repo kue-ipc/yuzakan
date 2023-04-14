@@ -17,11 +17,11 @@ module Yuzakan
         asset_json = Hanami.root + 'public/assets.json'
         if Hanami.env == 'production' && asset_json.file?
           JSON.parse(asset_json.read).to_h do |path, obj|
-            [path.gsub(%r{^/assets/}, '@'), obj['target']] if path.end_with?('.js')
+            [path.gsub(%r{^/assets/}, '~/'), obj['target']] if path.end_with?('.js')
           end.compact
         else
           {
-            '@' => '/assets/',
+            '~/' => '/assets/',
           }
         end
       end
