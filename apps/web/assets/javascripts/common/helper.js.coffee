@@ -1,6 +1,6 @@
 # utils
 
-import * as R from '~/vendor/ramda.js'
+import * as R from 'ramda'
 
 import {convertToType} from '~/common/convert.js'
 

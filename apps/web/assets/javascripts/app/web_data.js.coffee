@@ -4,7 +4,7 @@
 import {app, text} from 'hyperapp'
 import * as html from '@hyperapp/html'
 import {focus} from '@hyperapp/dom'
-import {Modal} from '~/vendor/bootstrap.js'
+import {Modal} from 'bootstrap'
 import {StatusIcon, statusInfo} from '~/app/status.js'
 import {fetchJson} from '~/api/fetch_json.js'
 import {modalDialog} from '~/app/modal.js'

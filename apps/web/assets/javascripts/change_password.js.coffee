@@ -1,5 +1,5 @@
 import {h, text, app} from 'hyperapp'
-import zxcvbn from '~/vendor/zxcvbn.js'
+import zxcvbn from 'zxcvbn'
 
 import bsIcon from '~/app/bs_icon.js'
 import {camelize} from '~/common/string_helper.js'

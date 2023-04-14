@@ -1,4 +1,4 @@
-import HttpLinkHeader from '~/vendor/http-link-header.js'
+import HttpLinkHeader from 'http-link-header'
 
 import {isPresent} from '~/common/helper.js'
 import {formDataToJson, formDataToUrlencoded} from '~/common/form_helper.js'

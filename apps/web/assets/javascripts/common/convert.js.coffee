@@ -1,6 +1,6 @@
 # convert from/to primitive vaule and Object, Array, Map, Set, DateTime, etc...
 
-import {DateTime} from '~/vendor/luxon.js'
+import {DateTime} from 'luxon'
 
 import {capitalize} from '~/common/string_helper.js'
 

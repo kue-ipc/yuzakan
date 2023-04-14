@@ -1,4 +1,4 @@
-import {parse, stringify, transform} from '~/vendor/csv.js'
+import {parse, stringify, transform} from 'csv'
 
 import {objToRecord, recordToObj} from '~/common/convert.js'
 

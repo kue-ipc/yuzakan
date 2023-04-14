@@ -2,7 +2,7 @@
 
 import {text, app} from 'hyperapp'
 import * as html from '@hyperapp/html'
-import {DateTime} from '~/vendor/luxon.js'
+import {DateTime} from 'luxon'
 
 import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '~/common/helper.js'
 import {convertToType, objToUrlencoded, objToJson, listToParamName} from '~/common/convert.js'

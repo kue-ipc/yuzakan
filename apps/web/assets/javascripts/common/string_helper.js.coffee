@@ -1,4 +1,4 @@
-import Pluralize from '~/vendor/pluralize.js'
+import Pluralize from 'pluralize'
 
 import {listToCamelCase, listToPascalCase, listToSnakeCase, listToKebabCase} from '~/common/convert.js'
 

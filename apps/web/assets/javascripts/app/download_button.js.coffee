@@ -1,6 +1,6 @@
 import {text} from 'hyperapp'
 import * as html from '@hyperapp/html'
-import FileSaver from '~/vendor/file-saver.js'
+import FileSaver from 'file-saver'
 
 import {listToCsv} from '~/common/csv_helper.js'
 

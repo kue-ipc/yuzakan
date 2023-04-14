@@ -3,7 +3,7 @@
 # その際、modalを使用する。
 
 import {h, text, app} from 'hyperapp'
-import {Modal} from '~/vendor/bootstrap.js'
+import {Modal} from 'bootstrap'
 import bsIcon from '~/app/bs_icon.js'
 
 export default class WebPostJson

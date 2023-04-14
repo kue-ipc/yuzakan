@@ -6,13 +6,24 @@ module Yuzakan
   module Helpers
     module ImportmapHelper
       ASSETS_MAP = {'~/' => '/assets/'}.freeze
-      JS_LIBRARIES_MAP = [
-        'hyperapp',
-        '@hyperapp/dom',
-        '@hyperapp/events',
-        '@hyperapp/html',
-        '@hyperapp/svg',
-        '@hyperapp/time',
+      JS_LIBRARIES_MAP = %w[
+        @hyperapp/dom
+        @hyperapp/events
+        @hyperapp/html
+        @hyperapp/svg
+        @hyperapp/time
+        bootstrap
+        csv
+        es-module-shims
+        file-saver
+        hljs
+        http-link-header
+        hyperapp
+        luxon
+        pluralize
+        ramda
+        xxhashjs
+        zxcvbn
       ].to_h { |name| [name, "/assets/vendor/#{name}.js"] }.freeze
 
       private def importmap

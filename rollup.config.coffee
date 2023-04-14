@@ -17,9 +17,6 @@ targets = [
   {name: 'file-saver', ext: 'coffee'}
   {name: 'hljs', ext: 'coffee'}
   {name: 'http-link-header', ext: 'coffee'}
-  {name: 'hyperapp-dom', ext: 'coffee'}
-  {name: 'hyperapp-events', ext: 'coffee'}
-  {name: 'hyperapp-time', ext: 'coffee'}
   {name: 'hyperapp', ext: 'coffee'}
   {name: 'luxon', ext: 'coffee'}
   {name: 'pluralize', ext: 'coffee'}

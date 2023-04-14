@@ -1,4 +1,4 @@
-import {DateTime} from '~/vendor/luxon.js'
+import {DateTime} from 'luxon'
 import {text} from 'hyperapp'
 import * as html from '@hyperapp/html'
 

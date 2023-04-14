@@ -1,6 +1,6 @@
 import {text} from 'hyperapp'
 import * as html from '@hyperapp/html'
-import {DateTime} from '~/vendor/luxon.js'
+import {DateTime} from 'luxon'
 
 import {formName, formId} from '~/common/form_helper.js'
 import csrf from '~/csrf.js'

@@ -1,4 +1,4 @@
-import {Modal} from '~/vendor/bootstrap.js'
+import {Modal} from 'bootstrap'
 import {app, text} from 'hyperapp'
 import * as html from '@hyperapp/html'
 import {modalDialog} from '~/app/modal.js'

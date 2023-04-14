@@ -1,1 +1,1 @@
-import '~/vendor/bootstrap.js'
+import 'bootstrap'

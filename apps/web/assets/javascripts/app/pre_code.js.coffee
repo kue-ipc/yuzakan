@@ -1,4 +1,4 @@
-import hljs from '~/vendor/hljs.js'
+import hljs from 'hljs'
 import * as html from '@hyperapp/html'
 
 export default preCode = ({code, language, ignoreIllegals = true}) ->
