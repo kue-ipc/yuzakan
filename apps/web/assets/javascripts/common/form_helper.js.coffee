@@ -18,7 +18,7 @@ export formDataToObj = (formData) ->
         obj[subKey] = value
       else
         if keyList[0] == ''
-          throw 'Empty key must be last' unless keyList.length == 1
+          throw new Error('Empty key must be last') unless keyList.length == 1
           obj[subKey] ?= []
           obj[subKey].push value
         else if keyList[0].match(/^\d+$/)

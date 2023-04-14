@@ -260,7 +260,7 @@ export recordToObj = (record) ->
         if keyList[0] == ''
           unless keyList.length == 1
             console.error 'empty key must be last: %s', key
-            throw 'ilegal subkey: empty key must be last'
+            throw new Error('ilegal subkey: empty key must be last')
           obj[subKey] == (v for v in Array(value) when v? && v != '')
         else if /^\d+$/.test(keyList[0])
           obj[subKey] ?= []
@@ -270,7 +270,7 @@ export recordToObj = (record) ->
           obj[subKey] ?= {}
           unless typeof obj[subKey] == 'object'
             console.error 'parent is not object: %s', key
-            throw 'ilegal subkey: parent is not object'
+            throw new Error('ilegal subkey: parent is not object')
           if obj[subKey] instanceof Array
             console.warn 'mix numbers and words on array: %s', key
         obj = obj[subKey]
