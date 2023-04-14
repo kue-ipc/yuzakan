@@ -1,6 +1,8 @@
 require 'hanami/helpers'
 require 'hanami/assets'
 
+require_relative '../../lib/yuzakan/utils/terser_compressor'
+
 module Vendor
   class Application < Hanami::Application
     configure do
@@ -13,7 +15,7 @@ module Vendor
       # templates 'templates'
 
       assets do
-        javascript_compressor Yuzakan::Utils::UglifierEsCompressor.new
+        javascript_compressor Yuzakan::Utils::TerserCompressor.new
         stylesheet_compressor :sass
         sources << [
           'assets',

@@ -273,8 +273,6 @@ GEM
     trailblazer-option (0.1.2)
     transproc (1.1.1)
     uber (0.1.0)
-    uglifier (4.2.0)
-      execjs (>= 0.3.0, < 3)
     url_mount (0.2.1)
       rack
     webrick (1.8.1)
@@ -315,7 +313,6 @@ DEPENDENCIES
   slim
   smbhash
   terser
-  uglifier
   xxhash
   zxcvbn-js
 

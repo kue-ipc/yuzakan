@@ -11,7 +11,7 @@ require_relative '../web/controllers/handle_exception'
 
 require_relative '../../lib/yuzakan/params/id_params'
 require_relative '../../lib/yuzakan/predicates/name_predicates'
-require_relative '../../lib/yuzakan/utils/uglifier_es_compressor'
+require_relative '../../lib/yuzakan/utils/terser_compressor'
 
 module Admin
   class Application < Hanami::Application
@@ -48,7 +48,7 @@ module Admin
       templates 'templates'
 
       assets do
-        javascript_compressor Yuzakan::Utils::UglifierEsCompressor.new
+        javascript_compressor Yuzakan::Utils::TerserCompressor.new
         stylesheet_compressor :sass
         sources << ['assets']
       end

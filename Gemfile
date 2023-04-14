@@ -22,7 +22,6 @@ gem 'sassc'
 
 gem 'opal'
 gem 'coffee-script'
-gem 'uglifier'
 gem 'terser'
 
 gem 'bcrypt'

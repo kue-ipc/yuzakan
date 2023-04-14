@@ -15,7 +15,7 @@ require_relative './views/accept_json'
 
 require_relative '../../lib/yuzakan/params/id_params'
 require_relative '../../lib/yuzakan/predicates/name_predicates'
-require_relative '../../lib/yuzakan/utils/uglifier_es_compressor'
+require_relative '../../lib/yuzakan/utils/terser_compressor'
 
 module Api
   class Application < Hanami::Application
@@ -55,7 +55,7 @@ module Api
       templates 'templates'
 
       assets do
-        javascript_compressor Yuzakan::Utils::UglifierEsCompressor.new
+        javascript_compressor Yuzakan::Utils::TerserCompressor.new
         stylesheet_compressor :sass
         sources << ['assets']
       end
