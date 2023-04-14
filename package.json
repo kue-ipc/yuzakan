@@ -15,7 +15,6 @@
     "highlight.js": "^11.7.0",
     "http-link-header": "^1.1.0",
     "hyperapp": "^2.0.22",
-    "lodash": "^4.17.21",
     "luxon": "^3.3.0",
     "pluralize": "^8.0.0",
     "ramda": "^0.29.0",
