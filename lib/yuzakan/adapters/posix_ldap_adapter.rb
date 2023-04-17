@@ -6,6 +6,7 @@ require_relative 'ldap_adapter'
 
 module Yuzakan
   module Adapters
+    # rubocop: disable Matrixs/ClassLength
     class PosixLdapAdapter < LdapAdapter
       self.name = 'posix_ldap'
       self.display_name = 'Posix LDAP'
@@ -298,45 +299,42 @@ module Yuzakan
       end
 
       private def posix_passwds
-        @posix_passwds ||= ldap_search(search_user_opts('*')).map do |user|
-          passwd_args = Etc::Passwd.members.map do |name|
-            case name
-            when :name
-              user.first('uid')
-            when :passwd
-              'x'
-            when :uid
-              user.first('uidNumber').to_i
-            when :gid
-              user.first('gidNumber').to_i
-            when :gecos
-              user.first('gecos') || ''
-            when :dir
-              user.first('homeDirectory') || ''
-            when :shell
-              user.first('loginShell') || ''
-            end
+        @posix_passwds ||= ldap_search(search_user_opts('*')).map { |user| get_posix_passwd(user) }
+      end
+
+      private def get_posix_passwd(user)
+        passwd_args = Etc::Passwd.members.map do |name|
+          case name
+          when :name then user.first('uid')
+          when :passwd then 'x'
+          when :uid then user.first('uidNumber').to_i
+          when :gid then user.first('gidNumber').to_i
+          when :gecos then user.first('gecos') || ''
+          when :dir then user.first('homeDirectory') || ''
+          when :shell then user.first('loginShell') || ''
           end
-          Etc::Passwd.new(*passwd_args)
         end
+        Etc::Passwd.new(*passwd_args)
       end
 
       private def posix_groups
-        @posix_groups ||= ldap_search(search_group_opts('*')).map do |group|
-          group_args = Etc::Group.members.map do |name|
-            case name
-            when :name
-              group.first('cn')
-            when :passwd
-              'x'
-            when :gid
-              group.first('gidNumber').to_i
-            when :mem
-              group['memberUid'].to_a || []
-            end
+        @posix_groups ||= ldap_search(search_group_opts('*')).map { |group| get_posix_group(group) }
+      end
+
+      private def get_posix_group(group)
+        group_args = Etc::Group.members.map do |name|
+          case name
+          when :name
+            group.first('cn')
+          when :passwd
+            'x'
+          when :gid
+            group.first('gidNumber').to_i
+          when :mem
+            group['memberUid'].to_a || []
           end
-          Etc::Group.new(*group_args)
         end
+        Etc::Group.new(*group_args)
       end
 
       private def posix_passwd_byuid_map
@@ -355,5 +353,6 @@ module Yuzakan
         @posix_group_byname_map ||= posix_groups.to_h { |gr| [gr.name, gr] }
       end
     end
+    # rubocop: enable Matrixs/ClassLength
   end
 end

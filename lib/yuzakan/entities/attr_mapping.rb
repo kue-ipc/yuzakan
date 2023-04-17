@@ -36,45 +36,47 @@ class AttrMapping < Hanami::Entity
   def convert_value(value)
     return if value.nil?
 
-    if conversion.nil?
-      case attr.type
-      when 'boolean'
-        if TRUE_VALUES.include?(value)
-          true
-        elsif FALSE_VALUES.include?(value)
-          false
-        end
-      when 'string'
-        value.to_s
-      when 'integer'
-        value.to_i
-      when 'float'
-        value.to_f
-      when 'date'
-        value.to_date
-      when 'time', 'datetime'
-        value.to_time
-      else
-        value
-      end
+    case conversion
+    when nil
+      convert_type(value, attr.type)
+    when 'posix_time'
+      Time.at(value.to_i)
+    when 'posix_date'
+      Date.new(1970, 1, 1) + value.to_i
+    when 'path'
+      value.sub(%r{^/+}, '')
+    when 'e2j'
+      translate_e2j(value)
+    when 'j2e'
+      translate_j2e(value)
     else
-      case conversion
-      when 'posix_time'
-        Time.at(value.to_i)
-      when 'posix_date'
-        Date.new(1970, 1, 1) + value.to_i
-      when 'path'
-        value.sub(%r{^/+}, '')
-      when 'e2j'
-        translate_e2j(value)
-      when 'j2e'
-        translate_j2e(value)
-      else
-        value
-      end
+      value
     end
   end
   alias convert convert_value
+
+  private def convert_type(value, type)
+    case type
+    when 'boolean'
+      if TRUE_VALUES.include?(value)
+        true
+      elsif FALSE_VALUES.include?(value)
+        false
+      end
+    when 'string'
+      value.to_s
+    when 'integer'
+      value.to_i
+    when 'float'
+      value.to_f
+    when 'date'
+      value.to_date
+    when 'time', 'datetime'
+      value.to_time
+    else
+      value
+    end
+  end
 
   # Ruby data -> Adapter data
   def map_value(value)

@@ -1035,20 +1035,14 @@ module Yuzakan
       end
 
       # https://trac.tools.ietf.org/id/draft-stroeder-hashed-userpassword-values-00.html
-      private def generate_password(password)
+      private def generate_password(password) # rubocop: disable Metrics/AbcSize, Metrics/MethodLength
         case @params[:password_scheme].upcase
-        when '{CLEARTEXT}'
-          password
-        when '{CRYPT}'
-          "{CRYPT}#{generate_crypt_password(password)}"
-        when '{MD5}'
-          "{MD5}#{Base64.strict_encode64(Digest::MD5.digest(password))}"
-        when '{SHA}'
-          "{SHA}#{Base64.strict_encode64(Digest::SHA1.digest(password))}"
-        when '{SHA256}'
-          "{SHA256}#{Base64.strict_encode64(Digest::SHA256.digest(password))}"
-        when '{SHA512}'
-          "{SHA512}#{Base64.strict_encode64(Digest::SHA512.digest(password))}"
+        when '{CLEARTEXT}' then password
+        when '{CRYPT}' then "{CRYPT}#{generate_crypt_password(password)}"
+        when '{MD5}' then "{MD5}#{Base64.strict_encode64(Digest::MD5.digest(password))}"
+        when '{SHA}' then "{SHA}#{Base64.strict_encode64(Digest::SHA1.digest(password))}"
+        when '{SHA256}' then "{SHA256}#{Base64.strict_encode64(Digest::SHA256.digest(password))}"
+        when '{SHA512}' then "{SHA512}#{Base64.strict_encode64(Digest::SHA512.digest(password))}"
         when '{SMD5}'
           salt = SecureRandom.random_bytes(8)
           "{SMD5}#{Base64.strict_encode64(Digest::MD5.digest(password + salt) + salt)}"

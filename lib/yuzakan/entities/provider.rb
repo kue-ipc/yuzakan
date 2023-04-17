@@ -3,6 +3,7 @@
 require 'digest/md5'
 require_relative '../utils/cache_store'
 
+# rubocop: disable Metrics/ClassLength
 class Provider < Hanami::Entity
   attr_reader :params
 
@@ -360,3 +361,4 @@ class Provider < Hanami::Entity
     has_group? && @adapter_class.has_primary_group?
   end
 end
+# rubocop: enable Metrics/ClassLength
