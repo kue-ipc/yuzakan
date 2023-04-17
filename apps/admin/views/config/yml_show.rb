@@ -9,10 +9,8 @@ module Admin
       class YmlShow < Show
         format :yml
 
-        def render
-          data = {}
-          data[:config] = {}
-          %i[
+        KEYS = {
+          config: %i[
             title
             domain
             session_timeout
@@ -28,66 +26,73 @@ module Admin
             contact_name
             contact_email
             contact_phone
-          ].each do |key|
-            data[:config][key] = current_config.__send__(key)
+          ],
+          provider: %i[
+            name
+            display_name
+            adapter_name
+            readable
+            writable
+            authenticatable
+            password_changeable
+            individual_password
+            lockable
+            self_management
+            group
+          ],
+          attr: %i[
+            name
+            display_name
+            type
+            hidden
+            readonly
+            code
+          ],
+        }.freeze
+
+        def render
+          data = {
+            config: config_data,
+            providers: providers_data,
+            attrs: attrs_data,
+          }
+          raw YAML.dump(Yuzakan::Utils::HashArray.stringify_keys(data))
+        end
+
+        private def config_data
+          KEYS[:config].to_h { |key| [key, current_config.__send__(key)] }
+        end
+
+        private def providers_data
+          providers.map do |provider|
+            provider_data = KEYS[:provider].to_h { |key| [key, provider.__send__(key)] }
+            provider_params_data = provider.adapter_param_types.to_h do |param_type|
+              [param_type.name.to_s, provider.params[param_type.name]]
+            end
+            {
+              **provider_data,
+              params: provider_params_data,
+            }
           end
+        end
 
-          data[:providers] = []
-          provider_ids = {}
-          providers.each do |provider|
-            provider_ids[provider.id] = provider
-            provider_data = {}
-            %i[
-              name
-              display_name
-              adapter_name
-              readable
-              writable
-              authenticatable
-              password_changeable
-              individual_password
-              lockable
-              self_management
-              group
-            ].each do |key|
-              provider_data[key] = provider.__send__(key)
-            end
+        private def attrs_data
+          attrs.map do |attr|
+            attr_data = KEYS[:attr].to_h { |key| [key, attr.__send__(key)] }
 
-            provider_data[:params] = {}
-            params = provider.params
-
-            provider_data[:params] = provider.adapter_param_types.to_h do |param_type|
-              [param_type.name.to_s, params[param_type.name]]
-            end
-            data[:providers] << provider_data
-          end
-
-          data[:attrs] = []
-          attrs.each do |attr|
-            attr_data = {}
-            %i[
-              name
-              display_name
-              type
-              hidden
-              readonly
-              code
-            ].each do |key|
-              attr_data[key] = attr.__send__(key)
-            end
-
-            attr_data[:attr_mappings] = attr.attr_mappings.map do |attr_mapping|
+            attr_mappings_data = attr.attr_mappings.map do |attr_mapping|
               {
-                provider: provider_ids[attr_mapping.provider_id].name,
+                provider: providers.find { |provider| provider.id == attr_mapping.provider_id }&.name,
                 key: attr_mapping.key,
                 conversion: attr_mapping.conversion,
               }
             end
 
-            data[:attrs] << attr_data
+            {
+              **attr_data,
+              attr_mappings: attr_mappings_data,
+            }
           end
-
-          raw YAML.dump(Yuzakan::Utils::HashArray.stringify_keys(data))
         end
       end
     end
