@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'securerandom'
+
 require_relative 'ldap_adapter'
 require_relative 'ad_adapter/account_control'
 
@@ -83,8 +85,11 @@ module Yuzakan
       private def run_after_user_create(user, password: nil, **userdata)
         super
 
+        # パスワードが未設定の場合、UAC適用に失敗するため、ランダムなパスワードを設定する。
+        password ||= SecureRandom.alphanumeric(64)
+
         # 作成時にパスワードは設定されていないため、パスワード変更を行う
-        ldap_user_change_password(user, password) if password
+        ldap_user_change_password(user, password)
 
         # デフォルトUACの適用
         # 作成時には適用できないため、作成後にする必要がある。
