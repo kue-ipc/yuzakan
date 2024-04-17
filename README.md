@@ -54,7 +54,7 @@
 ### プログラミング言語
 
 * Ruby >= 2.7 < 3.0
-* Node.js >= 16
+* Node.js >= 18
 
 Node.jsは必須です。
 
@@ -105,7 +105,7 @@ $ bundle exec rake build
 テスト実施:
 
 ```
-$ bundle exec rake test
+$ bundle exec rake
 ```
 
 開発コンソール起動:
