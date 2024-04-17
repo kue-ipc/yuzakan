@@ -58,7 +58,6 @@ module Admin
             next {} if menu.empty?
             next if menu[:level] > current_level
 
-            pp menu
             {
               name: menu[:name],
               url: routes.path(menu[:action], **menu.fetch(:action_params, {})),
