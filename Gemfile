@@ -7,6 +7,8 @@ gem 'hanami-model', '~> 1.3'
 # FIXME: don't update dry-configurable
 # maybe 0.13.0 have a bug
 gem 'dry-configurable', '~> 0.12.1'
+# bug? 0.9.0 confilcet 0.10.0 error
+gem 'dry-container', '~> 0.8.0'
 
 gem 'rack', '>= 2.2.2'
 
@@ -43,6 +45,9 @@ gem 'smbhash'
 # Google Workspace
 gem 'google-apis-admin_directory_v1'
 
+# bug?
+gem 'mail', '~> 2.7.1'
+
 group :development do
   # Code reloading
   # See: http://hanamirb.org/guides/projects/code-reloading
@@ -58,7 +63,6 @@ end
 group :test do
   gem 'minitest'
   gem 'capybara'
-  gem 'sqlite3'
 end
 
 group :production do
