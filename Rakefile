@@ -39,11 +39,11 @@ namespace :vendor do
     sh 'npm install'
   end
 
-  rule '.js' => ['.coffee', 'node_modules/.bin/coffee'] do |t|
-    sh "node_modules/.bin/coffee -c #{t.source}"
+  rule '.mjs' => ['.coffee', 'node_modules/.bin/coffee'] do |t|
+    sh "node_modules/.bin/coffee -o #{t.name} -c #{t.source}"
   end
 
-  task build_js: ['rollup.config.js', 'node_modules/.bin/rollup'] do
+  task build_js: ['rollup.config.mjs', 'node_modules/.bin/rollup'] do
     sh 'node_modules/.bin/rollup -c'
   end
 
@@ -71,7 +71,7 @@ namespace :vendor do
 
   task build_image: ['vendor/assets/images'] do
     images_dir = 'vendor/assets/images'
-    
+
     bootstrap_icons_dir = 'node_modules/bootstrap-icons'
     cp "#{bootstrap_icons_dir}/bootstrap-icons.svg", images_dir
   end
