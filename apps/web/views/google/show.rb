@@ -66,7 +66,7 @@ module Web
           modal_classes = ['modal', 'fade']
           dialog_classes = ['modal-dialog', 'modal-dialog-centered',
                             'modal-dialog-scrollable', 'modal-lg',]
-          form_classes = []
+          form_classes = ['click-only-once']
           form_classes << 'submit-before-agreement' if agreement
 
           title ||= id
