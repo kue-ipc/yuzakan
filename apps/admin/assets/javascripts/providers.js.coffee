@@ -18,6 +18,15 @@ providerTr = ({provider}) ->
         html.span {class: 'text-danger'}, text 'NG'
     else
       html.span {class: 'text-secondary'}, text '確認中'
+    html.td {}, if provider.adapter_name == "local"
+      html.a {
+        class: "btn btn-primary btn-sm"
+        href: "/admin/providers/#{provider.name}/export"
+        type: "application/json-lines"
+        download: "#{provider.name}_#{(new Date).getTime()}.jsonl" 
+      }, text "取得"
+    else
+      ""
   ]
 
 providerAction = (state, {name, provider}) ->
@@ -62,6 +71,7 @@ view = ({providers}) ->
         html.th {}, text '表示名'
         html.th {}, text 'アダプター'
         html.th {}, text '状態'
+        html.th {}, text 'エクスポート'
       ]
     html.tbody {}, (providerTr({provider}) for provider in providers)
   ]

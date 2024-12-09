@@ -52,6 +52,23 @@ module Admin
               color: 'danger',
               level: 5,
             },
+            {},
+            {
+              name: '全ユーザー情報エクスポート',
+              action: :export_users,
+              description: '各プロバイダーにはないユーザー情報をエクスポートします。',
+              color: 'warning',
+              level: 5,
+              filename: "users_#{Time.now.strftime("%Y%m%d_%H%M%S")}.jsonl",
+            },
+            {
+              name: '全グループ情報エクスポート',
+              action: :export_groups,
+              description: '各プロバイダーにはないグループ情報をエクスポートします。',
+              color: 'warning',
+              level: 5,
+              filename: "groups_#{Time.now.strftime("%Y%m%d_%H%M%S")}.jsonl",
+            },
           ].freeze
         def menu_items
           MENU_ITEMS.map do |menu|
@@ -63,7 +80,7 @@ module Admin
               url: routes.path(menu[:action], **menu.fetch(:action_params, {})),
               description: menu[:description],
               color: menu[:color],
-            }
+            }.merge(if menu[:filename] then {type: :download, filename: menu[:filename]} else {} end)
           end.compact
         end
       end
