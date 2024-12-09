@@ -19,4 +19,8 @@ resources :users, only: [:index, :show] do
   end
 end
 
-resources :groups, only: [:index, :show]
+resources :groups, only: [:index, :show] do
+  collection do
+    get 'export'
+  end
+end

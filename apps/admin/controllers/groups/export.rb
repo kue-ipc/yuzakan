@@ -2,7 +2,7 @@
 
 module Admin
   module Controllers
-    module Users
+    module Groups
       class Export
         include Admin::Action
 

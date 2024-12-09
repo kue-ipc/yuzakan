@@ -61,6 +61,14 @@ module Admin
               level: 5,
               filename: "users_#{Time.now.strftime("%Y%m%d_%H%M%S")}.jsonl",
             },
+            {
+              name: '全グループ情報エクスポート',
+              action: :export_groups,
+              description: '各プロバイダーにはないグループ情報をエクスポートします。',
+              color: 'warning',
+              level: 5,
+              filename: "groups_#{Time.now.strftime("%Y%m%d_%H%M%S")}.jsonl",
+            },
           ].freeze
         def menu_items
           MENU_ITEMS.map do |menu|

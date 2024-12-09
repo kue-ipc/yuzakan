@@ -10,7 +10,7 @@ module Admin
         format :jsonl
 
         def render
-          text = users.map do |user|
+          text = UserRepository.new.all.map do |user|
             {
               name: user.name,
               display_name: user.display_name,
