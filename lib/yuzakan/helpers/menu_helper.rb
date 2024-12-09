@@ -3,7 +3,8 @@
 module Yuzakan
   module Helpers
     module MenuHelper
-      private def menu_link(name: nil, url: nil, description: nil, color: 'dark', filled: false, type: :link)
+      private def menu_link(name: nil, url: nil, description: nil, color: 'dark', filled: false, type: :link,
+        filename: nil)
         card_class = if filled then ['card', 'text-white', "bg-#{color}"] else ['card', "border-#{color}"] end
         if name
           html.div class: col_card + ['my-1'] do
@@ -15,6 +16,11 @@ module Yuzakan
               end
             when :modal
               link_to url, class: card_class, 'data-bs-toggle': 'modal', 'data-bs-target': url do
+                div name, class: 'card-header text-center'
+                div description, class: 'card-body'
+              end
+            when :download
+              link_to url, class: card_class, download: filename do
                 div name, class: 'card-header text-center'
                 div description, class: 'card-body'
               end

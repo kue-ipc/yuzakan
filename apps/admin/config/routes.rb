@@ -13,6 +13,10 @@ end
 
 resources :attrs, only: [:index]
 
-resources :users, only: [:index, :show]
+resources :users, only: [:index, :show] do
+  collection do
+    get 'export'
+  end
+end
 
 resources :groups, only: [:index, :show]
