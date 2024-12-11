@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Hanami::Model.migration do
+ROM::SQL.migration do
   change do
     create_table :auth_logs do
       primary_key :id

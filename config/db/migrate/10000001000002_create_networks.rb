@@ -2,7 +2,7 @@
 
 require "socket"
 
-Hanami::Model.migration do
+ROM::SQL.migration do
   change do
     create_table :networks do
       primary_key :id
