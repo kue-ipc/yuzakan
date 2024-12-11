@@ -10,37 +10,37 @@ module Yuzakan
     slice :admin, at: "/admin" do
       root to: "home.index"
 
-      get "/config", to: "config.show"
+      get "/config", to: "config.show", as: :config
       get "/config/new", to: "config.new"
       get "/config/edit", to: "config.edit"
-      post "/config", to: "config.create"
-      patch "/config", to: "config.update"
-      put "/config", to: "config.replace", as: "config"
+      post "/config", to: "config.create", as: :config
+      patch "/config", to: "config.update", as: :config
+      put "/config", to: "config.replace", as: :config
 
-      get "/providers", to: "providers.index"
-      get "/providers/:id", to: "providers.show"
+      get "/providers", to: "providers.index", as: :providers
+      get "/providers/:id", to: "providers.show", as: :provider
       get "/providers/:id/export", to: "providers.export"
 
-      get "/attrs", to: "attrs.index"
+      get "/attrs", to: "attrs.index", as: :attrs
 
-      get "/users", to: "users.index"
-      get "/users/:id", to: "users.index"
+      get "/users", to: "users.index", as: :users
+      get "/users/:id", to: "users.index", as: :user
       get "/users/:id/export", to: "users.export"
 
-      get "/groups", to: "groups.index"
-      get "/groups/:id", to: "groups.index"
+      get "/groups", to: "groups.index", as: :group
+      get "/groups/:id", to: "groups.index", as: :groups
       get "/groups/:id/export", to: "groups.export"
     end
 
     slice :api, at: "/api" do
-      get "/adapters", to: "adapters.index"
-      get "/adapters/:id", to: "adapters.show"
+      get "/adapters", to: "adapters.index", as: :adapters
+      get "/adapters/:id", to: "adapters.show", as: :adapter
 
-      get "/attrs", to: "attrs.index"
-      get "/attrs/:id", to: "attrs.show"
-      post "/attrs", to: "attrs.create"
-      patch "/attrs/:id", to: "attrs.update"
-      delete "/attrs/:id", to: "attrs.destroy"
+      get "/attrs", to: "attrs.index", as: :attrs
+      post "/attrs", to: "attrs.create", as: :attrs
+      get "/attrs/:id", to: "attrs.show", as: :attr
+      patch "/attrs/:id", to: "attrs.update", as: :attr
+      delete "/attrs/:id", to: "attrs.destroy", as: :attr
 
       # TODO: わけずにユーザーの処理にする
       # resource :self, only: [:show] do
@@ -52,36 +52,36 @@ module Yuzakan
       #   end
       # end
 
-      get "/providers", to: "providers.index"
-      get "/providers/:id", to: "providers.show"
-      post "/providers", to: "providers.create"
-      patch "/providers/:id", to: "providers.update"
-      delete "/providers/:id", to: "providers.destroy"
+      get "/providers", to: "providers.index", as: :providers
+      post "/providers", to: "providers.create", as: :providers
+      get "/providers/:id", to: "providers.show", as: :provider
+      patch "/providers/:id", to: "providers.update", as: :provider
+      delete "/providers/:id", to: "providers.destroy", as: :provider
       get "/providers/:id/check", to: "providers.check"
 
-      get "/session", to: "session.show"
-      post "/session", to: "session.create"
-      delete "/session", to: "session.destroy"
+      get "/session", to: "session.show", as: :session
+      post "/session", to: "session.create", as: :session
+      delete "/session", to: "session.destroy", as: :session
 
-      get "/users", to: "users.index"
-      get "/users/:id", to: "users.show"
-      post "/users", to: "users.create"
-      patch "/users/:id", to: "users.update"
-      delete "/users/:id", to: "users.destroy"
-      post "/users/:id/password", to: "users/password.create"
-      post "/users/:id/lock", to: "users/lock.create"
-      delete "/users/:id/lock", to: "users/lock.destroy"
+      get "/users", to: "users.index", as: :users
+      post "/users", to: "users.create", as: :users
+      get "/users/:id", to: "users.show", as: :user
+      patch "/users/:id", to: "users.update", as: :user
+      delete "/users/:id", to: "users.destroy", as: :user
+      post "/users/:id/password", to: "users/password.create", as: :user_password
+      post "/users/:id/lock", to: "users/lock.create", as: :user_lock
+      delete "/users/:id/lock", to: "users/lock.destroy", as: :user_lock
 
-      get "/groups", to: "groups.index"
-      get "/groups/:id", to: "groups.show"
-      patch "/groups/:id", to: "groups.update"
-      get "/groups/:id/members", to: "groups/members.index"
-      patch "/groups/:id/members/:user_id", to: "groups/members.update"
-      delete "/groups/:id/members/:user_id", to: "groups/members.destroy"
+      get "/groups", to: "groups.index", as: :groups
+      get "/groups/:id", to: "groups.show", as: :group
+      patch "/groups/:id", to: "groups.update", as: :group
+      get "/groups/:id/members", to: "groups/members.index", as: :group_members
+      patch "/groups/:id/members/:user_id", to: "groups/members.update", as: :group_member
+      delete "/groups/:id/members/:user_id", to: "groups/members.destroy", as: :group_member
 
-      get "/system", to: "system.show"
+      get "/system", to: "system.show", as: :system
 
-      get "/menus", to: "menus.index"
+      get "/menus", to: "menus.index", as: :menus
     end
 
     slice :vendor, at: "/vendor" do
@@ -92,16 +92,15 @@ module Yuzakan
       root to: "home.index"
       # get "/user", to: "user.show"
 
-      get "/password", to: "user/password.show"
-      patch "/password", to: "user/password.update"
+      get "/password", to: "user/password.show", as: :password
+      patch "/password", to: "user/password.update", as: :password
       # TODO: providerで汎用化
       # resource "google", only: [:show, :create, :destroy] do
       #   resource "code", only: [:create]
       #   resource "password", only: [:create]
       #   resource "lock", only: [:destroy]
       # end
-      get "/providers/:id", to: "providers.show"
-      get "/home", to: "home.index"
+      get "/providers/:id", to: "providers.show", as: :provider
     end
   end
 end
