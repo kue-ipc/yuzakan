@@ -4,9 +4,9 @@ module Yuzakan
   class Routes < Hanami::Routes
     root to: "home.index"
 
-    get "/user", to: "user.show"
-    get "/user/password/edit", to: "user/password.edit"
-    patch "/user/password", to: "user/password.update"
+    # get "/user", to: "user.show"
+    # get "/user/password/edit", to: "user/password.edit"
+    # patch "/user/password", to: "user/password.update"
 
     get "/about", to: "about.index", as: :about
     get "/about/browser", to: "about.browser", as: :about_browser
@@ -99,6 +99,9 @@ module Yuzakan
 
     slice :vendor, at: "/vendor" do
       root to: ->(_env) { [200, {}, [""]] }
+    end
+
+    slice :user, at: "/user" do
     end
   end
 end
