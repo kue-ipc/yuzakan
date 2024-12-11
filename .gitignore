@@ -11,6 +11,3 @@
 /.*-version
 
 /rollup.config.mjs
-
-!.gitkeep
-!.keep
