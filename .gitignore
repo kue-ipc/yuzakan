@@ -1,17 +1,16 @@
-/.*-version
+/.env*.local
+/log/*
+/public/
+/node_modules/
 /db/*.sqlite
-/db/*.sqlite-journal
-/public/assets*
-/public/errors*
-/tmp/*
-/node_modules
-/vendor/*
+/spec/examples.txt
+
+/.bundle/
+/vendor/
+
+/.*-version
 
 /rollup.config.mjs
-/yarn-error.log
-/yarn.lock
-/log/*.log*
-
-/.bundle
 
 !.gitkeep
+!.keep
