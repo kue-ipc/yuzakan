@@ -55,6 +55,10 @@ group :development do
   gem "rubocop-capybara"
   gem "rubocop-rake"
   gem "rubocop-rspec"
+
+  # Ruby LSP and Debug
+  gem "ruby-lsp", require: false
+  gem "debug", require: false, platforms: :mri
 end
 
 group :development, :test do

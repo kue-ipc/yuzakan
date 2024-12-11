@@ -33,6 +33,10 @@ GEM
     database_cleaner-sequel (2.0.2)
       database_cleaner-core (~> 2.0.0)
       sequel
+    date (3.4.1)
+    debug (1.9.2)
+      irb (~> 1.10)
+      reline (>= 0.3.8)
     debug_inspector (1.2.0)
     declarative (0.0.20)
     diff-lcs (1.5.1)
@@ -214,6 +218,10 @@ GEM
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
+    io-console (0.8.0)
+    irb (1.14.1)
+      rdoc (>= 4.0.0)
+      reline (>= 0.4.2)
     json (2.9.0)
     jwt (2.9.3)
       base64
@@ -253,9 +261,13 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.9)
+    prism (1.2.0)
     pry (0.15.0)
       coderay (~> 1.1)
       method_source (~> 1.0)
+    psych (5.2.1)
+      date
+      stringio
     public_suffix (6.0.1)
     puma (6.5.0)
       nio4r (~> 2.0)
@@ -270,6 +282,10 @@ GEM
     rb-fsevent (0.11.2)
     rb-inotify (0.11.1)
       ffi (~> 1.0)
+    rbs (3.7.0)
+      logger
+    rdoc (6.8.1)
+      psych (>= 4.0.0)
     readthis (2.2.0)
       connection_pool (~> 2.1)
       redis (>= 3.0, < 5.0)
@@ -280,6 +296,8 @@ GEM
     redis-store (1.11.0)
       redis (>= 4, < 6)
     regexp_parser (2.9.3)
+    reline (0.5.12)
+      io-console (~> 0.5)
     representable (3.2.0)
       declarative (< 0.1.0)
       trailblazer-option (>= 0.1.1, < 0.2.0)
@@ -343,6 +361,11 @@ GEM
       rubocop (~> 1.0)
     rubocop-rspec (3.2.0)
       rubocop (~> 1.61)
+    ruby-lsp (0.22.1)
+      language_server-protocol (~> 3.17.0)
+      prism (>= 1.2, < 2.0)
+      rbs (>= 3, < 4)
+      sorbet-runtime (>= 0.5.10782)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     sassc (2.4.0)
@@ -359,7 +382,9 @@ GEM
       temple (~> 0.10.0)
       tilt (>= 2.1.0)
     smbhash (1.1.0)
+    sorbet-runtime (0.5.11690)
     sqlite3 (2.4.1-x86_64-linux-gnu)
+    stringio (3.1.2)
     temple (0.10.3)
     terser (1.2.4)
       execjs (>= 0.3.0, < 3)
@@ -387,6 +412,7 @@ DEPENDENCIES
   capybara
   coffee-script
   database_cleaner-sequel
+  debug
   dotenv
   dry-operation
   dry-types (~> 1.7)
@@ -415,6 +441,7 @@ DEPENDENCIES
   rubocop-capybara
   rubocop-rake
   rubocop-rspec
+  ruby-lsp
   sassc
   slim
   smbhash
