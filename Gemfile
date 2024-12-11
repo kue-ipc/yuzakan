@@ -2,19 +2,23 @@
 
 source "https://rubygems.org"
 
+gem "hanami", "~> 2.2"
+gem "hanami-assets", "~> 2.2"
+gem "hanami-controller", "~> 2.2"
+gem "hanami-db", "~> 2.2"
+gem "hanami-router", "~> 2.2"
+gem "hanami-validations", "~> 2.2"
+gem "hanami-view", "~> 2.2"
+
+gem "dry-types", "~> 1.7"
+gem "dry-operation"
+gem "puma"
 gem "rake"
-gem "hanami",       "~> 1.3"
-gem "hanami-model", "~> 1.3"
-
-# bug? 0.9.0 confilcet 0.10.0 error
-gem "dry-container", "~> 0.8.0"
-
-gem "rack", ">= 2.2.2"
 
 # Database
 gem "mysql2"
-# gem 'pg'
-# gem 'sqlite3'
+gem "pg"
+gem "sqlite3"
 
 gem "slim"
 
@@ -44,24 +48,32 @@ gem "google-apis-admin_directory_v1"
 gem "xxhash"
 
 group :development do
-  # Code reloading
-  # See: http://hanamirb.org/guides/projects/code-reloading
-  gem "shotgun", platforms: :ruby
-  gem "hanami-webconsole"
+  gem "hanami-webconsole", "~> 2.2"
+
+  # Rubocop
   gem "rubocop"
+  gem "rubocop-capybara"
+  gem "rubocop-rake"
+  gem "rubocop-rspec"
 end
 
-group :test, :development do
-  gem "dotenv", "~> 2.4"
-  gem "pry"
+group :development, :test do
+  gem "dotenv"
+end
+
+group :cli, :development do
+  gem "hanami-reloader", "~> 2.2"
+end
+
+group :cli, :development, :test do
+  gem "hanami-rspec", "~> 2.2"
 end
 
 group :test do
-  gem "rspec"
-  gem "capybara"
-end
+  # Database
+  gem "database_cleaner-sequel"
 
-group :production do
-  gem "puma", "~> 5.6"
-  gem "sd_notify"
+  # Web integration
+  gem "capybara"
+  gem "rack-test"
 end
