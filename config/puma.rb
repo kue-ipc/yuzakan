@@ -1,23 +1,47 @@
 # frozen_string_literal: true
 
-hanami_env = ENV.fetch("HANAMI_ENV", "development")
-app_root = Dir.pwd
+#
+# Environment and port
+#
+port ENV.fetch("HANAMI_PORT", 2300)
+environment ENV.fetch("HANAMI_ENV", "development")
 
-if !ENV.include?("PORT") && hanami_env == "production"
-  sockets_dir = File.expand_path("tmp/sockets", app_root)
-  Dir.mkdir(sockets_dir) unless FileTest.directory?(sockets_dir)
-  bind "unix://#{File.join(sockets_dir, 'puma.sock')}"
-else
-  port ENV.fetch("PORT", 2300)
-end
+#
+# Threads within each Puma/Ruby process (aka worker)
+#
 
-environment hanami_env
+# Configure the minimum and maximum number of threads to use to answer requests.
+max_threads_count = ENV.fetch("HANAMI_MAX_THREADS", 5)
+min_threads_count = ENV.fetch("HANAMI_MIN_THREADS") { max_threads_count }
 
-if hanami_env == "production"
-  pids_dir = File.expand_path("tmp/pids", app_root)
-  Dir.mkdir(pids_dir) unless FileTest.directory?(pids_dir)
-  pidfile File.join(pids_dir, "puma.pid")
-  stdout_redirect(File.expand_path("log/puma.log", app_root),
-                  File.expand_path("log/puma-error.log", app_root),
-                  true)
+threads min_threads_count, max_threads_count
+
+#
+# Workers (aka Puma/Ruby processes)
+#
+
+puma_concurrency = Integer(ENV.fetch("HANAMI_WEB_CONCURRENCY", 0))
+puma_cluster_mode = puma_concurrency > 1
+
+# How many worker (Puma/Ruby) processes to run.
+# Typically this is set to the number of available cores.
+workers puma_concurrency
+
+#
+# Cluster mode (aka multiple workers)
+#
+
+if puma_cluster_mode
+  # Preload the application before starting the workers. Only in cluster mode.
+  preload_app!
+
+  # Code to run immediately before master process forks workers (once on boot).
+  #
+  # These hooks can block if necessary to wait for background operations unknown
+  # to puma to finish before the process terminates. This can be used to close
+  # any connections to remote servers (database, redis, …) that were opened when
+  # preloading the code.
+  before_fork do
+    Hanami.shutdown
+  end
 end
