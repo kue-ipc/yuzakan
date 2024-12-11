@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'hanami/interactor'
-require 'hanami/validations/form'
+require "hanami/interactor"
+require "hanami/validations/form"
 
 class UnlockUser
   include Hanami::Interactor
 
   class Validator
     include Hanami::Validations::Form
-    messages_path 'config/messages.yml'
+    messages_path "config/messages.yml"
 
     validations do
       optional(:username) { filled? & str? }
@@ -41,9 +41,9 @@ class UnlockUser
   def call(params)
     @username = params&.[](:username) || @user.name
 
-    if params&.[](:password_reset) == '1'
+    if params&.[](:password_reset) == "1"
       gp_result = @generate_password.call
-      error!('パスワード生成に失敗しました。') if gp_result.failure?
+      error!("パスワード生成に失敗しました。") if gp_result.failure?
       @password = gp_result.password
     else
       @password = nil
@@ -52,9 +52,9 @@ class UnlockUser
     activity_params = {
       user_id: @user.id,
       client: @client,
-      type: 'user',
+      type: "user",
       target: @username,
-      action: 'unlock_user',
+      action: "unlock_user",
     }
 
     by_user =
@@ -68,15 +68,15 @@ class UnlockUser
       user: @user,
       config: @config,
       by_user: by_user,
-      action: 'アカウントロック解除',
-      description: 'アカウントのロックを解除しました。',
+      action: "アカウントロック解除",
+      description: "アカウントのロックを解除しました。",
     }
 
     if @password
-      activity_params[:action] += '+reset_password'
-      mailer_params[:action] += '＋パスワードリセット'
+      activity_params[:action] += "+reset_password"
+      mailer_params[:action] += "＋パスワードリセット"
       mailer_params[:description] =
-        'アカウントのロックを解除し、パスワードをリセットしました。'
+        "アカウントのロックを解除し、パスワードをリセットしました。"
     end
 
     if @providers
@@ -107,7 +107,7 @@ class UnlockUser
     end
 
     if @user_datas.empty?
-      error('どのシステムでもロック解除は実行されませんでした。')
+      error("どのシステムでもロック解除は実行されませんでした。")
       result = :failure
     end
 
@@ -126,12 +126,12 @@ class UnlockUser
     return true if @user.clearance_level >= 3
 
     unless @providers&.all?(&:self_management)
-      error('自己管理可能なシステム以外でロックを解除することはできません。')
+      error("自己管理可能なシステム以外でロックを解除することはできません。")
       return false
     end
 
     if params&.key?(:username) && params[:username] != @user.name
-      error(username: '自分自身以外のアカウントのロックを解除することはできません。')
+      error(username: "自分自身以外のアカウントのロックを解除することはできません。")
       return false
     end
 

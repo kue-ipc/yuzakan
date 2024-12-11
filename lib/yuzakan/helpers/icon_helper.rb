@@ -5,10 +5,10 @@ module Yuzakan
     module IconHelper
       private def bs_icon(name, size: 24, alt: nil, **opts)
         svg_opts = {
-          class: ['bi'],
+          class: ["bi"],
           width: size,
           height: size,
-          fill: 'currentColor',
+          fill: "currentColor",
         }
 
         case opts[:class]
@@ -18,11 +18,11 @@ module Yuzakan
           svg_opts[:class].concat(opts[:class].split)
         end
 
-        svg_opts.merge!(role: 'img', 'aria-label': alt) if alt
+        svg_opts.merge!(role: "img", "aria-label": alt) if alt
 
         html.svg(**svg_opts) do
           html.empty_tag :use,
-                         'xlink:href': "/assets/vendor/bootstrap-icons.svg##{name}"
+                         "xlink:href": "/assets/vendor/bootstrap-icons.svg##{name}"
         end
       end
     end

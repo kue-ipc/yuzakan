@@ -8,7 +8,7 @@
 # level 4: operator admin
 # level 5: admin
 
-require_relative './connection'
+require_relative "connection"
 
 module Web
   module Authorization

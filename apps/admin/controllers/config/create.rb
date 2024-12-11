@@ -49,13 +49,13 @@ module Admin
           flash[:errors] ||= []
 
           if configurated?
-            flash[:errors] << I18n.t('errors.already_initialized')
+            flash[:errors] << I18n.t("errors.already_initialized")
             redirect_to Web.routes.path(:root)
           end
 
           unless params.valid?
             flash[:errors] << params.errors
-            flash[:failure] = '設定に失敗しました。'
+            flash[:failure] = "設定に失敗しました。"
             self.body = Admin::Views::Config::New.render(exposures)
             return
           end
@@ -67,13 +67,13 @@ module Admin
             setup_config(params[:config].except(:admin_user).to_h)
           rescue => e
             flash[:errors] << e.message
-            flash[:failure] = '設定に失敗しました。'
+            flash[:failure] = "設定に失敗しました。"
             self.body = Admin::Views::Config::New.render(exposures)
             return
           end
 
-          flash[:success] = '初期設定が完了しました。' \
-                            '管理者でログインしてください。'
+          flash[:success] = "初期設定が完了しました。" \
+                            "管理者でログインしてください。"
         end
 
         def configurate!
@@ -84,27 +84,27 @@ module Admin
 
           @network_repository.transaction do
             [
-              '127.0.0.0/8',
-              '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16',
-              '::1',
-              'fc00::/7',
+              "127.0.0.0/8",
+              "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16",
+              "::1",
+              "fc00::/7",
             ].each do |address|
               @network_repository.create_or_update_by_address(address, {clearance_level: 5, trusted: true})
             end
-            ['0.0.0.0/0', '::/0'].each do |address|
+            ["0.0.0.0/0", "::/0"].each do |address|
               @network_repository.create_or_update_by_address(address, {clearance_level: 1, trusted: false})
             end
           end
         end
 
         private def setup_local_provider
-          return if @provider_repository.find_by_name('local')
+          return if @provider_repository.find_by_name("local")
 
           @provider_repository.create({
-            name: 'local',
-            display_name: 'ローカル',
-            order: '0',
-            adapter_name: 'local',
+            name: "local",
+            display_name: "ローカル",
+            order: "0",
+            adapter_name: "local",
             readable: true,
             writable: true,
             authenticatable: true,
@@ -119,8 +119,8 @@ module Admin
           unless admin_user
             create_result = proider_create_user.call({
               **admin_user_params.slice(:username, :password),
-              providers: ['local'],
-              display_name: 'ローカル管理者',
+              providers: ["local"],
+              display_name: "ローカル管理者",
             })
             if create_result.failure?
               flash[:errors].concat(create_result.errors)
@@ -154,7 +154,7 @@ module Admin
           sync_result = sync_user.call({username: username})
           if sync_result.failure?
             sync_result[:errors].concat(sync_result.errors)
-            raise '同期処理に失敗しました'
+            raise "同期処理に失敗しました"
           end
           sync_result.user
         end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../utils/refine_escape'
+require_relative "../utils/refine_escape"
 
 module Yuzakan
   module Helpers

@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'time'
-require 'hanami/http/status'
+require "time"
+require "hanami/http/status"
 
 module Api
   module MessageJson
     # override handle
     def handle_invalid_csrf_token
       Hanami.logger.warn "CSRF attack: expected #{session[:_csrf_token]}, was #{params[:_csrf_token]}"
-      halt_json 400, errors: [I18n.t('errors.invalid_csrf_token')]
+      halt_json 400, errors: [I18n.t("errors.invalid_csrf_token")]
     end
 
     private def halt_json(code, message = nil, **others)
@@ -21,7 +21,7 @@ module Api
 
     private def redirect_to_json(url, message = nil, status: 320, **others)
       url = url.to_s
-      headers['Location'] = url
+      headers["Location"] = url
       halt_json(status, message, location: url, **others)
     end
 
@@ -49,7 +49,7 @@ module Api
       data = entity.to_h
         .except(:id, :created_at, :updated_at)
         .reject do |k, v|
-          k.end_with?('_id') || v.is_a?(Hanami::Entity) || v.is_a?(Array)
+          k.end_with?("_id") || v.is_a?(Hanami::Entity) || v.is_a?(Array)
         end
       case entity
       when Attr

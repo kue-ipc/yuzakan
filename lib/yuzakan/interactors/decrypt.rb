@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require 'hanami/interactor'
-require 'hanami/validations'
+require "hanami/interactor"
+require "hanami/validations"
 
-require_relative '../utils/pb_crypt'
+require_relative "../utils/pb_crypt"
 
 class Decrypt
   include Hanami::Interactor
 
   class Validator
     include Hanami::Validations
-    messages_path 'config/messages.yml'
+    messages_path "config/messages.yml"
 
     validations do
       required(:encrypted) { str? }
@@ -19,7 +19,7 @@ class Decrypt
 
   expose :data
 
-  def initialize(password: ENV.fetch('DB_SECRET'), text: false, encoding: Encoding::UTF_8)
+  def initialize(password: ENV.fetch("DB_SECRET"), text: false, encoding: Encoding::UTF_8)
     @pb_crypt = Yuzakan::Utils::PbCrypt.new(password)
     @text = text
     @encoding = encoding
@@ -34,7 +34,7 @@ class Decrypt
       end
   rescue OpenSSL::Cipher::CipherError
     @data = nil
-    error!('復号化に失敗しました。')
+    error!("復号化に失敗しました。")
   end
 
   private def valid?(params)

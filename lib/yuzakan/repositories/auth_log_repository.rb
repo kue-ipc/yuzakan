@@ -7,7 +7,7 @@ class AuthLogRepository < Hanami::Repository
 
   def recent_by_username(username, ago)
     by_username(username)
-      .where(result: ['success', 'failure', 'recover'])
+      .where(result: ["success", "failure", "recover"])
       .where { created_at >= Time.now - ago }
       .order { created_at.desc }
   end

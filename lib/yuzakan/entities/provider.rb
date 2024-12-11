@@ -1,26 +1,26 @@
 # frozen_string_literal: true
 
-require 'digest/md5'
-require_relative '../utils/cache_store'
+require "digest/md5"
+require_relative "../utils/cache_store"
 
 # rubocop: disable Metrics/ClassLength
 class Provider < Hanami::Entity
   attr_reader :params
 
   class NoAdapterError < StandardError
-    def initialize(msg = 'No adapter, but need an adapter.')
+    def initialize(msg = "No adapter, but need an adapter.")
       super
     end
   end
 
   class NoMappingsError < StandardError
-    def initialize(msg = 'No mappings, but need mappings.')
+    def initialize(msg = "No mappings, but need mappings.")
       super
     end
   end
 
   class NoGroupError < StandardError
-    def initialize(msg = 'Cannot manage group.')
+    def initialize(msg = "Cannot manage group.")
       super
     end
   end
@@ -35,12 +35,12 @@ class Provider < Hanami::Entity
 
     # cache_store
     expires_in = case Hanami.env
-                 when 'production' then 60 * 60
-                 when 'development' then 60
+                 when "production" then 60 * 60
+                 when "development" then 60
                  else 0
                  end
-    namespace = ['yuzakan', 'provider', attributes[:name]].join(':')
-    redis_url = ENV.fetch('REDIS_URL', 'redis://127.0.0.1:6379/0')
+    namespace = ["yuzakan", "provider", attributes[:name]].join(":")
+    redis_url = ENV.fetch("REDIS_URL", "redis://127.0.0.1:6379/0")
     @cache_store = Yuzakan::Utils::CacheStore.create_store(
       expires_in: expires_in, namespace: namespace, redis_url: redis_url)
 
@@ -84,35 +84,35 @@ class Provider < Hanami::Entity
   end
 
   def key(*name)
-    name.join(':')
+    name.join(":")
   end
 
   def user_key(username)
-    key('user', username)
+    key("user", username)
   end
 
   def group_key(groupname)
-    key('group', groupname)
+    key("group", groupname)
   end
 
   def list_key(name, *others)
-    key('list', name, *others)
+    key("list", name, *others)
   end
 
   def user_list_key
-    list_key('user')
+    list_key("user")
   end
 
   def group_list_key
-    list_key('group')
+    list_key("group")
   end
 
   def member_list_key(groupname)
-    list_key('member', groupname)
+    list_key("member", groupname)
   end
 
   def user_search_key_raw(name)
-    key('search', 'user', name)
+    key("search", "user", name)
   end
 
   def user_search_key(query)
@@ -120,7 +120,7 @@ class Provider < Hanami::Entity
   end
 
   def group_search_key_raw(name)
-    key('search', 'group', name)
+    key("search", "group", name)
   end
 
   def group_search_key(query)
@@ -129,12 +129,12 @@ class Provider < Hanami::Entity
 
   def clear_user_list_cache
     @cache_store.delete(user_list_key)
-    @cache_store.delete_matched(user_search_key_raw('*'))
+    @cache_store.delete_matched(user_search_key_raw("*"))
   end
 
   def clear_group_list_cache
     @cache_store.delete(group_list_key)
-    @cache_store.delete_matched(group_search_key_raw('*'))
+    @cache_store.delete_matched(group_search_key_raw("*"))
   end
 
   # Ruby attrs -> Adapter aatrs

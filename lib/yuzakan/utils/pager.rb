@@ -11,8 +11,8 @@ module Yuzakan
       MAX_PAGE = 10000
       MIN_PER_PAGE = 10
       MAX_PER_PAGE = 100
-      PAGE_RANGE = (MIN_PAGE..MAX_PAGE).freeze
-      PER_PAGE_RANGE = (MIN_PER_PAGE..MAX_PER_PAGE).freeze
+      PAGE_RANGE = (MIN_PAGE..MAX_PAGE)
+      PER_PAGE_RANGE = (MIN_PER_PAGE..MAX_PER_PAGE)
 
       attr_reader :page, :per_page
 
@@ -71,9 +71,9 @@ module Yuzakan
 
       def headers
         {
-          'Link' => header_link,
-          'Content-Range' => header_content_range,
-          'Content-Location' => location,
+          "Link" => header_link,
+          "Content-Range" => header_content_range,
+          "Content-Location" => location,
         }.compact
       end
 
@@ -92,11 +92,11 @@ module Yuzakan
           last: last_page,
         }.compact.map do |key, value|
           link_item(@create_link.call({page: value, per_page: per_page}), rel: key.to_s)
-        end.join(', ')
+        end.join(", ")
       end
 
       private def header_content_range
-        return 'items 0-0/0' if total.zero?
+        return "items 0-0/0" if total.zero?
 
         "items #{offset}-#{offset + page_items.size - 1}/#{total}"
       end
@@ -104,7 +104,7 @@ module Yuzakan
       private def link_item(uri, **params)
         list = ["<#{uri}>"]
         list += params.map { |key, value| "#{key}=\"#{value}\"" }
-        list.join('; ')
+        list.join("; ")
       end
     end
   end

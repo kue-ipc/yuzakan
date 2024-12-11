@@ -3,7 +3,7 @@
 # 個別修正
 
 # ネストされたアセットで拡張子が残る問題の修正
-require 'hanami/assets/compiler'
+require "hanami/assets/compiler"
 module Hanami
   module Assets
     class Compiler

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'securerandom'
+require "securerandom"
 
 module Web
   module Connection
@@ -71,7 +71,7 @@ module Web
     end
 
     private def current_user
-      @current_user ||= (session[:user_id] && @user_repository.find(session[:user_id]))
+      @current_user ||= session[:user_id] && @user_repository.find(session[:user_id])
     end
 
     private def current_network
@@ -113,7 +113,7 @@ module Web
     end
 
     private def reply_session_timeout
-      flash[:warn] = 'セッションがタイムアウトしました。'
+      flash[:warn] = "セッションがタイムアウトしました。"
       redirect_to Web.routes.path(:root)
     end
   end

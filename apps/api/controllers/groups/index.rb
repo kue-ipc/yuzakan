@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../../lib/yuzakan/utils/pager'
+require_relative "../../../../lib/yuzakan/utils/pager"
 
 module Api
   module Controllers
@@ -79,7 +79,7 @@ module Api
           all_groups.sort!
           {
             groups: all_groups.map { |name| {name: name} },
-            headers: {'Content-Location' => routes.path(:groups, all: true)},
+            headers: {"Content-Location" => routes.path(:groups, all: true)},
           }
         end
 
@@ -89,7 +89,7 @@ module Api
 
           order =
             if params[:order]
-              name, asc_desc = params[:order].split('.', 2).map(&:intern)
+              name, asc_desc = params[:order].split(".", 2).map(&:intern)
               {name => asc_desc || :asc}
             else
               {name: :asc}
@@ -113,7 +113,7 @@ module Api
           else
             {
               groups: relation.to_a,
-              headers: {'Content-Location' => routes.path(:groups, **params.except(:per_page))},
+              headers: {"Content-Location" => routes.path(:groups, **params.except(:per_page))},
             }
           end
         end
@@ -122,7 +122,7 @@ module Api
         def get_groups_from_provider(params)
           params = params.to_h
 
-          if params.key?(:order) && !params[:key].start_with?('name')
+          if params.key?(:order) && !params[:key].start_with?("name")
             # nameに対する順序以外は無視される。
             params = params.except(:order)
           end
@@ -156,7 +156,7 @@ module Api
           end
 
           all_items.sort!
-          all_items.reverse! if params[:order] == 'name.desc'
+          all_items.reverse! if params[:order] == "name.desc"
 
           pager = Yuzakan::Utils::Pager.new(all_items, **params.slice(:page, :per_page)) do |link_params|
             routes.path(:groups, **params.to_h, **link_params)

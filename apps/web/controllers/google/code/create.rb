@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'hanami/action/cache'
+require "hanami/action/cache"
 
 module Web
   module Controllers
@@ -25,12 +25,12 @@ module Web
 
             if result.failure?
               flash[:errors] = result.errors
-              flash[:failure] = 'バックアップコードの生成に失敗しました。'
+              flash[:failure] = "バックアップコードの生成に失敗しました。"
               redirect_to routes.path(:google)
             end
 
             @codes = result.user_datas[provider.name]
-            flash[:success] = 'バックアップコードを生成しました。'
+            flash[:success] = "バックアップコードを生成しました。"
           end
         end
       end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../../../../lib/yuzakan/utils/hash_array'
-require_relative './show'
+require_relative "../../../../lib/yuzakan/utils/hash_array"
+require_relative "show"
 
 module Admin
   module Views

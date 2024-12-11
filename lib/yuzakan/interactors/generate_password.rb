@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'hanami/interactor'
-require 'hanami/validations'
+require "hanami/interactor"
+require "hanami/validations"
 
 class GeneratePassword
   include Hanami::Interactor
@@ -33,7 +33,7 @@ class GeneratePassword
     char_list =
       case type.intern
       when :alphanumeric
-        ['0'..'9', 'A'..'Z', 'a'..'z'].flat_map(&:to_a) - chars.chars
+        ["0".."9", "A".."Z", "a".."z"].flat_map(&:to_a) - chars.chars
       when :ascii
         ("\x20".."\x7e").to_a - chars.chars
       when :custom

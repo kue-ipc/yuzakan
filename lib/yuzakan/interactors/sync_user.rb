@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'hanami/interactor'
-require 'hanami/validations'
-require_relative '../predicates/name_predicates'
+require "hanami/interactor"
+require "hanami/validations"
+require_relative "../predicates/name_predicates"
 
 # Userレポジトリと各プロバイダーのユーザー情報同期
 class SyncUser
@@ -40,7 +40,7 @@ class SyncUser
     if read_user_result.failure?
       Hanami.logger.error "[#{self.class.name}] Failed to call ProviderReadUser"
       Hanami.logger.error read_user_result.errors
-      error(I18n.t('errors.action.fail', action: I18n.t('interactors.provider_read_user')))
+      error(I18n.t("errors.action.fail", action: I18n.t("interactors.provider_read_user")))
       read_user_result.errors.each { |msg| error(msg) }
       fail!
     end
@@ -62,7 +62,7 @@ class SyncUser
         .call(username: @username)
       if unregister_user_result.failure?
         Hanami.logger.error "[#{self.class.name}] Failed to call UnregisterUser"
-        error(I18n.t('errors.action.fail', action: I18n.t('interactors.unregister_user')))
+        error(I18n.t("errors.action.fail", action: I18n.t("interactors.unregister_user")))
         unregister_user_result.errors.each { |msg| error(msg) }
         fail!
       end
@@ -73,7 +73,7 @@ class SyncUser
         .call(@data.slice(:username, :display_name, :email, :primary_group, :groups))
       if register_user_result.failure?
         Hanami.logger.error "[#{self.class.name}] Failed to call RegisterUser"
-        error(I18n.t('errors.action.fail', action: I18n.t('interactors.register_user')))
+        error(I18n.t("errors.action.fail", action: I18n.t("interactors.register_user")))
         register_user_result.errors.each { |msg| error(msg) }
         fail!
       end

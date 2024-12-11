@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require_relative 'helpers/alert_helper'
-require_relative 'helpers/error_helper'
-require_relative 'helpers/escape_helper'
-require_relative 'helpers/grid_helper'
-require_relative 'helpers/icon_helper'
-require_relative 'helpers/importmap_helper'
-require_relative 'helpers/menu_helper'
-require_relative 'helpers/pattern_helper'
+require_relative "helpers/alert_helper"
+require_relative "helpers/error_helper"
+require_relative "helpers/escape_helper"
+require_relative "helpers/grid_helper"
+require_relative "helpers/icon_helper"
+require_relative "helpers/importmap_helper"
+require_relative "helpers/menu_helper"
+require_relative "helpers/pattern_helper"
 
 module Yuzakan
   module Helpers

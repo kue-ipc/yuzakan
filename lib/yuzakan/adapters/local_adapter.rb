@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require_relative 'abstract_adapter'
+require_relative "abstract_adapter"
 
 module Yuzakan
   module Adapters
     class LocalAdapter < AbstractAdapter
-      self.name = 'local'
-      self.display_name = 'ローカル'
-      self.version = '0.0.1'
+      self.name = "local"
+      self.display_name = "ローカル"
+      self.version = "0.0.1"
       self.params = []
 
       group false
@@ -95,10 +95,10 @@ module Yuzakan
 
       def user_search(query)
         pattern = query.dup
-        pattern.gsub!('\\', '\\\\')
-        pattern.gsub!('%', '\\%')
-        pattern.gsub!('_', '\\_')
-        pattern.tr!('*?', '%_')
+        pattern.gsub!("\\", "\\\\")
+        pattern.gsub!("%", '\\%')
+        pattern.gsub!("_", '\\_')
+        pattern.tr!("*?", "%_")
         @repository.ilike(pattern).map { |data| data[:username] }
       end
 

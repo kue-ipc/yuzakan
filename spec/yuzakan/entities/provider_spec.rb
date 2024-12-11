@@ -3,9 +3,9 @@
 RSpec.describe Provider do
   let(:attributes) {
     {
-      name: 'test',
-      dispaly_name: 'テスト',
-      adapter_name: 'test',
+      name: "test",
+      dispaly_name: "テスト",
+      adapter_name: "test",
       order: 0,
       readable: true,
       writable: true,
@@ -21,15 +21,15 @@ RSpec.describe Provider do
   let(:provider_params) {
     [
       {
-        name: 'str',
-        value: Marshal.dump('文字列'),
+        name: "str",
+        value: Marshal.dump("文字列"),
       },
     ]
   }
 
-  it 'test adapter provider' do
-    provider = Provider.new(**attributes)
-    expect(provider.name).to eq 'test'
-    expect(provider.params[:str]).to eq '文字列'
+  it "test adapter provider" do
+    provider = described_class.new(**attributes)
+    expect(provider.name).to eq "test"
+    expect(provider.params[:str]).to eq "文字列"
   end
 end

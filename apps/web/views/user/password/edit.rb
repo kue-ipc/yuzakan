@@ -13,7 +13,7 @@ module Web
 
           def change_password_data
             {
-              form: 'user-form',
+              form: "user-form",
               parents: %i[user password],
               config: change_password_config,
               cols: change_password_cols,
@@ -21,12 +21,12 @@ module Web
           end
 
           def change_password_field_opt(name)
-            password_class = ['form-control']
-            password_class << 'is-invalid' if flash[:param_errors]&.key?(name.to_s)
+            password_class = ["form-control"]
+            password_class << "is-invalid" if flash[:param_errors]&.key?(name.to_s)
 
             opt = {
               class: password_class,
-              placeholder: 'パスワードを入力',
+              placeholder: "パスワードを入力",
               required: true,
             }
 
@@ -39,7 +39,7 @@ module Web
                   .map { |code| "\\u#{'%04x' % code}" }
                   .join
                 opt.merge!(pattern: "[^#{codes}]*",
-                           title: '使用不可文字を含めることはできません。')
+                           title: "使用不可文字を含めることはできません。")
               end
             end
             opt
@@ -62,15 +62,15 @@ module Web
               current_user.name,
               current_user.display_name&.split,
               current_user.email,
-              current_user.email&.split('@'),
+              current_user.email&.split("@"),
             ].flatten.compact)
             dict
           end
 
           private def change_password_cols
             @change_password_cols ||= {
-              left: 'col-sm-4',
-              right: 'col-sm-8',
+              left: "col-sm-4",
+              right: "col-sm-8",
             }
           end
         end

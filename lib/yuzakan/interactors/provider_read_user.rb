@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'hanami/interactor'
-require 'hanami/validations'
+require "hanami/interactor"
+require "hanami/validations"
 
 class ProviderReadUser
   include Hanami::Interactor
@@ -31,7 +31,7 @@ class ProviderReadUser
     rescue => e
       Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
       Hanami.logger.error e
-      error(I18n.t('errors.action.error', action: I18n.t('interactors.provider_read_user'), target: provider.label))
+      error(I18n.t("errors.action.error", action: I18n.t("interactors.provider_read_user"), target: provider.label))
       error(e.message)
       fail!
     end
@@ -55,12 +55,12 @@ class ProviderReadUser
         provider = @provider_repository.find_with_adapter_by_name(provider_name)
         unless provider
           Hanami.logger.warn "[#{self.class.name}] Not found: #{provider_name}"
-          error!(I18n.t('errors.not_found', name: I18n.t('entities.provider')))
+          error!(I18n.t("errors.not_found", name: I18n.t("entities.provider")))
         end
 
         unless provider.can_do?(operation)
           Hanami.logger.warn "[#{self.class.name}] No ability: #{provider.name}, #{operation}"
-          error!(I18n.t('errors.no_ability', name: provider.label, action: I18n.t(operation, scope: 'operations')))
+          error!(I18n.t("errors.no_ability", name: provider.label, action: I18n.t(operation, scope: "operations")))
         end
 
         provider

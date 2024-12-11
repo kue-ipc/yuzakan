@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'hanami/validations'
+require "hanami/validations"
 
-require_relative '../predicates/name_predicates'
-require_relative '../entities/attr_mapping'
+require_relative "../predicates/name_predicates"
+require_relative "../entities/attr_mapping"
 
 class CreateAttrMappingValidator
   include Hanami::Validations

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'hanami/interactor'
-require 'hanami/validations'
+require "hanami/interactor"
+require "hanami/validations"
 
 class ResetPassword
   include Hanami::Interactor
@@ -34,7 +34,7 @@ class ResetPassword
     result = ProviderChangePassword.new(provider_repository: @provider_repository)
       .call({password: @password, **params})
     if result.failure?
-      error(I18n.t('errors.action.fail', action: I18n.t('interactors.change_password')))
+      error(I18n.t("errors.action.fail", action: I18n.t("interactors.change_password")))
       result.errors.each { |e| error(e) }
       fail!
     end
@@ -56,7 +56,7 @@ class ResetPassword
   private def generate_password
     result = GeneratePassword.new(config_repository: @config_repository).call({})
     if result.failure?
-      error(I18n.t('errors.action.fail', action: I18n.t('interactors.change_password')))
+      error(I18n.t("errors.action.fail", action: I18n.t("interactors.change_password")))
       result.errors.each { |e| error(e) }
       fail!
     end

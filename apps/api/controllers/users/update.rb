@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './set_user'
+require_relative "set_user"
 
 module Api
   module Controllers
@@ -41,11 +41,11 @@ module Api
         def call(params)
           if params[:name] && @user.name != params[:name]
             halt_json 422, errors: {
-              name: I18n.t('errors.unchangeable', name: I18n.t('attributes.user.name')),
+              name: I18n.t("errors.unchangeable", name: I18n.t("attributes.user.name")),
             }
           end
 
-          halt_json 422, errors: {attrs: I18n.t('errors.filled?')} if params[:providers] && params[:attrs].nil?
+          halt_json 422, errors: {attrs: I18n.t("errors.filled?")} if params[:providers] && params[:attrs].nil?
 
           params = params.to_h
 

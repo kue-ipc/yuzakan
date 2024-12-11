@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../web/controllers/connection'
+require_relative "../../web/controllers/connection"
 
 module Admin
   module Connection

@@ -8,8 +8,8 @@ module Yuzakan
     class Manager
       def initialize
         @adapters = {}
-        search_adapters(File.expand_path('adapters', __dir__))
-        search_adapters(File.expand_path('../../vendor/adapters', __dir__))
+        search_adapters(File.expand_path("adapters", __dir__))
+        search_adapters(File.expand_path("../../vendor/adapters", __dir__))
       end
 
       def hash
@@ -34,9 +34,9 @@ module Yuzakan
 
       private def search_adapters(adapters_dir)
         Dir.each_child(adapters_dir).each do |child|
-          next unless child.end_with?('_adapter.rb', '_adapter.so')
+          next unless child.end_with?("_adapter.rb", "_adapter.so")
 
-          adapter_file_basename = File.basename(child, '.*')
+          adapter_file_basename = File.basename(child, ".*")
 
           require File.join(adapters_dir, child)
 
@@ -48,7 +48,7 @@ module Yuzakan
       end
 
       private def camelize(str)
-        str.split('_').map(&:capitalize).join
+        str.split("_").map(&:capitalize).join
       end
     end
   end

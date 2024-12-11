@@ -3,8 +3,8 @@
 # Googleでのみ使用されている
 # ReadUserを使えばいい？
 
-require 'hanami/interactor'
-require 'hanami/validations'
+require "hanami/interactor"
+require "hanami/validations"
 
 class UserAttrs
   include Hanami::Interactor

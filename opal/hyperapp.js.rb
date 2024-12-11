@@ -2,10 +2,10 @@
 
 # await: true
 
-puts 'hyperapp2'
+puts "hyperapp2"
 
 module Hyperapp
-  JSModule = JS.import('./hyperapp.js').__await__
+  JSModule = JS.import("./hyperapp.js").__await__
 
   @@view_stack = [] # rubocop: disable Style/ClassVars
 
@@ -44,13 +44,13 @@ end
 
 include Hyperapp # rubocop: disable Style/MixinUsage
 
-view = lambda { |_state|
-  h('div') { text('テスト') }
+view = ->(_state) {
+  h("div") { text("テスト") }
 }
 
 app(
   view: view,
-  node: $$.document.getElementById('test'))
+  node: $$.document.getElementById("test"))
 
 # add_todo = lambda do |state|
 #   {

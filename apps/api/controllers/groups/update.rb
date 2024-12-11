@@ -39,7 +39,7 @@ module Api
         def call(params)
           if params[:name] && @group.name != params[:name]
             halt_json 422, errors: {
-              name: I18n.t('errors.unchangeable', name: I18n.t('attributes.group.name')),
+              name: I18n.t("errors.unchangeable", name: I18n.t("attributes.group.name")),
             }
           end
 

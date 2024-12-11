@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'hanami/action/cache'
+require "hanami/action/cache"
 
 module Web
   module Controllers
@@ -27,14 +27,14 @@ module Web
 
             if result.failure?
               flash[:errors] = result.errors
-              flash[:failure] = 'Google アカウントのパスワードリセットに失敗しました。'
+              flash[:failure] = "Google アカウントのパスワードリセットに失敗しました。"
               redirect_to routes.path(:google)
             end
 
             @user = result.user_datas[provider.name]
             @password = result.password
 
-            flash[:success] = 'Google アカウントのパスワードをリセットしました。'
+            flash[:success] = "Google アカウントのパスワードをリセットしました。"
           end
         end
       end

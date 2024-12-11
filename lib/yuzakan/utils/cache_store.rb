@@ -3,9 +3,9 @@
 module Yuzakan
   module Utils
     class CacheStore
-      def self.create_store(expires_in: 0, **opts)
+      def self.create_store(expires_in: 0, **)
         if expires_in.positive?
-          RedisCacheStore.new(expires_in: expires_in, **opts)
+          RedisCacheStore.new(expires_in: expires_in, **)
         else
           NoCacheStore.new
         end
@@ -13,8 +13,8 @@ module Yuzakan
 
       class RedisCacheStore
         def initialize(expires_in: 0,
-                       namespace: 'yuzakan:cache',
-                       redis_url: 'redis://127.0.0.1:6379/0')
+                       namespace: "yuzakan:cache",
+                       redis_url: "redis://127.0.0.1:6379/0")
           @cache = Readthis::Cache.new(
             expires_in: expires_in,
             namespace: namespace,
@@ -37,8 +37,8 @@ module Yuzakan
           @cache.delete_matched(pattern)
         end
 
-        def fetch(key, default = nil, &block)
-          @cache.fetch(key, default, &block)
+        def fetch(key, default = nil, &)
+          @cache.fetch(key, default, &)
         end
 
         def clear

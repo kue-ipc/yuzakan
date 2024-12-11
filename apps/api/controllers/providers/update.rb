@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './set_provider'
+require_relative "set_provider"
 
 module Api
   module Controllers
@@ -46,7 +46,7 @@ module Api
         def call(params)
           change_name = params[:name] && params[:name] != @provider.name
           if change_name && @provider_repository.exist_by_name?(params[:name])
-            halt_json 422, errors: [{name: [I18n.t('errors.uniq?')]}]
+            halt_json 422, errors: [{name: [I18n.t("errors.uniq?")]}]
           end
 
           provider_params = params.to_h.except(:id)
@@ -86,7 +86,7 @@ module Api
           load_provider
 
           self.status = 200
-          headers['Content-Location'] = routes.provider_path(@name) if change_name
+          headers["Content-Location"] = routes.provider_path(@name) if change_name
           self.body = provider_json
         end
       end

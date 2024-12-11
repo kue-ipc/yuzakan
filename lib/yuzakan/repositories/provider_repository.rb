@@ -77,7 +77,7 @@ class ProviderRepository < Hanami::Repository
 
   def first_google
     providers
-      .where(adapter_name: 'google')
+      .where(adapter_name: "google")
       .where(self_management: true)
       .order(:order)
       .first
@@ -85,7 +85,7 @@ class ProviderRepository < Hanami::Repository
 
   def first_google_with_adapter
     aggregate(:provider_params, attr_mappings: :attr)
-      .where(adapter_name: 'google')
+      .where(adapter_name: "google")
       .where(self_management: true)
       .order(:order)
       .map_to(Provider)

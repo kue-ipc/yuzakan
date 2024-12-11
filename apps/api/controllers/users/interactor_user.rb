@@ -14,7 +14,6 @@ module Api
                        group_repository: GroupRepository.new,
                        member_repository: MemberRepository.new,
                        **opts)
-
           super
           @config_repository ||= config_repository
           @provider_repository ||= provider_repository

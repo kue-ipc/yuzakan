@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './entity_provider'
+require_relative "entity_provider"
 
 module Api
   module Controllers
@@ -44,7 +44,7 @@ module Api
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
           if @provider_repository.exist_by_name?(params[:name])
-            halt_json 422, errors: [{name: [I18n.t('errors.uniq?')]}]
+            halt_json 422, errors: [{name: [I18n.t("errors.uniq?")]}]
           end
 
           provider_params = params.to_h.dup
@@ -66,7 +66,7 @@ module Api
           load_provider
 
           self.status = 201
-          headers['Content-Location'] = routes.provider_path(@name)
+          headers["Content-Location"] = routes.provider_path(@name)
           self.body = provider_json
         end
       end

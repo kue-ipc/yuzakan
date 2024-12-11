@@ -50,9 +50,8 @@ class MemberRepository < Hanami::Repository
 
   def set_groups_for_user(user, groups)
     remains = of_user(user).to_a.to_h { |member| [member.group_id, member] }
-    members = []
-    groups.each do |group|
-      members << (remains.delete(group.id) || create({user_id: user.id, group_id: group.id}))
+    members = groups.map do |group|
+      remains.delete(group.id) || create({user_id: user.id, group_id: group.id})
     end
     remains.each_value { |member| delete(member.id) }
     members

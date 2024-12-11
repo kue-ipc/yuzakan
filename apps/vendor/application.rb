@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require 'hanami/helpers'
-require 'hanami/assets'
+require "hanami/helpers"
+require "hanami/assets"
 
-require_relative '../../lib/yuzakan/utils/terser_compressor'
+require_relative "../../lib/yuzakan/utils/terser_compressor"
 
 module Vendor
   class Application < Hanami::Application
     configure do
       root __dir__
       # load_paths << ['controllers', 'views']
-      routes 'config/routes'
+      routes "config/routes"
 
       default_request_format :text
       default_response_format :text
@@ -21,14 +21,14 @@ module Vendor
         stylesheet_compressor :sass
         nested true
         sources << [
-          'assets',
-          '../../vendor/assets',
+          "assets",
+          "../../vendor/assets",
         ]
       end
 
-      security.x_frame_options 'DENY'
-      security.x_content_type_options 'nosniff'
-      security.x_xss_protection '1; mode=block'
+      security.x_frame_options "DENY"
+      security.x_content_type_options "nosniff"
+      security.x_xss_protection "1; mode=block"
       security.content_security_policy %(
         form-action 'self';
         frame-ancestors 'self';
@@ -64,8 +64,8 @@ module Vendor
     end
 
     configure :production do
-      scheme 'https'
-      host   ENV.fetch('HOST', nil)
+      scheme "https"
+      host   ENV.fetch("HOST", nil)
       port   443
 
       assets do

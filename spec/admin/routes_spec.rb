@@ -5,6 +5,6 @@ RSpec.describe Web.routes do
 
   it 'generates "/"' do
     actual = routes.path(:root)
-    expect(actual).to eq('/')
+    expect(actual).to eq("/")
   end
 end

@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'securerandom'
-require 'base64'
-require 'digest'
+require "securerandom"
+require "base64"
+require "digest"
 
-require 'net/ldap'
-require 'net/ldap/dn'
+require "net/ldap"
+require "net/ldap/dn"
 
-require_relative 'abstract_adapter'
-require_relative 'abstract_adapter/adapter_error'
-require_relative '../utils/ignore_case_string_set'
+require_relative "abstract_adapter"
+require_relative "abstract_adapter/adapter_error"
+require_relative "../utils/ignore_case_string_set"
 
 # パスワード変更について
 # userPassword は {CRYPT}$6$%.16s をデフォルトする。
@@ -20,214 +20,214 @@ module Yuzakan
       class LdapAdapterError < Yuzakan::Adapters::AbstractAdapter::AdapterError
       end
 
-      self.name = 'ldap'
-      self.display_name = 'LDAP'
-      self.version = '0.0.1'
+      self.name = "ldap"
+      self.display_name = "LDAP"
+      self.version = "0.0.1"
       self.params = [
         {
           name: :host,
-          label: 'サーバーのホスト名/IPアドレス',
-          description: 'LDAPサーバーのホスト名またはIPアドレスを指定します。',
+          label: "サーバーのホスト名/IPアドレス",
+          description: "LDAPサーバーのホスト名またはIPアドレスを指定します。",
           type: :string,
-          placeholder: 'ldap.example.jp',
+          placeholder: "ldap.example.jp",
         }, {
           name: :port,
-          label: 'ポート',
-          description: 'LDAPサーバーにアクセスするポート番号をして指定します。' \
-                       '指定しない場合は既定値(LDAPは389、LDAPSは636)を使用します。',
+          label: "ポート",
+          description: "LDAPサーバーにアクセスするポート番号をして指定します。" \
+                       "指定しない場合は既定値(LDAPは389、LDAPSは636)を使用します。",
           type: :integer,
           required: false,
-          placeholder: '389 or 636',
+          placeholder: "389 or 636",
         }, {
           name: :protocol,
-          label: 'プロトコル/暗号化形式',
-          description: 'LDAPサーバーにアクセスするプロトコルを指定します。',
+          label: "プロトコル/暗号化形式",
+          description: "LDAPサーバーにアクセスするプロトコルを指定します。",
           type: :string,
-          default: 'ldaps',
+          default: "ldaps",
           list: [
-            {name: :ldap, label: 'LDAP(平文)', value: 'ldap', deprecated: true},
-            {name: :ldap_starttls, label: 'LDAP+STARTTLS(暗号化)',
-             value: 'ldap_starttls',},
-            {name: :ldaps, label: 'LDAPS(暗号化)', value: 'ldaps'},
+            {name: :ldap, label: "LDAP(平文)", value: "ldap", deprecated: true},
+            {name: :ldap_starttls, label: "LDAP+STARTTLS(暗号化)",
+             value: "ldap_starttls",},
+            {name: :ldaps, label: "LDAPS(暗号化)", value: "ldaps"},
           ],
-          input: 'radio',
+          input: "radio",
         }, {
           name: :certificate_check,
-          label: '証明書チェックを行う。',
-          description: 'サーバー証明書のチェックを行います。' \
-                       'LDAPサーバーには正式証明書が必要になります。',
+          label: "証明書チェックを行う。",
+          description: "サーバー証明書のチェックを行います。" \
+                       "LDAPサーバーには正式証明書が必要になります。",
           type: :boolean,
           default: true,
         }, {
           name: :base_dn,
-          label: 'ベースDN',
-          description: 'LDAPのベースです。',
+          label: "ベースDN",
+          description: "LDAPのベースです。",
           type: :string,
-          placeholder: 'dc=example,dc=jp',
+          placeholder: "dc=example,dc=jp",
         }, {
           name: :bind_username,
-          label: '接続ユーザー名',
+          label: "接続ユーザー名",
           type: :string,
-          placeholder: 'cn=Admin,dc=example,dc=jp',
+          placeholder: "cn=Admin,dc=example,dc=jp",
         }, {
           name: :bind_password,
-          label: '接続ユーザーのパスワード',
+          label: "接続ユーザーのパスワード",
           type: :string,
           encrypted: true,
-          input: 'password',
+          input: "password",
         }, {
           name: :user_name_attr,
-          label: 'ユーザー名の属性',
+          label: "ユーザー名の属性",
           type: :string,
           required: true,
-          placeholder: 'cn, uid, name, etc...',
-          description: 'ユーザーの検索時に使用されます。',
+          placeholder: "cn, uid, name, etc...",
+          description: "ユーザーの検索時に使用されます。",
         }, {
           name: :user_display_name_attr,
-          label: 'ユーザー表示名の属性',
+          label: "ユーザー表示名の属性",
           type: :string,
           required: false,
-          placeholder: 'displayName, displayName;lang-ja, etc...',
-          description: '設定しない場合は使われません。',
+          placeholder: "displayName, displayName;lang-ja, etc...",
+          description: "設定しない場合は使われません。",
         }, {
           name: :user_email_attr,
-          label: 'ユーザーメールの属性',
+          label: "ユーザーメールの属性",
           type: :string,
           required: false,
-          placeholder: 'mail, email, maildrop, etc...',
-          description: '設定しない場合は使われません。',
+          placeholder: "mail, email, maildrop, etc...",
+          description: "設定しない場合は使われません。",
         }, {
           name: :user_search_base_dn,
-          label: 'ユーザー検索のベースDN',
-          description: 'ユーザー検索を行うときのベースです。' \
-                       '指定しない場合はLDAPサーバーのベースから検索します。',
+          label: "ユーザー検索のベースDN",
+          description: "ユーザー検索を行うときのベースです。" \
+                       "指定しない場合はLDAPサーバーのベースから検索します。",
           type: :string,
           required: false,
-          placeholder: 'ou=Users,dc=example,dc=jp',
+          placeholder: "ou=Users,dc=example,dc=jp",
         }, {
           name: :user_search_scope,
-          label: 'ユーザー検索のスコープ',
-          description: 'ユーザー検索を行うときのスコープです。' \
-                       '通常は sub を使用します。',
+          label: "ユーザー検索のスコープ",
+          description: "ユーザー検索を行うときのスコープです。" \
+                       "通常は sub を使用します。",
           type: :string,
-          default: 'sub',
+          default: "sub",
           list: [
-            {name: :base, label: 'ベースのみ検索(base)', value: 'base'},
-            {name: :one, label: 'ベース直下のみ検索(one)', value: 'one'},
-            {name: :sub, label: 'ベース配下全て検索(sub)', value: 'sub'},
+            {name: :base, label: "ベースのみ検索(base)", value: "base"},
+            {name: :one, label: "ベース直下のみ検索(one)", value: "one"},
+            {name: :sub, label: "ベース配下全て検索(sub)", value: "sub"},
           ],
         }, {
           name: :user_search_filter,
-          label: 'ユーザー検索のフィルター',
-          description: 'ユーザー検索を行うときのフィルターです。' \
-                       'LDAPの形式で指定します。' \
-                       '何も指定しない場合は(objectclass=*)になります。',
+          label: "ユーザー検索のフィルター",
+          description: "ユーザー検索を行うときのフィルターです。" \
+                       "LDAPの形式で指定します。" \
+                       "何も指定しない場合は(objectclass=*)になります。",
           type: :string,
-          default: '(objectclass=*)',
+          default: "(objectclass=*)",
           required: false,
         }, {
           name: :group_name_attr,
-          label: 'グループ名の属性',
+          label: "グループ名の属性",
           type: :string,
-          default: 'cn',
-          placeholder: 'cn',
+          default: "cn",
+          placeholder: "cn",
         }, {
           name: :group_name_suffix,
-          label: 'グループ名のサフィックス',
-          description: 'グループ名にサフィックスがある場合は自動的に追加・除去をします。',
+          label: "グループ名のサフィックス",
+          description: "グループ名にサフィックスがある場合は自動的に追加・除去をします。",
           type: :string,
         }, {
           name: :group_display_name_attr,
-          label: 'グループ表示名の属性',
+          label: "グループ表示名の属性",
           type: :string,
-          default: 'description',
-          placeholder: 'description',
+          default: "description",
+          placeholder: "description",
         }, {
           name: :group_search_base_dn,
-          label: 'グループ検索のベースDN',
-          description: 'グループ検索を行うときのベースです。' \
-                       '指定しない場合はLDAPサーバーのベースから検索します。',
+          label: "グループ検索のベースDN",
+          description: "グループ検索を行うときのベースです。" \
+                       "指定しない場合はLDAPサーバーのベースから検索します。",
           type: :string,
           required: false,
-          placeholder: 'ou=Groups,dc=example,dc=jp',
+          placeholder: "ou=Groups,dc=example,dc=jp",
         }, {
           name: :group_search_scope,
-          label: 'グループ検索のスコープ',
-          description: 'グループ検索を行うときのスコープです。' \
-                       '通常は sub を使用します。',
+          label: "グループ検索のスコープ",
+          description: "グループ検索を行うときのスコープです。" \
+                       "通常は sub を使用します。",
           type: :string,
-          default: 'sub',
+          default: "sub",
           list: [
-            {name: :base, label: 'ベースのみ検索(base)', value: 'base'},
-            {name: :one, label: 'ベース直下のみ検索(one)', value: 'one'},
-            {name: :sub, label: 'ベース配下全て検索(sub)', value: 'sub'},
+            {name: :base, label: "ベースのみ検索(base)", value: "base"},
+            {name: :one, label: "ベース直下のみ検索(one)", value: "one"},
+            {name: :sub, label: "ベース配下全て検索(sub)", value: "sub"},
           ],
         }, {
           name: :group_search_filter,
-          label: 'グループ検索のフィルター',
-          description: 'ユーザー検索を行うときのフィルターです。' \
-                       'LDAPの形式で指定します。' \
-                       '何も指定しない場合は(objectclass=*)になります。',
+          label: "グループ検索のフィルター",
+          description: "ユーザー検索を行うときのフィルターです。" \
+                       "LDAPの形式で指定します。" \
+                       "何も指定しない場合は(objectclass=*)になります。",
           type: :string,
-          default: '(objectclass=*)',
+          default: "(objectclass=*)",
           required: false,
         }, {
           name: :password_scheme,
-          label: 'パスワードのスキーム',
-          description: 'パスワード設定時に使うスキームです。' \
-                       '{CRYPT}はソルトフォーマットも選択してください。' \
-                       '対応するスキームはLDAPサーバーの実装によります。',
+          label: "パスワードのスキーム",
+          description: "パスワード設定時に使うスキームです。" \
+                       "{CRYPT}はソルトフォーマットも選択してください。" \
+                       "対応するスキームはLDAPサーバーの実装によります。",
           type: :string,
           required: true,
-          default: '{CRYPT}',
+          default: "{CRYPT}",
           list: [
-            {name: :cleartext, label: '{CLEARTEXT} 平文', value: '{CLEARTEXT}', deprecated: true},
-            {name: :crypt, label: '{CRYPT} CRYPT', value: '{CRYPT}'},
-            {name: :md5, label: '{MD5} MD5', value: '{MD5}', deprecated: true},
-            {name: :sha, label: '{SHA} SHA-1', value: '{SHA}', deprecated: true},
-            {name: :sha256, label: '{SHA256} SHA-256', value: '{SHA256}', deprecated: true},
-            {name: :sha512, label: '{SHA512} SHA-512', value: '{SHA512}', deprecated: true},
-            {name: :smd5, label: '{SMD5} ソルト付MD5', value: '{SMD5}', deprecated: true},
-            {name: :ssha, label: '{SSHA} ソルト付SHA-1', value: '{SSHA}', deprecated: true},
-            {name: :ssha256, label: '{SSHA256} ソルト付-SHA256', value: '{SSHA256}'},
-            {name: :ssha512, label: '{SSHA512} ソルト付SHA-512', value: '{SSHA512}'},
-            {name: :pbkdf2_sha1, label: '{PBKDF2-SHA1} PBKDF2 SHA-1', value: '{PBKDF2-SHA1}', deprecated: true},
-            {name: :pbkdf2_sha256, label: '{PBKDF2-SHA256} PBKDF2 SHA256', value: '{PBKDF2-SHA256}'},
-            {name: :pbkdf2_sha512, label: '{PBKDF2-SHA512} PBKDF2 SHA256', value: '{PBKDF2-SHA512}'},
+            {name: :cleartext, label: "{CLEARTEXT} 平文", value: "{CLEARTEXT}", deprecated: true},
+            {name: :crypt, label: "{CRYPT} CRYPT", value: "{CRYPT}"},
+            {name: :md5, label: "{MD5} MD5", value: "{MD5}", deprecated: true},
+            {name: :sha, label: "{SHA} SHA-1", value: "{SHA}", deprecated: true},
+            {name: :sha256, label: "{SHA256} SHA-256", value: "{SHA256}", deprecated: true},
+            {name: :sha512, label: "{SHA512} SHA-512", value: "{SHA512}", deprecated: true},
+            {name: :smd5, label: "{SMD5} ソルト付MD5", value: "{SMD5}", deprecated: true},
+            {name: :ssha, label: "{SSHA} ソルト付SHA-1", value: "{SSHA}", deprecated: true},
+            {name: :ssha256, label: "{SSHA256} ソルト付-SHA256", value: "{SSHA256}"},
+            {name: :ssha512, label: "{SSHA512} ソルト付SHA-512", value: "{SSHA512}"},
+            {name: :pbkdf2_sha1, label: "{PBKDF2-SHA1} PBKDF2 SHA-1", value: "{PBKDF2-SHA1}", deprecated: true},
+            {name: :pbkdf2_sha256, label: "{PBKDF2-SHA256} PBKDF2 SHA256", value: "{PBKDF2-SHA256}"},
+            {name: :pbkdf2_sha512, label: "{PBKDF2-SHA512} PBKDF2 SHA256", value: "{PBKDF2-SHA512}"},
           ],
         }, {
           name: :crypt_salt_format,
-          label: 'CRYPTのソルトフォーマット',
-          description: 'パスワードのスキームに{CRYPT}を使用している場合は、' \
-                       '記載のフォーマットでソルト値が作成されます。' \
-                       '対応する形式はサーバーのcryptの実装によります。',
+          label: "CRYPTのソルトフォーマット",
+          description: "パスワードのスキームに{CRYPT}を使用している場合は、" \
+                       "記載のフォーマットでソルト値が作成されます。" \
+                       "対応する形式はサーバーのcryptの実装によります。",
           type: :string,
-          default: '$6$%.16s',
+          default: "$6$%.16s",
           list: [
-            {name: :des, label: 'DES', value: '%.2s', deprecated: true},
-            {name: :md5, label: 'MD5', value: '$1$%.8s', deprecated: true},
-            {name: :sha256, label: 'SHA256', value: '$5$%.16s'},
-            {name: :sha512, label: 'SHA512', value: '$6$%.16s'},
+            {name: :des, label: "DES", value: "%.2s", deprecated: true},
+            {name: :md5, label: "MD5", value: "$1$%.8s", deprecated: true},
+            {name: :sha256, label: "SHA256", value: "$5$%.16s"},
+            {name: :sha512, label: "SHA512", value: "$6$%.16s"},
           ],
         }, {
           name: :create_user_dn_attr,
-          label: 'ユーザー作成時のDNの属性',
+          label: "ユーザー作成時のDNの属性",
           type: :string,
-          default: 'cn',
-          placeholder: 'cn',
+          default: "cn",
+          placeholder: "cn",
         }, {
           name: :create_user_ou_dn,
-          label: 'ユーザー作成時のOUのDN',
+          label: "ユーザー作成時のOUのDN",
           type: :string,
-          default: 'ou=Users,dc=example,dc=jp',
-          placeholder: 'ou=Users,dc=example,dc=jp',
+          default: "ou=Users,dc=example,dc=jp",
+          placeholder: "ou=Users,dc=example,dc=jp",
         }, {
           name: :create_user_object_classes,
-          label: 'ユーザー作成時のオブジェクトクラス',
-          description: 'オブジェクトクラスをカンマ区切りで入力してください。',
+          label: "ユーザー作成時のオブジェクトクラス",
+          description: "オブジェクトクラスをカンマ区切りで入力してください。",
           type: :string,
-          default: 'inetOrgPerson',
-          placeholder: 'inetOrgPerson',
+          default: "inetOrgPerson",
+          placeholder: "inetOrgPerson",
         },
       ]
 
@@ -253,7 +253,7 @@ module Yuzakan
           false
         end
       rescue LdapAdatpterError
-        @logger.warn 'LDAP check failed due to an error'
+        @logger.warn "LDAP check failed due to an error"
         false
       end
 
@@ -342,7 +342,7 @@ module Yuzakan
       end
 
       def user_list
-        opts = search_user_opts('*')
+        opts = search_user_opts("*")
         ldap_search(opts).map { |user| user_entry_name(user) }
       end
 
@@ -350,11 +350,11 @@ module Yuzakan
         filter = Net::LDAP::Filter.eq(@params[:user_name_attr], query)
 
         [:display_name, :email].each do |name|
-          attr_name = @params["user_#{name}_attr".intern]
+          attr_name = @params[:"user_#{name}_attr"]
           filter |= Net::LDAP::Filter.eq(attr_name, query) if attr_name&.size&.positive?
         end
 
-        opts = search_user_opts('*', filter: filter)
+        opts = search_user_opts("*", filter: filter)
         ldap_search(opts).map { |user| user_entry_name(user) }
       end
 
@@ -371,7 +371,7 @@ module Yuzakan
       end
 
       def group_list
-        opts = search_group_opts('*')
+        opts = search_group_opts("*")
         ldap_search(opts).map { |group| group_entry_name(group) }
       end
 
@@ -379,11 +379,11 @@ module Yuzakan
         filter = Net::LDAP::Filter.eq(@params[:group_name_attr], query)
 
         [:display_name].each do |name|
-          attr_name = @params["group_#{name}_attr".intern]
+          attr_name = @params[:"group_#{name}_attr"]
           filter |= Net::LDAP::Filter.eq(attr_name, query) if attr_name&.size&.positive?
         end
 
-        opts = search_group_opts('*', filter: filter)
+        opts = search_group_opts("*", filter: filter)
         ldap_search(opts).map { |user| group_entry_name(user) }
       end
 
@@ -421,7 +421,7 @@ module Yuzakan
       private def ldap_user_create(**userdata)
         attributes = create_user_attributes(**userdata)
         # objectClassが重複している場合はエラーになるため、重複をなくしておく
-        attributes[attribute_name('objectClass')].uniq!
+        attributes[attribute_name("objectClass")].uniq!
 
         dn_attr = @params[:create_user_dn_attr]
         attribute_name(@params[:create_user_dn_attr])
@@ -466,8 +466,8 @@ module Yuzakan
       end
 
       private def ldap_user_group_list(user)
-        filter = Net::LDAP::Filter.eq('member', user.dn)
-        opts = search_group_opts('*', filter: filter)
+        filter = Net::LDAP::Filter.eq("member", user.dn)
+        opts = search_group_opts("*", filter: filter)
         ldap_search(opts).to_a
       end
 
@@ -483,14 +483,14 @@ module Yuzakan
 
       private def ldap_member_list(group)
         # memberOf が operation attribute であっても検索は可能
-        filter = Net::LDAP::Filter.eq('memberOf', group.dn)
-        opts = search_user_opts('*', filter: filter)
+        filter = Net::LDAP::Filter.eq("memberOf", group.dn)
+        opts = search_user_opts("*", filter: filter)
         ldap_search(opts).to_a
       end
 
       private def ldap_member_add(group, user)
         # memberOf が operation attribute である可能性があるため、member で調べる
-        return false if group['member'].include?(user.dn)
+        return false if group["member"].include?(user.dn)
 
         operations = [operation_add(:member, user.dn)]
         ldap_modify(group.dn, operations)
@@ -498,7 +498,7 @@ module Yuzakan
 
       private def ldap_member_remove(group, user)
         # memberOf が operation attribute である可能性があるため、member で調べる
-        return false unless group['member'].include?(user.dn)
+        return false unless group["member"].include?(user.dn)
 
         operations = [operation_delete(:member, user.dn)]
         ldap_modify(group.dn, operations)
@@ -573,15 +573,15 @@ module Yuzakan
         when nil
           nil
         when true
-          'TRUE'
+          "TRUE"
         when false
-          'FALSE'
+          "FALSE"
         when String
           value
         when Integer
           value.to_s
         when Time
-          value.utc.strftime('%Y%m%d%H%M%S.%1NZ')
+          value.utc.strftime("%Y%m%d%H%M%S.%1NZ")
         when Array
           value.map { |v| convert_ldap_value(v) }
         else
@@ -594,8 +594,8 @@ module Yuzakan
         attributes.transform_values! { |value| convert_ldap_value(value) }
 
         # OpenLDAP環境では"top"が自動的に付与されないため、"top"を付けて置く
-        attributes[attribute_name('objectClass')] = ['top']
-        attributes[attribute_name('objectClass')].concat(@params[:create_user_object_classes].split(',').map(&:strip))
+        attributes[attribute_name("objectClass")] = ["top"]
+        attributes[attribute_name("objectClass")].concat(@params[:create_user_object_classes].split(",").map(&:strip))
 
         attributes[attribute_name(@params[:create_user_dn_attr])] = username
         unless @params[:user_name_attr].casecmp?(@params[:create_user_dn_attr])
@@ -615,7 +615,7 @@ module Yuzakan
       end
 
       private def create_user_password_attributes(password)
-        {attribute_name('userPassword') => generate_password(password)}
+        {attribute_name("userPassword") => generate_password(password)}
       end
 
       private def update_user_attributes(**userdata)
@@ -623,9 +623,9 @@ module Yuzakan
         attributes.transform_values! { |value| convert_ldap_value(value) }
 
         [:display_name, :email].each do |name|
-          attr_name = @params["user_#{name}_attr".intern]
+          attr_name = @params[:"user_#{name}_attr"]
           if attr_name&.size&.positive? && (userdata[name])
-            attributes[attribute_name(@params["user_#{name}_attr".intern])] = userdata[name]
+            attributes[attribute_name(@params[:"user_#{name}_attr"])] = userdata[name]
           end
         end
 
@@ -701,12 +701,12 @@ module Yuzakan
 
         port = @params[:port] if @params[:port] && !@params[:port].zero?
         case @params[:protocol]
-        when 'ldap'
+        when "ldap"
           opts[:port] = port || 389
-        when 'ldap_starttls'
+        when "ldap_starttls"
           opts[:port] = port || 389
           opts[:encryption] = {method: :start_tls}
-        when 'ldaps'
+        when "ldaps"
           opts[:port] = port || 636
           opts[:encryption] = {method: :simple_tls}
         else
@@ -740,16 +740,16 @@ module Yuzakan
         if filter&.size&.positive?
           Net::LDAP::Filter.construct(filter)
         else
-          Net::LDAP::Filter.pres('objectClass')
+          Net::LDAP::Filter.pres("objectClass")
         end
       end
 
       private def generate_scope(scope)
         case scope
-        when 'base' then Net::LDAP::SearchScope_BaseObject
-        when 'one' then Net::LDAP::SearchScope_SingleLevel
-        when 'sub' then Net::LDAP::SearchScope_WholeSubtree
-        else raise LdapAdapterError, 'Invalid scope'
+        when "base" then Net::LDAP::SearchScope_BaseObject
+        when "one" then Net::LDAP::SearchScope_SingleLevel
+        when "sub" then Net::LDAP::SearchScope_WholeSubtree
+        else raise LdapAdapterError, "Invalid scope"
         end
       end
 
@@ -904,15 +904,15 @@ module Yuzakan
         when String
           value
         when true
-          'TRUE'
+          "TRUE"
         when false
-          'FALSE'
+          "FALSE"
         when nil
-          ''
+          ""
         when Integer
           value.to_s
         when Time
-          value.utc.strftime('%Y%m%d%H%M%SZ')
+          value.utc.strftime("%Y%m%d%H%M%SZ")
         when Array
           value.map { |v| value_to_str(v) }
         else
@@ -974,7 +974,7 @@ module Yuzakan
       end
 
       private def user_entry_locked?(user)
-        password = user.first('userPassword')
+        password = user.first("userPassword")
         return false if password.nil?
 
         locked_password?(password)
@@ -993,10 +993,10 @@ module Yuzakan
         user_password = lock_password(user_password) if locked
 
         operations = []
-        operations << if user.first('userPassword')
-                        operation_replace('userPassword', user_password)
+        operations << if user.first("userPassword")
+                        operation_replace("userPassword", user_password)
                       else
-                        operation_add('userPassword', user_password)
+                        operation_add("userPassword", user_password)
                       end
         operations
       end
@@ -1004,11 +1004,11 @@ module Yuzakan
       private def lock_operations(user)
         operations = []
 
-        current_password = user.first('userPassword')
+        current_password = user.first("userPassword")
         if current_password.nil?
-          operations << operation_add('userPassword', lock_password(''))
+          operations << operation_add("userPassword", lock_password(""))
         elsif !locked_password?(current_password)
-          operations << operation_replace('userPassword', lock_password(current_password))
+          operations << operation_replace("userPassword", lock_password(current_password))
         end
 
         operations
@@ -1020,13 +1020,13 @@ module Yuzakan
         if password
           operations << change_password_operations(user, password)
         else
-          current_password = user.first('userPassword')
+          current_password = user.first("userPassword")
           if current_password && locked_password?(current_password)
             new_password = unlock_password(current_password)
             operations << if new_password.empty?
-                            operation_delete('userPassword', current_password)
+                            operation_delete("userPassword", current_password)
                           else
-                            operation_replace('userPassword', new_password)
+                            operation_replace("userPassword", new_password)
                           end
           end
         end
@@ -1037,22 +1037,22 @@ module Yuzakan
       # https://trac.tools.ietf.org/id/draft-stroeder-hashed-userpassword-values-00.html
       private def generate_password(password) # rubocop: disable Metrics/AbcSize, Metrics/MethodLength
         case @params[:password_scheme].upcase
-        when '{CLEARTEXT}' then password
-        when '{CRYPT}' then "{CRYPT}#{generate_crypt_password(password)}"
-        when '{MD5}' then "{MD5}#{Base64.strict_encode64(Digest::MD5.digest(password))}"
-        when '{SHA}' then "{SHA}#{Base64.strict_encode64(Digest::SHA1.digest(password))}"
-        when '{SHA256}' then "{SHA256}#{Base64.strict_encode64(Digest::SHA256.digest(password))}"
-        when '{SHA512}' then "{SHA512}#{Base64.strict_encode64(Digest::SHA512.digest(password))}"
-        when '{SMD5}'
+        when "{CLEARTEXT}" then password
+        when "{CRYPT}" then "{CRYPT}#{generate_crypt_password(password)}"
+        when "{MD5}" then "{MD5}#{Base64.strict_encode64(Digest::MD5.digest(password))}"
+        when "{SHA}" then "{SHA}#{Base64.strict_encode64(Digest::SHA1.digest(password))}"
+        when "{SHA256}" then "{SHA256}#{Base64.strict_encode64(Digest::SHA256.digest(password))}"
+        when "{SHA512}" then "{SHA512}#{Base64.strict_encode64(Digest::SHA512.digest(password))}"
+        when "{SMD5}"
           salt = SecureRandom.random_bytes(8)
           "{SMD5}#{Base64.strict_encode64(Digest::MD5.digest(password + salt) + salt)}"
-        when '{SSHA}'
+        when "{SSHA}"
           salt = SecureRandom.random_bytes(8)
           "{SSHA}#{Base64.strict_encode64(Digest::SHA1.digest(password + salt) + salt)}"
-        when '{SSHA256}'
+        when "{SSHA256}"
           salt = SecureRandom.random_bytes(8)
           "{SSHA256}#{Base64.strict_encode64(Digest::SHA256.digest(password + salt) + salt)}"
-        when '{SSHA512}'
+        when "{SSHA512}"
           salt = SecureRandom.random_bytes(8)
           "{SSHA512}#{Base64.strict_encode64(Digest::SHA512.digest(password + salt) + salt)}"
         else
@@ -1063,7 +1063,7 @@ module Yuzakan
 
       private def generate_crypt_password(password, format: @params[:crypt_salt_format])
         # 16 [./0-9A-Za-z] chars
-        salt = SecureRandom.base64(12).tr('+', '.')
+        salt = SecureRandom.base64(12).tr("+", ".")
         password.crypt(format % salt)
       end
 
@@ -1071,15 +1071,15 @@ module Yuzakan
         if (m = /\A\{([\w-]+)\}(.*)\z/.match(str))
           scheme = m[1]
           value = m[2]
-          if value.start_with?('!')
+          if value.start_with?("!")
             # 既にロックされているため変更しない
-            @logger.info('password has locked')
+            @logger.info("password has locked")
             str
           else
             "{#{scheme}}!#{value}"
           end
         else
-          @logger.warn('cleartext password')
+          @logger.warn("cleartext password")
           # CLEARTEXT is dummy scheme
           "{CLEARTEXT}!#{str}"
         end
@@ -1089,14 +1089,14 @@ module Yuzakan
         if (m = /\A\{([\w-]+)\}!*([^!].*)\z/.match(str))
           scheme = m[1]
           value = m[2]
-          if scheme.empty? || scheme == 'CLEARTEXT'
-            @logger.warn('cleartext password')
+          if scheme.empty? || scheme == "CLEARTEXT"
+            @logger.warn("cleartext password")
             value
           else
             "{#{scheme}}#{value}"
           end
         else
-          @logger.warn('cleartext password')
+          @logger.warn("cleartext password")
           str
         end
       end

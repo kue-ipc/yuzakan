@@ -22,8 +22,8 @@ module Api
 
           def initialize(provider_repository: ProviderRepository.new,
                          user_notify: Mailers::UserNotify,
-                         **opts)
-            super(**opts)
+                         **)
+            super(**)
             @provider_repository = provider_repository
             @user_notify = user_notify
           end
@@ -34,15 +34,15 @@ module Api
             unless param_errors.key?(:password)
               password_size = params[:password].size
               if current_config.password_min_size&.>(password_size)
-                param_errors[:name] = [I18n.t('errors.min_size?', num: current_config.password_min_size)]
+                param_errors[:name] = [I18n.t("errors.min_size?", num: current_config.password_min_size)]
               elsif current_config.password_max_size&.<(password_size)
-                param_errors[:name] = [I18n.t('errors.max_size?', num: current_config.password_max_size)]
+                param_errors[:name] = [I18n.t("errors.max_size?", num: current_config.password_max_size)]
               end
 
               if params[:password] !~ /\A[\u0020-\u007e]*\z/ ||
-                 !((current_config.password_unusable_chars&.chars || []) & params[:password].chars).empty?
+                 !!(current_config.password_unusable_chars&.chars || []).intersect?(params[:password].chars)
                 param_errors[:name] ||= []
-                param_errors[:name] << I18n.t('errors.valid_chars?')
+                param_errors[:name] << I18n.t("errors.valid_chars?")
               end
 
               password_types = [/[0-9]/, /[a-z]/, /[A-Z]/, /[^0-9a-zA-Z]/].select do |reg|
@@ -50,7 +50,7 @@ module Api
               end.size
               if current_config.password_min_types&.> password_types
                 param_errors[:name] ||= []
-                param_errors[:name] << I18n.t('errors.min_types?', num: current_config.password_min_types)
+                param_errors[:name] << I18n.t("errors.min_types?", num: current_config.password_min_types)
               end
 
               dict = (current_config.password_extra_dict&.split || []) +
@@ -58,14 +58,14 @@ module Api
                        current_user.name,
                        current_user.display_name&.split,
                        current_user.email,
-                       current_user.email&.split('@'),
+                       current_user.email&.split("@"),
                        params[:current_password],
                      ].flatten.compact
 
               password_score = Zxcvbn.test(params[:password], dict).score
               if current_config.password_min_score&.>(password_score)
                 param_errors[:name] ||= []
-                param_errors[:name] << I18n.t('errors.strong_password?')
+                param_errors[:name] << I18n.t("errors.strong_password?")
               end
 
             end
@@ -82,8 +82,8 @@ module Api
                 user: current_user,
                 config: current_config,
                 by_user: :self,
-                action: 'パスワード変更',
-                description: 'アカウントのパスワードを変更しました。')
+                action: "パスワード変更",
+                description: "アカウントのパスワードを変更しました。")
             end
 
             self.status = 200

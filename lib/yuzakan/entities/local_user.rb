@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'bcrypt'
+require "bcrypt"
 
 class LocalUser < Hanami::Entity
   class << self
@@ -12,7 +12,7 @@ class LocalUser < Hanami::Entity
   end
 
   def name
-    Hanami.logger.warn('call LocalUser#name')
+    Hanami.logger.warn("call LocalUser#name")
     username
   end
 

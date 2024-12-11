@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './set_provider'
+require_relative "set_provider"
 
 module Api
   module Controllers

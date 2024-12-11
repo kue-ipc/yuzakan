@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './entity_user'
+require_relative "entity_user"
 
 module Api
   module Controllers
@@ -49,9 +49,9 @@ module Api
 
           @name = params[:name]
           load_user
-          halt_json 422, errors: {name: [I18n.t('errors.uniq?')]} if @user
+          halt_json 422, errors: {name: [I18n.t("errors.uniq?")]} if @user
 
-          halt_json 422, errors: {attrs: I18n.t('errors.filled?')} if params[:providers] && params[:attrs].nil?
+          halt_json 422, errors: {attrs: I18n.t("errors.filled?")} if params[:providers] && params[:attrs].nil?
 
           password = params[:password] || generate_password.password
 
@@ -68,13 +68,13 @@ module Api
               password: password,
             })
           else
-            halt_json 422, errors: {providers: [I18n.t('errors.min_size?', num: 1)]}
+            halt_json 422, errors: {providers: [I18n.t("errors.min_size?", num: 1)]}
           end
 
           load_user
 
           self.status = 201
-          headers['Content-Location'] = routes.user_path(@user.name)
+          headers["Content-Location"] = routes.user_path(@user.name)
           self.body = user_json(password: password)
         end
       end

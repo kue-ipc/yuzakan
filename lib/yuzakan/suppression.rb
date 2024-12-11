@@ -7,7 +7,7 @@
 
 # URI.escape is obslete
 # hanami-router 2系 で対応予定
-require 'uri'
+require "uri"
 module URI
   module Escape
     def escape(*arg)
@@ -25,7 +25,7 @@ end
 # Ruby 3.1 で追加
 class Hash
   def except(*keys)
-    reject { |key, _value| keys.include?(key) }
+    except(*keys)
   end
 
   def slice(*keys)
@@ -34,4 +34,3 @@ class Hash
 end
 
 # Ruby 3.2 で組み込みになるため、常にrequireする
-require 'set'

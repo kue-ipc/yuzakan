@@ -2,7 +2,7 @@
 
 RSpec.describe Api::Controllers::Users::Update, type: :action do
   init_controller_spec
-  let(:format) { 'application/json' }
+  let(:format) { "application/json" }
   let(:action_opts) {
     {
       config_repository: config_repository,
@@ -14,7 +14,7 @@ RSpec.describe Api::Controllers::Users::Update, type: :action do
   }
   let(:action_params) {
     {
-      id: 'user',
+      id: "user",
       **user_attributes.except(:id),
       primary_group: primary_group.name,
       groups: groups.map(&:name),
@@ -23,12 +23,12 @@ RSpec.describe Api::Controllers::Users::Update, type: :action do
     }
   }
 
-  it 'is failure' do
+  it "is failure" do
     response = action.call(params)
     expect(response[0]).to eq 403
-    expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+    expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    expect(json).to eq({code: 403, message: 'Forbidden'})
+    expect(json).to eq({code: 403, message: "Forbidden"})
   end
 
   # describe 'admin' do

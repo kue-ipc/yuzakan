@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # RSpec.describe Admin::Views::Users::Export, type: :view do
 #   let(:exposures) { Hash[format: :html] }
 #   let(:template)  { Hanami::View::Template.new('apps/admin/templates/users/export.html.slim') }

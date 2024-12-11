@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'ipaddr'
+require "ipaddr"
 
 class NetworkRepository < Hanami::Repository
   private :create, :update, :delete

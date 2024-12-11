@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'hanami/validations'
-require_relative '../provider_interactor'
+require "hanami/validations"
+require_relative "../provider_interactor"
 
 class ProviderUnlockUser
   include Yuzakan::ProviderInteractor

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../web/controllers/authentication'
+require_relative "../../web/controllers/authentication"
 
 module Api
   module Authentication

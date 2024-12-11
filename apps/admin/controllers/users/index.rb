@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'hanami/action/cache'
+require "hanami/action/cache"
 
 module Admin
   module Controllers

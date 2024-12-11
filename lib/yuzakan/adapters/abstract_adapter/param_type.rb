@@ -20,20 +20,20 @@
 # - required: 必須かどうか (デフォルト: fales)
 # - placeholder: 入力時のプレースホルダー
 
-require 'date'
-require 'time'
+require "date"
+require "time"
 
-require_relative 'adapter_error'
+require_relative "adapter_error"
 
 module Yuzakan
   module Adapters
     class AbstractAdapter
       class ParamType
         TYPE_INPUTS = {
-          boolean: 'checkbox',
-          string: 'text',
-          text: 'textarea',
-          integer: 'number',
+          boolean: "checkbox",
+          string: "text",
+          text: "textarea",
+          integer: "number",
         }.freeze
 
         attr_reader :name, :label, :description,
@@ -97,7 +97,7 @@ module Yuzakan
           case type
           when :boolean
             if value.is_a?(String)
-              ['1', 'yes', 'true'].include?(value.downcase)
+              ["1", "yes", "true"].include?(value.downcase)
             else
               nil | value
             end

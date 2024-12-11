@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module Controllers
     module Providers
@@ -17,8 +19,8 @@ module Admin
 
         params Params
 
-        def initialize(provider_repository: ProviderRepository.new, **opts)
-          super(**opts)
+        def initialize(provider_repository: ProviderRepository.new, **)
+          super(**)
           @provider_repository = provider_repository
         end
 

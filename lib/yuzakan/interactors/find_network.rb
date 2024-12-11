@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'hanami/interactor'
-require 'hanami/validations'
+require "hanami/interactor"
+require "hanami/validations"
 
 class FindNetwork
   include Hanami::Interactor
@@ -24,7 +24,7 @@ class FindNetwork
   def call(params)
     ip = params[:ip]
     # unixドメインは127.0.0.1と同じとみなす
-    ip = '127.0.0.1' if ip.include?('unix')
+    ip = "127.0.0.1" if ip.include?("unix")
 
     ip_addr = IPAddr.new(ip)
 

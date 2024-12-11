@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'hanami/interactor'
-require 'hanami/validations'
-require_relative '../predicates/name_predicates'
+require "hanami/interactor"
+require "hanami/validations"
+require_relative "../predicates/name_predicates"
 
 class ProviderReadGroup
   include Hanami::Interactor
@@ -32,7 +32,7 @@ class ProviderReadGroup
     rescue => e
       Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{groupname}"
       Hanami.logger.error e
-      error(I18n.t('errors.action.error', action: I18n.t('interactors.provider_read_group'), target: provider.label))
+      error(I18n.t("errors.action.error", action: I18n.t("interactors.provider_read_group"), target: provider.label))
       error(e.message)
       fail!
     end
@@ -55,7 +55,7 @@ class ProviderReadGroup
         @provider_repository.find_with_adapter_by_name(provider_name).tap do |provider|
           unless provider
             Hanami.logger.warn "[#{self.class.name}] Not found: #{provider_name}"
-            error!(I18n.t('errors.not_found', name: I18n.t('entities.provider')))
+            error!(I18n.t("errors.not_found", name: I18n.t("entities.provider")))
           end
         end
       end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'hanami/action/params'
-require_relative '../predicates/name_predicates'
+require "hanami/action/params"
+require_relative "../predicates/name_predicates"
 
 class IdParams < Hanami::Action::Params
   predicates NamePredicates

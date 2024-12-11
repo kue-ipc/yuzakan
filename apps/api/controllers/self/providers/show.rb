@@ -8,7 +8,7 @@ module Api
           include Api::Action
 
           def call(_params)
-            self.body = 'OK'
+            self.body = "OK"
           end
         end
       end

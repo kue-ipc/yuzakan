@@ -12,14 +12,14 @@
 # 暗号: AES-256-CBC
 # ソルトサイズ: 8バイト
 
-require 'openssl'
-require 'securerandom'
-require 'base64'
+require "openssl"
+require "securerandom"
+require "base64"
 
 module Yuzakan
   module Utils
     class PbCrypt
-      DEFAULT_ALGORITHM = 'aes-256-cbc'
+      DEFAULT_ALGORITHM = "aes-256-cbc"
       DEFAULT_ITERATION = 10_000
       DEFAULT_SALT_SIZE = 8
 
@@ -34,7 +34,7 @@ module Yuzakan
       end
 
       def encrypt_text(text)
-        return '' if text.empty?
+        return "" if text.empty?
 
         Base64.strict_encode64(encrypt(text))
       end
@@ -47,7 +47,7 @@ module Yuzakan
       end
 
       def encrypt(data)
-        return '' if data.empty?
+        return "" if data.empty?
 
         salt = generate_salt
 
@@ -65,7 +65,7 @@ module Yuzakan
       end
 
       def decrypt(salt_encrypted_data)
-        return '' if salt_encrypted_data.empty?
+        return "" if salt_encrypted_data.empty?
 
         dec = OpenSSL::Cipher.new(@algorithm)
         dec.decrypt

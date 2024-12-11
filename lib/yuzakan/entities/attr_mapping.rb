@@ -22,12 +22,12 @@ class AttrMapping < Hanami::Entity
                  FALSE_STR_VALUES.map(&:intern)
 
   E2J_LIST = [
-    ['student', '学生'],
-    ['faculty', '教員'],
-    ['staff', '職員'],
-    ['member', '構成員'],
-    ['guest', 'ゲスト'],
-    ['organization', '組織'],
+    ["student", "学生"],
+    ["faculty", "教員"],
+    ["staff", "職員"],
+    ["member", "構成員"],
+    ["guest", "ゲスト"],
+    ["organization", "組織"],
   ].freeze
   E2J_DICT = E2J_LIST.to_h
   J2E_DICT = E2J_LIST.to_h(&:reverse)
@@ -39,15 +39,15 @@ class AttrMapping < Hanami::Entity
     case conversion
     when nil
       convert_type(value, attr.type)
-    when 'posix_time'
+    when "posix_time"
       Time.at(value.to_i)
-    when 'posix_date'
+    when "posix_date"
       Date.new(1970, 1, 1) + value.to_i
-    when 'path'
-      value.sub(%r{^/+}, '')
-    when 'e2j'
+    when "path"
+      value.sub(%r{^/+}, "")
+    when "e2j"
       translate_e2j(value)
-    when 'j2e'
+    when "j2e"
       translate_j2e(value)
     else
       value
@@ -57,21 +57,21 @@ class AttrMapping < Hanami::Entity
 
   private def convert_type(value, type)
     case type
-    when 'boolean'
+    when "boolean"
       if TRUE_VALUES.include?(value)
         true
       elsif FALSE_VALUES.include?(value)
         false
       end
-    when 'string'
+    when "string"
       value.to_s
-    when 'integer'
+    when "integer"
       value.to_i
-    when 'float'
+    when "float"
       value.to_f
-    when 'date'
+    when "date"
       value.to_date
-    when 'time', 'datetime'
+    when "time", "datetime"
       value.to_time
     else
       value
@@ -85,15 +85,15 @@ class AttrMapping < Hanami::Entity
     return value if conversion.nil?
 
     case conversion
-    when 'posix_time'
+    when "posix_time"
       value.to_time.to_i
-    when 'posix_date'
+    when "posix_date"
       (Date.new(1970, 1, 1) - value.to_date).to_i
-    when 'path'
+    when "path"
       "/#{value}"
-    when 'e2j'
+    when "e2j"
       translate_j2e(value)
-    when 'j2e'
+    when "j2e"
       translate_e2j(value)
     else
       value

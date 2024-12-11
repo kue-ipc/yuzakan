@@ -44,7 +44,7 @@ module Api
         def call(params)
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
-          halt_json 422, errors: [{name: [I18n.t('errors.uniq?')]}] if @attr_repository.exist_by_name?(params[:name])
+          halt_json 422, errors: [{name: [I18n.t("errors.uniq?")]}] if @attr_repository.exist_by_name?(params[:name])
 
           mapping_errors = {}
           attr_mappings = (params[:mappings] || []).each_with_index.map do |mapping, idx|
@@ -52,7 +52,7 @@ module Api
 
             provider = provider_by_name(mapping[:provider])
             if provider.nil?
-              mapping_errors[idx] = {provider: [I18n.t('errors.found?')]}
+              mapping_errors[idx] = {provider: [I18n.t("errors.found?")]}
               next
             end
 
@@ -67,7 +67,7 @@ module Api
             attr_mappings: attr_mappings)
 
           self.status = 201
-          headers['Content-Location'] = routes.attr_path(@attr.name)
+          headers["Content-Location"] = routes.attr_path(@attr.name)
           self.body = generate_json(@attr, assoc: true)
         end
 

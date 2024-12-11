@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'hanami/action/cache'
+require "hanami/action/cache"
 
 module Web
   module Controllers
@@ -24,7 +24,7 @@ module Web
 
           result = UserAttrs.new.call(username: current_user.name)
           if result.successful? &&
-             ['学生', '教員', '職員'].include?(result.attrs[:affiliation])
+             ["学生", "教員", "職員"].include?(result.attrs[:affiliation])
             @creatable = true
           end
         end

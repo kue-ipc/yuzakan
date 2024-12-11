@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../web/controllers/handle_exception'
+require_relative "../../web/controllers/handle_exception"
 
 module Api
   module HandleException

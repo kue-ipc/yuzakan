@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'hanami/interactor'
-require 'hanami/validations/form'
+require "hanami/interactor"
+require "hanami/validations/form"
 
 class GenerateVerificationCode
   include Hanami::Interactor
 
   class Validator
     include Hanami::Validations::Form
-    messages_path 'config/messages.yml'
+    messages_path "config/messages.yml"
 
     validations do
       optional(:username) { filled? & str? }
@@ -38,9 +38,9 @@ class GenerateVerificationCode
     activity_params = {
       user_id: @user.id,
       client: @client,
-      type: 'user',
+      type: "user",
       target: @username,
-      action: 'generate_code',
+      action: "generate_code",
     }
 
     by_user =
@@ -54,8 +54,8 @@ class GenerateVerificationCode
       user: @user,
       config: @config,
       by_user: by_user,
-      action: 'バックアップコード生成',
-      description: 'バックアップコードを生成しました。',
+      action: "バックアップコード生成",
+      description: "バックアップコードを生成しました。",
     }
 
     activity_params[:action] += ":#{@providers.map(&:name).join(',')}"
@@ -74,7 +74,7 @@ class GenerateVerificationCode
     end
 
     if @user_datas.empty?
-      error('どのシステムでもバックアップコードは生成されませんでした。')
+      error("どのシステムでもバックアップコードは生成されませんでした。")
       result = :failure
     end
 
@@ -93,12 +93,12 @@ class GenerateVerificationCode
     return true if @user.clearance_level >= 3
 
     unless @providers&.all?(&:self_management)
-      error('自己管理可能なシステム以外でバックアップコードを生成することはできません。')
+      error("自己管理可能なシステム以外でバックアップコードを生成することはできません。")
       return false
     end
 
     if params&.key?(:username) && params[:username] != @user.name
-      error(username: '自分自身以外のバックアップコードを生成することはできません。')
+      error(username: "自分自身以外のバックアップコードを生成することはできません。")
       return false
     end
 

@@ -3,20 +3,20 @@
 RSpec.describe Admin::Controllers::Home::Index, type: :action do
   init_controller_spec
 
-  it 'is failure' do
+  it "is failure" do
     response = action.call(params)
     expect(response[0]).to eq 403
-    expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+    expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
   end
 
-  describe 'admin' do
+  describe "admin" do
     let(:user) { User.new(**user_attributes, clearance_level: 5) }
-    let(:client) { '127.0.0.1' }
+    let(:client) { "127.0.0.1" }
 
-    it 'is successful' do
+    it "is successful" do
       response = action.call(params)
       expect(response[0]).to eq 200
-      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
     end
   end
 
@@ -26,12 +26,12 @@ RSpec.describe Admin::Controllers::Home::Index, type: :action do
       let(:client) { "10.1.#{pattern[:network_level]}.1" }
 
       if [pattern[:user_level], pattern[:network_level]].min >= 2
-        it 'is successful' do
+        it "is successful" do
           response = action.call(params)
           expect(response[0]).to eq 200
         end
       else
-        it 'is failure' do
+        it "is failure" do
           response = action.call(params)
           expect(response[0]).to eq 403
         end

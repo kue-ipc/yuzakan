@@ -3,7 +3,7 @@
 # AD Account Control
 # https://learn.microsoft.com/ja-jp/troubleshoot/windows-server/identity/useraccountcontrol-manipulate-account-properties
 
-require_relative '../ldap_adapter'
+require_relative "../ldap_adapter"
 
 module Yuzakan
   module Adapters
@@ -35,7 +35,7 @@ module Yuzakan
         end
         DEFAULT_USER_FLAGS = Flag::NORMAL_ACCOUNT | Flag::DONT_EXPIRE_PASSWORD
 
-        ATTRIBUTE_NAME = 'userAccountControl'
+        ATTRIBUTE_NAME = "userAccountControl"
 
         include Enumerable
 
@@ -127,7 +127,7 @@ module Yuzakan
         end
 
         def disjoint?(other)
-          (@flags & other.to_i).zero?
+          @flags.nobits?(other.to_i)
         end
 
         def intersect?(other)
@@ -153,7 +153,7 @@ module Yuzakan
         end
 
         def to_s
-          '0x%04X' % to_i
+          "0x%04X" % to_i
         end
 
         def inspect

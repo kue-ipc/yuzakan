@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../../lib/yuzakan/validators/update_config_validator'
+require_relative "../../../../lib/yuzakan/validators/update_config_validator"
 
 module Admin
   module Controllers
@@ -35,19 +35,19 @@ module Admin
 
           unless params.valid?
             flash[:errors] << params.errors
-            flash[:error] = '設定に失敗しました。'
+            flash[:error] = "設定に失敗しました。"
             self.body = Admin::Views::Config::Edit.render(exposures)
             return
           end
 
           @config_repository.current_update(@config)
 
-          flash[:success] = '設定を更新しました。'
+          flash[:success] = "設定を更新しました。"
           redirect_to routes.path(:edit_config)
         rescue => e
           Hanami.logger.error e
           flash[:errors] << e.message
-          flash[:error] = 'エラーが発生しました。'
+          flash[:error] = "エラーが発生しました。"
           self.body = Admin::Views::Config::Edit.render(exposures)
         end
       end

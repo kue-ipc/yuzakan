@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './set_user'
+require_relative "set_user"
 
 module Api
   module Controllers

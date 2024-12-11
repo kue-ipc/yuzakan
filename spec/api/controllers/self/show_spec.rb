@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'yaml'
+require "yaml"
 
 RSpec.describe Api::Controllers::Self::Show, type: :action do
   init_controller_spec
@@ -10,107 +10,105 @@ RSpec.describe Api::Controllers::Self::Show, type: :action do
      member_repository: member_repository,
      group_repository: group_repository,}
   }
-  let(:format) { 'application/json' }
+  let(:format) { "application/json" }
 
   let(:providers) {
     [create_mock_provider(
-      name: 'provider',
+      name: "provider",
       group: true,
       params: {
-        username: 'user', display_name: 'ユーザー', email: 'user@example.jp',
-        primary_group: 'group',
-        groups: 'admin, staff',
-        attrs: YAML.dump({'jaDisplayName' => '表示ユーザー'}),
+        username: "user", display_name: "ユーザー", email: "user@example.jp",
+        primary_group: "group",
+        groups: "admin, staff",
+        attrs: YAML.dump({"jaDisplayName" => "表示ユーザー"}),
       },
       attr_mappings: [{
-        key: 'jaDisplayName', conversion: nil,
-        attr: {name: 'ja_display_name', display_name: '日本語表示名', type: 'string', hidden: false},
+        key: "jaDisplayName", conversion: nil,
+        attr: {name: "ja_display_name", display_name: "日本語表示名", type: "string", hidden: false},
       }])]
   }
-  let(:provider_repository) { instance_double('ProviderRepository', ordered_all_with_adapter_by_operation: providers) }
+  let(:provider_repository) { instance_double(ProviderRepository, ordered_all_with_adapter_by_operation: providers) }
   let(:user_with_groups) {
     User.new(**user.to_h,
       members: [
-        Member.new(primary: true, group: Group.new(name: 'group')),
-        Member.new(primary: false, group: Group.new(name: 'admin')),
-        Member.new(primary: false, group: Group.new(name: 'staff')),
+        Member.new(primary: true, group: Group.new(name: "group")),
+        Member.new(primary: false, group: Group.new(name: "admin")),
+        Member.new(primary: false, group: Group.new(name: "staff")),
       ])
   }
 
-  it 'is successful' do
-    allow(user_repository).to receive(:find_by_name).and_return(user)
-    allow(user_repository).to receive(:update).and_return(user)
-    allow(user_repository).to receive(:find_with_groups).and_return(user_with_groups)
+  it "is successful" do
+    allow(user_repository).to receive_messages(find_by_name: user, update: user, find_with_groups: user_with_groups)
     allow(user_repository).to receive(:transaction).and_yield
 
     response = action.call(params)
     expect(response[0]).to eq 200
-    expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+    expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
     expect(json).to eq({
-      name: 'user',
-      display_name: 'ユーザー',
-      email: 'user@example.jp',
+      name: "user",
+      display_name: "ユーザー",
+      email: "user@example.jp",
       note: nil,
       prohibited: false,
       deleted: false,
       deleted_at: nil,
       clearance_level: 1,
-      primary_group: 'group',
-      groups: ['group', 'admin', 'staff'],
-      attrs: {ja_display_name: '表示ユーザー'},
+      primary_group: "group",
+      groups: ["group", "admin", "staff"],
+      attrs: {ja_display_name: "表示ユーザー"},
       providers: {
         provider: {
-          username: 'user',
-          display_name: 'ユーザー',
-          email: 'user@example.jp',
+          username: "user",
+          display_name: "ユーザー",
+          email: "user@example.jp",
           locked: false,
           unmanageable: false,
           mfa: false,
-          primary_group: 'group',
-          groups: ['admin', 'staff'],
-          attrs: {ja_display_name: '表示ユーザー'},
+          primary_group: "group",
+          groups: ["admin", "staff"],
+          attrs: {ja_display_name: "表示ユーザー"},
         },
       },
     })
   end
 
-  describe 'no login session' do
+  describe "no login session" do
     let(:session) { {uuid: uuid} }
 
-    it 'is error' do
+    it "is error" do
       response = action.call(params)
       expect(response[0]).to eq 401
-      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).to eq({code: 401, message: 'Unauthorized'})
+      expect(json).to eq({code: 401, message: "Unauthorized"})
     end
   end
 
-  describe 'no session' do
+  describe "no session" do
     let(:session) { {} }
 
-    it 'is error' do
+    it "is error" do
       response = action.call(params)
       expect(response[0]).to eq 401
-      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).to eq({code: 401, message: 'Unauthorized'})
+      expect(json).to eq({code: 401, message: "Unauthorized"})
     end
   end
 
-  describe 'session timeout' do
+  describe "session timeout" do
     let(:session) { {uuid: uuid, user_id: user.id, created_at: Time.now - 7200, updated_at: Time.now - 7200} }
 
-    it 'is error' do
+    it "is error" do
       response = action.call(params)
       expect(response[0]).to eq 401
-      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         code: 401,
-        message: 'Unauthorized',
-        errors: ['セッションがタイムアウトしました。'],
+        message: "Unauthorized",
+        errors: ["セッションがタイムアウトしました。"],
       })
     end
   end

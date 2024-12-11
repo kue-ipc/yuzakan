@@ -19,15 +19,15 @@ module Admin
 
         params Params
 
-        def initialize(provider_repository: ProviderRepository.new, **opts)
-          super(**opts)
+        def initialize(provider_repository: ProviderRepository.new, **)
+          super(**)
           @provider_repository = provider_repository
         end
 
         def call(params)
           halt 400 unless params.valid?
           name = params[:id].to_s
-          halt 404 unless name == '*' || @provider_repository.exist_by_name?(name)
+          halt 404 unless name == "*" || @provider_repository.exist_by_name?(name)
         end
       end
     end

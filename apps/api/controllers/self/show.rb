@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../users/entity_user'
+require_relative "../users/entity_user"
 
 module Api
   module Controllers

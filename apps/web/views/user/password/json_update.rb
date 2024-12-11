@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'update'
+require_relative "update"
 
 module Web
   module Views

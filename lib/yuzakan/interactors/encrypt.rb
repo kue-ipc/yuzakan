@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require 'hanami/interactor'
-require 'hanami/validations'
+require "hanami/interactor"
+require "hanami/validations"
 
-require_relative '../utils/pb_crypt'
+require_relative "../utils/pb_crypt"
 
 class Encrypt
   include Hanami::Interactor
 
   class Validator
     include Hanami::Validations
-    messages_path 'config/messages.yml'
+    messages_path "config/messages.yml"
 
     validations do
       required(:data) { str? }
@@ -19,7 +19,7 @@ class Encrypt
 
   expose :encrypted
 
-  def initialize(password: ENV.fetch('DB_SECRET'), max: 0, text: false)
+  def initialize(password: ENV.fetch("DB_SECRET"), max: 0, text: false)
     @pb_crypt = Yuzakan::Utils::PbCrypt.new(password)
     @max = max
     @text = text
@@ -33,7 +33,7 @@ class Encrypt
         @pb_crypt.encrypt(params[:data])
       end
 
-    error!('暗号化できるサイズを超えました。') if @max.positive? && @encrypted.size > @max
+    error!("暗号化できるサイズを超えました。") if @max.positive? && @encrypted.size > @max
   end
 
   private def valid?(params)

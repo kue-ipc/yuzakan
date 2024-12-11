@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './set_group'
+require_relative "set_group"
 
 module Api
   module Controllers

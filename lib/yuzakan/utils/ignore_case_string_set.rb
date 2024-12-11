@@ -30,10 +30,10 @@ module Yuzakan
       alias + union
       alias | union
 
-      def each(&block)
+      def each(&)
         return to_enum unless block_given?
 
-        @attrs.each(&block)
+        @attrs.each(&)
       end
 
       def add(obj)

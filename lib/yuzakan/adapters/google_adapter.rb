@@ -2,44 +2,44 @@
 
 # Google Workspace Adapter
 
-require 'stringio'
-require 'securerandom'
-require 'json'
+require "stringio"
+require "securerandom"
+require "json"
 
-require 'googleauth'
-require 'google/apis/admin_directory_v1'
+require "googleauth"
+require "google/apis/admin_directory_v1"
 
 module Yuzakan
   module Adapters
     class GoogleAdapter < AbstractAdapter
-      self.name = 'google'
-      self.display_name = 'Google Workspace'
-      self.version = '0.0.1'
+      self.name = "google"
+      self.display_name = "Google Workspace"
+      self.version = "0.0.1"
       self.params = []
       self.params = [
         {
           name: :domain,
-          label: 'Google Workspaceのドメイン名',
+          label: "Google Workspaceのドメイン名",
           description:
-            'Google Workspaceでのドメイン名を指定します。',
+            "Google Workspaceでのドメイン名を指定します。",
           type: :string,
           required: true,
-          placeholder: 'google.example.jp',
+          placeholder: "google.example.jp",
         }, {
           name: :account,
-          label: 'Google Workspaceの管理用アカウント',
+          label: "Google Workspaceの管理用アカウント",
           description:
-            'Google Workspaceでユーザーに対する管理権限のあるアカウントを指定します。' \
-            'このユーザーの権限にて各処理が実行されます。',
+            "Google Workspaceでユーザーに対する管理権限のあるアカウントを指定します。" \
+            "このユーザーの権限にて各処理が実行されます。",
           type: :string,
           required: true,
-          placeholder: 'admin@google.example.jp',
+          placeholder: "admin@google.example.jp",
         }, {
           name: :json_key,
-          label: 'JSONキー',
+          label: "JSONキー",
           description:
-            'Google Workspaceで作成したサービスアカウントのキーを貼り付けます。' \
-            'ドメイン全体の委任が有効でなければなりません。',
+            "Google Workspaceで作成したサービスアカウントのキーを貼り付けます。" \
+            "ドメイン全体の委任が有効でなければなりません。",
           type: :text,
           rows: 20,
           required: true,
@@ -70,7 +70,7 @@ module Yuzakan
         # set a password
         set_password(user, password)
         response = service.insert_user(user)
-        if ['/教員', '/職員'].include?(user.org_unit_path)
+        if ["/教員", "/職員"].include?(user.org_unit_path)
           member = Google::Apis::AdminDirectoryV1::Member.new(email: user.primary_email)
           service.insert_member("classroom_teachers@#{@params[:domain]}", member)
         end
@@ -93,9 +93,9 @@ module Yuzakan
       def user_delete(username)
         email = "#{username}@#{@params[:domain]}"
         user = service.get_user(email)
-        raise 'ユーザーが存在しません。' if user.nil?
+        raise "ユーザーが存在しません。" if user.nil?
 
-        raise 'このシステムで、管理者を削除することはできません。' if user.is_admin?
+        raise "このシステムで、管理者を削除することはできません。" if user.is_admin?
 
         # service.delete_user(email)
       end
@@ -107,9 +107,9 @@ module Yuzakan
       def user_change_password(username, password)
         email = "#{username}@#{@params[:domain]}"
         user = service.get_user(email)
-        raise 'ユーザーが存在しません。' if user.nil?
+        raise "ユーザーが存在しません。" if user.nil?
 
-        raise 'このシステムで、管理者のパスワードを変更することはできません。' if user.is_admin?
+        raise "このシステムで、管理者のパスワードを変更することはできません。" if user.is_admin?
 
         user = Google::Apis::AdminDirectoryV1::User.new
         set_password(user, password)
@@ -130,14 +130,14 @@ module Yuzakan
       def user_unlock(username, password = nil)
         email = "#{username}@#{@params[:domain]}"
         user = service.get_user(email)
-        raise 'ユーザーが存在しません。' if user.nil?
+        raise "ユーザーが存在しません。" if user.nil?
 
-        raise 'このシステムで、管理者をアンロックすることはできません。' if user.is_admin?
+        raise "このシステムで、管理者をアンロックすることはできません。" if user.is_admin?
 
         # ロックされていないユーザーはそのまま無視して、nilを返す。
         return unless user.suspended?
 
-        raise 'このシステムでは、無効状態を解除できません。' if user.suspension_reason != 'ADMIN'
+        raise "このシステムでは、無効状態を解除できません。" if user.suspension_reason != "ADMIN"
 
         user = Google::Apis::AdminDirectoryV1::User.new(
           suspended: false)
@@ -156,7 +156,7 @@ module Yuzakan
                                         page_token: next_page_token)
           users.concat(response.users
             .map(&:primary_email)
-            .map { |email| email.split('@', 2) }
+            .map { |email| email.split("@", 2) }
             .select { |_name, domain| domain == @params[:domain] }
             .map(&:first))
           next_page_token = response.next_page_token
@@ -167,7 +167,7 @@ module Yuzakan
 
       def user_search(query)
         query_str = query.dup
-        query_str.delete!('*?')
+        query_str.delete!("*?")
         query_str.gsub!("'", "\\'")
         query_str = "'#{query_str}'"
 
@@ -181,7 +181,7 @@ module Yuzakan
                                         page_token: next_page_token)
           users.concat(response.users
             .map(&:primary_email)
-            .map { |email| email.split('@', 2) }
+            .map { |email| email.split("@", 2) }
             .select { |_name, domain| domain == @params[:domain] }
             .map(&:first))
           next_page_token = response.next_page_token
@@ -226,15 +226,15 @@ module Yuzakan
       # slappasswd -h '{CRYPT}' -c '$1$%.8s'
       # $1$vuIZLw8r$d9mkddv58FuCPxOh6nO8f0
       private def generate_password(password)
-        salt = SecureRandom.base64(12).gsub('+', '.')
-        password.crypt('$1$%.8s' % salt)
+        salt = SecureRandom.base64(12).gsub("+", ".")
+        password.crypt("$1$%.8s" % salt)
       end
 
       private def normalize_user(user)
         return if user.nil?
 
         data = {
-          username: user.primary_email.split('@').first,
+          username: user.primary_email.split("@").first,
           display_name: user.name.full_name,
           email: user.primary_email,
           locked: user.suspended?,
@@ -243,7 +243,7 @@ module Yuzakan
         }
 
         JSON.parse(user.to_json).each do |key, value|
-          if key == 'name'
+          if key == "name"
             value.each do |name_key, name_value|
               data["name.#{name_key}"] = name_value
             end
@@ -257,12 +257,12 @@ module Yuzakan
 
       private def specialize_user(attrs)
         name = Google::Apis::AdminDirectoryV1::UserName.new(
-          given_name: attrs['name.givenName'],
-          family_name: attrs['name.familyName'])
+          given_name: attrs["name.givenName"],
+          family_name: attrs["name.familyName"])
         user = Google::Apis::AdminDirectoryV1::User.new(
           primary_email: "#{attrs[:name]}@#{@params[:domain]}",
           name: name)
-        user.org_unit_path = attrs['orgUnitPath'] if attrs['orgUnitPath']
+        user.org_unit_path = attrs["orgUnitPath"] if attrs["orgUnitPath"]
 
         user
       end
@@ -273,7 +273,7 @@ module Yuzakan
       # TODO: 次回ログイン時は選べるようにしておく。
       private def set_password(user, password)
         user.password = generate_password(password)
-        user.hash_function = 'crypt'
+        user.hash_function = "crypt"
         user.change_password_at_next_login = true
       end
 

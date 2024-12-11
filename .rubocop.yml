@@ -1,5 +1,10 @@
+require:
+  - rubocop-capybara
+  - rubocop-rake
+  - rubocop-rspec
+
 AllCops:
-  TargetRubyVersion: 2.7
+  TargetRubyVersion: 3.3
   NewCops: enable
 
 Layout/LineLength:
@@ -90,22 +95,26 @@ Style/FormatString:
   EnforcedStyle: percent
 Style/FrozenStringLiteralComment:
   EnforcedStyle: always
+Style/Lambda:
+  EnforcedStyle: literal
 Style/MultilineBlockChain:
   Enabled: false
 Style/NumericLiterals:
   MinDigits: 7
 Style/OneLineConditional:
   Enabled: false
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+Style/SpecialGlobalVars:
+  EnforcedStyle: use_perl_names
+Style/SymbolArray:
+  MinSize: 8
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: consistent_comma
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: consistent_comma
 Style/RescueStandardError:
   EnforcedStyle: implicit
-Style/SpecialGlobalVars:
-  EnforcedStyle: use_perl_names
-Style/SymbolArray:
-  MinSize: 8
 Style/WordArray:
   MinSize: 8
 Style/DoubleNegation:
@@ -119,3 +128,13 @@ Lint/EmptyBlock:
 Bundler/OrderedGems:
   Enabled: false
 
+RSpec/ExampleLength:
+  Enabled: false
+RSpec/MultipleExpectations:
+  Enabled: false
+RSpec/NamedSubject:
+  Enabled: false
+RSpec/SpecFilePathFormat:
+  IgnoreMethods: true
+  CustomTransform:
+    Yuzakan: .

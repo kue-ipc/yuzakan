@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './set_attr'
+require_relative "set_attr"
 
 module Api
   module Controllers

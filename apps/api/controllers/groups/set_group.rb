@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './entity_group'
+require_relative "entity_group"
 
 module Api
   module Controllers

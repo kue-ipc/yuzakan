@@ -54,10 +54,10 @@
 # member_remove(groupname, username) -> bool [writable]
 #
 
-require 'logger'
+require "logger"
 
-require_relative 'abstract_adapter/param_type'
-require_relative '../utils/hash_array'
+require_relative "abstract_adapter/param_type"
+require_relative "../utils/hash_array"
 
 module Yuzakan
   module Adapters

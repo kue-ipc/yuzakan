@@ -3,7 +3,7 @@
 RSpec.describe Api::Controllers::Attrs::Create, type: :action do
   init_controller_spec
   let(:action_opts) { {attr_repository: attr_repository, provider_repository: provider_repository} }
-  let(:format) { 'application/json' }
+  let(:format) { "application/json" }
   let(:action_params) {
     {
       **attr_attributes.except(:id),
@@ -11,23 +11,23 @@ RSpec.describe Api::Controllers::Attrs::Create, type: :action do
     }
   }
 
-  it 'is failure' do
+  it "is failure" do
     response = action.call(params)
     expect(response[0]).to eq 403
-    expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+    expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
     json = JSON.parse(response[2].first, symbolize_names: true)
-    expect(json).to eq({code: 403, message: 'Forbidden'})
+    expect(json).to eq({code: 403, message: "Forbidden"})
   end
 
-  describe 'admin' do
+  describe "admin" do
     let(:user) { User.new(**user_attributes, clearance_level: 5) }
-    let(:client) { '127.0.0.1' }
+    let(:client) { "127.0.0.1" }
 
-    it 'is successful' do
+    it "is successful" do
       response = action.call(params)
       expect(response[0]).to eq 201
-      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
-      expect(response[1]['Content-Location']).to eq "/api/attrs/#{attr_with_mappings.name}"
+      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response[1]["Content-Location"]).to eq "/api/attrs/#{attr_with_mappings.name}"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         **attr_attributes.except(:id),
@@ -35,11 +35,11 @@ RSpec.describe Api::Controllers::Attrs::Create, type: :action do
       })
     end
 
-    it 'is successful without order param' do
+    it "is successful without order param" do
       response = action.call(params.except(:order))
       expect(response[0]).to eq 201
-      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
-      expect(response[1]['Content-Location']).to eq "/api/attrs/#{attr_with_mappings.name}"
+      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response[1]["Content-Location"]).to eq "/api/attrs/#{attr_with_mappings.name}"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         **attr_attributes.except(:id),
@@ -47,136 +47,136 @@ RSpec.describe Api::Controllers::Attrs::Create, type: :action do
       })
     end
 
-    it 'is failure with bad name pattern' do
-      response = action.call({**params, name: '!'})
+    it "is failure with bad name pattern" do
+      response = action.call({**params, name: "!"})
       expect(response[0]).to eq 400
-      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         code: 400,
-        message: 'Bad Request',
-        errors: [{name: ['名前付けの規則に違反しています。']}],
+        message: "Bad Request",
+        errors: [{name: ["名前付けの規則に違反しています。"]}],
       })
     end
 
-    it 'is failure with name over' do
-      response = action.call({**params, name: 'a' * 256})
+    it "is failure with name over" do
+      response = action.call({**params, name: "a" * 256})
       expect(response[0]).to eq 400
-      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         code: 400,
-        message: 'Bad Request',
-        errors: [{name: ['サイズが255を超えてはいけません。']}],
+        message: "Bad Request",
+        errors: [{name: ["サイズが255を超えてはいけません。"]}],
       })
     end
 
-    it 'is failure with name over' do
+    it "is failure with name over" do
       response = action.call({**params, name: 1})
       expect(response[0]).to eq 400
-      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         code: 400,
-        message: 'Bad Request',
-        errors: [{name: ['文字列を入力してください。']}],
+        message: "Bad Request",
+        errors: [{name: ["文字列を入力してください。"]}],
       })
     end
 
-    it 'is failure with bad mapping params' do
+    it "is failure with bad mapping params" do
       response = action.call({
         **params,
         mappings: [
-          {provider: '', name: 'attr1_1', conversion: nil},
-          {name: 'attr1_2', conversion: 'e2j'},
+          {provider: "", name: "attr1_1", conversion: nil},
+          {name: "attr1_2", conversion: "e2j"},
         ],
       })
       expect(response[0]).to eq 400
-      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         code: 400,
-        message: 'Bad Request',
+        message: "Bad Request",
         errors: [{
           mappings: {
-            '0': {provider: ['入力が必須です。'], key: ['存在しません。']},
-            '1': {provider: ['存在しません。'], key: ['存在しません。']},
+            "0": {provider: ["入力が必須です。"], key: ["存在しません。"]},
+            "1": {provider: ["存在しません。"], key: ["存在しません。"]},
           },
         }],
       })
     end
 
-    it 'is failure without params' do
+    it "is failure without params" do
       response = action.call(env)
       expect(response[0]).to eq 400
-      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
         code: 400,
-        message: 'Bad Request',
-        errors: [{name: ['存在しません。'], type: ['存在しません。']}],
+        message: "Bad Request",
+        errors: [{name: ["存在しません。"], type: ["存在しません。"]}],
       })
     end
 
-    describe 'existed name' do
-      let(:attr_repository) { instance_double('AttrRepository', **attr_repository_stubs, exist_by_name?: true) }
+    describe "existed name" do
+      let(:attr_repository) { instance_double(AttrRepository, **attr_repository_stubs, exist_by_name?: true) }
 
-      it 'is failure' do
+      it "is failure" do
         response = action.call(params)
         expect(response[0]).to eq 422
-        expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+        expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
         expect(json).to eq({
           code: 422,
-          message: 'Unprocessable Entity',
-          errors: [{name: ['重複しています。']}],
+          message: "Unprocessable Entity",
+          errors: [{name: ["重複しています。"]}],
         })
       end
 
-      it 'is failure with bad name pattern' do
-        response = action.call({**params, name: '!'})
+      it "is failure with bad name pattern" do
+        response = action.call({**params, name: "!"})
         expect(response[0]).to eq 400
-        expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+        expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
         expect(json).to eq({
           code: 400,
-          message: 'Bad Request',
-          errors: [{name: ['名前付けの規則に違反しています。']}],
+          message: "Bad Request",
+          errors: [{name: ["名前付けの規則に違反しています。"]}],
         })
       end
     end
 
-    describe 'not found provider' do
+    describe "not found provider" do
       # provider1のみない
       let(:providers) {
         providers_attributes
-          .reject { |attributes| attributes[:name] == 'provider1' }
+          .reject { |attributes| attributes[:name] == "provider1" }
           .map { |attributes| Provider.new(attributes) }
       }
 
-      it 'is failure' do
+      it "is failure" do
         response = action.call(params)
         expect(response[0]).to eq 422
-        expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+        expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
         expect(json).to eq({
           code: 422,
-          message: 'Unprocessable Entity',
-          errors: [{mappings: {'1': {provider: ['見つかりません。']}}}],
+          message: "Unprocessable Entity",
+          errors: [{mappings: {"1": {provider: ["見つかりません。"]}}}],
         })
       end
     end
   end
 
-  describe 'no login session' do
+  describe "no login session" do
     let(:session) { {uuid: uuid} }
 
-    it 'is error' do
+    it "is error" do
       response = action.call(params)
       expect(response[0]).to eq 401
-      expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
+      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
-      expect(json).to eq({code: 401, message: 'Unauthorized'})
+      expect(json).to eq({code: 401, message: "Unauthorized"})
     end
   end
 end

@@ -12,7 +12,7 @@
 # x = 3
 
 # `import("./rb_hyperapp.js")`
-JS.import('./rb_hyperapp.js').__await__
+JS.import("./rb_hyperapp.js").__await__
 
 # require 'test_opal2'
 # puts 'hello opal!!!'

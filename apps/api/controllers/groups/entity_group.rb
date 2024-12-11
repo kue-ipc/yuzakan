@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './interactor_group'
+require_relative "interactor_group"
 
 module Api
   module Controllers

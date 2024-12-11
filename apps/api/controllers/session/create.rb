@@ -37,7 +37,7 @@ module Api
         def call(params)
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
-          halt_json 403, errors: [I18n.t('session.errors.deny_network')] unless current_network.trusted
+          halt_json 403, errors: [I18n.t("session.errors.deny_network")] unless current_network.trusted
 
           redirect_to_json routes.path(:session), status: 303 if current_user
 
@@ -52,29 +52,29 @@ module Api
           # 10 minutes
           @auth_log_repository.recent_by_username(params[:username], 600).each do |auth_log|
             case auth_log.result
-            when 'success', 'recover'
+            when "success", "recover"
               break
-            when 'failure'
+            when "failure"
               failure_count += 1
             end
           end
 
           if failure_count >= 5
-            @auth_log_repository.create(**auth_log_params, result: 'reject')
-            halt_json 403, errors: [I18n.t('session.errors.too_many_failure')]
+            @auth_log_repository.create(**auth_log_params, result: "reject")
+            halt_json 403, errors: [I18n.t("session.errors.too_many_failure")]
           end
 
           auth_result = ProviderAuthenticate.new(provider_repository: @provider_repository).call(params)
 
           if auth_result.failure?
-            @auth_log_repository.create(**auth_log_params, result: 'error')
+            @auth_log_repository.create(**auth_log_params, result: "error")
             halt_json 500, errors: auth_result.errors
           end
 
           provider = auth_result.provider
           if provider.nil?
-            @auth_log_repository.create(**auth_log_params, result: 'failure')
-            halt_json 422, errors: [I18n.t('session.errors.incorrect')]
+            @auth_log_repository.create(**auth_log_params, result: "failure")
+            halt_json 422, errors: [I18n.t("session.errors.incorrect")]
           end
 
           @auth_log_repository.create(**auth_log_params, result: "success:#{provider.name}")
@@ -93,14 +93,14 @@ module Api
 
           # 使用禁止を確認
           if user.prohibited
-            @auth_log_repository.create(**auth_log_params, result: 'prohibited')
-            halt_json 403, errors: [I18n.t('session.errors.prohibited')]
+            @auth_log_repository.create(**auth_log_params, result: "prohibited")
+            halt_json 403, errors: [I18n.t("session.errors.prohibited")]
           end
 
           # クリアランスレベルを確認
           if user.clearance_level.zero?
-            @auth_log_repository.create(**auth_log_params, result: 'no_clearance')
-            halt_json 403, errors: [I18n.t('session.errors.no_clearance')]
+            @auth_log_repository.create(**auth_log_params, result: "no_clearance")
+            halt_json 403, errors: [I18n.t("session.errors.no_clearance")]
           end
 
           # セッション情報を保存

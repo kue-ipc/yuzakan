@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'hanami/action/cache'
+require "hanami/action/cache"
 
 module Web
   module Controllers
@@ -20,7 +20,7 @@ module Web
 
         def call(params)
           unless params.get(:agreement)
-            flash[:failure] = '同意がありません。'
+            flash[:failure] = "同意がありません。"
             redirect_to routes.path(:google)
           end
 
@@ -33,14 +33,14 @@ module Web
 
           if result.failure?
             flash[:errors] = result.errors
-            flash[:failure] = 'Google アカウント の作成に失敗しました。'
+            flash[:failure] = "Google アカウント の作成に失敗しました。"
             redirect_to routes.path(:google)
           end
 
           @user = result.user_datas[provider.name]
           @password = result.password
 
-          flash[:success] = 'Google アカウント を作成しました。'
+          flash[:success] = "Google アカウント を作成しました。"
         end
       end
     end

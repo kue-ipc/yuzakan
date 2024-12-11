@@ -1,3 +1,3 @@
 # frozen_string_literal: true
 
-root to: ->(_env) { [200, {}, ['']] }
+root to: ->(_env) { [200, {}, [""]] }

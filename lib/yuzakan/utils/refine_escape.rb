@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'hanami/utils/escape'
+require "hanami/utils/escape"
 
 module Yuzakan
   module Utils
@@ -15,9 +15,9 @@ module Yuzakan
 
       def self.json_chars
         @json_chars ||= {
-          '&' => '\u0026',
-          '>' => '\u003e',
-          '<' => '\u003c',
+          "&" => '\u0026',
+          ">" => '\u003e',
+          "<" => '\u003c',
           "\u2028" => '\u2028',
           "\u2029" => '\u2029',
         }

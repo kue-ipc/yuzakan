@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'ipaddr'
+require "ipaddr"
 
 class Network < Hanami::Entity
   attr_reader :ipaddr

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../../../../lib/yuzakan/validators/update_config_validator'
-require_relative '../../../../lib/yuzakan/validators/create_provider_validator'
-require_relative '../../../../lib/yuzakan/validators/create_attr_validator'
+require_relative "../../../../lib/yuzakan/validators/update_config_validator"
+require_relative "../../../../lib/yuzakan/validators/create_provider_validator"
+require_relative "../../../../lib/yuzakan/validators/create_attr_validator"
 
 module Admin
   module Controllers
@@ -63,7 +63,7 @@ module Admin
 
           unless params.valid?
             flash[:errors] << params.errors
-            flash[:error] = 'ファイルが選択されていません。'
+            flash[:error] = "ファイルが選択されていません。"
             self.body = Admin::Views::Config::Edit.render(exposures)
             return
           end
@@ -71,16 +71,16 @@ module Admin
           import_yaml(params[:import][:yaml])
 
           unless flash[:errors].empty?
-            flash[:failure] = 'インポートに失敗しました。'
+            flash[:failure] = "インポートに失敗しました。"
             self.body = Admin::Views::Config::Edit.render(exposures)
             return
           end
 
-          flash[:success] = 'インポートに成功しました。'
+          flash[:success] = "インポートに成功しました。"
           redirect_to routes.path(:edit_config)
         rescue => e
           Hanami.logger.error e
-          flash[:failure] = 'インポートに失敗しました。'
+          flash[:failure] = "インポートに失敗しました。"
           flash[:errors] << e.message
           self.body = Admin::Views::Config::Edit.render(exposures)
         end
@@ -103,7 +103,7 @@ module Admin
           validate_result = YamlValidator.new(data).validate
           if validate_result.failure?
             flash[:errors] << {file: validate_result.messages}
-            raise 'インポートするファイルのパラメーターが不正です。'
+            raise "インポートするファイルのパラメーターが不正です。"
           end
           validate_result.output
         end
@@ -121,7 +121,7 @@ module Admin
         def update_config(config_data)
           @config_repository.current_update(config_data)
         rescue
-          flash[:errors] << '全体設定の設定に失敗しました。'
+          flash[:errors] << "全体設定の設定に失敗しました。"
           raise
         end
 
@@ -150,7 +150,7 @@ module Admin
             @provider_repository.delete(provider.id)
           end
         rescue
-          flash[:errors] << 'プロバイダーの設定に失敗しました。'
+          flash[:errors] << "プロバイダーの設定に失敗しました。"
           raise
         end
 
@@ -197,7 +197,7 @@ module Admin
             @attr_repository.create_with_mappings(data)
           end
         rescue
-          flash[:errors] << '属性の設定に失敗しました。'
+          flash[:errors] << "属性の設定に失敗しました。"
           raise
         end
       end

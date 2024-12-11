@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './entity_provider'
+require_relative "entity_provider"
 
 module Api
   module Controllers
