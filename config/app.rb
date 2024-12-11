@@ -6,15 +6,16 @@ require "hanami"
 ENV["COFFEESCRIPT_SOURCE_PATH"] ||= File.expand_path(
   "../node_modules/coffeescript/lib/coffeescript-browser-compiler-legacy/coffeescript.js", __dir__)
 
-# i18n
-I18n.load_path << Dir["#{File.expand_path('locales', __dir__)}/*.yml"]
-I18n.default_locale = :ja
-
 # Sequel timezone
 Sequel.application_timezone = :local
 
+# i18n
+require "i18n"
+I18n.load_path << Dir["#{File.expand_path('locales', __dir__)}/*.yml"]
+I18n.default_locale = :ja
+
 # Adapter
-requrie_relative "../lib/yuzakan/adapters"
+require_relative "../lib/yuzakan/adapters"
 ADAPTERS_MANAGER = Yuzakan::Adapters::Manager.new
 
 module Yuzakan
