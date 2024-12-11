@@ -2,71 +2,102 @@
 
 module Yuzakan
   class Routes < Hanami::Routes
-    root to: "home#index"
-    resource "user", only: [:show] do
-      resource "password", only: [:edit, :update]
-    end
-    get "/about", to: "about#index", as: :about
-    get "/about/browser", to: "about#browser", as: :about_browser
-    resource "google", only: [:show, :create, :destroy] do
-      resource "code", only: [:create]
-      resource "password", only: [:create]
-      resource "lock", only: [:destroy]
-    end
-    resources "providers", only: [:show]
-    resource "password", only: [:edit]
+    root to: "home.index"
 
-    slice :api, at: "/admin" do
-      root to: "home#index"
-      resource :config, only: [:show, :new, :create, :edit, :update]
-      put "config", to: "config#replace", as: :config
-      resources :providers, only: [:index, :show] do
-        member do
-          get "export"
-        end
-      end
-      resources :attrs, only: [:index]
-      resources :users, only: [:index, :show] do
-        collection do
-          get "export"
-        end
-      end
-      resources :groups, only: [:index, :show] do
-        collection do
-          get "export"
-        end
-      end
+    get "/user", to: "user.show"
+    get "/user/password/edit", to: "user/password.edit"
+    patch "/user/password", to: "user/password.update"
+
+    get "/about", to: "about.index", as: :about
+    get "/about/browser", to: "about.browser", as: :about_browser
+
+    # TODO: providerで汎用化
+    # resource "google", only: [:show, :create, :destroy] do
+    #   resource "code", only: [:create]
+    #   resource "password", only: [:create]
+    #   resource "lock", only: [:destroy]
+    # end
+    get "/providers/:id", to: "providers.show"
+    get "/password/edit", to: "password.edit"
+
+    slice :admin, at: "/admin" do
+      root to: "home.index"
+
+      get "/config", to: "config.show"
+      get "/config/new", to: "config.new"
+      get "/config/edit", to: "config.edit"
+      post "/config", to: "config.create"
+      patch "/config", to: "config.update"
+      put "/config", to: "config.replace", as: "config"
+
+      get "/providers", to: "providers.index"
+      get "/providers/:id", to: "providers.show"
+      get "/providers/:id/export", to: "providers.export"
+
+      get "/attrs", to: "attrs.index"
+
+      get "/users", to: "users.index"
+      get "/users/:id", to: "users.index"
+      get "/users/:id/export", to: "users.export"
+
+      get "/groups", to: "groups.index"
+      get "/groups/:id", to: "groups.index"
+      get "/groups/:id/export", to: "groups.export"
     end
 
     slice :api, at: "/api" do
-      resources :adapters, only: [:index, :show]
-      resources :attrs, only: [:index, :show, :create, :update, :destroy]
-      resource :self, only: [:show] do
-        resource :password, only: [:update]
-        resources :providers, only: [:show, :create, :destroy] do
-          resource :password, only: [:create]
-          resource :code, only: [:create]
-          resource :lock, only: [:destroy]
-        end
-      end
-      resources :providers, only: [:index, :show, :create, :update, :destroy] do
-        member do
-          get :check
-        end
-      end
-      resource :session, only: [:show, :create, :destroy]
-      resources :users, only: [:index, :show, :create, :update, :destroy] do
-        resource :password, only: [:create]
-        resource :lock, only: [:create, :destroy]
-      end
-      resources :groups, only: [:index, :show, :update] do
-        resources :members, only: [:index, :update, :destroy]
-      end
-      resource :system, only: [:show]
-      resources :menus, only: [:index]
+      get "/adapters", to: "adapters.index"
+      get "/adapters/:id", to: "adapters.show"
+
+      get "/attrs", to: "attrs.index"
+      get "/attrs/:id", to: "attrs.show"
+      post "/attrs", to: "attrs.create"
+      patch "/attrs/:id", to: "attrs.update"
+      delete "/attrs/:id", to: "attrs.destroy"
+
+      # TODO: わけずにユーザーの処理にする
+      # resource :self, only: [:show] do
+      #   resource :password, only: [:update]
+      #   resources :providers, only: [:show, :create, :destroy] do
+      #     resource :password, only: [:create]
+      #     resource :code, only: [:create]
+      #     resource :lock, only: [:destroy]
+      #   end
+      # end
+
+      get "/providers", to: "providers.index"
+      get "/providers/:id", to: "providers.show"
+      post "/providers", to: "providers.create"
+      patch "/providers/:id", to: "providers.update"
+      delete "/providers/:id", to: "providers.destroy"
+      get "/providers/:id/check", to: "providers.check"
+
+      get "/session", to: "session.show"
+      post "/session", to: "session.create"
+      delete "/session", to: "session.destroy"
+
+      get "/users", to: "users.index"
+      get "/users/:id", to: "users.show"
+      post "/users", to: "users.create"
+      patch "/users/:id", to: "users.update"
+      delete "/users/:id", to: "users.destroy"
+      post "/users/:id/password", to: "users/password.create"
+      post "/users/:id/lock", to: "users/lock.create"
+      delete "/users/:id/lock", to: "users/lock.destroy"
+
+      get "/groups", to: "groups.index"
+      get "/groups/:id", to: "groups.show"
+      patch "/groups/:id", to: "groups.update"
+      get "/groups/:id/members", to: "groups/members.index"
+      patch "/groups/:id/members/:user_id", to: "groups/members.update"
+      delete "/groups/:id/members/:user_id", to: "groups/members.destroy"
+
+      get "/system", to: "system.show"
+
+      get "/menus", to: "menus.index"
     end
 
-    slice :api, at: "/vendor" do
+    slice :vendor, at: "/vendor" do
       root to: ->(_env) { [200, {}, [""]] }
     end
   end
