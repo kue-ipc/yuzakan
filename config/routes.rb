@@ -4,21 +4,8 @@ module Yuzakan
   class Routes < Hanami::Routes
     root to: "home.index"
 
-    # get "/user", to: "user.show"
-    # get "/user/password/edit", to: "user/password.edit"
-    # patch "/user/password", to: "user/password.update"
-
     get "/about", to: "about.index", as: :about
     get "/about/browser", to: "about.browser", as: :about_browser
-
-    # TODO: providerで汎用化
-    # resource "google", only: [:show, :create, :destroy] do
-    #   resource "code", only: [:create]
-    #   resource "password", only: [:create]
-    #   resource "lock", only: [:destroy]
-    # end
-    get "/providers/:id", to: "providers.show"
-    get "/password/edit", to: "password.edit"
 
     slice :admin, at: "/admin" do
       root to: "home.index"
@@ -102,6 +89,19 @@ module Yuzakan
     end
 
     slice :user, at: "/user" do
+      root to: "home.index"
+      # get "/user", to: "user.show"
+
+      get "/password", to: "user/password.show"
+      patch "/password", to: "user/password.update"
+      # TODO: providerで汎用化
+      # resource "google", only: [:show, :create, :destroy] do
+      #   resource "code", only: [:create]
+      #   resource "password", only: [:create]
+      #   resource "lock", only: [:destroy]
+      # end
+      get "/providers/:id", to: "providers.show"
+      get "/home", to: "home.index"
     end
   end
 end
