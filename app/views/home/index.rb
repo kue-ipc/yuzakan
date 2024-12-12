@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
-module Web
+module Yuzakan
   module Views
     module Home
-      class Index
-        include Web::View
-
+      class Index < Yuzakan::View
         def menu_items
           []
           # [

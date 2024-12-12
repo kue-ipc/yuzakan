@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
-module Web
+module Yuzakan
   module Views
-    module About
-      class Index
-        include Web::View
+    module Home
+      class Index < Yuzakan::View
       end
     end
   end

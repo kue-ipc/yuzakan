@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module Web
+module Yuzakan
   module Views
     module Home
-      class Login
+      class Login < Yuzakan::View
         include Web::View
         layout false
       end

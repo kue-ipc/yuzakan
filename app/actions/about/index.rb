@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
-module Web
-  module Controllers
+module Yuzakan
+  module Actions
     module About
-      class Index
-        include Web::Action
-
+      class Index < Yuzakan::Action
         accept :html
         security_level 0
 
-        def call(params)
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
         end
 
         def configurate!

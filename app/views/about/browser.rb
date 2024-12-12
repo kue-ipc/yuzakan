@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
-module Web
+module Yuzakan
   module Views
-    module About
-      class Browser
-        include Web::View
-
+    module Home
+      class Browser < Yuzakan::View
         def supported_browsers
           [
             {

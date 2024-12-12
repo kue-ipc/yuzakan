@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
-module Web
-  module Controllers
+module Yuzakan
+  module Actions
     module Home
-      class Index
-        include Web::Action
-
+      class Index < Yuzakan::Action
         accept :html
         security_level 0
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           self.body = Web::Views::Home::Login.render(exposures) unless authenticated?
         end
       end

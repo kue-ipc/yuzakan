@@ -102,5 +102,6 @@ module Yuzakan
       # end
       get "/providers/:id", to: "providers.show", as: :provider
     end
+    get "/home/:id", to: "home.show"
   end
 end
