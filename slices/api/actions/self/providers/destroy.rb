@@ -5,7 +5,6 @@ module API
     module Self
       module Providers
         class Destroy < API::Action
-
           def call(_params)
             self.body = "OK"
           end

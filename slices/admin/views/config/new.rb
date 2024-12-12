@@ -4,7 +4,6 @@ module Admin
   module Views
     module Config
       class New < Admin::View
-
         def form
           Form.new(
             :config,

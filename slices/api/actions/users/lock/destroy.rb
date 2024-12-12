@@ -5,7 +5,6 @@ module API
     module Users
       module Lock
         class Destroy < API::Action
-
           security_level 3
 
           class Params < Hanami::Action::Params

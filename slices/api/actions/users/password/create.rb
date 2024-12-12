@@ -5,7 +5,6 @@ module API
     module Users
       module Password
         class Create < API::Action
-
           security_level 3
 
           class Params < Hanami::Action::Params

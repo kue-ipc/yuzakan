@@ -4,7 +4,6 @@ module Admin
   module Views
     module Home
       class Index < Admin::View
-
         MENU_ITEMS =
           [
             {

@@ -5,7 +5,6 @@ module API
     module Self
       module Password
         class Update < API::Action
-
           class Params < Hanami::Action::Params
             predicates NamePredicates
             messages :i18n

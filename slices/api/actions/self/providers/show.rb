@@ -5,7 +5,6 @@ module API
     module Self
       module Providers
         class Show < API::Action
-
           def call(_params)
             self.body = "OK"
           end

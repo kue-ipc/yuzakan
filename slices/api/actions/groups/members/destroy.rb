@@ -5,8 +5,7 @@ module API
     module Groups
       module Members
         class Destroy < API::Action
-
-          def call(_params)
+          def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
             self.body = "OK"
           end
         end

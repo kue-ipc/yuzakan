@@ -6,7 +6,6 @@ module Admin
   module Views
     module Providers
       class Export < Admin::View
-
         format :jsonl
 
         def render

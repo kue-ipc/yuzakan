@@ -6,7 +6,6 @@ module API
       module Providers
         module Lock
           class Destroy < API::Action
-
             def call(_params)
               self.body = "OK"
             end

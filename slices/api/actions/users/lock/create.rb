@@ -5,7 +5,6 @@ module API
     module Users
       module Lock
         class Create < API::Action
-
           security_level 3
 
           class Params < Hanami::Action::Params

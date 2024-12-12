@@ -7,7 +7,6 @@ module API
     module Groups
       module Members
         class Index < API::Action
-
           security_level 2
 
           class Params < Hanami::Action::Params
