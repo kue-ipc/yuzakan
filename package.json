@@ -1,5 +1,9 @@
 {
+  "name": "yuzakan",
+  "private": true,
+  "type": "module",
   "dependencies": {
+    "hanami-assets": "^2.2.1",
     "@hyperapp/dom": "^1.0.0",
     "@hyperapp/events": "^2.0.0",
     "@hyperapp/html": "^2.0.0",
