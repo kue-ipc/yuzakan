@@ -1,4 +1,8 @@
 # frozen_string_literal: true
 
-class ActivityLogRepository < Hanami::Repository
+module Yuzakan
+  module Repos
+    class ActivityLogRepo < Yuzakan::DB::Repo
+    end
+  end
 end
