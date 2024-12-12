@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
-module Web
+module User
   module Views
     module Providers
-      class Show
-        include Web::View
+      class Show < User::View
       end
     end
   end

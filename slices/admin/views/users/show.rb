@@ -3,8 +3,7 @@
 module Admin
   module Views
     module Users
-      class Show
-        include Admin::View
+      class Show < Admin::View
       end
     end
   end

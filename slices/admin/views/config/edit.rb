@@ -3,8 +3,7 @@
 module Admin
   module Views
     module Config
-      class Edit
-        include Admin::View
+      class Edit < Admin::View
 
         def form
           Form.new(

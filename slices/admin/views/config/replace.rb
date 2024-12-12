@@ -3,8 +3,7 @@
 module Admin
   module Views
     module Config
-      class Replace
-        include Admin::View
+      class Replace < Admin::View
       end
     end
   end

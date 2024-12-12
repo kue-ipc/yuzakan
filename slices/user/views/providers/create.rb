@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
-module Web
+module User
   module Views
-    module Google
-      class Create
-        include Web::View
+    module Providers
+      class Create < User::View
       end
     end
   end

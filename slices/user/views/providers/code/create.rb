@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-module Web
+module User
   module Views
-    module Google
+    module Providers
       module Code
-        class Create
-          include Web::View
+        class Create < User::View
         end
       end
     end

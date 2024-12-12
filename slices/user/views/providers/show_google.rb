@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module Web
+module User
   module Views
-    module Google
-      class Show
+    module Providers
+      class Show < User::View
         include Web::View
 
         def available_operations

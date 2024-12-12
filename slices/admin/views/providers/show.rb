@@ -3,8 +3,7 @@
 module Admin
   module Views
     module Providers
-      class Show
-        include Admin::View
+      class Show < Admin::View
       end
     end
   end

@@ -3,8 +3,7 @@
 module Admin
   module Views
     module Config
-      class Create
-        include Admin::View
+      class Create < Admin::View
       end
     end
   end

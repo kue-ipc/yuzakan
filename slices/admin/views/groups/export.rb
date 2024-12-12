@@ -5,8 +5,7 @@ require "json"
 module Admin
   module Views
     module Groups
-      class Export
-        include Admin::View
+      class Export < Admin::View
         format :jsonl
 
         def render

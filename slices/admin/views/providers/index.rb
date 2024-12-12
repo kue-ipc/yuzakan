@@ -3,8 +3,7 @@
 module Admin
   module Views
     module Providers
-      class Index
-        include Admin::View
+      class Index < Admin::View
       end
     end
   end
