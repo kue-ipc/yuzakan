@@ -3,10 +3,6 @@
 module Yuzakan
   module Repos
     class ProviderParamRepo < Yuzakan::DB::Repo
-      associations do
-        belongs_to :provider
-      end
-
       def find_by_provider_and_name(data)
         provider_params
           .where(provider_id: data[:provider_id] || data[:provider].id)

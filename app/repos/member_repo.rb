@@ -3,11 +3,6 @@
 module Yuzakan
   module Repos
     class MemberRepo < Yuzakan::DB::Repo
-      associations do
-        belongs_to :user
-        belongs_to :group
-      end
-
       def find_of_user_group(user, group)
         members.where(user_id: user.id, group_id: group.id).one
       end

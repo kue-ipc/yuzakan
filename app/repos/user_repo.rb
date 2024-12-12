@@ -3,11 +3,6 @@
 module Yuzakan
   module Repos
     class UserRepo < Yuzakan::DB::Repo
-      associations do
-        has_many :members
-        has_many :groups, through: :members
-      end
-
       def ordered_all
         users.order(:name).to_a
       end

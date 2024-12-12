@@ -3,12 +3,6 @@
 module Yuzakan
   module Repos
     class ProviderRepo < Yuzakan::DB::Repo
-      associations do
-        has_many :provider_params
-        has_many :attr_mappings
-        has_many :attrs, throught: :attr_mappings
-      end
-
       def ordered_all
         providers.order(:order, :name).to_a
       end

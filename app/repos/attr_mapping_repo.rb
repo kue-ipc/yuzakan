@@ -3,11 +3,6 @@
 module Yuzakan
   module Repos
     class AttrMappingRepo < Yuzakan::DB::Repo
-      associations do
-        belongs_to :provider
-        belongs_to :attr
-      end
-
       def find_by_provider_attr(provider_id, attr_id)
         attr_mappings.where(provider_id: provider_id)
           .where(attr_id: attr_id)

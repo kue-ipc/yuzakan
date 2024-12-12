@@ -3,11 +3,6 @@
 module Yuzakan
   module Repos
     class AttrRepo < Yuzakan::DB::Repo
-      associations do
-        has_many :attr_mappings
-        has_many :providers, throught: :attr_mappings
-      end
-
       private def by_name(name)
         attrs.where(name: name)
       end
