@@ -50,7 +50,7 @@ namespace :vendor do
   desc "ベンダーファイル生成"
   task build: [:build_js, :build_font, :build_image]
 
-  task build_js: [:build_js_rollup, :build_js_hyperapp, :build_js_opal]
+  task build_js: [:build_js_rollup, :build_js_hyperapp]
 
   task build_js_rollup: ["rollup.config.mjs", "node_modules/.bin/rollup"] do
     sh "npx rollup -c"
@@ -72,36 +72,6 @@ namespace :vendor do
 
   rule %r{^#{js_dir}/@hyperapp/.*\.js$} => ["node_modules/@hyperapp/%n/index.js", "#{js_dir}/@hyperapp"] do |t|
     cp t.source, t.name
-  end
-
-  task build_js_opal: [js_dir] do
-    stdlibs = %w[
-      js
-      native
-    ]
-
-    Tempfile.open do |fp|
-      fp.puts "`Opal`"
-      fp.close
-
-      cmd = %w[
-        opal
-        --no-source-map
-        --no-exit
-        --esm
-        --no-cache
-        --compile
-        --output vendor/assets/javascripts/opal.js
-      ]
-      stdlibs.each do |lib|
-        cmd << "--require"
-        cmd << lib
-      end
-      cmd << "--"
-      cmd << fp.path
-
-      sh(*cmd)
-    end
   end
 
   task build_font: [font_dir] do

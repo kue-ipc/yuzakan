@@ -24,7 +24,6 @@ gem "slim"
 
 gem "sassc"
 
-gem "opal"
 gem "coffee-script"
 gem "terser"
 
