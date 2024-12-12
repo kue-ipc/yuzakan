@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
-module Web
+module User
   module Views
-    module User
-      module Password
-        class Update
-          include Web::View
-        end
+    module Password
+      class Update < User::View
       end
     end
   end
