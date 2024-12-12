@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Api
-  module Controllers
+  module Actions
     module Providers
       module EntityProvider
         def initialize(provider_repository: ProviderRepository.new,

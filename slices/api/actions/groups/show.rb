@@ -3,15 +3,14 @@
 require_relative "set_group"
 
 module Api
-  module Controllers
+  module Actions
     module Groups
-      class Show
-        include Api::Action
+      class Show < API::Action
         include SetGroup
 
         security_level 2
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           self.body = group_json
         end
       end

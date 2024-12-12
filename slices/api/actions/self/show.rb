@@ -3,10 +3,9 @@
 require_relative "../users/entity_user"
 
 module Api
-  module Controllers
+  module Actions
     module Self
-      class Show
-        include Api::Action
+      class Show < API::Action
         include Users::EntityUser
 
         def initialize(provider_repository: ProviderRepository.new,
@@ -15,7 +14,7 @@ module Api
           @provider_repository = provider_repository
         end
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           @name = current_user.name
           load_user
           halt_json 404 unless @user

@@ -3,7 +3,7 @@
 require_relative "interactor_user"
 
 module Api
-  module Controllers
+  module Actions
     module Users
       module EntityUser
         include InteractorUser

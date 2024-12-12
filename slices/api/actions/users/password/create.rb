@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Api
-  module Controllers
+  module Actions
     module Users
       module Password
         class Create
@@ -30,7 +30,7 @@ module Api
             @config_repository ||= config_repository
           end
 
-          def call(params)
+          def handle(_request, _response)
             halt_json 400, errors: [params.errors] unless params.valid?
 
             reset_password = ResetPassword.new(provider_repository: @provider_repository,

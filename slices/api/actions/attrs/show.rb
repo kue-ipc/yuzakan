@@ -3,13 +3,12 @@
 require_relative "set_attr"
 
 module Api
-  module Controllers
+  module Actions
     module Attrs
-      class Show
-        include Api::Action
+      class Show < API::Action
         include SetAttr
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           self.status = 200
           self.body = generate_json(@attr, assoc: current_level >= 2)
         end

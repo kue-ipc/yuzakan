@@ -2,11 +2,10 @@
 
 require "hanami/action/cache"
 
-module Web
-  module Controllers
-    module Google
-      class Show
-        include Web::Action
+module User
+  module Actions
+    module Providers
+      class Show < User::Action
         include Hanami::Action::Cache
 
         cache_control :no_store
@@ -15,7 +14,7 @@ module Web
         expose :google_user
         expose :creatable
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           @google_provider = ProviderRepository.new.first_google_with_adapter
           @google_user = @google_provider.read(current_user.name)
 

@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 module Api
-  module Controllers
+  module Actions
     module Attrs
-      class Create
-        include Api::Action
-
+      class Create < API::Action
         security_level 5
 
         class Params < Hanami::Action::Params
@@ -41,7 +39,7 @@ module Api
           @provider_repository ||= provider_repository
         end
 
-        def call(params)
+        def handle(_request, _response)
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
           halt_json 422, errors: [{name: [I18n.t("errors.uniq?")]}] if @attr_repository.exist_by_name?(params[:name])

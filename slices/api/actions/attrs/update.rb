@@ -3,10 +3,9 @@
 require_relative "set_attr"
 
 module Api
-  module Controllers
+  module Actions
     module Attrs
-      class Update
-        include Api::Action
+      class Update < API::Action
         include SetAttr
 
         security_level 5
@@ -48,7 +47,7 @@ module Api
           @provider_repository ||= provider_repository
         end
 
-        def call(params)
+        def handle(_request, _response)
           change_name = params[:name] && params[:name] != @attr.name
           if change_name && @attr_repository.exist_by_name?(params[:name])
             halt_json 422, errors: [{name: [I18n.t("errors.uniq?")]}]

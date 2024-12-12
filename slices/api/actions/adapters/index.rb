@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 module Api
-  module Controllers
+  module Actions
     module Adapters
-      class Index
-        include Api::Action
-
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+      class Index < API::Action
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           adapters = ADAPTERS_MANAGER.hash.map do |key, value|
             {name: key, label: value.label}
           end.sort_by { |adapter| adapter[:name] }

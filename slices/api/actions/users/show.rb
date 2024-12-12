@@ -3,15 +3,14 @@
 require_relative "set_user"
 
 module Api
-  module Controllers
+  module Actions
     module Users
-      class Show
-        include Api::Action
+      class Show < API::Action
         include SetUser
 
         security_level 2
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           self.body = user_json
         end
       end

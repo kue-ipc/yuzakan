@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Api
-  module Controllers
+  module Actions
     module Attrs
       module SetAttr
         def self.included(action)

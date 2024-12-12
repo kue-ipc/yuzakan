@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Api
-  module Controllers
+  module Actions
     module Self
       module Password
         class Update
@@ -28,7 +28,7 @@ module Api
             @user_notify = user_notify
           end
 
-          def call(params)
+          def handle(_request, _response)
             param_errors = only_first_errors(params.errors)
 
             unless param_errors.key?(:password)

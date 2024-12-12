@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Api
-  module Controllers
+  module Actions
     module Users
       module Lock
         class Create
@@ -24,7 +24,7 @@ module Api
             @provider_repository ||= provider_repository
           end
 
-          def call(params)
+          def handle(_request, _response)
             halt_json 400, errors: [params.errors] unless params.valid?
 
             result = call_interacttor(ProviderLockUser.new(provider_repository: @provider_repository),

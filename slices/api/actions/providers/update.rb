@@ -3,10 +3,9 @@
 require_relative "set_provider"
 
 module Api
-  module Controllers
+  module Actions
     module Providers
-      class Update
-        include Api::Action
+      class Update < API::Action
         include SetProvider
 
         security_level 5
@@ -43,7 +42,7 @@ module Api
           @provider_param_repository ||= provider_param_repository
         end
 
-        def call(params)
+        def handle(_request, _response)
           change_name = params[:name] && params[:name] != @provider.name
           if change_name && @provider_repository.exist_by_name?(params[:name])
             halt_json 422, errors: [{name: [I18n.t("errors.uniq?")]}]

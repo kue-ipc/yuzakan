@@ -3,14 +3,12 @@
 require "digest/md5"
 
 module Api
-  module Controllers
+  module Actions
     module Adapters
-      class Show
-        include Api::Action
-
+      class Show < API::Action
         params IdParams
 
-        def call(params)
+        def handle(_request, _response)
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
           @adapter = ADAPTERS_MANAGER.by_name(params[:id])

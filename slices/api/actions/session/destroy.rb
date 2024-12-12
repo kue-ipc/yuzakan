@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
 module Api
-  module Controllers
+  module Actions
     module Session
-      class Destroy
-        include Api::Action
-
+      class Destroy < API::Action
         security_level 0
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           halt_json 410 unless current_user
 
           self.status = 200

@@ -3,10 +3,9 @@
 require_relative "set_attr"
 
 module Api
-  module Controllers
+  module Actions
     module Attrs
-      class Destroy
-        include Api::Action
+      class Destroy < API::Action
         include SetAttr
 
         security_level 5
@@ -16,7 +15,7 @@ module Api
           @attr_repository ||= attr_repository
         end
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           @attr_repository.delete(@attr.id)
 
           self.status = 200

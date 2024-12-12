@@ -3,7 +3,7 @@
 require_relative "entity_user"
 
 module Api
-  module Controllers
+  module Actions
     module Users
       module SetUser
         include EntityUser

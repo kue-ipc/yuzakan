@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Api
-  module Controllers
+  module Actions
     module Groups
       module InteractorGroup
         def initialize(provider_repository: ProviderRepository.new,

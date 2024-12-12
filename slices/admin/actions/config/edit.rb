@@ -3,16 +3,14 @@
 require "hanami/action/cache"
 
 module Admin
-  module Controllers
+  module Actions
     module Config
-      class Edit
-        include Admin::Action
-
+      class Edit < Admin::Action
         security_level 5
 
         expose :config
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           @config = current_config
         end
       end

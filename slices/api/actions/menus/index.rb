@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 module Api
-  module Controllers
+  module Actions
     module Menus
-      class Index
-        include Api::Action
-
+      class Index < API::Action
         security_level 0
 
         def initialize(provider_repository: ProviderRepository.new,
@@ -14,7 +12,7 @@ module Api
           @provider_repository ||= provider_repository
         end
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           menus = []
 
           if current_level >= 1

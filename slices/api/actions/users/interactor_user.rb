@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Api
-  module Controllers
+  module Actions
     module Users
       module InteractorUser
         USER_BASE_INFO = [:username, :display_name, :email].freeze

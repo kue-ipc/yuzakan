@@ -7,7 +7,7 @@ module Yuzakan
         accept :html
         security_level 0
 
-        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response)
         end
 
         def configurate!

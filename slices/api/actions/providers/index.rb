@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 module Api
-  module Controllers
+  module Actions
     module Providers
-      class Index
-        include Api::Action
-
+      class Index < API::Action
         class Params < Hanami::Action::Params
           predicates NamePredicates
           messages :i18n
@@ -22,7 +20,7 @@ module Api
           @provider_repository ||= provider_repository
         end
 
-        def call(params)
+        def handle(_request, _response)
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
           @providers =

@@ -1,17 +1,15 @@
 # frozen_string_literal: true
 
 module Api
-  module Controllers
+  module Actions
     module Attrs
-      class Index
-        include Api::Action
-
+      class Index < API::Action
         def initialize(attr_repository: AttrRepository.new, **opts)
           super
           @attr_repository ||= attr_repository
         end
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           @attrs = @attr_repository.ordered_all
 
           self.status = 200

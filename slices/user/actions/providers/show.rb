@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
-module Web
-  module Controllers
+module User
+  module Actions
     module Providers
-      class Show
-        include Web::Action
-
-        def call(params)
+      class Show < User::Action
+        def handle(request, response)
         end
       end
     end

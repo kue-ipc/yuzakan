@@ -3,10 +3,9 @@
 require_relative "entity_provider"
 
 module Api
-  module Controllers
+  module Actions
     module Providers
-      class Create
-        include Api::Action
+      class Create < API::Action
         include EntityProvider
 
         security_level 5
@@ -40,7 +39,7 @@ module Api
           @provider_repository ||= provider_repository
         end
 
-        def call(params)
+        def handle(_request, _response)
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
           if @provider_repository.exist_by_name?(params[:name])

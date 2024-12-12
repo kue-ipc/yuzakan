@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 module Admin
-  module Controllers
+  module Actions
     module Providers
-      class Show
-        include Admin::Action
-
+      class Show < Admin::Action
         security_level 5
 
         class Params < Hanami::Action::Params
@@ -24,7 +22,7 @@ module Admin
           @provider_repository = provider_repository
         end
 
-        def call(params)
+        def handle(_request, _response)
           halt 400 unless params.valid?
           name = params[:id].to_s
           halt 404 unless name == "*" || @provider_repository.exist_by_name?(name)

@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 module Api
-  module Controllers
+  module Actions
     module Session
-      class Create
-        include Api::Action
-
+      class Create < API::Action
         security_level 0
 
         class Params < Hanami::Action::Params
@@ -34,7 +32,7 @@ module Api
           @member_repository ||= member_repository
         end
 
-        def call(params)
+        def handle(_request, _response)
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
           halt_json 403, errors: [I18n.t("session.errors.deny_network")] unless current_network.trusted

@@ -3,11 +3,9 @@
 require_relative "../../../../lib/yuzakan/utils/pager"
 
 module Api
-  module Controllers
+  module Actions
     module Groups
-      class Index
-        include Api::Action
-
+      class Index < API::Action
         security_level 2
 
         class Params < Hanami::Action::Params
@@ -51,7 +49,7 @@ module Api
           @provider_repository ||= provider_repository
         end
 
-        def call(params)
+        def handle(_request, _response)
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
           result =

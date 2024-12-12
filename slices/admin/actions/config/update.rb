@@ -3,11 +3,9 @@
 require_relative "../../../../lib/yuzakan/validators/update_config_validator"
 
 module Admin
-  module Controllers
+  module Actions
     module Config
-      class Update
-        include Admin::Action
-
+      class Update < Admin::Action
         security_level 5
 
         class Params < Hanami::Action::Params
@@ -28,7 +26,7 @@ module Admin
           @config_repository ||= config_repository
         end
 
-        def call(params)
+        def handle(_request, _response)
           flash[:errors] ||= []
 
           @config = params[:config] || current_config

@@ -3,10 +3,9 @@
 require_relative "set_user"
 
 module Api
-  module Controllers
+  module Actions
     module Users
-      class Destroy
-        include Api::Action
+      class Destroy < API::Action
         include SetUser
 
         security_level 4
@@ -29,7 +28,7 @@ module Api
           @user_repository ||= user_repository
         end
 
-        def call(params)
+        def handle(_request, _response)
           unless @user.deleted?
             provider_delete_user({username: @name}) unless @user.deleted?
             sync_user({username: @name})

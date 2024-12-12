@@ -2,19 +2,18 @@
 
 require "hanami/action/cache"
 
-module Web
-  module Controllers
-    module Google
+module User
+  module Actions
+    module Providers
       module Code
-        class Create
-          include Web::Action
+        class Create < User::Action
           include Hanami::Action::Cache
 
           cache_control :no_store
 
           expose :codes
 
-          def call(params)
+          def handle(_request, _response)
             provider = ProviderRepository.new.first_google_with_adapter
 
             result = GenerateVerificationCode.new(

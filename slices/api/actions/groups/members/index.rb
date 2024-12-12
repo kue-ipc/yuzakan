@@ -3,7 +3,7 @@
 require_relative "../../../../../lib/yuzakan/utils/pager"
 
 module Api
-  module Controllers
+  module Actions
     module Groups
       module Members
         class Index
@@ -34,7 +34,7 @@ module Api
             @user_repository ||= user_repository
           end
 
-          def call(params)
+          def handle(_request, _response)
             halt_json 400, errors: [params.errors] unless params.valid?
 
             groupname = params[:group_id]

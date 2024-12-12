@@ -3,13 +3,12 @@
 require_relative "set_provider"
 
 module Api
-  module Controllers
+  module Actions
     module Providers
-      class Show
-        include Api::Action
+      class Show < API::Action
         include SetProvider
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           self.status = 200
           self.body = provider_json
         end

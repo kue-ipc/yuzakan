@@ -2,13 +2,11 @@
 
 require "hanami/action/cache"
 
-module Web
-  module Controllers
-    module Google
+module User
+  module Actions
+    module Providers
       module Password
-        class Create
-          include Web::Action
-
+        class Create < User::Action
           include Hanami::Action::Cache
 
           cache_control :no_store
@@ -16,7 +14,7 @@ module Web
           expose :user
           expose :password
 
-          def call(params)
+          def handle(_request, _response)
             provider = ProviderRepository.new.first_google_with_adapter
 
             result = ResetPassword.new(user: current_user,

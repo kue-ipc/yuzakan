@@ -3,7 +3,7 @@
 require_relative "entity_group"
 
 module Api
-  module Controllers
+  module Actions
     module Groups
       module SetGroup
         include EntityGroup

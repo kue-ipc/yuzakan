@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
 module Api
-  module Controllers
+  module Actions
     module Session
-      class Show
-        include Api::Action
-
+      class Show < API::Action
         security_level 0
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           halt_json 404 unless current_user
 
           self.body = generate_json({

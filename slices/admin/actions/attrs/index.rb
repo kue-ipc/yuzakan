@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
 module Admin
-  module Controllers
+  module Actions
     module Attrs
-      class Index
-        include Admin::Action
-
+      class Index < Admin::Action
         security_level 5
 
-        def call(params)
+        def handle(request, response)
         end
       end
     end

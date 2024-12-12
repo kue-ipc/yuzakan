@@ -3,10 +3,9 @@
 require_relative "entity_user"
 
 module Api
-  module Controllers
+  module Actions
     module Users
-      class Create
-        include Api::Action
+      class Create < API::Action
         include EntityUser
 
         security_level 4
@@ -44,7 +43,7 @@ module Api
           @user_repository ||= user_repository
         end
 
-        def call(params)
+        def handle(_request, _response)
           halt_json 400, errors: [params.errors] unless params.valid?
 
           @name = params[:name]

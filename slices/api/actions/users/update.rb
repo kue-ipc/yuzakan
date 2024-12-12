@@ -3,10 +3,9 @@
 require_relative "set_user"
 
 module Api
-  module Controllers
+  module Actions
     module Users
-      class Update
-        include Api::Action
+      class Update < API::Action
         include SetUser
 
         security_level 4
@@ -38,7 +37,7 @@ module Api
 
         params Params
 
-        def call(params)
+        def handle(_request, _response)
           if params[:name] && @user.name != params[:name]
             halt_json 422, errors: {
               name: I18n.t("errors.unchangeable", name: I18n.t("attributes.user.name")),

@@ -2,11 +2,10 @@
 
 require "hanami/action/cache"
 
-module Web
-  module Controllers
-    module Google
-      class Create
-        include Web::Action
+module User
+  module Actions
+    module Providers
+      class Create < User::Action
         include Hanami::Action::Cache
 
         cache_control :no_store
@@ -18,7 +17,7 @@ module Web
         expose :user
         expose :password
 
-        def call(params)
+        def handle(_request, _response)
           unless params.get(:agreement)
             flash[:failure] = "同意がありません。"
             redirect_to routes.path(:google)

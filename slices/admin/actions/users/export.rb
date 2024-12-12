@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
 module Admin
-  module Controllers
+  module Actions
     module Users
-      class Export
-        include Admin::Action
-
+      class Export < Admin::Action
         security_level 5
 
-        def call(params)
+        def handle(request, response)
         end
       end
     end

@@ -3,10 +3,9 @@
 require_relative "set_provider"
 
 module Api
-  module Controllers
+  module Actions
     module Providers
-      class Destroy
-        include Api::Action
+      class Destroy < API::Action
         include SetProvider
 
         security_level 5
@@ -16,7 +15,7 @@ module Api
           @provider_repository ||= provider_repository
         end
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           @provider_repository.delete(@provider.id)
 
           self.status = 200

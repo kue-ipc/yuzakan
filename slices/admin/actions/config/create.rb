@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 module Admin
-  module Controllers
+  module Actions
     module Config
-      class Create
-        include Admin::Action
-
+      class Create < Admin::Action
         security_level 0
 
         class Params < Hanami::Action::Params
@@ -45,7 +43,7 @@ module Admin
           @member_repository ||= member_repository
         end
 
-        def call(params)
+        def handle(_request, _response)
           flash[:errors] ||= []
 
           if configurated?

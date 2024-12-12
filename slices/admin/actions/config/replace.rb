@@ -5,11 +5,9 @@ require_relative "../../../../lib/yuzakan/validators/create_provider_validator"
 require_relative "../../../../lib/yuzakan/validators/create_attr_validator"
 
 module Admin
-  module Controllers
+  module Actions
     module Config
-      class Replace
-        include Admin::Action
-
+      class Replace < Admin::Action
         security_level 5
 
         class Params < Hanami::Action::Params
@@ -56,7 +54,7 @@ module Admin
           @attr_repository ||= attr_repository
         end
 
-        def call(params)
+        def handle(_request, _response)
           flash[:errors] ||= []
 
           @config = current_config

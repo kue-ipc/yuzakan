@@ -1,17 +1,15 @@
 # frozen_string_literal: true
 
 module Admin
-  module Controllers
+  module Actions
     module Config
-      class New
-        include Admin::Action
-
+      class New < Admin::Action
         security_level 0
 
         expose :config
         expose :admin_user
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           flash[:errors] ||= []
 
           if configurated?

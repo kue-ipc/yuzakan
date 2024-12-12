@@ -3,7 +3,7 @@
 require_relative "entity_provider"
 
 module Api
-  module Controllers
+  module Actions
     module Providers
       module SetProvider
         include EntityProvider

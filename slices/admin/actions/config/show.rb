@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 module Admin
-  module Controllers
+  module Actions
     module Config
-      class Show
-        include Admin::Action
-
+      class Show < Admin::Action
         security_level 5
 
         expose :attrs
@@ -19,7 +17,7 @@ module Admin
           @provider_repository ||= provider_repository
         end
 
-        def call(params) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           self.format = :yml
 
           @attrs = @attr_repository.ordered_all_with_mappings

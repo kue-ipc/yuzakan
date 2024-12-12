@@ -3,7 +3,7 @@
 require_relative "interactor_group"
 
 module Api
-  module Controllers
+  module Actions
     module Groups
       module EntityGroup
         include InteractorGroup

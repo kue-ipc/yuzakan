@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 module Api
-  module Controllers
+  module Actions
     module Groups
-      class Update
-        include Api::Action
+      class Update < API::Action
         include SetGroup
 
         security_level 4
@@ -36,7 +35,7 @@ module Api
           @group_repository ||= group_repository
         end
 
-        def call(params)
+        def handle(_request, _response)
           if params[:name] && @group.name != params[:name]
             halt_json 422, errors: {
               name: I18n.t("errors.unchangeable", name: I18n.t("attributes.group.name")),

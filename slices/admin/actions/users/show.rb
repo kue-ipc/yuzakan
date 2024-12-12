@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 module Admin
-  module Controllers
+  module Actions
     module Users
-      class Show
-        include Admin::Action
-
+      class Show < Admin::Action
         class Params < Hanami::Action::Params
           predicates NamePredicates
           messages :i18n
@@ -22,7 +20,7 @@ module Admin
           @user_repository ||= user_repository
         end
 
-        def call(params)
+        def handle(_request, _response)
           halt 400 unless params.valid?
         end
       end

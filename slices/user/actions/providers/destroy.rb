@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
-module Admin
+module User
   module Actions
-    module Groups
-      class Export < Admin::Action
-        security_level 5
-
+    module Providers
+      class Destroy < User::Action
         def handle(request, response)
         end
       end
