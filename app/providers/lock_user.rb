@@ -3,25 +3,29 @@
 require "hanami/validations"
 require_relative "../provider_interactor"
 
-class ProviderLockUser
-  include Yuzakan::ProviderInteractor
+module Yuzakan
+  module Providers
+    class LockUser < Yuzakan::Operation
+      include Yuzakan::ProviderInteractor
 
-  class Validator
-    include Hanami::Validations
-    predicates NamePredicates
-    messages :i18n
+      class Validator
+        include Hanami::Validations
+        predicates NamePredicates
+        messages :i18n
 
-    validations do
-      required(:username).filled(:str?, :name?, max_size?: 255)
-      optional(:providers).each(:str?, :name?, max_size?: 255)
-    end
-  end
+        validations do
+          required(:username).filled(:str?, :name?, max_size?: 255)
+          optional(:providers).each(:str?, :name?, max_size?: 255)
+        end
+      end
 
-  def call(params)
-    username = params[:username]
+      def call(params)
+        username = params[:username]
 
-    call_providers(params[:providers], operation: :user_lock) do |provider|
-      provider.user_lock(username)
+        call_providers(params[:providers], operation: :user_lock) do |provider|
+          provider.user_lock(username)
+        end
+      end
     end
   end
 end
