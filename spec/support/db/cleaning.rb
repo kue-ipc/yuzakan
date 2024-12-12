@@ -12,11 +12,11 @@ RSpec.configure do |config|
   all_databases = -> {
     slices = [Hanami.app] + Hanami.app.slices.with_nested
 
-    slices.each_with_object([]) { |slice, dbs|
+    slices.each_with_object([]) do |slice, dbs|
       next unless slice.key?("db.rom")
 
       dbs.concat slice["db.rom"].gateways.values.map(&:connection)
-    }.uniq
+    end.uniq
   }
 
   config.before :suite do
