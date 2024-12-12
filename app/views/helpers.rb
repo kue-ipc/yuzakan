@@ -4,7 +4,14 @@
 module Yuzakan
   module Views
     module Helpers
-      # Add your view helpers here
+      include AlertHelper
+      include ErrorHelper
+      include EscapeHelper
+      include GridHelper
+      include IconHelper
+      include ImportmapHelper
+      include MenuHelper
+      include PatternHelper
     end
   end
 end
