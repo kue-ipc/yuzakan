@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module Actions
     module Self
       module Password
-        class Update
-          include Api::Action
+        class Update < API::Action
 
           class Params < Hanami::Action::Params
             predicates NamePredicates

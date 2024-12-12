@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Admin::Controllers::Providers::Index, type: :action do
+RSpec.describe Admin::Actions::Providers::Index do
   init_controller_spec
 
   it "is failure" do

@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module Actions
     module Self
       module Providers
-        class Show
-          include Api::Action
+        class Show < API::Action
 
           def call(_params)
             self.body = "OK"

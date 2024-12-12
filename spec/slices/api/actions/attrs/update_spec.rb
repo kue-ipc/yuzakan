@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Api::Controllers::Attrs::Update, type: :action do
+RSpec.describe API::Actions::Attrs::Update do
   init_controller_spec
   let(:action_opts) {
     {

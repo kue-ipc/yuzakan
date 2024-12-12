@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Api::Controllers::Users::Update, type: :action do
+RSpec.describe API::Actions::Users::Update do
   init_controller_spec
   let(:format) { "application/json" }
   let(:action_opts) {

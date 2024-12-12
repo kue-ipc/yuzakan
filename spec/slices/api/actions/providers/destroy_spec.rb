@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Api::Controllers::Providers::Destroy, type: :action do
+RSpec.describe API::Actions::Providers::Destroy do
   init_controller_spec
   let(:action_opts) { {provider_repository: provider_repository} }
   let(:format) { "application/json" }

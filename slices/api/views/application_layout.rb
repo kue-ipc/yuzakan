@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module Views
     class ApplicationLayout
-      include Api::Layout
+      include API::Layout
     end
   end
 end

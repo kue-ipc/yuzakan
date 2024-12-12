@@ -2,7 +2,7 @@
 
 require "digest/md5"
 
-module Api
+module API
   module Actions
     module Adapters
       class Show < API::Action

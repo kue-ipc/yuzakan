@@ -2,7 +2,7 @@
 
 require_relative "../../web/controllers/connection"
 
-module Api
+module API
   module Connection
     include Web::Connection
 

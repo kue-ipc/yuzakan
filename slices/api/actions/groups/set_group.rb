@@ -2,7 +2,7 @@
 
 require_relative "entity_group"
 
-module Api
+module API
   module Actions
     module Groups
       module SetGroup

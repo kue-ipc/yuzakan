@@ -2,7 +2,7 @@
 
 require "yaml"
 
-RSpec.describe Api::Controllers::Self::Show, type: :action do
+RSpec.describe API::Actions::Self::Show do
   init_controller_spec
   let(:action_opts) {
     {provider_repository: provider_repository,

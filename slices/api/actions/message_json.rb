@@ -3,7 +3,7 @@
 require "time"
 require "hanami/http/status"
 
-module Api
+module API
   module MessageJson
     # override handle
     def handle_invalid_csrf_token

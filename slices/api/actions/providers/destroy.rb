@@ -2,7 +2,7 @@
 
 require_relative "set_provider"
 
-module Api
+module API
   module Actions
     module Providers
       class Destroy < API::Action

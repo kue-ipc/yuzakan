@@ -2,7 +2,7 @@
 
 require_relative "set_attr"
 
-module Api
+module API
   module Actions
     module Attrs
       class Destroy < API::Action

@@ -2,7 +2,7 @@
 
 require_relative "interactor_user"
 
-module Api
+module API
   module Actions
     module Users
       module EntityUser

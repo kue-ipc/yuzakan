@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Api::Controllers::Session::Create, type: :action do
+RSpec.describe API::Actions::Session::Create do
   init_controller_spec
   let(:action_opts) {
     {

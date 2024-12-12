@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module Actions
     module Self
       module Providers
         module Lock
-          class Destroy
-            include Api::Action
+          class Destroy < API::Action
 
             def call(_params)
               self.body = "OK"

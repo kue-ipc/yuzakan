@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Admin::Controllers::Config::New, type: :action do
+RSpec.describe Admin::Actions::Config::New do
   init_controller_spec
 
   it "rediret to root" do

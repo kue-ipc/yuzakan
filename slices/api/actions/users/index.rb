@@ -2,7 +2,7 @@
 
 require_relative "../../../../lib/yuzakan/utils/pager"
 
-module Api
+module API
   module Actions
     module Users
       class Index < API::Action

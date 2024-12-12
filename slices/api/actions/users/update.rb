@@ -2,7 +2,7 @@
 
 require_relative "set_user"
 
-module Api
+module API
   module Actions
     module Users
       class Update < API::Action

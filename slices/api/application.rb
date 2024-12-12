@@ -17,7 +17,7 @@ require_relative "../../lib/yuzakan/params/id_params"
 require_relative "../../lib/yuzakan/predicates/name_predicates"
 require_relative "../../lib/yuzakan/utils/terser_compressor"
 
-module Api
+module API
   class Application < Hanami::Application
     configure do
       root __dir__
@@ -51,7 +51,7 @@ module Api
       default_request_format :json
       default_response_format :json
 
-      layout :application # It will load Api::Views::ApplicationLayout
+      layout :application # It will load API::Views::ApplicationLayout
       templates "templates"
 
       assets do
@@ -83,12 +83,12 @@ module Api
 
       controller.prepare do
         include Hanami::Action::Cache
-        include Api::Connection
-        include Api::Configuration
-        include Api::Authentication
-        include Api::Authorization
-        include Api::MessageJson
-        include Api::HandleException
+        include API::Connection
+        include API::Configuration
+        include API::Authentication
+        include API::Authorization
+        include API::MessageJson
+        include API::HandleException
         cache_control :private, :no_cache
         handle_exception StandardError => :handle_standard_error
         accept :json
@@ -96,9 +96,9 @@ module Api
 
       view.prepare do
         include Hanami::Helpers
-        include Api::Assets::Helpers
+        include API::Assets::Helpers
         include Yuzakan::Helpers
-        include Api::Views::AcceptJson
+        include API::Views::AcceptJson
       end
     end
 

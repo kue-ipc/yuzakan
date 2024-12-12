@@ -2,7 +2,7 @@
 
 require_relative "../../web/controllers/configuration"
 
-module Api
+module API
   module Configuration
     include Web::Configuration
 

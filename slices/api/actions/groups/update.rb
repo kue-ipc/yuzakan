@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module Actions
     module Groups
       class Update < API::Action

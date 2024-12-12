@@ -2,12 +2,11 @@
 
 require_relative "../../../../../lib/yuzakan/utils/pager"
 
-module Api
+module API
   module Actions
     module Groups
       module Members
-        class Index
-          include Api::Action
+        class Index < API::Action
 
           security_level 2
 

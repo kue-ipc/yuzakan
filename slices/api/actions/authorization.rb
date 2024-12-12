@@ -2,7 +2,7 @@
 
 require_relative "../../web/controllers/authorization"
 
-module Api
+module API
   module Authorization
     include Web::Authorization
 

@@ -2,7 +2,7 @@
 
 require_relative "interactor_group"
 
-module Api
+module API
   module Actions
     module Groups
       module EntityGroup

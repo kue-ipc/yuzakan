@@ -2,7 +2,7 @@
 
 require_relative "entity_provider"
 
-module Api
+module API
   module Actions
     module Providers
       class Create < API::Action

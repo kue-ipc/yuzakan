@@ -2,7 +2,7 @@
 
 require_relative "../users/entity_user"
 
-module Api
+module API
   module Actions
     module Self
       class Show < API::Action

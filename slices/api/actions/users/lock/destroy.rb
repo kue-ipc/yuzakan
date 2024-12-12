@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module Actions
     module Users
       module Lock
-        class Destroy
-          include Api::Action
+        class Destroy < API::Action
 
           security_level 3
 

@@ -2,7 +2,7 @@
 
 require_relative "set_group"
 
-module Api
+module API
   module Actions
     module Groups
       class Show < API::Action

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Api::Controllers::Session::Destroy, type: :action do
+RSpec.describe API::Actions::Session::Destroy do
   init_controller_spec
   let(:format) { "application/json" }
 

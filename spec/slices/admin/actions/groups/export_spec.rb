@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# RSpec.describe Admin::Controllers::Groups::Export, type: :action do
+# RSpec.describe Admin::Actions::Groups::Export do
 #   let(:action) { described_class.new }
 #   let(:params) { Hash[] }
 

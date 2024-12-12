@@ -2,7 +2,7 @@
 
 require_relative "../../web/controllers/handle_exception"
 
-module Api
+module API
   module HandleException
     include Web::HandleException
 

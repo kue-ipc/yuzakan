@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module Views
     module AcceptJson
       def self.included(view)
