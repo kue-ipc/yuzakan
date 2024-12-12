@@ -38,6 +38,8 @@ gem "readthis"
 
 # LDAP
 gem "net-ldap"
+# FIXME: https://github.com/ruby-ldap/ruby-net-ldap/issues/431
+gem "ostruct"
 gem "smbhash"
 
 # Google Workspace

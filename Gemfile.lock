@@ -253,6 +253,7 @@ GEM
       nenv (~> 0.1)
       shellany (~> 0.0)
     os (1.1.4)
+    ostruct (0.6.1)
     parallel (1.26.3)
     parser (3.3.6.0)
       ast (~> 2.4.1)
@@ -427,6 +428,7 @@ DEPENDENCIES
   i18n
   mysql2
   net-ldap
+  ostruct
   pg
   puma
   rack-test
