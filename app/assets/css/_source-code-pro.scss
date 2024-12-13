@@ -1,4 +1,8 @@
 // Source Code Pro web fonts
+// ../../../node_modules/source-code-pro/source-code-pro.css
+// ../../../node_modules/source-code-pro/source-code-variable.css
+$source-code-pro-path: "../../../node_modules/source-code-pro";
+
 $source-code-pro-fonts: (
   "ExtraLight":   ("weight": 200, "style": normal),
   "ExtraLightIt": ("weight": 200, "style": italic),
@@ -22,8 +26,10 @@ $source-code-pro-fonts: (
     @each $key, $value in $attr {
       font-#{$key}: $value;
     }
-    src: url("/assets/vendor/SourceCodePro-#{$name}.woff2") format("woff2"),
-         url("/assets/vendor/SourceCodePro-#{$name}.woff") format("woff");
+    src: url("#{$source-code-pro-path}/WOFF2/TTF/SourceCodePro-#{$name}.ttf.woff2") format("woff2"),
+         url("#{$source-code-pro-path}/WOFF/OTF/SourceCodePro-#{$name}.otf.woff") format("woff"),
+         url("#{$source-code-pro-path}/OTF/SourceCodePro-#{$name}.otf") format("opentype"),
+         url("#{$source-code-pro-path}/TTF/SourceCodePro-#{$name}.ttf") format("truetype");
   }
 }
 
@@ -38,7 +44,8 @@ $source-code-variable-fonts: (
     @each $key, $value in $attr {
       font-#{$key}: $value;
     }
-    src: url("/assets/vendor//SourceCodeVariable-#{$name}.woff2") format("woff2"),
-         url("/assets/vendor//SourceCodeVariable-#{$name}.woff") format("woff");
+    src: url("#{$source-code-pro-path}/WOFF2/VAR/SourceCodeVariable-#{$name}.ttf.woff2") format("woff2"),
+         url("#{$source-code-pro-path}/WOFF/VAR/SourceCodeVariable-#{$name}.ttf.woff") format("woff"),
+         url("#{$source-code-pro-path}/VAR/SourceCodeVariable-#{$name}.ttf") format("truetype");
   }
 }
