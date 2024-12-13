@@ -60,20 +60,18 @@ Hanami 2 へアップデート中です。
 
 ### プログラミング言語
 
-* Ruby >= 2.7 < 3.0
-* Node.js >= 18
-
-Node.jsは必須です。
+* Ruby >= 3.3
+* Node.js >= 22
 
 ### データベース
 
 * [ ] SQLite (本番環境では非推奨)
-* [x] MariaDB
-* [ ] PostgreSQL
+* [ ] MariaDB
+* [x] PostgreSQL
 
-現在はMariaDBのみテストしていますが、他DBもサポート予定です。
+現在はPostgreSQLのみテストしていますが、他DBもサポート予定です。
 
-MariaDBはutf8mb4にしてください。DATABES_URLでは"?encoding=utf8mb4"を付ける必要があります。
+MariaDBの場合はutf8mb4にしてください。DATABES_URLでは"?encoding=utf8mb4"を付ける必要があります。
 
 ### セッション管理key-valueデータベース
 
