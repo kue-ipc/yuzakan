@@ -18,8 +18,9 @@ ROM::SQL.migration do
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
 
-      index :username
+      index :uuid
       index :client
+      index :username
     end
   end
 end

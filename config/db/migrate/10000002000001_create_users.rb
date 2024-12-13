@@ -8,6 +8,7 @@ ROM::SQL.migration do
       column :name, String, null: false
       column :display_name, String
       column :email, String
+      # TODO: "text"型にすることで文字数制限をなくす。
       column :note, String, size: 4096
 
       column :clearance_level, Integer, null: false, default: 1

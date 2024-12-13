@@ -16,6 +16,8 @@ ROM::SQL.migration do
       column :password_min_types, Integer, null: false, default: 1
       column :password_min_score, Integer, null: false, default: 3
       column :password_unusable_chars, String, null: false, default: ""
+
+      # TODO: "text"型にすることで文字数制限をなくす。
       column :password_extra_dict, String, size: 4096, null: false, default: ""
 
       column :generate_password_size, Integer, null: false, default: 24
