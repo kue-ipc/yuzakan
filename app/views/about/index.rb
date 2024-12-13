@@ -2,7 +2,7 @@
 
 module Yuzakan
   module Views
-    module Home
+    module About
       class Index < Yuzakan::View
       end
     end
