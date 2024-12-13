@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# FIXME: 1.3からそのまま移行なので、2.2にあわせて適切なところに分けること。
+
 require "hanami/helpers"
 require "hanami/assets"
 require "hanami/action/cache"

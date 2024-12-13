@@ -2,6 +2,7 @@
 
 require "hanami"
 
+# FIXME: 必要ないかも？
 # CoffeeScript v2 (from node_modulses)
 ENV["COFFEESCRIPT_SOURCE_PATH"] ||= File.expand_path(
   "../node_modules/coffeescript/lib/coffeescript-browser-compiler-legacy/coffeescript.js", __dir__)
@@ -14,6 +15,7 @@ require "i18n"
 I18n.load_path << Dir["#{File.expand_path('locales', __dir__)}/*.yml"]
 I18n.default_locale = :ja
 
+# TODO: たぶん、これはproviderとして実装すべき
 # Adapter
 require_relative "../lib/yuzakan/adapters"
 ADAPTERS_MANAGER = Yuzakan::Adapters::Manager.new
