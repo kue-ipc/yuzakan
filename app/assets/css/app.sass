@@ -1,5 +1,10 @@
-body
-  background-color: #fff
-  color: #000
-  font-family: sans-serif
+@charset "utf-8"
 
+@use "common"
+@use "color"
+
+.bg-light-bar
+  background-color: color.$gray-200
+
+.bg-dark-bar
+  background-color: mix(black, color.$blue, 50%)

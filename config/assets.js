@@ -22,7 +22,9 @@ await assets.run({
     esbuildOptions.plugins ??= [];
     esbuildOptions.plugins.push(coffeeScriptPlugin());
     esbuildOptions.plugins.push(civetPlugin());
-    esbuildOptions.plugins.push(sassPlugin());
+    esbuildOptions.plugins.push(sassPlugin({
+      silenceDeprecations: ['mixed-decls', 'color-functions', 'global-builtin', 'import'],
+    }));
 
     return esbuildOptions;
   }
