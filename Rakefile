@@ -39,40 +39,14 @@ end
 
 namespace :vendor do
   root_dir = "vendor/assets"
-  js_dir = "#{root_dir}/javascripts"
   image_dir = "#{root_dir}/images"
   font_dir = "#{root_dir}/fonts"
   directory root_dir
-  directory js_dir
   directory image_dir
   directory font_dir
 
   desc "ベンダーファイル生成"
   task build: [:build_js, :build_font, :build_image]
-
-  task build_js: [:build_js_rollup, :build_js_hyperapp]
-
-  task build_js_rollup: ["rollup.config.mjs", "node_modules/.bin/rollup"] do
-    sh "npx rollup -c"
-  end
-
-  rule ".mjs" => [".coffee", "node_modules/.bin/coffee"] do |t|
-    sh "npx coffee -o #{t.name} -c #{t.source}"
-  end
-
-  rule %r{^node_modules/.*$} do
-    sh "npm install"
-  end
-
-  directory "#{js_dir}/@hyperapp"
-
-  hyperapp_pkgs = ["dom", "events", "html", "svg", "time"]
-
-  task build_js_hyperapp: hyperapp_pkgs.map { |name| "#{js_dir}/@hyperapp/#{name}.js" }
-
-  rule %r{^#{js_dir}/@hyperapp/.*\.js$} => ["node_modules/@hyperapp/%n/index.js", "#{js_dir}/@hyperapp"] do |t|
-    cp t.source, t.name
-  end
 
   task build_font: [font_dir] do
     bootstrap_icons_dir = "node_modules/bootstrap-icons/font"
