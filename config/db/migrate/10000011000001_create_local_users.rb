@@ -5,7 +5,7 @@ ROM::SQL.migration do
     create_table :local_users do
       primary_key :id
 
-      column :username, String, null: false
+      column :name, String, null: false
       column :hashed_password, String
       column :display_name, String
       column :email, String
@@ -15,7 +15,7 @@ ROM::SQL.migration do
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
 
-      index :username, unique: true
+      index :name, unique: true
     end
   end
 end
