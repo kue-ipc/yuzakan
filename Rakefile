@@ -40,34 +40,11 @@ end
 namespace :vendor do
   root_dir = "vendor/assets"
   image_dir = "#{root_dir}/images"
-  font_dir = "#{root_dir}/fonts"
   directory root_dir
   directory image_dir
-  directory font_dir
 
   desc "ベンダーファイル生成"
-  task build: [:build_js, :build_font, :build_image]
-
-  task build_font: [font_dir] do
-    bootstrap_icons_dir = "node_modules/bootstrap-icons/font"
-    cp Dir.glob("#{bootstrap_icons_dir}/fonts/*.{woff,woff2}"), font_dir
-
-    source_code_pro_dir = "node_modules/source-code-pro"
-    ["OTF", "VAR"].each do |type|
-      ["woff", "woff2"].each do |ext|
-        Dir.glob("#{source_code_pro_dir}/#{ext.upcase}/#{type}/*.otf.#{ext}").each do |path|
-          cp path, "#{font_dir}/#{File.basename(path, ".otf.#{ext}")}.#{ext}"
-        end
-      end
-    end
-
-    firacode_dir = "node_modules/firacode"
-    cp Dir.glob("#{firacode_dir}/distr/woff/*.woff"), font_dir
-    cp Dir.glob("#{firacode_dir}/distr/woff2/*.woff2"), font_dir
-
-    typopro_web_iosevka_dir = "node_modules/@typopro/web-iosevka"
-    cp Dir.glob("#{typopro_web_iosevka_dir}/*.woff"), font_dir
-  end
+  task build: [:build_image]
 
   task build_image: [image_dir] do
     bootstrap_icons_dir = "node_modules/bootstrap-icons"
