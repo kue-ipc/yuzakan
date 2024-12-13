@@ -16,6 +16,7 @@
     "csv": "^6.3.11",
     "es-module-shims": "^1.10.1",
     "esbuild-coffeescript": "^2.2.0",
+    "esbuild-sass-plugin": "^3.3.1",
     "file-saver": "^2.0.5",
     "firacode": "^6.2.0",
     "hanami-assets": "^2.2.1",

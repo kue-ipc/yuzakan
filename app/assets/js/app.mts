@@ -1,2 +1,2 @@
-import "../css/app.css";
+import "../css/app.sass";
 import "./test.civet";

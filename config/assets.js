@@ -2,6 +2,7 @@ import * as assets from "hanami-assets";
 
 import coffeeScriptPlugin from 'esbuild-coffeescript';
 import civetPlugin from '@danielx/civet/esbuild-plugin';
+import {sassPlugin} from 'esbuild-sass-plugin';
 
 await assets.run({
   esbuildOptionsFn: (args, esbuildOptions) => {
@@ -21,6 +22,7 @@ await assets.run({
     esbuildOptions.plugins ??= [];
     esbuildOptions.plugins.push(coffeeScriptPlugin());
     esbuildOptions.plugins.push(civetPlugin());
+    esbuildOptions.plugins.push(sassPlugin());
 
     return esbuildOptions;
   }
