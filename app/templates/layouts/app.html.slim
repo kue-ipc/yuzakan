@@ -1,0 +1,25 @@
+doctype html
+html lang="ja"
+  head
+    meta charset="UTF-8"
+    meta name="viewport" content="width=device-width, initial-scale=1.0"
+    / = csrf_meta_tags
+    title
+      | Yuzakan
+      / = current_config&.title
+
+    = favicon_tag
+    = stylesheet_tag "app"
+    = javascript_tag "app", type: "module"
+
+    / = favicon
+    / = stylesheet 'application'
+    / = javascript 'vendor/es-module-shims', async: true
+    / = importmap
+    / = javascript 'application', type: 'module'
+  body
+    / = render partial: 'partial/header'
+    / .container-fluid.mt-2
+    /   = render partial: 'partial/alert'
+    = yield
+    / = render partial: 'partial/footer'
