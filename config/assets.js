@@ -18,12 +18,9 @@ await assets.run({
       'firefox128', // for ESR
       'safari16', // for iOS 16
     ];
-
     esbuildOptions.plugins ??= [];
     esbuildOptions.plugins.push(coffeeScriptPlugin());
     esbuildOptions.plugins.push(civetPlugin());
-
-    console.log(esbuildOptions);
 
     return esbuildOptions;
   }
