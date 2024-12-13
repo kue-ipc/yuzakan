@@ -2,10 +2,8 @@
 @use "firacode"
 @use "source-code-pro"
 @use "font"
-@use "color"
 @use "~highlight.js/scss/default"
-@use "~bootstrap/scss/bootstrap"
-
+@use "~bootstrap/scss/bootstrap" with ($font-family-sans-serif: var(--yuazkan-font-sans-serif), $font-family-monospace: var(--yuzakan-font-monospace), $font-family-base: var(--yuzakan-font-base), $font-family-code: var(--yuzakan-font-code))
 
 .login
   width: 20rem
@@ -50,10 +48,10 @@ a.link-user
     color: bootstrap.$light
 
 .text-serif
-  font-family: font.$font-family-serif
+  font-family: var(--yuzakan-font-serif)
 
 code
-  font-family: 'Cascadia Code', 'Fira Code VF', 'Fira Code', 'Source Code Variable', 'Source Code Pro', font.$font-family-monospace
+  font-family: var(--yuzakan-font-code)
 
   &.login-info
     letter-spacing: .2rem
@@ -82,13 +80,13 @@ code
   .col-print
     flex: 1 0 0%
 
-  // .col-print-auto
-  //   @include make-col-auto()
+  .col-print-auto
+    @include bootstrap.make-col-auto()
 
-  // @if bootstrap.$grid-columns > 0
-  //   @for $i from 1 through bootstrap.$grid-columns
-  //     .col-print-#{$i}
-  //       @include make-col($i, bootstrap.$grid-columns)
-  //   @for $i from 0 through (bootstrap.$grid-columns - 1)
-  //     .offset-print-#{$i}
-  //       @include make-col-offset($i, bootstrap.$grid-columns)
+  @if bootstrap.$grid-columns > 0
+    @for $i from 1 through bootstrap.$grid-columns
+      .col-print-#{$i}
+        @include bootstrap.make-col($i, bootstrap.$grid-columns)
+    @for $i from 0 through (bootstrap.$grid-columns - 1)
+      .offset-print-#{$i}
+        @include bootstrap.make-col-offset($i, bootstrap.$grid-columns)
