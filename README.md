@@ -17,7 +17,7 @@ Hanami 2 へアップデート中です。
 ## 既知の不具合
 
 - PostgreSQLでは、`bundle exec hanami db drop` でデータベースが消えない。
-    開発時にデータベースを差異さ育成したい場合は、`dropdb yuzakan_development` と `dropdb yuzakan_test` で消すこと。
+    開発時にデータベースを再作成したい場合は、`dropdb yuzakan_development` と `dropdb yuzakan_test` で消すこと。
 
 ## TODO
 
