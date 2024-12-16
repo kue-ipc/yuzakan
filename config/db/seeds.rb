@@ -16,8 +16,10 @@
 #   categories = Hanami.app["relations.categories"]
 #   categories.insert(title: "General")
 
+require "socket"
+
 title = ENV.fetch("TITLE", "Yuzakan")
-domain = ENV.fetch("DOMAIN", nil)
+domain = ENV.fetch("DOMAIN", Socket.gethostname.split(".", 2)[1])
 admin_username = ENV.fetch("ADMIN_USERNAME", "admin")
 admin_password = ENV.fetch("ADMIN_PASSWORD", admin_password)
 
@@ -43,9 +45,8 @@ end
 
 # setup local provider
 provider_repo = Hanami.app["repos.provider_repo"]
-unless provider_repo.by_name("local")
-  provider_repo.create({
-    name: "local",
+unless provider_repo.get("local")
+  local_provider_params = {
     display_name: "ローカル",
     order: "0",
     adapter_name: "local",
@@ -54,7 +55,8 @@ unless provider_repo.by_name("local")
     authenticatable: true,
     password_changeable: true,
     lockable: true,
-  })
+  }
+  provider_repo.set("local", **local_provider_params)
 end
 
 # setup admin user
