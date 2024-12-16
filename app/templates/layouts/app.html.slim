@@ -18,8 +18,8 @@ html lang="ja"
     / = importmap
     / = javascript 'application', type: 'module'
   body
-    / = render partial: 'partial/header'
-    / .container-fluid.mt-2
-    /   = render partial: 'partial/alert'
-    = yield
-    / = render partial: 'partial/footer'
+    = render "partial/header"
+    .container-fluid.mt-2
+      = render "partial/alert"
+      = yield
+    = render "partial/footer"
