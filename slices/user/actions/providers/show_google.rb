@@ -21,6 +21,7 @@ module User
           @creatable = false
           return if @google_user
 
+          # FIXME: UserAttrsを使わずに、Providers::ReadUserを使用すること。
           result = UserAttrs.new.call(username: current_user.name)
           if result.successful? &&
              ["学生", "教員", "職員"].include?(result.attrs[:affiliation])

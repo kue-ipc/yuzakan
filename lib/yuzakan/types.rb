@@ -6,26 +6,11 @@ module Yuzakan
   Types = Dry.Types
 
   module Types
-    # Define your custom types here
-    NameString = Types::String.constrained(
-      format: /\A[a-z0-9_](?:[0-9a-z_-]|\.[0-9a-z_-])*\z/)
+    NameString = Types::String.constrained(format: Patterns::NAME.ruby)
+    PasswordString = Types::String.constrained(format: Patterns::PASSSWORD.ruby)
 
-    NameOrStarString = Types::String.constrained(
-      format: /\A(?:[a-z0-9_](?:[0-9a-z_-]|\.[0-9a-z_-])*|\*)\z/)
-
-    # https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address
-    EmailString = Types::String.constrained(
-      format: %r{\A
-        [a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+
-        @
-        [a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*
-      \z}x)
-
-    DomainString = Types::String.constrained(
-      format: /\A[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\z/
-      )
-
-    PasswordString = Types::String.constrained(
-      format: /\A[\x20-\x7e]*\Z/)
+    HostString = Types::String.constrained(format: Patterns::HOST.ruby)
+    DomainString = Types::String.constrained(format: Patterns::DOMAI.ruby)
+    EmailString = Types::String.constrained(format: Patterns::EMAIL.ruby)
   end
 end

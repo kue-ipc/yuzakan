@@ -1,13 +1,9 @@
 # frozen_string_literal: true
 
-require "hanami/interactor"
-require "hanami/validations"
-require_relative "../predicates/name_predicates"
-
 # Userレポジトリへの登録または更新
 module Yuzakan
-  module Operations
-    class RegisterUser < Yuzakan::Operation
+  module Users
+    class Register < Yuzakan::Operation
       include Hanami::Interactor
 
       class Validator

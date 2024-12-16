@@ -4,8 +4,8 @@ require "hanami/interactor"
 require "hanami/validations/form"
 
 module Yuzakan
-  module Operations
-    class UnlockUser < Yuzakan::Operation
+  module Users
+    class Unlock < Yuzakan::Operation
       include Hanami::Interactor
 
       class Validator
