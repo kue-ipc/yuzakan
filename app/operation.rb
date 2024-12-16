@@ -5,5 +5,11 @@ require "dry/operation"
 
 module Yuzakan
   class Operation < Dry::Operation
+    private def validate_name(name)
+      return Failure(:not_string) unless name.is_a?(String)
+      return Failure(:invaild_name) unless name =~ Patterns::NAME.ruby
+
+      Success(username)
+    end
   end
 end

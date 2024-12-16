@@ -4,40 +4,39 @@
 module Yuzakan
   module Users
     class Register < Yuzakan::Operation
-      include Hanami::Interactor
+      include Deps[
+        "repos.user_repo",
+        "repos.group_repo",
+        "repos.member_repo",
+        "groups.sync",
+      ]
 
-      class Validator
-        include Hanami::Validations
-        predicates NamePredicates
-        messages :i18n
-
-        validations do
-          required(:username).filled(:str?, :name?, max_size?: 255)
-          optional(:display_name).maybe(:str?, max_size?: 255)
-          optional(:email).maybe(:str?, :email?, max_size?: 255)
-          optional(:primary_group).maybe(:str?, :name?, max_size?: 255)
-          optional(:groups).each(:str?, :name?, max_size?: 255)
-        end
+      def call(username, params)
+        username = step validate_name(username)
+        params = step validate(params)
+        step register(username, params)
       end
 
-      expose :user
-
-      def initialize(user_repository: UserRepository.new,
-                     group_repository: GroupRepository.new,
-                     member_repository: MemberRepository.new)
-        @user_repository = user_repository
-        @group_repository = group_repository
-        @member_repository = member_repository
+      private def validate(params)
+        Success({
+          **params.slice(:display_name, :email),
+          primary_group: step(get_group(params[:primary_group])),
+          groups: parasm[:groups]&.map { |groupname| set(get_group(groupname)) },
+        })
       end
 
-      def call(params)
-        username = params[:username]
+      def register(username, params)
         data = {
-          name: params[:username],
+          name: username,
           **params.slice(:display_name, :email),
           deleted: false,
           deleted_at: nil,
         }
+        primary_group = get_group(params[:primary_group])
+        groups = parasm[:groups]&.map { |groupname| get_group(groupname) }
+
+
+        user_repo.get(username)
         user_id = @user_repository.find_by_name(username)&.id
 
         @user_repository.transaction do
@@ -62,22 +61,14 @@ module Yuzakan
         @user = @user_repository.find_with_groups(@user.id)
       end
 
-      private def valid?(params)
-        result = Validator.new(params).validate
-        if result.failure?
-          Hanami.logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
-          error(result.messages)
-          return false
-        end
-
-        true
-      end
-
       private def get_group(groupname)
-        return unless groupname
+        return Success(nil) unless groupname
 
-        @groups ||= {}
-        @groups[groupname] ||= @group_repository.find_or_create_by_name(groupname)
+        group = group_repo.get(groupname)
+        return Success(group) if group
+
+        # FIXME groups.syncが失敗した場合は？
+        sync(groupname)
       end
     end
   end

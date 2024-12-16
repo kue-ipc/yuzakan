@@ -3,6 +3,21 @@
 module Yuzakan
   module Repos
     class UserRepo < Yuzakan::DB::Repo
+      def get(name)
+        users.by_name(name).one
+      end
+
+      def set(name, **)
+        users.by_name(name).changeset(:update, **).map(:touch).commit ||
+          users.changeset(:create, **, name: name).map(:add_timestamps).commit
+      end
+
+      def unset(name)
+        users.by_name(name).changeset(:delete).commit
+      end
+
+
+
       def ordered_all
         users.order(:name).to_a
       end

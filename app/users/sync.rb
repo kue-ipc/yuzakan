@@ -5,26 +5,15 @@ module Yuzakan
   module Users
     class Sync < Yuzakan::Operation
       include Deps[
-        "repos.provider_repo",
-        "repos.user_repo",
-        "repos.group_repo",
-        "repos.member_repo",
         "providers.read_user",
         "users.register",
         "users.unregister",
       ]
 
       def call(username)
-        username = step validate(username)
+        username = step validate_name(username)
         user_params = step read(username)
         step sync(username, user_params)
-      end
-
-      private def validate(username)
-        return Failure(:is_not_string) unless username.is_a?(String)
-        return Failure(:invaild_name) unless username =~ /\A[a-z0-9_](?:[0-9a-z_-]|\.[0-9a-z_-])*\z/
-
-        Success(username)
       end
 
       private def read(username)
