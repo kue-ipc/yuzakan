@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: esbuildでbundleしない時に必要になるかもしれない。
+
 require "json"
 
 module Yuzakan

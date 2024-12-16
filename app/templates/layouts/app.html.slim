@@ -3,20 +3,16 @@ html lang="ja"
   head
     meta charset="UTF-8"
     meta name="viewport" content="width=device-width, initial-scale=1.0"
+    / FIXME: 必要かどうかは要確認
     / = csrf_meta_tags
     title
       | Yuzakan
       / = current_config&.title
-
+    / TODO: esbuildでbundleしない時に必要になるかもしれない。
+    / = importmap
     = favicon_tag
     = stylesheet_tag "app"
     = javascript_tag "app", type: "module"
-
-    / = favicon
-    / = stylesheet 'application'
-    / = javascript 'vendor/es-module-shims', async: true
-    / = importmap
-    / = javascript 'application', type: 'module'
   body
     = render "partial/header"
     .container-fluid.mt-2
