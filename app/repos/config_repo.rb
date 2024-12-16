@@ -3,22 +3,10 @@
 module Yuzakan
   module Repos
     class ConfigRepo < Yuzakan::DB::Repo
-      private :create, :update, :delete
+      def current = configs.last
 
-      def initialized?
-        !current.nil?
-      end
-
-      def current
-        @current ||= first
-      end
-
-      def current_create(params)
-        @current = create(params)
-      end
-
-      def current_update(params)
-        @current = update(current.id, params)
+      def set(**)
+        configs.changeset(:create, **).map(:add_timestamps).commit
       end
     end
   end

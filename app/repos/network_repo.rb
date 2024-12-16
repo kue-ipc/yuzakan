@@ -5,34 +5,28 @@ require "ipaddr"
 module Yuzakan
   module Repos
     class NetworkRepo < Yuzakan::DB::Repo
-      private :create, :update, :delete
-
-      def create_or_update_by_address(address, data)
-        if (network = find_by_address(address))
-          update(network.id, data)
+      def set(address, **)
+        address = normalize_address(address)
+        network = networks.by_address(address).one
+        if network
+          networks.by_pk(network.id).changeset(:update, **).map(:touch).commit
         else
-          create({**data, address: normalize_address(address)})
+          networks.changeset(:create, **, address: address).map(:add_timestamps).commit
         end
       end
 
-      def create_by_address(address, data)
-        create({**data, address: normalize_address(address)})
+      def remove(address)
+        address = normalize_address(address)
+        networks.by_address(address).changeset(:delete).commit
       end
 
-      def update_by_address(address, data)
-        update(find_by_address(address).id, data)
+      def get(address)
+        address = normalize_address(address)
+        networks.by_address(address).one
       end
 
-      def delete_by_address(address)
-        delete(find_by_address(address).id)
-      end
-
-      def find_by_address(address)
-        by_address(address).one
-      end
-
-      def by_address(address)
-        networks.where(address: normalize_address(address))
+      def all
+        networks.to_a
       end
 
       def count
