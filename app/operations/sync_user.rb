@@ -1,97 +1,68 @@
 # frozen_string_literal: true
 
-require "hanami/interactor"
-require "hanami/validations"
-require_relative "../predicates/name_predicates"
-
 # Userレポジトリと各プロバイダーのユーザー情報同期
 module Yuzakan
   module Operations
     class SyncUser < Yuzakan::Operation
-      include Hanami::Interactor
+      include Deps[
+        "repos.provider_repo",
+        "repos.user_repo",
+        "repos.group_repo",
+        "repos.member_repo",
+        "provider.read_user",
+        "operations.register_user"
+      ]
 
-      class Validator
-        include Hanami::Validations
-        predicates NamePredicates
-        messages :i18n
+      # class Validator
+      #   include Hanami::Validations
+      #   predicates NamePredicates
+      #   messages :i18n
 
-        validations do
-          required(:username).filled(:str?, :name?, max_size?: 255)
-        end
-      end
+      #   validations do
+      #     required(:username).filled(:str?, :name?, max_size?: 255)
+      #   end
+      # end
 
       expose :user
       expose :data
       expose :providers
 
-      def initialize(provider_repository: ProviderRepository.new,
-                     user_repository: UserRepository.new,
-                     group_repository: GroupRepository.new,
-                     member_repository: MemberRepository.new)
-        @provider_repository = provider_repository
-        @user_repository = user_repository
-        @group_repository = group_repository
-        @member_repository = member_repository
+      def call(username)
+        username = step validate(username)
+        user_params = step read_from_providers(username)
+        user = step sync(username, user_params)
+        user
       end
 
-      def call(params)
-        @username = params[:username]
+      private def validate(username)
+        return Failure(:is_not_string) unless username.is_a?(String)
+        return Failure(:invaild_name) unless username =~ /\A[a-z0-9_](?:[0-9a-z_-]|\.[0-9a-z_-])*\z/
 
-        read_user_result = ProviderReadUser.new(provider_repository: @provider_repository)
-          .call({username: @username})
-        if read_user_result.failure?
-          Hanami.logger.error "[#{self.class.name}] Failed to call ProviderReadUser"
-          Hanami.logger.error read_user_result.errors
-          error(I18n.t("errors.action.fail", action: I18n.t("interactors.provider_read_user")))
-          read_user_result.errors.each { |msg| error(msg) }
-          fail!
-        end
+        Success(username)
+      end
 
-        @providers = read_user_result.providers.compact
+      private def read_from_providers(username)
+        providers = step read_user.call(username)
 
-        @data = {attrs: {}, groups: []}
-        @providers.each_value do |data|
+        return Success(nil) if providers.empty?
+
+        user_params = {attrs: {}, groups: []}
+        providers.each_value do |data|
           %i[username display_name email primary_group].each do |name|
-            @data[name] ||= data[name] unless data[name].nil?
+            user_params[name] ||= data[name] unless data[name].nil?
           end
-          @data[:groups] |= data[:groups] unless data[:groups].nil?
-          @data[:attrs] = data[:attrs].merge(@data[:attrs]) unless data[:attrs].nil?
+          user_params[:groups] |= data[:groups] unless data[:groups].nil?
+          user_params[:attrs] = data[:attrs].merge(user_params[:attrs]) unless data[:attrs].nil?
         end
-
-        if @providers.empty?
-          unregister_user_result = UnregisterUser.new(user_repository: @user_repository,
-                                                      member_repository: @member_repository)
-            .call(username: @username)
-          if unregister_user_result.failure?
-            Hanami.logger.error "[#{self.class.name}] Failed to call UnregisterUser"
-            error(I18n.t("errors.action.fail", action: I18n.t("interactors.unregister_user")))
-            unregister_user_result.errors.each { |msg| error(msg) }
-            fail!
-          end
-          @user = unregister_user_result.user
-        else
-          register_user_result = RegisterUser.new(user_repository: @user_repository, group_repository: @group_repository,
-                                                  member_repository: @member_repository)
-            .call(@data.slice(:username, :display_name, :email, :primary_group, :groups))
-          if register_user_result.failure?
-            Hanami.logger.error "[#{self.class.name}] Failed to call RegisterUser"
-            error(I18n.t("errors.action.fail", action: I18n.t("interactors.register_user")))
-            register_user_result.errors.each { |msg| error(msg) }
-            fail!
-          end
-          @user = register_user_result.user
-        end
+        Success(user_params)
       end
 
-      private def valid?(params)
-        result = Validator.new(params).validate
-        if result.failure?
-          Hanami.logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
-          error(result.messages)
-          return false
+      private def sync(username, user_params)
+        if user_params
+          step register_user.call(user_params.slice(:username, :display_name, :email, :primary_group, :groups))
+        else
+          step unregister_user.call(username)
         end
-
-        true
       end
     end
   end
