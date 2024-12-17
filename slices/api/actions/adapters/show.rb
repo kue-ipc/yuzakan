@@ -6,12 +6,14 @@ module API
   module Actions
     module Adapters
       class Show < API::Action
+        include Deps["adapters"]
+
         params IdParams
 
         def handle(_request, _response)
           halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
 
-          @adapter = ADAPTERS_MANAGER.by_name(params[:id])
+          @adapter = adapters[params[:id]]
           halt_json 404 unless @adapter
 
           fresh etag: etag
