@@ -26,13 +26,14 @@ module Yuzakan
         end
       end
 
+      # rubocop:disable Lint/ReturnInVoidContext
       def initialize(attributes = nil)
-        return super if attributes.nil? || attributes[:adapter_name].nil? # rubocop:disable Lint/ReturnInVoidContext
+        return super if attributes.nil? || attributes[:adapter_name].nil?
 
         @adapter_class = ADAPTERS_MANAGER.by_name(attributes[:adapter_name])
         raise NoAdapterError, "Not found adapter: #{attributes[:adapter_name]}" unless @adapter_class
 
-        return super if attributes[:provider_params].nil? # rubocop:disable Lint/ReturnInVoidContext
+        return super if attributes[:provider_params].nil?
 
         # cache_store
         expires_in = case Hanami.env
@@ -52,6 +53,8 @@ module Yuzakan
         @adapter = @adapter_class.new(@params, group: attributes[:group], logger: Hanami.logger)
         super
       end
+      # rubocop:enable Lint/ReturnInVoidContext
+
 
       def label_name
         if display_name

@@ -1,33 +1,14 @@
 # frozen_string_literal: true
 
-require "hanami/interactor"
-require "hanami/validations"
-require_relative "../predicates/name_predicates"
-
 module Yuzakan
   module Providers
     class ReadGroup < Yuzakan::Operation
-      include Hanami::Interactor
+      include Deps["repos.provider_repo"]
 
-      class Validator
-        include Hanami::Validations
-        predicates NamePredicates
-        messages :i18n
+      def call(groupname, provider_names = nil)
+        groupname = step validate_name(groupname)
 
-        validations do
-          required(:groupname).filled(:str?, :name?, max_size?: 255)
-          optional(:providers).each(:str?, :name?, max_size?: 255)
-        end
-      end
-
-      expose :providers
-
-      def initialize(provider_repository: ProviderRepository.new)
-        @provider_repository = provider_repository
-      end
-
-      def call(params)
-        groupname = params[:groupname]
+        providers = get_providers(provider_names)
 
         @providers = get_providers(params[:providers]).to_h do |provider|
           [provider.name, provider.group_read(groupname)]
@@ -52,18 +33,13 @@ module Yuzakan
         true
       end
 
-      private def get_providers(providers = nil)
-        if providers
-          providers.map do |provider_name|
-            @provider_repository.find_with_adapter_by_name(provider_name).tap do |provider|
-              unless provider
-                Hanami.logger.warn "[#{self.class.name}] Not found: #{provider_name}"
-                error!(I18n.t("errors.not_found", name: I18n.t("entities.provider")))
-              end
-            end
-          end
+      private def get_providers(provider_names = nil)
+        if provider_names
+          provider_names.map do |provider_name|
+            provider_repo.find_with_adapter_by_name(provider_name)
+          end.compact
         else
-          @provider_repository.ordered_all_with_adapter_by_operation(:group_read)
+          provider_repo.ordered_all_with_adapter_by_operation(:group_read)
         end
       end
     end

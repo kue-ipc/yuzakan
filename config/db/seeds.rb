@@ -21,7 +21,8 @@ require "socket"
 title = ENV.fetch("TITLE", "Yuzakan")
 domain = ENV.fetch("DOMAIN", Socket.gethostname.split(".", 2)[1])
 admin_username = ENV.fetch("ADMIN_USERNAME", "admin")
-admin_password = ENV.fetch("ADMIN_PASSWORD", admin_password)
+admin_password = ENV.fetch("ADMIN_PASSWORD", admin_username)
+admin_groupname = ENV.fetch("ADMIN_GROUPNAME", admin_username)
 
 # setup config
 config_repo = Hanami.app["repos.config_repo"]
@@ -48,24 +49,27 @@ provider_repo = Hanami.app["repos.provider_repo"]
 unless provider_repo.get("local")
   local_provider_params = {
     display_name: "ローカル",
-    order: "0",
     adapter_name: "local",
+    order: "0",
     readable: true,
     writable: true,
     authenticatable: true,
     password_changeable: true,
     lockable: true,
+    group: true,
   }
   provider_repo.set("local", **local_provider_params)
 end
 
-# setup admin user
-sync_result = sync_user.call({username: admin_username})
-if sync_result.failure?
-  sync_result[:errors].concat(sync_result.errors)
-  raise "同期処理に失敗しました"
+# setup admin user and group
+providers_read_group = Hanami.app["providers.read_group"]
+group_providers = providers_read_group.call(admin_groupname, ["local"])
+if group_providers.empty?
+  providers_create_group = Hanami.app["providers.create_group"]
+  providers_create_group.call(admin_groupname, ["local"], display_name: "管理者")
 end
-sync_result.user
+groups_sync = Hanami.app["groups.sync"]
+groups_sync.call(admin_groupname)
 
 unless get_user(admin_username)
   create_result = proider_create_user.call({

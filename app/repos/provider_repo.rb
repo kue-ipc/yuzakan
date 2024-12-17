@@ -5,6 +5,7 @@ module Yuzakan
     class ProviderRepo < Yuzakan::DB::Repo
       def get(name)
         providers.by_name(name).one
+        providers.by_name(name).combine(:provider_params, attr_mappings: :attr).one
       end
 
       def set(name, **)
@@ -15,6 +16,7 @@ module Yuzakan
       def unset(name)
         providers.by_name(name).changeset(:delete).commit
       end
+
 
       # TODO: 整理が必要
       def ordered_all
