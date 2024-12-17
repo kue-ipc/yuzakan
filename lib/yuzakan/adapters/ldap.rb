@@ -7,18 +7,12 @@ require "digest"
 require "net/ldap"
 require "net/ldap/dn"
 
-require_relative "abstract_adapter"
-require_relative "abstract_adapter/adapter_error"
-require_relative "../utils/ignore_case_string_set"
-
 # パスワード変更について
 # userPassword は {CRYPT}$6$%.16s をデフォルトする。
 
 module Yuzakan
   module Adapters
-    class LdapAdapter < AbstractAdapter
-      class LdapAdapterError < Yuzakan::Adapters::AbstractAdapter::AdapterError
-      end
+    class Ldap < Yuzakan::Adapter
 
       self.name = "ldap"
       self.display_name = "LDAP"
@@ -749,7 +743,7 @@ module Yuzakan
         when "base" then Net::LDAP::SearchScope_BaseObject
         when "one" then Net::LDAP::SearchScope_SingleLevel
         when "sub" then Net::LDAP::SearchScope_WholeSubtree
-        else raise LdapAdapterError, "Invalid scope"
+        else raise AdapterError, "Invalid scope"
         end
       end
 
@@ -929,7 +923,7 @@ module Yuzakan
 
         ldap_error_message = ldap.get_operation_result.error_message
         @logger.error "LDAP #{action} error: #{ldap_error_message}"
-        raise LdapAdapterError, ldap_error_message
+        raise AdapterError, ldap_error_message
       end
 
       private def ldap_get(dn)

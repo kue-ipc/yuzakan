@@ -4,14 +4,9 @@ require "yaml"
 require "bcrypt"
 require "securerandom"
 
-require_relative "abstract_adapter"
-require_relative "abstract_adapter/adapter_error"
-
 module Yuzakan
   module Adapters
-    class MockAdapter < AbstractAdapter
-      class MockAdapterError < Yuzakan::Adapters::AbstractAdapter::AdapterError
-      end
+    class Mock < Yuzakan::Adapter
 
       hidden true if Hanami.env == "production"
 
@@ -116,7 +111,7 @@ module Yuzakan
       end
 
       def create(username, password = nil, **userdata)
-        raise MockAdapterError, "ユーザーは既に存在します。" if @users.key?(username)
+        raise AdapterError, "ユーザーは既に存在します。" if @users.key?(username)
 
         @passwords[username] = BCrypt::Password.create(password) if password
         @users[username] = {
@@ -131,7 +126,7 @@ module Yuzakan
 
       def user_update(username, **userdata)
         return nil unless @users.key?(username)
-        raise MockAdapterError, "管理不可ユーザーであるため、更新できません。" if @users.dig(username, :unmanageable)
+        raise AdapterError, "管理不可ユーザーであるため、更新できません。" if @users.dig(username, :unmanageable)
 
         @users[username] = @users[username].merge(userdata) do |_key, self_val, other_val|
           if self_val.is_a?(Hash)
@@ -144,7 +139,7 @@ module Yuzakan
 
       def user_delete(username)
         return nil unless @users.key?(username)
-        raise MockAdapterError, "管理不可ユーザーであるため、削除できません。" if @users.dig(username, :unmanageable)
+        raise AdapterError, "管理不可ユーザーであるため、削除できません。" if @users.dig(username, :unmanageable)
 
         @users[username]
       end
@@ -159,7 +154,7 @@ module Yuzakan
 
       def user_change_password(username, password)
         return nil unless @users.key?(username)
-        raise MockAdapterError, "管理不可ユーザーであるため、パスワードを変更できません。" if @users.dig(username, :unmanageable)
+        raise AdapterError, "管理不可ユーザーであるため、パスワードを変更できません。" if @users.dig(username, :unmanageable)
 
         @passwords[username] = BCrypt::Password.create(password)
         @users[username]
@@ -167,14 +162,14 @@ module Yuzakan
 
       def user_generate_code(username)
         return nil unless @users.key?(username)
-        raise MockAdapterError, "管理不可ユーザーであるため、バックアップコードを生成できません。" if @users.dig(username, :unmanageable)
+        raise AdapterError, "管理不可ユーザーであるため、バックアップコードを生成できません。" if @users.dig(username, :unmanageable)
 
         10.times.map { SecureRandom.alphanumeric }
       end
 
       def user_lock(username)
         return nil unless @users.key?(username)
-        raise MockAdapterError, "管理不可ユーザーであるため、ロックできません。" if @users.dig(username, :unmanageable)
+        raise AdapterError, "管理不可ユーザーであるため、ロックできません。" if @users.dig(username, :unmanageable)
 
         @users[username][:locked] = true
         @users[username]
@@ -182,7 +177,7 @@ module Yuzakan
 
       def user_unlock(username, password = nil)
         return nil unless @users.key?(username)
-        raise MockAdapterError, "管理不可ユーザーであるため、アンロックできません。" if @users.dig(username, :unmanageable)
+        raise AdapterError, "管理不可ユーザーであるため、アンロックできません。" if @users.dig(username, :unmanageable)
 
         user_change_password(usename, password) if password
 

@@ -15,11 +15,6 @@ require "i18n"
 I18n.load_path << Dir["#{File.expand_path('locales', __dir__)}/*.yml"]
 I18n.default_locale = :ja
 
-# TODO: たぶん、これはproviderとして実装すべき
-# Adapter
-require_relative "../lib/yuzakan/adapters"
-ADAPTERS_MANAGER = Yuzakan::Adapters::Manager.new
-
 module Yuzakan
   class App < Hanami::App
     config.actions.sessions = :cookie, {
@@ -29,5 +24,8 @@ module Yuzakan
     }
     # config.shared_app_component_keys += ["repos.*_repo"]
     config.middleware.use :body_parser, :json
+    config.inflections do |inflections|
+      inflections.acronym "AD"
+    end
   end
 end

@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "abstract_adapter"
-
 module Yuzakan
   module Adapters
-    class DummyAdapter < AbstractAdapter
+    class Dummy < Yuzakan::Adapter
       self.name = "dummy"
       self.display_name = "ダミー"
       self.version = "0.0.1"

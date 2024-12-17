@@ -19,17 +19,14 @@
 require "securerandom"
 require "smbhash"
 
-require_relative "posix_ldap_adapter"
-require_relative "ad_adapter/account_control"
-
 module Yuzakan
   module Adapters
-    class SambaLdapAdapter < PosixLdapAdapter
+    class SambaLdap < PosixLdap
       self.name = "samba_ldap"
       self.display_name = "Samba LDAP"
       self.version = "0.0.1"
       self.params = ha_merge(
-        PosixLdapAdapter.params + [
+        PosixLdap.params + [
           {
             name: :user_search_filter,
             default: "(&(objectclass=posixAccount)(objectClass=sambaSamAccount))",
@@ -68,8 +65,8 @@ module Yuzakan
             default: false,
           },
         ], key: :name)
-      self.multi_attrs = PosixLdapAdapter.multi_attrs
-      self.hide_attrs = PosixLdapAdapter.hide_attrs + %w[sambaNTPassword sambaLMPassword].map(&:downcase)
+      self.multi_attrs = PosixLdap.multi_attrs
+      self.hide_attrs = PosixLdap.hide_attrs + %w[sambaNTPassword sambaLMPassword].map(&:downcase)
 
       group :primary
 

@@ -1,16 +1,14 @@
 # frozen_string_literal: true
 
-require_relative "abstract_adapter"
-
 module Yuzakan
   module Adapters
-    class LocalAdapter < AbstractAdapter
+    class Local < Yuzakan::Adapter
       self.name = "local"
       self.display_name = "ローカル"
-      self.version = "0.0.1"
+      self.version = "0.0.2"
       self.params = []
 
-      group false
+      group :primary
 
       def initialize(params, **opts)
         super

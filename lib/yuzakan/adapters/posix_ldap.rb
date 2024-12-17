@@ -2,17 +2,15 @@
 
 require "etc"
 
-require_relative "ldap_adapter"
-
 module Yuzakan
   module Adapters
     # rubocop: disable Matrixs/ClassLength
-    class PosixLdapAdapter < LdapAdapter
+    class PosixLdap < Ldap
       self.name = "posix_ldap"
       self.display_name = "Posix LDAP"
       self.version = "0.0.1"
       self.params = ha_merge(
-        LdapAdapter.params + [
+        Ldap.params + [
           {
             name: :user_name_attr,
             default: "uid",
@@ -72,8 +70,8 @@ module Yuzakan
             default: 100,
           },
         ], key: :name)
-      self.multi_attrs = LdapAdapter.multi_attrs
-      self.hide_attrs = LdapAdapter.hide_attrs
+      self.multi_attrs = Ldap.multi_attrs
+      self.hide_attrs = Ldap.hide_attrs
 
       group :primary
 

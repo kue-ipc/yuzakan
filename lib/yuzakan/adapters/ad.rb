@@ -2,17 +2,14 @@
 
 require "securerandom"
 
-require_relative "ldap_adapter"
-require_relative "ad_adapter/account_control"
-
 module Yuzakan
   module Adapters
-    class AdAdapter < LdapAdapter
+    class AD < Ldap
       self.name = "ad"
       self.display_name = "Active Directory"
       self.version = "0.0.1"
       self.params = ha_merge(
-        LdapAdapter.params + [
+        Ldap.params + [
           {
             name: :host,
             label: "ドメインコントローラーのホスト名/IPアドレス",
@@ -76,8 +73,8 @@ module Yuzakan
           },
         ], key: :name)
 
-      self.multi_attrs = LdapAdapter.multi_attrs
-      self.hide_attrs = LdapAdapter.hide_attrs
+      self.multi_attrs = Ldap.multi_attrs
+      self.hide_attrs = Ldap.hide_attrs
 
       group true
 

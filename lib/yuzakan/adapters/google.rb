@@ -11,7 +11,7 @@ require "google/apis/admin_directory_v1"
 
 module Yuzakan
   module Adapters
-    class GoogleAdapter < AbstractAdapter
+    class Google < Yuzakan::Adapter
       self.name = "google"
       self.display_name = "Google Workspace"
       self.version = "0.0.1"
