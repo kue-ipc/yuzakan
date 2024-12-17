@@ -35,7 +35,21 @@ module Yuzakan
         @params = @adapter_class.normalize_params(provider_params_hash)
         @adapter = @adapter_class.new(@params, group: attributes[:group], logger: Hanami.logger)
         super
+      end
 
+      def get_provider(provider)
+        provider =
+          if !provider.is_a?(Yuzakan::Structs::Provider)
+            provider_repo.get(provider)
+          elsif provider.provider_params.nil?
+            provider_repo.get(provider) unless provider.is_a?(Yuzakan::Structs::Provider)
+          end
+
+        if provider
+          Success(provider)
+        else
+          Failure(:not_found)
+        end
       end
     end
   end

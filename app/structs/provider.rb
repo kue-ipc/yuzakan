@@ -8,8 +8,6 @@ require "digest/md5"
 module Yuzakan
   module Structs
     class Provider < Yuzakan::DB::Struct
-      attr_reader :params
-
       class NoAdapterError < StandardError
         def initialize(msg = "No adapter, but need an adapter.")
           super
@@ -28,35 +26,8 @@ module Yuzakan
         end
       end
 
-      # rubocop:disable Lint/ReturnInVoidContext
-      def initialize(attributes = nil)
-        return super if attributes.nil? || attributes[:adapter].nil?
-
-        @adapter_class = adapters[attributes[:adapter]]
-        raise NoAdapterError, "Not found adapter: #{attributes[:adapter]}" unless @adapter_class
-
-        return super if attributes[:provider_params].nil?
-
-        # cache_store
-        expires_in = case Hanami.env
-                     when "production" then 60 * 60
-                     when "development" then 60
-                     else 0
-                     end
-        namespace = ["yuzakan", "provider", attributes[:name]].join(":")
-        redis_url = ENV.fetch("REDIS_URL", "redis://127.0.0.1:6379/0")
-        @cache_store = Yuzakan::Utils::CacheStore.create_store(
-          expires_in: expires_in, namespace: namespace, redis_url: redis_url)
-
-        provider_params_hash = attributes[:provider_params].to_h do |param|
-          [param[:name].intern, param[:value]]
-        end
-        @params = @adapter_class.normalize_params(provider_params_hash)
-        @adapter = @adapter_class.new(@params, group: attributes[:group], logger: Hanami.logger)
-        super
-      end
-      # rubocop:enable Lint/ReturnInVoidContext
-
+      # FIXME: adapterはoperationsで作る
+      # @adapter_class, @cache_store, @params, @adapterを使用するメソッドはそちらに移動すること。
 
       def label_name
         if display_name
