@@ -17,7 +17,7 @@ module API
           params do
             required(:name).filled(:str?, :name?, max_size?: 255)
             optional(:display_name).maybe(:str?, max_size?: 255)
-            required(:adapter_name).filled(:str?, :name?, max_size?: 255)
+            required(:adapter).filled(:str?, :name?, max_size?: 255)
             optional(:order).filled(:int?)
             optional(:readable).filled(:bool?)
             optional(:writable).filled(:bool?)

@@ -49,7 +49,7 @@ provider_repo = Hanami.app["repos.provider_repo"]
 unless provider_repo.get("local")
   local_provider_params = {
     display_name: "ローカル",
-    adapter_name: "local",
+    adapter: "local",
     order: "0",
     readable: true,
     writable: true,

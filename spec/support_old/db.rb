@@ -25,7 +25,7 @@ def db_initialize
     name: "local",
     display_name: "ローカル",
     order: "0",
-    adapter_name: "local",
+    adapter: "local",
     readable: true,
     writable: true,
     authenticatable: true,
@@ -35,7 +35,7 @@ def db_initialize
   provider_repository.create({
     name: "dummy",
     display_name: "ダミー",
-    adapter_name: "dummy",
+    adapter: "dummy",
   })
   local_provider = provider_repository.find_with_adapter_by_name("local")
   local_provider.create("admin", "pass",

@@ -4,9 +4,9 @@ RSpec.describe ProviderRepository do
   let(:provider_repository) { described_class.new }
 
   before do
-    @provider_hoge = provider_repository.create(name: "hoge", display_name: "ほげ", adapter_name: "test", order: 8)
-    @provider_fuga = provider_repository.create(name: "fuga", display_name: "ふが", adapter_name: "test", order: 32)
-    @provider_piyo = provider_repository.create(name: "piyo", display_name: "ぴよ", adapter_name: "test", order: 16)
+    @provider_hoge = provider_repository.create(name: "hoge", display_name: "ほげ", adapter: "test", order: 8)
+    @provider_fuga = provider_repository.create(name: "fuga", display_name: "ふが", adapter: "test", order: 32)
+    @provider_piyo = provider_repository.create(name: "piyo", display_name: "ぴよ", adapter: "test", order: 16)
   end
 
   after do

@@ -102,7 +102,7 @@ module Admin
             name: "local",
             display_name: "ローカル",
             order: "0",
-            adapter_name: "local",
+            adapter: "local",
             readable: true,
             writable: true,
             authenticatable: true,

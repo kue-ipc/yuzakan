@@ -10,7 +10,7 @@ RSpec.describe API::Actions::Providers::Create do
     {
       name: "provider1",
       display_name: "プロバイダー①",
-      adapter_name: "test",
+      adapter: "test",
       order: 16,
       readable: true,
       writable: true,
@@ -160,7 +160,7 @@ RSpec.describe API::Actions::Providers::Create do
       expect(json).to eq({
         code: 400,
         message: "Bad Request",
-        errors: [{name: ["存在しません。"], adapter_name: ["存在しません。"]}],
+        errors: [{name: ["存在しません。"], adapter: ["存在しません。"]}],
       })
     end
 

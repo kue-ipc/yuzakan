@@ -10,7 +10,7 @@ RSpec.describe API::Actions::Providers::Destroy do
     {
       name: "provider1",
       display_name: "プロバイダー①",
-      adapter_name: "test",
+      adapter: "test",
       order: 16,
       readable: true,
       writable: true,

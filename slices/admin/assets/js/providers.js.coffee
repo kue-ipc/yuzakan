@@ -10,7 +10,7 @@ providerTr = ({provider}) ->
     html.td {},
       html.a {href: "/admin/providers/#{provider.name}"}, text provider.name
     html.td {}, text provider.display_name
-    html.td {}, text provider.adapter_name
+    html.td {}, text provider.adapter
     html.td {}, if provider.check?
       if provider.check
         html.span {class: 'text-success'}, text 'OK'
@@ -18,7 +18,7 @@ providerTr = ({provider}) ->
         html.span {class: 'text-danger'}, text 'NG'
     else
       html.span {class: 'text-secondary'}, text '確認中'
-    html.td {}, if provider.adapter_name == "local"
+    html.td {}, if provider.adapter == "local"
       html.a {
         class: "btn btn-primary btn-sm"
         href: "/admin/providers/#{provider.name}/export"

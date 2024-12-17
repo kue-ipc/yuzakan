@@ -30,7 +30,7 @@ module Admin
           provider: %i[
             name
             display_name
-            adapter_name
+            adapter
             readable
             writable
             authenticatable

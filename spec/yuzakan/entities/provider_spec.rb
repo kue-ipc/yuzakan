@@ -5,7 +5,7 @@ RSpec.describe Provider do
     {
       name: "test",
       dispaly_name: "テスト",
-      adapter_name: "test",
+      adapter: "test",
       order: 0,
       readable: true,
       writable: true,

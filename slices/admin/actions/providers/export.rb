@@ -27,7 +27,7 @@ module Admin
           @name = params[:id].to_s
           @provider = @provider_repository.find_with_params_by_name(@name)
           halt 404 unless @provider
-          halt 403 unless @provider.adapter_name == "local"
+          halt 403 unless @provider.adapter == "local"
         end
       end
     end

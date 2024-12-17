@@ -37,7 +37,7 @@ module API
                 url: Web.routes.path(:providers, provider.name),
                 description: "#{provider.display_name}のアカウントを操作します。",
                 color: "secondary",
-                icon: adapter_icon(provider.adapter_name),
+                icon: adapter_icon(provider.adapter),
                 category: "user",
               }
             end
@@ -110,8 +110,8 @@ module API
         def configurate!
         end
 
-        private def adapter_icon(adapter_name)
-          case adapter_name
+        private def adapter_icon(adapter)
+          case adapter
           when "google"
             "google"
           when "microsoft"

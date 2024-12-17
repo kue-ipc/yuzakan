@@ -17,7 +17,7 @@ export API_PROVIDERS = '/api/providers'
 export PROVIDER_PROPERTIES = {
   name: 'string'
   display_name: 'string'
-  adapter_name: 'string'
+  adapter: 'string'
   order: 'integer'
   readable: 'boolean'
   writable: 'boolean'

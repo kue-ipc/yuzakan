@@ -118,7 +118,7 @@ def let_mock_repositories
   let(:group_attributes) { {id: 42, name: "group", display_name: "グループ"} }
   let(:provider_attriubtes) {
     {
-      id: 42, name: "provider42", display_name: "プロバイダー42", adapter_name: "dummy", order: 8,
+      id: 42, name: "provider42", display_name: "プロバイダー42", adapter: "dummy", order: 8,
       readable: false, writable: false, authenticatable: false, password_changeable: false,
       lockable: false, group: false, individual_password: false, self_management: false,
       description: nil,

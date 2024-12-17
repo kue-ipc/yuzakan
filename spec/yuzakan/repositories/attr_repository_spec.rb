@@ -40,8 +40,8 @@ RSpec.describe AttrRepository do
     let(:provider_repository) { ProviderRepository.new }
 
     before do
-      @provider_hoge = provider_repository.create(name: "hoge", display_name: "ほげ", adapter_name: "dummy", order: 8)
-      @provider_fuga = provider_repository.create(name: "fuga", display_name: "ふが", adapter_name: "dummy", order: 16)
+      @provider_hoge = provider_repository.create(name: "hoge", display_name: "ほげ", adapter: "dummy", order: 8)
+      @provider_fuga = provider_repository.create(name: "fuga", display_name: "ふが", adapter: "dummy", order: 16)
 
       @attr_mapping_hoge_hoge = attr_mapping_repository.create(attr_id: @attr_hoge.id, provider_id: @provider_hoge.id,
                                                                key: "hoge_hoge")

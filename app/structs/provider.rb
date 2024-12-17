@@ -2,6 +2,8 @@
 
 require "digest/md5"
 
+# TODO: ばらばらにする。
+
 # rubocop: disable Metrics/ClassLength
 module Yuzakan
   module Structs
@@ -28,10 +30,10 @@ module Yuzakan
 
       # rubocop:disable Lint/ReturnInVoidContext
       def initialize(attributes = nil)
-        return super if attributes.nil? || attributes[:adapter_name].nil?
+        return super if attributes.nil? || attributes[:adapter].nil?
 
-        @adapter_class = ADAPTERS_MANAGER.by_name(attributes[:adapter_name])
-        raise NoAdapterError, "Not found adapter: #{attributes[:adapter_name]}" unless @adapter_class
+        @adapter_class = adapters[attributes[:adapter]]
+        raise NoAdapterError, "Not found adapter: #{attributes[:adapter]}" unless @adapter_class
 
         return super if attributes[:provider_params].nil?
 

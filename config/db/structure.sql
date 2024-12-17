@@ -394,7 +394,7 @@ CREATE TABLE public.providers (
     name text NOT NULL,
     display_name text,
     description character varying(4096),
-    adapter_name text NOT NULL,
+    adapter text NOT NULL,
     "order" integer NOT NULL,
     readable boolean DEFAULT false NOT NULL,
     writable boolean DEFAULT false NOT NULL,
