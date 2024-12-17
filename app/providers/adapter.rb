@@ -9,14 +9,8 @@ module Yuzakan
       ]
 
       def call(provider)
-        provider = provider_repo.get(provider) unless provider.is_a?(Yuzakan::Structs::Provider)
-
-        return super if attributes.nil? || attributes[:adapter].nil?
-
-        adapter_class = adapters[provider.adapter]
-        raise NoAdapterError, "Not found adapter: #{attributes[:adapter]}" unless @adapter_class
-
-        return super if attributes[:provider_params].nil?
+        provider = step get_provider(provider)
+        adapter_class = step get_adapter_class(provider.adapter)
 
         # cache_store
         expires_in = case Hanami.env
@@ -38,15 +32,28 @@ module Yuzakan
       end
 
       def get_provider(provider)
+        return Failure(:nil) if provider.nil?
+
         provider =
-          if !provider.is_a?(Yuzakan::Structs::Provider)
-            provider_repo.get(provider)
+          if provider.is_a?(Yuzakan::Structs::Provider)
+            provider_repo.get(provider.to_s)
           elsif provider.provider_params.nil?
-            provider_repo.get(provider) unless provider.is_a?(Yuzakan::Structs::Provider)
+            provider_repo.get(provider.name)
+          else
+            provider
           end
 
         if provider
           Success(provider)
+        else
+          Failure(:not_found)
+        end
+      end
+
+      def get_adapter_class(name)
+        adapter_class = adapters[name]
+        if adapter_class
+          Success(adapter_class)
         else
           Failure(:not_found)
         end

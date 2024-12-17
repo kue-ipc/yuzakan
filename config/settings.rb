@@ -2,9 +2,10 @@
 
 module Yuzakan
   class Settings < Hanami::Settings
-    # Define your app settings here, for example:
-    #
-    # setting :my_flag, default: false, constructor: Types::Params::Bool
+    setting :crypt_secret, constructor: Types::String
     setting :session_secret, constructor: Types::String
+    setting :session_expire, default: 24 * 60 * 60, constructor: Types::Params::Integer
+    setting :cache_expire, defalut: 24 * 60 * 60, constructor: Types::Params::Integer
+    setting :redis_url, constructor: Types::String.optional
   end
 end

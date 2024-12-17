@@ -35,6 +35,8 @@ gem "i18n"
 # key-value storage
 gem "redis-rack"
 gem "readthis"
+gem "hiredis"
+
 
 # LDAP
 gem "net-ldap"

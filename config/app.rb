@@ -2,6 +2,8 @@
 
 require "hanami"
 
+require "rack/session/redis"
+
 # FIXME: 必要ないかも？
 # CoffeeScript v2 (from node_modulses)
 ENV["COFFEESCRIPT_SOURCE_PATH"] ||= File.expand_path(
@@ -17,15 +19,30 @@ I18n.default_locale = :ja
 
 module Yuzakan
   class App < Hanami::App
-    config.actions.sessions = :cookie, {
-      key: "yuzakan.session",
-      secret: settings.session_secret,
-      expire_after: 60 * 60 * 24 * 365,
-    }
-    # config.shared_app_component_keys += ["repos.*_repo"]
+    config.actions.sessions =
+      if settings.redis_url
+        [:redis, {
+          key: "yuzakan.session",
+          expire_after: setting.session_expire,
+          redis_server: "#{settings.redis_url}/yuzakan:session",
+          expires_in: setting.session_expire,
+        },]
+      elsif settings.session_secret
+        [:cookie, {
+          key: "yuzakan.session",
+          expire_after: setting.session_expire,
+          secret: settings.session_secret,
+        },]
+      else
+        [:pool, {
+          key: "yuzakan.session",
+          expire_after: setting.session_expire,
+        },]
+      end
     config.middleware.use :body_parser, :json
     config.inflections do |inflections|
       inflections.acronym "AD"
     end
+    # config.shared_app_component_keys += ["repos.*_repo"]
   end
 end
