@@ -14,31 +14,27 @@ module Yuzakan
           dirver: :hiredis)
       end
 
-      private def redis_key(key)
-        normalize_key(key).join(SEPARATOR)
-      end
-
       def key?(key)
-        @store.exist?(redis_key(key))
+        @store.exist?(key)
       end
 
       def [](key)
-        @store.read(redis_key(key))
+        @store.read(key)
       end
 
       def []=(key, value)
-        @store.write(redis_key(key), value)
+        @store.write(key, value)
         value
       end
 
       def delete(key)
         value = self[key]
-        @store.delete(redis_key(key))
+        @store.delete(key)
         value
       end
 
       def delete_all(key)
-        @store.delete_matched("#{redis_key(key)}#{SEPARATOR}*")
+        @store.delete_matched("#{key}#{SEPARATOR}*")
       end
 
       def clear
@@ -47,7 +43,7 @@ module Yuzakan
       end
 
       def fetch(key, &)
-        @store.fetch(redis_key(key), &)
+        @store.fetch(key, &)
       end
     end
   end

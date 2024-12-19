@@ -2,17 +2,28 @@
 
 module Yuzakan
   module CacheStore
+    SEPARATOR = ":"
+
     attr_reader :expire, :namespace
 
     # expire: integer
-    # namespace: array or string
-    def initialize(expire: 0, namespace: nil)
+    # namespace: string with colon separated
+    def initialize(expire: 0, namespace: "")
       @expire = expire
-      @namespace = normalize_key(namespace)
+      @namespace = namespace
     end
 
-    private def normalize_key(key)
-      Array(key)
+    private def split_key(key)
+      key.split(SEPARATOR)
+    end
+
+    private def join_keys(*keys)
+      keys.join(SEPARATOR)
+    end
+
+    private def take_key(key)
+      *parents, child = split_key(key)
+      [join_keys(*parents), child]
     end
 
     # need to define methods

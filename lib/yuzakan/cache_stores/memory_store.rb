@@ -22,25 +22,18 @@ module Yuzakan
         end
       end
 
-      SEPARATOR = "."
-
       def initialize(...)
         super
         # ignore namespace
         @stores = Hash.new { |hash, key| hash[key] = {} }
       end
 
-      private def memory_key(key)
-        *parents, child = normalize_key(key)
-        [parents.join(SEPARATOR), child]
-      end
-
       def key?(key)
-        tree, node = memory_key(key)
-        value = @store[tree][node]
-        return false if value.nil?
+        tree, node = take_key(key)
+        cache = @store[tree][node]
+        return false if cache.nil?
 
-        if value.expired?
+        if cache.expired?
           # expired value
           @store[tree].delete(node)
           return false
@@ -50,11 +43,11 @@ module Yuzakan
       end
 
       def [](key)
-        tree, node = memory_key(key)
-        value = @store[tree][node]
-        return if value.nil?
+        tree, node = take_key(key)
+        cache = @store[tree][node]
+        return if cache.nil?
 
-        if value.expired?
+        if cache.expired?
           # expired value
           @store[tree].delete(node)
           return
@@ -64,38 +57,43 @@ module Yuzakan
       end
 
       def []=(key, value)
-        tree, node = memory_key(key)
-        @store[tree][node] = Value.new(value, expire: @expire)
+        tree, node = take_key(key)
+        cache = @store[tree][node]
+        if cache
+          cache.update(value)
+        else
+          @store[tree][node] = Value.new(value, expire: @expire)
+        end
+        value
       end
 
       def delete(key)
-        tree, node = memory_key(key)
-        value = @store[tree].delete(node)
-        return if value.nil?
-        return if value.expired?
+        tree, node = take_key(key)
+        cache = @store[tree].delete(node)
+        return if cache.nil?
+        return if cache.expired?
 
-        value.data
+        cache.data
       end
 
       def delete_all(key)
-        tree = normalize_key(key).join(SEPARATOR)
-        count = @store[tree].each_value.count { |value| !value.expired? }
+        count = @store[key].each_value.count { |value| !value.expired? }
         @store[tree].clear
         count
       end
 
       def fetch(key)
-        tree, node = memory_key(key)
-        value = @store[tree][node]
-        return yield key if value.nil?
+        tree, node = take_key(key)
+        cache = @store[tree][node]
+        return yield key if cache.nil?
 
-        if value.expired?
+        if cache.expired?
           # expired value
           @store[tree].delete(node)
           return yield key
         end
 
-        value.data
+        cache.data
       end
 
       def clear
