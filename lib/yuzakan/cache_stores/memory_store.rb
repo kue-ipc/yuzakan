@@ -37,19 +37,27 @@ module Yuzakan
 
       def key?(key)
         tree, node = memory_key(key)
-        @store[tree].key?(node)
-      end
-
-      def [](key)
-        tree, node = memory_key(key)
-
         value = @store[tree][node]
-        return nil if value.nil?
+        return false if value.nil?
 
         if value.expired?
           # expired value
           @store[tree].delete(node)
-          return nil
+          return false
+        end
+
+        true
+      end
+
+      def [](key)
+        tree, node = memory_key(key)
+        value = @store[tree][node]
+        return if value.nil?
+
+        if value.expired?
+          # expired value
+          @store[tree].delete(node)
+          return
         end
 
         value.data
@@ -63,33 +71,31 @@ module Yuzakan
       def delete(key)
         tree, node = memory_key(key)
         value = @store[tree].delete(node)
-        return nil if value.nil?
-        return nil if value.expired?
+        return if value.nil?
+        return if value.expired?
 
         value.data
       end
 
       def delete_all(key)
-        @store.delete_matched("#{redis_key(key)}#{SEPARATOR}*")
+        tree = normalize_key(key).join(SEPARATOR)
+        count = @store[tree].each_value.count { |value| !value.expired? }
+        @store[tree].clear
+        count
       end
 
-      def delete_matched(pattern)
+      def fetch(key)
         tree, node = memory_key(key)
+        value = @store[tree][node]
+        return yield key if value.nil?
 
-        # TODO: プリフィックスのみ
-        prefix = pattern.split(/\*|\?|\[/).first
-        @store.delete_if { |key, _value| key.start_with?(prefix) }
-      end
-
-      def fetch(key, &)
-        if @store.key?(key)
-          time, value = @store[key]
-          return value if Time.now - time <= @expires_in
-
-          @store.delete(key)
+        if value.expired?
+          # expired value
+          @store[tree].delete(node)
+          return yield key
         end
 
-        yield key
+        value.data
       end
 
       def clear
