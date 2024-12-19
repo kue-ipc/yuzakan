@@ -22,6 +22,9 @@ Layout/MultilineMethodCallBraceLayout:
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
 
+Lint/Void:
+  Enabled: false
+
 # double size metrics
 Metrics/AbcSize:
   Max: 30

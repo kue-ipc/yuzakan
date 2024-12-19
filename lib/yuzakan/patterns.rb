@@ -6,26 +6,31 @@
 module Yuzakan
   module Patterns
     class Pattern
-      attr_reader :pattern
+      attr_reader :pattern, :ruby, :ecma_script
 
       def initialize(pattern)
         @pattern = -pattern
+        @ruby = /\A#{pattern}\z/
+        @ecma_script = "/^#{pattern}$/v"
       end
 
-      def ruby
-        Regexp.compile("\\A#{@pattern}\\z")
-      end
-
-      def es
-        "/^#{@pattern}$/v"
-      end
+      alias to_s pattern
     end
-    NAME = Pattern.new('[a-z0-9_](?:[0-9a-z_\-]|\.[0-9a-z_\-])*')
-    PASSWORD = Pattern.new('[\x20-\x7e]*')
 
-    # https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address
-    HOST = Pattern.new("[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?")
-    DOMAIN = Pattern.new("#{HOST.pettern}(?:\\.#{HOST.pattern})*")
-    EMAIL = Pattern.new("[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~\\-]+@#{DOMAIN.pattern}")
+    MAP =
+      {
+        name: '[a-z0-9_](?:[0-9a-z_\-]|\.[0-9a-z_\-])*',
+        password: '[\x20-\x7e]*',
+      }.then do |hash|
+        # https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address
+        host = "[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?"
+        domain = "#{host}(?:\\.#{host})*"
+        email = "[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~\\-]+@#{domain}"
+        hash.merge({host:, domain:, email:})
+      end.transform_valuse { |value| Pattern.new(value) }
+
+    def self.[](key)
+      MAP[key]
+    end
   end
 end
