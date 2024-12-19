@@ -6,8 +6,8 @@ require_relative "../predicates/name_predicates"
 
 # Groupレポジトリからの解除
 module Yuzakan
-  module Groups
-    class Unregister < Yuzakan::Operation
+  module Mgmt
+    class UnregisterGroup < Yuzakan::Operation
       include Hanami::Interactor
 
       class Validator

@@ -6,8 +6,8 @@ require_relative "../predicates/name_predicates"
 
 # Groupレポジトリと各プロバイダーのグループ情報同期
 module Yuzakan
-  module Groups
-    class Sync < Yuzakan::Operation
+  module Mgmt
+    class SyncGroup < Yuzakan::Operation
       include Hanami::Interactor
 
       class Validator

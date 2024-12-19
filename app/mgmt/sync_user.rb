@@ -2,8 +2,8 @@
 
 # Userレポジトリと各プロバイダーのユーザー情報を同期し、ユーザーを返す。
 module Yuzakan
-  module Users
-    class Sync < Yuzakan::Operation
+  module Mgmt
+    class SyncUser < Yuzakan::Operation
       include Deps[
         "providers.read_user",
         "users.register",

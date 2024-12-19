@@ -2,8 +2,8 @@
 
 # Userレポジトリへの登録または更新
 module Yuzakan
-  module Users
-    class Register < Yuzakan::Operation
+  module Mgmt
+    class RegisterUser < Yuzakan::Operation
       include Deps[
         "repos.user_repo",
         "repos.group_repo",

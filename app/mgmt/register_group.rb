@@ -6,8 +6,8 @@ require_relative "../predicates/name_predicates"
 
 # Groupレポジトリへの登録または更新
 module Yuzakan
-  module Groups
-    class Register < Yuzakan::Operation
+  module Mgmt
+    class RegisterGroup < Yuzakan::Operation
       include Hanami::Interactor
 
       class Validator
