@@ -2,8 +2,8 @@
 
 module Yuzakan
   module Relations
-    class ProviderParams < Yuzakan::DB::Relation
-      schema :provider_params, infer: true do
+    class AdapterParams < Yuzakan::DB::Relation
+      schema :adapter_params, infer: true do
         associations do
           belongs_to :provider
         end

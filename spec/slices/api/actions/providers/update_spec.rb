@@ -2,11 +2,11 @@
 
 RSpec.describe API::Actions::Providers::Update do
   init_controller_spec
-  let(:action_opts) { {provider_repository: provider_repository, provider_param_repository: provider_param_repository} }
+  let(:action_opts) { {provider_repository: provider_repository, adapter_param_repository: adapter_param_repository} }
   let(:format) { "application/json" }
-  let(:action_params) { {id: "provider1", **provider_params, params: provider_params_params} }
+  let(:action_params) { {id: "provider1", **adapter_params, params: adapter_params_params} }
 
-  let(:provider_params) {
+  let(:adapter_params) {
     {
       name: "provider1",
       display_name: "プロバイダー①",
@@ -22,7 +22,7 @@ RSpec.describe API::Actions::Providers::Update do
       self_management: false,
     }
   }
-  let(:provider_params_params) {
+  let(:adapter_params_params) {
     {
       str: "hoge",
       str_required: "fuga",
@@ -32,13 +32,13 @@ RSpec.describe API::Actions::Providers::Update do
       list: "other",
     }
   }
-  let(:provider_params_attributes) {
+  let(:adapter_params_attributes) {
     [
       {name: "str", value: Marshal.dump("hoge")},
       {name: "int", value: Marshal.dump(42)},
     ]
   }
-  let(:provider_params_attributes_params) {
+  let(:adapter_params_attributes_params) {
     {
       default: nil,
       str: "hoge",
@@ -51,8 +51,8 @@ RSpec.describe API::Actions::Providers::Update do
       list: "default",
     }
   }
-  let(:provider_with_params) { Provider.new(id: 3, **provider_params, provider_params: provider_params_attributes) }
-  let(:provider_without_params) { Provider.new(id: 3, **provider_params) }
+  let(:provider_with_params) { Provider.new(id: 3, **adapter_params, adapter_params: adapter_params_attributes) }
+  let(:provider_without_params) { Provider.new(id: 3, **adapter_params) }
   let(:provider_repository) {
     instance_double(ProviderRepository,
       find_with_params_by_name: provider_with_params,
@@ -61,9 +61,9 @@ RSpec.describe API::Actions::Providers::Update do
       last_order: 16,
       update: provider_without_params,
       delete_param_by_name: 1,
-      add_param: ProviderParam.new)
+      add_param: AdapterParam.new)
   }
-  let(:provider_param_repository) { instance_double(ProviderParamRepository, update: ProviderParam.new) }
+  let(:adapter_param_repository) { instance_double(AdapterParamRepository, update: AdapterParam.new) }
 
   it "is failure" do
     response = action.call(params)
@@ -83,8 +83,8 @@ RSpec.describe API::Actions::Providers::Update do
       expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
-        **provider_params,
-        params: provider_params_attributes_params,
+        **adapter_params,
+        params: adapter_params_attributes_params,
       })
     end
 
@@ -94,8 +94,8 @@ RSpec.describe API::Actions::Providers::Update do
       expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
-        **provider_params,
-        params: provider_params_attributes_params,
+        **adapter_params,
+        params: adapter_params_attributes_params,
       })
     end
 
@@ -126,7 +126,7 @@ RSpec.describe API::Actions::Providers::Update do
           last_order: 16,
           update: provider_without_params,
           delete_param_by_name: 1,
-          add_param: ProviderParam.new)
+          add_param: AdapterParam.new)
       }
 
       it "is successful" do
@@ -135,8 +135,8 @@ RSpec.describe API::Actions::Providers::Update do
         expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
         expect(json).to eq({
-          **provider_params,
-          params: provider_params_attributes_params,
+          **adapter_params,
+          params: adapter_params_attributes_params,
         })
       end
 
@@ -146,8 +146,8 @@ RSpec.describe API::Actions::Providers::Update do
         expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
         json = JSON.parse(response[2].first, symbolize_names: true)
         expect(json).to eq({
-          **provider_params,
-          params: provider_params_attributes_params,
+          **adapter_params,
+          params: adapter_params_attributes_params,
         })
       end
 

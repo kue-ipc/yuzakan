@@ -36,17 +36,17 @@ RSpec.describe ProviderRepository do
   end
 
   describe "with params" do
-    let(:provider_param_repository) { ProviderParamRepository.new }
+    let(:adapter_param_repository) { AdapterParamRepository.new }
 
     before do
-      @provider_param_hoge = provider_param_repository.create(provider_id: @provider_hoge.id, name: "str",
+      @adapter_param_hoge = adapter_param_repository.create(provider_id: @provider_hoge.id, name: "str",
         value: Marshal.dump("ほげほげ"))
-      @provider_param_fuga = provider_param_repository.create(provider_id: @provider_hoge.id, name: "int",
+      @adapter_param_fuga = adapter_param_repository.create(provider_id: @provider_hoge.id, name: "int",
         value: Marshal.dump(42))
     end
 
     after do
-      provider_param_repository.clear
+      adapter_param_repository.clear
     end
 
     it "find_with_params" do
@@ -66,20 +66,20 @@ RSpec.describe ProviderRepository do
     end
 
     it "add_param" do
-      provider_param = provider_repository.add_param(@provider_fuga, {name: "str", value: Marshal.dump("ふがふが")})
-      expect(provider_param).to be_instance_of ProviderParam
-      expect(provider_param.name).to eq "str"
-      expect(provider_param_repository.all.count).to eq 3
+      adapter_param = provider_repository.add_param(@provider_fuga, {name: "str", value: Marshal.dump("ふがふが")})
+      expect(adapter_param).to be_instance_of AdapterParam
+      expect(adapter_param.name).to eq "str"
+      expect(adapter_param_repository.all.count).to eq 3
     end
 
     it "delete_param_by_name" do
       delete_count = provider_repository.delete_param_by_name(@provider_hoge, "str")
       expect(delete_count).to eq 1
-      expect(provider_param_repository.all.count).to eq 1
+      expect(adapter_param_repository.all.count).to eq 1
 
       delete_count = provider_repository.delete_param_by_name(@provider_fuga, "str")
       expect(delete_count).to eq 0
-      expect(provider_param_repository.all.count).to eq 1
+      expect(adapter_param_repository.all.count).to eq 1
     end
   end
 end

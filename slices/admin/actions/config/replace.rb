@@ -43,14 +43,14 @@ module Admin
         def initialize(config_repository: ConfigRepository.new,
                        network_repository: NetworkRepository.new,
                        provider_repository: ProviderRepository.new,
-                       provider_param_repository: ProviderParamRepository.new,
+                       adapter_param_repository: AdapterParamRepository.new,
                        attr_repository: AttrRepository.new,
                        **opts)
           super
           @config_repository ||= config_repository
           @network_repository ||= network_repository
           @provider_repository ||= provider_repository
-          @provider_param_repository ||= provider_param_repository
+          @adapter_param_repository ||= adapter_param_repository
           @attr_repository ||= attr_repository
         end
 
@@ -134,7 +134,7 @@ module Admin
             current_provider = existing_providers.delete(provider_name)
 
             data = {**provider_data, order: idx * 8}
-            provider_params = data.delete(:params)
+            adapter_params = data.delete(:params)
 
             provider =
               if current_provider
@@ -143,7 +143,7 @@ module Admin
                 @provider_repository.create(data)
               end
 
-            update_provider_params(provider, provider_params) if provider_params
+            update_adapter_params(provider, adapter_params) if adapter_params
           end
 
           # リストになかったプロバイダーを削除
@@ -155,8 +155,8 @@ module Admin
           raise
         end
 
-        def update_provider_params(provider, params)
-          existing_params = @provider_param_repository.all_by_provider(provider).to_h do |param|
+        def update_adapter_params(provider, params)
+          existing_params = @adapter_param_repository.all_by_provider(provider).to_h do |param|
             [param.name, param]
           end
 
@@ -171,15 +171,15 @@ module Admin
             param_data = {provider_id: provider.id, name: param_name.to_s,
                           value: param_type.dump_value(value),}
             if current_param
-              @provider_param_repository.update(current_param.id, param_data)
+              @adapter_param_repository.update(current_param.id, param_data)
             else
-              @provider_param_repository.create(param_data)
+              @adapter_param_repository.create(param_data)
             end
           end
 
           # リストになかったパラメーターを削除
           existing_params.each_value do |param|
-            @provider_param_repository.delete(param.id)
+            @adapter_param_repository.delete(param.id)
           end
         end
 

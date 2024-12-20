@@ -607,7 +607,7 @@ module Yuzakan
         when Array
           value.map { |v| convert_ldap_value(v) }
         else
-          raise LdapAdatperError, "unsupported value type: #{value.class}"
+          raise LdapAdapterError, "unsupported value type: #{value.class}"
         end
       end
 
@@ -687,7 +687,7 @@ module Yuzakan
       end
 
       private def generate_operation(operator, name, value = nil)
-        raise LdapAdatperError, "invalid operator: #{operator}" unless [:add,
+        raise LdapAdapterError, "invalid operator: #{operator}" unless [:add,
                                                                         :replace, :delete,].include?(operator)
 
         [operator, name, value]
@@ -740,7 +740,7 @@ module Yuzakan
           opts[:port] = port || 636
           opts[:encryption] = {method: :simple_tls}
         else
-          raise LdapAdatperError, "invalid protcol: #{@params[:protocol]}"
+          raise LdapAdapterError, "invalid protcol: #{@params[:protocol]}"
         end
 
         if opts[:encryption] && !@params[:certificate_check]

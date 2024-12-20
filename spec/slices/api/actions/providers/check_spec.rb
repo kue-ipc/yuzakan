@@ -6,7 +6,7 @@ RSpec.describe API::Actions::Providers::Check do
   let(:format) { "application/json" }
   let(:action_params) { {id: "provider1"} }
 
-  let(:provider_params) {
+  let(:adapter_params) {
     {
       name: "provider1",
       display_name: "プロバイダー①",
@@ -14,8 +14,8 @@ RSpec.describe API::Actions::Providers::Check do
       order: 16,
     }
   }
-  let(:provider_params_attributes) { [{name: "check", value: Marshal.dump(true)}] }
-  let(:provider_with_params) { Provider.new(id: 3, **provider_params, provider_params: provider_params_attributes) }
+  let(:adapter_params_attributes) { [{name: "check", value: Marshal.dump(true)}] }
+  let(:provider_with_params) { Provider.new(id: 3, **adapter_params, adapter_params: adapter_params_attributes) }
   let(:provider_repository) {
     instance_double(ProviderRepository, find_with_params_by_name: provider_with_params)
   }
@@ -29,7 +29,7 @@ RSpec.describe API::Actions::Providers::Check do
   end
 
   describe "check failed" do
-    let(:provider_params_attributes) { [{name: "check", value: Marshal.dump(false)}] }
+    let(:adapter_params_attributes) { [{name: "check", value: Marshal.dump(false)}] }
 
     it "is successful, but false" do
       response = action.call(params)

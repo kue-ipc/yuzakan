@@ -43,7 +43,7 @@ module Yuzakan
 
       def get_adapter_params(provider)
         params = provider.adapter_params ||
-          adatper_params.all_by_provider(provider)
+          adapter_params.all_by_provider(provider)
         Success(params)
       end
     end

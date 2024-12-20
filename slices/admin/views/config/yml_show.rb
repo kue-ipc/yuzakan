@@ -68,12 +68,12 @@ module Admin
             provider_data = KEYS[:provider].to_h do |key|
               [key, provider.__send__(key)]
             end
-            provider_params_data = provider.adapter_param_types.to_h do |param_type|
+            adapter_params_data = provider.adapter_param_types.to_h do |param_type|
               [param_type.name.to_s, provider.params[param_type.name]]
             end
             {
               **provider_data,
-              params: provider_params_data,
+              params: adapter_params_data,
             }
           end
         end

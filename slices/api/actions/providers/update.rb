@@ -35,11 +35,11 @@ module API
         params Params
 
         def initialize(provider_repository: ProviderRepository.new,
-                       provider_param_repository: ProviderParamRepository.new,
+                       adapter_param_repository: AdapterParamRepository.new,
                        **opts)
           super
           @provider_repository ||= provider_repository
-          @provider_param_repository ||= provider_param_repository
+          @adapter_param_repository ||= adapter_param_repository
         end
 
         def handle(_request, _response)
@@ -48,14 +48,14 @@ module API
             halt_json 422, errors: [{name: [I18n.t("errors.uniq?")]}]
           end
 
-          provider_params = params.to_h.except(:id)
-          provider_params_params = provider_params.delete(:params)
-          @provider_repository.update(@provider.id, provider_params)
+          adapter_params = params.to_h.except(:id)
+          adapter_params_params = adapter_params.delete(:params)
+          @provider_repository.update(@provider.id, adapter_params)
 
-          if provider_params_params
+          if adapter_params_params
             existing_params = @provider.params.dup
             @provider.adapter_param_types.each do |param_type|
-              value = param_type.convert_value(provider_params_params[param_type.name])
+              value = param_type.convert_value(adapter_params_params[param_type.name])
               next if value.nil?
 
               data = {name: param_type.name.to_s,
@@ -65,12 +65,12 @@ module API
 
                 if existing_value != value
                   param_name = param_type.name.to_s
-                  existing_provider_param = @provider.provider_params.find do |param|
+                  existing_adapter_param = @provider.adapter_params.find do |param|
                     param.name == param_name
                   end
-                  if existing_provider_param
-                    @provider_param_repository.update(
-                      existing_provider_param.id, data)
+                  if existing_adapter_param
+                    @adapter_param_repository.update(
+                      existing_adapter_param.id, data)
                   else
                     # 名前がないということはあり得ない？
                     @provider_repository.add_param(@provider, data)

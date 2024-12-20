@@ -27,8 +27,8 @@ def let_mock_repositories
   let(:network_repository) {
     instance_double(NetworkRepository, **network_repository_stubs)
   }
-  let(:provider_param_repository) {
-    instance_double(ProviderParamRepository, **provider_param_repository_stubs)
+  let(:adapter_param_repository) {
+    instance_double(AdapterParamRepository, **adapter_param_repository_stubs)
   }
   let(:provider_repository) {
     instance_double(ProviderRepository, **provider_repository_stubs)
@@ -75,7 +75,7 @@ def let_mock_repositories
     }
   }
   let(:network_repository_stubs) { {all: networks} }
-  let(:provider_param_repository_stubs) { {} }
+  let(:adapter_param_repository_stubs) { {} }
   let(:provider_repository_stubs) {
     {
       all: providers,

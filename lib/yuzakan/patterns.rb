@@ -27,7 +27,7 @@ module Yuzakan
         domain = "#{host}(?:\\.#{host})*"
         email = "[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~\\-]+@#{domain}"
         hash.merge({host:, domain:, email:})
-      end.transform_valuse { |value| Pattern.new(value) }
+      end.transform_values { |value| Pattern.new(value) }
 
     def self.[](key)
       MAP[key]

@@ -10,7 +10,7 @@ import csrf from '~/csrf.js'
 import WebData from '~/app/web_data.js'
 import ConfirmDialog from '~/app/confirm_dialog.js'
 
-import providerParams from '~/admin/provider_params.js'
+import adapterParams from '~/admin/adapter_params.js'
 
 parentNames = ['provider']
 
@@ -61,7 +61,7 @@ destroyWebData = new WebData {
   ]
 }
 
-providerParamAction = (state, {name, value}) ->
+adapterParamAction = (state, {name, value}) ->
   {state..., provider: {state.provider..., params: {state.provider.params..., [name]: value}}}
 
 providerAction = (state, {name, provider}) ->
@@ -232,10 +232,10 @@ view = ({name, provider, adapters}) ->
             )...
           ]
     ]
-    providerParams {
+    adapterParams {
       params: provider.params
       param_types: provider_adapter?.param_types ? []
-      action: providerParamAction
+      action: adapterParamAction
     }
     html.div {class: 'mb-1'},
       if !name?

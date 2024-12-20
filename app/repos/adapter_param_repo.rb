@@ -2,9 +2,9 @@
 
 module Yuzakan
   module Repos
-    class ProviderParamRepo < Yuzakan::DB::Repo
+    class AdapterParamRepo < Yuzakan::DB::Repo
       def find_by_provider_and_name(data)
-        provider_params
+        adapter_params
           .where(provider_id: data[:provider_id] || data[:provider].id)
           .where(name: data[:name])
           .one
@@ -24,7 +24,7 @@ module Yuzakan
       end
 
       def all_by_provider_id(provider_id)
-        provider_params
+        adapter_params
           .where(provider_id: provider_id)
           .to_a
       end

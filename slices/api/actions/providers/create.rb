@@ -49,14 +49,14 @@ module API
             halt_json 422, errors: [{name: [I18n.t("errors.uniq?")]}]
           end
 
-          provider_params = params.to_h.dup
-          provider_params_params = provider_params.delete(:params)
-          provider_params[:order] ||= @provider_repository.last_order + 8
-          provider = @provider_repository.create(provider_params)
+          adapter_params = params.to_h.dup
+          adapter_params_params = adapter_params.delete(:params)
+          adapter_params[:order] ||= @provider_repository.last_order + 8
+          provider = @provider_repository.create(adapter_params)
 
-          if provider_params_params
+          if adapter_params_params
             provider.adapter_param_types.each do |param_type|
-              value = param_type.convert_value(provider_params_params[param_type.name])
+              value = param_type.convert_value(adapter_params_params[param_type.name])
               next if value.nil?
 
               data = {name: param_type.name.to_s,

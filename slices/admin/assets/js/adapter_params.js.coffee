@@ -122,7 +122,7 @@ inputParam = (props) ->
       text '未実装の形式です。'
 
 
-export default providerParams = ({params, param_types, props...}) ->
+export default adapterParams = ({params, param_types, props...}) ->
   html.div {}, [
     html.h5 {},
       text 'パラメーター'

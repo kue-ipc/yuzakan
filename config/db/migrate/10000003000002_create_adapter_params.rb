@@ -2,7 +2,7 @@
 
 ROM::SQL.migration do
   change do
-    create_table :provider_params do
+    create_table :adapter_params do
       primary_key :id
 
       foreign_key :provider_id, :providers, on_delete: :cascade, null: false

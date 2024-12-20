@@ -5,7 +5,7 @@ module Yuzakan
     class ProviderRepo < Yuzakan::DB::Repo
       def get(name)
         providers.by_name(name).one
-        providers.by_name(name).combine(:provider_params,
+        providers.by_name(name).combine(:adapter_params,
           attr_mappings: :attr).one
       end
 
@@ -45,19 +45,19 @@ module Yuzakan
       end
 
       def find_with_params(id)
-        aggregate(:provider_params).where(id: id).map_to(Provider).one
+        aggregate(:adapter_params).where(id: id).map_to(Provider).one
       end
 
       def find_with_params_by_name(name)
-        aggregate(:provider_params).where(name: name).map_to(Provider).one
+        aggregate(:adapter_params).where(name: name).map_to(Provider).one
       end
 
       def add_param(provider, data)
-        assoc(:provider_params, provider).add(data)
+        assoc(:adapter_params, provider).add(data)
       end
 
       private def param_by_name(provider, param_name)
-        assoc(:provider_params, provider).where(name: param_name)
+        assoc(:adapter_params, provider).where(name: param_name)
       end
 
       def delete_param_by_name(provider, param_name)
@@ -69,17 +69,17 @@ module Yuzakan
       end
 
       def ordered_all_with_adapter
-        aggregate(:provider_params, attr_mappings: :attr).order(:order,
+        aggregate(:adapter_params, attr_mappings: :attr).order(:order,
           :name).map_to(Provider).to_a
       end
 
       def find_with_adapter(id)
-        aggregate(:provider_params,
+        aggregate(:adapter_params,
           attr_mappings: :attr).where(id: id).map_to(Provider).one
       end
 
       def find_with_adapter_by_name(name)
-        aggregate(:provider_params,
+        aggregate(:adapter_params,
           attr_mappings: :attr).where(name: name).map_to(Provider).one
       end
 
@@ -88,7 +88,7 @@ module Yuzakan
       end
 
       def ordered_all_with_adapter_by_ability(ability)
-        aggregate(:provider_params, attr_mappings: :attr).where(ability).order(
+        aggregate(:adapter_params, attr_mappings: :attr).where(ability).order(
           :order, :name).map_to(Provider).to_a
       end
 
@@ -101,7 +101,7 @@ module Yuzakan
       end
 
       def first_google_with_adapter
-        aggregate(:provider_params, attr_mappings: :attr)
+        aggregate(:adapter_params, attr_mappings: :attr)
           .where(adapter: "google")
           .where(self_management: true)
           .order(:order)
@@ -110,7 +110,7 @@ module Yuzakan
       end
 
       def ordered_all_with_adapter_self_management
-        aggregate(:provider_params, attr_mappings: :attr).where(self_management: true)
+        aggregate(:adapter_params, attr_mappings: :attr).where(self_management: true)
           .order(:order, :name).as(Provider).to_a
       end
 

@@ -6,7 +6,7 @@ RSpec.describe API::Actions::Providers::Destroy do
   let(:format) { "application/json" }
   let(:action_params) { {**env, id: "provider1"} }
 
-  let(:provider_params) {
+  let(:adapter_params) {
     {
       name: "provider1",
       display_name: "プロバイダー①",
@@ -21,13 +21,13 @@ RSpec.describe API::Actions::Providers::Destroy do
       self_management: false,
     }
   }
-  let(:provider_params_attributes) {
+  let(:adapter_params_attributes) {
     [
       {name: "str", value: Marshal.dump("hoge")},
       {name: "int", value: Marshal.dump(42)},
     ]
   }
-  let(:provider_params_attributes_params) {
+  let(:adapter_params_attributes_params) {
     {
       default: nil,
       str: "hoge",
@@ -40,8 +40,8 @@ RSpec.describe API::Actions::Providers::Destroy do
       list: "default",
     }
   }
-  let(:provider_with_params) { Provider.new(id: 3, **provider_params, provider_params: provider_params_attributes) }
-  let(:provider_without_params) { Provider.new(id: 3, **provider_params) }
+  let(:provider_with_params) { Provider.new(id: 3, **adapter_params, adapter_params: adapter_params_attributes) }
+  let(:provider_without_params) { Provider.new(id: 3, **adapter_params) }
   let(:provider_repository) {
     instance_double(ProviderRepository,
       find_with_params_by_name: provider_with_params,
@@ -66,8 +66,8 @@ RSpec.describe API::Actions::Providers::Destroy do
       expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
-        **provider_params,
-        params: provider_params_attributes_params,
+        **adapter_params,
+        params: adapter_params_attributes_params,
       })
     end
 

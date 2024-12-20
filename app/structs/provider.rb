@@ -42,7 +42,7 @@ module Yuzakan
       end
 
       def to_h
-        super.except(:provider_params, :attr_mappings)
+        super.except(:adapter_params, :attr_mappings)
       end
 
       def safe_params
@@ -127,7 +127,7 @@ module Yuzakan
           .compact # 値がnilの場合は除外する
       end
 
-      # Ruby userdata -> Adatper userdata
+      # Ruby userdata -> Adapter userdata
       private def map_userdata(userdata)
         return if userdata.nil?
 

@@ -4,9 +4,9 @@ RSpec.describe API::Actions::Providers::Create do
   init_controller_spec
   let(:action_opts) { {provider_repository: provider_repository} }
   let(:format) { "application/json" }
-  let(:action_params) { {**provider_params, params: provider_params_params} }
+  let(:action_params) { {**adapter_params, params: adapter_params_params} }
 
-  let(:provider_params) {
+  let(:adapter_params) {
     {
       name: "provider1",
       display_name: "プロバイダー①",
@@ -22,7 +22,7 @@ RSpec.describe API::Actions::Providers::Create do
     }
   }
 
-  let(:provider_params_params) {
+  let(:adapter_params_params) {
     {
       str: "hoge",
       str_required: "fuga",
@@ -32,13 +32,13 @@ RSpec.describe API::Actions::Providers::Create do
       list: "other",
     }
   }
-  let(:provider_params_attributes) {
+  let(:adapter_params_attributes) {
     [
       {name: "str", value: Marshal.dump("hoge")},
       {name: "int", value: Marshal.dump(42)},
     ]
   }
-  let(:provider_params_attributes_params) {
+  let(:adapter_params_attributes_params) {
     {
       default: nil,
       str: "hoge",
@@ -51,8 +51,8 @@ RSpec.describe API::Actions::Providers::Create do
       list: "default",
     }
   }
-  let(:provider_without_params) { Provider.new(id: 3, **provider_params) }
-  let(:provider_with_params) { Provider.new(id: 3, **provider_params, provider_params: provider_params_attributes) }
+  let(:provider_without_params) { Provider.new(id: 3, **adapter_params) }
+  let(:provider_with_params) { Provider.new(id: 3, **adapter_params, adapter_params: adapter_params_attributes) }
   let(:provider_repository) {
     instance_double(ProviderRepository,
       exist_by_name?: false,
@@ -60,7 +60,7 @@ RSpec.describe API::Actions::Providers::Create do
       create: provider_without_params,
       find_with_params: provider_with_params,
       find_with_params_by_name: provider_with_params,
-      add_param: ProviderParam.new)
+      add_param: AdapterParam.new)
   }
 
   it "is failure" do
@@ -82,8 +82,8 @@ RSpec.describe API::Actions::Providers::Create do
       expect(response[1]["Content-Location"]).to eq "/api/providers/#{provider_with_params.name}"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
-        **provider_params,
-        params: provider_params_attributes_params,
+        **adapter_params,
+        params: adapter_params_attributes_params,
       })
     end
 
@@ -94,8 +94,8 @@ RSpec.describe API::Actions::Providers::Create do
       expect(response[1]["Content-Location"]).to eq "/api/providers/#{provider_with_params.name}"
       json = JSON.parse(response[2].first, symbolize_names: true)
       expect(json).to eq({
-        **provider_params,
-        params: provider_params_attributes_params,
+        **adapter_params,
+        params: adapter_params_attributes_params,
       })
     end
 
@@ -135,7 +135,7 @@ RSpec.describe API::Actions::Providers::Create do
       })
     end
 
-    it "is failure with bad provider_params params" do
+    it "is failure with bad adapter_params params" do
       response = action.call({
         **params,
         params: "abc",
@@ -171,7 +171,7 @@ RSpec.describe API::Actions::Providers::Create do
           last_order: 16,
           create: provider_without_params,
           find_with_params: provider_with_params,
-          add_param: ProviderParam.new)
+          add_param: AdapterParam.new)
       }
 
       it "is failure" do

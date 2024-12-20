@@ -14,11 +14,11 @@ RSpec.describe Provider do
       individual_password: false,
       lockable: true,
       self_management: false,
-      provider_params: provider_params,
+      adapter_params: adapter_params,
     }
   }
 
-  let(:provider_params) {
+  let(:adapter_params) {
     [
       {
         name: "str",
