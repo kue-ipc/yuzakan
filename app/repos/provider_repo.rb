@@ -7,6 +7,10 @@ module Yuzakan
         providers.by_name(name).one
       end
 
+      def get_with_adapter_params(name)
+        providers.by_name(name).combine(:adapter_params).one
+      end
+
       def set(name, **)
         providers.by_name(name).changeset(:update, **).map(:touch).commit ||
           providers.changeset(:create, **, name: name).map(:add_timestamps)

@@ -2,10 +2,10 @@
 
 module Yuzakan
   module Providers
-    class Adapter < Yuzakan::Operation
+    class GetAdapter < Yuzakan::Operation
       include Deps[
         "repos.provider_repo",
-        "repos.adapters_params_repo",
+        "repos.adapter_param_repo",
         "adapters",
       ]
 
@@ -28,22 +28,26 @@ module Yuzakan
         if provider
           Success(provider)
         else
-          Failure(:not_found)
+          Failure([:not_found, "provider"])
         end
       end
 
-      def get_adapter_class(name)
-        adapter_class = adapters[name]
+      def get_class(provider)
+        adapter_class = adapters[provider.adapter]
         if adapter_class
           Success(adapter_class)
         else
-          Failure(:not_found)
+          Failure([:not_found, "adapter"])
         end
       end
 
-      def get_adapter_params(provider)
-        params = provider.adapter_params ||
-          adapter_params.all_by_provider(provider)
+      def get_params(provider)
+        params =
+          if provider.respond_to?(:adapter_params)
+            provider.adapter_params
+          else
+            adapter_param_repo.all_by_provider(provider)
+          end
         Success(params)
       end
     end

@@ -12,7 +12,10 @@ module Yuzakan
 
       def initialize(params, **opts)
         super
-        @repository = LocalUserRepository.new
+        @user_repo = Hanami.app["repos.local_user_repo"]
+        @group_repo = Hanami.app["repos.local_group_repo"]
+        @member_repo = Hanami.app["repos.local_member_repo"]
+
       end
 
       def check
@@ -20,7 +23,8 @@ module Yuzakan
       end
 
       def user_create(username, password = nil, **userdata)
-        hashed_password = LocalUser.create_hashed_password(password)
+        Hanam.app["operations.hash_password"].call(password) =>
+          Success[hashed_password]
         user = @repository.create({
           username: username,
           display_name: userdata[:display_name],
@@ -67,7 +71,8 @@ module Yuzakan
         user = @repository.find_by_username(username)
         return if user.nil?
 
-        hashed_password = LocalUser.create_hashed_password(password)
+        Hanam.app["operations.hash_password"].call(password) =>
+          Success[hashed_password]
         !!@repository.update(user.id, hashed_password: hashed_password)
       end
 

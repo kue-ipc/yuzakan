@@ -3,7 +3,12 @@
 module Yuzakan
   module Providers
     class ReadGroup < Yuzakan::Operation
-      include Deps["repos.provider_repo", "providers.adapter", "cache_store"]
+      include Deps[
+        "repos.provider_repo",
+        "providers.get_adapter",
+        "providers.convert_data",
+        "cache_store",
+      ]
 
       def call(groupname, providers = nil)
         groupname = step validate_name(groupname)
@@ -57,20 +62,13 @@ module Yuzakan
       private def read_group(provider, groupname)
         return nil unless provider.group
 
-        step adatper.call(provider)
-
-        cache_store
-          .fetch_or_store(groupname, namespace: group_namespace(provider)) do
-          groupdata = @adapter.group_read(groupname)
-          if groupdata && has_primary_group?
-            groupdata = {primary: true}.merge(groupdata)
-          end
-          @cache_store[group_key(groupname)] = groupdata
+        name = "provider:#{provider.name}:group:#{groupname}"
+        data = cache_store.fetch(name) do
+          provider_adapter = step get_adatper.call(provider)
+          raw_data = provider_adapter.group_read(groupname)
+          step convert_data(provider, raw_data, type: :group)
         end
-      end
-
-      private def group_namespace(provider)
-        cache_namespace("provider", provider.name, "group")
+        Success(data)
       end
     end
   end

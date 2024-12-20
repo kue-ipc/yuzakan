@@ -4,24 +4,8 @@ module Yuzakan
   module Repos
     class LocalUserRepo < Yuzakan::DB::Repo
       def get(name)
-        providers.by_name(name).one
       end
-
-      def set(name, **)
-        providers.by_name(name).changeset(:update, **).map(:touch).commit ||
-          providers.changeset(:create, **, name: name).map(:add_timestamps)
-            .commit
-      end
-
-      def unset(name)
-        providers.by_name(name).changeset(:delete).commit
-      end
-
-      def all
-        providers.to_a
-      end
-
-      def by_username(username)
+      def by_name(username)
         local_users.where(username: username)
       end
 
