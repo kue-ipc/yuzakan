@@ -3,4 +3,4 @@ linters:
     enabled: false
 
   LineLength:
-    max: 120
+    max: 80

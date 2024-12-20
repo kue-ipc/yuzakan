@@ -8,7 +8,7 @@ AllCops:
   NewCops: enable
 
 Layout/LineLength:
-  Max: 120
+  Max: 80
   Exclude:
     - spec/**/*_spec.rb
 Layout/EndOfLine:
