@@ -74,7 +74,9 @@ module Yuzakan
         when Array
           obj.map { |v| symbolize_keys(v) }
         when Hash
-          obj.transform_keys(&:intern).transform_values { |v| symbolize_keys(v) }
+          obj.transform_keys(&:intern).transform_values do |v|
+            symbolize_keys(v)
+          end
         else
           obj
         end

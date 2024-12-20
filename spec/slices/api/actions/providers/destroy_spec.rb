@@ -44,8 +44,8 @@ RSpec.describe API::Actions::Providers::Destroy do
   let(:provider_without_params) { Provider.new(id: 3, **provider_params) }
   let(:provider_repository) {
     instance_double(ProviderRepository,
-                    find_with_params_by_name: provider_with_params,
-                    delete: provider_without_params)
+      find_with_params_by_name: provider_with_params,
+      delete: provider_without_params)
   }
 
   it "is failure" do

@@ -106,7 +106,9 @@ module API
       errors.each do |error|
         if error.is_a?(Hash)
           error = only_first_errors(error)
-          hash = hash_deep_merge(hash, only_first_errors(error)) { |_k, s, o| s + o }
+          hash = hash_deep_merge(hash, only_first_errors(error)) do |_k, s, o|
+            s + o
+          end
         else
           list << error
         end

@@ -58,7 +58,8 @@ module Yuzakan
           list: [
             {name: :default, label: "デフォルト", value: "default"},
             {name: :other, label: "その他", value: "other"},
-            {name: :deprecated, label: "非推奨", value: "deprecated", deprecated: true},
+            {name: :deprecated, label: "非推奨", value: "deprecated",
+             deprecated: true,},
           ],
         },
       ]

@@ -28,7 +28,10 @@ module Yuzakan
 
       def call(params)
         @group = @group_repository.find_by_name(params[:groupname])
-        @group_repository.update(group.id, deleted: true, deleted_at: Time.now) if @group
+        return unless @group
+
+        @group_repository.update(group.id, deleted: true,
+          deleted_at: Time.now)
       end
 
       private def valid?(params)

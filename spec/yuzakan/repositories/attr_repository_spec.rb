@@ -44,9 +44,9 @@ RSpec.describe AttrRepository do
       @provider_fuga = provider_repository.create(name: "fuga", display_name: "ふが", adapter: "dummy", order: 16)
 
       @attr_mapping_hoge_hoge = attr_mapping_repository.create(attr_id: @attr_hoge.id, provider_id: @provider_hoge.id,
-                                                               key: "hoge_hoge")
+        key: "hoge_hoge")
       @attr_mapping_hoge_fuga = attr_mapping_repository.create(attr_id: @attr_hoge.id, provider_id: @provider_fuga.id,
-                                                               key: "hoge_fuga", conversion: "e2j")
+        key: "hoge_fuga", conversion: "e2j")
     end
 
     after do

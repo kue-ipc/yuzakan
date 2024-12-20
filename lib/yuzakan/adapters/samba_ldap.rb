@@ -66,7 +66,8 @@ module Yuzakan
           },
         ], key: :name)
       self.multi_attrs = PosixLdap.multi_attrs
-      self.hide_attrs = PosixLdap.hide_attrs + %w[sambaNTPassword sambaLMPassword].map(&:downcase)
+      self.hide_attrs = PosixLdap.hide_attrs + %w[sambaNTPassword
+                                                  sambaLMPassword].map(&:downcase)
 
       group :primary
 
@@ -107,8 +108,14 @@ module Yuzakan
       private def create_user_password_attributes(password)
         attributes = super
 
-        attributes[attribute_name("sambaNTPAssword")] = generate_nt_password(password) if @params[:samba_nt_password]
-        attributes[attribute_name("sambaLMPAssword")] = generate_lm_password(password) if @params[:samba_lm_password]
+        if @params[:samba_nt_password]
+          attributes[attribute_name("sambaNTPAssword")] =
+            generate_nt_password(password)
+        end
+        if @params[:samba_lm_password]
+          attributes[attribute_name("sambaLMPAssword")] =
+            generate_lm_password(password)
+        end
 
         attributes
       end
@@ -122,14 +129,16 @@ module Yuzakan
           else
             SAMAB_NO_PASSWORD
           end
-        operations << operation_add_or_replace("sambaNTPAssword", nt_password, user)
+        operations << operation_add_or_replace("sambaNTPAssword", nt_password,
+          user)
         lm_password =
           if @params[:samba_lm_password]
             generate_lm_password(password)
           else
             SAMAB_NO_PASSWORD
           end
-        operations << operation_add_or_replace("sambaLMPAssword", lm_password, user)
+        operations << operation_add_or_replace("sambaLMPAssword", lm_password,
+          user)
         operations
       end
 
@@ -148,7 +157,8 @@ module Yuzakan
         sac = user_entry_sac(user)
         unless sac.accountdisable?
           sac.accountdisable = true
-          operations << operation_add_or_replace(SambaAccountControl::ATTRIBUTE_NAME, sac.to_s, user)
+          operations << operation_add_or_replace(
+            SambaAccountControl::ATTRIBUTE_NAME, sac.to_s, user)
         end
 
         operations
@@ -161,7 +171,8 @@ module Yuzakan
         sac = user_entry_sac(user)
         if sac.accountdisable?
           sac.accountdisable = false
-          operations << operation_add_or_replace(SambaAccountControl::ATTRIBUTE_NAME, sac.to_s, user)
+          operations << operation_add_or_replace(
+            SambaAccountControl::ATTRIBUTE_NAME, sac.to_s, user)
         end
 
         operations

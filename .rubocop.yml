@@ -7,14 +7,18 @@ AllCops:
   TargetRubyVersion: 3.3
   NewCops: enable
 
-Layout/LineLength:
-  Max: 80
-  Exclude:
-    - spec/**/*_spec.rb
+Layout/ArgumentAlignment:
+  EnforcedStyle: with_fixed_indentation
 Layout/EndOfLine:
   EnforcedStyle: lf
 Layout/FirstHashElementIndentation:
   EnforcedStyle: consistent
+Layout/HashAlignment:
+  EnforcedLastArgumentHashStyle: ignore_implicit
+Layout/LineLength:
+  Max: 80
+  Exclude:
+    - spec/**/*_spec.rb
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
 Layout/MultilineMethodCallBraceLayout:

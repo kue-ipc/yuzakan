@@ -21,7 +21,7 @@ module API
 
         private def sync_group(params)
           @sync_group ||= SyncGroup.new(provider_repository: @provider_repository,
-                                        group_repository: @group_repository)
+            group_repository: @group_repository)
           call_interacttor(@sync_group, params)
         end
 

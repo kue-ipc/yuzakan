@@ -12,7 +12,9 @@ module Yuzakan
       end
 
       def ilike(pattern)
-        local_users.where { username.ilike(pattern) | display_name.ilike(pattern) | email.ilike(pattern) }
+        local_users.where do
+          username.ilike(pattern) | display_name.ilike(pattern) | email.ilike(pattern)
+        end
       end
     end
   end

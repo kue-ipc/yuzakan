@@ -72,7 +72,8 @@ module Yuzakan
         response = service.insert_user(user)
         if ["/教員", "/職員"].include?(user.org_unit_path)
           member = Google::Apis::AdminDirectoryV1::Member.new(email: user.primary_email)
-          service.insert_member("classroom_teachers@#{@params[:domain]}", member)
+          service.insert_member("classroom_teachers@#{@params[:domain]}",
+            member)
         end
         normalize_user(response)
       end
@@ -152,8 +153,8 @@ module Yuzakan
         # 最大でも20回で10,000ユーザーしか取得できない
         20.times do
           response = service.list_users(domain: @params[:domain],
-                                        max_results: 500,
-                                        page_token: next_page_token)
+            max_results: 500,
+            page_token: next_page_token)
           users.concat(response.users
             .map(&:primary_email)
             .map { |email| email.split("@", 2) }
@@ -176,9 +177,9 @@ module Yuzakan
         # 最大でも20回で10,000ユーザーしか取得できない
         20.times do
           response = service.list_users(domain: @params[:domain],
-                                        max_results: 500,
-                                        query: query_str,
-                                        page_token: next_page_token)
+            max_results: 500,
+            query: query_str,
+            page_token: next_page_token)
           users.concat(response.users
             .map(&:primary_email)
             .map { |email| email.split("@", 2) }

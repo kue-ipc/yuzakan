@@ -45,8 +45,10 @@ module API
     get "/groups/:id", to: "groups.show", as: :group
     patch "/groups/:id", to: "groups.update", as: :group
     get "/groups/:id/members", to: "groups/members.index", as: :group_members
-    patch "/groups/:id/members/:user_id", to: "groups/members.update", as: :group_member
-    delete "/groups/:id/members/:user_id", to: "groups/members.destroy", as: :group_member
+    patch "/groups/:id/members/:user_id", to: "groups/members.update",
+      as: :group_member
+    delete "/groups/:id/members/:user_id", to: "groups/members.destroy",
+      as: :group_member
 
     get "/system", to: "system.show", as: :system
 

@@ -65,7 +65,9 @@ module Admin
 
         private def providers_data
           providers.map do |provider|
-            provider_data = KEYS[:provider].to_h { |key| [key, provider.__send__(key)] }
+            provider_data = KEYS[:provider].to_h do |key|
+              [key, provider.__send__(key)]
+            end
             provider_params_data = provider.adapter_param_types.to_h do |param_type|
               [param_type.name.to_s, provider.params[param_type.name]]
             end
@@ -82,7 +84,9 @@ module Admin
 
             attr_mappings_data = attr.attr_mappings.map do |attr_mapping|
               {
-                provider: providers.find { |provider| provider.id == attr_mapping.provider_id }&.name,
+                provider: providers.find do |provider|
+                  provider.id == attr_mapping.provider_id
+                end&.name,
                 key: attr_mapping.key,
                 conversion: attr_mapping.conversion,
               }

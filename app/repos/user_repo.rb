@@ -16,8 +16,6 @@ module Yuzakan
         users.by_name(name).changeset(:delete).commit
       end
 
-
-
       def ordered_all
         users.order(:name).to_a
       end

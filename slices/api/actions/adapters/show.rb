@@ -11,7 +11,10 @@ module API
         params IdParams
 
         def handle(_request, _response)
-          halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
+          unless params.valid?
+            halt_json 400,
+              errors: [only_first_errors(params.errors)]
+          end
 
           @adapter = adapters[params[:id]]
           halt_json 404 unless @adapter

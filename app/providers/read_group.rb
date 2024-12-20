@@ -8,7 +8,7 @@ module Yuzakan
       def call(groupname, provider_names = nil)
         groupname = step validate_name(groupname)
 
-        providers = get_providers(provider_names)
+        get_providers(provider_names)
 
         @providers = get_providers(params[:providers]).to_h do |provider|
           [provider.name, provider.group_read(groupname)]
@@ -16,7 +16,7 @@ module Yuzakan
           Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{groupname}"
           Hanami.logger.error e
           error(I18n.t("errors.action.error", action: I18n.t("interactors.provider_read_group"),
-                                              target: provider.label))
+            target: provider.label))
           error(e.message)
           fail!
         end

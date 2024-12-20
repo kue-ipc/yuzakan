@@ -29,7 +29,9 @@ module API
                 predicates NamePredicates
                 required(:provider).filled(:str?, :name?, max_size?: 255)
                 required(:key).maybe(:str?, max_size?: 255)
-                optional(:conversion) { none? | included_in?(AttrMapping::CONVERSIONS) }
+                optional(:conversion) do
+                  none? | included_in?(AttrMapping::CONVERSIONS)
+                end
               end
             end
           end
@@ -63,7 +65,10 @@ module API
 
             {**mapping.except(:provider), provider_id: provider&.id}
           end.compact
-          halt_json 422, errors: [{mappings: mapping_errors}] unless mapping_errors.empty?
+          unless mapping_errors.empty?
+            halt_json 422,
+              errors: [{mappings: mapping_errors}]
+          end
 
           @attr_repository.update(@attr.id, params.to_h.except(:id, :mappings))
 
@@ -77,18 +82,26 @@ module API
 
               @attr_repository.delete_mapping(@attr, current_mapping.id)
             end
-            @attr_repository.add_mapping(@attr, mapping_params) if mapping_params[:key]&.size&.positive?
+            if mapping_params[:key]&.size&.positive?
+              @attr_repository.add_mapping(@attr,
+                mapping_params)
+            end
           end
 
           @attr = @attr_repository.find_with_mappings(@attr.id)
 
           self.status = 200
-          headers["Content-Location"] = routes.attr_path(params[:name]) if change_name
+          if change_name
+            headers["Content-Location"] =
+              routes.attr_path(params[:name])
+          end
           self.body = generate_json(@attr, assoc: true)
         end
 
         private def provider_by_name(name)
-          @named_providers ||= @provider_repository.all.to_h { |provider| [provider.name, provider] }
+          @named_providers ||= @provider_repository.all.to_h do |provider|
+            [provider.name, provider]
+          end
           @named_providers[name]
         end
       end

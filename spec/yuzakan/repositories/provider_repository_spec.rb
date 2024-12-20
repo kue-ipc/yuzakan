@@ -40,9 +40,9 @@ RSpec.describe ProviderRepository do
 
     before do
       @provider_param_hoge = provider_param_repository.create(provider_id: @provider_hoge.id, name: "str",
-                                                              value: Marshal.dump("ほげほげ"))
+        value: Marshal.dump("ほげほげ"))
       @provider_param_fuga = provider_param_repository.create(provider_id: @provider_hoge.id, name: "int",
-                                                              value: Marshal.dump(42))
+        value: Marshal.dump(42))
     end
 
     after do

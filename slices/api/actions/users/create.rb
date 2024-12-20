@@ -50,7 +50,10 @@ module API
           load_user
           halt_json 422, errors: {name: [I18n.t("errors.uniq?")]} if @user
 
-          halt_json 422, errors: {attrs: I18n.t("errors.filled?")} if params[:providers] && params[:attrs].nil?
+          if params[:providers] && params[:attrs].nil?
+            halt_json 422,
+              errors: {attrs: I18n.t("errors.filled?")}
+          end
 
           password = params[:password] || generate_password.password
 
@@ -58,7 +61,8 @@ module API
             # どのプロバイダーにも登録しない削除済みユーザーの作成する。
             # プロバイダーの指定は無視する。
             # 削除日時が指定されていない場合は現在の日時を削除日時とする。
-            @user = @user_repository.create({deleted_at: Time.now, **params.to_h.except(:id)})
+            @user = @user_repository.create({deleted_at: Time.now,
+                                             **params.to_h.except(:id),})
           elsif params[:providers]&.size&.positive?
             @user = @user_repository.create(params.to_h.except(:id))
             provider_create_user({
@@ -67,7 +71,8 @@ module API
               password: password,
             })
           else
-            halt_json 422, errors: {providers: [I18n.t("errors.min_size?", num: 1)]}
+            halt_json 422,
+              errors: {providers: [I18n.t("errors.min_size?", num: 1)]}
           end
 
           load_user

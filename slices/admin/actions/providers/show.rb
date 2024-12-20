@@ -25,7 +25,9 @@ module Admin
         def handle(_request, _response)
           halt 400 unless params.valid?
           name = params[:id].to_s
-          halt 404 unless name == "*" || @provider_repository.exist_by_name?(name)
+          return if name == "*" || @provider_repository.exist_by_name?(name)
+
+          halt 404
         end
       end
     end

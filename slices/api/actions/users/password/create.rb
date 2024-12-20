@@ -32,10 +32,13 @@ module API
             halt_json 400, errors: [params.errors] unless params.valid?
 
             reset_password = ResetPassword.new(provider_repository: @provider_repository,
-                                               config_repository: @config_repository)
+              config_repository: @config_repository)
             result = reset_password.call({username: params[:user_id]})
 
-            halt_json(422, errors: merge_errors(result.errors)) if result.failure?
+            if result.failure?
+              halt_json(422,
+                errors: merge_errors(result.errors))
+            end
 
             # @mailer&.deliver(**mailer_params, result: result)
 

@@ -13,8 +13,10 @@ module API
           messages :i18n
 
           params do
-            optional(:page).filled(:int?, included_in?: Yuzakan::Utils::Pager::PAGE_RANGE)
-            optional(:per_page).filled(:int?, included_in?: Yuzakan::Utils::Pager::PER_PAGE_RANGE)
+            optional(:page).filled(:int?,
+              included_in?: Yuzakan::Utils::Pager::PAGE_RANGE)
+            optional(:per_page).filled(:int?,
+              included_in?: Yuzakan::Utils::Pager::PER_PAGE_RANGE)
 
             optional(:order).filled(:str?, included_in?: %w[
               name
@@ -53,7 +55,10 @@ module API
         end
 
         def handle(_request, _response)
-          halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
+          unless params.valid?
+            halt_json 400,
+              errors: [only_first_errors(params.errors)]
+          end
 
           result =
             if params[:all]
@@ -100,10 +105,13 @@ module API
           filter[:prohibited] = false if params[:hide_prohibited]
           filter[:deleted] = false unless params[:show_deleted]
 
-          relation = @user_repository.ordered_filter(order: order, filter: filter)
+          relation = @user_repository.ordered_filter(order: order,
+            filter: filter)
 
           if params.key?(:page)
-            pager = Yuzakan::Utils::Pager.new(relation, **params.slice(:page, :per_page)) do |link_params|
+            pager = Yuzakan::Utils::Pager.new(relation,
+                                              **params.slice(:page,
+                                                :per_page)) do |link_params|
               routes.path(:users, **params, **link_params)
             end
             {
@@ -113,7 +121,8 @@ module API
           else
             {
               users: relation.to_a,
-              headers: {"Content-Location" => routes.path(:users, **params.except(:per_page))},
+              headers: {"Content-Location" => routes.path(:users,
+                                                          **params.except(:per_page))},
             }
           end
         end
@@ -142,7 +151,9 @@ module API
           all_items = users_providers.keys.sort
 
           # prohibitedなユーザーは隠す
-          all_items -= @user_repository.filter(prohibited: true).map(:name) if params[:hide_prohibited]
+          if params[:hide_prohibited]
+            all_items -= @user_repository.filter(prohibited: true).map(:name)
+          end
 
           # プロバイダーにないユーザーもすべて取り出す
           if params[:show_deleted]
@@ -155,13 +166,17 @@ module API
           all_items.sort!
           all_items.reverse! if params[:order] == "name.desc"
 
-          pager = Yuzakan::Utils::Pager.new(all_items, **params.slice(:page, :per_page)) do |link_params|
+          pager = Yuzakan::Utils::Pager.new(all_items,
+                                            **params.slice(:page,
+                                              :per_page)) do |link_params|
             routes.path(:users, **params.to_h, **link_params)
           end
 
           users = get_users(pager.page_items).map do |user|
             # プロバイダーから削除しされているが、レポジトリ―では残っている場合は同期する。
-            user = get_sync_user(user.name) if !user.deleted && !users_providers.key?(user.name)
+            if !user.deleted && !users_providers.key?(user.name)
+              user = get_sync_user(user.name)
+            end
             {
               **convert_for_json(user, assoc: true),
               providers: users_providers[user.name],
@@ -175,7 +190,9 @@ module API
         end
 
         private def get_users(usernames)
-          user_entities = @user_repository.all_with_groups_by_name(usernames).to_h { |user| [user.name, user] }
+          user_entities = @user_repository.all_with_groups_by_name(usernames).to_h do |user|
+            [user.name, user]
+          end
           usernames.map do |username|
             user_entities[username] || get_sync_user(username)
           end
@@ -183,9 +200,9 @@ module API
 
         private def get_sync_user(username)
           @sync_user ||= SyncUser.new(provider_repository: @provider_repository,
-                                      user_repository: @user_repository,
-                                      group_repository: @group_repository,
-                                      member_repository: @member_repository)
+            user_repository: @user_repository,
+            group_repository: @group_repository,
+            member_repository: @member_repository)
           result = @sync_user.call({username: username})
           if result.failure?
             Hanami.logger.error "[#{self.class.name}] failed sync user: #{username} - #{result.errors}"

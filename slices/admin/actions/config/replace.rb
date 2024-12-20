@@ -84,7 +84,8 @@ module Admin
         end
 
         def import_yaml(upload_file)
-          data = yaml_load(upload_file[:tempfile].read, filename: upload_file[:filename])
+          data = yaml_load(upload_file[:tempfile].read,
+            filename: upload_file[:filename])
 
           data = validate_data(data)
 
@@ -93,8 +94,8 @@ module Admin
 
         private def yaml_load(yaml, filename: nil)
           YAML.safe_load(yaml, permitted_classes: [Symbol, Time, Date],
-                               filename: filename,
-                               symbolize_names: true)
+            filename: filename,
+            symbolize_names: true)
         end
 
         private def validate_data(data)
@@ -124,7 +125,9 @@ module Admin
         end
 
         def update_providers(provider_datas)
-          existing_providers = @provider_repository.all.to_h { |provider| [provider.name, provider] }
+          existing_providers = @provider_repository.all.to_h do |provider|
+            [provider.name, provider]
+          end
 
           provider_datas.each_with_index do |provider_data, idx|
             provider_name = provider_data[:name]
@@ -153,12 +156,16 @@ module Admin
         end
 
         def update_provider_params(provider, params)
-          existing_params = @provider_param_repository.all_by_provider(provider).to_h { |param| [param.name, param] }
+          existing_params = @provider_param_repository.all_by_provider(provider).to_h do |param|
+            [param.name, param]
+          end
 
           provider.adapter_param_types.each do |param_type|
             param_name = param_type.name
             # 存在チェック
-            next unless params.key?(param_name) && !(value = param_type.convert_value(params[param_type.name])).nil?
+            unless params.key?(param_name) && !(value = param_type.convert_value(params[param_type.name])).nil?
+              next
+            end
 
             current_param = existing_params.delete(param_name.to_s)
             param_data = {provider_id: provider.id, name: param_name.to_s,
@@ -177,7 +184,9 @@ module Admin
         end
 
         def update_attrs(attr_datas)
-          named_providers = @provider_repository.all.to_h { |provider| [provider.name, provider] }
+          named_providers = @provider_repository.all.to_h do |provider|
+            [provider.name, provider]
+          end
           @attr_repository.clear
 
           attr_datas.each_with_index do |attr_data, idx|

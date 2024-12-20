@@ -24,7 +24,8 @@ module Yuzakan
       end
 
       def ordered_all_with_mappings
-        aggregate(attr_mappings: :provider).order(:order, :name).map_to(Attr).to_a
+        aggregate(attr_mappings: :provider).order(:order,
+          :name).map_to(Attr).to_a
       end
 
       def find_with_mappings(id)

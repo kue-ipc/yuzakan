@@ -58,15 +58,19 @@ module API
               value = param_type.convert_value(provider_params_params[param_type.name])
               next if value.nil?
 
-              data = {name: param_type.name.to_s, value: param_type.dump_value(value)}
+              data = {name: param_type.name.to_s,
+                      value: param_type.dump_value(value),}
               if existing_params.key?(param_type.name)
                 existing_value = existing_params.delete(param_type.name)
 
                 if existing_value != value
                   param_name = param_type.name.to_s
-                  existing_provider_param = @provider.provider_params.find { |param| param.name == param_name }
+                  existing_provider_param = @provider.provider_params.find do |param|
+                    param.name == param_name
+                  end
                   if existing_provider_param
-                    @provider_param_repository.update(existing_provider_param.id, data)
+                    @provider_param_repository.update(
+                      existing_provider_param.id, data)
                   else
                     # 名前がないということはあり得ない？
                     @provider_repository.add_param(@provider, data)
@@ -85,7 +89,10 @@ module API
           load_provider
 
           self.status = 200
-          headers["Content-Location"] = routes.provider_path(@name) if change_name
+          if change_name
+            headers["Content-Location"] =
+              routes.provider_path(@name)
+          end
           self.body = provider_json
         end
       end

@@ -4,7 +4,7 @@ require "etc"
 
 module Yuzakan
   module Adapters
-    # rubocop: disable Matrixs/ClassLength
+    # rubocop: disable Matrics/ClassLength
     class PosixLdap < Ldap
       self.name = "posix_ldap"
       self.display_name = "Posix LDAP"
@@ -132,12 +132,15 @@ module Yuzakan
 
         # object class
         attributes[attribute_name("objectClass")] << "posixAccount"
-        attributes[attribute_name("objectClass")] << "shadowAccount" if @params[:shadow_account]
+        if @params[:shadow_account]
+          attributes[attribute_name("objectClass")] << "shadowAccount"
+        end
 
         # uid number
         unless attributes.key?(attribute_name("uidNumber"))
           uid_number = search_free_uid
-          attributes[attribute_name("uidNumber")] = convert_ldap_value(uid_number)
+          attributes[attribute_name("uidNumber")] =
+            convert_ldap_value(uid_number)
         end
 
         # gid number
@@ -148,7 +151,8 @@ module Yuzakan
             else
               @params[:user_gid_number]
             end
-          attributes[attribute_name("gidNumber")] = convert_ldap_value(gid_number)
+          attributes[attribute_name("gidNumber")] =
+            convert_ldap_value(gid_number)
         end
 
         attributes
@@ -164,7 +168,8 @@ module Yuzakan
         # gid number
         if userdata[:primary_group]
           gid_number = get_gidnumber(userdata[:primary_group])
-          attributes[attribute_name("gidNumber")] = convert_ldap_value(gid_number)
+          attributes[attribute_name("gidNumber")] =
+            convert_ldap_value(gid_number)
         end
 
         attributes
@@ -297,7 +302,9 @@ module Yuzakan
       end
 
       private def posix_passwds
-        @posix_passwds ||= ldap_search(search_user_opts("*")).map { |user| get_posix_passwd(user) }
+        @posix_passwds ||= ldap_search(search_user_opts("*")).map do |user|
+          get_posix_passwd(user)
+        end
       end
 
       private def get_posix_passwd(user)
@@ -316,7 +323,9 @@ module Yuzakan
       end
 
       private def posix_groups
-        @posix_groups ||= ldap_search(search_group_opts("*")).map { |group| get_posix_group(group) }
+        @posix_groups ||= ldap_search(search_group_opts("*")).map do |group|
+          get_posix_group(group)
+        end
       end
 
       private def get_posix_group(group)
@@ -351,6 +360,6 @@ module Yuzakan
         @posix_group_byname_map ||= posix_groups.to_h { |gr| [gr.name, gr] }
       end
     end
-    # rubocop: enable Matrixs/ClassLength
+    # rubocop: enable Matrics/ClassLength
   end
 end

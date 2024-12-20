@@ -23,7 +23,8 @@ module API
                 predicates NamePredicates
                 required(:provider).filled(:str?, :name?, max_size?: 255)
                 required(:key).maybe(:str?, max_size?: 255)
-                optional(:conversion).maybe(:str?, included_in?: AttrMapping::CONVERSIONS)
+                optional(:conversion).maybe(:str?,
+                  included_in?: AttrMapping::CONVERSIONS)
               end
             end
           end
@@ -40,9 +41,15 @@ module API
         end
 
         def handle(_request, _response)
-          halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
+          unless params.valid?
+            halt_json 400,
+              errors: [only_first_errors(params.errors)]
+          end
 
-          halt_json 422, errors: [{name: [I18n.t("errors.uniq?")]}] if @attr_repository.exist_by_name?(params[:name])
+          if @attr_repository.exist_by_name?(params[:name])
+            halt_json 422,
+              errors: [{name: [I18n.t("errors.uniq?")]}]
+          end
 
           mapping_errors = {}
           attr_mappings = (params[:mappings] || []).each_with_index.map do |mapping, idx|
@@ -56,7 +63,10 @@ module API
 
             {**mapping.except(:provider), provider_id: provider&.id}
           end.compact
-          halt_json 422, errors: [{mappings: mapping_errors}] unless mapping_errors.empty?
+          unless mapping_errors.empty?
+            halt_json 422,
+              errors: [{mappings: mapping_errors}]
+          end
 
           order = params[:order] || (@attr_repository.last_order + 8)
           @attr = @attr_repository.create_with_mappings(
@@ -70,7 +80,9 @@ module API
         end
 
         private def provider_by_name(name)
-          @named_providers ||= @provider_repository.all.to_h { |provider| [provider.name, provider] }
+          @named_providers ||= @provider_repository.all.to_h do |provider|
+            [provider.name, provider]
+          end
           @named_providers[name]
         end
       end

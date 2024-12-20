@@ -3,17 +3,39 @@
 # default let script
 
 def let_mock_repositories
-  let(:activity_log_repository) { instance_double(ActivityLogRepository, **activity_log_repository_stubs) }
-  let(:attr_mapping_repository) { instance_double(AttrMappingRepository, **attr_mapping_repository_stubs) }
-  let(:attr_repository) { instance_double(AttrRepository, **attr_repository_stubs) }
-  let(:auth_log_repository) { instance_double(AuthLogRepository, **auth_log_repository_stubs) }
-  let(:config_repository) { instance_double(CnofigRepository, **config_repository_stubs) }
-  let(:group_repository) { instance_double(GroupRepository, **group_repository_stubs) }
-  let(:member_repository) { instance_double(MemberRepository, **member_repository_stubs) }
-  let(:network_repository) { instance_double(NetworkRepository, **network_repository_stubs) }
-  let(:provider_param_repository) { instance_double(ProviderParamRepository, **provider_param_repository_stubs) }
-  let(:provider_repository) { instance_double(ProviderRepository, **provider_repository_stubs) }
-  let(:user_repository) { instance_double(UserRepository, **user_repository_stubs) }
+  let(:activity_log_repository) {
+    instance_double(ActivityLogRepository, **activity_log_repository_stubs)
+  }
+  let(:attr_mapping_repository) {
+    instance_double(AttrMappingRepository, **attr_mapping_repository_stubs)
+  }
+  let(:attr_repository) {
+    instance_double(AttrRepository, **attr_repository_stubs)
+  }
+  let(:auth_log_repository) {
+    instance_double(AuthLogRepository, **auth_log_repository_stubs)
+  }
+  let(:config_repository) {
+    instance_double(CnofigRepository, **config_repository_stubs)
+  }
+  let(:group_repository) {
+    instance_double(GroupRepository, **group_repository_stubs)
+  }
+  let(:member_repository) {
+    instance_double(MemberRepository, **member_repository_stubs)
+  }
+  let(:network_repository) {
+    instance_double(NetworkRepository, **network_repository_stubs)
+  }
+  let(:provider_param_repository) {
+    instance_double(ProviderParamRepository, **provider_param_repository_stubs)
+  }
+  let(:provider_repository) {
+    instance_double(ProviderRepository, **provider_repository_stubs)
+  }
+  let(:user_repository) {
+    instance_double(UserRepository, **user_repository_stubs)
+  }
 
   # repostitory stubs
   # let(:model_repository_stubs) {
@@ -76,17 +98,31 @@ def let_mock_repositories
   let(:group) { Group.new(**group_attributes) }
 
   let(:attrs) { attrs_attributes.map { |attributes| Attr.new(attributes) } }
-  let(:networks) { networks_attributes.map { |attributes| Network.new(attributes) } }
+  let(:networks) {
+    networks_attributes.map do |attributes|
+      Network.new(attributes)
+    end
+  }
   let(:users) { users_attributes.map { |attributes| User.new(attributes) } }
   let(:groups) { [group] }
-  let(:providers) { providers_attributes.map { |attributes| Provider.new(attributes) } }
+  let(:providers) {
+    providers_attributes.map do |attributes|
+      Provider.new(attributes)
+    end
+  }
 
-  let(:attr_with_mappings) { Attr.new(**attr_attributes, attr_mappings: attr_mappings) }
-  let(:user_with_groups) { User.new(**user_attributes, groups: user_members.map(&:group), members: user_members) }
+  let(:attr_with_mappings) {
+    Attr.new(**attr_attributes, attr_mappings: attr_mappings)
+  }
+  let(:user_with_groups) {
+    User.new(**user_attributes, groups: user_members.map(&:group),
+      members: user_members)
+  }
 
   let(:attr_mappings) {
     attr_mappings_attributes.map do |attributes|
-      AttrMapping.new(provider: Provider.new(name: attributes[:provider]), **attributes.except(:provider))
+      AttrMapping.new(provider: Provider.new(name: attributes[:provider]),
+                      **attributes.except(:provider))
     end
   }
   let(:user_members) {
@@ -107,8 +143,12 @@ def let_mock_repositories
       hidden: false, readonly: false, code: nil, description: nil,
     }
   }
-  let(:activity_log_attributes) { {uuid: uuid, client: client, username: user.name} }
-  let(:config_attributes) { {title: "title", session_timeout: 3600, domain: "example.jp"} }
+  let(:activity_log_attributes) {
+    {uuid: uuid, client: client, username: user.name}
+  }
+  let(:config_attributes) {
+    {title: "title", session_timeout: 3600, domain: "example.jp"}
+  }
   let(:user_attributes) {
     {
       id: 42, name: "user", display_name: "ユーザー", email: "user@example.jp", clearance_level: 1,
@@ -129,10 +169,14 @@ def let_mock_repositories
   let(:attrs_attributes) {
     [
       attr_attributes,
-      {**attr_attributes, id: 19, name: "attr_bool", display_name: "真偽値属性", type: "boolean", order: 24},
-      {**attr_attributes, id: 24, name: "attr_int", display_name: nil, type: "整数属性", order: 16, code: '"hoge"'},
-      {**attr_attributes, id: 27, name: "attr_str", display_name: "文字列属性", type: "string", order: 64, hidden: true},
-      {**attr_attributes, id: 28, name: "attr_noname", display_name: nil, type: "string", order: 32, readonly: true},
+      {**attr_attributes, id: 19, name: "attr_bool", display_name: "真偽値属性",
+                          type: "boolean", order: 24,},
+      {**attr_attributes, id: 24, name: "attr_int", display_name: nil,
+                          type: "整数属性", order: 16, code: '"hoge"',},
+      {**attr_attributes, id: 27, name: "attr_str", display_name: "文字列属性",
+                          type: "string", order: 64, hidden: true,},
+      {**attr_attributes, id: 28, name: "attr_noname", display_name: nil,
+                          type: "string", order: 32, readonly: true,},
     ]
   }
   let(:attr_mappings_attributes) {
@@ -176,18 +220,24 @@ def let_mock_repositories
   let(:users_attributes) {
     [
       user_attributes,
-      {**user_attributes, id: 1, name: "admin", display_name: "管理者", email: "admin@example.jp", clearance_level: 5},
+      {**user_attributes, id: 1, name: "admin", display_name: "管理者",
+                          email: "admin@example.jp", clearance_level: 5,},
       {**user_attributes, id: 24, name: "prohibited", prohibited: true},
-      {**user_attributes, id: 19, name: "deleted", deleted: true, deleted_at: Time.now - (24 * 60 * 60)},
+      {**user_attributes, id: 19, name: "deleted", deleted: true,
+                          deleted_at: Time.now - (24 * 60 * 60),},
     ]
   }
   let(:providers_attributes) {
     [
       provider_attriubtes,
-      {**provider_attriubtes, id: 1, name: "provider1", display_name: "プロ1", order: 8},
-      {**provider_attriubtes, id: 2, name: "provider2", display_name: "プロ2", order: 32},
-      {**provider_attriubtes, id: 3, name: "provider3", display_name: nil, order: 16},
-      {**provider_attriubtes, id: 4, name: "self_management_provider", self_management: true},
+      {**provider_attriubtes, id: 1, name: "provider1", display_name: "プロ1",
+                              order: 8,},
+      {**provider_attriubtes, id: 2, name: "provider2", display_name: "プロ2",
+                              order: 32,},
+      {**provider_attriubtes, id: 3, name: "provider3", display_name: nil,
+                              order: 16,},
+      {**provider_attriubtes, id: 4, name: "self_management_provider",
+                              self_management: true,},
     ]
   }
 
@@ -217,8 +267,14 @@ def init_controller_spec
     }
   }
   let(:params) { {**action_params, **env} }
-  let(:env) { {"REMOTE_ADDR" => client, "rack.session" => session, "HTTP_ACCEPT" => format} }
-  let(:session) { {uuid: uuid, user_id: user.id, created_at: Time.now - 600, updated_at: Time.now - 60} }
+  let(:env) {
+    {"REMOTE_ADDR" => client, "rack.session" => session,
+     "HTTP_ACCEPT" => format,}
+  }
+  let(:session) {
+    {uuid: uuid, user_id: user.id, created_at: Time.now - 600,
+     updated_at: Time.now - 60,}
+  }
   let(:format) { "text/html" }
   # overwrite
   let(:action_opts) { {} }

@@ -48,12 +48,15 @@ module API
 
             all_items = providers_items.values.compact.sum(Set.new).to_a.sort
 
-            @pager = Yuzakan::Utils::Pager.new(routes, :group_members, params, all_items)
+            @pager = Yuzakan::Utils::Pager.new(routes, :group_members, params,
+              all_items)
 
             @members = get_members(@pager.page_items).map do |member|
               {
                 **convert_for_json(member),
-                providers: providers_items.filter { |_, v| v.include?(member.username) }.keys,
+                providers: providers_items.filter do |_, v|
+                  v.include?(member.username)
+                end.keys,
               }
             end
 
@@ -63,7 +66,9 @@ module API
           end
 
           private def get_members(usernames)
-            user_entities = @user_repository.by_username(usernames).to_a.to_h { |user| [user.username, user] }
+            user_entities = @user_repository.by_username(usernames).to_a.to_h do |user|
+              [user.username, user]
+            end
             usernames.map do |username|
               if user_entities.key?(username)
                 user_entities[username]

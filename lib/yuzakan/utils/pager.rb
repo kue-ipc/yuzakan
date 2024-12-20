@@ -16,7 +16,8 @@ module Yuzakan
 
       attr_reader :page, :per_page
 
-      def initialize(relation, page: DEFAULT_PAGE, per_page: DEFAULT_PER_PAGE, create_link: nil, &block)
+      def initialize(relation, page: DEFAULT_PAGE, per_page: DEFAULT_PER_PAGE,
+                     create_link: nil, &block)
         @page = page.clamp(PAGE_RANGE)
         @per_page = per_page.clamp(PER_PAGE_RANGE)
         @create_link = create_link || block
@@ -91,7 +92,8 @@ module Yuzakan
           next: next_page,
           last: last_page,
         }.compact.map do |key, value|
-          link_item(@create_link.call({page: value, per_page: per_page}), rel: key.to_s)
+          link_item(@create_link.call({page: value, per_page: per_page}),
+            rel: key.to_s)
         end.join(", ")
       end
 

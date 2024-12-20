@@ -26,9 +26,11 @@ module API
             halt_json 400, errors: [params.errors] unless params.valid?
 
             result = call_interacttor(ProviderUnlockUser.new(provider_repository: @provider_repository),
-                                      {username: params[:user_id]})
+              {username: params[:user_id]})
 
-            providers = result.providers.compact.transform_values { |v| {locked: !v} }
+            providers = result.providers.compact.transform_values do |v|
+              {locked: !v}
+            end
             self.status = 200
             self.body = generate_json({providers: providers})
           end

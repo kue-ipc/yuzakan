@@ -120,7 +120,10 @@ module Yuzakan
 
         attr_mappings
           .reject { |mapping| mapping.attr.readonly } # 読み取り専用の属性は除外する
-          .to_h { |mapping| [mapping.key, mapping.map_value(attrs[mapping.attr.name.intern])] }
+          .to_h do |mapping|
+          [mapping.key,
+           mapping.map_value(attrs[mapping.attr.name.intern]),]
+        end
           .compact # 値がnilの場合は除外する
       end
 
@@ -147,7 +150,10 @@ module Yuzakan
       private def convert_userdata(raw_userdata)
         return if raw_userdata.nil?
 
-        raw_userdata = raw_userdata.except(:primary_group, :groups) unless has_group?
+        unless has_group?
+          raw_userdata = raw_userdata.except(:primary_group,
+            :groups)
+        end
 
         {**raw_userdata, attrs: convert_attrs(raw_userdata[:attrs])}
       end
@@ -185,7 +191,8 @@ module Yuzakan
 
         @cache_store.fetch(user_key(username)) do
           raw_userdata = @adapter.user_read(username)
-          @cache_store[user_key(username)] = raw_userdata && convert_userdata(raw_userdata)
+          @cache_store[user_key(username)] =
+            raw_userdata && convert_userdata(raw_userdata)
         end
       end
 
@@ -194,7 +201,8 @@ module Yuzakan
         need_mappings!
 
         raw_userdata = @adapter.user_update(username, **map_userdata(userdata))
-        @cache_store[user_key(username)] = raw_userdata && convert_userdata(raw_userdata)
+        @cache_store[user_key(username)] =
+          raw_userdata && convert_userdata(raw_userdata)
       end
 
       def user_delete(username)
@@ -271,7 +279,9 @@ module Yuzakan
         need_group!
         @cache_store.fetch(group_key(groupname)) do
           groupdata = @adapter.group_read(groupname)
-          groupdata = {primary: true}.merge(groupdata) if groupdata && has_primary_group?
+          if groupdata && has_primary_group?
+            groupdata = {primary: true}.merge(groupdata)
+          end
           @cache_store[group_key(groupname)] = groupdata
         end
       end
@@ -296,7 +306,8 @@ module Yuzakan
         need_adapter!
         need_group!
         @cache_store.fetch(member_list_key(groupname)) do
-          @cache_store[member_list_key(groupname)] = @adapter.member_list(groupname)
+          @cache_store[member_list_key(groupname)] =
+            @adapter.member_list(groupname)
         end
       end
 

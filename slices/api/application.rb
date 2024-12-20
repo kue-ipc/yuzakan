@@ -36,7 +36,7 @@ module API
       # -- redis --
       redis_url = ENV.fetch("REDIS_URL", "redis://127.0.0.1:6379/0")
       sessions :redis,
-               redis_server: "#{redis_url}/#{sassions_name}",
+        redis_server: "#{redis_url}/#{sassions_name}",
                **sessions_opts
 
       # -- memcached --

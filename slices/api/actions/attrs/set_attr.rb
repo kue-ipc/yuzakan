@@ -17,7 +17,10 @@ module API
         end
 
         private def set_attr
-          halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
+          unless params.valid?
+            halt_json 400,
+              errors: [only_first_errors(params.errors)]
+          end
 
           @attr = @attr_repository.find_with_mappings_by_name(params[:id])
 

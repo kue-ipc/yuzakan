@@ -83,6 +83,9 @@ unless get_user(admin_username)
   end
 
   admin_user = get_user(admin_user_params[:username])
-  user_repo.update(admin_user.id, clearance_level: 5) if admin_user.clearance_level < 5
+  if admin_user.clearance_level < 5
+    user_repo.update(admin_user.id,
+      clearance_level: 5)
+  end
   admin_password
 end

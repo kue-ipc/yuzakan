@@ -31,9 +31,9 @@ module API
 
         private def sync_user(params)
           @sync_user ||= SyncUser.new(provider_repository: @provider_repository,
-                                      user_repository: @user_repository,
-                                      group_repository: @group_repository,
-                                      member_repository: @member_repository)
+            user_repository: @user_repository,
+            group_repository: @group_repository,
+            member_repository: @member_repository)
           call_interacttor(@sync_user, params)
         end
 

@@ -16,7 +16,8 @@ module Admin
               required(:domain).maybe(:str?, max_size?: 255)
               required(:admin_user).schema do
                 required(:username).filled(:str?, :name?, max_size?: 255)
-                required(:password).filled(:str?, min_size?: 8, max_size?: 255).confirmation
+                required(:password).filled(:str?, min_size?: 8,
+                  max_size?: 255).confirmation
               end
             end
           end
@@ -87,10 +88,16 @@ module Admin
               "::1",
               "fc00::/7",
             ].each do |address|
-              @network_repository.create_or_update_by_address(address, {clearance_level: 5, trusted: true})
+              @network_repository.create_or_update_by_address(address,
+                {
+                  clearance_level: 5, trusted: true,
+                })
             end
             ["0.0.0.0/0", "::/0"].each do |address|
-              @network_repository.create_or_update_by_address(address, {clearance_level: 1, trusted: false})
+              @network_repository.create_or_update_by_address(address,
+                {
+                  clearance_level: 1, trusted: false,
+                })
             end
           end
         end
@@ -128,20 +135,24 @@ module Admin
             admin_user = get_user(admin_user_params[:username])
           end
 
-          @user_repository.update(admin_user.id, clearance_level: 5) if admin_user.clearance_level < 5
+          return unless admin_user.clearance_level < 5
+
+          @user_repository.update(admin_user.id,
+            clearance_level: 5)
         end
 
         private def setup_config(config_params)
           return if @config_repository.current
 
-          @config_repository.current_create({**config_params, maintenace: false})
+          @config_repository.current_create({**config_params,
+            maintenace: false,})
         end
 
         private def sync_user
           @sync_user ||= SyncUser.new(provider_repository: @provider_repository,
-                                      user_repository: @user_repository,
-                                      group_repository: @group_repository,
-                                      member_repository: @member_repository)
+            user_repository: @user_repository,
+            group_repository: @group_repository,
+            member_repository: @member_repository)
         end
 
         private def proider_create_user

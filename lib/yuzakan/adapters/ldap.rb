@@ -13,7 +13,6 @@ require "net/ldap/dn"
 module Yuzakan
   module Adapters
     class Ldap < Yuzakan::Adapter
-
       self.name = "ldap"
       self.display_name = "LDAP"
       self.version = "0.0.1"
@@ -175,19 +174,30 @@ module Yuzakan
           required: true,
           default: "{CRYPT}",
           list: [
-            {name: :cleartext, label: "{CLEARTEXT} 平文", value: "{CLEARTEXT}", deprecated: true},
+            {name: :cleartext, label: "{CLEARTEXT} 平文", value: "{CLEARTEXT}",
+             deprecated: true,},
             {name: :crypt, label: "{CRYPT} CRYPT", value: "{CRYPT}"},
             {name: :md5, label: "{MD5} MD5", value: "{MD5}", deprecated: true},
-            {name: :sha, label: "{SHA} SHA-1", value: "{SHA}", deprecated: true},
-            {name: :sha256, label: "{SHA256} SHA-256", value: "{SHA256}", deprecated: true},
-            {name: :sha512, label: "{SHA512} SHA-512", value: "{SHA512}", deprecated: true},
-            {name: :smd5, label: "{SMD5} ソルト付MD5", value: "{SMD5}", deprecated: true},
-            {name: :ssha, label: "{SSHA} ソルト付SHA-1", value: "{SSHA}", deprecated: true},
-            {name: :ssha256, label: "{SSHA256} ソルト付-SHA256", value: "{SSHA256}"},
-            {name: :ssha512, label: "{SSHA512} ソルト付SHA-512", value: "{SSHA512}"},
-            {name: :pbkdf2_sha1, label: "{PBKDF2-SHA1} PBKDF2 SHA-1", value: "{PBKDF2-SHA1}", deprecated: true},
-            {name: :pbkdf2_sha256, label: "{PBKDF2-SHA256} PBKDF2 SHA256", value: "{PBKDF2-SHA256}"},
-            {name: :pbkdf2_sha512, label: "{PBKDF2-SHA512} PBKDF2 SHA256", value: "{PBKDF2-SHA512}"},
+            {name: :sha, label: "{SHA} SHA-1", value: "{SHA}",
+             deprecated: true,},
+            {name: :sha256, label: "{SHA256} SHA-256", value: "{SHA256}",
+             deprecated: true,},
+            {name: :sha512, label: "{SHA512} SHA-512", value: "{SHA512}",
+             deprecated: true,},
+            {name: :smd5, label: "{SMD5} ソルト付MD5", value: "{SMD5}",
+             deprecated: true,},
+            {name: :ssha, label: "{SSHA} ソルト付SHA-1", value: "{SSHA}",
+             deprecated: true,},
+            {name: :ssha256, label: "{SSHA256} ソルト付-SHA256",
+             value: "{SSHA256}",},
+            {name: :ssha512, label: "{SSHA512} ソルト付SHA-512",
+             value: "{SSHA512}",},
+            {name: :pbkdf2_sha1, label: "{PBKDF2-SHA1} PBKDF2 SHA-1",
+             value: "{PBKDF2-SHA1}", deprecated: true,},
+            {name: :pbkdf2_sha256, label: "{PBKDF2-SHA256} PBKDF2 SHA256",
+             value: "{PBKDF2-SHA256}",},
+            {name: :pbkdf2_sha512, label: "{PBKDF2-SHA512} PBKDF2 SHA256",
+             value: "{PBKDF2-SHA512}",},
           ],
         }, {
           name: :crypt_salt_format,
@@ -229,7 +239,8 @@ module Yuzakan
         attr_accessor :multi_attrs, :hide_attrs
       end
 
-      self.multi_attrs = Yuzakan::Utils::IgnoreCaseStringSet.new(%w[objectClass member memberOf])
+      self.multi_attrs = Yuzakan::Utils::IgnoreCaseStringSet.new(%w[objectClass
+                                                                    member memberOf])
       self.hide_attrs = Yuzakan::Utils::IgnoreCaseStringSet.new(%w[userPassword])
 
       group true
@@ -254,10 +265,12 @@ module Yuzakan
       def user_create(username, password = nil, **userdata)
         return if ldap_user_read(username)
 
-        user = ldap_user_create(**userdata, username: username, password: password)
+        user = ldap_user_create(**userdata, username: username,
+          password: password)
 
         # パスワードも渡す。
-        user = ldap_get(user.dn) if run_after_user_create(user, **userdata, password: password)
+        user = ldap_get(user.dn) if run_after_user_create(user, **userdata,
+          password: password)
 
         user_entry_to_data(user)
       end
@@ -345,7 +358,10 @@ module Yuzakan
 
         [:display_name, :email].each do |name|
           attr_name = @params[:"user_#{name}_attr"]
-          filter |= Net::LDAP::Filter.eq(attr_name, query) if attr_name&.size&.positive?
+          if attr_name&.size&.positive?
+            filter |= Net::LDAP::Filter.eq(attr_name,
+              query)
+          end
         end
 
         opts = search_user_opts("*", filter: filter)
@@ -374,7 +390,10 @@ module Yuzakan
 
         [:display_name].each do |name|
           attr_name = @params[:"group_#{name}_attr"]
-          filter |= Net::LDAP::Filter.eq(attr_name, query) if attr_name&.size&.positive?
+          if attr_name&.size&.positive?
+            filter |= Net::LDAP::Filter.eq(attr_name,
+              query)
+          end
         end
 
         opts = search_group_opts("*", filter: filter)
@@ -452,11 +471,14 @@ module Yuzakan
       private def ldap_user_auth(user, password)
         @logger.info "LDAP bind: #{user.dn}"
         # 認証のbindには別のLDAPインスタンスを使用します。
-        generate_ldap.bind(method: :simple, username: user.dn, password: password)
+        generate_ldap.bind(method: :simple, username: user.dn,
+          password: password)
       end
 
       private def ldap_user_change_password(user, password)
-        ldap_modify(user.dn, change_password_operations(user, password, locked: user_entry_locked?(user)))
+        ldap_modify(user.dn,
+          change_password_operations(user, password,
+            locked: user_entry_locked?(user)))
       end
 
       private def ldap_user_group_list(user)
@@ -470,7 +492,9 @@ module Yuzakan
       end
 
       private def ldap_group_read(groupname)
-        groupname += @params[:group_name_suffix] if @params[:group_name_suffix]&.size&.positive?
+        if @params[:group_name_suffix]&.size&.positive?
+          groupname += @params[:group_name_suffix]
+        end
         opts = search_group_opts(groupname)
         ldap_search(opts).first
       end
@@ -500,7 +524,8 @@ module Yuzakan
 
       # == 処理の実行前後
 
-      private def run_after_user_create(user, primary_group: nil, groups: nil, **_userdata)
+      private def run_after_user_create(user, primary_group: nil, groups: nil,
+                                        **_userdata)
         # グループを管理しない場合は何もしない。
         return false unless has_group?
 
@@ -519,7 +544,8 @@ module Yuzakan
         changed
       end
 
-      private def run_after_user_update(user, primary_group: nil, groups: nil, **_userdata)
+      private def run_after_user_update(user, primary_group: nil, groups: nil,
+                                        **_userdata)
         # グループを管理しない場合は何もしない。
         return false unless has_group?
 
@@ -529,7 +555,9 @@ module Yuzakan
         changed = false
 
         # グループのチェック
-        remains = ldap_user_group_list(user).to_h { |group| [group_entry_name(group), group] }
+        remains = ldap_user_group_list(user).to_h do |group|
+          [group_entry_name(group), group]
+        end
 
         # プライマリーグループを管理しない場合は、プリマリーグループを無条件で追加する。
         # 管理している場合は追加しない
@@ -583,8 +611,11 @@ module Yuzakan
         end
       end
 
-      private def create_user_attributes(username:, password: nil, display_name: nil, email: nil, **userdata)
-        attributes = userdata[:attrs].transform_keys { |key| attribute_name(key) }
+      private def create_user_attributes(username:, password: nil,
+                                         display_name: nil, email: nil, **userdata)
+        attributes = userdata[:attrs].transform_keys do |key|
+          attribute_name(key)
+        end
         attributes.transform_values! { |value| convert_ldap_value(value) }
 
         # OpenLDAP環境では"top"が自動的に付与されないため、"top"を付けて置く
@@ -597,7 +628,8 @@ module Yuzakan
         end
 
         if @params[:user_display_name_attr]&.size&.positive? && display_name&.size&.positive?
-          attributes[attribute_name(@params[:user_display_name_attr])] = display_name
+          attributes[attribute_name(@params[:user_display_name_attr])] =
+            display_name
         end
         if @params[:user_email_attr]&.size&.positive? && email&.size&.positive?
           attributes[attribute_name(@params[:user_email_attr])] = email
@@ -613,13 +645,16 @@ module Yuzakan
       end
 
       private def update_user_attributes(**userdata)
-        attributes = userdata[:attrs].transform_keys { |key| attribute_name(key) }
+        attributes = userdata[:attrs].transform_keys do |key|
+          attribute_name(key)
+        end
         attributes.transform_values! { |value| convert_ldap_value(value) }
 
         [:display_name, :email].each do |name|
           attr_name = @params[:"user_#{name}_attr"]
           if attr_name&.size&.positive? && (userdata[name])
-            attributes[attribute_name(@params[:"user_#{name}_attr"])] = userdata[name]
+            attributes[attribute_name(@params[:"user_#{name}_attr"])] =
+              userdata[name]
           end
         end
 
@@ -652,7 +687,8 @@ module Yuzakan
       end
 
       private def generate_operation(operator, name, value = nil)
-        raise LdapAdatperError, "invalid operator: #{operator}" unless [:add, :replace, :delete].include?(operator)
+        raise LdapAdatperError, "invalid operator: #{operator}" unless [:add,
+                                                                        :replace, :delete,].include?(operator)
 
         [operator, name, value]
       end
@@ -832,8 +868,12 @@ module Yuzakan
         group_data =
           if has_group?
             {
-              primary_group: ldap_primary_group(user)&.then { |group| group_entry_name(group) },
-              groups: ldap_user_group_list(user).map { |group| group_entry_name(group) },
+              primary_group: ldap_primary_group(user)&.then do |group|
+                group_entry_name(group)
+              end,
+              groups: ldap_user_group_list(user).map do |group|
+                group_entry_name(group)
+              end,
             }
           else
             {}
@@ -1002,7 +1042,8 @@ module Yuzakan
         if current_password.nil?
           operations << operation_add("userPassword", lock_password(""))
         elsif !locked_password?(current_password)
-          operations << operation_replace("userPassword", lock_password(current_password))
+          operations << operation_replace("userPassword",
+            lock_password(current_password))
         end
 
         operations
@@ -1055,7 +1096,8 @@ module Yuzakan
         end
       end
 
-      private def generate_crypt_password(password, format: @params[:crypt_salt_format])
+      private def generate_crypt_password(password,
+                                          format: @params[:crypt_salt_format])
         # 16 [./0-9A-Za-z] chars
         salt = SecureRandom.base64(12).tr("+", ".")
         password.crypt(format % salt)

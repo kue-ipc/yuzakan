@@ -32,9 +32,13 @@ module API
             unless param_errors.key?(:password)
               password_size = params[:password].size
               if current_config.password_min_size&.>(password_size)
-                param_errors[:name] = [I18n.t("errors.min_size?", num: current_config.password_min_size)]
+                param_errors[:name] =
+                  [I18n.t("errors.min_size?",
+                    num: current_config.password_min_size)]
               elsif current_config.password_max_size&.<(password_size)
-                param_errors[:name] = [I18n.t("errors.max_size?", num: current_config.password_max_size)]
+                param_errors[:name] =
+                  [I18n.t("errors.max_size?",
+                    num: current_config.password_max_size)]
               end
 
               if params[:password] !~ /\A[\u0020-\u007e]*\z/ ||
@@ -43,12 +47,14 @@ module API
                 param_errors[:name] << I18n.t("errors.valid_chars?")
               end
 
-              password_types = [/[0-9]/, /[a-z]/, /[A-Z]/, /[^0-9a-zA-Z]/].select do |reg|
+              password_types = [/[0-9]/, /[a-z]/, /[A-Z]/,
+                                /[^0-9a-zA-Z]/,].select do |reg|
                 reg.match(params[:password])
               end.size
               if current_config.password_min_types&.> password_types
                 param_errors[:name] ||= []
-                param_errors[:name] << I18n.t("errors.min_types?", num: current_config.password_min_types)
+                param_errors[:name] << I18n.t("errors.min_types?",
+                  num: current_config.password_min_types)
               end
 
               dict = (current_config.password_extra_dict&.split || []) +

@@ -36,7 +36,8 @@ module Yuzakan
         if read_group_result.failure?
           Hanami.logger.error "[#{self.class.name}] Failed to call ProviderReadGroup"
           Hanami.logger.error read_group_result.errors
-          error(I18n.t("errors.action.fail", action: I18n.t("interactors.read_group")))
+          error(I18n.t("errors.action.fail",
+            action: I18n.t("interactors.read_group")))
           read_group_result.errors.each { |msg| error(msg) }
           fail!
         end
@@ -56,7 +57,8 @@ module Yuzakan
             .call(groupname: params[:groupname])
           if unregister_group_result.failure?
             Hanami.logger.error "[#{self.class.name}] Failed to call UnregisterGroup"
-            error(I18n.t("errors.action.fail", action: I18n.t("interactors.unregister_group")))
+            error(I18n.t("errors.action.fail",
+              action: I18n.t("interactors.unregister_group")))
             unregister_group_result.errors.each { |msg| error(msg) }
             fail!
           end
@@ -66,7 +68,8 @@ module Yuzakan
             .call(@data.slice(:groupname, :display_name, :primary))
           if register_group_result.failure?
             Hanami.logger.error "[#{self.class.name}] Failed to call RegisterGroup"
-            error(I18n.t("errors.action.fail", action: I18n.t("interactors.register_group")))
+            error(I18n.t("errors.action.fail",
+              action: I18n.t("interactors.register_group")))
             register_group_result.errors.each { |msg| error(msg) }
             fail!
           end

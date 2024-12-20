@@ -13,8 +13,10 @@ module API
           messages :i18n
 
           params do
-            optional(:page).filled(:int?, included_in?: Yuzakan::Utils::Pager::PAGE_RANGE)
-            optional(:per_page).filled(:int?, included_in?: Yuzakan::Utils::Pager::PER_PAGE_RANGE)
+            optional(:page).filled(:int?,
+              included_in?: Yuzakan::Utils::Pager::PAGE_RANGE)
+            optional(:per_page).filled(:int?,
+              included_in?: Yuzakan::Utils::Pager::PER_PAGE_RANGE)
 
             optional(:order).filled(:str?, included_in?: %w[
               name
@@ -50,7 +52,10 @@ module API
         end
 
         def handle(_request, _response)
-          halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
+          unless params.valid?
+            halt_json 400,
+              errors: [only_first_errors(params.errors)]
+          end
 
           result =
             if params[:all]
@@ -98,10 +103,13 @@ module API
           filter[:prohibited] = false if params[:hide_prohibited]
           filter[:deleted] = false unless params[:show_deleted]
 
-          relation = @group_repository.ordered_filter(order: order, filter: filter)
+          relation = @group_repository.ordered_filter(order: order,
+            filter: filter)
 
           if params.key?(:page)
-            pager = Yuzakan::Utils::Pager.new(relation, **params.slice(:page, :per_page)) do |link_params|
+            pager = Yuzakan::Utils::Pager.new(relation,
+                                              **params.slice(:page,
+                                                :per_page)) do |link_params|
               routes.path(:groups, **params, **link_params)
             end
             {
@@ -111,7 +119,8 @@ module API
           else
             {
               groups: relation.to_a,
-              headers: {"Content-Location" => routes.path(:groups, **params.except(:per_page))},
+              headers: {"Content-Location" => routes.path(:groups,
+                                                          **params.except(:per_page))},
             }
           end
         end
@@ -143,7 +152,9 @@ module API
           all_items = groups_providers.keys
 
           # prohibitedなグループは隠す
-          all_items -= @group_repository.filter(prohibited: true).map(:name) if params[:hide_prohibited]
+          if params[:hide_prohibited]
+            all_items -= @group_repository.filter(prohibited: true).map(:name)
+          end
 
           # プロバイダーにないグループもすべて取り出す
           if params[:show_deleted]
@@ -156,13 +167,17 @@ module API
           all_items.sort!
           all_items.reverse! if params[:order] == "name.desc"
 
-          pager = Yuzakan::Utils::Pager.new(all_items, **params.slice(:page, :per_page)) do |link_params|
+          pager = Yuzakan::Utils::Pager.new(all_items,
+                                            **params.slice(:page,
+                                              :per_page)) do |link_params|
             routes.path(:groups, **params.to_h, **link_params)
           end
 
           groups = get_groups(pager.page_items).map do |group|
             # プロバイダーから削除しされているが、レポジトリ―では残っている場合は同期する。
-            group = get_sync_group(group.name) if !group.deleted && !groups_providers.key?(group.name)
+            if !group.deleted && !groups_providers.key?(group.name)
+              group = get_sync_group(group.name)
+            end
             {
               **convert_for_json(group),
               providers: groups_providers[group.name] || [],
@@ -176,14 +191,17 @@ module API
         end
 
         private def get_groups(groupnames)
-          group_entities = @group_repository.all_by_name(groupnames).to_h { |group| [group.name, group] }
+          group_entities = @group_repository.all_by_name(groupnames).to_h do |group|
+            [group.name, group]
+          end
           groupnames.map do |groupname|
             group_entities[groupname] || get_sync_group(groupname)
           end
         end
 
         private def get_sync_group(groupname)
-          @sync_group ||= SyncGroup.new(provider_repository: @provider_repository, group_repository: @group_repository)
+          @sync_group ||= SyncGroup.new(
+            provider_repository: @provider_repository, group_repository: @group_repository)
           result = @sync_group.call({groupname: groupname})
           if result.failure?
             Hanami.logger.error "[#{self.class.name}] Failed sync group: #{groupname} - #{result.errors}"

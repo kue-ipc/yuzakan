@@ -21,7 +21,8 @@ RSpec.configure do |config|
 
   config.before :suite do
     all_databases.call.each do |db|
-      DatabaseCleaner[:sequel, db: db].clean_with :truncation, except: ["schema_migrations"]
+      DatabaseCleaner[:sequel, db: db].clean_with :truncation,
+        except: ["schema_migrations"]
     end
   end
 

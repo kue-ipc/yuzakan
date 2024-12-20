@@ -18,14 +18,17 @@ module Yuzakan
           [param[:name].intern, param[:value]]
         end
         @params = @adapter_class.normalize_params(provider_params_hash)
-        @adapter = @adapter_class.new(@params, group: attributes[:group], logger: Hanami.logger)
+        @adapter = @adapter_class.new(@params, group: attributes[:group],
+          logger: Hanami.logger)
         Success(adapter)
       end
 
       def get_provider(provider)
         return Failure(:nil) if provider.nil?
 
-        provider = provider_repo.get(provider.to_s) unless provider.is_a?(Yuzakan::Structs::Provider)
+        unless provider.is_a?(Yuzakan::Structs::Provider)
+          provider = provider_repo.get(provider.to_s)
+        end
 
         if provider
           Success(provider)
@@ -48,7 +51,8 @@ module Yuzakan
           [param[:name].intern, param[:value]]
         end
         @params = @adapter_class.normalize_params(provider_params_hash)
-        @adapter = @adapter_class.new(@params, group: attributes[:group], logger: Hanami.logger)
+        @adapter = @adapter_class.new(@params, group: attributes[:group],
+          logger: Hanami.logger)
         Success(adapter)
       end
     end

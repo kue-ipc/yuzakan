@@ -21,7 +21,8 @@ module Yuzakan
         Success({
           **params.slice(:display_name, :email),
           primary_group: step(get_group(params[:primary_group])),
-          groups: parasm[:groups]&.map { |groupname| set(get_group(groupname)) },
+          groups:
+            parasm[:groups]&.map { |groupname| set(get_group(groupname)) },
         })
       end
 
@@ -32,9 +33,8 @@ module Yuzakan
           deleted: false,
           deleted_at: nil,
         }
-        primary_group = get_group(params[:primary_group])
+        get_group(params[:primary_group])
         groups = parasm[:groups]&.map { |groupname| get_group(groupname) }
-
 
         user_repo.get(username)
         user_id = @user_repository.find_by_name(username)&.id
@@ -49,11 +49,14 @@ module Yuzakan
 
           if params[:primary_group]
             @member_repository.set_primary_group_for_user(@user,
-                                                          get_group(params[:primary_group]))
+              get_group(params[:primary_group]))
           end
 
           if params[:groups]
-            groups = [params[:primary_group], *params[:groups]].compact.uniq.map { |groupname| get_group(groupname) }
+            groups = [params[:primary_group], *params[:groups]]
+              .compact.uniq.map do |groupname|
+              get_group(groupname)
+            end
             @member_repository.set_groups_for_user(@user, groups)
           end
         end
@@ -67,7 +70,7 @@ module Yuzakan
         group = group_repo.get(groupname)
         return Success(group) if group
 
-        # FIXME groups.syncが失敗した場合は？
+        # FIXME: groups.syncが失敗した場合は？
         sync(groupname)
       end
     end

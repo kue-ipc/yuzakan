@@ -22,7 +22,8 @@ module Yuzakan
         filter(**filter).order(*order_attributes)
       end
 
-      def filter(query: nil, match: :partial, primary: nil, prohibited: nil, deleted: nil)
+      def filter(query: nil, match: :partial, primary: nil, prohibited: nil,
+                 deleted: nil)
         q = search(query: query, match: match)
         q = q.where(primary: primary) unless primary.nil?
         q = q.where(prohibited: prohibited) unless prohibited.nil?

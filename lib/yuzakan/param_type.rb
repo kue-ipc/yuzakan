@@ -36,8 +36,8 @@ module Yuzakan
     }.freeze
 
     attr_reader :name, :label, :description,
-                :type, :default, :fixed, :encrypted,
-                :input, :list, :required, :placeholder
+      :type, :default, :fixed, :encrypted,
+      :input, :list, :required, :placeholder
 
     alias encrypted? encrypted
     alias fixed? fixed
@@ -155,7 +155,9 @@ module Yuzakan
       # データベース由来のデータしかloadしないようにすること
       value = Marshal.load(data) # rubocop:disable Security/MarshalLoad
 
-      return default if default && (value.nil? || (value.respond_to?(:empty?) && value.empty?))
+      if default && (value.nil? || (value.respond_to?(:empty?) && value.empty?))
+        return default
+      end
 
       value
     end
@@ -174,7 +176,8 @@ module Yuzakan
       end
 
       def to_json(...)
-        {name: name, label: label, value: value, deprecated: deprecated}.to_json(...)
+        {name: name, label: label, value: value,
+         deprecated: deprecated,}.to_json(...)
       end
     end
   end

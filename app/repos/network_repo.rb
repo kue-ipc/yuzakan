@@ -12,8 +12,10 @@ module Yuzakan
 
       def set(address, **)
         address = normalize_address(address)
-        networks.by_address(address).changeset(:update, **).map(:touch).commit ||
-          networks.changeset(:create, **, address: address).map(:add_timestamps).commit
+        networks.by_address(address).changeset(:update,
+                                               **).map(:touch).commit ||
+          networks.changeset(:create, **,
+            address: address).map(:add_timestamps).commit
       end
 
       def unset(address)

@@ -21,7 +21,10 @@ module API
         end
 
         def handle(_request, _response)
-          halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
+          unless params.valid?
+            halt_json 400,
+              errors: [only_first_errors(params.errors)]
+          end
 
           @providers =
             if params[:has_group]

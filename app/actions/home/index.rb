@@ -8,7 +8,9 @@ module Yuzakan
         security_level 0
 
         def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
-          self.body = Web::Views::Home::Login.render(exposures) unless authenticated?
+          return if authenticated?
+
+          self.body = Web::Views::Home::Login.render(exposures)
         end
       end
     end

@@ -29,7 +29,8 @@ task build_errors: %w[
   500 502 503 504
 ].map { |code| "public/errors/#{code}.html" }
 
-rule %r{^public/errors/\d+\.html$} => ["apps/web/templates/%n.html.slim", "public/errors"] do |t|
+rule %r{^public/errors/\d+\.html$} => ["apps/web/templates/%n.html.slim",
+                                       "public/errors",] do |t|
   sh "bundle exec slimrb #{t.source} > #{t.name}"
 end
 

@@ -5,18 +5,19 @@ module Yuzakan
     class ProviderRepo < Yuzakan::DB::Repo
       def get(name)
         providers.by_name(name).one
-        providers.by_name(name).combine(:provider_params, attr_mappings: :attr).one
+        providers.by_name(name).combine(:provider_params,
+          attr_mappings: :attr).one
       end
 
       def set(name, **)
         providers.by_name(name).changeset(:update, **).map(:touch).commit ||
-          providers.changeset(:create, **, name: name).map(:add_timestamps).commit
+          providers.changeset(:create, **,
+            name: name).map(:add_timestamps).commit
       end
 
       def unset(name)
         providers.by_name(name).changeset(:delete).commit
       end
-
 
       # TODO: 整理が必要
       def ordered_all
@@ -68,15 +69,18 @@ module Yuzakan
       end
 
       def ordered_all_with_adapter
-        aggregate(:provider_params, attr_mappings: :attr).order(:order, :name).map_to(Provider).to_a
+        aggregate(:provider_params, attr_mappings: :attr).order(:order,
+          :name).map_to(Provider).to_a
       end
 
       def find_with_adapter(id)
-        aggregate(:provider_params, attr_mappings: :attr).where(id: id).map_to(Provider).one
+        aggregate(:provider_params,
+          attr_mappings: :attr).where(id: id).map_to(Provider).one
       end
 
       def find_with_adapter_by_name(name)
-        aggregate(:provider_params, attr_mappings: :attr).where(name: name).map_to(Provider).one
+        aggregate(:provider_params,
+          attr_mappings: :attr).where(name: name).map_to(Provider).one
       end
 
       def ordered_all_with_adapter_by_operation(operation)
@@ -84,7 +88,8 @@ module Yuzakan
       end
 
       def ordered_all_with_adapter_by_ability(ability)
-        aggregate(:provider_params, attr_mappings: :attr).where(ability).order(:order, :name).map_to(Provider).to_a
+        aggregate(:provider_params, attr_mappings: :attr).where(ability).order(
+          :order, :name).map_to(Provider).to_a
       end
 
       def first_google

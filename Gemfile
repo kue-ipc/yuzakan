@@ -37,7 +37,6 @@ gem "redis-rack"
 gem "readthis"
 gem "hiredis"
 
-
 # LDAP
 gem "net-ldap"
 # FIXME: https://github.com/ruby-ldap/ruby-net-ldap/issues/431

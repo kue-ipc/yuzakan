@@ -91,7 +91,8 @@ module Yuzakan
         # デフォルトUACの適用
         # 作成時には適用できないため、作成後にする必要がある。
         default_uac = AccountControl.new
-        operations = [operation_replace(AccountControl::ATTRIBUTE_NAME, convert_ldap_value(default_uac.to_i))]
+        operations = [operation_replace(AccountControl::ATTRIBUTE_NAME,
+          convert_ldap_value(default_uac.to_i))]
         ldap_modify(user.dn, operations)
 
         # 必ず変更がある
@@ -144,7 +145,8 @@ module Yuzakan
         uac = user_entry_uac(user)
         unless uac.accountdisable?
           uac.accountdisable = true
-          operations << operation_replace("userAccountControl", convert_ldap_value(uac.to_i))
+          operations << operation_replace("userAccountControl",
+            convert_ldap_value(uac.to_i))
         end
 
         operations
@@ -157,10 +159,14 @@ module Yuzakan
         uac = user_entry_uac(user)
         if uac.accountdisable?
           uac.accountdisable = false
-          operations << operation_replace("userAccountControl", convert_ldap_value(uac.to_i))
+          operations << operation_replace("userAccountControl",
+            convert_ldap_value(uac.to_i))
         end
 
-        operations.concat(change_password_operations(user, password)) if password
+        if password
+          operations.concat(change_password_operations(user,
+            password))
+        end
 
         operations
       end

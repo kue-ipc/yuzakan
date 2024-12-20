@@ -42,7 +42,8 @@ module API
             }
           end
 
-          @group = @group_repository.update(@group.id, params.to_h.except(:id, :name))
+          @group = @group_repository.update(@group.id,
+            params.to_h.except(:id, :name))
           self.body = group_json
         end
       end

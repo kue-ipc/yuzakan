@@ -23,7 +23,8 @@ module Yuzakan
         username = params[:username]
         password = params[:password]
 
-        call_providers(params[:providers], operation: :user_unlock) do |provider|
+        call_providers(params[:providers],
+          operation: :user_unlock) do |provider|
           provider.user_unlock(username, password)
         end
       end

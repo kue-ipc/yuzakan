@@ -55,12 +55,12 @@ RSpec.describe API::Actions::Providers::Create do
   let(:provider_with_params) { Provider.new(id: 3, **provider_params, provider_params: provider_params_attributes) }
   let(:provider_repository) {
     instance_double(ProviderRepository,
-                    exist_by_name?: false,
-                    last_order: 16,
-                    create: provider_without_params,
-                    find_with_params: provider_with_params,
-                    find_with_params_by_name: provider_with_params,
-                    add_param: ProviderParam.new)
+      exist_by_name?: false,
+      last_order: 16,
+      create: provider_without_params,
+      find_with_params: provider_with_params,
+      find_with_params_by_name: provider_with_params,
+      add_param: ProviderParam.new)
   }
 
   it "is failure" do
@@ -167,11 +167,11 @@ RSpec.describe API::Actions::Providers::Create do
     describe "existed name" do
       let(:provider_repository) {
         instance_double(ProviderRepository,
-                        exist_by_name?: true,
-                        last_order: 16,
-                        create: provider_without_params,
-                        find_with_params: provider_with_params,
-                        add_param: ProviderParam.new)
+          exist_by_name?: true,
+          last_order: 16,
+          create: provider_without_params,
+          find_with_params: provider_with_params,
+          add_param: ProviderParam.new)
       }
 
       it "is failure" do

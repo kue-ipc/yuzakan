@@ -22,7 +22,7 @@ RSpec.describe API::Actions::System::Show do
   describe "other config" do
     let(:config) {
       Config.new(title: "title2", session_timeout: 3600, contact_name: "admin", contact_email: "admin@example.jp",
-                 contact_phone: "00-0000-0000", domain: "example.jp")
+        contact_phone: "00-0000-0000", domain: "example.jp")
     }
 
     it "is successful" do

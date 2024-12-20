@@ -33,9 +33,15 @@ module API
         end
 
         def handle(_request, _response)
-          halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
+          unless params.valid?
+            halt_json 400,
+              errors: [only_first_errors(params.errors)]
+          end
 
-          halt_json 403, errors: [I18n.t("session.errors.deny_network")] unless current_network.trusted
+          unless current_network.trusted
+            halt_json 403,
+              errors: [I18n.t("session.errors.deny_network")]
+          end
 
           redirect_to_json routes.path(:session), status: 303 if current_user
 
@@ -48,7 +54,8 @@ module API
           failure_count = 0
 
           # 10 minutes
-          @auth_log_repository.recent_by_username(params[:username], 600).each do |auth_log|
+          @auth_log_repository.recent_by_username(params[:username],
+            600).each do |auth_log|
             case auth_log.result
             when "success", "recover"
               break
@@ -75,16 +82,20 @@ module API
             halt_json 422, errors: [I18n.t("session.errors.incorrect")]
           end
 
-          @auth_log_repository.create(**auth_log_params, result: "success:#{provider.name}")
+          @auth_log_repository.create(**auth_log_params,
+result: "success:#{provider.name}")
 
           user = @user_repository.find_by_name(params[:username])
           if user.nil?
             sync_user = SyncUser.new(provider_repository: @provider_repository,
-                                     user_repository: @user_repository,
-                                     group_repository: @group_repository,
-                                     member_repository: @member_repository)
+              user_repository: @user_repository,
+              group_repository: @group_repository,
+              member_repository: @member_repository)
             sync_user_result = sync_user.call({username: params[:username]})
-            halt_json 500, errors: sync_user_result.errors if sync_user_result.failure?
+            if sync_user_result.failure?
+              halt_json 500,
+                errors: sync_user_result.errors
+            end
 
             user = sync_user_result.user
           end
@@ -97,7 +108,8 @@ module API
 
           # クリアランスレベルを確認
           if user.clearance_level.zero?
-            @auth_log_repository.create(**auth_log_params, result: "no_clearance")
+            @auth_log_repository.create(**auth_log_params,
+result: "no_clearance")
             halt_json 403, errors: [I18n.t("session.errors.no_clearance")]
           end
 

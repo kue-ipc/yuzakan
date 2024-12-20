@@ -19,7 +19,9 @@ module User
 
         def change_password_field_opt(name)
           password_class = ["form-control"]
-          password_class << "is-invalid" if flash[:param_errors]&.key?(name.to_s)
+          if flash[:param_errors]&.key?(name.to_s)
+            password_class << "is-invalid"
+          end
 
           opt = {
             class: password_class,
@@ -29,14 +31,14 @@ module User
 
           if name == :password
             opt.merge!(minlength: change_password_config[:min_size],
-                       maxlength: change_password_config[:max_size])
+              maxlength: change_password_config[:max_size])
             if change_password_config[:unusable_chars]&.size&.positive?
               codes = change_password_config[:unusable_chars]
                 .each_codepoint
                 .map { |code| "\\u#{'%04x' % code}" }
                 .join
               opt.merge!(pattern: "[^#{codes}]*",
-                         title: "使用不可文字を含めることはできません。")
+                title: "使用不可文字を含めることはできません。")
             end
           end
           opt

@@ -55,13 +55,13 @@ RSpec.describe API::Actions::Providers::Update do
   let(:provider_without_params) { Provider.new(id: 3, **provider_params) }
   let(:provider_repository) {
     instance_double(ProviderRepository,
-                    find_with_params_by_name: provider_with_params,
-                    find_with_params: provider_with_params,
-                    exist_by_name?: false,
-                    last_order: 16,
-                    update: provider_without_params,
-                    delete_param_by_name: 1,
-                    add_param: ProviderParam.new)
+      find_with_params_by_name: provider_with_params,
+      find_with_params: provider_with_params,
+      exist_by_name?: false,
+      last_order: 16,
+      update: provider_without_params,
+      delete_param_by_name: 1,
+      add_param: ProviderParam.new)
   }
   let(:provider_param_repository) { instance_double(ProviderParamRepository, update: ProviderParam.new) }
 

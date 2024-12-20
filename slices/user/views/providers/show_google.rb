@@ -74,7 +74,7 @@ module User
           title ||= id
 
           html.div id: id, class: modal_classes, role: "dialog", tabindex: "-1",
-                   "aria-labelledby": label_id, "aria-hidden":  "true" do
+            "aria-labelledby": label_id, "aria-hidden":  "true" do
             div class: dialog_classes do
               form_for form, class: form_classes do
                 div class: "modal-content" do
@@ -83,7 +83,7 @@ module User
                       text title
                     end
                     button type: "button", class: "btn-close",
-                           "data-bs-dismiss": "modal", "aria-label": "閉じる"
+                      "data-bs-dismiss": "modal", "aria-label": "閉じる"
                   end
                   div class: "modal-body" do
                     p content if content
@@ -104,8 +104,8 @@ module User
                       hr
                       div class: "form-check" do
                         check_box :agreement,
-                                  class: "form-check-input agreement",
-                                  name: "agreement"
+                          class: "form-check-input agreement",
+                          name: "agreement"
                         label class: "form-check-label", for: :agreement do
                           text "私は、上記全てについて同意します。"
                         end
@@ -116,10 +116,10 @@ module User
                       inputs.each do |input_data|
                         div class: "form-check" do
                           check_box input_data[:name],
-                                    class: "form-check-input",
-                                    checked: input_data[:default] && "checked"
+                            class: "form-check-input",
+                            checked: input_data[:default] && "checked"
                           label class: "form-check-label",
-                                for: input_data[:name] do
+                            for: input_data[:name] do
                             text input_data[:text]
                           end
                         end
@@ -128,10 +128,10 @@ module User
                   end
                   div class: "modal-footer" do
                     submit submit_button[:label],
-                           class: "btn btn-#{submit_button[:color]} submit",
-                           disabled: agreement
+                      class: "btn btn-#{submit_button[:color]} submit",
+                      disabled: agreement
                     button class: "btn btn-secondary", type: "button",
-                           "data-bs-dismiss": "modal" do
+                      "data-bs-dismiss": "modal" do
                       text "閉じる"
                     end
                   end
@@ -145,14 +145,14 @@ module User
           @modal_forms ||= {
             google_create: Form.new(:google_create, routes.path(:google)),
             google_destroy: Form.new(:google_destroy, routes.path(:google), {},
-                                     method: :delete),
+              method: :delete),
             google_password_create: Form.new(:google_password_create,
-                                             routes.path(:google_password)),
+              routes.path(:google_password)),
             google_lock_destroy: Form.new(:google_lock_destroy,
-                                          routes.path(:google_lock), {},
-                                          method: :delete),
+              routes.path(:google_lock), {},
+              method: :delete),
             google_code_create: Form.new(:google_code_create,
-                                         routes.path(:google_code)),
+              routes.path(:google_code)),
           }
         end
 

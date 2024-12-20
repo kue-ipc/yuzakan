@@ -78,7 +78,9 @@ module Admin
               url: routes.path(menu[:action], **menu.fetch(:action_params, {})),
               description: menu[:description],
               color: menu[:color],
-            }.merge(if menu[:filename] then {type: :download, filename: menu[:filename]} else {} end)
+            }.merge(if menu[:filename] then {type: :download,
+                                             filename: menu[:filename],} else
+                                                                           {} end)
           end.compact
         end
       end

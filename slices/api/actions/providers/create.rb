@@ -40,7 +40,10 @@ module API
         end
 
         def handle(_request, _response)
-          halt_json 400, errors: [only_first_errors(params.errors)] unless params.valid?
+          unless params.valid?
+            halt_json 400,
+              errors: [only_first_errors(params.errors)]
+          end
 
           if @provider_repository.exist_by_name?(params[:name])
             halt_json 422, errors: [{name: [I18n.t("errors.uniq?")]}]
@@ -56,7 +59,8 @@ module API
               value = param_type.convert_value(provider_params_params[param_type.name])
               next if value.nil?
 
-              data = {name: param_type.name.to_s, value: param_type.dump_value(value)}
+              data = {name: param_type.name.to_s,
+                      value: param_type.dump_value(value),}
               @provider_repository.add_param(provider, data)
             end
           end

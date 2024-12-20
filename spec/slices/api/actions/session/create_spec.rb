@@ -128,14 +128,14 @@ RSpec.describe API::Actions::Session::Create do
     describe "too many access" do
       let(:auth_log_repository) {
         instance_double(AuthLogRepository,
-                        create: AuthLog.new,
-                        recent_by_username: [
-                          AuthLog.new(result: "failure"),
-                          AuthLog.new(result: "failure"),
-                          AuthLog.new(result: "failure"),
-                          AuthLog.new(result: "failure"),
-                          AuthLog.new(result: "failure"),
-                        ])
+          create: AuthLog.new,
+          recent_by_username: [
+            AuthLog.new(result: "failure"),
+            AuthLog.new(result: "failure"),
+            AuthLog.new(result: "failure"),
+            AuthLog.new(result: "failure"),
+            AuthLog.new(result: "failure"),
+          ])
       }
 
       it "is failure" do
