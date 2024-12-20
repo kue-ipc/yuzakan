@@ -47,7 +47,7 @@ end
 # setup local provider
 provider_repo = Hanami.app["repos.provider_repo"]
 unless provider_repo.get("local")
-  local_adapter_params = {
+  local_provider_params = {
     display_name: "ローカル",
     adapter: "local",
     order: "0",
@@ -58,7 +58,7 @@ unless provider_repo.get("local")
     lockable: true,
     group: true,
   }
-  provider_repo.set("local", **local_adapter_params)
+  provider_repo.set("local", **local_provider_params)
 end
 
 # setup admin user and group

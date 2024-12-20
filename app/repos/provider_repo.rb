@@ -5,24 +5,27 @@ module Yuzakan
     class ProviderRepo < Yuzakan::DB::Repo
       def get(name)
         providers.by_name(name).one
-        providers.by_name(name).combine(:adapter_params,
-          attr_mappings: :attr).one
       end
 
       def set(name, **)
         providers.by_name(name).changeset(:update, **).map(:touch).commit ||
-          providers.changeset(:create, **,
-            name: name).map(:add_timestamps).commit
+          providers.changeset(:create, **, name: name).map(:add_timestamps)
+            .commit
       end
 
       def unset(name)
         providers.by_name(name).changeset(:delete).commit
       end
 
-      # TODO: 整理が必要
+      def all
+        providers.to_a
+      end
+
       def ordered_all
         providers.order(:order, :name).to_a
       end
+
+      # TODO: 整理が必要
 
       private def by_name(name)
         providers.where(name: name)
