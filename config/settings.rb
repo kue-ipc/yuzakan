@@ -9,5 +9,6 @@ module Yuzakan
     setting :cache_expire, default: 24 * 60 * 60,
       constructor: Types::Params::Integer
     setting :redis_url, constructor: Types::String.optional
+    setting :cache_path, constructor: Types::String.optional
   end
 end

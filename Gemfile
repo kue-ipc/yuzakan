@@ -20,6 +20,8 @@ gem "mysql2"
 gem "pg"
 gem "sqlite3"
 
+gem "activesupport", "~> 8.0"
+
 gem "slim"
 
 gem "sassc"
@@ -32,10 +34,10 @@ gem "zxcvbn-js", require: "zxcvbn"
 
 gem "i18n"
 
-# key-value storage
-gem "redis-rack"
-gem "readthis"
+# redis
 gem "hiredis"
+gem "redis", require: ["redis", "redis/connection/hiredis"]
+gem "redis-rack"
 
 # LDAP
 gem "net-ldap"

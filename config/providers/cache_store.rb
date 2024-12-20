@@ -1,19 +1,28 @@
 # frozen_string_literal: true
 
+# use Active Support Cache Store
+
 Hanami.app.register_provider(:cache_store) do
+  preare do
+    require "active_support/cache"
+  end
+
   start do
-    cache_opts = {
-      expire: target["settings"].cache_expire,
+    store_opts = {
       namespace: "yuzakan:cache",
+      expires_in: target["settings"].cache_expire,
     }
     cache_store =
       if target["settings"].cache_expire.zero?
-        Yuzakan::CacheStore::NullStore.new(**cache_opts)
+        ActiveSupport::Cache::NullStore.new(**store_opts)
       elsif target["settings"].redis_url
-        Yuzakan::CacheStore::RedisStore.new(**cache_opts,
-          redis_url: target["settings"].redis_url)
+        ActiveSupport::Cache::RedisCacheStore.new(**store_opts,
+          url: target["settings"].redis_url)
+      elsif target["settings"].cache_path
+        ActiveSupport::Cache::FileStore.new(target["settings"].cache_file,
+          **store_opts)
       else
-        Yuzakan::CacheStore::MemoryStore.new(**cache_opts)
+        ActiveSupport::Cache::MemoryStore.new(**store_opts)
       end
     register "cache_store", cache_store
   end
