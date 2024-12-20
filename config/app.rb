@@ -4,11 +4,6 @@ require "hanami"
 
 require "rack/session/redis"
 
-# FIXME: 必要ないかも？
-# CoffeeScript v2 (from node_modulses)
-ENV["COFFEESCRIPT_SOURCE_PATH"] ||= File.expand_path(
-  "../node_modules/coffeescript/lib/coffeescript-browser-compiler-legacy/coffeescript.js", __dir__)
-
 # Sequel timezone
 Sequel.application_timezone = :local
 

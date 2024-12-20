@@ -20,24 +20,22 @@ gem "mysql2"
 gem "pg"
 gem "sqlite3"
 
-gem "activesupport", "~> 8.0"
-
+# Template
 gem "slim"
 
-gem "sassc"
-
-gem "coffee-script"
-gem "terser"
-
-gem "bcrypt"
-gem "zxcvbn-js", require: "zxcvbn"
-
-gem "i18n"
-
-# redis
+# Redis
 gem "hiredis"
 gem "redis", require: ["redis", "redis/connection/hiredis"]
 gem "redis-rack"
+
+# Uitls
+gem "activesupport", "~> 8.0"
+gem "i18n"
+gem "bcrypt"
+gem "zxcvbn-js", require: "zxcvbn"
+gem "xxhash"
+
+## for adapter ##
 
 # LDAP
 gem "net-ldap"
@@ -47,9 +45,6 @@ gem "smbhash"
 
 # Google Workspace
 gem "google-apis-admin_directory_v1"
-
-# xxHash
-gem "xxhash"
 
 group :development do
   gem "hanami-webconsole", "~> 2.2"

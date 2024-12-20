@@ -37,10 +37,6 @@ GEM
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
     coderay (1.1.3)
-    coffee-script (2.4.1)
-      coffee-script-source
-      execjs
-    coffee-script-source (1.12.2)
     concurrent-ruby (1.3.4)
     connection_pool (2.4.1)
     database_cleaner-core (2.0.1)
@@ -383,8 +379,6 @@ GEM
       sorbet-runtime (>= 0.5.10782)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
-    sassc (2.4.0)
-      ffi (~> 1.9)
     securerandom (0.4.1)
     sequel (5.87.0)
       bigdecimal
@@ -402,8 +396,6 @@ GEM
     sqlite3 (2.4.1-x86_64-linux-gnu)
     stringio (3.1.2)
     temple (0.10.3)
-    terser (1.2.4)
-      execjs (>= 0.3.0, < 3)
     thor (1.3.2)
     tilt (2.4.0)
     trailblazer-option (0.1.2)
@@ -429,7 +421,6 @@ DEPENDENCIES
   activesupport (~> 8.0)
   bcrypt
   capybara
-  coffee-script
   database_cleaner-sequel
   debug
   dotenv
@@ -462,11 +453,9 @@ DEPENDENCIES
   rubocop-rake
   rubocop-rspec
   ruby-lsp
-  sassc
   slim
   smbhash
   sqlite3
-  terser
   xxhash
   zxcvbn-js
 
