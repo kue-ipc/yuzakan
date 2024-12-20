@@ -11,5 +11,9 @@ module Yuzakan
 
       Success(name)
     end
+
+    private def cache_namespace(*names)
+      names.join(":")
+    end
   end
 end

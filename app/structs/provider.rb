@@ -45,6 +45,8 @@ module Yuzakan
         super.except(:adapter_params, :attr_mappings)
       end
 
+      # TODO: ここから下はたぶんほとんど移動すべき
+
       def safe_params
         @params.reject do |key, _value|
           param_type = @adapter_class.param_type_by_name(key)
@@ -271,18 +273,6 @@ module Yuzakan
         need_adapter!
         @cache_store.fetch(user_search_key(query)) do
           @cache_store[user_search_key(query)] = @adapter.user_search(query)
-        end
-      end
-
-      def group_read(groupname)
-        need_adapter!
-        need_group!
-        @cache_store.fetch(group_key(groupname)) do
-          groupdata = @adapter.group_read(groupname)
-          if groupdata && has_primary_group?
-            groupdata = {primary: true}.merge(groupdata)
-          end
-          @cache_store[group_key(groupname)] = groupdata
         end
       end
 
