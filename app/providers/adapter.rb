@@ -5,22 +5,17 @@ module Yuzakan
     class Adapter < Yuzakan::Operation
       include Deps[
         "repos.provider_repo",
-        "adapters"
+        "repos.adapters_params_repo",
+        "adapters",
       ]
 
       def call(provider)
         provider = step get_provider(provider)
         adapter_class = step get_class(provider)
-        step get_params(provider)
-        step create(adapter_class, provider)
+        adapter_params = step get_params(provider)
 
-        provider_params_hash = attributes[:provider_params].to_h do |param|
-          [param[:name].intern, param[:value]]
-        end
-        @params = @adapter_class.normalize_params(provider_params_hash)
-        @adapter = @adapter_class.new(@params, group: attributes[:group],
-          logger: Hanami.logger)
-        Success(adapter)
+        adapter_class.new(adapter_params,
+          group: provider.group, logger: Hanami.logger)
       end
 
       def get_provider(provider)
@@ -46,14 +41,10 @@ module Yuzakan
         end
       end
 
-      def create_adatper(_adapter_class, _params)
-        provider_params_hash = attributes[:provider_params].to_h do |param|
-          [param[:name].intern, param[:value]]
-        end
-        @params = @adapter_class.normalize_params(provider_params_hash)
-        @adapter = @adapter_class.new(@params, group: attributes[:group],
-          logger: Hanami.logger)
-        Success(adapter)
+      def get_adapter_params(provider)
+        params = provider.adapter_params ||
+          adatper_params.all_by_provider(provider)
+        Success(params)
       end
     end
   end

@@ -23,6 +23,8 @@ Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
 Layout/MultilineMethodCallBraceLayout:
   EnforcedStyle: same_line
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
 

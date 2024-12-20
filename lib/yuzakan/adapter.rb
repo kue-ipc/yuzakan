@@ -126,6 +126,8 @@ module Yuzakan
       end
 
       def normalize_params(params)
+        params = params.to_h(&:to_a) if params.is_a?(Array)
+        params = params.transform_keys(&:intern)
         param_types.to_h do |param_type|
           [param_type.name, param_type.load_value(params[param_type.name])]
         end
@@ -135,7 +137,7 @@ module Yuzakan
     abstract true
 
     def initialize(params, group: false, logger: Logger.new($stderr))
-      @params = params
+      @params = self.class.normalize_params(params)
       @group = group
       @logger = logger
     end
