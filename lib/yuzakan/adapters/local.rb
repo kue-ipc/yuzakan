@@ -12,10 +12,9 @@ module Yuzakan
 
       def initialize(params, **opts)
         super
-        @user_repo = Hanami.app["repos.local_user_repo"]
-        @group_repo = Hanami.app["repos.local_group_repo"]
-        @member_repo = Hanami.app["repos.local_member_repo"]
-
+        @local_user_repo = Hanami.app["repos.local_user_repo"]
+        @local_group_repo = Hanami.app["repos.local_group_repo"]
+        @local_member_repo = Hanami.app["repos.local_member_repo"]
       end
 
       def check
@@ -23,89 +22,100 @@ module Yuzakan
       end
 
       def user_create(username, password = nil, **userdata)
-        Hanam.app["operations.hash_password"].call(password) =>
-          Success[hashed_password]
-        user = @repository.create({
-          username: username,
+        return if @local_user_repo.exist?(useranme)
+
+        params = {
+          name: username,
           display_name: userdata[:display_name],
           email: userdata[:email],
-          hashed_password: hashed_password,
-        })
-        user_entity_to_data(user)
+        }
+        if password
+          case Hanam.app["operations.hash_password"].call(password)
+          in Success[hashed_password]
+            params[:hashed_password] = hashed_password
+          in Failure[:invalid, msg]
+            raise AdapterError, msg
+          in Failure[:error, err]
+            raise err
+          end
+        end
+        user_struct_to_data(@local_user_repo.set(username, **params))
       end
 
       def user_read(username)
-        user = @repository.find_by_username(username)
-        return if user.nil?
-
-        user_entity_to_data(user)
+        user_struct_to_data(@local_user_repo.get(username))
       end
 
       def user_update(username, **userdata)
-        user = @repository.find_by_username(username)
-        return if user.nil?
+        return unless @local_user_repo.exist?(username)
 
-        data = {}
-        %i[display_name email].each do |key|
-          data[key] = userdata[key] if userdata[key]
-        end
-        user_entity_to_data(@repository.update(user.id, data))
+        params = userdata.slice(:display_name, :email)
+        user_struct_to_data(@local_user_repo.set(username, **params))
       end
 
       def user_delete(username)
-        user = @repository.find_by_username(username)
-        return if user.nil?
-
-        user_entity_to_data(@repository.delete(user.id))
+        user_struct_to_data(@local_user_repo.unset(username))
       end
 
       def user_auth(username, password)
-        user = @repository.find_by_username(username)
+        user = @local_user_repo.get(username)
         return if user.nil?
         return false if user.locked?
+        return false if user.hashed_passworcd.nil?
 
-        user.verify_password(password)
+        case Hanam.app["operations.verify_password"]
+          .call(password, user.hashed_password)
+        in Success[result]
+          result
+        in Failure[:invalid, msg]
+          raise AdapterError, msg
+        in Failure[:error, err]
+          raise err
+        end
       end
 
       def user_change_password(username, password)
-        user = @repository.find_by_username(username)
-        return if user.nil?
+        return unless @local_user_repo.exist?(username)
 
-        Hanam.app["operations.hash_password"].call(password) =>
-          Success[hashed_password]
-        !!@repository.update(user.id, hashed_password: hashed_password)
+        hashed_password =
+          if password
+            case Hanam.app["operations.hash_password"].call(password)
+            in Success[hashed_password]
+              hashed_password
+            in Failure[:invalid, msg]
+              raise AdapterError, msg
+            in Failure[:error, err]
+              raise err
+            end
+          end
+        !!@local_user_repo.set(username, hashed_password:)
       end
 
       def user_lock(username)
-        user = @repository.find_by_username(username)
+        user = @local_user_repo.get(username)
         return if user.nil?
         return true if user.locked?
 
-        !!@repository.update(user.id, locked: true)
+        !!@local_user_repo.set(username, locked: true)
       end
 
       def user_unlock(username, _password = nil)
-        user = @repository.find_by_username(username)
+        user = @local_user_repo.get(username)
         return if user.nil?
         return true unless user.locked?
 
-        !!@repository.update(user.id, locked: false)
+        !!@local_user_repo.set(username, locked: false)
       end
 
       def user_list
-        @repository.all.map(&:username)
+        @local_user_repo.list
       end
 
       def user_search(query)
-        pattern = query.dup
-        pattern.gsub!("\\", "\\\\")
-        pattern.gsub!("%", '\\%')
-        pattern.gsub!("_", '\\_')
-        pattern.tr!("*?", "%_")
-        @repository.ilike(pattern).map { |data| data[:username] }
+        @local_user_repo.search(query)
       end
 
-      private def user_entity_to_data(user)
+      private def user_struct_to_data(user)
         return if user.nil?
 
         {

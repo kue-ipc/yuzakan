@@ -24,7 +24,8 @@
 #   x attrs: Hash = {key: value, ...}
 #
 # -- CRUD --
-# user_create(username, password = nil, **userdata) -> userdata [writable]
+# user_create(username, password = nil, **userdata) -> userdata? [writable]
+#   ... if user exists, do nothing and return nil
 # user_read(username) -> userdata? [readable]
 # user_update(username, **userdata) -> userdata? [writeable]
 # user_delete(username) -> userdata? [writable]
@@ -42,10 +43,11 @@
 #
 # user_group_list(username) -> Array[groupname] [readable, group]
 #
-# x group_create(groupname, **groupdata) -> groupdata [writable]
+# group_create(groupname, **groupdata) -> groupdata? [writable]
+#   ... if group exists, do nothing and return nil
 # group_read(groupname) -> groupdata? [readable]
-# x group_update(groupname, **groupdata) -> groupdata? [writeable]
-# x group_delete(groupname) -> groupdata? [writable]
+# group_update(groupname, **groupdata) -> groupdata? [writeable]
+# group_delete(groupname) -> groupdata? [writable]
 # group_list -> Array[groupname] [readable]
 # group_search(query) -> Array[groupname] [readable]
 #
