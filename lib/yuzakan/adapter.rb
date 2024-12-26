@@ -19,9 +19,8 @@
 # groupdate:
 #   groupname: String = groupname
 #   display_name: String = display name
-#   x disabled: ?bool
-#   x unmanageable: ?bool
-#   x attrs: Hash = {key: value, ...}
+#   unmanageable: ?bool
+#   attrs: Hash = {key: value, ...}
 #
 # -- CRUD --
 # user_create(username, password = nil, **userdata) -> userdata? [writable]
@@ -31,9 +30,10 @@
 # user_delete(username) -> userdata? [writable]
 #
 # user_auth(username, password) -> bool? [authenticatable]
-#
 # user_change_password(username, password) -> bool? [password_changeable]
-# user_generate_code(username) -> codes? [password_changeable]
+#
+# user_generate_code(username) -> codes? [mfa_changeable]
+# user_reset_mfa -> bool? [mfa_changeable]
 #
 # user_lock(username) -> bool? [lockable]
 # user_unlock(username, password = nil) -> bool? [lockable]

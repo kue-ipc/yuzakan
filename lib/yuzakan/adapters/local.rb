@@ -91,6 +91,12 @@ module Yuzakan
         !!@local_user_repo.set(username, hashed_password:)
       end
 
+      def user_generate_code(username)
+      end
+
+      def user_reset_mfa(username)
+      end
+
       def user_lock(username)
         user = @local_user_repo.get(username)
         return if user.nil?
@@ -114,6 +120,8 @@ module Yuzakan
       def user_search(query)
         @local_user_repo.search(query)
       end
+
+
 
       private def user_struct_to_data(user)
         return if user.nil?
