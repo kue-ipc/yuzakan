@@ -3,24 +3,24 @@
 # adapter
 #
 # initialize(params)
-# check -> true or false
+# check -> bool
 #
 # userdata:
-#   usnername: String = username
-#   display_name: String = display name
-#   email: String = mail address
-#   locked: ?bool
-#   unmanageable: ?bool
-#   mfa: ?bool
-#   primary_group: ?String
+#   username: String
+#   display_name: String
+#   email: String
+#   locked: bool?
+#   unmanageable: bool?
+#   mfa: bool?
+#   primary_group: String?
 #   groups: Array[String]
-#   attrs: Hash = {key: value, ...}
+#   attrs: Hash[Symbol, untyped]
 #
 # groupdate:
-#   groupname: String = groupname
-#   display_name: String = display name
-#   unmanageable: ?bool
-#   attrs: Hash = {key: value, ...}
+#   groupname: String
+#   display_name: String
+#   unmanageable: bool?
+#   attrs: Hash[Symbol, untyped]
 #
 # -- CRUD --
 # user_create(username, password = nil, **userdata) -> userdata? [writable]
@@ -38,10 +38,10 @@
 # user_lock(username) -> bool? [lockable]
 # user_unlock(username, password = nil) -> bool? [lockable]
 #
-# user_list -> username[] [readable]
-# user_search(query) -> username[] [readable]
+# user_list -> Array[username] [readable]
+# user_search(query) -> Array[username] [readable]
 #
-# user_group_list(username) -> groupname[] [readable, group]
+# user_group_list(username) -> Array[groupname] [readable, group]
 #
 # group_create(groupname, **groupdata) -> groupdata? [writable]
 #   ... if group exists, do nothing and return nil
@@ -62,6 +62,21 @@ module Yuzakan
   class Adapter
     extend Yuzakan::Utils::HashArray
     class AdapterError < StandardError
+    end
+
+    UserData = Data.define(:name, :primary_group, :groups,
+      :display_name, :email, :locked, :unmanageable, :mfa, :attrs) do
+      def initialize(primary_group: nil, groups: [],
+        display_name: nil, email: nil,
+        locked: false, unmanageable: false, mfa: false, attrs: {}, **)
+        super
+      end
+    end
+
+    GroupData = Data.define(:name, :display_name, :unmanageable, :attrs) do
+      def initialize(display_name: nil, unmanageable: false, attrs: {}, **)
+        super
+      end
     end
 
     class << self

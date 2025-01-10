@@ -122,11 +122,18 @@ module Yuzakan
       end
 
       def user_group_list(username)
-        @local_group_repo.list_by_user_name(username)
+        user = @local_user_repo.get(username)
+        @local_group_repo.list_of_user(user)
       end
 
       def group_create(groupname, **groupdata)
-        raise NoMethodError, "Not implement #{self.class}##{__method__}"
+        return if @local_group_repo.exist?(groupanme)
+
+        params = {
+          name: groupname,
+          display_name: groupdata[:display_name],
+        }
+        group_struct_to_data(@local_group_repo.set(groupname, **params))
       end
 
       def group_list
@@ -155,14 +162,25 @@ module Yuzakan
         return if user.nil?
 
         {
-          username: user.username,
+          username: user.name,
           display_name: user.display_name,
           email: user.email,
           locked: user.locked?,
           unmanageable: false,
           mfa: false,
-          primary_group: nil,
-          groups: [],
+          primary_group: user.primary_group.map(:name),
+          groups: user.groups.map(:name),
+          attrs: {},
+        }
+      end
+
+      private def group_struct_to_data(group)
+        return if group.nil?
+
+        {
+          groupname: group.name,
+          display_name: group.display_name,
+          unmanageable: false,
           attrs: {},
         }
       end
