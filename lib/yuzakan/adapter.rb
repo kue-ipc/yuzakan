@@ -38,10 +38,10 @@
 # user_lock(username) -> bool? [lockable]
 # user_unlock(username, password = nil) -> bool? [lockable]
 #
-# user_list -> Array[username] [readable]
-# user_search(query) -> Array[username] [readable]
+# user_list -> username[] [readable]
+# user_search(query) -> username[] [readable]
 #
-# user_group_list(username) -> Array[groupname] [readable, group]
+# user_group_list(username) -> groupname[] [readable, group]
 #
 # group_create(groupname, **groupdata) -> groupdata? [writable]
 #   ... if group exists, do nothing and return nil

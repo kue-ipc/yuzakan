@@ -3,18 +3,23 @@
 module Yuzakan
   module Repos
     class LocalUserRepo < Yuzakan::DB::Repo
+      commands :create, use: :timestamps,
+        plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
+      commands update: :by_name, use: :timestamps,
+        plugins_options: {timestamps: {timestamps: [:updated_at]}}
+      commands delete: :by_name
+      private :create, :update, :delete
+
       def get(name)
         local_users.by_name(name).one
       end
 
       def set(name, **)
-        local_users.by_name(name).changeset(:update, **).map(:touch).commit ||
-          local_users.changeset(:create, **, name: name).map(:add_timestamps)
-            .commit
+        update(name, {**}) || create({name: name, **})
       end
 
       def unset(name)
-        local_users.by_name(name).changeset(:delete).commit
+        delete(name)
       end
 
       def exist?(name)
@@ -39,8 +44,8 @@ module Yuzakan
             name.like(pattern) | display_name.like(pattern) |
               email.like(pattern)
           end
-        end
-      end.pluck(:name)
+        end.pluck(:name)
+      end
     end
   end
 end

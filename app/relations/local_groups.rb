@@ -2,11 +2,11 @@
 
 module Yuzakan
   module Relations
-    class LocalUsers < Yuzakan::DB::Relation
-      schema :local_users, infer: true do
+    class LocalGroups < Yuzakan::DB::Relation
+      schema :local_groups, infer: true do
         associations do
           has_many :local_members
-          has_many :local_groups, through: :local_members
+          has_many :local_users, through: :members
         end
       end
     end

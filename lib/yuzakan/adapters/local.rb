@@ -121,7 +121,35 @@ module Yuzakan
         @local_user_repo.search(query)
       end
 
+      def user_group_list(username)
+        @local_group_repo.list_by_user_name(username)
+      end
 
+      def group_create(groupname, **groupdata)
+        raise NoMethodError, "Not implement #{self.class}##{__method__}"
+      end
+
+      def group_list
+        raise NoMethodError, "Not implement #{self.class}##{__method__}"
+      end
+
+      def group_search(query)
+        raise NoMethodError, "Not implement #{self.class}##{__method__}"
+      end
+
+      def member_list(groupname)
+        raise NoMethodError, "Not implement #{self.class}##{__method__}"
+      end
+
+      def member_add(groupname, username)
+        raise NoMethodError, "Not implement #{self.class}##{__method__}"
+      end
+
+      def member_remove(groupname, username)
+        raise NoMethodError, "Not implement #{self.class}##{__method__}"
+      end
+
+      # private methods
 
       private def user_struct_to_data(user)
         return if user.nil?

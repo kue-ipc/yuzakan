@@ -5,7 +5,7 @@ require "hanami"
 require "rack/session/redis"
 
 # Sequel timezone
-Sequel.application_timezone = :local
+Sequel.default_timezone = :local
 
 # i18n
 require "i18n"
