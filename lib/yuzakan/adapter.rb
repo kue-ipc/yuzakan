@@ -5,22 +5,22 @@
 # initialize(params)
 # check -> bool
 #
-# userdata:
-#   username: String
-#   display_name: String
-#   email: String
-#   locked: bool?
-#   unmanageable: bool?
-#   mfa: bool?
-#   primary_group: String?
-#   groups: Array[String]
-#   attrs: Hash[Symbol, untyped]
+# UserData:
+#   attr_reader name: String
+#   attr_reader primary_group: String?
+#   attr_reader groups: Array[String]
+#   attr_reader display_name: String
+#   attr_reader email: String
+#   attr_reader locked: bool?
+#   attr_reader unmanageable: bool?
+#   attr_reader mfa: bool?
+#   attr_reader attrs: Hash[Symbol, untyped]
 #
-# groupdate:
-#   groupname: String
-#   display_name: String
-#   unmanageable: bool?
-#   attrs: Hash[Symbol, untyped]
+# GroupData:
+#   attr_reader name: String
+#   attr_reader display_name: String
+#   attr_reader unmanageable: bool?
+#   attr_reader attrs: Hash[Symbol, untyped]
 #
 # -- CRUD --
 # user_create(username, password = nil, **userdata) -> userdata? [writable]
@@ -28,6 +28,8 @@
 # user_read(username) -> userdata? [readable]
 # user_update(username, **userdata) -> userdata? [writeable]
 # user_delete(username) -> userdata? [writable]
+#
+# user_rename(oldname, newname)
 #
 # user_auth(username, password) -> bool? [authenticatable]
 # user_change_password(username, password) -> bool? [password_changeable]
