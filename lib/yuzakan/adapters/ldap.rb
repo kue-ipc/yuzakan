@@ -1069,30 +1069,45 @@ module Yuzakan
         operations
       end
 
-      # https://trac.tools.ietf.org/id/draft-stroeder-hashed-userpassword-values-00.html
+      # https://datatracker.ietf.org/doc/html/draft-stroeder-hashed-userpassword-values
       private def generate_password(password) # rubocop: disable Metrics/AbcSize, Metrics/MethodLength
         case @params[:password_scheme].upcase
         when "{CLEARTEXT}" then password
         when "{CRYPT}" then "{CRYPT}#{generate_crypt_password(password)}"
-        when "{MD5}" then "{MD5}#{Base64.strict_encode64(Digest::MD5.digest(password))}"
-        when "{SHA}" then "{SHA}#{Base64.strict_encode64(Digest::SHA1.digest(password))}"
-        when "{SHA256}" then "{SHA256}#{Base64.strict_encode64(Digest::SHA256.digest(password))}"
-        when "{SHA512}" then "{SHA512}#{Base64.strict_encode64(Digest::SHA512.digest(password))}"
+        when "{MD5}"
+          "{MD5}#{Base64.strict_encode64(Digest::MD5.digest(password))}"
+        when "{SHA}"
+          "{SHA}#{Base64.strict_encode64(Digest::SHA1.digest(password))}"
+        when "{SHA256}"
+          "{SHA256}#{Base64.strict_encode64(Digest::SHA256.digest(password))}"
+        when "{SHA384}"
+          "{SHA384}#{Base64.strict_encode64(Digest::SHA384.digest(password))}"
+        when "{SHA512}"
+          "{SHA512}#{Base64.strict_encode64(Digest::SHA512.digest(password))}"
         when "{SMD5}"
           salt = SecureRandom.random_bytes(8)
-          "{SMD5}#{Base64.strict_encode64(Digest::MD5.digest(password + salt) + salt)}"
+          hashed_password = Digest::MD5.digest(password + salt) + salt
+          "{SMD5}#{Base64.strict_encode64(hashed_password)}"
         when "{SSHA}"
           salt = SecureRandom.random_bytes(8)
-          "{SSHA}#{Base64.strict_encode64(Digest::SHA1.digest(password + salt) + salt)}"
+          hashed_password = Digest::SHA1.digest(password + salt) + salt
+          "{SSHA}#{Base64.strict_encode64(hashed_password)}"
         when "{SSHA256}"
           salt = SecureRandom.random_bytes(8)
-          "{SSHA256}#{Base64.strict_encode64(Digest::SHA256.digest(password + salt) + salt)}"
+          hashed_password = Digest::SHA256.digest(password + salt) + salt
+          "{SSHA256}#{Base64.strict_encode64(hashed_password)}"
+        when "{SSHA384}"
+          salt = SecureRandom.random_bytes(8)
+          hashed_password = Digest::SHA384.digest(password + salt) + salt
+          "{SSHA384}#{Base64.strict_encode64(hashed_password)}"
         when "{SSHA512}"
           salt = SecureRandom.random_bytes(8)
-          "{SSHA512}#{Base64.strict_encode64(Digest::SHA512.digest(password + salt) + salt)}"
+          hashed_password = Digest::SHA512.digest(password + salt) + salt
+          "{SSHA512}#{Base64.strict_encode64(hashed_password)}"
         else
           # TODO: PBKDF2
-          raise NotImplementedError
+          raise ArgumentError,
+            "Unsupported encryption scheme: #{@params[:password_scheme].upcase}"
         end
       end
 

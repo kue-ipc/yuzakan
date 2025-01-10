@@ -87,9 +87,9 @@ module Yuzakan
         nil
       end
 
-      def user_update(_username, **_userdata)
-        raise NotImplementedError
-      end
+      # TODO: 実装
+      # def user_update(_username, **_userdata)
+      # end
 
       def user_delete(username)
         email = "#{username}@#{@params[:domain]}"
@@ -101,9 +101,9 @@ module Yuzakan
         # service.delete_user(email)
       end
 
-      def user_auth(_username, _password)
-        raise NotImplementedError
-      end
+      # TODO: 実装
+      # def user_auth(_username, _password)
+      # end
 
       def user_change_password(username, password)
         email = "#{username}@#{@params[:domain]}"
@@ -119,7 +119,7 @@ module Yuzakan
       end
 
       def user_lock(_username)
-        raise NotImplementedError
+        raise NoMethodError, "Not implement #{self.class}##{__method__}"
       end
 
       # 停止中の理由は user.suspension_reason よりわかるが、ADMIN以外は解除不可

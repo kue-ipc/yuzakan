@@ -152,80 +152,83 @@ module Yuzakan
       has_group? && self.class.has_primary_group?
     end
 
+    # abstract instance methods
+    # rubocop: disable Lint/UnusedMethodArgument
     def check
-      raise NotImplementedError
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
-    def user_create(_username, _password = nil, **_userdata)
-      raise NotImplementedError
+    def user_create(username, password = nil, **userdata)
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
-    def user_read(_username)
-      raise NotImplementedError
+    def user_read(username)
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
-    def user_update(_username, **_userdata)
-      raise NotImplementedError
+    def user_update(username, **userdata)
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
-    def user_delete(_username)
-      raise NotImplementedError
+    def user_delete(username)
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
-    def user_auth(_username, _password)
-      raise NotImplementedError
+    def user_auth(username, password)
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
-    def user_change_password(_username, _password)
-      raise NotImplementedError
+    def user_change_password(username, password)
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
-    def user_generate_code(_username)
-      raise NotImplementedError
+    def user_generate_code(username)
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
-    def user_lock(_username)
-      raise NotImplementedError
+    def user_lock(username)
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
-    def user_unlock(_username, _password = nil)
-      raise NotImplementedError
+    def user_unlock(username, password = nil)
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
     def user_list
-      raise NotImplementedError
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
     def user_search(query)
-      raise NotImplementedError
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
     def user_group_list(username)
-      raise NotImplementedError
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
     def group_create(groupname, **groupdata)
-      raise NotImplementedError
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
     def group_list
-      raise NotImplementedError
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
     def group_search(query)
-      raise NotImplementedError
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
     def member_list(groupname)
-      raise NotImplementedError
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
     def member_add(groupname, username)
-      raise NotImplementedError
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
     def member_remove(groupname, username)
-      raise NotImplementedError
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
+    # rubocop: enable Lint/UnusedMethodArgument
   end
 end

@@ -61,7 +61,7 @@ module Yuzakan
         user = @local_user_repo.get(username)
         return if user.nil?
         return false if user.locked?
-        return false if user.hashed_passworcd.nil?
+        return false if user.hashed_password.nil?
 
         case Hanam.app["operations.verify_password"]
           .call(password, user.hashed_password)
