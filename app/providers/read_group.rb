@@ -2,9 +2,8 @@
 
 module Yuzakan
   module Providers
-    class ReadGroup < Yuzakan::Operation
+    class ReadGroup < Yuzakan::ProviderOperation
       include Deps[
-        "repos.provider_repo",
         "providers.get_adapter",
         "providers.convert_data",
         "cache_store",

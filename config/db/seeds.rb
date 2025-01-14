@@ -17,6 +17,9 @@
 #   categories.insert(title: "General")
 
 require "socket"
+require "dry/monads"
+
+include Dry::Monads[:result]
 
 title = ENV.fetch("TITLE", "Yuzakan")
 domain = ENV.fetch("DOMAIN", Socket.gethostname.split(".", 2)[1])
@@ -62,15 +65,15 @@ unless provider_repo.get("local")
 end
 
 # setup admin user and group
-providers_read_group = Hanami.app["providers.read_group"]
-group_providers = providers_read_group.call(admin_groupname, ["local"])
-if group_providers["local"].nil?
-  providers_create_group = Hanami.app["providers.create_group"]
-  providers_create_group.call(admin_groupname, ["local"], display_name: "管理者")
+case Hanami.app["providers.read_group"].call(admin_groupname, ["local"])
+in Success(group_providers)
+  if group_providers["local"].nil?
+    Hanami.app["providers.create_group"]
+      .call(admin_groupname, ["local"], display_name: "管理者")
+  end
 end
 
 puts "-----------------"
-pp group_providers
 # TODO: ここまで
 exit 1
 
