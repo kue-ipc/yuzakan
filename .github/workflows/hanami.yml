@@ -46,7 +46,8 @@ jobs:
         run: bundle exec hanami db migrate
         env:
           HANAMI_ENV: test
-      - name: Run build
-        run: bundle exec rake build
+          DATABASE_URL: "postgres://yuzakan:password@localhost/yuzakan_test"
       - name: Run tests
         run: bundle exec rake spec
+        env:
+          DATABASE_URL: "postgres://yuzakan:password@localhost/yuzakan_test"
