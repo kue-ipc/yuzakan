@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 13.18
--- Dumped by pg_dump version 13.18
+-- Dumped from database version 16.6 (Ubuntu 16.6-0ubuntu0.24.04.1)
+-- Dumped by pg_dump version 16.6 (Ubuntu 16.6-0ubuntu0.24.04.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -279,7 +279,6 @@ CREATE TABLE public.local_members (
     id integer NOT NULL,
     local_user_id integer NOT NULL,
     local_group_id integer NOT NULL,
-    "primary" boolean DEFAULT false NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -311,7 +310,8 @@ CREATE TABLE public.local_users (
     email text,
     locked boolean DEFAULT false NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    local_group_id integer
 );
 
 
@@ -712,6 +712,13 @@ CREATE UNIQUE INDEX local_members_local_user_id_local_group_id_index ON public.l
 
 
 --
+-- Name: local_users_local_group_id_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX local_users_local_group_id_index ON public.local_users USING btree (local_group_id);
+
+
+--
 -- Name: local_users_name_index; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -808,6 +815,14 @@ ALTER TABLE ONLY public.local_members
 
 
 --
+-- Name: local_users local_users_local_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.local_users
+    ADD CONSTRAINT local_users_local_group_id_fkey FOREIGN KEY (local_group_id) REFERENCES public.local_groups(id) ON DELETE SET NULL;
+
+
+--
 -- Name: members members_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -843,4 +858,5 @@ INSERT INTO schema_migrations (filename) VALUES
 ('10000005000002_create_auth_logs.rb'),
 ('10000011000001_create_local_users.rb'),
 ('10000011000002_create_local_groups.rb'),
-('10000011000003_create_local_members.rb');
+('10000011000003_create_local_members.rb'),
+('10000011000004_add_local_group_id_to_local_users.rb');

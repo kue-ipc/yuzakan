@@ -10,8 +10,6 @@ ROM::SQL.migration do
       foreign_key :local_group_id, :local_groups,
         on_delete: :cascade, null: false
 
-      column :primary, TrueClass, null: false, default: false
-
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
 
