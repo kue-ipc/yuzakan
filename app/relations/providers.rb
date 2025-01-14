@@ -10,6 +10,11 @@ module Yuzakan
           has_many :attrs, throught: :attr_mappings
         end
       end
+
+      # always ordered by order and name
+      dataset do
+        order(:order, :name)
+      end
     end
   end
 end

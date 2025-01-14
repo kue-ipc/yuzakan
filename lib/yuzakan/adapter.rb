@@ -34,8 +34,8 @@
 # user_auth(username, password) -> bool? [authenticatable]
 # user_change_password(username, password) -> bool? [password_changeable]
 #
-# user_generate_code(username) -> codes? [mfa_changeable]
 # user_reset_mfa -> bool? [mfa_changeable]
+# user_generate_code(username) -> codes? [mfa_changeable]
 #
 # user_lock(username) -> bool? [lockable]
 # user_unlock(username, password = nil) -> bool? [lockable]

@@ -2,12 +2,13 @@
 
 module Yuzakan
   module Providers
-    class ConvertData < Yuzakan::Operation
+    class ConvertData < Yuzakan::ProviderOperation
       include Deps[
         "repos.attr_mapping_repo",
       ]
 
       def call(provider, data, category: :user)
+        provider = step get_provider(provider)
         mappings = step get_mappings(provider, category)
         hash = step convert_data_with_mappings(data, mappings)
         if category == :user && !provider.has_group?

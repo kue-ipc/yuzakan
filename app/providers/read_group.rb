@@ -11,7 +11,7 @@ module Yuzakan
 
       def call(groupname, providers = nil)
         groupname = step validate_name(groupname)
-        providers = step get_providers(providers)
+        providers = step get_providers(providers, operation: :group_read)
 
         providers.to_h do |provider|
           data = step read_group(provider, groupname)
@@ -19,25 +19,8 @@ module Yuzakan
         end
       end
 
-      private def get_providers(providers = nil)
-        providers =
-          case providers
-          in nil
-            provider_repo.ordered_all_with_adapter_by_operation(:group_read)
-          in []
-            []
-          in [String | Symbol, *]
-            providers.map { |provider| provider_repo.get(provider) }.compact
-          in [Yuzakann::Struct::Provider, *]
-            providers
-          else
-            Failure(:invalid_provider_list)
-          end
-        Success(providers)
-      end
-
       private def read_group(provider, groupname)
-        return nil unless provider.group
+        return Success(nil) unless provider.can_do?(:group_read)
 
         name = "provider:#{provider.name}:group:#{groupname}"
         data = cache_store.fetch(name) do

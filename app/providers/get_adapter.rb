@@ -2,9 +2,8 @@
 
 module Yuzakan
   module Providers
-    class GetAdapter < Yuzakan::Operation
+    class GetAdapter < Yuzakan::ProviderOperation
       include Deps[
-        "repos.provider_repo",
         "repos.adapter_param_repo",
         "adapters",
       ]
@@ -18,23 +17,8 @@ module Yuzakan
           group: provider.group, logger: Hanami.logger)
       end
 
-      private def get_provider(provider)
-        return Failure(:nil) if provider.nil?
-
-        unless provider.is_a?(Yuzakan::Structs::Provider)
-          provider = provider_repo.get(provider.to_s)
-        end
-
-        if provider
-          Success(provider)
-        else
-          Failure([:not_found, "provider"])
-        end
-      end
-
       private def get_class(provider)
-        adapter_class = adapters[provider.adapter]
-        if adapter_class
+        if (adapter_class = adapters[provider.adapter])
           Success(adapter_class)
         else
           Failure([:not_found, "adapter"])
@@ -42,13 +26,11 @@ module Yuzakan
       end
 
       private def get_params(provider)
-        params =
-          if provider.respond_to?(:adapter_params)
-            provider.adapter_params
-          else
-            adapter_param_repo.all_by_provider(provider)
-          end
-        Success(params)
+        if provider.respond_to?(:adapter_params)
+          Success(provider.adapter_params)
+        else
+          Success(adapter_param_repo.all_by_provider(provider))
+        end
       end
     end
   end

@@ -4,33 +4,40 @@ module Yuzakan
   module Repos
     class ProviderRepo < Yuzakan::DB::Repo
       def get(name)
-        providers.by_name(name).one
-      end
-
-      def get_with_adapter_params(name)
-        providers.by_name(name).combine(:adapter_params).one
-      end
-
-      def get_with_attr_mappings(name)
-        providers.by_name(name).combine(:attr_mappings).combine(:attrs).one
+        providers.by_name(normalize_name(name)).one
       end
 
       def set(name, **)
-        providers.by_name(name).changeset(:update, **).map(:touch).commit ||
-          providers.changeset(:create, **, name: name).map(:add_timestamps)
-            .commit
+        normalized_name = normalize_name(name)
+        providers.by_name(normalized_name).changeset(:update, **)
+          .map(:touch).commit ||
+          providers.changeset(:create, **, name: normalized_name)
+            .map(:add_timestamps).commit
       end
 
       def unset(name)
-        providers.by_name(name).changeset(:delete).commit
+        providers.by_name(normalize_name(name)).changeset(:delete).commit
+      end
+
+      def exist?(name)
+        providers.by_name(normalize_name(name)).exist?
+      end
+
+      def list
+        providers.pluck(:name)
       end
 
       def all
         providers.to_a
       end
 
-      def ordered_all
-        providers.order(:order, :name).to_a
+      def all_capable_of_operation(operation)
+        ability = Yuzakan::Structs::Provider.operation_ability(operation)
+        providers.where(ability).to_a
+      end
+
+      def mget(*names)
+        providers.where(name: names.map { |name| normalize_name(name) }).to_a
       end
 
       # TODO: 整理が必要
@@ -92,15 +99,6 @@ module Yuzakan
       def find_with_adapter_by_name(name)
         aggregate(:adapter_params,
           attr_mappings: :attr).where(name: name).map_to(Provider).one
-      end
-
-      def ordered_all_with_adapter_by_operation(operation)
-        ordered_all_with_adapter_by_ability(Provider.operation_ability(operation))
-      end
-
-      def ordered_all_with_adapter_by_ability(ability)
-        aggregate(:adapter_params, attr_mappings: :attr).where(ability).order(
-          :order, :name).map_to(Provider).to_a
       end
 
       def first_google

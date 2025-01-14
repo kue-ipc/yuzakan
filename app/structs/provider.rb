@@ -287,25 +287,26 @@ module Yuzakan
       end
 
       def self.operation_ability(operation)
-        case operation
-        when :check
+        case operation.intern.downcase
+        in :check
           {}
-        when :user_create, :user_update, :user_delete
-          {writable: true}
-        when :user_read, :user_list, :user_seacrh
+        in :user_read | :user_list | :user_seacrh
           {readable: true}
-        when :user_auth
+        in :user_create | :user_update | :user_delete
+          {writable: true}
+        in :user_auth
           {authenticatable: true}
-        when :user_change_password, :user_generate_code
+        in :user_change_password | :user_generate_code
           {password_changeable: true}
-        when :user_lock, :user_unlock
+        in :user_reset_mfa | :user_generate_code
+          {mfa_changeable: true}
+        in :user_lock | :user_unlock
           {lockable: true}
-        when :group_read, :group_list, :member_list
+        in :group_read | :group_list | :group_search | :member_list
           {group: true, readable: true}
-        when :member_add, :member_remove
+        in :group_create | :group_update | :group_delete | :member_add |
+          :member_remove
           {group: true, writable: true}
-        else
-          raise "不明な操作です。#{operation}"
         end
       end
 
