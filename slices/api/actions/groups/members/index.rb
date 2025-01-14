@@ -23,9 +23,9 @@ module API
           params Params
 
           def initialize(provider_repository: ProviderRepository.new,
-                         group_repository: GroupRepository.new,
-                         user_repository: UserRepository.new,
-                         **opts)
+            group_repository: GroupRepository.new,
+            user_repository: UserRepository.new,
+            **opts)
             super
             @provider_repository ||= provider_repository
             @group_repository ||= group_repository

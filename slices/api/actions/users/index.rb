@@ -26,10 +26,10 @@ module API
 
             optional(:query).maybe(:str?, max_size?: 255)
             optional(:match).filled(:str?, included_in?: %w[
-                                      extract
-                                      partial
-                                      forward
-                                      backward
+              extract
+              partial
+              forward
+              backward
                                     ])
 
             optional(:no_sync).filled(:bool?)
@@ -43,10 +43,10 @@ module API
         params Params
 
         def initialize(user_repository: UserRepository.new,
-                       group_repository: GroupRepository.new,
-                       provider_repository: ProviderRepository.new,
-                       member_repository: MemberRepository.new,
-                       **opts)
+          group_repository: GroupRepository.new,
+          provider_repository: ProviderRepository.new,
+          member_repository: MemberRepository.new,
+          **opts)
           super
           @user_repository ||= user_repository
           @group_repository ||= group_repository

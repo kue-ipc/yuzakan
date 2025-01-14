@@ -60,7 +60,6 @@ puts "-----------------"
 # TODO: ここまで
 exit 1
 
-
 groups_sync = Hanami.app["groups.sync"]
 groups_sync.call(admin_groupname)
 

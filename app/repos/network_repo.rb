@@ -35,7 +35,7 @@ module Yuzakan
         ipaddr = IPAddr.new(address)
         prefix = ipaddr.prefix
         if (prefix == 32 && ipaddr.ipv4?) ||
-           (prefix == 128 && ipaddr.ipv6?)
+            (prefix == 128 && ipaddr.ipv6?)
           ipaddr.to_s
         else
           "#{ipaddr}/#{ipaddr.prefix}"

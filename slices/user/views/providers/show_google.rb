@@ -61,13 +61,13 @@ module User
         end
 
         def modal(id, form, title: nil, content: nil, rules: nil,
-                  submit_button: {label: "送信", color: "primary"},
-                  agreement: false, inputs: nil)
+          submit_button: {label: "送信", color: "primary"},
+          agreement: false, inputs: nil)
           label_id = "#{id}-label"
 
           modal_classes = ["modal", "fade"]
           dialog_classes = ["modal-dialog", "modal-dialog-centered",
-                            "modal-dialog-scrollable", "modal-lg",]
+            "modal-dialog-scrollable", "modal-lg",]
           form_classes = []
           form_classes << "submit-before-agreement" if agreement
 

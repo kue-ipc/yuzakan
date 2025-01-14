@@ -40,9 +40,9 @@ module API
         params Params
 
         def initialize(attr_repository: AttrRepository.new,
-                       attr_mapping_repository: AttrMappingRepository.new,
-                       provider_repository: ProviderRepository.new,
-                       **opts)
+          attr_mapping_repository: AttrMappingRepository.new,
+          provider_repository: ProviderRepository.new,
+          **opts)
           super
           @attr_repository ||= attr_repository
           @attr_mapping_repository ||= attr_mapping_repository
@@ -76,7 +76,7 @@ module API
             current_mapping = @attr.mapping_by_provider_id(mapping_params[:provider_id])
             if current_mapping
               if current_mapping.key == mapping_params[:key] &&
-                 (!mapping_params.key?(:conversion) || current_mapping.conversion == mapping_params[:conversion])
+                  (!mapping_params.key?(:conversion) || current_mapping.conversion == mapping_params[:conversion])
                 next
               end
 

@@ -44,8 +44,8 @@ module Yuzakan
     alias required? required
 
     def initialize(name:, label: nil, description: nil,
-                   type: :string, default: nil, fixed: false, encrypted: false,
-                   input: nil, list: nil, required: nil, placeholder: nil)
+      type: :string, default: nil, fixed: false, encrypted: false,
+      input: nil, list: nil, required: nil, placeholder: nil)
       @name = name.intern
       @label = label || name.to_s
       @description = description

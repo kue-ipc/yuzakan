@@ -35,8 +35,8 @@ module API
         params Params
 
         def initialize(provider_repository: ProviderRepository.new,
-                       adapter_param_repository: AdapterParamRepository.new,
-                       **opts)
+          adapter_param_repository: AdapterParamRepository.new,
+          **opts)
           super
           @provider_repository ||= provider_repository
           @adapter_param_repository ||= adapter_param_repository

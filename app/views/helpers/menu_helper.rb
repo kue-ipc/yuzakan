@@ -5,11 +5,11 @@ module Yuzakan
     module Helpers
       module MenuHelper
         def menu_link(name: nil, url: nil, description: nil, color: "dark", filled: false, type: :link,
-                      filename: nil)
+          filename: nil)
           card_class = if filled then ["card", "text-white",
-                                       "bg-#{color}",] else
-                                                         ["card",
-                                                          "border-#{color}",] end
+            "bg-#{color}",] else
+                              ["card",
+                                "border-#{color}",] end
           if name
             html.div class: col_card + ["my-1"] do
               case type

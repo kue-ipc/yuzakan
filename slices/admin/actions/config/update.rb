@@ -21,7 +21,7 @@ module Admin
         expose :config
 
         def initialize(config_repository: ConfigRepository.new,
-                       **opts)
+          **opts)
           super
           @config_repository ||= config_repository
         end

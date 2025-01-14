@@ -9,11 +9,11 @@ module API
         USER_REPOSITORY_INFO = [:clearance_level, :prohibited, :note].freeze
 
         def initialize(config_repository: ConfigRepository.new,
-                       provider_repository: ProviderRepository.new,
-                       user_repository: UserRepository.new,
-                       group_repository: GroupRepository.new,
-                       member_repository: MemberRepository.new,
-                       **opts)
+          provider_repository: ProviderRepository.new,
+          user_repository: UserRepository.new,
+          group_repository: GroupRepository.new,
+          member_repository: MemberRepository.new,
+          **opts)
           super
           @config_repository ||= config_repository
           @provider_repository ||= provider_repository

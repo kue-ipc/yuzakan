@@ -41,11 +41,11 @@ module Admin
         expose :config
 
         def initialize(config_repository: ConfigRepository.new,
-                       network_repository: NetworkRepository.new,
-                       provider_repository: ProviderRepository.new,
-                       adapter_param_repository: AdapterParamRepository.new,
-                       attr_repository: AttrRepository.new,
-                       **opts)
+          network_repository: NetworkRepository.new,
+          provider_repository: ProviderRepository.new,
+          adapter_param_repository: AdapterParamRepository.new,
+          attr_repository: AttrRepository.new,
+          **opts)
           super
           @config_repository ||= config_repository
           @network_repository ||= network_repository

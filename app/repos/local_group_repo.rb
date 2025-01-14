@@ -49,7 +49,7 @@ module Yuzakan
         local_groups.assoc(:users).where(name: user.name)
       end
 
-      def by_username(name)
+      def by_username(_name)
         local_groups.where(username: username)
       end
 

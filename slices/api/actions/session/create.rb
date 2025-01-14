@@ -19,11 +19,11 @@ module API
         params Params
 
         def initialize(user_repository: UserRepository.new,
-                       provider_repository: ProviderRepository.new,
-                       auth_log_repository: AuthLogRepository.new,
-                       group_repository: GroupRepository.new,
-                       member_repository: MemberRepository.new,
-                       **opts)
+          provider_repository: ProviderRepository.new,
+          auth_log_repository: AuthLogRepository.new,
+          group_repository: GroupRepository.new,
+          member_repository: MemberRepository.new,
+          **opts)
           super
           @user_repository ||= user_repository
           @provider_repository ||= provider_repository

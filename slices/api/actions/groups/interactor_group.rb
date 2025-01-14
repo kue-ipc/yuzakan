@@ -5,8 +5,8 @@ module API
     module Groups
       module InteractorGroup
         def initialize(provider_repository: ProviderRepository.new,
-                       group_repository: GroupRepository.new,
-                       **opts)
+          group_repository: GroupRepository.new,
+          **opts)
           super
           @provider_repository ||= provider_repository
           @group_repository ||= group_repository

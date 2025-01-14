@@ -23,7 +23,7 @@ module Yuzakan
       end
 
       def filter(query: nil, match: :partial, primary: nil, prohibited: nil,
-                 deleted: nil)
+        deleted: nil)
         q = search(query: query, match: match)
         q = q.where(primary: primary) unless primary.nil?
         q = q.where(prohibited: prohibited) unless prohibited.nil?

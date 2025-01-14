@@ -19,8 +19,8 @@ module API
           params Params
 
           def initialize(provider_repository: ProviderRepository.new,
-                         user_notify: Mailers::UserNotify,
-                         **)
+            user_notify: Mailers::UserNotify,
+            **)
             super(**)
             @provider_repository = provider_repository
             @user_notify = user_notify
@@ -42,13 +42,13 @@ module API
               end
 
               if params[:password] !~ /\A[\u0020-\u007e]*\z/ ||
-                 !!(current_config.password_unusable_chars&.chars || []).intersect?(params[:password].chars)
+                  !!(current_config.password_unusable_chars&.chars || []).intersect?(params[:password].chars)
                 param_errors[:name] ||= []
                 param_errors[:name] << I18n.t("errors.valid_chars?")
               end
 
               password_types = [/[0-9]/, /[a-z]/, /[A-Z]/,
-                                /[^0-9a-zA-Z]/,].select do |reg|
+                /[^0-9a-zA-Z]/,].select do |reg|
                 reg.match(params[:password])
               end.size
               if current_config.password_min_types&.> password_types
@@ -58,13 +58,13 @@ module API
               end
 
               dict = (current_config.password_extra_dict&.split || []) +
-                     [
-                       current_user.name,
-                       current_user.display_name&.split,
-                       current_user.email,
-                       current_user.email&.split("@"),
-                       params[:current_password],
-                     ].flatten.compact
+                [
+                  current_user.name,
+                  current_user.display_name&.split,
+                  current_user.email,
+                  current_user.email&.split("@"),
+                  params[:current_password],
+                ].flatten.compact
 
               password_score = Zxcvbn.test(params[:password], dict).score
               if current_config.password_min_score&.>(password_score)

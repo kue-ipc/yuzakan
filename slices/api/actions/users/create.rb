@@ -38,7 +38,7 @@ module API
         params Params
 
         def initialize(user_repository: UserRepository.new,
-                       **opts)
+          **opts)
           super
           @user_repository ||= user_repository
         end

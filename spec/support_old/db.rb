@@ -11,9 +11,9 @@ end
 def db_initialize
   network_repository = NetworkRepository.new
   ["127.0.0.0/8",
-   "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16",
-   "::1",
-   "fc00::/7",].each do |address|
+    "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16",
+    "::1",
+    "fc00::/7",].each do |address|
     network_repository.create_or_update_by_address(address,
       {clearance_level: 5,
        trusted: true,})

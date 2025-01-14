@@ -22,7 +22,7 @@ module Yuzakan
       expose :data
 
       def initialize(password: ENV.fetch("DB_SECRET"), text: false,
-                     encoding: Encoding::UTF_8)
+        encoding: Encoding::UTF_8)
         @pb_crypt = Yuzakan::Utils::PbCrypt.new(password)
         @text = text
         @encoding = encoding

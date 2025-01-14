@@ -16,9 +16,7 @@ module Yuzakan
           .to_a
       end
 
-
-    # TODO: 整理が必要
-
+      # TODO: 整理が必要
 
       def find_by_provider_and_name(data)
         adapter_params
@@ -35,7 +33,6 @@ module Yuzakan
           create(data)
         end
       end
-
     end
   end
 end

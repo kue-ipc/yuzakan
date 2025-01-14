@@ -23,7 +23,7 @@ module Yuzakan
       expose :user
 
       def initialize(user_repository: UserRepository.new,
-                     member_repository: MemberRepository.new)
+        member_repository: MemberRepository.new)
         @user_repository = user_repository
         @member_repository = member_repository
       end

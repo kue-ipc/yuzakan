@@ -240,7 +240,7 @@ module Yuzakan
       end
 
       self.multi_attrs = Yuzakan::Utils::IgnoreCaseStringSet.new(%w[objectClass
-                                                                    member memberOf])
+        member memberOf])
       self.hide_attrs = Yuzakan::Utils::IgnoreCaseStringSet.new(%w[userPassword])
 
       group true
@@ -525,7 +525,7 @@ module Yuzakan
       # == 処理の実行前後
 
       private def run_after_user_create(user, primary_group: nil, groups: nil,
-                                        **_userdata)
+        **_userdata)
         # グループを管理しない場合は何もしない。
         return false unless has_group?
 
@@ -545,7 +545,7 @@ module Yuzakan
       end
 
       private def run_after_user_update(user, primary_group: nil, groups: nil,
-                                        **_userdata)
+        **_userdata)
         # グループを管理しない場合は何もしない。
         return false unless has_group?
 
@@ -612,7 +612,7 @@ module Yuzakan
       end
 
       private def create_user_attributes(username:, password: nil,
-                                         display_name: nil, email: nil, **userdata)
+        display_name: nil, email: nil, **userdata)
         attributes = userdata[:attrs].transform_keys do |key|
           attribute_name(key)
         end
@@ -688,7 +688,7 @@ module Yuzakan
 
       private def generate_operation(operator, name, value = nil)
         raise LdapAdapterError, "invalid operator: #{operator}" unless [:add,
-                                                                        :replace, :delete,].include?(operator)
+          :replace, :delete,].include?(operator)
 
         [operator, name, value]
       end
@@ -810,9 +810,9 @@ module Yuzakan
       end
 
       private def search_user_opts(name,
-                                   base: user_search_base_dn,
-                                   scope: user_search_scope,
-                                   filter: nil)
+        base: user_search_base_dn,
+        scope: user_search_scope,
+        filter: nil)
         filter = Net::LDAP::Filter.construct(filter) if filter.is_a?(String)
 
         if filter
@@ -825,14 +825,14 @@ module Yuzakan
           base: base,
           scope: scope,
           filter: filter &
-                  Net::LDAP::Filter.eq(@params[:user_name_attr], name),
+            Net::LDAP::Filter.eq(@params[:user_name_attr], name),
         }
       end
 
       private def search_group_opts(name,
-                                    base: group_search_base_dn,
-                                    scope: user_search_scope,
-                                    filter: nil)
+        base: group_search_base_dn,
+        scope: user_search_scope,
+        filter: nil)
         filter = Net::LDAP::Filter.construct(filter) if filter.is_a?(String)
 
         if filter
@@ -845,7 +845,7 @@ module Yuzakan
           base: base,
           scope: scope,
           filter: filter &
-                  Net::LDAP::Filter.eq(@params[:group_name_attr], name),
+            Net::LDAP::Filter.eq(@params[:group_name_attr], name),
         }
       end
 
@@ -927,7 +927,7 @@ module Yuzakan
       private def group_entry_name(group)
         name = group.first(@params[:group_name_attr]).downcase
         if @params[:group_name_suffix]&.size&.positive? &&
-           name.delete_suffix!(@params[:group_name_suffix].downcase).nil?
+            name.delete_suffix!(@params[:group_name_suffix].downcase).nil?
           @logger.warn "no suffix group name: #{name}"
         end
         name
@@ -1112,7 +1112,7 @@ module Yuzakan
       end
 
       private def generate_crypt_password(password,
-                                          format: @params[:crypt_salt_format])
+        format: @params[:crypt_salt_format])
         # 16 [./0-9A-Za-z] chars
         salt = SecureRandom.base64(12).tr("+", ".")
         password.crypt(format % salt)

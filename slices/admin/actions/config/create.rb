@@ -29,12 +29,12 @@ module Admin
         expose :admin_user
 
         def initialize(config_repository: ConfigRepository.new,
-                       network_repository: NetworkRepository.new,
-                       provider_repository: ProviderRepository.new,
-                       user_repository: UserRepository.new,
-                       group_repository: GroupRepository.new,
-                       member_repository: MemberRepository.new,
-                       **opts)
+          network_repository: NetworkRepository.new,
+          provider_repository: ProviderRepository.new,
+          user_repository: UserRepository.new,
+          group_repository: GroupRepository.new,
+          member_repository: MemberRepository.new,
+          **opts)
           super
           @config_repository ||= config_repository
           @network_repository ||= network_repository

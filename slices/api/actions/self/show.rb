@@ -9,7 +9,7 @@ module API
         include Users::EntityUser
 
         def initialize(provider_repository: ProviderRepository.new,
-                       **opts)
+          **opts)
           super
           @provider_repository = provider_repository
         end

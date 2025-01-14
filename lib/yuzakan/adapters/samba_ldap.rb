@@ -67,7 +67,7 @@ module Yuzakan
         ], key: :name)
       self.multi_attrs = PosixLdap.multi_attrs
       self.hide_attrs = PosixLdap.hide_attrs + %w[sambaNTPassword
-                                                  sambaLMPassword].map(&:downcase)
+        sambaLMPassword].map(&:downcase)
 
       group :primary
 

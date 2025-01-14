@@ -30,7 +30,7 @@ module API
         params Params
 
         def initialize(group_repository: GroupRepository.new,
-                       **opts)
+          **opts)
           super
           @group_repository ||= group_repository
         end

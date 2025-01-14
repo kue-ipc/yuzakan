@@ -30,10 +30,10 @@ module Web
 
     # その他のオプションはここで捨てる。
     def initialize(activity_log_repository: ActivityLogRepository.new,
-                   config_repository: ConfigRepository.new,
-                   network_repository: NetworkRepository.new,
-                   user_repository: UserRepository.new,
-                   **_opts)
+      config_repository: ConfigRepository.new,
+      network_repository: NetworkRepository.new,
+      user_repository: UserRepository.new,
+      **_opts)
       @activity_log_repository = activity_log_repository
       @config_repository = config_repository
       @network_repository = network_repository

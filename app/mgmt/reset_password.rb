@@ -24,7 +24,7 @@ module Yuzakan
       expose :providers
 
       def initialize(provider_repository: ProviderRepository.new,
-                     config_repository: ConfigRepository.new)
+        config_repository: ConfigRepository.new)
         @provider_repository = provider_repository
         @config_repository = config_repository
       end

@@ -17,7 +17,7 @@ module Yuzakan
       attr_reader :page, :per_page
 
       def initialize(relation, page: DEFAULT_PAGE, per_page: DEFAULT_PER_PAGE,
-                     create_link: nil, &block)
+        create_link: nil, &block)
         @page = page.clamp(PAGE_RANGE)
         @per_page = per_page.clamp(PER_PAGE_RANGE)
         @create_link = create_link || block
