@@ -7,22 +7,23 @@ ROM::SQL.migration do
 
       column :name, String, null: false
       column :display_name, String
-      # TODO: "text"型にすることで文字数制限をなくす。
-      column :description, String, size: 4096
+      column :description, "text"
 
+      column :category, String, null: false
       column :type, String, null: false
 
       column :order, Integer, null: false
       column :hidden, TrueClass, null: false, default: false
       column :readonly, TrueClass, null: false, default: false
 
-      # TODO: "text"型にすることで文字数制限をなくす。
-      column :code, String, size: 4096
+      column :code, "text"
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
 
-      index :name, unique: true
+      index :name
+      index :category
+      index [:name, :category], unique: true
     end
   end
 end

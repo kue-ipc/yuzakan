@@ -117,12 +117,13 @@ CREATE TABLE public.attrs (
     id integer NOT NULL,
     name text NOT NULL,
     display_name text,
-    description character varying(4096),
+    description text,
+    category text NOT NULL,
     type text NOT NULL,
     "order" integer NOT NULL,
     hidden boolean DEFAULT false NOT NULL,
     readonly boolean DEFAULT false NOT NULL,
-    code character varying(4096),
+    code text,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -186,7 +187,7 @@ CREATE TABLE public.configs (
     password_min_types integer DEFAULT 1 NOT NULL,
     password_min_score integer DEFAULT 3 NOT NULL,
     password_unusable_chars text DEFAULT ''::text NOT NULL,
-    password_extra_dict character varying(4096) DEFAULT ''::character varying NOT NULL,
+    password_extra_dict text DEFAULT ''::text NOT NULL,
     generate_password_size integer DEFAULT 24 NOT NULL,
     generate_password_type text DEFAULT 'ascii'::text NOT NULL,
     generate_password_chars text DEFAULT ' '::text NOT NULL,
@@ -220,7 +221,7 @@ CREATE TABLE public.groups (
     id integer NOT NULL,
     name text NOT NULL,
     display_name text,
-    note character varying(4096),
+    note text,
     "primary" boolean DEFAULT false NOT NULL,
     prohibited boolean DEFAULT false NOT NULL,
     deleted boolean DEFAULT false NOT NULL,
@@ -393,7 +394,7 @@ CREATE TABLE public.providers (
     id integer NOT NULL,
     name text NOT NULL,
     display_name text,
-    description character varying(4096),
+    description text,
     adapter text NOT NULL,
     "order" integer NOT NULL,
     readable boolean DEFAULT false NOT NULL,
@@ -441,7 +442,7 @@ CREATE TABLE public.users (
     name text NOT NULL,
     display_name text,
     email text,
-    note character varying(4096),
+    note text,
     clearance_level integer DEFAULT 1 NOT NULL,
     prohibited boolean DEFAULT false NOT NULL,
     deleted boolean DEFAULT false NOT NULL,
@@ -649,10 +650,24 @@ CREATE INDEX attr_mappings_provider_id_index ON public.attr_mappings USING btree
 
 
 --
+-- Name: attrs_category_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX attrs_category_index ON public.attrs USING btree (category);
+
+
+--
+-- Name: attrs_name_category_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX attrs_name_category_index ON public.attrs USING btree (name, category);
+
+
+--
 -- Name: attrs_name_index; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX attrs_name_index ON public.attrs USING btree (name);
+CREATE INDEX attrs_name_index ON public.attrs USING btree (name);
 
 
 --
