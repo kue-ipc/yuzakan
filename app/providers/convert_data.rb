@@ -10,7 +10,7 @@ module Yuzakan
       def call(provider, data, category: :user)
         mappings = step get_mappings(provider, category)
         hash = step convert_data_with_mappings(data, mappings)
-        if categroy == :user && !provider.has_group?
+        if category == :user && !provider.has_group?
           hash.except!(:primary_group, :groups)
         end
         hash
@@ -18,16 +18,16 @@ module Yuzakan
 
       private def get_mappings(provider, category)
         mappings =
-          if provider.attr_mappings.nil?
-            attr_mapping_repo.all_by_provider(provider, category:)
-          else
+          if provider.respond_to?(:attr_mappings)
             provider.attr_mappings
-              .select { |mapping| mapping.category_of?(category) }
-          end
+          else
+            attr_mapping_repo.all_with_attrs_by_provider(provider)
+          end.select { |mapping| mapping.category_of?(category) }
+
         Success(mappings)
       end
 
-      private def convert_data(data, mappings)
+      private def convert_data_with_mappings(data, mappings)
         return Success(nil) if data.nil?
 
         attrs = mappings.to_h do |mapping|

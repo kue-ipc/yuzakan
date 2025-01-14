@@ -64,13 +64,17 @@ end
 # setup admin user and group
 providers_read_group = Hanami.app["providers.read_group"]
 group_providers = providers_read_group.call(admin_groupname, ["local"])
-pp group_providers
-# TODO: ここまで
-exit 1
-if group_providers.empty?
+if group_providers["local"].nil?
   providers_create_group = Hanami.app["providers.create_group"]
   providers_create_group.call(admin_groupname, ["local"], display_name: "管理者")
 end
+
+puts "-----------------"
+pp group_providers
+# TODO: ここまで
+exit 1
+
+
 groups_sync = Hanami.app["groups.sync"]
 groups_sync.call(admin_groupname)
 

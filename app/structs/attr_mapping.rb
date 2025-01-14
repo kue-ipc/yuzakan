@@ -110,6 +110,14 @@ module Yuzakan
       def translate_j2e(value)
         J2E_DICT[value] || value
       end
+
+      def category
+        attr.category.intern
+      end
+
+      def category_of?(name)
+        category.casecmp?(name.intern)
+      end
     end
   end
 end
