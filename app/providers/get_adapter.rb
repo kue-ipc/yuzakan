@@ -18,7 +18,7 @@ module Yuzakan
           group: provider.group, logger: Hanami.logger)
       end
 
-      def get_provider(provider)
+      private def get_provider(provider)
         return Failure(:nil) if provider.nil?
 
         unless provider.is_a?(Yuzakan::Structs::Provider)
@@ -32,7 +32,7 @@ module Yuzakan
         end
       end
 
-      def get_class(provider)
+      private def get_class(provider)
         adapter_class = adapters[provider.adapter]
         if adapter_class
           Success(adapter_class)
@@ -41,7 +41,7 @@ module Yuzakan
         end
       end
 
-      def get_params(provider)
+      private def get_params(provider)
         params =
           if provider.respond_to?(:adapter_params)
             provider.adapter_params

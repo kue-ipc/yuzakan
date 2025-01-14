@@ -3,7 +3,8 @@
 # use Active Support Cache Store
 
 Hanami.app.register_provider(:cache_store) do
-  preare do
+  prepare do
+    require "active_support"
     require "active_support/cache"
   end
 

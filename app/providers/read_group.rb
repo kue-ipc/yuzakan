@@ -6,7 +6,7 @@ module Yuzakan
       include Deps[
         "repos.provider_repo",
         "providers.get_adapter",
-        "providers.convert_data",
+        # "providers.convert_data",
         "cache_store",
       ]
 
@@ -19,16 +19,16 @@ module Yuzakan
           [provider.name, data]
         end
 
-        @providers = get_providers(params[:providers]).to_h do |provider|
-          [provider.name, provider.group_read(groupname)]
-        rescue => e
-          Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{groupname}"
-          Hanami.logger.error e
-          error(I18n.t("errors.action.error", action: I18n.t("interactors.provider_read_group"),
-            target: provider.label))
-          error(e.message)
-          fail!
-        end
+        # @providers = get_providers(params[:providers]).to_h do |provider|
+        #   [provider.name, provider.group_read(groupname)]
+        # rescue => e
+        #   Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{groupname}"
+        #   Hanami.logger.error e
+        #   error(I18n.t("errors.action.error", action: I18n.t("interactors.provider_read_group"),
+        #     target: provider.label))
+        #   error(e.message)
+        #   fail!
+        # end
       end
 
       private def valid?(params)
@@ -64,7 +64,7 @@ module Yuzakan
 
         name = "provider:#{provider.name}:group:#{groupname}"
         data = cache_store.fetch(name) do
-          provider_adapter = step get_adatper.call(provider)
+          provider_adapter = step get_adapter.call(provider)
           raw_data = provider_adapter.group_read(groupname)
           step convert_data(provider, raw_data, type: :group)
         end

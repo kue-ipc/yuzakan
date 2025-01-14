@@ -138,28 +138,6 @@ module Yuzakan
         {**userdata, attrs: map_attrs(userdata[:attrs])}
       end
 
-      # Adapter attrs -> Ruby attrs
-      private def convert_attrs(raw_attrs)
-        return {} if raw_attrs.nil?
-
-        attr_mappings.to_h do |mapping|
-          raw_value = raw_attrs[mapping.key] || raw_attrs[mapping.key.downcase]
-          [mapping.attr.name, mapping.convert_value(raw_value)]
-        end.compact # 値がnilの場合は除外する
-      end
-
-      # Adapter userdata -> Ruby userdata
-      private def convert_userdata(raw_userdata)
-        return if raw_userdata.nil?
-
-        unless has_group?
-          raw_userdata = raw_userdata.except(:primary_group,
-            :groups)
-        end
-
-        {**raw_userdata, attrs: convert_attrs(raw_userdata[:attrs])}
-      end
-
       def need_adapter!
         raise NoAdapterError unless @adapter
       end
