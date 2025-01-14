@@ -23,10 +23,10 @@
 #   attr_reader attrs: Hash[Symbol, untyped]
 #
 # -- CRUD --
-# user_create(username, password = nil, **userdata) -> userdata? [writable]
+# user_create(username, userdata, password: nil) -> userdata? [writable]
 #   ... if user exists, do nothing and return nil
 # user_read(username) -> userdata? [readable]
-# user_update(username, **userdata) -> userdata? [writeable]
+# user_update(username, userdata) -> userdata? [writeable]
 # user_delete(username) -> userdata? [writable]
 #
 # user_rename(oldname, newname)
@@ -45,10 +45,10 @@
 #
 # user_group_list(username) -> Array[groupname] [readable, group]
 #
-# group_create(groupname, **groupdata) -> groupdata? [writable]
+# group_create(groupname, groupdata) -> groupdata? [writable]
 #   ... if group exists, do nothing and return nil
 # group_read(groupname) -> groupdata? [readable]
-# group_update(groupname, **groupdata) -> groupdata? [writeable]
+# group_update(groupname, groupdata) -> groupdata? [writeable]
 # group_delete(groupname) -> groupdata? [writable]
 # group_list -> Array[groupname] [readable]
 # group_search(query) -> Array[groupname] [readable]
@@ -175,7 +175,7 @@ module Yuzakan
       raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
-    def user_create(username, password = nil, **userdata)
+    def user_create(username, userdata, password: nil)
       raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
@@ -183,7 +183,7 @@ module Yuzakan
       raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
-    def user_update(username, **userdata)
+    def user_update(username, userdata)
       raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
@@ -207,7 +207,7 @@ module Yuzakan
       raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
-    def user_unlock(username, password = nil)
+    def user_unlock(username, password: nil)
       raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
@@ -223,7 +223,19 @@ module Yuzakan
       raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 
-    def group_create(groupname, **groupdata)
+    def group_create(groupname, groupdata)
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
+    end
+
+    def group_read(groupname)
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
+    end
+
+    def group_update(groupname, groupdata)
+      raise NoMethodError, "Not implement #{self.class}##{__method__}"
+    end
+
+    def group_delete(groupname)
       raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 

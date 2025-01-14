@@ -21,13 +21,13 @@ module Yuzakan
         true
       end
 
-      def user_create(username, password = nil, **userdata)
+      def user_create(username, userdata, password: nil)
         return if @local_user_repo.exist?(useranme)
 
         params = {
           name: username,
-          display_name: userdata[:display_name],
-          email: userdata[:email],
+          display_name: userdata.display_name,
+          email: userdata.email,
         }
         if password
           case Hanam.app["operations.hash_password"].call(password)
@@ -49,7 +49,10 @@ module Yuzakan
       def user_update(username, **userdata)
         return unless @local_user_repo.exist?(username)
 
-        params = userdata.slice(:display_name, :email)
+        params = {
+          display_name: userdata.display_name,
+          email: userdata.email,
+        }
         user_struct_to_data(@local_user_repo.set(username, **params))
       end
 
@@ -126,33 +129,50 @@ module Yuzakan
         @local_group_repo.list_of_user(user)
       end
 
-      def group_create(groupname, **groupdata)
+      def group_create(groupname, groupdata)
         return if @local_group_repo.exist?(groupanme)
 
         params = {
           name: groupname,
-          display_name: groupdata[:display_name],
+          display_name: groupdata.display_name,
         }
         group_struct_to_data(@local_group_repo.set(groupname, **params))
       end
 
+      def group_read(groupname)
+        group_struct_to_data(@local_group_repo.get(groupname))
+      end
+
+      def group_update(groupname, groupdata)
+        return unless @local_group_repo.exist?(groupname)
+
+        params = {
+          display_name: groupdata.display_name,
+        }
+        group_struct_to_data(@local_group_repo.set(groupname, **params))
+      end
+
+      def group_delete(groupname)
+        group_struct_to_data(@local_group_repo.unset(groupname))
+      end
+
       def group_list
-        raise NoMethodError, "Not implement #{self.class}##{__method__}"
+        @local_group_repo.list
       end
 
       def group_search(query)
+        @local_group_repo.search(query)
+      end
+
+      def member_list(_groupname)
         raise NoMethodError, "Not implement #{self.class}##{__method__}"
       end
 
-      def member_list(groupname)
+      def member_add(_groupname, _username)
         raise NoMethodError, "Not implement #{self.class}##{__method__}"
       end
 
-      def member_add(groupname, username)
-        raise NoMethodError, "Not implement #{self.class}##{__method__}"
-      end
-
-      def member_remove(groupname, username)
+      def member_remove(_groupname, _username)
         raise NoMethodError, "Not implement #{self.class}##{__method__}"
       end
 
@@ -161,28 +181,21 @@ module Yuzakan
       private def user_struct_to_data(user)
         return if user.nil?
 
-        {
-          username: user.name,
+        UserData.new(
+          name: user.name,
+          primary_group: user.primary_group&.name,
+          groups: user.groups.map(:name),
           display_name: user.display_name,
           email: user.email,
-          locked: user.locked?,
-          unmanageable: false,
-          mfa: false,
-          primary_group: user.primary_group.map(:name),
-          groups: user.groups.map(:name),
-          attrs: {},
-        }
+          locked: user.locked?)
       end
 
       private def group_struct_to_data(group)
         return if group.nil?
 
-        {
-          groupname: group.name,
-          display_name: group.display_name,
-          unmanageable: false,
-          attrs: {},
-        }
+        GroupData.new(
+          name: group.name,
+          display_name: group.display_name)
       end
     end
   end
