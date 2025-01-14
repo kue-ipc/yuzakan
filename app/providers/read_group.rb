@@ -9,6 +9,8 @@ module Yuzakan
         "cache_store",
       ]
 
+      category :group
+
       def call(groupname, providers = nil)
         groupname = step validate_name(groupname)
         providers = step get_providers(providers, operation: :group_read)
@@ -22,13 +24,11 @@ module Yuzakan
       private def read_group(provider, groupname)
         return Success(nil) unless provider.can_do?(:group_read)
 
-        name = "provider:#{provider.name}:group:#{groupname}"
-        data = cache_store.fetch(name) do
+        cache_store.fetch(cache_key(provider, groupname)) do
           provider_adapter = step get_adapter.call(provider)
           groupdata = provider_adapter.group_read(groupname)
-          step convert_data.call(provider, groupdata, category: :group)
-        end
-        Success(data)
+          step convert_data.call(provider, groupdata, category:)
+        end.then { Success(_1) }
       end
     end
   end

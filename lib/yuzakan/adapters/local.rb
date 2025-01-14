@@ -130,7 +130,7 @@ module Yuzakan
       end
 
       def group_create(groupname, groupdata)
-        return if @local_group_repo.exist?(groupanme)
+        return if @local_group_repo.exist?(groupname)
 
         params = {
           name: groupname,

@@ -68,15 +68,16 @@ module Yuzakan
 
     UserData = Data.define(:name, :primary_group, :groups,
       :display_name, :email, :locked, :unmanageable, :mfa, :attrs) do
-      def initialize(primary_group: nil, groups: [],
+      def initialize(name: nil, primary_group: nil, groups: [],
         display_name: nil, email: nil,
-        locked: false, unmanageable: false, mfa: false, attrs: {}, **)
+        locked: false, unmanageable: false, mfa: false, attrs: {})
         super
       end
     end
 
     GroupData = Data.define(:name, :display_name, :unmanageable, :attrs) do
-      def initialize(display_name: nil, unmanageable: false, attrs: {}, **)
+      def initialize(name: nil, display_name: nil, unmanageable: false,
+        attrs: {})
         super
       end
     end

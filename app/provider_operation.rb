@@ -5,6 +5,12 @@ require "dry/operation"
 
 module Yuzakan
   class ProviderOperation < Yuzakan::Operation
+    def self.category(name)
+      define_method(:category) do
+        name
+      end
+    end
+
     include Deps[
       "repos.provider_repo",
     ]
@@ -36,6 +42,14 @@ module Yuzakan
         Success(providers)
       else
         Failure(:invalid_provider_list)
+      end
+    end
+
+    private def cache_key(provider, name = nil, category: self.category)
+      if name
+        "provider:#{provider.name}:#{category}:#{name}"
+      else
+        "provider:#{provider.name}:list:#{category}"
       end
     end
   end
