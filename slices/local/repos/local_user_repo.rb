@@ -1,16 +1,14 @@
 # frozen_string_literal: true
 
-module Yuzakan
+module Local
   module Repos
-    class LocalUserRepo < Yuzakan::DB::Repo
-      commands :create, use: :timestamps,
-        plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
-      commands update: :by_name, use: :timestamps,
-        plugins_options: {timestamps: {timestamps: [:updated_at]}}
-      commands delete: :by_name
-      private :create, :update, :delete
+    class LocalUserRepo < Local::DB::Repo
+      commands :create, :update, :delete
 
       def get(name)
+        pp self.class
+        pp self.class.root
+        pp self.root
         local_users.by_name(name).one
       end
 

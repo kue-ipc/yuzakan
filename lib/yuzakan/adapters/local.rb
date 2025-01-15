@@ -12,9 +12,9 @@ module Yuzakan
 
       def initialize(params, **opts)
         super
-        @local_user_repo = Hanami.app["repos.local_user_repo"]
-        @local_group_repo = Hanami.app["repos.local_group_repo"]
-        @local_member_repo = Hanami.app["repos.local_member_repo"]
+        @local_user_repo = ::Local::Slice["repos.local_user_repo"]
+        @local_group_repo = ::Local::Slice["repos.local_group_repo"]
+        @local_member_repo = ::Local::Slice["repos.local_member_repo"]
       end
 
       def check

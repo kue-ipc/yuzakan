@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module Yuzakan
+module Local
   module Relations
-    class LocalMembers < Yuzakan::DB::Relation
+    class LocalMembers < Local::DB::Relation
       schema :local_members, infer: true do
         associations do
           belongs_to :local_user

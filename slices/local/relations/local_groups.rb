@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module Yuzakan
+module Local
   module Relations
-    class LocalGroups < Yuzakan::DB::Relation
+    class LocalGroups < Local::DB::Relation
       schema :local_groups, infer: true do
         associations do
           has_many :local_users

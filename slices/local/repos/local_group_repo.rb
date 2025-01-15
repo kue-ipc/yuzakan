@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
-module Yuzakan
+module Local
   module Repos
-    class LocalGroupRepo < Yuzakan::DB::Repo
-      commands :create, use: :timestamps,
-        plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
-      commands update: :by_name, use: :timestamps,
-        plugins_options: {timestamps: {timestamps: [:updated_at]}}
+    class LocalGroupRepo < Local::DB::Repo
+      commands :create
+      commands update: :by_name
       commands delete: :by_name
       private :create, :update, :delete
 
