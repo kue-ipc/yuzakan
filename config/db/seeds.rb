@@ -56,6 +56,14 @@ if group_providers["local"].nil?
     .call(admin_groupname, ["local"], display_name: "管理者") in Success(_)
 end
 
+Hanami.app["providers.read_user"]
+  .call(admin_username, ["local"]) => Success(user_providers)
+if user_providers["local"].nil?
+  Hanami.app["providers.create_user"]
+    .call(admin_username, ["local"], password: admin_password,
+      display_name: "ローカル管理者") in Success(_)
+end
+
 puts "-----------------"
 # TODO: ここまで
 exit 1

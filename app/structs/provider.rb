@@ -281,27 +281,19 @@ module Yuzakan
 
       def can_do?(operation)
         ability = Provider.operation_ability(operation)
-        ability.all? do |name, value|
-          __send__(name) == value
-        end
+        ability.all? { |name, value| __send__(name) == value }
       end
 
       def self.operation_ability(operation)
         case operation.intern.downcase
-        in :check
-          {}
-        in :user_read | :user_list | :user_seacrh
-          {readable: true}
-        in :user_create | :user_update | :user_delete
-          {writable: true}
-        in :user_auth
-          {authenticatable: true}
+        in nil | :check then {}
+        in :user_read | :user_list | :user_seacrh then {readable: true}
+        in :user_create | :user_update | :user_delete then {writable: true}
+        in :user_auth then {authenticatable: true}
         in :user_change_password | :user_generate_code
           {password_changeable: true}
-        in :user_reset_mfa | :user_generate_code
-          {mfa_changeable: true}
-        in :user_lock | :user_unlock
-          {lockable: true}
+        in :user_reset_mfa | :user_generate_code then {mfa_changeable: true}
+        in :user_lock | :user_unlock then {lockable: true}
         in :group_read | :group_list | :group_search | :member_list
           {group: true, readable: true}
         in :group_create | :group_update | :group_delete | :member_add |

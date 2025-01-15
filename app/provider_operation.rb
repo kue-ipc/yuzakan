@@ -43,11 +43,11 @@ module Yuzakan
       in []
         Success([])
       in [String | Symbol, *]
-        Success(provider_repo.mget(*providers))
+        Success(provider_repo.mget(*providers).select { _1.can_do?(operation) })
       in [Yuzakan::Structs::Provider, *]
-        Success(providers)
+        Success(providers.select { _1.can_do?(operation) })
       else
-        Failure(:invalid_provider_list)
+        Failure([:not_provider_list])
       end
     end
 

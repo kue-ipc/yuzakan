@@ -9,19 +9,19 @@ module Yuzakan
         groupname = step validate_name(groupname)
         providers = step get_providers(providers, operation: :group_create)
 
+        # TODO: 途中で失敗した場合の処理
         providers.to_h do |provider|
-          data = nil
-          if provider.can_do?(:group_create)
-            adapter = step get_adapter(provider)
-            groupdata = step map_data(provider, params, category:)
-
-            if (result = adapter.group_create(groupname, groupdata))
-              data = step convert_data(provider, result, category:)
+          adapter = step get_adapter(provider)
+          groupdata = step map_data(provider, params)
+          new_groupdata = adapter.group_create(groupname, groupdata)
+          result =
+            if new_groupdata
+              new_params = step convert_data(provider, new_groupdata)
               cache_delete(provider)
-              cache_write(provider, groupname) { data }
+              cache_write(provider, groupname) { new_params }
+              new_params
             end
-          end
-          [provider.name, data]
+          [provider.name, result]
         end
       end
     end
