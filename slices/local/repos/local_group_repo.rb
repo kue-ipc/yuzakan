@@ -3,13 +3,29 @@
 module Local
   module Repos
     class LocalGroupRepo < Local::DB::Repo
-      commands :create
-      commands update: :by_name
-      commands delete: :by_name
-      private :create, :update, :delete
+      commands :create, update: :by_name, delete: :by_name
+
+      def all
+        local_groups.to_a
+      end
+
+      def find(name)
+        local_groups.by_name(name).one
+      end
+
+      def first
+        local_groups.first
+      end
+
+      def last
+        local_groups.last
+      end
+
+      def clear
+        local_groups.clear
+      end
 
       def get(name)
-        local_groups.by_name(name).one
       end
 
       def set(name, **)
@@ -26,10 +42,6 @@ module Local
 
       def list
         local_groups.pluck(:name)
-      end
-
-      def all
-        local_groups.to_a
       end
 
       def search(query, ignore_case: true, **)
