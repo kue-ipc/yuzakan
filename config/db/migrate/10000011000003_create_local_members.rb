@@ -10,9 +10,6 @@ ROM::SQL.migration do
       foreign_key :local_group_id, :local_groups,
         on_delete: :cascade, null: false
 
-      column :created_at, DateTime, null: false
-      column :updated_at, DateTime, null: false
-
       index :local_user_id
       index :local_group_id
       index [:local_user_id, :local_group_id], unique: true

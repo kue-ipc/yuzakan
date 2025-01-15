@@ -8,8 +8,7 @@ ROM::SQL.migration do
       column :name, String, null: false
       column :display_name, String
 
-      column :created_at, DateTime, null: false
-      column :updated_at, DateTime, null: false
+      column :attrs, "jsonb"
 
       index :name, unique: true
     end
