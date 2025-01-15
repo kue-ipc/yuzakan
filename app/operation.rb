@@ -5,11 +5,21 @@ require "dry/operation"
 
 module Yuzakan
   class Operation < Dry::Operation
-    private def validate_name(name)
-      return Failure(:not_string) unless name.is_a?(String)
-      return Failure(:invaild_name) unless name =~ Yuzakan::Patterns[:name].ruby
+    # common flows
 
-      Success(name)
+    private def validate_name(name)
+      case name
+      when Yuzakan::Patterns[:name].ruby
+        Success(name)
+      when String
+        Failure([:invaild_name])
+      when Symbol
+        validate_name(name.to_s)
+      when nil
+        Failure([:nil])
+      else
+        Failure([:not_string])
+      end
     end
   end
 end
