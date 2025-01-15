@@ -3,6 +3,13 @@
 module Yuzakan
   module Repos
     class ProviderRepo < Yuzakan::DB::Repo
+      commands :create, use: :timestamps,
+        plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
+      commands update: :by_name, use: :timestamps,
+        plugins_options: {timestamps: {timestamps: [:updated_at]}}
+      commands delete: :by_name
+      private :create, :update, :delete
+
       def get(name)
         providers.by_name(normalize_name(name)).one
       end
