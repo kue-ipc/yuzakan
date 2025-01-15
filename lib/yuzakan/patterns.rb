@@ -3,9 +3,12 @@
 # Regular expressions patterns comiptale with
 # Ruby Regexp and ECMAScript RegExp with v flag
 
+require "forwardable"
+
 module Yuzakan
   module Patterns
     class Pattern
+      extend Forwardable
       attr_reader :pattern, :ruby, :ecma_script
 
       def initialize(pattern)
@@ -15,6 +18,9 @@ module Yuzakan
       end
 
       alias to_s pattern
+      alias regexp ruby
+
+      def_delegators :@ruby, :===, :=~, :match, :match?
     end
 
     MAP =

@@ -22,7 +22,7 @@ module Yuzakan
       end
 
       def user_create(username, userdata, password: nil)
-        return if @local_user_repo.exist?(useranme)
+        return if @local_user_repo.exist?(username)
 
         params = {
           name: username,
@@ -30,7 +30,7 @@ module Yuzakan
           email: userdata.email,
         }
         if password
-          case Hanam.app["operations.hash_password"].call(password)
+          case Hanami.app["operations.hash_password"].call(password)
           in Success[hashed_password]
             params[:hashed_password] = hashed_password
           in Failure[:invalid, msg]

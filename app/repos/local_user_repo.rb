@@ -11,7 +11,7 @@ module Yuzakan
       private :create, :update, :delete
 
       def get(name)
-        local_users.by_name(name).combine(:members).combine(:groups).one
+        local_users.by_name(name).one
       end
 
       def set(name, **)
