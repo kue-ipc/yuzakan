@@ -253,7 +253,7 @@ CREATE TABLE public.local_groups (
     id integer NOT NULL,
     name text NOT NULL,
     display_name text,
-    attrs jsonb
+    attrs jsonb NOT NULL
 );
 
 
@@ -307,7 +307,7 @@ CREATE TABLE public.local_users (
     display_name text,
     email text,
     locked boolean DEFAULT false NOT NULL,
-    attrs jsonb,
+    attrs jsonb NOT NULL,
     local_group_id integer
 );
 

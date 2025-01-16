@@ -22,7 +22,7 @@ module Yuzakan
       def user_create(username, userdata, password: nil)
         return if user_repo.exist_by_name?(username)
 
-        hashed_password = passwrd&.then { hash_password(_1) }
+        hashed_password = password&.then { hash_password(_1) }
         primary_group = userdata.primary_group
           &.then { group_repo.find_by_name(_1) }
         member_groups = userdata.groups&.difference([userdata.primary_group])
@@ -99,7 +99,7 @@ module Yuzakan
         user = user_repo.find_by_name(username)
         return false if user.nil?
 
-        hashed_password = (hash_password(passwold) if password)
+        hashed_password = password&.then { hash_password(_1) }
         user_repo.update(user.id, hashed_password:)
         true
       end
@@ -233,7 +233,7 @@ module Yuzakan
         UserData.new(
           name: user.name,
           primary_group: user.primary_group&.name,
-          groups: user.groups.map(:name),
+          groups: user.groups.map(&:name),
           display_name: user.display_name,
           email: user.email,
           locked: user.locked?)
