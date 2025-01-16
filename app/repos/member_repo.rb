@@ -36,11 +36,11 @@ module Yuzakan
         end
       end
 
-      def set_groups_for_user(user, _groups)
-        group_ids = group.map(&:id)
+      def set_groups_for_user(user, groups)
+        group_ids = groups.map(&:id)
         members.transaction do
           by_user(user).where(primary: false)
-            .exclude(group_id: groups_ids)
+            .exclude(group_id: group_ids)
             .changeset(:delete).commit
           current_group_ids = by_user(user).pluck(:group_id)
 

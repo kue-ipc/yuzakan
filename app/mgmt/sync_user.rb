@@ -6,17 +6,17 @@ module Yuzakan
     class SyncUser < Yuzakan::Operation
       include Deps[
         "providers.read_user",
-        "mgmt.register_users",
-        "mgmt.unregister_users",
+        "mgmt.register_user",
+        "mgmt.unregister_user",
       ]
 
       def call(username)
         username = step validate_name(username)
-        params = step read_user(username)
-        step sync_user(username, params)
+        params = step read(username)
+        step sync(username, params)
       end
 
-      private def read_user(username)
+      private def read(username)
         providers = read_user.call(username)
           .value_or { |failure| return Failure(failure) }
         return Success(nil) if providers.empty?
@@ -31,7 +31,7 @@ module Yuzakan
         Success(params)
       end
 
-      private def sync_user(username, params)
+      private def sync(username, params)
         if params
           register_user.call(username, params)
         else

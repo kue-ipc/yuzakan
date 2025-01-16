@@ -11,7 +11,7 @@ module Yuzakan
       def call(groupname, params)
         groupname = step validate_name(groupname)
         params = step validate_params(params)
-        step register_group(groupname, params)
+        step register(groupname, params)
       end
 
       private def validate_params(params)
@@ -22,7 +22,7 @@ module Yuzakan
         })
       end
 
-      private def register_group(groupname, params)
+      private def register(groupname, params)
         Success(group_repo.set(groupname, **params))
       end
     end

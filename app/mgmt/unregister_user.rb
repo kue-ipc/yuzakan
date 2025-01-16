@@ -11,10 +11,10 @@ module Yuzakan
 
       def call(username)
         username = step validate_name(username)
-        step unregister_user(username)
+        step unregister(username)
       end
 
-      def unregister_user(username)
+      def unregister(username)
         user = user_repo.get(username)
         return Success(nil) if user.nil?
         return Success(user) if user.deleted?

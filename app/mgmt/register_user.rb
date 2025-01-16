@@ -40,8 +40,8 @@ module Yuzakan
         Success(validated_params)
       end
 
-      def register_user(username, params)
-        user.transaction do
+      def register(username, params)
+        user_repo.transaction do
           user = user_repo.set(username, **params)
 
           if params.key?(:primary_group)

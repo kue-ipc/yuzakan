@@ -22,7 +22,7 @@ module Yuzakan
       def list = users.pluck(:name)
 
       def get_with_groups(name)
-        by_name(name).combine(members: :group)..one
+        by_name(name).combine(members: :group).one
       end
 
       # TODO: ここらは下は未整理

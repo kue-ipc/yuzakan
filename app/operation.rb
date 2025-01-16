@@ -5,15 +5,19 @@ require "dry/operation"
 
 module Yuzakan
   class Operation < Dry::Operation
-    # logging
+    include Deps[
+      "logger",
+  ]
+
+  # logging
     private def on_failure(failure)
       case failure
       in [:error, e]
-        app["logger"].error e
+        logger.error e
       in [type, msg]
-        app["logger"].warn type, message: msg
+        logger.warn type, message: msg
       else
-        app["logger"].error "failure is invalid format", failure.inspcet
+        logger.error "failure is invalid format", failure.inspcet
       end
     end
 
@@ -22,7 +26,7 @@ module Yuzakan
     private def validate_name(name, max_size: 255)
       case name
       when Yuzakan::Patterns[:name]
-        if max_size&.>(name.size)
+        if max_size&.<(name.size)
           Failure([:max_size, {num: max_size}])
         else
           Success(name)

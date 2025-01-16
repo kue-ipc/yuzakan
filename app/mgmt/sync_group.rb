@@ -12,11 +12,11 @@ module Yuzakan
 
       def call(groupname)
         groupname = step validate_name(groupname)
-        params = step read_group(groupname)
-        step sync_group(groupname, params)
+        params = step read(groupname)
+        step sync(groupname, params)
       end
 
-      private def read_group(groupname)
+      private def read(groupname)
         providers = read_group.call(groupname)
           .value_or { |failure| return Failure(failure) }
         return Success(nil) if providers.empty?
@@ -30,7 +30,7 @@ module Yuzakan
         Success(params)
       end
 
-      private def sync_group(groupname, params)
+      private def sync(groupname, params)
         if params
           register_group.call(groupname, params)
         else

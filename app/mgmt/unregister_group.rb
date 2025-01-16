@@ -11,10 +11,10 @@ module Yuzakan
 
       def call(groupname)
         groupname = step validate_name(groupname)
-        step unregister_group(groupname)
+        step unregister(groupname)
       end
 
-      def unregister_group(groupname)
+      def unregister(groupname)
         group = group_repo.get(groupname)
         return Success(nil) if group.nil?
         return Success(group) if group.deleted?

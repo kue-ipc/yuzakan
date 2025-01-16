@@ -71,31 +71,5 @@ Hanami.app["mgmt.sync_group"].call(admin_groupname) => Success(admin_group)
 Hanami.app["mgmt.sync_user"].call(admin_username) => Success(admin_user)
 
 if admin_user.clearance_level < 5
-  Hanam.app["repos.user_repo"].update(admin_user.id, clearance_level: 5)
-end
-
-puts "-----------------"
-# TODO: ここまで
-exit 1
-
-groups_sync = Hanami.app["groups.sync"]
-groups_sync.call(admin_groupname)
-
-unless get_user(admin_username)
-  create_result = proider_create_user.call({
-    **admin_user_params.slice(:username, :password),
-    providers: ["local"],
-    display_name: "ローカル管理者",
-  })
-  if create_result.failure?
-    flash[:errors].concat(create_result.errors)
-    return
-  end
-
-  admin_user = get_user(admin_user_params[:username])
-  if admin_user.clearance_level < 5
-    user_repo.update(admin_user.id,
-      clearance_level: 5)
-  end
-  admin_password
+  Hanami.app["repos.user_repo"].set(admin_username, clearance_level: 5)
 end
