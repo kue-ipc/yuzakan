@@ -10,11 +10,9 @@ module Yuzakan
 
       group :primary
 
-      def initialize(params, **opts)
-        super
-        @local_user_repo = ::Local::Slice["repos.local_user_repo"]
-        @local_group_repo = ::Local::Slice["repos.local_group_repo"]
-        @local_member_repo = ::Local::Slice["repos.local_member_repo"]
+      def initialize(params, container: ::Local::Slice, **)
+        super(params, **)
+        @container = container
       end
 
       def check
@@ -22,7 +20,7 @@ module Yuzakan
       end
 
       def user_create(username, userdata, password: nil)
-        return if @local_user_repo.exist?(username)
+        return if user_repo.exist?(username)
 
         params = {
           name: username,
@@ -30,7 +28,7 @@ module Yuzakan
           email: userdata.email,
         }
         if password
-          case Hanami.app["operations.hash_password"].call(password)
+          case @container["operations.hash_password"].call(password)
           in Success[hashed_password]
             params[:hashed_password] = hashed_password
           in Failure[:invalid, msg]
@@ -39,34 +37,34 @@ module Yuzakan
             raise err
           end
         end
-        user_struct_to_data(@local_user_repo.set(username, **params))
+        user_struct_to_data(user_repo.set(username, **params))
       end
 
       def user_read(username)
-        user_struct_to_data(@local_user_repo.get(username))
+        user_struct_to_data(user_repo.get(username))
       end
 
       def user_update(username, **userdata)
-        return unless @local_user_repo.exist?(username)
+        return unless user_repo.exist?(username)
 
         params = {
           display_name: userdata.display_name,
           email: userdata.email,
         }
-        user_struct_to_data(@local_user_repo.set(username, **params))
+        user_struct_to_data(user_repo.set(username, **params))
       end
 
       def user_delete(username)
-        user_struct_to_data(@local_user_repo.unset(username))
+        user_struct_to_data(user_repo.unset(username))
       end
 
       def user_auth(username, password)
-        user = @local_user_repo.get(username)
+        user = user_repo.get(username)
         return if user.nil?
         return false if user.locked?
         return false if user.hashed_password.nil?
 
-        case Hanam.app["operations.verify_password"]
+        case @container["operations.verify_password"]
           .call(password, user.hashed_password)
         in Success[result]
           result
@@ -78,7 +76,7 @@ module Yuzakan
       end
 
       def user_change_password(username, password)
-        return unless @local_user_repo.exist?(username)
+        return unless user_repo.exist?(username)
 
         hashed_password =
           if password
@@ -91,7 +89,7 @@ module Yuzakan
               raise err
             end
           end
-        !!@local_user_repo.set(username, hashed_password:)
+        !!user_repo.set(username, hashed_password:)
       end
 
       def user_generate_code(username)
@@ -101,82 +99,121 @@ module Yuzakan
       end
 
       def user_lock(username)
-        user = @local_user_repo.get(username)
+        user = user_repo.get(username)
         return if user.nil?
         return true if user.locked?
 
-        !!@local_user_repo.set(username, locked: true)
+        !!user_repo.set(username, locked: true)
       end
 
       def user_unlock(username, _password = nil)
-        user = @local_user_repo.get(username)
+        user = user_repo.get(username)
         return if user.nil?
         return true unless user.locked?
 
-        !!@local_user_repo.set(username, locked: false)
+        !!user_repo.set(username, locked: false)
       end
 
       def user_list
-        @local_user_repo.list
+        user_repo.list
       end
 
       def user_search(query)
-        @local_user_repo.search(query)
+        user_repo.search(query)
       end
 
       def user_group_list(username)
-        user = @local_user_repo.get(username)
-        @local_group_repo.list_of_user(user)
+        user = user_repo.get(username)
+        group_repo.list_of_user(user)
       end
 
       def group_create(groupname, groupdata)
-        return if @local_group_repo.exist?(groupname)
+        return if group_repo.exist_by_name?(groupname)
 
         params = {
           name: groupname,
           display_name: groupdata.display_name,
+          attrs: groupdata.attrs,
         }
-        group_struct_to_data(@local_group_repo.set(groupname, **params))
+        group_struct_to_data(group_repo.create(**params))
       end
 
       def group_read(groupname)
-        group_struct_to_data(@local_group_repo.get(groupname))
+        group_struct_to_data(group_repo.find_by_name(groupname))
       end
 
       def group_update(groupname, groupdata)
-        return unless @local_group_repo.exist?(groupname)
+        return unless group_repo.exist?(groupname)
 
         params = {
           display_name: groupdata.display_name,
-        }
-        group_struct_to_data(@local_group_repo.set(groupname, **params))
+          attrs: groupdata.attrs,
+        }.compact
+        group_struct_to_data(
+          group_repo.update_by_name(groupname, **params))
       end
 
       def group_delete(groupname)
-        group_struct_to_data(@local_group_repo.unset(groupname))
+        group_struct_to_data(group_repo.delete_by_name(groupname))
       end
 
       def group_list
-        @local_group_repo.list
+        group_repo.names
       end
 
       def group_search(query)
-        @local_group_repo.search(query)
+        group_repo.search_names(query)
       end
 
-      def member_list(_groupname)
-        raise NoMethodError, "Not implement #{self.class}##{__method__}"
+      def member_list(groupname)
+        group = group_repo
+          .find_with_users_by_name(groupname)
+        return if group.nil?
+
+        group.members.map(:name)
       end
 
-      def member_add(_groupname, _username)
-        raise NoMethodError, "Not implement #{self.class}##{__method__}"
+      def member_add(groupname, username)
+        group = group_repo.find_by_name(groupname)
+        return false if group.nil?
+
+        user = user_repo.find_by_name(username)
+        return false if user.nil?
+        return false if user.lcoal_group_id == group.id
+
+        member = member_repo.find_by_local_user_by_local_group(user, group)
+        return false if member
+
+        member_repo.create(local_user_id: user.id, local_group_id: group.id)
+        true
       end
 
-      def member_remove(_groupname, _username)
-        raise NoMethodError, "Not implement #{self.class}##{__method__}"
+      def member_remove(groupname, username)
+        group = group_repo.find_by_name(groupname)
+        return false if group.nil?
+
+        user = user_repo.find_by_name(username)
+        return false if user.nil?
+
+        change = false
+
+        if user.lcoal_group_id == group.id
+          user_repo.update(user.id, local_group_id: nil)
+          change = true
+        end
+
+        member = member_repo.find_by_local_user_by_local_group(user, group)
+        if member
+          member_repo.delete(member.id)
+          change = true
+        end
+        change
       end
 
       # private methods
+      private def user_repo = @container["repos.local_user_repo"]
+      private def group_repo = @container["repos.local_group_repo"]
+      private def member_repo = @container["repos.local_member_repo"]
 
       private def user_struct_to_data(user)
         return if user.nil?

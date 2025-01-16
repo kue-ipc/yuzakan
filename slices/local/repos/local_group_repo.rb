@@ -3,48 +3,29 @@
 module Local
   module Repos
     class LocalGroupRepo < Local::DB::Repo
-      commands :create, update: :by_name, delete: :by_name
+      commands :create
+      def all = local_groups.to_a
+      def first = local_groups.first
+      def last = local_groups.last
+      def clear = local_groups.clear
 
-      def all
-        local_groups.to_a
-      end
+      # id (pk)
+      commands update: :by_pk, delete: :by_pk
+      def ids = local_groups.pluck(:id)
+      private def by_id(id) = local_groups.by_pk(id)
+      def find(id) = by_id(id).one
+      def exist?(id) = by_id(id).exist?
 
-      def find(name)
-        local_groups.by_name(name).one
-      end
+      # name
+      private def by_name(name) = local_groups.by_name(name)
+      def update_by_name(name, **) = by_name(name).command(:update).call(**)
+      def delete_by_name(name) = by_name(name).command(:delete).call
+      def find_by_name(name) = by_name(name).one
+      def exist_by_name?(name) = by_name(name).exist?
+      def names = local.groups.pluck(:name)
 
-      def first
-        local_groups.first
-      end
-
-      def last
-        local_groups.last
-      end
-
-      def clear
-        local_groups.clear
-      end
-
-      def get(name)
-      end
-
-      def set(name, **)
-        update(name, {**}) || create({name: name, **})
-      end
-
-      def unset(name)
-        delete(name)
-      end
-
-      def exist?(name)
-        local_groups.exist?(name:)
-      end
-
-      def list
-        local_groups.pluck(:name)
-      end
-
-      def search(query, ignore_case: true, **)
+      # search
+      private def search(query, ignore_case: true, **)
         pattern = generate_like_pattern(query, **)
         local_groups.where do
           if ignore_case
@@ -52,25 +33,14 @@ module Local
           else
             name.like(pattern) | display_name.like(pattern)
           end
-        end.pluck(:name)
-      end
-
-      def list_of_user(user)
-        local_groups.assoc(:users).where(name: user.name)
-      end
-
-      def by_username(_name)
-        local_groups.where(username: username)
-      end
-
-      def find_by_username(username)
-        by_username(username).first
-      end
-
-      def ilike(pattern)
-        local_groups.where do
-          username.ilike(pattern) | display_name.ilike(pattern) | email.ilike(pattern)
         end
+      end
+      def search_all(...) = search(...).to_a
+      def search_ids(...) = search(...).pluck(:id)
+      def search_names(...) = search(...).pluck(:name)
+
+      def find_with_users_by_name(name)
+        by_name(name).combine(:local_users).combine(:local_member_users).one
       end
     end
   end
