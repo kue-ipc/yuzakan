@@ -4,7 +4,7 @@ require "etc"
 
 module Yuzakan
   module Adapters
-    # rubocop: disable Matrics/ClassLength
+    # rubocop: disable Metrics/ClassLength
     class PosixLdap < Ldap
       self.name = "posix_ldap"
       self.display_name = "Posix LDAP"
@@ -360,6 +360,6 @@ module Yuzakan
         @posix_group_byname_map ||= posix_groups.to_h { |gr| [gr.name, gr] }
       end
     end
-    # rubocop: enable Matrics/ClassLength
+    # rubocop: enable Metrics/ClassLength
   end
 end
