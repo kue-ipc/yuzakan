@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module Yuzakan
+module Local
   module Operations
-    class VerifyPassword < Yuzakan::Operation
+    class VerifyPassword < Local::Operation
       def call(password, hashed_password, **)
         password, hashed_password = step validate(password, hashed_password, **)
         bcrypt_password = step create_bcrypt(hashed_password)
@@ -31,7 +31,7 @@ module Yuzakan
         Failuer([:invalid, "invalid hashed password"])
       end
 
-      def verify(password, bcrypt_password)
+      private def verify(password, bcrypt_password)
         Success(bcrypt_password == password)
       end
     end

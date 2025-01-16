@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-require "bcrypt"
-
-module Yuzakan
+module Local
   module Operations
-    class HashPassword < Yuzakan::Operation
+    class HashPassword < Local::Operation
       def call(password, **)
         password = step validate(password, **)
         step hash(password)
