@@ -18,7 +18,7 @@ module Yuzakan
               step convert_data(provider, userdata)
             end
           [provider.name, result]
-        end
+        end.compact
       end
     end
   end

@@ -9,6 +9,11 @@ module Yuzakan
           has_many :providers, throught: :attr_mappings
         end
       end
+
+      # always ordered by order and name
+      dataset do
+        order(:order, :name)
+      end
     end
   end
 end

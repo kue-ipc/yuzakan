@@ -8,70 +8,61 @@ module Yuzakan
         "repos.user_repo",
         "repos.group_repo",
         "repos.member_repo",
-        "groups.sync",
+        "mgmt.sync_group",
       ]
 
       def call(username, params)
         username = step validate_name(username)
-        params = step validate(params)
+        params = step validate_params(params)
         step register(username, params)
       end
 
-      private def validate(params)
-        Success({
-          **params.slice(:display_name, :email),
-          primary_group: step(get_group(params[:primary_group])),
-          groups:
-            parasm[:groups]&.map { |groupname| set(get_group(groupname)) },
-        })
-      end
-
-      def register(username, params)
-        data = {
-          name: username,
+      private def validate_params(params)
+        validated_params = {
           **params.slice(:display_name, :email),
           deleted: false,
           deleted_at: nil,
         }
-        get_group(params[:primary_group])
-        groups = parasm[:groups]&.map { |groupname| get_group(groupname) }
 
-        user_repo.get(username)
-        user_id = @user_repository.find_by_name(username)&.id
-
-        @user_repository.transaction do
-          @user =
-            if user_id
-              @user_repository.update(user_id, data)
-            else
-              @user_repository.create(data)
+        if params.key?(:primary_group)
+          validated_params[:primary_group] = get_group(params[:primary_group])
+            .value_or { |failure| return Failure(failure) }
+        end
+        if params.key?(:groups)
+          validated_params[:groups] =
+            params[:groups].map do |groupname|
+              get_group(groupname).value_or do |failure|
+                return Failure(failure)
+              end
             end
+        end
 
-          if params[:primary_group]
-            @member_repository.set_primary_group_for_user(@user,
-              get_group(params[:primary_group]))
+        Success(validated_params)
+      end
+
+      def register_user(username, params)
+        user.transaction do
+          user = user_repo.set(username, **params)
+
+          if params.key?(:primary_group)
+            member_repo.set_primary_group_for_user(user, params[:primary_group])
           end
 
-          if params[:groups]
-            groups = [params[:primary_group], *params[:groups]]
-              .compact.uniq.map do |groupname|
-              get_group(groupname)
-            end
-            @member_repository.set_groups_for_user(@user, groups)
+          if params.key?(:groups)
+            member_repo.set_groups_for_user(user, params[:groups])
           end
         end
 
-        @user = @user_repository.find_with_groups(@user.id)
+        Success(user_repo.get_with_groups(username))
       end
 
       private def get_group(groupname)
-        return Success(nil) unless groupname
+        return Success(nil) if groupname.nil?
 
         group = group_repo.get(groupname)
         return Success(group) if group
 
-        # FIXME: groups.syncが失敗した場合は？
-        sync(groupname)
+        sync_group.call(groupname)
       end
     end
   end

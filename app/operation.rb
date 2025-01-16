@@ -19,18 +19,22 @@ module Yuzakan
 
     # common flows
 
-    private def validate_name(name)
+    private def validate_name(name, max_size: 255)
       case name
-      when Yuzakan::Patterns[:name].ruby
-        Success(name)
+      when Yuzakan::Patterns[:name]
+        if max_size&.>(name.size)
+          Failure([:max_size, {num: max_size}])
+        else
+          Success(name)
+        end
       when String
-        Failure([:invaild_name])
+        Failure([:invaild, "name"])
       when Symbol
         validate_name(name.to_s)
       when nil
-        Failure([:nil])
+        Failure([:nil, "name"])
       else
-        Failure([:not_string])
+        Failure([:not_string, "name"])
       end
     end
   end

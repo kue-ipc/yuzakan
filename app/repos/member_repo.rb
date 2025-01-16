@@ -3,56 +3,55 @@
 module Yuzakan
   module Repos
     class MemberRepo < Yuzakan::DB::Repo
-      def find_of_user_group(user, group)
-        members.where(user_id: user.id, group_id: group.id).one
+      private def by_user_id(id) = members.by_user_id(id)
+      private def by_user(user) = by_user_id(user.id)
+      private def by_group_id(id) = members.by_group_id(id)
+      private def by_group(group) = by_group_id(group.id)
+      private def by_user_id_and_by_group_id(user_id, group_id)
+        members.by_user_id_and_by_group_id(user_id, group_id)
+      end
+      private def by_user_and_by_group(user, group)
+        by_user_id_and_by_group_id(user.id, group.id)
       end
 
-      private def primary_of_user(user)
-        members.where(user_id: user.id, primary: true)
+      def delete_by_user(group) = by_group(group).changeset(:delete).commit
+      def delete_by_group(group) = by_group(group).changeset(:delete).commit
+
+      def set_primary_group_for_user(user, primary_group)
+        if primary_group.nil?
+          by_user(user).where(primary: true)
+            .changeset(:update, primary: false).commit
+          return
+        end
+
+        members.transaction do
+          by_user(user).where(primary: true).exclude(group_id: primary_group.id)
+            .changeset(:update, primary: false).commit
+
+          by_user_and_by_group(user, primary_group)
+            .changeset(:update, primary: true).commit ||
+            members.changeset(:create,
+              user_id: user.id, group_id: primary_group.id, primary: true)
+              .commit
+        end
       end
 
-      private def of_user(user)
-        members.where(user_id: user.id)
-      end
+      def set_groups_for_user(user, _groups)
+        group_ids = group.map(&:id)
+        members.transaction do
+          by_user(user).where(primary: false)
+            .exclude(group_id: groups_ids)
+            .changeset(:delete).commit
+          current_group_ids = by_user(user).pluck(:group_id)
 
-      def clear_of_user(user)
-        of_user(user).delete
-      end
-
-      def set_primary_group_for_user(user, group)
-        primary = nil
-        primary_of_user(user).each do |member|
-          if member.group_id == group&.id
-            primary = member
-          else
-            # 既存を格下げ
-            update(member.id, {primary: false})
+          # TODO: 作成が一つ一つになる
+          (group_ids - current_group_ids).each do |group_id|
+            members.changeset(:create,
+              user_id: user.id, group_id: group_id, primary: false)
+              .commit
           end
         end
-
-        # 既存が設定済みの場合は終了。
-        return primary if primary
-
-        # プライマリーグループがない場合は終了。
-        return if group.nil?
-
-        # 既存がある場合は更新、無ければ作成
-        member = find_of_user_group(user, group)
-        if member
-          update(member.id, {primary: true})
-        else
-          create({user_id: user.id, group_id: group.id, primary: true})
-        end
-      end
-
-      def set_groups_for_user(user, groups)
-        remains = of_user(user).to_a.to_h { |member| [member.group_id, member] }
-        members = groups.map do |group|
-          remains.delete(group.id) || create({user_id: user.id,
-                                              group_id: group.id,})
-        end
-        remains.each_value { |member| delete(member.id) }
-        members
+        by_user(user).where(primary: false).to_a
       end
     end
   end

@@ -22,11 +22,11 @@ module Yuzakan
       def user_create(username, userdata, password: nil)
         return if user_repo.exist_by_name?(username)
 
-        hashed_password = password&.then { hash_password(_1) }
+        hashed_password = hash_password(password)
         primary_group = userdata.primary_group
-          &.then { group_repo.find_by_name(_1) }
+          &.then { |name| group_repo.find_by_name(name) }
         member_groups = userdata.groups&.difference([userdata.primary_group])
-          &.then { group_repo.all_by_names(_1) }
+          &.then { |names| group_repo.all_by_names(names) }
 
         params = {
           name: username,
@@ -35,8 +35,8 @@ module Yuzakan
           email: userdata.email,
           attrs: userdata.attrs || {},
           local_group_id: primary_group&.id,
-          local_members:
-            member_groups&.map { {local_group_id: _1.id} } || [],
+          local_members: member_groups
+            &.map { |group| {local_group_id: group.id} } || [],
         }
         user_repo.create_with_members(**params)
 
@@ -52,9 +52,9 @@ module Yuzakan
         return if user.nil?
 
         primary_group = userdata.primary_group
-          &.then { group_repo.find_by_name(_1) }
+          &.then { |name| group_repo.find_by_name(name) }
         member_groups = userdata.groups&.difference([userdata.primary_group])
-          &.then { group_repo.all_by_names(_1) }
+          &.then { |names| group_repo.all_by_names(names) }
 
         params = {
           display_name: userdata.display_name,
@@ -62,16 +62,18 @@ module Yuzakan
           **{attrs: userdata.attrs&.merge(user.attrs)}.comact,
           local_group_id: primary_group&.id,
         }
-        user_repo.update(user.id, **params)
-        if member_groups
-          remain_group_ids = member_groups.map(&:id)
-          user_repo.find_with_members(user.id).local_members.each do |member|
-            unless remain_group_ids.delete(member.local_group_id)
-              member_repo.delete(member.id)
+        user_repo.transaction do
+          user_repo.update(user.id, **params)
+          if member_groups
+            remain_group_ids = member_groups.map(&:id)
+            user_repo.find_with_members(user.id).local_members.each do |member|
+              unless remain_group_ids.delete(member.local_group_id)
+                member_repo.delete(member.id)
+              end
             end
-          end
-          remain_group_ids.each do |group_id|
-            member_repo.create(local_user_id: user.id, local_group_id: group_id)
+            remain_group_ids.each do |group_id|
+              member_repo.create(local_user_id: user.id, local_group_id: group_id)
+            end
           end
         end
 
@@ -99,7 +101,7 @@ module Yuzakan
         user = user_repo.find_by_name(username)
         return false if user.nil?
 
-        hashed_password = password&.then { hash_password(_1) }
+        hashed_password = hash_password(password)
         user_repo.update(user.id, hashed_password:)
         true
       end
@@ -169,8 +171,7 @@ module Yuzakan
       end
 
       def member_list(groupname)
-        group = group_repo
-          .find_with_users_by_name(groupname)
+        group = group_repo.find_with_users_by_name(groupname)
         return if group.nil?
 
         group.members.map(:name)
@@ -219,6 +220,8 @@ module Yuzakan
       private def member_repo = @container["repos.local_member_repo"]
 
       private def hash_password(password)
+        return if password.nil?
+
         @container["operations.hash_password"].call(password).value_or(nil)
       end
 

@@ -3,40 +3,23 @@
 module Yuzakan
   module Repos
     class ProviderRepo < Yuzakan::DB::Repo
-      commands :create, use: :timestamps,
-        plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
-      commands update: :by_name, use: :timestamps,
-        plugins_options: {timestamps: {timestamps: [:updated_at]}}
-      commands delete: :by_name
-      private :create, :update, :delete
+      private def by_name(name) = providers.by_name(normalize_name(name))
 
-      def get(name)
-        providers.by_name(normalize_name(name)).one
-      end
+      def get(name) = by_name(name).one
 
       def set(name, **)
-        normalized_name = normalize_name(name)
-        providers.by_name(normalized_name).changeset(:update, **)
-          .map(:touch).commit ||
-          providers.changeset(:create, **, name: normalized_name)
+        by_name(name).changeset(:update, **).map(:touch).commit ||
+          providers.changeset(:create, **, name: normalize_name(name))
             .map(:add_timestamps).commit
       end
 
-      def unset(name)
-        providers.by_name(normalize_name(name)).changeset(:delete).commit
-      end
+      def unset(name) = by_name(name).changeset(:delete).commit
 
-      def exist?(name)
-        providers.by_name(normalize_name(name)).exist?
-      end
+      def exist?(name) = by_name(name).exist?
 
-      def list
-        providers.pluck(:name)
-      end
+      def all = providers.to_a
 
-      def all
-        providers.to_a
-      end
+      def list = providers.pluck(:name)
 
       def all_capable_of_operation(operation)
         ability = Yuzakan::Structs::Provider.operation_ability(operation)

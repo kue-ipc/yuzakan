@@ -3,22 +3,29 @@
 module Yuzakan
   module Repos
     class UserRepo < Yuzakan::DB::Repo
-      def get(name)
-        users.by_name(name).one
-      end
+      private def by_name(name) = users.by_name(normalize_name(name))
+
+      def get(name) = by_name(name).one
 
       def set(name, **)
-        users.by_name(name).changeset(:update, **).map(:touch).commit ||
-          users.changeset(:create, **, name: name).map(:add_timestamps).commit
+        by_name(name).changeset(:update, **).map(:touch).commit ||
+          users.changeset(:create, **, name: normalize_name(name))
+            .map(:add_timestamps).commit
       end
 
-      def unset(name)
-        users.by_name(name).changeset(:delete).commit
+      def unset(name) = by_name(name).changeset(:delete).commit
+
+      def exist?(name) = by_name(name).exist?
+
+      def all = users.to_a
+
+      def list = users.pluck(:name)
+
+      def get_with_groups(name)
+        by_name(name).combine(members: :group)..one
       end
 
-      def ordered_all
-        users.order(:name).to_a
-      end
+      # TODO: ここらは下は未整理
 
       def ordered_filter(order: {name: :asc}, filter: {})
         order = {name: :asc} if order.nil? || order.empty?

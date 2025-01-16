@@ -43,9 +43,11 @@ module Yuzakan
       in []
         Success([])
       in [String | Symbol, *]
-        Success(provider_repo.mget(*providers).select { _1.can_do?(operation) })
+        Success(provider_repo.mget(*providers)
+        .select { |provider| provider.can_do?(operation) })
       in [Yuzakan::Structs::Provider, *]
-        Success(providers.select { _1.can_do?(operation) })
+        Success(providers
+        .select { |provider| provider.can_do?(operation) })
       else
         Failure([:not_provider_list])
       end
@@ -92,9 +94,10 @@ module Yuzakan
       if data.attrs.nil? || data.attrs.empty?
         attrs = data.attrs
       else
-        # TODO: Failureの場合を見考慮
-        get_mappings(provider, category:) => Success(mappings)
-        convert_attrs(mappings, data.attrs) => Success(attrs)
+        mappings = get_mappings(provider, category:)
+          .value_or { |failure| return Failure(failure) }
+        attrs = convert_attrs(mappings, data.attrs)
+          .value_or { |failure| return Failure(failure) }
       end
 
       group_params =
@@ -118,9 +121,10 @@ module Yuzakan
       if params[:attrs].nil? || params[:attrs].empty?
         attrs = params[:attrs]
       else
-        # TODO: Failureの場合を見考慮
-        get_mappings(provider, category:) => Success(mappings)
-        map_attrs(mappings, data.attrs) => Success(attrs)
+        mappings = get_mappings(provider, category:)
+          .value_or { |failure| return Failure(failure) }
+        attrs = map_attrs(mappings, data.attrs)
+          .value_or { |failure| return Failure(failure) }
       end
 
       case category
@@ -139,18 +143,24 @@ module Yuzakan
     private def convert_attrs(mappings, attrs)
       return Success(nil) if attrs.nil?
 
-      mappings.to_h do |mapping|
-        [mapping.attr.name, mapping.convert_value(attrs[mapping.key])]
-      end.compact.then { Success(_1) }
+      converted_attrs = mappings
+        .select { |mapping| attrs.key?(mapping.key) }
+        .to_h do |mapping|
+          [mapping.attr.name, mapping.convert_value(attrs[mapping.key])]
+        end
+      Success(converted_attrs)
     end
 
     private def map_attrs(mappings, attrs)
       return Success(nil) if attrs.nil?
 
-      mappings.reject { |mapping| mapping.attr.readonly } # exclude read-only
+      mapped_attrs = mappings
+        .reject(&:readonly) # exclude read-only
+        .select { |mapping| attrs.key?(mapping.attr.name) }
         .to_h do |mapping|
         [mapping.key, mapping.map_value(attrs[mapping.attr.name])]
-      end.compact.then { Success(_1) }
+      end
+      Success(mapped_attrs)
     end
 
     # common fuctions

@@ -118,6 +118,10 @@ module Yuzakan
       def category_of?(name)
         category.casecmp?(name.intern)
       end
+
+      def readonly
+        attr.readonly
+      end
     end
   end
 end

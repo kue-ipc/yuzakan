@@ -18,6 +18,10 @@ module Yuzakan
       def to_s
         name
       end
+
+      def deleted?
+        deleted
+      end
     end
   end
 end

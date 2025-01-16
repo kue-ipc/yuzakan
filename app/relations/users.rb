@@ -9,6 +9,11 @@ module Yuzakan
           has_many :groups, through: :members
         end
       end
+
+      # always ordered by name
+      dataset do
+        order(:name)
+      end
     end
   end
 end

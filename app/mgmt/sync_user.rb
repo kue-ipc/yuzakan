@@ -6,36 +6,36 @@ module Yuzakan
     class SyncUser < Yuzakan::Operation
       include Deps[
         "providers.read_user",
-        "users.register",
-        "users.unregister",
+        "mgmt.register_users",
+        "mgmt.unregister_users",
       ]
 
       def call(username)
         username = step validate_name(username)
-        user_params = step read(username)
-        step sync(username, user_params)
+        params = step read_user(username)
+        step sync_user(username, params)
       end
 
-      private def read(username)
-        providers = step read_user.call(username)
-
+      private def read_user(username)
+        providers = read_user.call(username)
+          .value_or { |failure| return Failure(failure) }
         return Success(nil) if providers.empty?
 
-        user_params = {groups: []}
+        params = {groups: []}
         providers.each_value do |data|
-          %i[display_name email primary_group].each do |name|
-            user_params[name] ||= data[name] unless data[name].nil?
+          [:display_name, :email, :primary_group].each do |name|
+            params[name] ||= data[name] if data.key?(name)
           end
-          user_params[:groups] |= data[:groups] unless data[:groups].nil?
+          params[:groups] |= data[:groups] if data.key?(:groups)
         end
-        Success(user_params)
+        Success(params)
       end
 
-      private def sync(username, user_params)
-        if user_params
-          step register.call(username, user_params)
+      private def sync_user(username, params)
+        if params
+          register_user.call(username, params)
         else
-          step unregister.call(username)
+          unregister_user.call(username)
         end
       end
     end

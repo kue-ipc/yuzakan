@@ -1,53 +1,28 @@
 # frozen_string_literal: true
 
-require "hanami/interactor"
-require "hanami/validations"
-require_relative "../predicates/name_predicates"
-
 # Userレポジトリからの解除
 module Yuzakan
   module Mgmt
     class UnregisterUser < Yuzakan::Operation
-      include Hanami::Interactor
+      include Deps[
+        "repos.user_repo",
+        "repos.member_repo"
+      ]
 
-      class Validator
-        include Hanami::Validations
-        predicates NamePredicates
-        messages :i18n
-
-        validations do
-          required(:username).filled(:str?, :name?, max_size?: 255)
-        end
+      def call(username)
+        username = step validate_name(username)
+        step unregister_user(username)
       end
 
-      expose :user
+      def unregister_user(username)
+        user = user_repo.get(username)
+        return Success(nil) if user.nil?
+        return Success(user) if user.deleted?
 
-      def initialize(user_repository: UserRepository.new,
-        member_repository: MemberRepository.new)
-        @user_repository = user_repository
-        @member_repository = member_repository
-      end
-
-      def call(params)
-        @user = @user_repository.find_by_name(params[:username])
-        return if @user.nil?
-        return if @user.deleted
-
-        @user_repository.transaction do
-          @user_repository.update(@user.id, deleted: true, deleted_at: Time.now)
-          @member_repository.clear_of_user(@user)
+        user_repo.transaction do
+          member_repo.delete_by_user(user)
+          Success(user_repo.set(username, deleted: true, deleted_at: Time.now))
         end
-      end
-
-      private def valid?(params)
-        result = Validator.new(params).validate
-        if result.failure?
-          Hanami.logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
-          error(result.messages)
-          return false
-        end
-
-        true
       end
     end
   end

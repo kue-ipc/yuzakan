@@ -1,58 +1,29 @@
 # frozen_string_literal: true
 
-require "hanami/interactor"
-require "hanami/validations"
-require_relative "../predicates/name_predicates"
-
 # Groupレポジトリへの登録または更新
 module Yuzakan
   module Mgmt
     class RegisterGroup < Yuzakan::Operation
-      include Hanami::Interactor
+      include Deps[
+        "repos.group_repo",
+      ]
 
-      class Validator
-        include Hanami::Validations
-        predicates NamePredicates
-        messages :i18n
-
-        validations do
-          required(:groupname).filled(:str?, :name?, max_size?: 255)
-          optional(:display_name).maybe(:str?, max_size?: 255)
-          optional(:primary).maybe(:bool?)
-        end
+      def call(groupname, params)
+        groupname = step validate_name(groupname)
+        params = step validate_params(params)
+        step register_group(groupname, params)
       end
 
-      def initialize(group_repository: GroupRepository.new)
-        @group_repository = group_repository
-      end
-
-      expose :group
-
-      def call(params)
-        data = {
-          name: params[:groupname],
+      private def validate_params(params)
+        Success({
           **params.slice(:display_name, :primary),
           deleted: false,
           deleted_at: nil,
-        }
-        group_id = @group_repository.find_by_name(params[:groupname])&.id
-        @group =
-          if group_id
-            @group_repository.update(group_id, data)
-          else
-            @group_repository.create(data)
-          end
+        })
       end
 
-      private def valid?(params)
-        result = Validator.new(params).validate
-        if result.failure?
-          Hanami.logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
-          error(result.messages)
-          return false
-        end
-
-        true
+      private def register_group(groupname, params)
+        Success(group_repo.set(groupname, **params))
       end
     end
   end

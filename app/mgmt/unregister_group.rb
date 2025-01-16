@@ -1,48 +1,29 @@
 # frozen_string_literal: true
 
-require "hanami/interactor"
-require "hanami/validations"
-require_relative "../predicates/name_predicates"
-
 # Groupレポジトリからの解除
 module Yuzakan
   module Mgmt
     class UnregisterGroup < Yuzakan::Operation
-      include Hanami::Interactor
+      include Deps[
+        "repos.group_repo",
+        "repos.member_repo"
+      ]
 
-      class Validator
-        include Hanami::Validations
-        predicates NamePredicates
-        messages :i18n
+      def call(groupname)
+        groupname = step validate_name(groupname)
+        step unregister_group(groupname)
+      end
 
-        validations do
-          required(:groupname).filled(:str?, :name?, max_size?: 255)
+      def unregister_group(groupname)
+        group = group_repo.get(groupname)
+        return Success(nil) if group.nil?
+        return Success(group) if group.deleted?
+
+        group_repo.transaction do
+          member_repo.delete_by_group(group)
+          Success(group_repo.set(groupname,
+            deleted: true, deleted_at: Time.now))
         end
-      end
-
-      expose :group
-
-      def initialize(group_repository: GroupRepository.new)
-        @group_repository = group_repository
-      end
-
-      def call(params)
-        @group = @group_repository.find_by_name(params[:groupname])
-        return unless @group
-
-        @group_repository.update(group.id, deleted: true,
-          deleted_at: Time.now)
-      end
-
-      private def valid?(params)
-        result = Validator.new(params).validate
-        if result.failure?
-          Hanami.logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
-          error(result.messages)
-          return false
-        end
-
-        true
       end
     end
   end
