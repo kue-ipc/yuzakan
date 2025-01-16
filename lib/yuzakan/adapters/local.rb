@@ -72,7 +72,8 @@ module Yuzakan
               end
             end
             remain_group_ids.each do |group_id|
-              member_repo.create(local_user_id: user.id, local_group_id: group_id)
+              member_repo.create(local_user_id: user.id,
+                local_group_id: group_id)
             end
           end
         end

@@ -5,11 +5,9 @@ require "dry/operation"
 
 module Yuzakan
   class Operation < Dry::Operation
-    include Deps[
-      "logger",
-  ]
+    include Deps["logger"]
 
-  # logging
+    # logging
     private def on_failure(failure)
       case failure
       in [:error, e]
