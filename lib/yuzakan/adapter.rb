@@ -43,8 +43,6 @@
 # user_list -> Array[username] [readable]
 # user_search(query) -> Array[username] [readable]
 #
-# user_group_list(username) -> Array[groupname] [readable, group]
-#
 # group_create(groupname, groupdata) -> groupdata? [writable]
 #   ... if group exists, do nothing and return nil
 # group_read(groupname) -> groupdata? [readable]
@@ -156,6 +154,8 @@ module Yuzakan
 
     abstract true
 
+    attr_reader :logger
+
     def initialize(params, group: false, logger: Logger.new($stderr))
       @params = self.class.normalize_params(params)
       @group = group
@@ -217,10 +217,6 @@ module Yuzakan
     end
 
     def user_search(query)
-      raise NoMethodError, "Not implement #{self.class}##{__method__}"
-    end
-
-    def user_group_list(username)
       raise NoMethodError, "Not implement #{self.class}##{__method__}"
     end
 

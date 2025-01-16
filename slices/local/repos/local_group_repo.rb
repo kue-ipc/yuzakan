@@ -24,6 +24,8 @@ module Local
       def exist_by_name?(name) = by_name(name).exist?
       def names = local.groups.pluck(:name)
 
+      def all_by_names(*names) = local_groups.where(name: names.flatten).to_a
+
       # search
       private def search(query, ignore_case: true, **)
         pattern = generate_like_pattern(query, **)
@@ -41,6 +43,10 @@ module Local
 
       def find_with_users_by_name(name)
         by_name(name).combine(:local_users).combine(:local_member_users).one
+      end
+
+      def find_with_members(id)
+        by_pk(id).combine(:local_members).one
       end
     end
   end

@@ -44,6 +44,10 @@ module Local
       def find_with_groups_by_name(name)
         by_name(name).combine(:local_groups).combine(:local_member_groups).one
       end
+
+      def create_with_members(**)
+        local_users.combine(:local_members).command(:create).call(**)
+      end
     end
   end
 end

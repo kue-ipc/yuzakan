@@ -20,111 +20,114 @@ module Yuzakan
       end
 
       def user_create(username, userdata, password: nil)
-        return if user_repo.exist?(username)
+        return if user_repo.exist_by_name?(username)
+
+        hashed_password = passwrd&.then { hash_password(_1) }
+        primary_group = userdata.primary_group
+          &.then { group_repo.find_by_name(_1) }
+        member_groups = userdata.groups&.difference([userdata.primary_group])
+          &.then { group_repo.all_by_names(_1) }
 
         params = {
           name: username,
+          hashed_password: hashed_password,
           display_name: userdata.display_name,
           email: userdata.email,
+          attrs: userdata.attrs || {},
+          local_group_id: primary_group&.id,
+          local_members:
+            member_groups&.map { {local_group_id: _1.id} } || [],
         }
-        if password
-          case @container["operations.hash_password"].call(password)
-          in Success[hashed_password]
-            params[:hashed_password] = hashed_password
-          in Failure[:invalid, msg]
-            raise AdapterError, msg
-          in Failure[:error, err]
-            raise err
-          end
-        end
-        user_struct_to_data(user_repo.set(username, **params))
+        user_repo.create_with_members(**params)
+
+        user_read(username)
       end
 
       def user_read(username)
-        user_struct_to_data(user_repo.get(username))
+        user_struct_to_data(user_repo.find_with_groups_by_name(username))
       end
 
       def user_update(username, **userdata)
-        return unless user_repo.exist?(username)
+        user = user_repo.find_by_name(username)
+        return if user.nil?
+
+        primary_group = userdata.primary_group
+          &.then { group_repo.find_by_name(_1) }
+        member_groups = userdata.groups&.difference([userdata.primary_group])
+          &.then { group_repo.all_by_names(_1) }
 
         params = {
           display_name: userdata.display_name,
           email: userdata.email,
+          **{attrs: userdata.attrs&.merge(user.attrs)}.comact,
+          local_group_id: primary_group&.id,
         }
-        user_struct_to_data(user_repo.set(username, **params))
+        user_repo.update(user.id, **params)
+        if member_groups
+          remain_group_ids = member_groups.map(&:id)
+          user_repo.find_with_members(user.id).local_members.each do |member|
+            unless remain_group_ids.delete(member.local_group_id)
+              member_repo.delete(member.id)
+            end
+          end
+          remain_group_ids.each do |group_id|
+            member_repo.create(local_user_id: user.id, local_group_id: group_id)
+          end
+        end
+
+        user_read(username)
       end
 
       def user_delete(username)
-        user_struct_to_data(user_repo.unset(username))
+        user = user_repo.find_with_groups_by_name(username)
+        return if user.nil?
+
+        user_repo.delete(user.id)
+        user_struct_to_data(user)
       end
 
       def user_auth(username, password)
-        user = user_repo.get(username)
+        user = user_repo.find_by_name(username)
         return if user.nil?
         return false if user.locked?
         return false if user.hashed_password.nil?
 
-        case @container["operations.verify_password"]
-          .call(password, user.hashed_password)
-        in Success[result]
-          result
-        in Failure[:invalid, msg]
-          raise AdapterError, msg
-        in Failure[:error, err]
-          raise err
-        end
+        verify_password(password, user.hashed_password)
       end
 
       def user_change_password(username, password)
-        return unless user_repo.exist?(username)
+        user = user_repo.find_by_name(username)
+        return false if user.nil?
 
-        hashed_password =
-          if password
-            case Hanam.app["operations.hash_password"].call(password)
-            in Success[hashed_password]
-              hashed_password
-            in Failure[:invalid, msg]
-              raise AdapterError, msg
-            in Failure[:error, err]
-              raise err
-            end
-          end
-        !!user_repo.set(username, hashed_password:)
-      end
-
-      def user_generate_code(username)
-      end
-
-      def user_reset_mfa(username)
+        hashed_password = (hash_password(passwold) if password)
+        user_repo.update(user.id, hashed_password:)
+        true
       end
 
       def user_lock(username)
-        user = user_repo.get(username)
-        return if user.nil?
-        return true if user.locked?
+        user = user_repo.find_by_name(username)
+        return false if user.nil?
+        return false if user.locked?
 
-        !!user_repo.set(username, locked: true)
+        user_repo.update(user.id, locked: true)
+        true
       end
 
       def user_unlock(username, _password = nil)
-        user = user_repo.get(username)
-        return if user.nil?
-        return true unless user.locked?
+        user = user_repo.find_by_name(username)
+        return false if user.nil?
+        return false unless user.locked?
 
-        !!user_repo.set(username, locked: false)
+        user_repo.update(user.id, locked: false)
+        true
       end
 
       def user_list
-        user_repo.list
+        user_repo.names
       end
 
       def user_search(query)
-        user_repo.search(query)
-      end
-
-      def user_group_list(username)
-        user = user_repo.get(username)
-        group_repo.list_of_user(user)
+        user_repo.search_names(query)
       end
 
       def group_create(groupname, groupdata)
@@ -133,7 +136,7 @@ module Yuzakan
         params = {
           name: groupname,
           display_name: groupdata.display_name,
-          attrs: groupdata.attrs,
+          attrs: groupdata.attrs || {},
         }
         group_struct_to_data(group_repo.create(**params))
       end
@@ -143,14 +146,14 @@ module Yuzakan
       end
 
       def group_update(groupname, groupdata)
-        return unless group_repo.exist?(groupname)
+        group = group_repo.find_by_name(groupname)
+        return if group.nil?
 
         params = {
           display_name: groupdata.display_name,
-          attrs: groupdata.attrs,
-        }.compact
-        group_struct_to_data(
-          group_repo.update_by_name(groupname, **params))
+          **{attrs: groupdata.attrs&.merge(group.attrs)}.comact,
+        }
+        group_struct_to_data(group_repo.update(group.id, **params))
       end
 
       def group_delete(groupname)
@@ -214,6 +217,15 @@ module Yuzakan
       private def user_repo = @container["repos.local_user_repo"]
       private def group_repo = @container["repos.local_group_repo"]
       private def member_repo = @container["repos.local_member_repo"]
+
+      private def hash_password(password)
+        @container["operations.hash_password"].call(password).value_or(nil)
+      end
+
+      private def verify_password(password, hashed_password)
+        @container["operations.verify_password"]
+          .call(password, hashed_password).value_or(false)
+      end
 
       private def user_struct_to_data(user)
         return if user.nil?

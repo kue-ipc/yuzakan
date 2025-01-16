@@ -368,11 +368,6 @@ module Yuzakan
         ldap_search(opts).map { |user| user_entry_name(user) }
       end
 
-      def user_group_list(username)
-        user = ldap_user_read(username)
-        ldap_user_group_list(user).map { |group| group_entry_name(group) }
-      end
-
       def group_read(groupname)
         group = ldap_group_read(groupname)
         return if group.nil?

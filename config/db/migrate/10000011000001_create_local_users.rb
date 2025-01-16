@@ -12,7 +12,7 @@ ROM::SQL.migration do
 
       column :locked, TrueClass, null: false, default: false
 
-      column :attrs, "jsonb"
+      column :attrs, "jsonb", null: false, default: {}
 
       index :name, unique: true
     end

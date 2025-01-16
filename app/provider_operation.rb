@@ -67,7 +67,7 @@ module Yuzakan
           logger: Hanami.logger)
         Success(adapter)
       rescue => e
-        Failure([:error, e.message])
+        Failure([:error, e])
       end
     end
 
