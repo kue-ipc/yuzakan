@@ -34,10 +34,10 @@ module Yuzakan
           expire_after: settings.session_expire,
         },]
       end
-    config.middleware.use :body_parser, :json
     config.inflections do |inflections|
       inflections.acronym "AD"
     end
+    config.actions.format :html
     # config.shared_app_component_keys += ["repos.*_repo"]
   end
 end
