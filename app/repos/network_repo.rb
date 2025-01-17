@@ -5,22 +5,20 @@ require "ipaddr"
 module Yuzakan
   module Repos
     class NetworkRepo < Yuzakan::DB::Repo
+      private def by_address(address) = networks.by_address(address)
+
       def get(address)
-        address = normalize_address(address)
-        networks.by_address(address).one
+        by_address(address).one
       end
 
       def set(address, **)
-        address = normalize_address(address)
-        networks.by_address(address).changeset(:update,
-                                               **).map(:touch).commit ||
+        by_address(address).changeset(:update, **).map(:touch).commit ||
           networks.changeset(:create, **,
-            address: address).map(:add_timestamps).commit
+            address: normalize_address(address)).map(:add_timestamps).commit
       end
 
       def unset(address)
-        address = normalize_address(address)
-        networks.by_address(address).changeset(:delete).commit
+        by_address(address).changeset(:delete).commit
       end
 
       def all
@@ -29,6 +27,13 @@ module Yuzakan
 
       def count
         networks.count
+      end
+
+      def find_include_address(address)
+        ip = IPAddr.new(address)
+        networks.all
+          .select { |network| network.include?(ip) }
+          .max_by(&:prefix)
       end
 
       private def normalize_address(address)

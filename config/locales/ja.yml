@@ -79,6 +79,9 @@ ja:
         実行されていない%{target}が存在する可能性があるため、
         再度%{action}を実行してください。
     invalid_csrf_token: CSRFトークンが不正です。
+  messages:
+    unauthenticated: "ログインしていません。"
+    session_timeout: "セッションがタイムアウトしました。"
   interactors:
     decrypt: 復号化
     encrypt: 暗号化

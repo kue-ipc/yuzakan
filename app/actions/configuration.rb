@@ -3,28 +3,23 @@
 module Yuzakan
   module Actions
     module Configuration
-      include Connection
-
       def self.included(action)
-        if action.is_a?(Class)
-          action.class_eval do
-            before :configurate!
-          end
-        else
-          action.define_singleton_method(:included, &method(:included))
-        end
+        action.include Conneciton unless action.include?(Connection)
+        action.before :configurate!
       end
 
-      private def configurate!
-        reply_uninitialized unless configurated?
+      private def configurate!(request, response)
+        return if configurated?(request, response)
+
+        reply_uninitialized(request, response)
       end
 
-      private def configurated?
-        !current_config.nil?
+      private def configurated?(request, response)
+        !response["current_config"].nil?
       end
 
-      private def reply_uninitialized
-        redirect_to Admin.routes.path(:new_config)
+      private def reply_uninitialized(request, response)
+        response.redirect_to(Hanami.app["routes"].path(:root))
       end
     end
   end

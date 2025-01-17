@@ -11,16 +11,8 @@
 module Yuzakan
   module Actions
     module Authorization
-      include Connection
-
       def self.included(action)
-        if action.is_a?(Class)
-          action.class_eval do
-            before :authorize!
-          end
-        else
-          action.define_singleton_method(:included, &method(:included))
-        end
+        action.before :authorize!
       end
 
       private def authorize!
