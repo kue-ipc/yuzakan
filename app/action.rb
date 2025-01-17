@@ -32,7 +32,7 @@ module Yuzakan
     defines :security_level
     security_level 1
 
-    before :connect!
+    before :connect! # first
     before :check_session!
     before :configurate!
     before :authenticate!
@@ -42,17 +42,36 @@ module Yuzakan
     handle_exception StandardError => :handle_standard_error
 
     private def connect!(request, response)
-      Hanami.logger.info(log_info(request, response))
+      response[:current_time] = Time.now
+      response[:current_uuid] = request.session[:uuid] || SecureRandom.uuid
+      response[:current_config] = config_repo.current
+      response[:current_user] = user_repo.get(request.session[:user])
+      response[:current_network] = network_repo.find_by_ip(request.ip)
+      response[:current_level] = [
+        response[:current_user]&.clearance_level || 0,
+        response[:current_network]&.clearance_level || 0,
+      ].min
+
+      @log_info = {
+        uuid: response[:current_uuid],
+        client: request.ip,
+        user: response[:current_user]&.name,
+        action: self.class.name,
+        method: request.request_method,
+        path: request.path,
+      }
+
+      Hanami.logger.info(@log_info)
     end
 
     private def check_session!(request, response)
       return if request.session[:user].nil?
 
       if request.session[:updated_at]
-        timeout = current_config(request, response)&.session_timeout || 3600
-        if timeout.zero? ||
-            current_time(request, response) - session[:updated_at] > timeout
-          request.session[:updated_at] = current_time
+        timeout = response[:current_config]&.session_timeout
+        if timeout && (timeout.zero? ||
+            response[:current_time] - session[:updated_at] > timeout)
+          request.session[:updated_at] = response[:current_time]
           return
         end
       end
@@ -67,68 +86,26 @@ module Yuzakan
     end
 
     private def configurate!(request, response)
-      return if current_config
+      return if response[:current_config]
 
       reply_uninitialized(request, response)
     end
 
     private def authenticate!(request, response)
       return if self.class.security_level&.zero?
-      return if current_user
+      return if response[:current_user]
 
       reply_unauthenticated(request, response)
     end
 
     private def authorize!(request, response)
-      return if current_level(request, response) >= self.class.security_level
+      return if response[:current_level] >= self.class.security_level
 
       reply_unauthorized(request, response)
     end
 
-    private def done!(request, response)
-      activity_log_repo.create(**log_info(request, response),
-        status: response.status)
-    end
-
-    private def log_info(request, response)
-      @log_info ||= {
-        uuid: current_uuid(request, response),
-        client: request.ip,
-        user: current_user(request, response)&.name,
-        action: self.class.name,
-        method: request.request_method,
-        path: request.path,
-      }
-    end
-
-    private def current_time(_request, _response)
-      @current_time ||= Time.now
-    end
-
-    private def current_uuid(request, _response)
-      @current_uuid ||= request.session[:uuid] || SecureRandom.uuid
-    end
-
-    private def current_config(_request, _response)
-      (@current_config ||= Maybe(config_repo.current)).value_or(nil)
-    end
-
-    private def current_user(request, _response)
-      (@current_user ||= Maybe(user_repo.get(request.session[:user])))
-        .value_or(nil)
-    end
-
-    # FIXME: unixドメイン経由やリバースプロキシ経由の場合の検証が必要。
-    private def current_network(request, _response)
-      (@current_network ||= Maybe(network_repo.find_by_ip(request.ip)))
-        .value_or(nil)
-    end
-
-    private def current_level(request, response)
-      (@current_level ||= Maybe([
-        current_user(request, response)&.clearance_level || 0,
-        current_network(request, response)&.clearance_level || 0,
-      ].min)).value_or(nil)
+    private def done!(_request, response)
+      activity_log_repo.create(**@log_info, status: response.status)
     end
 
     private def reply_uninitialized(_request, response)
@@ -140,7 +117,7 @@ module Yuzakan
       response.redirect_to(Hanami.app["routes"].path(:root))
     end
 
-    private def reply_unauthorized(request, response)
+    private def reply_unauthorized(_request, _response)
       halt 403
     end
 
