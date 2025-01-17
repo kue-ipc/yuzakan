@@ -121,8 +121,8 @@ module Yuzakan
       halt 403
     end
 
-    private def handle_standard_error(e)
-      Hanami.logger.error e
+    private def handle_standard_error(request, response, exception)
+      Hanami.logger.error exception
       halt 500
     end
   end
