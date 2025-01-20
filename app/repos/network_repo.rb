@@ -31,7 +31,7 @@ module Yuzakan
 
       def find_include_address(address)
         ip = IPAddr.new(address)
-        networks.all
+        networks.to_a
           .select { |network| network.include?(ip) }
           .max_by(&:prefix)
       end

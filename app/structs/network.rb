@@ -27,6 +27,10 @@ module Yuzakan
           "#{@ipaddr}/#{@ipaddr.prefix}"
         end
       end
+
+      def prefix
+        @ipaddr.prefix
+      end
     end
   end
 end

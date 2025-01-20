@@ -39,29 +39,20 @@ module Yuzakan
     before :authorize!
     after :done!
 
-    handle_exception StandardError => :handle_standard_error
+    Hanami.env["produciton"] do
+      handle_exception StandardError => :handle_standard_error
+    end
 
     private def connect!(request, response)
       response[:current_time] = Time.now
       response[:current_uuid] = request.session[:uuid] || SecureRandom.uuid
       response[:current_config] = config_repo.current
       response[:current_user] = user_repo.get(request.session[:user])
-      response[:current_network] = network_repo.find_by_ip(request.ip)
+      response[:current_network] = network_repo.find_include_address(request.ip)
       response[:current_level] = [
         response[:current_user]&.clearance_level || 0,
         response[:current_network]&.clearance_level || 0,
       ].min
-
-      @log_info = {
-        uuid: response[:current_uuid],
-        client: request.ip,
-        user: response[:current_user]&.name,
-        action: self.class.name,
-        method: request.request_method,
-        path: request.path,
-      }
-
-      Hanami.logger.info(@log_info)
     end
 
     private def check_session!(request, response)
@@ -104,8 +95,18 @@ module Yuzakan
       reply_unauthorized(request, response)
     end
 
-    private def done!(_request, response)
-      activity_log_repo.create(**@log_info, status: response.status)
+    private def done!(request, response)
+      log_info = {
+        uuid: response[:current_uuid],
+        client: request.ip,
+        user: response[:current_user]&.name,
+        action: self.class.name,
+        method: request.request_method,
+        path: request.path,
+        status: response.status,
+      }
+      Hanami.logger.info(log_info)
+      activity_log_repo.create(**log_info)
     end
 
     private def reply_uninitialized(_request, response)
