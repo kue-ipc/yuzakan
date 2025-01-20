@@ -16,6 +16,7 @@ module Yuzakan
       "repos.network_repo",
       "repos.user_repo",
       "repos.activity_log_repo",
+      login_view: "views.home.login"
     ]
 
     # Cache
@@ -44,6 +45,10 @@ module Yuzakan
     end
 
     private def connect!(request, response)
+      puts "--------------------------------"
+      pp response.session[CSRF_TOKEN]
+      puts "================================"
+
       response[:current_time] = Time.now
       response[:current_uuid] = request.session[:uuid] || SecureRandom.uuid
       response[:current_config] = config_repo.current
@@ -114,8 +119,10 @@ module Yuzakan
     end
 
     private def reply_unauthenticated(_request, response)
-      response.flash[:warn] ||= I18n.t("messages.unauthenticated")
-      response.redirect_to(Hanami.app["routes"].path(:root))
+      halt 401, response.render(login_view)
+      # response.render(login_view)
+      # response.flash[:warn] ||= I18n.t("messages.unauthenticated")
+      # response.redirect_to(Hanami.app["routes"].path(:root))
     end
 
     private def reply_unauthorized(_request, _response)

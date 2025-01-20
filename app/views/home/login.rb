@@ -4,8 +4,7 @@ module Yuzakan
   module Views
     module Home
       class Login < Yuzakan::View
-        include Web::View
-        layout false
+        config.layout = false
       end
     end
   end
