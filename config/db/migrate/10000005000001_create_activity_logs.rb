@@ -20,7 +20,7 @@ ROM::SQL.migration do
 
       index :uuid
       index :client
-      index :username
+      index :user
     end
   end
 end

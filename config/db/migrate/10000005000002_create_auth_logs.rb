@@ -7,7 +7,7 @@ ROM::SQL.migration do
 
       column :uuid, String, null: false
       column :client, String, null: false
-      column :username, String, null: false
+      column :user, String, null: false
 
       column :result, String, null: false
       column :code, String
@@ -17,7 +17,7 @@ ROM::SQL.migration do
 
       index :uuid
       index :client
-      index :username
+      index :user
     end
   end
 end
