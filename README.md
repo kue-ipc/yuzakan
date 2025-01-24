@@ -65,28 +65,24 @@ Hanami 2 へアップデート中です。
 
 ### データベース
 
-* [ ] SQLite (本番環境では非推奨)
-* [ ] MariaDB
 * [x] PostgreSQL
+* [ ] MariaDB
+* [ ] SQLite (本番環境では非推奨)
 
-現在はPostgreSQLのみテストしていますが、他DBもサポート予定です。
-
-MariaDBの場合はutf8mb4にしてください。DATABES_URLでは"?encoding=utf8mb4"を付ける必要があります。
+現在はPostgreSQLのみ対応しています。他のDBもサポートできるかはわかりません。
 
 ### セッション管理key-valueデータベース
 
 * [x] redis (デフォルト)
-* [ ] memcaced (未テスト、キャッシュ機能は未実装)
+* [ ] memcaced
+
+reidsが無い場合は、クッキーセッション、オンメモリキャッシュを使用します。
 
 ### サポートするOS/ディストリビューション
 
-* [x] Rocky Linux 8
-* [x] Ubuntu 20.04 LTS
-* [ ] CentOS 8
-* [ ] CentOS Stream 8
-* [ ] Ubuntu 22.04 LTS (予定)
-
-現在はRocky Linux 8とUbuntu 20.04 LTSでのみテストしています。
+* [x] Ubuntu 24.04 LTS
+* [x] Rocky 9
+* [ ] Rocky 10
 
 ## セットアップ
 

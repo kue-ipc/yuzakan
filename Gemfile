@@ -16,9 +16,9 @@ gem "puma"
 gem "rake"
 
 # Database
-gem "mysql2"
 gem "pg"
-gem "sqlite3"
+# gem "mysql2"
+# gem "sqlite3"
 
 # Template
 gem "slim"
