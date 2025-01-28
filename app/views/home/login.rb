@@ -4,7 +4,7 @@ module Yuzakan
   module Views
     module Home
       class Login < Yuzakan::View
-        config.layout = false
+        # config.layout = false
       end
     end
   end

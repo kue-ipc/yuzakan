@@ -3,19 +3,18 @@ html lang="ja"
   head
     meta charset="UTF-8"
     meta name="viewport" content="width=device-width, initial-scale=1.0"
-    / FIXME: 必要かどうかは要確認
-    / = csrf_meta_tagse
+    = csrf_param_meta_tag 
+    = csrf_token_meta_tag
     title
-      | Yuzakan
-      / = current_config&.title
+      = current_config&.title
     / TODO: esbuildでbundleしない時に必要になるかもしれない。
-    / = importmap
+    / = importmap_tag
     = favicon_tag
     = stylesheet_tag "app"
     = javascript_tag "app", type: "module"
   body
-    = render "partial/header"
+    / = render "partial/header"
     .container-fluid.mt-2
-      = render "partial/alert"
+      / = render "partial/alert"
       = yield
-    = render "partial/footer"
+    / = render "partial/footer"
