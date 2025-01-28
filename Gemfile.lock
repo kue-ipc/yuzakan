@@ -258,7 +258,6 @@ GEM
       hansi (~> 0.2.0)
       mustermann (= 3.0.3)
     mutex_m (0.3.0)
-    mysql2 (0.5.6)
     nenv (0.3.0)
     net-http (0.6.0)
       uri
@@ -399,8 +398,6 @@ GEM
       tilt (>= 2.1.0)
     smbhash (1.1.0)
     sorbet-runtime (0.5.11755)
-    sqlite3 (2.5.0-aarch64-linux-gnu)
-    sqlite3 (2.5.0-x86_64-linux-gnu)
     stringio (3.1.2)
     temple (0.10.3)
     thor (1.3.2)
@@ -447,7 +444,6 @@ DEPENDENCIES
   hanami-webconsole (~> 2.2)
   hiredis
   i18n
-  mysql2
   net-ldap
   ostruct
   pg
@@ -463,7 +459,6 @@ DEPENDENCIES
   ruby-lsp
   slim
   smbhash
-  sqlite3
   xxhash
   zxcvbn-js
 
