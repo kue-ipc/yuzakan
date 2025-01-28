@@ -4,6 +4,7 @@
 module Yuzakan
   module Views
     module Helpers
+      include CSRFHelper
       # include AlertHelper
       # include ErrorHelper
       # include EscapeHelper
