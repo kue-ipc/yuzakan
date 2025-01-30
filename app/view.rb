@@ -6,7 +6,7 @@ require "slim"
 
 module Yuzakan
   class View < Hanami::View
-    expose :current_config, layout: true
-    expose :current_user, layout: true
+    expose :current_config, as: :config, layout: true
+    expose :current_user, as: :user, layout: true
   end
 end

@@ -5,8 +5,7 @@ html lang="ja"
     meta name="viewport" content="width=device-width, initial-scale=1.0"
     = csrf_param_meta_tag 
     = csrf_token_meta_tag
-    title
-      = current_config&.title
+    = current_config.config_tag
     / TODO: esbuildでbundleしない時に必要になるかもしれない。
     / = importmap_tag
     = favicon_tag
