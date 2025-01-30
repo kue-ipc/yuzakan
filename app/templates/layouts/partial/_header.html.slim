@@ -6,7 +6,7 @@ header#header
         data: {bs_toggle: "collapse", bs_target: "#navbar-content"},
         aria: {controls: "navbar-content", expanded: "false",
           label: I18n.t("view.buttons.toggle_navigation")}) do
-        span.navbar-toggler-icon
+        = tag.span(class: "navbar-toggler-icon")
       #navbar-content.collapse.navbar-collapse
         - if current_user
           ul.navbar-nav.me-auto
