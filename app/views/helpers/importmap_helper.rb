@@ -17,7 +17,6 @@ module Yuzakan
           @hyperapp/time
           bootstrap
           csv
-          es-module-shims
           file-saver
           hljs
           http-link-header
