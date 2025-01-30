@@ -1,48 +1,49 @@
 header#header
-  nav.navbar.navbar-expand-sm.navbar-dark.bg-dark-bar
+  nav.navbar.navbar-expand-sm.bg-body-tertiary
     .container-fluid
-      = link_to current_config&.title || Yuzakan.name, routes.path(:root), class: 'navbar-brand'
-      button.navbar-toggler[type="button" data-bs-toggle="collapse" data-bs-target="#navbar-content"
-                            aria-controls="navbar-content" aria-expanded="false"
-                            aria-label="ナビゲーション切替"]
+      = link_to current_config.title, routes.path(:root), class: "navbar-brand"
+      = tag.button(class: "navbar-toggler", type: "button",
+        data: {bs_toggle: "collapse", bs_target: "#navbar-content"},
+        aria: {controls: "navbar-content", expanded: "false",
+          label: I18n.t("view.buttons.toggle_navigation")}) do
         span.navbar-toggler-icon
       #navbar-content.collapse.navbar-collapse
         - if current_user
           ul.navbar-nav.me-auto
             li.nav-item
-              = link_to routes.path(:root), class: 'nav-link d-flex align-items-center' do
-                - text bs_icon('house', class: 'flex-shrink-0 me-1')
-                - span class: 'd-none d-lg-inline' do
-                  - text '利用者用メニュー'
+              = link_to routes.path(:root), class: "nav-link d-flex align-items-center" do
+                - text bs_icon("house", class: "flex-shrink-0 me-1")
+                - span class: "d-none d-lg-inline" do
+                  - text "利用者用メニュー"
             - if current_level >= 2
               li.nav-item
-                = link_to Admin.routes.path(:root), class: 'nav-link d-flex align-items-center' do
-                  - text bs_icon('house-heart', class: 'flex-shrink-0 me-1')
-                  - span class: 'd-none d-lg-inline' do
-                    - text '管理者用メニュー'
+                = link_to Admin.routes.path(:root), class: "nav-link d-flex align-items-center" do
+                  - text bs_icon("house-heart", class: "flex-shrink-0 me-1")
+                  - span class: "d-none d-lg-inline" do
+                    - text "管理者用メニュー"
             / li.nav-item
-            /   = link_to routes.path(:edit_user_password), class: 'nav-link d-flex align-items-center' do
-            /     - text bs_icon('input-cursor-text', class: 'flex-shrink-0 me-1')
-            /     - span class: 'd-none d-lg-inline' do
-            /       - text 'パスワード'
+            /   = link_to routes.path(:edit_user_password), class: "nav-link d-flex align-items-center" do
+            /     - text bs_icon("input-cursor-text", class: "flex-shrink-0 me-1")
+            /     - span class: "d-none d-lg-inline" do
+            /       - text "パスワード"
             / li.nav-item
-            /   = link_to routes.path(:google), class: 'nav-link d-flex align-items-center' do
-            /     - text bs_icon('google', class: 'flex-shrink-0 me-1')
-            /     - span class: 'd-none d-lg-inline' do
-            /      - text 'Google Workspace'
+            /   = link_to routes.path(:google), class: "nav-link d-flex align-items-center" do
+            /     - text bs_icon("google", class: "flex-shrink-0 me-1")
+            /     - span class: "d-none d-lg-inline" do
+            /      - text "Google Workspace"
 
-          = link_to routes.path(:user), class: 'me-2 link-user d-flex align-items-center' do
-            - text bs_icon('person', class: 'flex-shrink-0 me-1')
-            - span class: 'd-none d-lg-inline' do
+          = link_to routes.path(:user), class: "me-2 link-user d-flex align-items-center" do
+            - text bs_icon("person", class: "flex-shrink-0 me-1")
+            - span class: "d-none d-lg-inline" do
               - text current_user.label_name
           .logout-button
-          = javascript 'logout', type: 'module'
+          = javascript "logout", type: "module"
         - else
           ul.navbar-nav.me-auto
             li.nav-item
-              = link_to routes.path(:root), class: 'nav-link' do
-                - text bs_icon('box-arrow-in-left')
-                - span class: 'd-none d-lg-inline' do
-                  - text 'ログイン'
+              = link_to routes.path(:root), class: "nav-link" do
+                / - text bs_icon("box-arrow-in-left")
+                - tag.span class: "d-none d-lg-inline" do
+                  - tag.text "ログイン"
           span.navbar-text
-            = '未ログイン'
+            = "未ログイン"

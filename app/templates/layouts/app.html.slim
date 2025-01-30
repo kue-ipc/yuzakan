@@ -12,7 +12,7 @@ html lang="ja"
     = stylesheet_tag "app"
     = javascript_tag "app", type: "module"
   body
-    / = render "partial/header"
+    = render "partial/header"
     .container-fluid.mt-2
       / = render "partial/alert"
       = yield

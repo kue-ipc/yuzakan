@@ -159,3 +159,6 @@ ja:
       display_name: 表示名
     attr:
       name: 属性名
+  view:
+    buttons:
+      toggle_navigation: ナビゲーション切替
