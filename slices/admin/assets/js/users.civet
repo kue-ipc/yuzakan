@@ -1,4 +1,4 @@
-# /admin/users
+// /admin/users
 
 import {text, app} from 'hyperapp'
 import * as html from '@hyperapp/html'
@@ -36,14 +36,14 @@ import {batchOperation, runDoNextAction, runStopAllAction} from '~/admin/batch_o
 import {setUserAttrsDefault} from '~/admin/user_attrs.js'
 
 
-# mode
-#   loading: 読込中
-#   loaded: 読込完了
-#   file: アップロードされたファイル
-#   do_all: 全て実行中
-#   result: 実行結果(全てとは限らない)
+// mode
+//   loading: 読込中
+//   loaded: 読込完了
+//   file: アップロードされたファイル
+//   do_all: 全て実行中
+//   result: 実行結果(全てとは限らない)
 
-# Cnostants
+// Cnostants
 
 USER_HEADERS = ['action']
   .concat(key for key, type of USER_PROPERTIES when !(['list', 'map', 'set', 'object'].includes(type)))
@@ -60,7 +60,7 @@ ACTIONS = new Map([
   ['UNL', 'アンロック']
 ])
 
-# Functions
+// Functions
 
 updateUserList = (users, user) -> updateList(users, user.name, user, {key: 'name'})
 
@@ -107,15 +107,15 @@ userHeaders = ({attrs}) ->
     ...(listToParamName('attrs', attr.name) for attr in attrs)
   ]
 
-# Dialogs
+// Dialogs
 
 loginInfo = new LoginInfo {
   id: 'users-login_info'
 }
 
-# Hyperapp Components
+// Hyperapp Components
 
-## Views
+//# Views
 
 indexUsersOption = ({onchange: action, readonly = false, ...props}) ->
   onchange = (state, event) -> [action, {[event.target.name]: event.target.checked}]
@@ -286,7 +286,7 @@ userProviderDataTd = ({user, provider}) ->
       html.div {key: 'data', class: 'small'},
         preCode {code: objToJson(user.providers_data.get(provider.name), 2), language: 'json'}
 
-## Action Creaters
+//# Action Creaters
 
 createActionUser = (createEffecter, props = {}) ->
   (state, user) ->
@@ -307,7 +307,7 @@ createActionUser = (createEffecter, props = {}) ->
       [run, {...props, ...user, id: user.name, user_id: user.name}]
     ]
 
-## Actions
+//# Actions
 
 runShowLoginInfo = (_dispatch, {user, dateTime = DateTime.now()}) ->
   loginInfo.showPromise {user, dateTime, site: {}}
@@ -434,7 +434,7 @@ PopState = (state, params) ->
   }
   [ReloadIndexUsers, data]
 
-## Effecters
+//# Effecters
 
 runIndexUsers = createRunIndexWithPageUsers({action: SetIndexUsers})
 
@@ -443,18 +443,18 @@ runPushHistory = (dispatch, params) ->
   if (query != location.search)
     history.pushState(params, '', "#{location.pathname}#{query}")
 
-## Subscribers
+//# Subscribers
 
 onPopstateSubscriber = (dispatch, action) ->
   listener = (event) -> dispatch(action, event.state)
   window.addEventListener 'popstate', listener
   -> window.removeEventListener 'popstate', listener
 
-## Subscription Generators
+//# Subscription Generators
 onPopstate = (action) ->
   [onPopstateSubscriber, action]
 
-# main
+// main
 main = ->
   queryParams = getQueryParamsFromUrl(location)
 

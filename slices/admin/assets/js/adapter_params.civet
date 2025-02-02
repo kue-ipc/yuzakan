@@ -1,4 +1,4 @@
-# プロバイダーのパラメーター
+// プロバイダーのパラメーター
 
 import {text} from 'hyperapp'
 import * as html from '@hyperapp/html'

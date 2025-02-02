@@ -1,4 +1,4 @@
-# convert from/to primitive vaule and Object, Array, Map, Set, DateTime, ...etc
+// convert from/to primitive vaule and Object, Array, Map, Set, DateTime, ...etc
 
 import {DateTime} from 'luxon'
 
@@ -25,7 +25,7 @@ FALSE_STRINGS = new Set([
 export TRUE_STR = '1'
 export FALSE_STR = '0'
 
-# convert to the specified type
+// convert to the specified type
 export convertToType = (val, type = 'string') ->
   return val unless val?
 
@@ -140,9 +140,9 @@ export toObject = (val) ->
   else
     Object(val)
 
-# string -> list
+// string -> list
 
-# abcDef_ghi-jkl -> abc def ghi jkl
+// abcDef_ghi-jkl -> abc def ghi jkl
 export strToList = (str) ->
   str.replace(/[A-Z]+/g, '_$&').toLowerCase().split(/[-_\s]+/)
 
@@ -152,42 +152,42 @@ export paramNameToList = (str) ->
   list.push ...(r[1] for r from str.matchAll(/\[([^\]]*)\]/g))
   list
 
-# list -> string
+// list -> string
 
-# abc, def, hij -> abcDefHij
+// abc, def, hij -> abcDefHij
 export listToCamelCase = (...list) ->
   (list[0]?.toLowerCase() ? '') +
     (capitalize(str) for str in list[1..]).join('')
 
-# abc, def, hij -> AbcDefHij
+// abc, def, hij -> AbcDefHij
 export listToPascalCase = (...list) ->
   (capitalize(str) for str in list).join('')
 
-# abc, def, hij -> abc_def_hij
+// abc, def, hij -> abc_def_hij
 export listToSnakeCase = (...list) ->
   (str.toLowerCase() for str in list).join('_')
 
-# abc, def, hij -> abc-def-hij
+// abc, def, hij -> abc-def-hij
 export listToKebabCase = (...list) ->
   (str.toLowerCase() for str in list).join('-')
 
-# abc, def, hij -> ABC_DEF_HIJ
+// abc, def, hij -> ABC_DEF_HIJ
 export listToAllCaps = (...list) ->
   (str.toUpperCase() for str in list).join('_')
 
-# abc, def, hij -> Abc-Def-Hij
+// abc, def, hij -> Abc-Def-Hij
 export listToTrainCase = (...list) ->
   (capitalize(str) for str in list).join('-')
 
 export listToParamName = (...list) ->
   (list[0] ? '') + ("[#{str}]" for str in list[1..]).join('')
 
-# object -> other
+// object -> other
 
 export objToJson = (obj, space = undefined) ->
   JSON.stringify obj, jsonReplacer, space
 
-# bigint, Map, Set
+// bigint, Map, Set
 jsonReplacer = (key, value) ->
   switch typeof value
     when 'bigint'
@@ -231,8 +231,8 @@ export objToUrlencodedParams = (obj) ->
   for [key, value] in objToParams(obj) when value?
     "#{encodeURIComponent(key)}=#{valueToUrlencoded(value)}"
 
-# JavaScriptの値をUrlencodedの文字列に落とし込む前に変換する
-# true, fales -> 1, 0
+// JavaScriptの値をUrlencodedの文字列に落とし込む前に変換する
+// true, fales -> 1, 0
 valueToUrlencoded = (value) ->
   if !value?
     ''
@@ -245,7 +245,7 @@ valueToUrlencoded = (value) ->
   else
     encodeURIComponent(String(value))
 
-# other -> object
+// other -> object
 
 export recordToObj = (record) ->
   root = {}

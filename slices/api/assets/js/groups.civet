@@ -1,4 +1,4 @@
-# /api/groupscreateRunCreateWithId
+// /api/groupscreateRunCreateWithId
 
 import {
   createRunIndex
@@ -15,7 +15,7 @@ import {ORDER_PARAM_TYPES} from '~/api/order.js'
 
 import {pickType} from '~/common/helper.js'
 
-# Contants
+// Contants
 
 export API_GROUPS = '/api/groups'
 
@@ -69,7 +69,7 @@ export DESTROY_GROUP_PARAM_TYPES = {
   permanent: 'boolean'
 }
 
-# Functions
+// Functions
 
 export normalizeGroups = (groups, type = {}) ->
   normalizeGroup(group, type) for group in groups
@@ -93,7 +93,7 @@ export normalizeGroup = (group, types = {}) ->
     ...providersData
   }
 
-# Actions
+// Actions
 
 export SetGroups = (state, groups) -> {
   ...state
@@ -105,7 +105,7 @@ export SetGroup = (state, group) -> {
   group
 }
 
-# create Effecters
+// create Effecters
 
 export createRunIndexGroupsNoSync = ({data = {}, ...params} = {}) ->
   createRunIndex({
@@ -162,7 +162,7 @@ export createRunDestroyGroup = (params = {}) ->
     ...params
   })
 
-# Effecters
+// Effecters
 export runIndexGroupsNoSync = createRunIndexGroupsNoSync()
 export runIndexWithPageGroups = createRunIndexWithPageGroups()
 export runShowGroup = createRunShowGroup()

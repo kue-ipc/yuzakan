@@ -1,6 +1,6 @@
-# フォームにあるデータをJSONとしてPOSTし、
-# 受け取ったJSONをメッセージとして表示する。
-# その際、modalを使用する。
+// フォームにあるデータをJSONとしてPOSTし、
+// 受け取ったJSONをメッセージとして表示する。
+// その際、modalを使用する。
 
 import {h, text, app} from 'hyperapp'
 import {Modal} from 'bootstrap'

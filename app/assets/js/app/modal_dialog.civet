@@ -1,6 +1,6 @@
-# ModaleDialog
-# モーダルダイアログを表示するベースクラス
-# 拡張して使用する
+// ModaleDialog
+// モーダルダイアログを表示するベースクラス
+// 拡張して使用する
 
 import {app, text} from 'hyperapp'
 import * as html from '@hyperapp/html'

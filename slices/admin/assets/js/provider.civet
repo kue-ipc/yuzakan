@@ -1,5 +1,5 @@
-# path: /admin/providers/:name
-# node: provider
+// path: /admin/providers/:name
+// node: provider
 
 import {text, app} from 'hyperapp'
 import * as html from '@hyperapp/html'

@@ -4,10 +4,10 @@ import FileSaver from 'file-saver'
 
 import {listToCsv} from '~/common/csv_helper.js'
 
-# Downolad button view
-# @param {boolean} disabled - 無効にする
-# @param {object[]} list - データ
-# @param {string} filename - ダウンロードするファイルのファイル名
+// Downolad button view
+// @param {boolean} disabled - 無効にする
+// @param {object[]} list - データ
+// @param {string} filename - ダウンロードするファイルのファイル名
 export default downloadButton = ({disabled = false, ...props}) ->
   html.button {
     class: 'btn btn-secondary'
@@ -15,10 +15,10 @@ export default downloadButton = ({disabled = false, ...props}) ->
     onclick: -> [DownloadCsv, props]
   }, text 'ダウンロード'
 
-# Dowunloa CSV action
+// Dowunloa CSV action
 DownloadCsv = (state, props) -> [state, [runDownloadCsv, props]]
 
-# Dwnload CSV effecter
+// Dwnload CSV effecter
 runDownloadCsv = (dispatch, {list, filename, header}) ->
   console.debug 'download: %s', filename
   csv = await listToCsv(list, {header})

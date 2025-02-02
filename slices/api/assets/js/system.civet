@@ -1,4 +1,4 @@
-# /api/system
+// /api/system
 
 import {
   createRunShow
@@ -6,7 +6,7 @@ import {
 
 import {pickType} from '~/common/helper.js'
 
-# Contants
+// Contants
 
 export API_SYSTEM = '/api/system'
 
@@ -30,7 +30,7 @@ SYSTEM_CONTACT_PROPERTIES = {
   phone: 'string'
 }
 
-# Functions
+// Functions
 
 export normalizeSystem = (system, types = {}) ->
   system = pickType(system, {...SYSTEM_PROPERTIES, ...types})
@@ -38,14 +38,14 @@ export normalizeSystem = (system, types = {}) ->
   system.contact = pickType(system.contact, SYSTEM_CONTACT_PROPERTIES) if system.contact
   system
 
-# Actions
+// Actions
 
 export SetSystem = (state, system) -> {
   ...state
   system
 }
 
-# create Effecters
+// create Effecters
 
 export createRunShowSystem = (params = {}) ->
   createRunShow({
@@ -55,6 +55,6 @@ export createRunShowSystem = (params = {}) ->
     ...params
   })
 
-# Effecters
+// Effecters
 
 export runShowSystem = createRunShowSystem()

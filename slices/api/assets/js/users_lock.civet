@@ -1,4 +1,4 @@
-# /api/users/:user_id/lock
+// /api/users/:user_id/lock
 
 import {
   createRunCreate
@@ -7,16 +7,16 @@ import {
 
 import {SetUser, normalizeUser} from '~/api/users.js'
 
-# Contants
+// Contants
 
 export USER_ID_KEY_USERS_LOCK = 'user_id'
 export API_USERS_LOCK = "/api/users/:#{USER_ID_KEY_USERS_LOCK}/lock"
 
-# Functions
+// Functions
 
-# Actions
+// Actions
 
-# create Effecters
+// create Effecters
 
 export createRunCreateUserLock = (params = {}) ->
   createRunCreate({
@@ -36,7 +36,7 @@ export createRunDestroyUserLock = (params = {}) ->
     ...params
   })
 
-# Effecters
+// Effecters
 
 export runCreateUserLock = createRunCreateUserLock()
 export runDestroyUserLock = createRunDestroyUserLock()

@@ -1,4 +1,4 @@
-# 入力イベントの値を渡すアクションを生成する
+// 入力イベントの値を渡すアクションを生成する
 
 export createEventValueAction = (action, {type = 'string'} = {}) ->
   switch type

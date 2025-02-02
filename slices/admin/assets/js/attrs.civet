@@ -12,11 +12,11 @@ import {normalizeAttr, createRunIndexAttrs, createRunShowAttr} from '~/api/attrs
 
 import {updateList} from '~/common/list_helper.js'
 
-# Functions
+// Functions
 
 updateAttrList = (attrs, attr) -> updateList(attrs, attr.name, attr, {key: 'name'})
 
-# Dialogs
+// Dialogs
 
 deleteConfirm = new ConfirmDialog {
   id: 'attrs_confirm'
@@ -35,7 +35,7 @@ inputCode = new InputTextDialog {
   size: 4096
 }
 
-# Viwes
+// Viwes
 
 providerTh = ({provider}) ->
   html.th {}, text provider.display_name ? provider.name
@@ -318,14 +318,14 @@ downAttrAction = (state, {name}) ->
   ]
 
 
-# showAttrRunner = (dispatch, {attr}) ->
-#   response = await fetchJsonGet({url: "/api/attrs/#{attr.name}"})
-#   if response.ok
-#     dispatch(attrAction, {attr: response.data})
-#   else
-#     console.error response
+// showAttrRunner = (dispatch, {attr}) ->
+//   response = await fetchJsonGet({url: "/api/attrs/#{attr.name}"})
+//   if response.ok
+//     dispatch(attrAction, {attr: response.data})
+//   else
+//     console.error response
 
-# Actions
+// Actions
 
 SetAttrsThenShow = (state, attrs) ->
   newAttrs = (normalizeAttr(attr) for attr in attrs)
@@ -340,7 +340,7 @@ SetAttrInList = (state, attr) ->
     attrs: updateAttrList(state.attrs, normalizeAttr(attr))
   }
 
-# Effecters
+// Effecters
 
 runShowAttr = createRunShowAttr({action: SetAttrInList})
 
@@ -348,7 +348,7 @@ runIndexAttrs = createRunIndexAttrs({action: SetAttrsThenShow})
 
 runIndexProviders = createRunIndexProviders()
 
-# Vars
+// Vars
 
 initNewAttr = {
   name: undefined

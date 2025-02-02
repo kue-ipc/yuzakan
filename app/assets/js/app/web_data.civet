@@ -1,5 +1,5 @@
-# データをJSONとしてfetchし、受け取ったJSONをメッセージとして表示する。
-# その際、modalを使用する。
+// データをJSONとしてfetchし、受け取ったJSONをメッセージとして表示する。
+// その際、modalを使用する。
 
 import {app, text} from 'hyperapp'
 import * as html from '@hyperapp/html'

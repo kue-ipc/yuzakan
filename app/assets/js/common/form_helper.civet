@@ -1,4 +1,4 @@
-# form helper
+// form helper
 
 import {listToKebabCase, listToParamName} from '~/common/convert.js'
 

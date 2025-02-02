@@ -1,4 +1,4 @@
-# /admin/user/*
+// /admin/user/*
 
 import {text, app} from 'hyperapp'
 import * as html from '@hyperapp/html'
@@ -25,12 +25,12 @@ import {InitUserAttrs} from '~/admin/user_attrs.js'
 
 SetAttrsWithInit = (state, attrs) -> [InitUserAttrs, {attrs}]
 
-## Effecters
+//# Effecters
 
-# runIndexAttrsWithInit = createRunIndexAttrs({action: SetAttrsWithInit})
+// runIndexAttrsWithInit = createRunIndexAttrs({action: SetAttrsWithInit})
 runIndexAttrsWithInit = createRunIndexAttrs()
 
-# runIndexAttrsWithInit = createRunIndexAttrs({action: SetUserWithInit})
+// runIndexAttrsWithInit = createRunIndexAttrs({action: SetUserWithInit})
 runShowUserWithInit = createRunShowUser()
 
 main = ->

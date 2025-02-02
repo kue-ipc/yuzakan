@@ -1,4 +1,4 @@
-# /api/attrs
+// /api/attrs
 
 import {
   createRunIndex
@@ -10,7 +10,7 @@ import {
 
 import {pickType} from '~/common/helper.js'
 
-# Constants
+// Constants
 
 export API_ATTRS = '/api/attrs'
 
@@ -42,7 +42,7 @@ export UPDATE_ATTR_PARAM_TYPES = {
 export DESTROY_ATTR_PARAM_TYPES = {
 }
 
-# Functions
+// Functions
 
 export normalizeAttrs = (attrs, type = {}) ->
   normalizeAttr(attr, type) for attr in attrs
@@ -54,7 +54,7 @@ export normalizeAttr = (attr, types = {}) ->
     ...types
   })
 
-# Actiosn
+// Actiosn
 
 export SetAttrs = (state, attrs) -> {
   ...state
@@ -66,7 +66,7 @@ export SetAttr = (state, attr) -> {
   attr
 }
 
-# create Effecters
+// create Effecters
 
 export createRunIndexAttrs = (params = {}) ->
   createRunIndex({
@@ -113,7 +113,7 @@ export createRunDestroyAttr = (params = {}) ->
     ...params
   })
 
-# Effecters
+// Effecters
 
 export runIndexAttrs = createRunIndexAttrs()
 export runShowAttr = createRunShowAttr()

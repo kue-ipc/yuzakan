@@ -1,4 +1,4 @@
-# /api/providers
+// /api/providers
 
 import {
   createRunIndex
@@ -10,7 +10,7 @@ import {
 
 import {pickType} from '~/common/helper.js'
 
-# Constants
+// Constants
 
 export API_PROVIDERS = '/api/providers'
 
@@ -48,7 +48,7 @@ export UPDATE_PROVIDER_PARAM_TYPES = {
 export DESTROY_PROVIDER_PARAM_TYPES = {
 }
 
-# Functions
+// Functions
 
 export normalizeProviders = (providers, type = {}) ->
   normalizeProvider(provider, type) for provider in providers
@@ -60,7 +60,7 @@ export normalizeProvider = (provider, types = {}) ->
     ...types
   })
 
-# Actiosn
+// Actiosn
 
 export SetProviders = (state, providers) -> {
   ...state
@@ -72,7 +72,7 @@ export SetProvider = (state, provider) -> {
   provider
 }
 
-# create Effecters
+// create Effecters
 
 export createRunIndexProviders = (params = {}) ->
   createRunIndex({
@@ -119,7 +119,7 @@ export createRunDestroyProvider = (params = {}) ->
     ...params
   })
 
-# Effecters
+// Effecters
 
 export runIndexProviders = createRunIndexProviders()
 export runShowProvider = createRunShowProvider()

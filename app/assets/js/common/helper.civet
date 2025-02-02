@@ -1,4 +1,4 @@
-# utils
+// utils
 
 import * as R from 'ramda'
 
@@ -61,31 +61,31 @@ export entityLabel = (entity) ->
 
   entity.display_name || entity.name || ''
 
-# URLから最後の文字列を取り出す。
-# 空文字列しかない場合は undefined を返す
+// URLから最後の文字列を取り出す。
+// 空文字列しかない場合は undefined を返す
 export getBasenameFromUrl = (url) ->
   basename(url.pathname)
 
 export getQueryParamsFromUrl = (url) ->
   Object.fromEntries(new URLSearchParams(url.search))
 
-# TODO
-# export deepFreeze = (obj)
-#   return obj if Object.isFrozen(obj)
+// TODO
+// export deepFreeze = (obj)
+//   return obj if Object.isFrozen(obj)
 
-#   Object.freeze(obj)
-#   switch Object.getPrototypeOf(obj).constructor
-#     when Object
-#       deepFreeze(value) for own key, value of obj
-#     when Array
-#       deepFreeze(value) for value in obj
-#     when Map
-#       deepFreeze(value) for value from obj.values()
-#     when Set
-#       deepFreeze(value) for value from obj
-#   obj
+//   Object.freeze(obj)
+//   switch Object.getPrototypeOf(obj).constructor
+//     when Object
+//       deepFreeze(value) for own key, value of obj
+//     when Array
+//       deepFreeze(value) for value in obj
+//     when Map
+//       deepFreeze(value) for value from obj.values()
+//     when Set
+//       deepFreeze(value) for value from obj
+//   obj
 
-# export clone
+// export clone
 
-# export deepClone
+// export deepClone
 

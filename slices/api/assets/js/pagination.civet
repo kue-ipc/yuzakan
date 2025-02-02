@@ -1,6 +1,6 @@
-# pagination
+// pagination
 
-# see lib/yuzakan/utils/pager.rb
+// see lib/yuzakan/utils/pager.rb
 
 import {pickType, getQueryParamsFromUrl} from '~/common/helper.js'
 

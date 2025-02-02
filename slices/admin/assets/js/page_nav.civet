@@ -3,7 +3,7 @@ import * as html from '@hyperapp/html'
 
 import {compact} from '~/common/helper.js'
 
-# page navigatino view
+// page navigatino view
 export default pageNav = ({page, per_page, total, start, end, onpage, readonly = false}) ->
   if total
     total_page = Math.ceil(total / per_page)

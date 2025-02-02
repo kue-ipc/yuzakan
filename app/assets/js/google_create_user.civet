@@ -1,4 +1,4 @@
-# 現在のところ使用していない
+// 現在のところ使用していない
 
 import {h, text, app} from 'hyperapp'
 import WebPostJson from '~/app/web_post_json.js'

@@ -1,4 +1,4 @@
-# 動的な警告の表示と削除
+// 動的な警告の表示と削除
 
 ALERTS_CLASS = 'alerts'
 
@@ -26,7 +26,7 @@ ALERT_LEVELS = [
   'unknown'
 ]
 
-# アラートの追加
+// アラートの追加
 export alertAdd = (message, level = 'error') ->
   level_color = LEVELS_COLOR[level] ? DEFALT_COLOR
   alert_class = "alert alert-#{level_color} alert-dismissible fade show"
@@ -48,12 +48,12 @@ export alertAdd = (message, level = 'error') ->
     div.appendChild(text)
     alerts.appendChild(div)
 
-# 全アラートを削除
+// 全アラートを削除
 export alertClear = ->
   for alerts in document.getElementsByClassName(ALERTS_CLASS)
     alerts.removeChild(alerts.firstChild) while alerts.firstChild
 
-# クリアしてメッセージをすべて表示
+// クリアしてメッセージをすべて表示
 export alertMessage = (messages) ->
   alertClear()
   for level in ALERT_LEVELS

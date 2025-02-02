@@ -1,4 +1,4 @@
-# グループ
+// グループ
 
 import {text, app} from 'hyperapp'
 import * as html from '@hyperapp/html'
@@ -14,7 +14,7 @@ import groupInfo from '~/admin/group_info.js'
 import groupProvider from '~/admin/group_provider.js'
 import groupOperation from '~/admin/group_operation.js'
 
-# main
+// main
 
 main = ->
   id = getBasenameFromUrl(location)

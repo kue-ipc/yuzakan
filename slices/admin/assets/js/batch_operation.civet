@@ -8,7 +8,7 @@ import {basename} from '~/common/helper.js'
 import downloadButton from '~/app/download_button.js'
 import uploadButton from '~/app/upload_button.js'
 
-# Dialogs
+// Dialogs
 
 startAllActionConfirm = new ConfirmDialog {
   id: 'modal.confirm.do_all_action'
@@ -20,7 +20,7 @@ startAllActionConfirm = new ConfirmDialog {
   }
 }
 
-# Views
+// Views
 
 export batchOperation = ({mode, list, header, filename, onupload, action}) ->
   filename = "#{basename(filename, '.*')}_#{DateTime.now().toFormat('yyyyMMddHHmmss')}.csv"
@@ -50,7 +50,7 @@ startAllActionButton = ({disabled, ...props}) ->
     onclick: -> [StartAllActionWithConfirm, props]
   }, text 'すべて実行'
 
-# Actions
+// Actions
 
 StartAllActionWithConfirm = (state, props) ->
   [state, [runStartAllActionWithConfirm, props]]
@@ -72,7 +72,7 @@ DoNextAction = (state, {list, action}) ->
   else
     StopAllAction
 
-# Effecters
+// Effecters
 
 runStartAllActionWithConfirm = (dispatch, props) ->
   confirm = await startAllActionConfirm.showPromise({

@@ -3,12 +3,12 @@ import * as html from '@hyperapp/html'
 
 import {csvToList} from '~/common/csv_helper.js'
 
-# Upload button view
-# @param {boolean} disabled - 無効にする
-# @param {action} onupload - アップロードされたファイルが渡されるアクション
-# アクションのprops
-#   list: データ(配列)
-#   filename: ファイル名
+// Upload button view
+// @param {boolean} disabled - 無効にする
+// @param {action} onupload - アップロードされたファイルが渡されるアクション
+// アクションのprops
+//   list: データ(配列)
+//   filename: ファイル名
 export default uploadButton = ({disabled = false, onupload}) ->
   inputFile = html.input {
     class: 'visually-hidden'
@@ -25,16 +25,16 @@ export default uploadButton = ({disabled = false, onupload}) ->
     }, text 'アップロード'
   ]
 
-# Upload CSV action
+// Upload CSV action
 UploadCsv = (state, {file, action}) ->
   return state unless file
 
   [{...state, mode: 'loading'}, [runUploadCsv, {file, action}]]
 
-# Click upload buton action
+// Click upload buton action
 ClickUploadButton = (state, input) ->  [state, [runClickInput, input]]
 
-# Upload CSV Effecter
+// Upload CSV Effecter
 runUploadCsv = (dispatch, {action, file}) ->
   filename = file.name
   console.debug 'upload: %s', filename
@@ -42,7 +42,7 @@ runUploadCsv = (dispatch, {action, file}) ->
   list = await csvToList(csv)
   dispatch(action, {list, filename})
 
-# Click input effecter
+// Click input effecter
 runClickInput = (dispatch, input) ->
   input.click()
 

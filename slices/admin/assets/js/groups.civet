@@ -1,4 +1,4 @@
-# /admin/gorups
+// /admin/gorups
 
 import {text, app} from 'hyperapp'
 import * as html from '@hyperapp/html'
@@ -26,14 +26,14 @@ import pageNav from '~/admin/page_nav.js'
 import searchForm from '~/admin/search_form.js'
 import {batchOperation, runDoNextAction, runStopAllAction} from '~/admin/batch_operation.js'
 
-# mode
-#   loading: 読込中
-#   loaded: 読込完了
-#   file: アップロードされたファイル
-#   do_all: 全て実行中
-#   result: 実行結果(全てとは限らない)
+// mode
+//   loading: 読込中
+//   loaded: 読込完了
+//   file: アップロードされたファイル
+//   do_all: 全て実行中
+//   result: 実行結果(全てとは限らない)
 
-# Cnostants
+// Cnostants
 
 GROUP_HEADERS = ['action']
   .concat(key for key, type of GROUP_PROPERTIES when !(['list', 'map', 'set', 'object'].includes(type)))
@@ -48,7 +48,7 @@ ACTIONS = new Map([
   ['SYN', '同期']
 ])
 
-# Functions
+// Functions
 
 updateGroupList = (groups, group) -> updateList(groups, group.name, group, {key: 'name'})
 
@@ -79,7 +79,7 @@ indexOptionFromState = (state) ->
   }, Object.keys(INDEX_WITH_PAGE_GROUPS_PARAM_TYPES))
 
 
-# Views
+// Views
 
 indexGroupsOption = ({onchange: action, readonly = false, ...props}) ->
   onchange = (state, event) -> [action, {[event.target.name]: event.target.checked}]
@@ -231,7 +231,7 @@ groupProviderDataTd = ({group, provider}) ->
       html.div {key: 'data', class: 'small'},
         preCode {code: objToJson(group.providers_data.get(provider.name), 2), language: 'json'}
 
-# Actions
+// Actions
 
 ReloadIndexGroups = (state, data) ->
   console.debug 'reload index groups'
@@ -351,7 +351,7 @@ PopState = (state, params) ->
   }
   [ReloadIndexGroups, data]
 
-# Effecters
+// Effecters
 
 runIndexGroups = createRunIndexWithPageGroups({action: SetIndexGroups})
 
@@ -360,18 +360,18 @@ runPushHistory = (dispatch, params) ->
   if (query != location.search)
     history.pushState(params, '', "#{location.pathname}#{query}")
 
-# Subscribers
+// Subscribers
 
 onPopstateSubscriber = (dispatch, action) ->
   listener = (event) -> dispatch(action, event.state)
   window.addEventListener 'popstate', listener
   -> window.removeEventListener 'popstate', listener
 
-# create Subscriver
+// create Subscriver
 onPopstate = (action) ->
   [onPopstateSubscriber, action]
 
-# main
+// main
 
 main = ->
   queryParams = getQueryParamsFromUrl(location)

@@ -1,4 +1,4 @@
-# Bootstrap Icons for hyperapp
+// Bootstrap Icons for hyperapp
 
 import * as svg from '@hyperapp/svg'
 

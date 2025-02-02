@@ -1,4 +1,4 @@
-# list helper
+// list helper
 
 export updateList = (list, id, data, {key = 'id'}) ->
   for item in list

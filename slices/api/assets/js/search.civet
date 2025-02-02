@@ -1,4 +1,4 @@
-# search
+// search
 
 export SEARCH_PARAM_TYPES = {
   query: 'string'

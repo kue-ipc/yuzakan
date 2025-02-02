@@ -2,7 +2,7 @@ import {parse, stringify, transform} from 'csv'
 
 import {objToRecord, recordToObj} from '~/common/convert.js'
 
-# async csv and records utilities
+// async csv and records utilities
 
 recordsToCsv = (records, {columns} = {}) ->
   new Promise (resolve, reject) ->

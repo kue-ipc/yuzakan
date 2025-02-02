@@ -1,7 +1,7 @@
-# 日本語変換
+// 日本語変換
 
-# https://www.ezairyu.mofa.go.jp/passport/hebon.html
-# ただし、va vi vu ve vo は使用可とする。
+// https://www.ezairyu.mofa.go.jp/passport/hebon.html
+// ただし、va vi vu ve vo は使用可とする。
 
 ROMAJI_MAP = {
   'ア': 'a',   'イ': 'i',   'ウ': 'u',   'エ': 'e',   'オ': 'o',
@@ -53,7 +53,7 @@ ROMAJI_MAP = {
   'ー': '',
 }
 
-# 平仮名や片仮名をローマ字にする
+// 平仮名や片仮名をローマ字にする
 export toRomaji = (str) ->
   return str unless str
 
@@ -72,7 +72,7 @@ export toRomaji = (str) ->
   str = str.replace /oo(?!$)/g, 'o'
   str
 
-# 正規化後に平仮名を片仮名にする
+// 正規化後に平仮名を片仮名にする
 export toKatakana = (str) ->
   return str unless str
 
@@ -81,7 +81,7 @@ export toKatakana = (str) ->
     String.fromCodePoint(m.codePointAt(0) + 0x60)
   str
 
-# 正規化後に片仮名を平仮名にする
+// 正規化後に片仮名を平仮名にする
 export toHiragana = (str) ->
   return str unless str
 

@@ -1,4 +1,4 @@
-# グループ
+// グループ
 
 import {text, app} from 'hyperapp'
 import * as html from '@hyperapp/html'
@@ -6,7 +6,7 @@ import * as html from '@hyperapp/html'
 import * as dlh from '~/app/dl_horizontal.js'
 import bsIcon from '~/app/bs_icon.js'
 
-# Views
+// Views
 
 export default groupInfo = ({mode, group}) ->
   html.div {key: 'group-info'}, [
