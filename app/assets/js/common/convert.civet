@@ -191,7 +191,7 @@ export objToJson = (obj, space = undefined) ->
 jsonReplacer = (key, value) ->
   switch typeof value
     when 'bigint'
-      # 精度落ち
+      // 精度落ち
       Number(value)
     when 'object'
       if value instanceof Map

@@ -34,7 +34,7 @@ export fetchJsonDelete = (params) ->
   await fetchJson({method: 'DELETE', ...params})
 
 createRequest = ({url, method, data = null, type = 'json', ...params}) ->
-  # create request
+  // create request
 
   method = method.toUpperCase()
   unless ALLOWED_METHODS.includes(method)

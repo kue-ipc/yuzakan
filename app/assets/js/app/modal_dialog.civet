@@ -45,7 +45,7 @@ export default class ModalDialog
 
     @initNode()
 
-  # モーダルウィンドウのノードを作成し、初期化する。
+  // モーダルウィンドウのノードを作成し、初期化する。
   initNode: ->
     @modalNode = document.createElement('div')
     @modalNode.id = "#{@id}-modal"
@@ -99,12 +99,12 @@ export default class ModalDialog
   modalBody: ({messages}) ->
     html.p {}, text message for message in messages ? []
 
-  # fire event
+  // fire event
   fireModalMessage: (props) ->
     event = new CustomEvent(ModalDialog.MESSAGE_EVENT, {detail: props})
     @modalNode.dispatchEvent(event)
 
-  # Actions
+  // Actions
   receiveModalMessage: (state, props) ->
     {...state, ...props}
 
@@ -121,14 +121,14 @@ export default class ModalDialog
     ...state
   }
 
-  # show
+  // show
   showPromise: (state = {}) ->
     state = @initState(state)
     @fireModalMessage(state)
     @result = undefined
     waitModalClose = @waitModalClosePromise()
-    # hack modal config
-    # https://github.com/twbs/bootstrap/issues/35664
+    // hack modal config
+    // https://github.com/twbs/bootstrap/issues/35664
     if state.closable
       @modal._config.backdrop = true
       @modal._config.keyboard = true
@@ -150,13 +150,13 @@ export default class ModalDialog
         resolve()
       , {once: true}
 
-  # Static Methods
-  # Create Subscription
+  // Static Methods
+  // Create Subscription
   @onMessage: (node, action) => [@listenMessage, {node, action}]
   @onShown: (node, action) => [@listenShown, {node, action}]
   @onHidden: (node, action) => [@listenHidden, {node, action}]
 
-  # SubscriberFn
+  // SubscriberFn
   @listenMessage: (dispatch, {node, action}) =>
     func = (e) -> dispatch(action, e.detail)
     node.addEventListener(@MESSAGE_EVENT, func)

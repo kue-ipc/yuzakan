@@ -73,7 +73,7 @@ export setUserAttrsDefault = ({user, attrs}) ->
     if userAttrs.has(attr.name)
       continue
     else if !attr.code
-      # not add
+      // not add
       continue
     else
       defaultValue = calcUserAttrValue({user, attrs: userAttrs, code: attr.code})

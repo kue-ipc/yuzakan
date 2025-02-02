@@ -124,7 +124,7 @@ destroyProviderRunner = (dispatch, {name}) ->
   if confirm
     response = await destroyWebData.submitPromise {url: "/api/providers/#{name}", data: csrf()}
     if response.ok
-      # ...redirect
+      // ...redirect
     else
       console.error response
 

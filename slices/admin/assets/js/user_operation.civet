@@ -164,7 +164,7 @@ runDestroyUser = (dispatch, {name}) ->
   if confirm
     response = await destroyWebData.submitPromise {url: "/api/users/#{name}", data: csrf()}
     if response.ok
-      # ...redirect
+      // ...redirect
     else
       console.error response
 

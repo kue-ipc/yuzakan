@@ -22,7 +22,7 @@ export createResponseAction = ({action, fallback, normalizer}) ->
       if fallback?
         [fallback, response.data]
       else
-        # do nothing
+        // do nothing
         state
 
 // データを受け取るアクションからページ情報付きのレスポンスに対応した新しいアクションを作成する。

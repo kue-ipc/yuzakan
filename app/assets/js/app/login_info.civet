@@ -23,10 +23,10 @@ export default class LoginInfo extends ModalDialog
     }
     @service = service
 
-  # override
+  // override
   appInit: => [@initState({}), runShowSystem]
 
-  # override
+  // override
   modalAction: (state) ->
     for tagName in ['header', 'main', 'footer']
       for el in document.getElementsByTagName(tagName)
@@ -43,7 +43,7 @@ export default class LoginInfo extends ModalDialog
         el.classList.remove('d-print-none')
     state
 
-  # override
+  // override
   modalBody: ({messages, ...props}) ->
     [
       ...super({messages})
@@ -151,7 +151,7 @@ export default class LoginInfo extends ModalDialog
           ]
         if @service.lock_days
           text """
-            #{sevrice.lock_days}日以内にログイン及びパスワード変更を実施しなかった場合、
+            //{sevrice.lock_days}日以内にログイン及びパスワード変更を実施しなかった場合、
             アカウントがロックされる場合があります。
           """
       ]

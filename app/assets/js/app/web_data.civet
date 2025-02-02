@@ -92,8 +92,8 @@ export default class WebData
       html.div {}, text msg
 
   modalMessage: (state) ->
-    # hack modal config
-    # https://github.com/twbs/bootstrap/issues/35664
+    // hack modal config
+    // https://github.com/twbs/bootstrap/issues/35664
     if state.closable
       @modal._config.backdrop = true
       @modal._config.keyboard = true

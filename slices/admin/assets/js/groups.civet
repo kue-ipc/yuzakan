@@ -266,11 +266,11 @@ MovePage = (state, page) ->
 Search = (state, query) ->
   return state if state.query == query
 
-  # ページ情報を初期化
+  // ページ情報を初期化
   [ReloadIndexGroups, {pagination: {...state.pagination , page: 1}, search: {query}}]
 
 ChangeOption = (state, option) ->
-  # ページ情報を初期化
+  // ページ情報を初期化
   [ReloadIndexGroups, {pagination: {...state.pagination , page: 1}, option: {...state.option, ...option}}]
 
 SortOrder = (state, order) ->

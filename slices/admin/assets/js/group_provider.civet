@@ -25,7 +25,7 @@ export default groupProvider = ({mode, group, providers}) ->
         ]
           html.tr {}, [
             html.td {}, text label
-            # html.td {}, valueDisplay {value: group[name], type}
+            // html.td {}, valueDisplay {value: group[name], type}
             (for provider in providers
               groupdata = group.providers_data?.get(provider.name)
               html.td {},
