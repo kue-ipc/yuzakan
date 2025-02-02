@@ -1,1 +1,1 @@
-import "./login.coffee";
+import "../login.civet";
