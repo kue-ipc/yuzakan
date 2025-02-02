@@ -104,7 +104,7 @@ indexOptionFromState = (state) ->
 userHeaders = ({attrs}) ->
   [
     ...USER_HEADERS
-    (listToParamName('attrs', attr.name) for attr in ...attrs)
+    ...(listToParamName('attrs', attr.name) for attr in attrs)
   ]
 
 # Dialogs
