@@ -23,12 +23,12 @@ submittable = ({username, password, disabled}) -> not disabled and username and 
 
 runLogin = (dispatch, payload) ->
   await webData.submitPromise {data: {
-    csrf()...
-    payload...
+    ...csrf()
+    ...payload
   }}
   dispatch (state) -> [
     {
-      state...
+      ...state
       disabled: false
       password: null
     }
@@ -41,7 +41,7 @@ login = ({username, password}) -> [runLogin, {username, password}]
 enterToSubmitOrNextInput = (state, event) ->
   if event.keyCode == 13
     if submittable(state)
-      [{state..., disabled: true}, login(state)]
+      [{...state, disabled: true}, login(state)]
     else if event.target.id == 'session-username'
       [state, focus('session-password')]
     else
@@ -67,7 +67,7 @@ view = ({username, password, disabled}) ->
         class: 'form-control', type: 'text', required: true, placeholder: 'ユーザー名'
         disabled
         value: username
-        oninput: (state, event) -> {state..., username: event.target.value}
+        oninput: (state, event) -> {...state, username: event.target.value}
         onkeypress: enterToSubmitOrNextInput
       }
     html.div {class: 'mb-3'},
@@ -77,14 +77,14 @@ view = ({username, password, disabled}) ->
         class: 'form-control', type: 'password', required: true, placeholder: 'パスワード'
         disabled
         value: password
-        oninput: (state, event) -> {state..., password: event.target.value}
+        oninput: (state, event) -> {...state, password: event.target.value}
         onkeypress: enterToSubmitOrNextInput
       }
     html.div {class: 'd-grid gap-auto'},
       html.button {
         class: 'login-submit btn btn-primary d-flex align-items-center justify-content-center'
         disabled: not submittable({username, password, disabled})
-        onclick: (state, event) -> [{state..., disabled: true}, login(state)]
+        onclick: (state, event) -> [{...state, disabled: true}, login(state)]
       }, [
         bsIcon {name: 'box-arrow-in-left', class: 'flex-shrink-0 me-1'}
         text 'ログイン'

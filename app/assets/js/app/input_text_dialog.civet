@@ -18,12 +18,12 @@ export default class InputTextDialog
       color: 'primary'
       label: 'OK'
       side: 'right'
-      action...
+      ...action
     }
     @close = {
       color: 'secondary'
       label: 'キャンセル'
-      close...
+      ...close
     }
 
     @modalNode = document.createElement('div')
@@ -54,8 +54,8 @@ export default class InputTextDialog
       node: modalDialogNode
       subscriptions: (state) => [
         @messageSub @messageAction, {node: @modalNode}
-        @shownSub (state) -> {state..., shown: true}
-        @hiddenSub (state) -> {state..., shown: false}
+        @shownSub (state) -> {...state, shown: true}
+        @hiddenSub (state) -> {...state, shown: false}
       ]
     }
 
@@ -68,11 +68,11 @@ export default class InputTextDialog
       closable: true
       action:
         {
-          action...
+          ...action
           onclick: (state) =>
             @result = value
             @modal.hide()
-            {state..., value: ''}
+            {...state, value: ''}
         }
       close: @close
     }, @modalBody {messages, value, size, shown}
@@ -81,13 +81,13 @@ export default class InputTextDialog
     html.div {},
       if shown
         [
-          (html.p({}, text message) for message in messages)...
+          ...(html.p({}, text message) for message in messages)
           html.textarea {
             id: "#{@id}-input-textarea"
             class: 'form-control'
             maxlength: size
             rows: 10
-            oninput: (state, event) -> {state..., value: event.target.value}
+            oninput: (state, event) -> {...state, value: event.target.value}
           }, text value
         ]
       else
@@ -105,7 +105,7 @@ export default class InputTextDialog
   messageSub: (action, {node}) => [@messageRunner, {action, node}]
 
   messageAction: (state, params) =>
-    [{state..., params...}, focus("#{@id}-input-textarea")]
+    [{...state, ...params}, focus("#{@id}-input-textarea")]
 
   shownRunner: (dispatch, {action}) =>
     func = -> dispatch(action)

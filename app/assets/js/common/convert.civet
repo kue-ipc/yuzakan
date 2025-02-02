@@ -1,4 +1,4 @@
-# convert from/to primitive vaule and Object, Array, Map, Set, DateTime, etc...
+# convert from/to primitive vaule and Object, Array, Map, Set, DateTime, ...etc
 
 import {DateTime} from 'luxon'
 
@@ -107,7 +107,7 @@ export toList = (val) ->
   return val if val instanceof Array
 
   if val[Symbol.iterator]?
-    [val...]
+    [...val]
   else if val.length?
     (v for v in val)
   else if typeof val == 'object'
@@ -149,37 +149,37 @@ export strToList = (str) ->
 export paramNameToList = (str) ->
   list = []
   list.push str.match(/^([^\[]*)/)[0]
-  list.push (r[1] for r from str.matchAll(/\[([^\]]*)\]/g))...
+  list.push ...(r[1] for r from str.matchAll(/\[([^\]]*)\]/g))
   list
 
 # list -> string
 
 # abc, def, hij -> abcDefHij
-export listToCamelCase = (list...) ->
+export listToCamelCase = (...list) ->
   (list[0]?.toLowerCase() ? '') +
     (capitalize(str) for str in list[1..]).join('')
 
 # abc, def, hij -> AbcDefHij
-export listToPascalCase = (list...) ->
+export listToPascalCase = (...list) ->
   (capitalize(str) for str in list).join('')
 
 # abc, def, hij -> abc_def_hij
-export listToSnakeCase = (list...) ->
+export listToSnakeCase = (...list) ->
   (str.toLowerCase() for str in list).join('_')
 
 # abc, def, hij -> abc-def-hij
-export listToKebabCase = (list...) ->
+export listToKebabCase = (...list) ->
   (str.toLowerCase() for str in list).join('-')
 
 # abc, def, hij -> ABC_DEF_HIJ
-export listToAllCaps = (list...) ->
+export listToAllCaps = (...list) ->
   (str.toUpperCase() for str in list).join('_')
 
 # abc, def, hij -> Abc-Def-Hij
-export listToTrainCase = (list...) ->
+export listToTrainCase = (...list) ->
   (capitalize(str) for str in list).join('-')
 
-export listToParamName = (list...) ->
+export listToParamName = (...list) ->
   (list[0] ? '') + ("[#{str}]" for str in list[1..]).join('')
 
 # object -> other
@@ -195,9 +195,9 @@ jsonReplacer = (key, value) ->
       Number(value)
     when 'object'
       if value instanceof Map
-        Object.fromEntries([value...])
+        Object.fromEntries([...value])
       else if value instanceof Set
-        [value...]
+        [...value]
       else
         value
     else
@@ -213,15 +213,15 @@ export objToParams = (obj, parents = []) ->
   for own key, value of obj
     if typeof value == 'object'
       if value instanceof Map
-        params.push(objToParams(toObject(value), [parents..., key])...)
+        params.push(...objToParams(toObject(value), [...parents, key]))
       else if value instanceof Set
-        params.push(objToParams(toList(value), [parents..., key])...)
+        params.push(...objToParams(toList(value), [...parents, key]))
       else if value instanceof DateTime
-        params.push([listToParamName(parents..., key), value.toString()])
+        params.push([listToParamName(...parents, key), value.toString()])
       else
-        params.push(objToParams(value, [parents..., key])...)
+        params.push(...objToParams(value, [...parents, key]))
     else
-      params.push([listToParamName(parents..., key), value])
+      params.push([listToParamName(...parents, key), value])
   params
 
 export objToUrlencoded = (obj) ->

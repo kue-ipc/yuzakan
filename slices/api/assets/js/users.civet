@@ -53,26 +53,26 @@ export INDEX_USERS_OPTION_PARAM_TYPES = {
 }
 
 export INDEX_USERS_PARAM_TYPES = {
-  SEARCH_PARAM_TYPES...
-  ORDER_PARAM_TYPES...
-  INDEX_USERS_OPTION_PARAM_TYPES...
+  ...SEARCH_PARAM_TYPES
+  ...ORDER_PARAM_TYPES
+  ...INDEX_USERS_OPTION_PARAM_TYPES
 }
 
 export INDEX_WITH_PAGE_USERS_PARAM_TYPES = {
-  PAGINATION_PARAM_TYPES...
-  INDEX_USERS_PARAM_TYPES...
+  ...PAGINATION_PARAM_TYPES
+  ...INDEX_USERS_PARAM_TYPES
 }
 
 export SHOW_USER_PARAM_TYPES = {
 }
 
 export CREATE_USER_PARAM_TYPES = {
-  USER_PROPERTIES...
+  ...USER_PROPERTIES
   providers: 'list'
 }
 
 export UPDATE_USER_PARAM_TYPES = {
-  USER_PROPERTIES...
+  ...USER_PROPERTIES
   providers: 'list'
 }
 
@@ -99,32 +99,32 @@ export normalizeUser = (user, types = {}) ->
         )
       }
   {
-    pickType(user, {USER_PROPERTIES..., types...})...
-    providersData...
+    ...pickType(user, {...USER_PROPERTIES, ...types})
+    ...providersData
   }
 
 # Actions
 
 export SetUsers = (state, users) -> {
-  state...
+  ...state
   users
 }
 
 export SetUser = (state, user) -> {
-  state...
+  ...state
   user
 }
 
 # create Effecters
 
-export createRunIndexUsersNoSync = ({data = {}, params...} = {}) ->
+export createRunIndexUsersNoSync = ({data = {}, ...params} = {}) ->
   createRunIndex({
     action: SetUsers
     normalizer: normalizeUsers
     url: API_USERS
     dataTypes: INDEX_USERS_PARAM_TYPES
-    data: {no_sync: true, data...}
-    params...
+    data: {no_sync: true, ...data}
+    ...params
   })
 
 export createRunIndexWithPageUsers = (params = {}) ->
@@ -133,7 +133,7 @@ export createRunIndexWithPageUsers = (params = {}) ->
     normalizer: normalizeUsers
     url: API_USERS
     dataTypes: INDEX_WITH_PAGE_USERS_PARAM_TYPES
-    params...
+    ...params
   })
 
 export createRunShowUser = (params = {}) ->
@@ -142,7 +142,7 @@ export createRunShowUser = (params = {}) ->
     normalizer: normalizeUser
     url: API_USERS
     dataTypes: SHOW_USER_PARAM_TYPES
-    params...
+    ...params
   })
 
 export createRunCreateUser = (params = {}) ->
@@ -151,7 +151,7 @@ export createRunCreateUser = (params = {}) ->
     normalizer: normalizeUser
     url: API_USERS
     dataTypes: CREATE_USER_PARAM_TYPES
-    params...
+    ...params
   })
 
 export createRunUpdateUser = (params = {}) ->
@@ -160,7 +160,7 @@ export createRunUpdateUser = (params = {}) ->
     normalizer: normalizeUser
     url: API_USERS
     dataTypes: UPDATE_USER_PARAM_TYPES
-    params...
+    ...params
   })
 
 export createRunDestroyUser = (params = {}) ->
@@ -169,7 +169,7 @@ export createRunDestroyUser = (params = {}) ->
     normalizer: normalizeUser
     url: API_USERS
     dataTypes: DESTROY_USER_PARAM_TYPES
-    params...
+    ...params
   })
 
 # Effecters

@@ -15,5 +15,5 @@ export parseClassProp = (obj) ->
     console.warn 'Not a string, an array, or an object.'
     []
 
-export classConcat = (objs...) ->
+export classConcat = (...objs) ->
   compact(uniq(objs.map(parseClassProp).flat()))

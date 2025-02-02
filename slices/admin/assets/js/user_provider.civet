@@ -20,18 +20,18 @@ userAddProviderAction = (state, {provider_name}) ->
     state
   else
     {
-      state...
+      ...state
       user: {
-        state.user...
-        providers: [state.user.providers..., provider_name]
+        ...state.user
+        providers: [...state.user.providers, provider_name]
       }
     }
 
 userRemoveProviderAction = (state, {provider_name}) ->
   {
-    state...
+    ...state
     user: {
-      state.user...
+      ...state.user
       providers: state.user.providers.filter (item) -> item != provider_name
     }
   }
@@ -80,7 +80,7 @@ providerTd = ({user, provider, name, type}) ->
 providerTr = ({user, providers, name, label, type}) ->
   html.tr {}, [
     html.th {}, text label
-    (providerTd {user, provider, name, type} for provider in providers)...
+    ...(providerTd {user, provider, name, type} for provider in providers)
   ]
 
 providerCheckTd = ({mode, user, provider}) ->
@@ -98,14 +98,14 @@ export default userProvider = ({mode, user, providers}) ->
       html.thead {},
         html.tr {}, [
           html.th {}, text ''
-          (html.th({}, text entityLabel(provider)) for provider in providers)...
+          ...(html.th({}, text entityLabel(provider)) for provider in providers)
         ]
       html.tbody {}, [
         html.tr {}, [
           html.th {}, text '登録'
-          (providerCheckTd({mode, user, provider}) for provider in providers)...
+          ...(providerCheckTd({mode, user, provider}) for provider in providers)
         ]
-        (if mode != 'new' then (providerTr {user, providers, item...} for item in PROVIDER_REG_ITEMS) else [])...
+        ...(if mode != 'new' then (providerTr {user, providers, ...item} for item in PROVIDER_REG_ITEMS) else [])
       ]
     ]
   ]

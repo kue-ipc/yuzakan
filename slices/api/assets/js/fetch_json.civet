@@ -16,24 +16,24 @@ export fetchJson = (params) ->
   parseResponse(response)
 
 export fetchJsonGet = (params) ->
-  await fetchJson({method: 'GET', params...})
+  await fetchJson({method: 'GET', ...params})
 
 export fetchJsonHead = (params) ->
-  await fetchJson({method: 'HEAD', params...})
+  await fetchJson({method: 'HEAD', ...params})
 
 export fetchJsonPost = (params) ->
-  await fetchJson({method: 'POST', params...})
+  await fetchJson({method: 'POST', ...params})
 
 export fetchJsonPut = (params) ->
-  await fetchJson({method: 'PUT', params...})
+  await fetchJson({method: 'PUT', ...params})
 
 export fetchJsonPatch = (params) ->
-  await fetchJson({method: 'PATCH', params...})
+  await fetchJson({method: 'PATCH', ...params})
 
 export fetchJsonDelete = (params) ->
-  await fetchJson({method: 'DELETE', params...})
+  await fetchJson({method: 'DELETE', ...params})
 
-createRequest = ({url, method, data = null, type = 'json', params...}) ->
+createRequest = ({url, method, data = null, type = 'json', ...params}) ->
   # create request
 
   method = method.toUpperCase()
@@ -44,7 +44,7 @@ createRequest = ({url, method, data = null, type = 'json', params...}) ->
     method: method
     mode: 'same-origin'
     credentials: 'same-origin'
-    params...
+    ...params
   }
 
   headers = new Headers {
@@ -123,7 +123,7 @@ parseResponse = (response) ->
     ok: response.ok
     code: toInteger(response.status)
     location
-    responseData...
-    paginationInfo...
-    linkInfo...
+    ...responseData
+    ...paginationInfo
+    ...linkInfo
   }

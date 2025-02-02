@@ -4,7 +4,7 @@ import {h, text, app} from 'hyperapp'
 import WebPostJson from '~/app/web_post_json.js'
 
 agreementCheck = (state, agreement) -> {
-  state...
+  ...state
   agreement
 }
 

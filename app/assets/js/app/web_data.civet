@@ -32,7 +32,7 @@ export default class WebData
     @url = null
     codeActions = []
   }) ->
-    @codeActions = new Map [DEFAULT_CODE_ACTIONS..., codeActions...]
+    @codeActions = new Map [...DEFAULT_CODE_ACTIONS, ...codeActions]
 
     @modalNode = document.createElement('div')
     @modalNode.id = "#{@id}-modal"
@@ -112,7 +112,7 @@ export default class WebData
   messageSub: (action, {node}) => [@messageRunner, {action, node}]
 
   messageAction: (state, params) =>
-    newState = {state..., params...}
+    newState = {...state, ...params}
     if newState.closable
       [newState, focus("#{@id}-modal-close-button")]
     else

@@ -173,7 +173,7 @@ attrTr = ({attr, index, providers}) ->
             onclick: (state) -> [state, [createAttrRunner, {attr}]]
           }, text '作成'
         ]
-    (attrMappingTd({attr, provider}) for provider in providers)...
+    ...(attrMappingTd({attr, provider}) for provider in providers)
   ]
 
 attrAction = (state, {name, attr}) ->
@@ -183,45 +183,45 @@ attrAction = (state, {name, attr}) ->
     attrs = for current in state.attrs
       if current.name == name
         replaced = true
-        {current..., attr...}
+        {...current, ...attr}
       else
         current
     unless replaced
-      attrs = [attrs..., attr]
-    {state..., attrs}
+      attrs = [...attrs, attr]
+    {...state, attrs}
   else
-    {state..., newAttr: {state.newAttr..., attr...}}
+    {...state, newAttr: {...state.newAttr, ...attr}}
 
 deleteAttrAction = (state, {name}) ->
   attrs = state.attrs.filter (attr) -> attr.name != name
-  {state..., attrs}
+  {...state, attrs}
 
 replaceAttrMapping = (mappings, mapping) ->
   replaced = false
   new_attr_mappings = for current in mappings
     if current.provider == mapping.provider
       replaced = true
-      {current..., mapping...}
+      {...current, ...mapping}
     else
       current
 
   if replaced
     new_attr_mappings
   else
-    [new_attr_mappings..., {key: '', conversion: null, mapping...}]
+    [...new_attr_mappings, {key: '', conversion: null, ...mapping}]
 
 attrMappingAction = (state, {name, mapping}) ->
   if name
     attrs = for attr in state.attrs
       if attr.name == name
-        {attr..., mappings: replaceAttrMapping(attr.mappings, mapping)}
+        {...attr, mappings: replaceAttrMapping(attr.mappings, mapping)}
       else
         attr
-    {state..., attrs}
+    {...state, attrs}
   else
     {
-      state...
-      newAttr: {state.newAttr..., mappings: replaceAttrMapping(state.newAttr.mappings, mapping)}
+      ...state
+      newAttr: {...state.newAttr, mappings: replaceAttrMapping(state.newAttr.mappings, mapping)}
     }
 
 inputCodeRunner = (dispatch, {attr}) ->
@@ -236,9 +236,9 @@ inputCodeRunner = (dispatch, {attr}) ->
       dispatch(attrAction, {name: attr.name, attr: {code: null}})
 
 createAttrRunner = (dispatch, {attr}) ->
-  {name, newName, attr...} = attr
-  attr = {attr..., name: newName}
-  response = await fetchJsonPost({url: "/api/attrs", data: {csrf()..., attr...}})
+  {name, newName, ...attr} = attr
+  attr = {...attr, name: newName}
+  response = await fetchJsonPost({url: "/api/attrs", data: {...csrf(), ...attr}})
   if response.ok
     dispatch(attrAction, {attr: response.data})
     dispatch(attrAction, {attr: initNewAttr})
@@ -246,11 +246,11 @@ createAttrRunner = (dispatch, {attr}) ->
     console.error response
 
 updateAttrRunner = (dispatch, {attr}) ->
-  {name, newName, attr...} = attr
-  attr = {attr..., name: newName} if newName?
-  response = await fetchJsonPatch({url: "/api/attrs/#{name}", data: {csrf()..., attr...}})
+  {name, newName, ...attr} = attr
+  attr = {...attr, name: newName} if newName?
+  response = await fetchJsonPatch({url: "/api/attrs/#{name}", data: {...csrf(), ...attr}})
   if response.ok
-    dispatch(attrAction, {name, attr: {response.data..., newName: undefined}})
+    dispatch(attrAction, {name, attr: {...response.data, newName: undefined}})
   else
     console.error response
 
@@ -276,14 +276,14 @@ upAttrAction = (state, {name}) ->
     console.warn '移動できません。'
     return state
  
-  newAttr = {state.attrs[attrIndex]..., order: newOrder}
+  newAttr = {...state.attrs[attrIndex], order: newOrder}
 
   [
     {
-      state...
+      ...state
       attrs: [
-        state.attrs[...(attrIndex)]...
-        state.attrs[(attrIndex + 1)..]...
+        ...state.attrs[...(attrIndex)]
+        ...state.attrs[(attrIndex + 1)..]
         newAttr
       ].sort (a, b) -> a.order - b.order || a.name.localeCompare(b.name)
     }
@@ -303,14 +303,14 @@ downAttrAction = (state, {name}) ->
     console.warn '移動できません。'
     return state
  
-  newAttr = {state.attrs[attrIndex]..., order: newOrder}
+  newAttr = {...state.attrs[attrIndex], order: newOrder}
 
   [
     {
-      state...
+      ...state
       attrs: [
-        state.attrs[...(attrIndex)]...
-        state.attrs[(attrIndex + 1)..]...
+        ...state.attrs[...(attrIndex)]
+        ...state.attrs[(attrIndex + 1)..]
         newAttr
       ].sort (a, b) -> a.order - b.order || a.name.localeCompare(b.name)
     }
@@ -330,13 +330,13 @@ downAttrAction = (state, {name}) ->
 SetAttrsThenShow = (state, attrs) ->
   newAttrs = (normalizeAttr(attr) for attr in attrs)
   [
-    {state..., attrs: newAttrs}
-    ([runShowAttr, {id: attr.name}] for attr in newAttrs)...
+    {...state, attrs: newAttrs}
+    ...([runShowAttr, {id: attr.name}] for attr in newAttrs)
   ]
 
 SetAttrInList = (state, attr) ->
   {
-    state...
+    ...state
     attrs: updateAttrList(state.attrs, normalizeAttr(attr))
   }
 
@@ -379,11 +379,11 @@ main = ->
           html.th {}, text '名前/表示名'
           html.th {}, text '型/オプション'
           html.th {}, text '操作'
-          (providerTh({provider}) for provider in providers)...
+          ...(providerTh({provider}) for provider in providers)
         ]
       ]
       html.tbody {},
-        for attr, index in [attrs..., newAttr]
+        for attr, index in [...attrs, newAttr]
           attrTr({attr, index, providers: providers})
     ]
 

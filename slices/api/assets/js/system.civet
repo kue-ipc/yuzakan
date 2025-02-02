@@ -33,7 +33,7 @@ SYSTEM_CONTACT_PROPERTIES = {
 # Functions
 
 export normalizeSystem = (system, types = {}) ->
-  system = pickType(system, {SYSTEM_PROPERTIES..., types...})
+  system = pickType(system, {...SYSTEM_PROPERTIES, ...types})
   system.app = pickType(system.app, SYSTEM_APP_PROPERTIES) if system.app
   system.contact = pickType(system.contact, SYSTEM_CONTACT_PROPERTIES) if system.contact
   system
@@ -41,7 +41,7 @@ export normalizeSystem = (system, types = {}) ->
 # Actions
 
 export SetSystem = (state, system) -> {
-  state...
+  ...state
   system
 }
 
@@ -52,7 +52,7 @@ export createRunShowSystem = (params = {}) ->
     action: SetSystem
     normalizer: normalizeSystem
     url: API_SYSTEM
-    params...
+    ...params
   })
 
 # Effecters

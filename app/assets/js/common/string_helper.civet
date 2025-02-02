@@ -8,19 +8,19 @@ export capitalize = (str) ->
 
 # camelCase
 export camelize = (str) ->
-  listToCamelCase(strToList(str)...)
+  listToCamelCase(...strToList(str))
 
 # PascalCase
 export pascalize = (str) ->
-  listToPascalCase(strToList(str)...)
+  listToPascalCase(...strToList(str))
 
 # snake_case
 export snakize = (str) ->
-  listToSnakeCase(strToList(str)...)
+  listToSnakeCase(...strToList(str))
 
 # kebab-case
 export kebabize = (str) ->
-  listToKebabCase(strToList(str)...)
+  listToKebabCase(...strToList(str))
 
 # names
 export pluralize = (str) ->

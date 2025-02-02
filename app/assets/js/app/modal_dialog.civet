@@ -39,8 +39,8 @@ export default class ModalDialog
     @messages = []
     @value
   }) ->
-    @action = if action then {ModalDialog.DEFAULT_ACTION..., action...} else null
-    @close = if close then {ModalDialog.DEFAULT_CLOSE..., close...} else null
+    @action = if action then {...ModalDialog.DEFAULT_ACTION, ...action} else null
+    @close = if close then {...ModalDialog.DEFAULT_CLOSE, ...close} else null
     @result = undefined
 
     @initNode()
@@ -69,14 +69,14 @@ export default class ModalDialog
       node: modalDialogNode
       subscriptions: (state) => [
         ModalDialog.onMessage @modalNode, @receiveModalMessage
-        ModalDialog.onShown @modalNode, (state) -> [{state..., shown: true}, focus(state.focus)]
-        ModalDialog.onHidden @modalNode, (state) -> {state..., shown: false}
+        ModalDialog.onShown @modalNode, (state) -> [{...state, shown: true}, focus(state.focus)]
+        ModalDialog.onHidden @modalNode, (state) -> {...state, shown: false}
       ]
     }
 
   appInit: => @initState
 
-  modalView: ({title, status, closable, action, close, props...}) =>
+  modalView: ({title, status, closable, action, close, ...props}) =>
     modalDialog {
       id: @id
       scrollable: @scrollable
@@ -88,7 +88,7 @@ export default class ModalDialog
       closable
       action
       close
-    }, @modalBody {props...}
+    }, @modalBody {...props}
 
   modalAction: (state) =>
     @result = state.value
@@ -106,19 +106,19 @@ export default class ModalDialog
 
   # Actions
   receiveModalMessage: (state, props) ->
-    {state..., props...}
+    {...state, ...props}
 
   initState: (state) => {
     title: @title
     status: @status
     closable: @closable
-    action: if @action then {@action..., onclick: @modalAction} else null
+    action: if @action then {@...action, onclick: @modalAction} else null
     close: @close
     messages: @messages
     value: @value
     shwon: false
     focus: "#{@id}-modal-close-button"
-    state...
+    ...state
   }
 
   # show

@@ -44,7 +44,7 @@ export batchOperation = ({mode, list, header, filename, onupload, action}) ->
         startAllActionButton {list, action, disbaled: mode == 'do_all'}
   ]
 
-startAllActionButton = ({disabled, props...}) ->
+startAllActionButton = ({disabled, ...props}) ->
   html.button {
     class: 'btn btn-danger'
     onclick: -> [StartAllActionWithConfirm, props]
@@ -57,12 +57,12 @@ StartAllActionWithConfirm = (state, props) ->
 
 StartAllAction = (state, props) ->
   [
-    {state..., mode: 'do_all'}
+    {...state, mode: 'do_all'}
     [runDoNextAction, props]
   ]
 
 StopAllAction = (state) ->
-  {state..., mode: 'result'}
+  {...state, mode: 'result'}
 
 DoNextAction = (state, {list, action}) ->
   target = list.find (item) -> ['ADD', 'MOD', 'DEL', 'SYN', 'LOC', 'UNL'].includes(item.action)

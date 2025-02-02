@@ -50,24 +50,24 @@ export ddSubClasses = Object.freeze calcDdSubClasses()
 
 export dl = (props, children) ->
   html.dl {
-    props...
+    ...props
     class: classConcat(dlClasses, props.class)
   }, children
 
 export dt = (props, children) ->
   html.dt {
-    props...
+    ...props
     class: classConcat(dtClasses, props.class)
   }, children
 
 export dd = (props, children) ->
   html.dd {
-    props...
+    ...props
     class: classConcat(ddClasses, props.class)
   }, children
 
 export ddSub = (props, children) ->
   html.dd {
-    props...
+    ...props
     class: classConcat(ddSubClasses, props.class)
   }, children

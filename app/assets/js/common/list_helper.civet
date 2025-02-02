@@ -3,7 +3,7 @@
 export updateList = (list, id, data, {key = 'id'}) ->
   for item in list
     if item[key] == id
-      {item..., data...}
+      {...item, ...data}
     else
       item
 

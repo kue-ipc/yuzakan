@@ -59,7 +59,7 @@ main = ->
         html.strong {}, text '準備中です。'
 
     unless user? && providers? && attrs? && groups? && system?
-      return html.div {}, text '読み込み中...'
+      return html.div {}, text '読込中...'
 
     html.div {}, [
       userInfo {mode, user, groups}

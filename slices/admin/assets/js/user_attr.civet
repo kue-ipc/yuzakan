@@ -8,7 +8,7 @@ import valueDisplay from '~/app/value_display.js'
 import {CalcUserAttrs} from '~/admin/user_attrs.js'
 
 SetUserAttr = (state, {attr_name, value}) ->
-  user = {state.user..., attrs: {state.user.attrs..., [attr_name]: value}}
+  user = {...state.user, attrs: {...state.user.attrs, [attr_name]: value}}
   [CalcUserAttrs, {user}]
 
 attrValue = ({attr_name, value, type = 'string', edit = false, color = 'body'}) ->
@@ -79,8 +79,8 @@ attrValue = ({attr_name, value, type = 'string', edit = false, color = 'body'}) 
 
 ChangeAttrSetting = (state, {attr_name, setting}) ->
   user = {
-    state.user...
-    attrSettings: {state.user.attrSettings..., [attr_name]: setting}
+    ...state.user
+    attrSettings: {...state.user.attrSettings, [attr_name]: setting}
   }
   [CalcUserAttrs, {user}]
 
@@ -163,7 +163,7 @@ export default userAttr = ({mode, user, providers, attrs}) ->
           # html.th {}, text 'デフォルト値'
           # html.th {}, text 'デファルト'
           html.th {}, text '設定値'
-          (html.th({}, text entityLabel(provider)) for provider in providers)...
+          ...(html.th({}, text entityLabel(provider)) for provider in providers)
         ]
       html.tbody {},
         for attr in attrs
@@ -172,7 +172,7 @@ export default userAttr = ({mode, user, providers, attrs}) ->
             # attrDefaultTd {user, attr}
             # attrSettingTd {mode, user, attr}
             attrValueTd {mode, user, attr}
-            (providerTd {user, attr, provider} for provider in providers)...
+            ...(providerTd {user, attr, provider} for provider in providers)
           ]
     ]
   ]

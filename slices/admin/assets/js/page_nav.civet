@@ -30,7 +30,7 @@ pageList = ({page, total_page, onpage, readonly = false}) ->
     pageItem {content: 'first', page: 1, disabled: page == 1, onpage, readonly}
     pageItem {content: 'prev', page: page - 1, disabled: page == 1, onpage, readonly}
     pageEllipsis {start: 1, end: page - 3, onpage, readonly}
-    (pageNumList {start: page - 2, end: page + 2, page, total_page, onpage, readonly})...
+    ...(pageNumList {start: page - 2, end: page + 2, page, total_page, onpage, readonly})
     pageEllipsis {start: page + 3, end: total_page, onpage, readonly}
     pageItem {content: 'next', page: page + 1, disabled: page == total_page, onpage, readonly}
     pageItem {content: 'last', page: total_page, disabled: page == total_page, onpage, readonly}

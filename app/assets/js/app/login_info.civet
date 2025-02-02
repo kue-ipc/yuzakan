@@ -9,7 +9,7 @@ import * as dlh from '~/app/dl_horizontal.js'
 import {runShowSystem} from '~/api/system.js'
 
 export default class LoginInfo extends ModalDialog
-  constructor: ({service = {}, props...}) ->
+  constructor: ({service = {}, ...props}) ->
     super {
       title: 'ログイン情報'
       fullscreen: 'xl-down'
@@ -19,7 +19,7 @@ export default class LoginInfo extends ModalDialog
         label: '印刷'
         side: 'left'
       }
-      props...,
+      ...props,
     }
     @service = service
 
@@ -44,9 +44,9 @@ export default class LoginInfo extends ModalDialog
     state
 
   # override
-  modalBody: ({messages, props...}) ->
+  modalBody: ({messages, ...props}) ->
     [
-      super({messages})...
+      ...super({messages})
       if props.user? && props.system?
         html.div {class: 'boder print-fullscreen'},
           @loginInfo(props)

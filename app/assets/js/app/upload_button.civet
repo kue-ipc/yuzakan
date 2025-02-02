@@ -29,7 +29,7 @@ export default uploadButton = ({disabled = false, onupload}) ->
 UploadCsv = (state, {file, action}) ->
   return state unless file
 
-  [{state..., mode: 'loading'}, [runUploadCsv, {file, action}]]
+  [{...state, mode: 'loading'}, [runUploadCsv, {file, action}]]
 
 # Click upload buton action
 ClickUploadButton = (state, input) ->  [state, [runClickInput, input]]

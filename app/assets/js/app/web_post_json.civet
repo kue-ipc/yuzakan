@@ -157,8 +157,8 @@ messageSub = (action, {node}) ->
   ]
 
 messageAction = (state, params) -> {
-  state...
-  params...
+  ...state
+  ...params
 }
 
 ModalView = ({status, title, messages, closable, successLink}) ->

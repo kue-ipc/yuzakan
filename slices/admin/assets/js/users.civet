@@ -64,7 +64,7 @@ ACTIONS = new Map([
 
 updateUserList = (users, user) -> updateList(users, user.name, user, {key: 'name'})
 
-normalizeUserUploaded = ({action, error, user...}) ->
+normalizeUserUploaded = ({action, error, ...user}) ->
   action = action?.slice(0, 3)?.toUpperCase() ? ''
   error = switch action
     when '', 'ADD', 'MOD', 'DEL', 'SYN', 'LOC', 'UNL'
@@ -79,7 +79,7 @@ normalizeUserUploaded = ({action, error, user...}) ->
   {
     action
     error
-    normalizeUser(user)...
+    ...normalizeUser(user)
   }
 
 normalizeUserAttrs = (userAttrs, {attrs}) ->
@@ -90,21 +90,21 @@ normalizeUserAttrs = (userAttrs, {attrs}) ->
 fillAddOrModUsers = ({users, attrs, domain}) ->
   for user in users
     user = setUserAttrsDefault({user, attrs}) if user.attrs? && ['ADD', 'MOD'].includes(user.action)
-    user = {user..., email: "#{user.name}@#{domain}"} if user.action == 'ADD' && !user.email
+    user = {...user, email: "#{user.name}@#{domain}"} if user.action == 'ADD' && !user.email
     user
 
 indexOptionFromState = (state) ->
   pick({
-    state.pagination...
-    state.search...
-    state.option...
-    state.order...
+    ...state.pagination
+    ...state.search
+    ...state.option
+    ...state.order
   }, Object.keys(INDEX_WITH_PAGE_USERS_PARAM_TYPES))
 
 userHeaders = ({attrs}) ->
   [
-    USER_HEADERS...
-    (listToParamName('attrs', attr.name) for attr in attrs)...
+    ...USER_HEADERS
+    (listToParamName('attrs', attr.name) for attr in ...attrs)
   ]
 
 # Dialogs
@@ -117,7 +117,7 @@ loginInfo = new LoginInfo {
 
 ## Views
 
-indexUsersOption = ({onchange: action, readonly = false, props...}) ->
+indexUsersOption = ({onchange: action, readonly = false, ...props}) ->
   onchange = (state, event) -> [action, {[event.target.name]: event.target.checked}]
 
   html.div {class: 'row mb-2'},
@@ -157,7 +157,7 @@ usersThead = ({providers}) ->
       html.th {key: 'email'}, text 'メールアドレス'
       html.th {key: 'clearance-level'}, text '権限レベル'
       html.th {key: 'primary-group'}, text 'プライマリグループ'
-      (providerTh({provider}) for provider in providers)...
+      ...(providerTh({provider}) for provider in providers)
     ]
 
 providerTh = ({provider}) ->
@@ -197,7 +197,7 @@ userTr = ({user, groups, providers}) ->
   }, [
     html.td {
       key: 'show'
-      onclick: -> [SetUserInList, {user..., show_detail: !user.show_detail}]
+      onclick: -> [SetUserInList, {...user, show_detail: !user.show_detail}]
     }, bsIcon {name: if user.show_detail then 'chevron-down' else 'chevron-right'}
     html.td {key: 'action'},
       switch user.action
@@ -241,7 +241,7 @@ userTr = ({user, groups, providers}) ->
           text entityLabel(findList(groups, user.primary_group, {key: 'name'})) ? user.primary_group
       else
         undefined
-    (userProviderTd({user, provider}) for provider in providers)...
+    ...(userProviderTd({user, provider}) for provider in providers)
   ]
 
 userProviderTd = ({user, provider}) ->
@@ -277,7 +277,7 @@ userDetailTr = ({user, providers}) ->
     ]
     html.td {key: 'groups'},
       html.div {}, text user.groups?.join(', ') ? ''
-    (userProviderDataTd({user, provider}) for provider in providers)...
+    ...(userProviderDataTd({user, provider}) for provider in providers)
   ]
 
 userProviderDataTd = ({user, provider}) ->
@@ -292,19 +292,19 @@ createActionUser = (createEffecter, props = {}) ->
   (state, user) ->
     action = (_, data) ->
       if data?
-        [SetUserInListNextIfDoAll, {user..., data..., action: 'SUC', error: null}]
+        [SetUserInListNextIfDoAll, {...user, ...data, action: 'SUC', error: null}]
       else
-        [SetUserInListNextIfDoAll, {user..., action: 'ERR', error: '存在しません。', show_detail: true}]
+        [SetUserInListNextIfDoAll, {...user, action: 'ERR', error: '存在しません。', show_detail: true}]
     fallback = (_, error) ->
-      [SetUserInListNextIfDoAll, {user..., action: 'ERR', error, show_detail: true}]
+      [SetUserInListNextIfDoAll, {...user, action: 'ERR', error, show_detail: true}]
     run = createEffecter({action, fallback})
     [
       {
-        state...
+        ...state
         mode: if state.mode == 'file' then 'result' else state.mode
-        users: updateUserList(state.users, {user..., action: 'ACT'})
+        users: updateUserList(state.users, {...user, action: 'ACT'})
       }
-      [run, {props..., user..., id: user.name, user_id: user.name}]
+      [run, {...props, ...user, id: user.name, user_id: user.name}]
     ]
 
 ## Actions
@@ -314,7 +314,7 @@ runShowLoginInfo = (_dispatch, {user, dateTime = DateTime.now()}) ->
 
 ReloadIndexUsers = (state, data) ->
   console.debug 'reload index users'
-  newState = {state..., data..., mode: 'loading'}
+  newState = {...state, ...data, mode: 'loading'}
   params = indexOptionFromState(newState)
   [
     newState,
@@ -329,10 +329,10 @@ SetIndexUsers = (state, rawUsers) ->
       action: ''
       show_detail: false
       error: null
-      user...
+      ...user
     }
   {
-    state...
+    ...state
     mode: 'loaded'
     users
   }
@@ -340,17 +340,17 @@ SetIndexUsers = (state, rawUsers) ->
 MovePage = (state, page) ->
   return state if state.page == page
 
-  [ReloadIndexUsers, {pagination: {state.pagination... , page}}]
+  [ReloadIndexUsers, {pagination: {...state.pagination , page}}]
 
 Search = (state, query) ->
   return state if state.query == query
 
   # ページ情報を初期化
-  [ReloadIndexUsers, {pagination: {state.pagination... , page: 1}, search: {query}}]
+  [ReloadIndexUsers, {pagination: {...state.pagination , page: 1}, search: {query}}]
 
 ChangeOption = (state, option) ->
   # ページ情報を初期化
-  [ReloadIndexUsers, {pagination: {state.pagination... , page: 1}, option: {state.option..., option...}}]
+  [ReloadIndexUsers, {pagination: {...state.pagination , page: 1}, option: {...state.option, ...option}}]
 
 SortOrder = (state, order) ->
   [ReloadIndexUsers, {order}]
@@ -363,13 +363,13 @@ UploadUsers = (state, {list, filename}) ->
       {}
     {
       show_detail: false
-      normalizeUserUploaded(user)...
-      userAttrs...
+      ...normalizeUserUploaded(user)
+      ...userAttrs
     }
 
   
   {
-    state...
+    ...state
     mode: 'file'
     users: fillAddOrModUsers({users, attrs: state.attrs, domain: state.system?.domain})
     filename
@@ -377,7 +377,7 @@ UploadUsers = (state, {list, filename}) ->
 
 SetUserInList = (state, user) ->
   {
-    state...
+    ...state
     users: updateUserList(state.users, user)
   }
 
@@ -385,7 +385,7 @@ SetUserInListNextIfDoAll = (state, user) ->
   users = updateUserList(state.users, user)
   [
     {
-      state...
+      ...state
       users
     }
     if user.action == 'ERR'
@@ -402,7 +402,7 @@ DoActionUser = (state, user) ->
     when 'MOD'
       [ModUser, user]
     when 'DEL'
-      [DelUser, {user..., permanent: user.deleted}]
+      [DelUser, {...user, permanent: user.deleted}]
     when 'SYN'
       [SyncUser, user]
     when 'LOC'
@@ -427,10 +427,10 @@ UnlockUser = createActionUser(createRunDestroyUserLock)
 
 PopState = (state, params) ->
   data = {
-    pagination: {state.pagination..., pickType(params, PAGINATION_PARAM_TYPES)...}
-    search: {state.search..., pickType(params, SEARCH_PARAM_TYPES)...}
-    option: {state.option..., pickType(params, INDEX_USERS_OPTION_PARAM_TYPES)...}
-    order: {state.order..., pickType(params, ORDER_PARAM_TYPES)...}
+    pagination: {...state.pagination, ...pickType(params, PAGINATION_PARAM_TYPES)}
+    search: {...state.search, ...pickType(params, SEARCH_PARAM_TYPES)}
+    option: {...state.option, ...pickType(params, INDEX_USERS_OPTION_PARAM_TYPES)}
+    order: {...state.order, ...pickType(params, ORDER_PARAM_TYPES)}
   }
   [ReloadIndexUsers, data]
 
@@ -495,9 +495,9 @@ main = ->
       }
       if mode == 'loaded' || mode == 'loading'
         html.div {key: 'index-params'}, [
-          searchForm {search..., onsearch: Search, readonly: mode == 'loading'}
-          indexUsersOption {option..., onchange: ChangeOption, readonly: mode == 'loading'}
-          pageNav {pagination..., onpage: MovePage, readonly: mode == 'loading'}
+          searchForm {...search, onsearch: Search, readonly: mode == 'loading'}
+          indexUsersOption {...option, onchange: ChangeOption, readonly: mode == 'loading'}
+          pageNav {...pagination, onpage: MovePage, readonly: mode == 'loading'}
         ]
       if mode == 'loading'
         html.p {}, text '読込中...'

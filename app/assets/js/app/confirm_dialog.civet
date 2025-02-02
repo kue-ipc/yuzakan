@@ -41,12 +41,12 @@ export default class ConfirmDialog extends ModalDialog
         ]
     ].flat()
 
-  changeAgree: (state, agreed) -> {state..., agreed}
+  changeAgree: (state, agreed) -> {...state, agreed}
 
   # override
   initState: (state = {}) -> {
     confirmations: @confirmations
     agreement_required: @agreement_required
     agreed: false
-    super(state)...
+    ...super(state)
   }

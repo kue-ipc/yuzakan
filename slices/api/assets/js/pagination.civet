@@ -26,8 +26,8 @@ export extractPagination = (contentRange, location) ->
   match = CONTENT_RANGE_REGEXP.exec(contentRange)
   if match
     {
-      pickType(getQueryParamsFromUrl(new URL(location, globalThis.location)), PAGINATION_PARAM_TYPES)...
-      pickType(match.groups, CONTENT_RANGE_TYPES)...
+      ...pickType(getQueryParamsFromUrl(new URL(location, globalThis.location)), PAGINATION_PARAM_TYPES)
+      ...pickType(match.groups, CONTENT_RANGE_TYPES)
     }
   else
     console.error 'invalid content range: %s', contentRange

@@ -13,9 +13,9 @@ SetUserWithInit = (state, {user}) ->
   providers = (provider_userdata.provider.name for provider_userdata in user.provider_userdatas)
   primary_group = user.userdata.primary_group
   groups = user.userdata.groups || []
-  [InitUserAttrs, {user: {user..., providers, primary_group, groups}}]
+  [InitUserAttrs, {user: {...user, providers, primary_group, groups}}]
 
-SetMode = (state, mode) -> {state..., mode}
+SetMode = (state, mode) -> {...state, mode}
 
 export runGetUserWithInit = (dispatch, {name}) ->
   if name?

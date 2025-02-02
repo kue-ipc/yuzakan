@@ -27,7 +27,7 @@ export CalcUserAttrs = (state, {user, attrs}) ->
   user ?= state.user
   attrs ?= state.attrs
 
-  attrValues = {user.attrs...}
+  attrValues = {...user.attrs}
   attrDefaults = {}
 
   for attr in attrs when attr.code
@@ -35,12 +35,12 @@ export CalcUserAttrs = (state, {user, attrs}) ->
     if user.attrSettings[attr.name] == 'default'
       attrValues[attr.name] = attrDefaults[attr.name]
 
-  {state..., user: {user..., attrs: attrValues, attrDefaults}, attrs}
+  {...state, user: {...user, attrs: attrValues, attrDefaults}, attrs}
 
 export InitUserAttrs = (state, {user, attrs}) ->
   user ?= state.user
   attrs ?= state.attrs
-  return {state..., user, attrs} unless user? && attrs?
+  return {...state, user, attrs} unless user? && attrs?
 
   attrValues = {}
   attrDefaults = {}
@@ -63,7 +63,7 @@ export InitUserAttrs = (state, {user, attrs}) ->
       attrSettings[attr.name] = 'custom'
       attrValues[attr.name] = user.userdata.attrs[attr.name]
 
-  {state..., user: {user..., attrs: attrValues, attrSettings, attrDefaults}, attrs}
+  {...state, user: {...user, attrs: attrValues, attrSettings, attrDefaults}, attrs}
 
 # user.attrs Map として必ず存在すること
 export setUserAttrsDefault = ({user, attrs}) ->
@@ -79,4 +79,4 @@ export setUserAttrsDefault = ({user, attrs}) ->
       defaultValue = calcUserAttrValue({user, attrs: userAttrs, code: attr.code})
       userAttrs.set(attr.name, defaultValue) if defaultValue?
 
-  {user..., attrs: userAttrs}
+  {...user, attrs: userAttrs}

@@ -26,7 +26,7 @@ inputControl = (props) ->
       class: 'form-control'
       value: props.value ? (if props.encrypted? then props.default else '')
       'aria-describedby': describeId
-      inputControlProps...
+      ...inputControlProps
       oninput: (state, event) -> [props.action, {name: props.name, value: event.target.value}]
     }
     if props.encrypted then html.small {class: 'form-text'}, text 'この項目は暗号化されて保存されます。'
@@ -67,7 +67,7 @@ inputTextarea = (props) ->
       class: 'form-control'
       value: props.value ? (if props.encrypted? then props.default else '')
       'aria-edscribedby': describeId
-      inputTextareaProps...
+      ...inputTextareaProps
       oninput: (state, event) -> [props.action, {name: props.name, value: event.target.value}]
     }
     if props.encrypted? then html.small {class: 'form-text'}, text 'この項目は暗号化されて保存されます。'
@@ -113,23 +113,23 @@ inputParam = (props) ->
     when 'text', 'password', 'email', 'search', 'tel', 'url', \
           'number', 'range', 'color', \
           'date', 'time', 'datetime-local', 'month', 'week'
-      inputControl {props..., inputType}
+      inputControl {...props, inputType}
     when 'checkbox'
-      inputCheckbox {props..., inputType}
+      inputCheckbox {...props, inputType}
     when 'textarea'
-      inputTextarea {props..., inputType}
+      inputTextarea {...props, inputType}
     else
       text '未実装の形式です。'
 
 
-export default adapterParams = ({params, param_types, props...}) ->
+export default adapterParams = ({params, param_types, ...props}) ->
   html.div {}, [
     html.h5 {},
       text 'パラメーター'
     html.div {},
       if param_types.length > 0
         for param_type in param_types
-          inputParam {props..., param_type..., value: params[param_type.name]}
+          inputParam {...props, ...param_type, value: params[param_type.name]}
       else
         text "設定できるパラメーターはありません。"
   ]

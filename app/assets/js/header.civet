@@ -93,13 +93,13 @@ headerNav = ({system, session}) ->
 #                 - text '利用者用メニュー'
 
 # SetSystem = (state, {system}) ->
-#   {state..., system}
+#   {...state, system}
 
 # SetSession = (state, {session}) ->
-#   {state..., system}
+#   {...state, system}
 
 # SetMenus = (state, {menus}) ->
-#   {state..., menu}
+#   {...state, menu}
 
 # runGetSystem = (dispatch) ->
 #   response = await fetchJsonGet({url: '/api/system'})

@@ -24,7 +24,7 @@ export createRunCreateUserLock = (params = {}) ->
     normalizer: normalizeUser
     url: API_USERS_LOCK
     pathKeys: [USER_ID_KEY_USERS_LOCK]
-    params...
+    ...params
   })
 
 export createRunDestroyUserLock = (params = {}) ->
@@ -33,7 +33,7 @@ export createRunDestroyUserLock = (params = {}) ->
     normalizer: normalizeUser
     url: API_USERS_LOCK
     pathKeys: [USER_ID_KEY_USERS_LOCK]
-    params...
+    ...params
   })
 
 # Effecters

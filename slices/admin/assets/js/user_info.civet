@@ -17,19 +17,19 @@ SetUserUsername = (state, name) ->
     else
       state.user.email
 
-  [CalcUserAttrs, {user: {state.user..., name, email}}]
+  [CalcUserAttrs, {user: {...state.user, name, email}}]
 SetUserUsernameByEvent = createEventValueAction(SetUserUsername)
 
-SetUserDisplayName = (state, display_name) -> [CalcUserAttrs, {user: {state.user..., display_name}}]
+SetUserDisplayName = (state, display_name) -> [CalcUserAttrs, {user: {...state.user, display_name}}]
 SetUserDisplayNameByEvent = createEventValueAction(SetUserDisplayName)
 
-SetUserEmail = (state, email) -> [CalcUserAttrs, {user: {state.user..., email}}]
+SetUserEmail = (state, email) -> [CalcUserAttrs, {user: {...state.user, email}}]
 SetUserEmailByEvent = createEventValueAction(SetUserEmail)
 
-SetUserClearanceLevel = (state, clearance_level) -> {state..., user: {state.user..., clearance_level}}
+SetUserClearanceLevel = (state, clearance_level) -> {...state, user: {...state.user, clearance_level}}
 SetUserClearanceLevelByEvent = createEventValueAction(SetUserClearanceLevel, {type: 'integer'})
 
-SetUserPrimaryGroup = (state, primary_group) -> [CalcUserAttrs, {user: {state.user..., primary_group}}]
+SetUserPrimaryGroup = (state, primary_group) -> [CalcUserAttrs, {user: {...state.user, primary_group}}]
 SetUserPrimaryGroupByEvent = createEventValueAction(SetUserPrimaryGroup)
 
 export default userInfo = ({mode, user, groups}) ->

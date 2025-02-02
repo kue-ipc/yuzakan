@@ -32,11 +32,11 @@ export SHOW_ATTR_PARAM_TYPES = {
 }
 
 export CREATE_ATTR_PARAM_TYPES = {
-  ATTR_PROPERTIES...
+  ...ATTR_PROPERTIES
 }
 
 export UPDATE_ATTR_PARAM_TYPES = {
-  ATTR_PROPERTIES...
+  ...ATTR_PROPERTIES
 }
 
 export DESTROY_ATTR_PARAM_TYPES = {
@@ -49,20 +49,20 @@ export normalizeAttrs = (attrs, type = {}) ->
 
 export normalizeAttr = (attr, types = {}) ->
   pickType(attr, {
-    ATTR_PROPERTIES...
+    ...ATTR_PROPERTIES
     mappings: 'list'
-    types...
+    ...types
   })
 
 # Actiosn
 
 export SetAttrs = (state, attrs) -> {
-  state...
+  ...state
   attrs
 }
 
 export SetAttr = (state, attr) -> {
-  state...
+  ...state
   attr
 }
 
@@ -74,7 +74,7 @@ export createRunIndexAttrs = (params = {}) ->
     normalizer: normalizeAttrs
     url: API_ATTRS
     dataTypes: INDEX_ATTRS_PARAM_TYPES
-    params...
+    ...params
   })
 
 export createRunShowAttr = (params = {}) ->
@@ -83,7 +83,7 @@ export createRunShowAttr = (params = {}) ->
     normalizer: normalizeAttr
     url: API_ATTRS
     dataTypes: SHOW_ATTR_PARAM_TYPES
-    params...
+    ...params
   })
 
 export createRunCreateAttr = (params = {}) ->
@@ -92,7 +92,7 @@ export createRunCreateAttr = (params = {}) ->
     normalizer: normalizeAttr
     url: API_ATTRS
     dataTypes: CREATE_ATTR_PARAM_TYPES
-    params...
+    ...params
   })
 
 export createRunUpdateAttr = (params = {}) ->
@@ -101,7 +101,7 @@ export createRunUpdateAttr = (params = {}) ->
     normalizer: normalizeAttr
     url: API_ATTRS
     dataTypes: UPDATE_ATTR_PARAM_TYPES
-    params...
+    ...params
   })
 
 export createRunDestroyAttr = (params = {}) ->
@@ -110,7 +110,7 @@ export createRunDestroyAttr = (params = {}) ->
     normalizer: normalizeAttr
     url: API_ATTRS
     dataTypes: DESTROY_ATTR_PARAM_TYPES
-    params...
+    ...params
   })
 
 # Effecters

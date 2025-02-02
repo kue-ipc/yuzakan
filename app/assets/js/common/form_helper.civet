@@ -3,10 +3,10 @@
 import {listToKebabCase, listToParamName} from '~/common/convert.js'
 
 export formName = (name, parents = []) ->
-  listToParamName(parents..., name)
+  listToParamName(...parents, name)
 
 export formId = (name, parents = []) ->
-  listToKebabCase(parents..., name)
+  listToKebabCase(...parents, name)
 
 export formDataToObj = (formData) ->
   root = {}

@@ -52,7 +52,7 @@ ACTIONS = new Map([
 
 updateGroupList = (groups, group) -> updateList(groups, group.name, group, {key: 'name'})
 
-normalizeGroupUploaded = ({action, error, group...}) ->
+normalizeGroupUploaded = ({action, error, ...group}) ->
   action = action?.slice(0, 3)?.toUpperCase() ? ''
   error = switch action
     when '', 'MOD', 'SYN'
@@ -67,21 +67,21 @@ normalizeGroupUploaded = ({action, error, group...}) ->
   {
     action
     error
-    normalizeGroup(group)...
+    ...normalizeGroup(group)
   }
 
 indexOptionFromState = (state) ->
   pick({
-    state.pagination...
-    state.search...
-    state.option...
-    state.order...
+    ...state.pagination
+    ...state.search
+    ...state.option
+    ...state.order
   }, Object.keys(INDEX_WITH_PAGE_GROUPS_PARAM_TYPES))
 
 
 # Views
 
-indexGroupsOption = ({onchange: action, readonly = false, props...}) ->
+indexGroupsOption = ({onchange: action, readonly = false, ...props}) ->
   onchange = (state, event) -> [action, {[event.target.name]: event.target.checked}]
 
   html.div {class: 'row mb-2'},
@@ -120,7 +120,7 @@ groupsThead = ({providers}) ->
       html.th {key: 'action'}, text 'アクション'
       html.th {key: 'name'}, text 'グループ名'
       html.th {key: 'label'}, text 'ラベル'
-      (providerTh({provider}) for provider in providers)...
+      ...(providerTh({provider}) for provider in providers)
     ]
 
 providerTh = ({provider}) ->
@@ -160,7 +160,7 @@ groupTr = ({group, providers}) ->
   }, [
     html.td {
       key: 'show'
-      onclick: -> [SetGroupInList, {group..., show_detail: !group.show_detail}]
+      onclick: -> [SetGroupInList, {...group, show_detail: !group.show_detail}]
     }, bsIcon {name: if group.show_detail then 'chevron-down' else 'chevron-right'}
     html.td {key: 'action'},
       switch group.action
@@ -191,7 +191,7 @@ groupTr = ({group, providers}) ->
       html.span {class: 'ms-2 badge text-bg-warning'}, text '使用禁止' if group.prohibited
       html.span {class: 'ms-2 badge text-bg-danger'}, text '削除済み' if group.deleted
     ]
-    (groupProviderTd({group, provider}) for provider in providers)...
+    ...(groupProviderTd({group, provider}) for provider in providers)
   ]
 
 groupProviderTd = ({group, provider}) ->
@@ -222,7 +222,7 @@ groupDetailTr = ({group, providers}) ->
           else
             preCode {code: objToJson(group.error, 2), language: 'json'}
     ]
-    (groupProviderDataTd({group, provider}) for provider in providers)...
+    ...(groupProviderDataTd({group, provider}) for provider in providers)
   ]
 
 groupProviderDataTd = ({group, provider}) ->
@@ -235,7 +235,7 @@ groupProviderDataTd = ({group, provider}) ->
 
 ReloadIndexGroups = (state, data) ->
   console.debug 'reload index groups'
-  newState = {state..., data..., mode: 'loading'}
+  newState = {...state, ...data, mode: 'loading'}
   params = indexOptionFromState(newState)
   [
     newState,
@@ -250,10 +250,10 @@ SetIndexGroups = (state, rawGroups) ->
       action: ''
       show_detail: false
       error: null
-      group...
+      ...group
     }
   {
-    state...
+    ...state
     mode: 'loaded'
     groups
   }
@@ -261,17 +261,17 @@ SetIndexGroups = (state, rawGroups) ->
 MovePage = (state, page) ->
   return state if state.page == page
 
-  [ReloadIndexGroups, {pagination: {state.pagination... , page}}]
+  [ReloadIndexGroups, {pagination: {...state.pagination , page}}]
 
 Search = (state, query) ->
   return state if state.query == query
 
   # ページ情報を初期化
-  [ReloadIndexGroups, {pagination: {state.pagination... , page: 1}, search: {query}}]
+  [ReloadIndexGroups, {pagination: {...state.pagination , page: 1}, search: {query}}]
 
 ChangeOption = (state, option) ->
   # ページ情報を初期化
-  [ReloadIndexGroups, {pagination: {state.pagination... , page: 1}, option: {state.option..., option...}}]
+  [ReloadIndexGroups, {pagination: {...state.pagination , page: 1}, option: {...state.option, ...option}}]
 
 SortOrder = (state, order) ->
   [ReloadIndexGroups, {order}]
@@ -280,10 +280,10 @@ UploadGroups = (state, {list, filename}) ->
   groups = for group in list
     {
       show_detail: false
-      normalizeGroupUploaded(group)...
+      ...normalizeGroupUploaded(group)
     }
   {
-    state...
+    ...state
     mode: 'file'
     groups
     filename
@@ -291,7 +291,7 @@ UploadGroups = (state, {list, filename}) ->
 
 SetGroupInList = (state, group) ->
   {
-    state...
+    ...state
     groups: updateGroupList(state.groups, group)
   }
 
@@ -299,7 +299,7 @@ SetGroupInListNextIfDoAll = (state, group) ->
   groups = updateGroupList(state.groups, group)
   [
     {
-      state...
+      ...state
       groups
     }
     if group.action == 'ERR'
@@ -323,19 +323,19 @@ createActionGroup = (createEffecter, props = {}) ->
   (state, group) ->
     action = (_, data) ->
       if data?
-        [SetGroupInListNextIfDoAll, {group..., data..., action: 'SUC', error: null}]
+        [SetGroupInListNextIfDoAll, {...group, ...data, action: 'SUC', error: null}]
       else
-        [SetGroupInListNextIfDoAll, {group..., action: 'ERR', error: '存在しません。', show_detail: true}]
+        [SetGroupInListNextIfDoAll, {...group, action: 'ERR', error: '存在しません。', show_detail: true}]
     fallback = (_, error) ->
-      [SetGroupInListNextIfDoAll, {group..., action: 'ERR', error, show_detail: true}]
+      [SetGroupInListNextIfDoAll, {...group, action: 'ERR', error, show_detail: true}]
     run = createEffecter({action, fallback})
     [
       {
-        state...
+        ...state
         mode: if state.mode == 'file' then 'result' else state.mode
-        groups: updateGroupList(state.groups, {group..., action: 'ACT'})
+        groups: updateGroupList(state.groups, {...group, action: 'ACT'})
       }
-      [run, {props..., group..., id: group.name}]
+      [run, {...props, ...group, id: group.name}]
     ]
 
 ModGroup = createActionGroup(createRunUpdateGroup)
@@ -344,10 +344,10 @@ SyncGroup = createActionGroup(createRunShowGroup)
 
 PopState = (state, params) ->
   data = {
-    pagination: {state.pagination..., pickType(params, PAGINATION_PARAM_TYPES)...}
-    search: {state.search..., pickType(params, SEARCH_PARAM_TYPES)...}
-    option: {state.option..., pickType(params, INDEX_GROUPS_OPTION_PARAM_TYPES)...}
-    order: {state.order..., pickType(params, ORDER_PARAM_TYPES)...}
+    pagination: {...state.pagination, ...pickType(params, PAGINATION_PARAM_TYPES)}
+    search: {...state.search, ...pickType(params, SEARCH_PARAM_TYPES)}
+    option: {...state.option, ...pickType(params, INDEX_GROUPS_OPTION_PARAM_TYPES)}
+    order: {...state.order, ...pickType(params, ORDER_PARAM_TYPES)}
   }
   [ReloadIndexGroups, data]
 
@@ -408,9 +408,9 @@ main = ->
       }
       if mode == 'loaded' || mode == 'loading'
         html.div {key: 'index-params'}, [
-          searchForm {search..., onsearch: Search, readonly: mode == 'loading'}
-          indexGroupsOption {option..., onchange: ChangeOption, readonly: mode == 'loading'}
-          pageNav {pagination..., onpage: MovePage, readonly: mode == 'loading'}
+          searchForm {...search, onsearch: Search, readonly: mode == 'loading'}
+          indexGroupsOption {...option, onchange: ChangeOption, readonly: mode == 'loading'}
+          pageNav {...pagination, onpage: MovePage, readonly: mode == 'loading'}
         ]
       if mode == 'loading'
         html.p {key: 'loading'}, text '読込中...'

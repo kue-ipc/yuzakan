@@ -23,7 +23,7 @@ abilities = [
 ]
 
 destroyConfirm = new ConfirmDialog {
-  id: formId('destroy', ['modal', 'confirm', parentNames...])
+  id: formId('destroy', ['modal', 'confirm', ...parentNames])
   status: 'alert'
   title: 'プロバイダーの削除'
   messages: ['プロバイダーを削除してもよろしいですか？']
@@ -34,7 +34,7 @@ destroyConfirm = new ConfirmDialog {
 }
 
 createWebData = new WebData {
-  id: formId('create', ['modal', 'web', parentNames...])
+  id: formId('create', ['modal', 'web', ...parentNames])
   title: 'プロバイダーの作成'
   method: 'POST'
   url: '/api/providers'
@@ -44,7 +44,7 @@ createWebData = new WebData {
 }
 
 updateWebData = new WebData {
-  id: formId('update', ['modal', 'web', parentNames...])
+  id: formId('update', ['modal', 'web', ...parentNames])
   title: 'プロバイダーの更新'
   method: 'PATCH'
   codeActions: new Map [
@@ -53,7 +53,7 @@ updateWebData = new WebData {
 }
 
 destroyWebData = new WebData {
-  id: formId('destroy', ['modal', 'web', parentNames...])
+  id: formId('destroy', ['modal', 'web', ...parentNames])
   title: 'プロバイダーの削除'
   method: 'DELETE'
   codeActions: new Map [
@@ -62,15 +62,15 @@ destroyWebData = new WebData {
 }
 
 adapterParamAction = (state, {name, value}) ->
-  {state..., provider: {state.provider..., params: {state.provider.params..., [name]: value}}}
+  {...state, provider: {...state.provider, params: {...state.provider.params, [name]: value}}}
 
 providerAction = (state, {name, provider}) ->
   history.pushState(null, null, "/admin/providers/#{name}") if name? && name != state.name
 
   newState = {
-    state...
+    ...state
     name: name ? state.name
-    provider: {state.provider..., provider...}
+    provider: {...state.provider, ...provider}
   }
 
   return newState unless provider.adapter?
@@ -88,10 +88,10 @@ adapterAction = (state, {name, adapter}) ->
   name ?= adapter.name
   adapters = for current in state.adapters
     if current.name == adapter.name
-      {current..., adapter...}
+      {...current, ...adapter}
     else
       current
-  {state..., adapters}
+  {...state, adapters}
 
 showAdapterRunner = (dispatch, {name}) ->
   return unless name?
@@ -103,7 +103,7 @@ showAdapterRunner = (dispatch, {name}) ->
     console.error response
 
 createProviderRunner = (dispatch, {provider}) ->
-  response = await createWebData.submitPromise {data: {csrf()..., provider...}}
+  response = await createWebData.submitPromise {data: {...csrf(), ...provider}}
   if response.ok
     provider = response.data
     dispatch(providerAction, {name: provider.name, provider})
@@ -112,7 +112,7 @@ createProviderRunner = (dispatch, {provider}) ->
 
 
 updateProviderRunner = (dispatch, {name, provider}) ->
-  response = await updateWebData.submitPromise {url: "/api/providers/#{name}", data: {csrf()..., provider...}}
+  response = await updateWebData.submitPromise {url: "/api/providers/#{name}", data: {...csrf(), ...provider}}
   if response.ok
     provider = response.data
     dispatch(providerAction, {name: provider.name, provider})
@@ -124,7 +124,7 @@ destroyProviderRunner = (dispatch, {name}) ->
   if confirm
     response = await destroyWebData.submitPromise {url: "/api/providers/#{name}", data: csrf()}
     if response.ok
-      # redirect...
+      # ...redirect
     else
       console.error response
 
@@ -139,7 +139,7 @@ showProviderRunner = (dispatch, {name}) ->
     console.error response
 
 initAllAdaptersAction = (state, {adapters}) ->
-  {state..., adapters}
+  {...state, adapters}
 
 indexAllAdaptersRunner = (dispatch) ->
   response = await fetchJsonGet({url: '/api/adapters'})

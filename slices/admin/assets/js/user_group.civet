@@ -3,9 +3,9 @@ import * as html from '@hyperapp/html'
 
 RemoveGroup = (state, name) ->
   {
-    state...
+    ...state
     user: {
-      state.user...
+      ...state.user
       groups: (group for group in state.user.groups when group != name)
     }
   }

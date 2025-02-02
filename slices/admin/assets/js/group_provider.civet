@@ -15,7 +15,7 @@ export default groupProvider = ({mode, group, providers}) ->
       html.thead {},
         html.tr {}, [
           html.th {}, text ''
-          (html.th({}, text entityLabel(provider)) for provider in providers)...
+          ...(html.th({}, text entityLabel(provider)) for provider in providers)
         ]
       html.tbody {},
         for {name, label, type} in [

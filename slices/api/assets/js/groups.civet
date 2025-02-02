@@ -44,25 +44,25 @@ export INDEX_GROUPS_OPTION_PARAM_TYPES = {
 }
 
 export INDEX_GROUPS_PARAM_TYPES = {
-  SEARCH_PARAM_TYPES...
-  ORDER_PARAM_TYPES...
-  INDEX_GROUPS_OPTION_PARAM_TYPES...
+  ...SEARCH_PARAM_TYPES
+  ...ORDER_PARAM_TYPES
+  ...INDEX_GROUPS_OPTION_PARAM_TYPES
 }
 
 export INDEX_WITH_PAGE_GROUPS_PARAM_TYPES = {
-  PAGINATION_PARAM_TYPES...
-  INDEX_GROUPS_PARAM_TYPES...
+  ...PAGINATION_PARAM_TYPES
+  ...INDEX_GROUPS_PARAM_TYPES
 }
 
 export SHOW_GROUP_PARAM_TYPES = {
 }
 
 export CREATE_GROUP_PARAM_TYPES = {
-  GROUP_PROPERTIES...
+  ...GROUP_PROPERTIES
 }
 
 export UPDATE_GROUP_PARAM_TYPES = {
-  GROUP_PROPERTIES...
+  ...GROUP_PROPERTIES
 }
 
 export DESTROY_GROUP_PARAM_TYPES = {
@@ -89,32 +89,32 @@ export normalizeGroup = (group, types = {}) ->
       }
 
   {
-    pickType(group, {GROUP_PROPERTIES..., types...})...
-    providersData...
+    ...pickType(group, {...GROUP_PROPERTIES, ...types})
+    ...providersData
   }
 
 # Actions
 
 export SetGroups = (state, groups) -> {
-  state...
+  ...state
   groups
 }
 
 export SetGroup = (state, group) -> {
-  state...
+  ...state
   group
 }
 
 # create Effecters
 
-export createRunIndexGroupsNoSync = ({data = {}, params...} = {}) ->
+export createRunIndexGroupsNoSync = ({data = {}, ...params} = {}) ->
   createRunIndex({
     action: SetGroups
     normalizer: normalizeGroups
     url: API_GROUPS
     dataTypes: INDEX_GROUPS_PARAM_TYPES
-    data: {no_sync: true, data...}
-    params...
+    data: {no_sync: true, ...data}
+    ...params
   })
 
 export createRunIndexWithPageGroups = (params = {}) ->
@@ -123,7 +123,7 @@ export createRunIndexWithPageGroups = (params = {}) ->
     normalizer: normalizeGroups
     url: API_GROUPS
     dataTypes: INDEX_WITH_PAGE_GROUPS_PARAM_TYPES
-    params...
+    ...params
   })
 
 export createRunShowGroup = (params = {}) ->
@@ -132,7 +132,7 @@ export createRunShowGroup = (params = {}) ->
     normalizer: normalizeGroup
     url: API_GROUPS
     dataTypes: SHOW_GROUP_PARAM_TYPES
-    params...
+    ...params
   })
 
 export createRunCreateGroup = (params = {}) ->
@@ -141,7 +141,7 @@ export createRunCreateGroup = (params = {}) ->
     normalizer: normalizeGroup
     url: API_GROUPS
     dataTypes: CREATE_GROUP_PARAM_TYPES
-    params...
+    ...params
   })
 
 export createRunUpdateGroup = (params = {}) ->
@@ -150,7 +150,7 @@ export createRunUpdateGroup = (params = {}) ->
     normalizer: normalizeGroup
     url: API_GROUPS
     dataTypes: UPDATE_GROUP_PARAM_TYPES
-    params...
+    ...params
   })
 
 export createRunDestroyGroup = (params = {}) ->
@@ -159,7 +159,7 @@ export createRunDestroyGroup = (params = {}) ->
     normalizer: normalizeGroup
     url: API_GROUPS
     dataTypes: DESTROY_GROUP_PARAM_TYPES
-    params...
+    ...params
   })
 
 # Effecters

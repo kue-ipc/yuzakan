@@ -33,15 +33,15 @@ providerAction = (state, {name, provider}) ->
   name ?= provider.name
   providers = for current in state.providers
     if current.name == name
-      {current..., provider...}
+      {...current, ...provider}
     else
       current
-  {state..., providers}
+  {...state, providers}
 
 initAllProvidersAction = (state, {providers}) ->
   [
-    {state..., providers}
-    ([checkProviderRunner, {provider}] for provider in providers)...
+    {...state, providers}
+    ...([checkProviderRunner, {provider}] for provider in providers)
   ]
 
 checkProviderRunner = (dispatch, {provider}) ->

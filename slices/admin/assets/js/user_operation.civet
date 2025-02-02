@@ -15,7 +15,7 @@ parentNames = ['user']
 # Confirm Dialog
 
 destroyConfirm = new ConfirmDialog {
-  id: formId('destroy', ['modal', 'confirm', parentNames...])
+  id: formId('destroy', ['modal', 'confirm', ...parentNames])
   status: 'alert'
   title: 'ユーザーの削除'
   action: {
@@ -25,7 +25,7 @@ destroyConfirm = new ConfirmDialog {
 }
 
 createPasswordConfirm = new ConfirmDialog {
-  id: formId('create', ['modal', 'confirm', parentNames..., 'password'])
+  id: formId('create', ['modal', 'confirm', ...parentNames, 'password'])
   status: 'warn'
   title: 'パスワードのリセット'
   action: {
@@ -35,7 +35,7 @@ createPasswordConfirm = new ConfirmDialog {
 }
 
 createLockConfirm = new ConfirmDialog {
-  id: formId('create', ['modal', 'confirm', parentNames..., 'lock'])
+  id: formId('create', ['modal', 'confirm', ...parentNames, 'lock'])
   status: 'info'
   title: 'ユーザーのロック'
   action: {
@@ -45,7 +45,7 @@ createLockConfirm = new ConfirmDialog {
 }
 
 destroyLockConfirm = new ConfirmDialog {
-  id: formId('destroy', ['modal', 'confirm', parentNames..., 'lock'])
+  id: formId('destroy', ['modal', 'confirm', ...parentNames, 'lock'])
   status: 'info'
   title: 'ユーザーのアンロック'
   action: {
@@ -57,7 +57,7 @@ destroyLockConfirm = new ConfirmDialog {
 # Web Data
 
 createWebData = new WebData {
-  id: formId('create', ['modal', 'web', parentNames...])
+  id: formId('create', ['modal', 'web', ...parentNames])
   title: 'ユーザーの作成'
   method: 'POST'
   url: '/api/users'
@@ -67,7 +67,7 @@ createWebData = new WebData {
 }
 
 updateWebData = new WebData {
-  id: formId('update', ['modal', 'web', parentNames...])
+  id: formId('update', ['modal', 'web', ...parentNames])
   title: 'ユーザーの更新'
   method: 'PATCH'
   codeActions: new Map [
@@ -76,7 +76,7 @@ updateWebData = new WebData {
 }
 
 destroyWebData = new WebData {
-  id: formId('destroy', ['modal', 'web', parentNames...])
+  id: formId('destroy', ['modal', 'web', ...parentNames])
   title: 'ユーザーの削除'
   method: 'DELETE'
   codeActions: new Map [
@@ -85,7 +85,7 @@ destroyWebData = new WebData {
 }
 
 createPasswordWebData = new WebData {
-  id: formId('create', ['modal', 'web', parentNames..., 'password'])
+  id: formId('create', ['modal', 'web', ...parentNames, 'password'])
   title: 'パスワードのリセット'
   method: 'POST'
   codeActions: new Map [
@@ -94,7 +94,7 @@ createPasswordWebData = new WebData {
 }
 
 createLockWebData = new WebData {
-  id: formId('create', ['modal', 'web', parentNames..., 'lock'])
+  id: formId('create', ['modal', 'web', ...parentNames, 'lock'])
   title: 'ユーザーのロック'
   method: 'POST'
   codeActions: new Map [
@@ -103,7 +103,7 @@ createLockWebData = new WebData {
 }
 
 destroyLockWebData = new WebData {
-  id: formId('destroy', ['modal', 'web', parentNames..., 'lock'])
+  id: formId('destroy', ['modal', 'web', ...parentNames, 'lock'])
   title: 'ユーザーのアンロック'
   method: 'DELETE'
   codeActions: new Map [
@@ -112,14 +112,14 @@ destroyLockWebData = new WebData {
 }
 
 loginInfo = new LoginInfo {
-  id: formId('login_inof', ['modal', 'login_info', parentNames...])
+  id: formId('login_inof', ['modal', 'login_info', ...parentNames])
 }
 
 # Effecters
 runCreateUser = (dispatch, {user}) ->
   response = await createWebData.submitPromise {
     data: {
-      csrf()...
+      ...csrf()
       name: user.name
       display_name: user.display_name
       email: user.email
@@ -141,7 +141,7 @@ runUpdateUser = (dispatch, {name, user}) ->
   response = await updateWebData.submitPromise {
     url: "/api/users/#{name}"
     data: {
-      csrf()...
+      ...csrf()
       name: user.name
       display_name: user.display_name
       email: user.email
@@ -164,7 +164,7 @@ runDestroyUser = (dispatch, {name}) ->
   if confirm
     response = await destroyWebData.submitPromise {url: "/api/users/#{name}", data: csrf()}
     if response.ok
-      # redirect...
+      # ...redirect
     else
       console.error response
 
@@ -176,7 +176,7 @@ runCreatePasswordUser = (dispatch, {user}) ->
     response = await createPasswordWebData.submitPromise {url: "/api/users/#{user.name}/password", data: csrf()}
     if response.ok
       dispatch (state) ->
-        [state, [runShowLoginInfo, {user: {user..., response.data...}, dateTime: response.dateTime ? DateTime.now()}]]
+        [state, [runShowLoginInfo, {user: {...user, ...response.data}, dateTime: response.dateTime ? DateTime.now()}]]
     else
       console.error response
 
@@ -220,11 +220,11 @@ CreatLockUser = (state) -> [state, [runCreateLockUser, {name: state.name}]]
 
 DestroyLockUser = (state) -> [state, [runDestroyLockUser, {name: state.name}]]
 
-ChangeMode = (state, mode) -> {state..., mode}
+ChangeMode = (state, mode) -> {...state, mode}
 
 ChangeUserName = (state, name) ->
   history.pushState(null, null, "/admin/users/#{name}") if name? && name != state.name
-  {state..., name}
+  {...state, name}
 
 export default userOperation = ({option}) ->
   html.div {key: 'group-operation'}, [

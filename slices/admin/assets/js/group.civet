@@ -26,7 +26,7 @@ main = ->
   init = [
     {mode, id, group: null, providers: [], option: queryParams}
     [runIndexProviders, {has_group: true}]
-    [runShowGroup, {id, queryParams...}]
+    [runShowGroup, {id, ...queryParams}]
   ]
 
   view = ({mode, id, group, providers, option}) ->
@@ -39,7 +39,7 @@ main = ->
         html.strong {}, text 'グループの新規作成はできません。'
 
     unless group? && providers?
-      return html.div {}, text '読み込み中...'
+      return html.div {}, text '読込中...'
 
     html.div {}, [
       groupInfo {mode, group}
