@@ -65,27 +65,6 @@ export default class WebData
       ]
     }
 
-  modalView: ({status, title, messages, closable, link, reload}) =>
-    modalDialog {
-      id: @id,
-      centered: true
-      title
-      status
-      closable
-      action: if link?
-        {
-          label: 'すぐに移動する'
-          color: 'primary'
-          onclick: (state) -> [state, [ -> location.href = link]]
-        }
-      else if reload
-        {
-          label: 'ページの再読み込み'
-          color: 'danger'
-          onclick: (state) -> [state, [ -> location.reload()]]
-        }
-    }, @messageList {messages: messages}
-
   messageList({messages})
     messages = [messages] unless messages instanceof Array
     html.div {}, messages.filter((x) -> typeof x == 'string').map (msg) ->
@@ -108,15 +87,6 @@ export default class WebData
     func = (e) -> dispatch(action, e.detail)
     node.addEventListener(WebData.MESSAGE_EVENT, func)
     -> node.removeEventListener(WebData.MESSAGE_EVENT, func)
-
-  messageSub: (action, {node}) => [@messageRunner, {action, node}]
-
-  messageAction: (state, params) =>
-    newState = {...state, ...params}
-    if newState.closable
-      [newState, focus("#{@id}-modal-close-button")]
-    else
-      newState
 
   submitPromise({url = @url, method = @method, data, type})
     @modalMessage {
@@ -203,7 +173,37 @@ export default class WebData
 
     return response
 
-  waitModalClose: =>
+  modalView = ({status, title, messages, closable, link, reload}) =>
+    modalDialog {
+      id: @id,
+      centered: true
+      title
+      status
+      closable
+      action: if link?
+        {
+          label: 'すぐに移動する'
+          color: 'primary'
+          onclick: (state) -> [state, [ -> location.href = link]]
+        }
+      else if reload
+        {
+          label: 'ページの再読み込み'
+          color: 'danger'
+          onclick: (state) -> [state, [ -> location.reload()]]
+        }
+    }, @messageList {messages: messages}
+
+  messageSub = (action, {node}) => [@messageRunner, {action, node}]
+
+  messageAction = (state, params) =>
+    newState = {...state, ...params}
+    if newState.closable
+      [newState, focus("#{@id}-modal-close-button")]
+    else
+      newState
+
+  waitModalClose = =>
     new Promise (resolve, reject) =>
       @modalNode.addEventListener 'hidden.bs.modal', ->
         resolve()

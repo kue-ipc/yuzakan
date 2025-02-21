@@ -24,9 +24,6 @@ export default class LoginInfo extends ModalDialog
     @service = service
 
   // override
-  appInit: => [@initState({}), runShowSystem]
-
-  // override
   modalAction(state)
     for tagName in ['header', 'main', 'footer']
       for el in document.getElementsByTagName(tagName)
@@ -197,3 +194,6 @@ export default class LoginInfo extends ModalDialog
           ]
       ]
     ]
+
+  // override
+  appInit = => [@initState({}), runShowSystem]

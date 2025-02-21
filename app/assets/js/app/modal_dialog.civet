@@ -74,28 +74,6 @@ export default class ModalDialog
       ]
     }
 
-  appInit: => @initState
-
-  modalView: ({title, status, closable, action, close, ...props}) =>
-    modalDialog {
-      id: @id
-      scrollable: @scrollable
-      centered: @centered
-      size: @size
-      fullscreen: @fullscreen
-      title
-      status
-      closable
-      action
-      close
-    }, @modalBody {...props}
-
-  modalAction: (state) =>
-    @result = state.value
-    [state, @hideModal]
-
-  hideModal: (_dispatch) => @modal.hide()
-
   modalBody({messages})
     html.p {}, text message for message in messages ? []
 
@@ -107,19 +85,6 @@ export default class ModalDialog
   // Actions
   receiveModalMessage(state, props)
     {...state, ...props}
-
-  initState: (state) => {
-    title: @title
-    status: @status
-    closable: @closable
-    action: if @action then {@...action, onclick: @modalAction} else null
-    close: @close
-    messages: @messages
-    value: @value
-    shwon: false
-    focus: "#{@id}-modal-close-button"
-    ...state
-  }
 
   // show
   showPromise(state = {})
@@ -149,6 +114,41 @@ export default class ModalDialog
       @modalNode.addEventListener 'hidden.bs.modal', ->
         resolve()
       , {once: true}
+
+  appInit = => @initState
+
+  modalView = ({title, status, closable, action, close, ...props}) =>
+    modalDialog {
+      id: @id
+      scrollable: @scrollable
+      centered: @centered
+      size: @size
+      fullscreen: @fullscreen
+      title
+      status
+      closable
+      action
+      close
+    }, @modalBody {...props}
+
+  modalAction = (state) =>
+    @result = state.value
+    [state, @hideModal]
+
+  hideModal = (_dispatch) => @modal.hide()
+
+  initState = (state) => {
+    title: @title
+    status: @status
+    closable: @closable
+    action: if @action then {@...action, onclick: @modalAction} else null
+    close: @close
+    messages: @messages
+    value: @value
+    shwon: false
+    focus: "#{@id}-modal-close-button"
+    ...state
+  }
 
   // Static Methods
   // Create Subscription
