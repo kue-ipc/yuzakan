@@ -10,7 +10,7 @@ export formId = (name, parents = []) ->
 
 export formDataToObj = (formData) ->
   root = {}
-  for [key, value] from formData
+  for [key, value] of formData
     keyList = paramNameToList(key)
     obj = root
     while subKey = keyList.shift()

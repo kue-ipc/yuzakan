@@ -36,7 +36,7 @@ import {batchOperation, runDoNextAction, runStopAllAction} from '~admin/batch_op
 // Cnostants
 
 GROUP_HEADERS = ['action']
-  .concat(key for key, type of GROUP_PROPERTIES when !(['list', 'map', 'set', 'object'].includes(type)))
+  .concat(key for key, type in GROUP_PROPERTIES when !(['list', 'map', 'set', 'object'].includes(type)))
 
 ACTIONS = new Map([
   ['ADD', '追加']
@@ -85,7 +85,7 @@ indexGroupsOption = ({onchange: action, readonly = false, ...props}) ->
   onchange = (state, event) -> [action, {[event.target.name]: event.target.checked}]
 
   html.div {class: 'row mb-2'},
-    for key, val of {
+    for key, val in {
       no_sync: 'プロバイダーと同期しない'
       primary_only: 'プライマリーのみ'
       hide_prohibited: '使用禁止を隠す'
@@ -120,7 +120,7 @@ groupsThead = ({providers}) ->
       html.th {key: 'action'}, text 'アクション'
       html.th {key: 'name'}, text 'グループ名'
       html.th {key: 'label'}, text 'ラベル'
-      ...(providerTh({provider}) for provider in providers)
+      ...(providerTh({provider}) for each provider of providers)
     ]
 
 providerTh = ({provider}) ->
@@ -128,7 +128,7 @@ providerTh = ({provider}) ->
 
 groupsTbody = ({groups, providers}) ->
   html.tbody {key: 'tbody'},
-    (for group in groups
+    (for each group of groups
       [
         groupTr({group, providers})
         groupDetailTr({group, providers})
@@ -191,7 +191,7 @@ groupTr = ({group, providers}) ->
       html.span {class: 'ms-2 badge text-bg-warning'}, text '使用禁止' if group.prohibited
       html.span {class: 'ms-2 badge text-bg-danger'}, text '削除済み' if group.deleted
     ]
-    ...(groupProviderTd({group, provider}) for provider in providers)
+    ...(groupProviderTd({group, provider}) for each provider of providers)
   ]
 
 groupProviderTd = ({group, provider}) ->
@@ -222,7 +222,7 @@ groupDetailTr = ({group, providers}) ->
           else
             preCode {code: objToJson(group.error, 2), language: 'json'}
     ]
-    ...(groupProviderDataTd({group, provider}) for provider in providers)
+    ...(groupProviderDataTd({group, provider}) for each provider of providers)
   ]
 
 groupProviderDataTd = ({group, provider}) ->
@@ -245,7 +245,7 @@ ReloadIndexGroups = (state, data) ->
 
 SetIndexGroups = (state, rawGroups) ->
   console.debug 'finish load groups'
-  groups = for group in rawGroups
+  groups = for each group of rawGroups
     {
       action: ''
       show_detail: false
@@ -277,7 +277,7 @@ SortOrder = (state, order) ->
   [ReloadIndexGroups, {order}]
 
 UploadGroups = (state, {list, filename}) ->
-  groups = for group in list
+  groups = for each group of list
     {
       show_detail: false
       ...normalizeGroupUploaded(group)

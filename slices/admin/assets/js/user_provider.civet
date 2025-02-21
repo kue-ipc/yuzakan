@@ -80,7 +80,7 @@ providerTd = ({user, provider, name, type}) ->
 providerTr = ({user, providers, name, label, type}) ->
   html.tr {}, [
     html.th {}, text label
-    ...(providerTd {user, provider, name, type} for provider in providers)
+    ...(providerTd {user, provider, name, type} for each provider of providers)
   ]
 
 providerCheckTd = ({mode, user, provider}) ->
@@ -98,14 +98,14 @@ export default userProvider = ({mode, user, providers}) ->
       html.thead {},
         html.tr {}, [
           html.th {}, text ''
-          ...(html.th({}, text entityLabel(provider)) for provider in providers)
+          ...(html.th({}, text entityLabel(provider)) for each provider of providers)
         ]
       html.tbody {}, [
         html.tr {}, [
           html.th {}, text '登録'
-          ...(providerCheckTd({mode, user, provider}) for provider in providers)
+          ...(providerCheckTd({mode, user, provider}) for each provider of providers)
         ]
-        ...(if mode != 'new' then (providerTr {user, providers, ...item} for item in PROVIDER_REG_ITEMS) else [])
+        ...(if mode != 'new' then (providerTr {user, providers, ...item} for each item of PROVIDER_REG_ITEMS) else [])
       ]
     ]
   ]

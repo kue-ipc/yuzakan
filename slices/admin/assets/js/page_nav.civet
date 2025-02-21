@@ -37,7 +37,7 @@ pageList = ({page, total_page, onpage, readonly = false}) ->
   ])
 
 pageNumList = ({start, end, page, total_page, onpage, readonly = false}) ->
-  for num in [start..end]
+  for each num of [start..end]
     if num > 0 && num <= total_page
       pageItem {content: num, page: num, active: page == num, onpage, readonly}
     else

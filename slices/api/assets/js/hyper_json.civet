@@ -70,7 +70,7 @@ export createRunResponse = ({
 }) ->
   (dispatch, props = {}) ->
     url = defaultUrl
-    for key in pathKeys
+    for each key of pathKeys
       unless key of props
         console.error 'given props does not have the property for path: %s', key
         return

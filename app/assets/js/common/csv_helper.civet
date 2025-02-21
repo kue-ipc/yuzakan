@@ -52,9 +52,9 @@ export csvToList = (csv) ->
 
 mergeHeaders = (records, {includes = [], excludes = []} = {}) ->
   set = new Set(includes)
-  for record in records
-    for key in Object.keys(record)
+  for each record of records
+    for each key of Object.keys(record)
       set.add(key)
-  for key in excludes
+  for each key of excludes
     set.delete(key)
   Array.from(set)

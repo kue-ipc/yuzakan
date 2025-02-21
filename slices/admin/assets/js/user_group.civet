@@ -6,7 +6,7 @@ RemoveGroup = (state, name) ->
     ...state
     user: {
       ...state.user
-      groups: (group for group in state.user.groups when group != name)
+      groups: (group for each group of state.user.groups when group != name)
     }
   }
 
@@ -30,7 +30,7 @@ export default userGroup = ({mode, user, groups}) ->
     html.h4 {}, text '所属グループ'
     if user.groups?.length
       html.ul {class: 'list-inline'},
-        for name in user.groups
+        for each name of user.groups
           groupLi({name, groups, removable: name != user.primary_group})
     else
       html.p {}, text '所属しているグループはありません。'

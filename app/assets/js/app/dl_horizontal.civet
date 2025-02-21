@@ -15,7 +15,7 @@ calcDtClasses = ->
   list = []
   list.push "col-#{cols.xs}" if cols.xs && cols.xs < 12
   pre = cols.xs
-  for name in ['sm', 'md', 'lg', 'xl', 'xll']
+  for each name of ['sm', 'md', 'lg', 'xl', 'xll']
     list.push "col-#{name}-#{cols[name]}" if cols[name] != pre
     pre = cols[name]
   list.push "col-print-#{colPrint}"
@@ -25,7 +25,7 @@ calcDdClasses = ->
   list = []
   list.push "col-#{12 - cols.xs}" if cols.xs && cols.xs < 12
   pre = cols.xs
-  for name in ['sm', 'md', 'lg', 'xl', 'xll']
+  for each name of ['sm', 'md', 'lg', 'xl', 'xll']
     list.push "col-#{name}-#{12 - cols[name]}" if cols[name] != pre
     pre = cols[name]
   list.push "col-print-#{12 - colPrint}"
@@ -35,7 +35,7 @@ calcDdSubClasses = ->
   list = calcDdClasses()
   list.push "offset-#{cols.xs}" if cols.xs && cols.xs < 12
   pre = cols.xs
-  for name in ['sm', 'md', 'lg', 'xl', 'xll']
+  for each name of ['sm', 'md', 'lg', 'xl', 'xll']
     list.push "offset-#{name}-#{cols[name]}" if cols[name] != pre
     list.push "col-#{name}-#{12 - cols[name]}" if cols[name] != pre
     pre = cols[name]

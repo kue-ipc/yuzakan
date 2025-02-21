@@ -72,7 +72,7 @@ export DESTROY_GROUP_PARAM_TYPES = {
 // Functions
 
 export normalizeGroups = (groups, type = {}) ->
-  normalizeGroup(group, type) for group in groups
+  normalizeGroup(group, type) for each group of groups
 
 export normalizeGroup = (group, types = {}) ->
   providersData =
@@ -82,9 +82,9 @@ export normalizeGroup = (group, types = {}) ->
       {providers: group.providers}
     else
       {
-        providers: (provider for provider, data of group.providers when data?)
+        providers: (provider for provider, data in group.providers when data?)
         providers_data: new Map(
-          [provider, pickType(data, GROUP_DATA_PROPERTIES)] for provider, data of group.providers when data?
+          [provider, pickType(data, GROUP_DATA_PROPERTIES)] for provider, data in group.providers when data?
         )
       }
 

@@ -1,10 +1,10 @@
 deepFreeze = (obj) ->
   if obj instanceof Array
-    deepFreeze value for value in obj
+    deepFreeze value for each value of obj
   else if obj instanceof Map
-    deepFreeze value for value from obj.values
+    deepFreeze value for value of obj.values
   else if obj instanceof Object
-    deepFreeze value for own key, value of obj
+    deepFreeze value for own key, value in obj
   Object.freeze(obj)
 
 export ATTR_TYPES = deepFreeze [

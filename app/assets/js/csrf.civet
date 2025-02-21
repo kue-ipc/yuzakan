@@ -1,5 +1,5 @@
 getMetaContent = (name) ->
-  for metaEl in document.getElementsByTagName('meta')
+  for each metaEl of document.getElementsByTagName('meta')
     if metaEl.name == name
       return metaEl.content
 

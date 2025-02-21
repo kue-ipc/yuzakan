@@ -75,7 +75,7 @@ export default class ModalDialog
     }
 
   modalBody({messages})
-    html.p {}, text message for message in messages ?? []
+    html.p {}, text message for each message of messages ?? []
 
   // fire event
   fireModalMessage(props)

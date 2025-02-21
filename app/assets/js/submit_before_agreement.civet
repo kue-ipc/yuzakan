@@ -12,5 +12,5 @@ submitBeforeAgreementSet = (form) ->
       else
         submitButton.disabled = true
 
-for form in document.getElementsByClassName('submit-before-agreement')
+for each form of document.getElementsByClassName('submit-before-agreement')
   submitBeforeAgreementSet(form)

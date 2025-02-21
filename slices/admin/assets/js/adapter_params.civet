@@ -15,7 +15,7 @@ inputControl = (props) ->
   id = formId(props.name, parentNames)
   describeId = "#{id}-help"
 
-  inputControlProps = Object.fromEntries([key, props[key]] for key in inputControlPropKeys when props[key]?)
+  inputControlProps = Object.fromEntries([key, props[key]] for each key of inputControlPropKeys when props[key]?)
 
   html.div {class: 'mb-3'}, [
     html.label {class: 'form-label', for: id}, text props.label
@@ -57,7 +57,7 @@ inputTextarea = (props) ->
   id = formId(props.name, parentNames)
   describeId = "#{id}-help"
 
-  inputTextareaProps = Object.fromEntries([key, props[key]] for key in inputTextareaPropKeys when props[key]?)
+  inputTextareaProps = Object.fromEntries([key, props[key]] for each key of inputTextareaPropKeys when props[key]?)
 
   html.div {class: 'mb-3'}, [
     html.label {class: 'form-label', for: id}, text props.label
@@ -89,7 +89,7 @@ inputList = (props) ->
       'aria-describedby': describeId
       oninput: (state, event) -> [props.action, {name: props.name, value: event.target.value}]
     },
-      for item in props.list
+      for each item of props.list
         html.option {value: item.value, selected: selected == item.value}, text(item.label || item.name)
     if props.description? then html.small {id: describeId, class: 'form-text'}, text props.description
   ]
@@ -128,7 +128,7 @@ export default adapterParams = ({params, param_types, ...props}) ->
       text 'パラメーター'
     html.div {},
       if param_types.length > 0
-        for param_type in param_types
+        for each param_type of param_types
           inputParam {...props, ...param_type, value: params[param_type.name]}
       else
         text "設定できるパラメーターはありません。"

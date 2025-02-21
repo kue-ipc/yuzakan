@@ -46,7 +46,7 @@ import {setUserAttrsDefault} from '~admin/user_attrs.civet'
 // Cnostants
 
 USER_HEADERS = ['action']
-  .concat(key for key, type of USER_PROPERTIES when !(['list', 'map', 'set', 'object'].includes(type)))
+  .concat(key for key, type in USER_PROPERTIES when !(['list', 'map', 'set', 'object'].includes(type)))
 
 ACTIONS = new Map([
   ['ADD', '追加']
@@ -83,12 +83,12 @@ normalizeUserUploaded = ({action, error, ...user}) ->
   }
 
 normalizeUserAttrs = (userAttrs, {attrs}) ->
-  newAttrs = for attr in attrs when attr.name of userAttrs
+  newAttrs = for each attr of attrs when attr.name of userAttrs
     [attr.name, convertToType(userAttrs[attr.name], attr.type)]
   new Map(newAttrs)
 
 fillAddOrModUsers = ({users, attrs, domain}) ->
-  for user in users
+  for each user of users
     user = setUserAttrsDefault({user, attrs}) if user.attrs? && ['ADD', 'MOD'].includes(user.action)
     user = {...user, email: "#{user.name}@#{domain}"} if user.action == 'ADD' && !user.email
     user
@@ -104,7 +104,7 @@ indexOptionFromState = (state) ->
 userHeaders = ({attrs}) ->
   [
     ...USER_HEADERS
-    ...(listToParamName('attrs', attr.name) for attr in attrs)
+    ...(listToParamName('attrs', attr.name) for each attr of attrs)
   ]
 
 // Dialogs
@@ -121,7 +121,7 @@ indexUsersOption = ({onchange: action, readonly = false, ...props}) ->
   onchange = (state, event) -> [action, {[event.target.name]: event.target.checked}]
 
   html.div {class: 'row mb-2'},
-    for key, val of {
+    for key, val in {
       no_sync: 'プロバイダーと同期しない'
       hide_prohibited: '使用禁止を隠す'
       show_deleted: '削除済みも表示'
@@ -157,7 +157,7 @@ usersThead = ({providers}) ->
       html.th {key: 'email'}, text 'メールアドレス'
       html.th {key: 'clearance-level'}, text '権限レベル'
       html.th {key: 'primary-group'}, text 'プライマリグループ'
-      ...(providerTh({provider}) for provider in providers)
+      ...(providerTh({provider}) for each provider of providers)
     ]
 
 providerTh = ({provider}) ->
@@ -165,7 +165,7 @@ providerTh = ({provider}) ->
 
 usersTbody = ({users, groups, providers}) ->
   html.tbody {key: 'tbody'},
-    (for user in users
+    (for each user of users
       [
         userTr({user, groups, providers})
         userDetailTr({user, providers})
@@ -241,7 +241,7 @@ userTr = ({user, groups, providers}) ->
           text entityLabel(findList(groups, user.primary_group, {key: 'name'})) ?? user.primary_group
       else
         undefined
-    ...(userProviderTd({user, provider}) for provider in providers)
+    ...(userProviderTd({user, provider}) for each provider of providers)
   ]
 
 userProviderTd = ({user, provider}) ->
@@ -277,7 +277,7 @@ userDetailTr = ({user, providers}) ->
     ]
     html.td {key: 'groups'},
       html.div {}, text user.groups?.join(', ') ?? ''
-    ...(userProviderDataTd({user, provider}) for provider in providers)
+    ...(userProviderDataTd({user, provider}) for each provider of providers)
   ]
 
 userProviderDataTd = ({user, provider}) ->
@@ -324,7 +324,7 @@ ReloadIndexUsers = (state, data) ->
 
 SetIndexUsers = (state, rawUsers) ->
   console.debug 'finish load users'
-  users = for user in rawUsers
+  users = for each user of rawUsers
     {
       action: ''
       show_detail: false
@@ -356,7 +356,7 @@ SortOrder = (state, order) ->
   [ReloadIndexUsers, {order}]
 
 UploadUsers = (state, {list, filename}) ->
-  users = for user in list
+  users = for each user of list
     userAttrs = if user.attrs?
       {attrs: normalizeUserAttrs(user.attrs, {attrs: state.attrs})}
     else

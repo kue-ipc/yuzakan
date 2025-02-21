@@ -15,10 +15,10 @@ export default groupProvider = ({mode, group, providers}) ->
       html.thead {},
         html.tr {}, [
           html.th {}, text ''
-          ...(html.th({}, text entityLabel(provider)) for provider in providers)
+          ...(html.th({}, text entityLabel(provider)) for each provider of providers)
         ]
       html.tbody {},
-        for {name, label, type} in [
+        for each {name, label, type} of [
           {name: 'name', label: 'グループ名', type: 'string'}
           {name: 'display_name', label: '表示名', type: 'string'}
           {name: 'primary', label: 'プライマリ', type: 'boolean'}
@@ -26,7 +26,7 @@ export default groupProvider = ({mode, group, providers}) ->
           html.tr {}, [
             html.td {}, text label
             // html.td {}, valueDisplay {value: group[name], type}
-            (for provider in providers
+            (for each provider of providers
               groupdata = group.providers_data?.get(provider.name)
               html.td {},
                 valueDisplay {

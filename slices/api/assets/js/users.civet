@@ -83,7 +83,7 @@ export DESTROY_USER_PARAM_TYPES = {
 // Functions
 
 export normalizeUsers = (users, type = {}) ->
-  normalizeUser(user, type) for user in users
+  normalizeUser(user, type) for each user of users
 
 export normalizeUser = (user, types = {}) ->
   providersData =
@@ -93,9 +93,9 @@ export normalizeUser = (user, types = {}) ->
       {providers: user.providers}
     else
       {
-        providers: (provider for provider, data of user.providers when data?)
+        providers: (provider for provider, data in user.providers when data?)
         providers_data: new Map(
-          [provider, pickType(data, USER_DATA_PROPERTIES)] for provider, data of user.providers when data?
+          [provider, pickType(data, USER_DATA_PROPERTIES)] for provider, data in user.providers when data?
         )
       }
   {

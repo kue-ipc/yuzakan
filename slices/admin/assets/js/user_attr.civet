@@ -151,7 +151,7 @@ providerTd = ({user, attr, provider}) ->
 
 export default userAttr = ({mode, user, providers, attrs}) ->
   // provider_userdatas =
-  // for provider in providers
+  // for each provider of providers
   //   (user.provider_userdatas.find (data) -> data.provider.name == provider.name)?.userdata
 
   html.div {}, [
@@ -164,16 +164,16 @@ export default userAttr = ({mode, user, providers, attrs}) ->
           // html.th {}, text 'デフォルト値'
           // html.th {}, text 'デファルト'
           html.th {}, text '設定値'
-          ...(html.th({}, text entityLabel(provider)) for provider in providers)
+          ...(html.th({}, text entityLabel(provider)) for each provider of providers)
         ]
       html.tbody {},
-        for attr in attrs
+        for each attr of attrs
           html.tr {}, [
             html.td {}, text entityLabel(attr)
             // attrDefaultTd {user, attr}
             // attrSettingTd {mode, user, attr}
             attrValueTd {mode, user, attr}
-            ...(providerTd {user, attr, provider} for provider in providers)
+            ...(providerTd {user, attr, provider} for each provider of providers)
           ]
     ]
   ]

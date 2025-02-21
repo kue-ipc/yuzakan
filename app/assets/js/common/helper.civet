@@ -25,13 +25,13 @@ export uniq = R.uniq
 export compact = (obj) ->
   switch R.type(obj)
     when 'Array'
-      (v for v in obj when v?)
+      (v for each v of obj when v?)
     when 'Object'
-      Object.fromEntries([k, v] for own k, v of obj when v?)
+      Object.fromEntries([k, v] for own k, v in obj when v?)
     when 'Map'
-      new Map([k, v] for [k, v] from obj when v?)
+      new Map([k, v] for [k, v] of obj when v?)
     when 'Set'
-      new Set(v for v from obj when v?)
+      new Set(v for v of obj when v?)
     else
       console.warn "cannot compact type: #{R.type(obj)}"
       obj
@@ -39,7 +39,7 @@ export compact = (obj) ->
 export pick = R.flip(R.pick)
 
 export pickType = (obj, types) ->
-  Object.fromEntries([key, convertToType(obj[key], type)] for own key, type of types when key of obj)
+  Object.fromEntries([key, convertToType(obj[key], type)] for own key, type in types when key in obj)
 
 export basename = (path, suffix = '') ->
   return '' unless path
@@ -76,13 +76,13 @@ export getQueryParamsFromUrl = (url) ->
 //   Object.freeze(obj)
 //   switch Object.getPrototypeOf(obj).constructor
 //     when Object
-//       deepFreeze(value) for own key, value of obj
+//       deepFreeze(value) for own key, value in obj
 //     when Array
-//       deepFreeze(value) for value in obj
+//       deepFreeze(value) for each value of obj
 //     when Map
-//       deepFreeze(value) for value from obj.values()
+//       deepFreeze(value) for value of obj.values()
 //     when Set
-//       deepFreeze(value) for value from obj
+//       deepFreeze(value) for value of obj
 //   obj
 
 // export clone

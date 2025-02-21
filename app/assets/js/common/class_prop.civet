@@ -6,11 +6,11 @@ export parseClassProp = (obj) ->
   if !obj?
     []
   else if typeof obj == 'string'
-    (item for item in obj.split(/\s+/) when item)
+    (item for each item of obj.split(/\s+/) when item)
   else if obj instanceof Array
     obj
   else if typeof obj == 'object'
-    (String(key) for own key, value of obj when value)
+    (String(key) for own key, value in obj when value)
   else
     console.warn 'Not a string, an array, or an object.'
     []

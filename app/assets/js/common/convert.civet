@@ -109,7 +109,7 @@ export toList = (val) ->
   if val[Symbol.iterator]?
     [...val]
   else if val.length?
-    (v for v in val)
+    (v for each v of val)
   else if typeof val == 'object'
     Object.entries(val)
   else
@@ -149,7 +149,7 @@ export strToList = (str) ->
 export paramNameToList = (str) ->
   list = []
   list.push str.match(/^([^\[]*)/)[0]
-  list.push ...(r[1] for r from str.matchAll(/\[([^\]]*)\]/g))
+  list.push ...(r[1] for r of str.matchAll(/\[([^\]]*)\]/g))
   list
 
 // list -> string
@@ -157,30 +157,30 @@ export paramNameToList = (str) ->
 // abc, def, hij -> abcDefHij
 export listToCamelCase = (...list) ->
   (list[0]?.toLowerCase() ?? '') +
-    (capitalize(str) for str in list[1..]).join('')
+    (capitalize(str) for each str of list[1..]).join('')
 
 // abc, def, hij -> AbcDefHij
 export listToPascalCase = (...list) ->
-  (capitalize(str) for str in list).join('')
+  (capitalize(str) for each str of list).join('')
 
 // abc, def, hij -> abc_def_hij
 export listToSnakeCase = (...list) ->
-  (str.toLowerCase() for str in list).join('_')
+  (str.toLowerCase() for each str of list).join('_')
 
 // abc, def, hij -> abc-def-hij
 export listToKebabCase = (...list) ->
-  (str.toLowerCase() for str in list).join('-')
+  (str.toLowerCase() for each str of list).join('-')
 
 // abc, def, hij -> ABC_DEF_HIJ
 export listToAllCaps = (...list) ->
-  (str.toUpperCase() for str in list).join('_')
+  (str.toUpperCase() for each str of list).join('_')
 
 // abc, def, hij -> Abc-Def-Hij
 export listToTrainCase = (...list) ->
-  (capitalize(str) for str in list).join('-')
+  (capitalize(str) for each str of list).join('-')
 
 export listToParamName = (...list) ->
-  (list[0] ?? '') + ("[#{str}]" for str in list[1..]).join('')
+  (list[0] ?? '') + ("[#{str}]" for each str of list[1..]).join('')
 
 // object -> other
 
@@ -210,7 +210,7 @@ export objToRecord = (obj) ->
 export objToParams = (obj, parents = []) ->
   obj = Object.fromEntries(obj) if obj instanceof Map
   params = []
-  for own key, value of obj
+  for own key, value in obj
     if typeof value == 'object'
       if value instanceof Map
         params.push(...objToParams(toObject(value), [...parents, key]))
@@ -228,7 +228,7 @@ export objToUrlencoded = (obj) ->
   objToUrlencodedParams(obj).join('&')
 
 export objToUrlencodedParams = (obj) ->
-  for [key, value] in objToParams(obj) when value?
+  for each [key, value] of objToParams(obj) when value?
     "#{encodeURIComponent(key)}=#{valueToUrlencoded(value)}"
 
 // JavaScriptの値をUrlencodedの文字列に落とし込む前に変換する
@@ -249,7 +249,7 @@ valueToUrlencoded = (value) ->
 
 export recordToObj = (record) ->
   root = {}
-  for key, value of record
+  for key, value in record
     value = undefined if value == ''
     keyList = paramNameToList(key)
     obj = root
@@ -261,7 +261,7 @@ export recordToObj = (record) ->
           unless keyList.length == 1
             console.error 'empty key must be last: %s', key
             throw new Error('ilegal subkey: empty key must be last')
-          obj[subKey] == (v for v in Array(value) when v? && v != '')
+          obj[subKey] == (v for each v of Array(value) when v? && v != '')
         else if /^\d+$/.test(keyList[0])
           obj[subKey] ?= []
           unless obj[subKey] instanceof Array

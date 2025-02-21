@@ -63,7 +63,7 @@ export default class InputTextDialog
     html.div {},
       if shown
         [
-          ...(html.p({}, text message) for message in messages)
+          ...(html.p({}, text message) for each message of messages)
           html.textarea {
             id: "#{@id}-input-textarea"
             class: 'form-control'

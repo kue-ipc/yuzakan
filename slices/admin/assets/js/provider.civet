@@ -75,7 +75,7 @@ providerAction = (state, {name, provider}) ->
 
   return newState unless provider.adapter?
 
-  for adapter in state.adapters when adapter.name == provider.adapter
+  for each adapter of state.adapters when adapter.name == provider.adapter
     return newState if adapter.param_types?
     break
 
@@ -86,7 +86,7 @@ providerAction = (state, {name, provider}) ->
 
 adapterAction = (state, {name, adapter}) ->
   name ?= adapter.name
-  adapters = for current in state.adapters
+  adapters = for each current of state.adapters
     if current.name == adapter.name
       {...current, ...adapter}
     else
@@ -158,7 +158,7 @@ init = [
 ]
 
 view = ({name, provider, adapters}) ->
-  provider_adapter = (adapter for adapter in adapters when adapter.name == provider.adapter)[0]
+  provider_adapter = (adapter for each adapter of adapters when adapter.name == provider.adapter)[0]
   html.div {}, [
     html.div {class: 'mb-3'}, [
       html.label {class: 'form-label', for: 'provider-name'}, text '名前'
@@ -222,12 +222,12 @@ view = ({name, provider, adapters}) ->
         oninput: (state, event) -> [providerAction, {provider: {adapter: event.target.value}}]
       },
         if provider.adapter?
-          for adapter in adapters
+          for each adapter of adapters
             html.option {value: adapter.name, selected: adapter.name == provider.adapter}, text adapter.label
         else
           [
             html.option {selected: true}, text '選択してください。'
-            ...(for adapter in adapters
+            ...(for each adapter of adapters
               html.option {value: adapter.name, selected: adapter.name == provider.adapter}, text adapter.label
             )
           ]

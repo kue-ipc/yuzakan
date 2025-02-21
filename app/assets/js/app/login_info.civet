@@ -25,18 +25,18 @@ export default class LoginInfo extends ModalDialog
 
   // override
   modalAction(state)
-    for tagName in ['header', 'main', 'footer']
-      for el in document.getElementsByTagName(tagName)
+    for each tagName of ['header', 'main', 'footer']
+      for each el of document.getElementsByTagName(tagName)
         el.classList.add('d-print-none')
-    for className in ['modal-header', 'modal-footer']
-      for el in document.getElementsByClassName(className)
+    for each className of ['modal-header', 'modal-footer']
+      for each el of document.getElementsByClassName(className)
         el.classList.add('d-print-none')
     window.print()
-    for tagName in ['header', 'main', 'footer']
-      for el in document.getElementsByTagName(tagName)
+    for each tagName of ['header', 'main', 'footer']
+      for each el of document.getElementsByTagName(tagName)
         el.classList.remove('d-print-none')
-    for className in ['modal-header', 'modal-footer']
-      for el in document.getElementsByClassName(className)
+    for each className of ['modal-header', 'modal-footer']
+      for each el of document.getElementsByClassName(className)
         el.classList.remove('d-print-none')
     state
 

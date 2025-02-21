@@ -10,7 +10,7 @@ newUser = {
 }
 
 SetUserWithInit = (state, {user}) ->
-  providers = (provider_userdata.provider.name for provider_userdata in user.provider_userdatas)
+  providers = (provider_userdata.provider.name for each provider_userdata of user.provider_userdatas)
   primary_group = user.userdata.primary_group
   groups = user.userdata.groups || []
   [InitUserAttrs, {user: {...user, providers, primary_group, groups}}]

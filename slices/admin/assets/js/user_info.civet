@@ -97,7 +97,7 @@ export default userInfo = ({mode, user, groups}) ->
             class: 'form-select'
             oninput: SetUserClearanceLevelByEvent
           },
-            for level in CLEARANCE_LEVELS
+            for each level of CLEARANCE_LEVELS
               html.option {
                 value: level.value
                 selected: level.value == user.clearance_level
@@ -124,7 +124,7 @@ export default userInfo = ({mode, user, groups}) ->
                 selected: !user.primary_group?
               }, text "選択してください。"
             (
-              for group in groups
+              for each group of groups
                 html.option {
                   value: group.name
                   selected: group.name == user.primary_group

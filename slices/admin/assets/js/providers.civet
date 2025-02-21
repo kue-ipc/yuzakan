@@ -31,7 +31,7 @@ providerTr = ({provider}) ->
 
 providerAction = (state, {name, provider}) ->
   name ?= provider.name
-  providers = for current in state.providers
+  providers = for each current of state.providers
     if current.name == name
       {...current, ...provider}
     else
@@ -41,7 +41,7 @@ providerAction = (state, {name, provider}) ->
 initAllProvidersAction = (state, {providers}) ->
   [
     {...state, providers}
-    ...([checkProviderRunner, {provider}] for provider in providers)
+    ...([checkProviderRunner, {provider}] for each provider of providers)
   ]
 
 checkProviderRunner = (dispatch, {provider}) ->
@@ -73,7 +73,7 @@ view = ({providers}) ->
         html.th {}, text '状態'
         html.th {}, text 'エクスポート'
       ]
-    html.tbody {}, (providerTr({provider}) for provider in providers)
+    html.tbody {}, (providerTr({provider}) for each provider of providers)
   ]
 
 node = document.getElementById('providers')
