@@ -27,11 +27,11 @@ export compact = (obj) ->
     when 'Array'
       (v for each v of obj when v?)
     when 'Object'
-      Object.fromEntries([k, v] for own k, v in obj when v?)
+      Object.fromEntries(([k, v] for own k, v in obj when v?))
     when 'Map'
-      new Map([k, v] for [k, v] of obj when v?)
+      new Map(([k, v] for [k, v] of obj when v?))
     when 'Set'
-      new Set(v for v of obj when v?)
+      new Set((v for v of obj when v?))
     else
       console.warn "cannot compact type: #{R.type(obj)}"
       obj
@@ -39,7 +39,7 @@ export compact = (obj) ->
 export pick = R.flip(R.pick)
 
 export pickType = (obj, types) ->
-  Object.fromEntries([key, convertToType(obj[key], type)] for own key, type in types when key in obj)
+  Object.fromEntries(([key, convertToType(obj[key], type)] for own key, type in types when key in obj))
 
 export basename = (path, suffix = '') ->
   return '' unless path

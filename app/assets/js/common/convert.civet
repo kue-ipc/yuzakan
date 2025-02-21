@@ -248,14 +248,13 @@ valueToUrlencoded = (value) ->
 // other -> object
 
 export recordToObj = (record) ->
-  root = {}
+  root := {}
   for key, value in record
-    value = undefined if value == ''
-    keyList = paramNameToList(key)
-    obj = root
+    keyList := paramNameToList(key)
+    obj .= root
     while subKey = keyList.shift()
       if keyList.length == 0
-        obj[subKey] = value if value?
+        obj[subKey] = value if value? && value != ''
       else
         if keyList[0] == ''
           unless keyList.length == 1
