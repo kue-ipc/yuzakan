@@ -1,1 +1,1 @@
-declare module '@hyperapp/html';
+declare module '@hyperapp/time';
