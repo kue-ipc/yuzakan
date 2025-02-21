@@ -1,5 +1,5 @@
 import * as html from '@hyperapp/html'
-import {classConcat} from '~/common/class_prop.js'
+import {classConcat} from '~/common/class_prop.civet'
 
 cols = {
   xs: 12

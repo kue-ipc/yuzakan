@@ -5,9 +5,9 @@ import {app, text} from 'hyperapp'
 import * as html from '@hyperapp/html'
 import {focus} from '@hyperapp/dom'
 import {Modal} from 'bootstrap'
-import {StatusIcon, statusInfo} from '~/app/status.js'
-import {fetchJson} from '~/api/fetch_json.js'
-import {modalDialog} from '~/app/modal.js'
+import {StatusIcon, statusInfo} from '~/app/status.civet'
+import {fetchJson} from '~api/fetch_json.civet'
+import {modalDialog} from '~/app/modal.civet'
 
 export default class WebData
   MESSAGE_EVENT = 'webdata.message'

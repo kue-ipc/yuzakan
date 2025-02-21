@@ -1,16 +1,16 @@
 import {text, app} from 'hyperapp'
 import * as html from '@hyperapp/html'
 
-import csrf from '~/csrf.js'
-import ConfirmDialog from '~/app/confirm_dialog.js'
-import InputTextDialog from '~/app/input_text_dialog.js'
-import {ATTR_TYPES, MAPPING_CONVERSIONS} from '~/definition.js'
+import csrf from '~/csrf.civet'
+import ConfirmDialog from '~/app/confirm_dialog.civet'
+import InputTextDialog from '~/app/input_text_dialog.civet'
+import {ATTR_TYPES, MAPPING_CONVERSIONS} from '~/definition.civet'
 
-import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '~/api/fetch_json.js'
-import {createRunIndexProviders} from '~/api/providers.js'
-import {normalizeAttr, createRunIndexAttrs, createRunShowAttr} from '~/api/attrs.js'
+import {fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from '~api/fetch_json.civet'
+import {createRunIndexProviders} from '~api/providers.civet'
+import {normalizeAttr, createRunIndexAttrs, createRunShowAttr} from '~api/attrs.civet'
 
-import {updateList} from '~/common/list_helper.js'
+import {updateList} from '~/common/list_helper.civet'
 
 // Functions
 

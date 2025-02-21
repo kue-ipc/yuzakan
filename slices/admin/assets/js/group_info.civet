@@ -3,8 +3,8 @@
 import {text, app} from 'hyperapp'
 import * as html from '@hyperapp/html'
 
-import * as dlh from '~/app/dl_horizontal.js'
-import bsIcon from '~/app/bs_icon.js'
+import * as dlh from '~/app/dl_horizontal.civet'
+import bsIcon from '~/app/bs_icon.civet'
 
 // Views
 

@@ -6,9 +6,9 @@ import {
   createRunCreateWithId
   createRunUpdateWithId
   createRunDestroyWithId
-} from '~/api/hyper_json.js'
+} from '~api/hyper_json.civet'
 
-import {pickType} from '~/common/helper.js'
+import {pickType} from '~/common/helper.civet'
 
 // Constants
 

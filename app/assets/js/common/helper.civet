@@ -2,7 +2,7 @@
 
 import * as R from 'ramda'
 
-import {convertToType} from '~/common/convert.js'
+import {convertToType} from '~/common/convert.civet'
 
 export isNil = R.isNil
 

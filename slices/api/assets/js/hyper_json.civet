@@ -1,10 +1,10 @@
 // Createer functions for Hyperapp object and fetch api
 
-import {pick, pickType, identity} from '~/common/helper.js'
-import csrf from '~/csrf.js'
+import {pick, pickType, identity} from '~/common/helper.civet'
+import csrf from '~/csrf.civet'
 
-import {fetchJson} from '~/api/fetch_json.js'
-import {DEFAULT_PAGE, DEFAULT_PER_PAGE} from '~/api/pagination.js'
+import {fetchJson} from '~api/fetch_json.civet'
+import {DEFAULT_PAGE, DEFAULT_PER_PAGE} from '~api/pagination.civet'
 // create Actions
 
 // データを受け取るアクションからレスポンスに対応した新しいアクションを作成する。

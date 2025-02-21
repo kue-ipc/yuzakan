@@ -1,11 +1,11 @@
 import {text} from 'hyperapp'
 import * as html from '@hyperapp/html'
 
-import * as dlh from '~/app/dl_horizontal.js'
-import {CLEARANCE_LEVELS} from '~/definition.js'
-import {createEventValueAction} from '~/input_event.js'
+import * as dlh from '~/app/dl_horizontal.civet'
+import {CLEARANCE_LEVELS} from '~/definition.civet'
+import {createEventValueAction} from '~/input_event.civet'
 
-import {CalcUserAttrs} from '~/admin/user_attrs.js'
+import {CalcUserAttrs} from '~admin/user_attrs.civet'
 
 SetUserUsername = (state, name) ->
   email =

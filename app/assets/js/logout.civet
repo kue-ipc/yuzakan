@@ -1,8 +1,8 @@
 import {app, text} from 'hyperapp'
 import * as html from '@hyperapp/html'
-import WebData from '~/app/web_data.js'
-import bsIcon from '~/app/bs_icon.js'
-import csrf from '~/csrf.js'
+import WebData from '~/app/web_data.civet'
+import bsIcon from '~/app/bs_icon.civet'
+import csrf from '~/csrf.civet'
 
 webData = new WebData {
   id: 'logout'

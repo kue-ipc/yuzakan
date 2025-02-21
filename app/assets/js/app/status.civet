@@ -1,6 +1,6 @@
 import {text} from 'hyperapp'
 import * as html from '@hyperapp/html'
-import bsIcon from '~/app/bs_icon.js'
+import bsIcon from '~/app/bs_icon.civet'
 
 STATUSES = new Map([
   {status: 'success', label: '成功', color: 'success', icon: 'check-circle-fill'}

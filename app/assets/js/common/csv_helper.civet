@@ -1,6 +1,6 @@
 import {parse, stringify, transform} from 'csv'
 
-import {objToRecord, recordToObj} from '~/common/convert.js'
+import {objToRecord, recordToObj} from '~/common/convert.civet'
 
 // async csv and records utilities
 

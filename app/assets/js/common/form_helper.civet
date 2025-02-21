@@ -1,6 +1,6 @@
 // form helper
 
-import {listToKebabCase, listToParamName} from '~/common/convert.js'
+import {listToKebabCase, listToParamName} from '~/common/convert.civet'
 
 export formName = (name, parents = []) ->
   listToParamName(...parents, name)

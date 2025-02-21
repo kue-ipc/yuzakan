@@ -2,7 +2,7 @@
 
 import {DateTime} from 'luxon'
 
-import {capitalize} from '~/common/string_helper.js'
+import {capitalize} from '~/common/string_helper.civet'
 
 TRUE_STRINGS = new Set([
   '1'

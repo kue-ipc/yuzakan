@@ -3,14 +3,14 @@
 
 import {text, app} from 'hyperapp'
 import * as html from '@hyperapp/html'
-import {fetchJsonGet} from '~/api/fetch_json.js'
-import {formName, formId} from '~/common/form_helper.js'
-import csrf from '~/csrf.js'
+import {fetchJsonGet} from '~api/fetch_json.civet'
+import {formName, formId} from '~/common/form_helper.civet'
+import csrf from '~/csrf.civet'
 
-import WebData from '~/app/web_data.js'
-import ConfirmDialog from '~/app/confirm_dialog.js'
+import WebData from '~/app/web_data.civet'
+import ConfirmDialog from '~/app/confirm_dialog.civet'
 
-import adapterParams from '~/admin/adapter_params.js'
+import adapterParams from '~admin/adapter_params.civet'
 
 parentNames = ['provider']
 

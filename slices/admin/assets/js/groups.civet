@@ -3,28 +3,28 @@
 import {text, app} from 'hyperapp'
 import * as html from '@hyperapp/html'
 
-import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '~/common/helper.js'
-import {objToUrlencoded, objToJson, listToParamName} from '~/common/convert.js'
-import {updateList} from '~/common/list_helper.js'
+import {pick, pickType, getQueryParamsFromUrl, entityLabel} from '~/common/helper.civet'
+import {objToUrlencoded, objToJson, listToParamName} from '~/common/convert.civet'
+import {updateList} from '~/common/list_helper.civet'
 
-import bsIcon from '~/app/bs_icon.js'
-import valueDisplay from '~/app/value_display.js'
-import preCode from '~/app/pre_code.js'
+import bsIcon from '~/app/bs_icon.civet'
+import valueDisplay from '~/app/value_display.civet'
+import preCode from '~/app/pre_code.civet'
 
 import {
   GROUP_PROPERTIES, GROUP_DATA_PROPERTIES,
   INDEX_GROUPS_OPTION_PARAM_TYPES, INDEX_WITH_PAGE_GROUPS_PARAM_TYPES,
   normalizeGroup
   createRunIndexWithPageGroups, createRunShowGroup, createRunUpdateGroup
-} from '~/api/groups.js'
-import {runIndexProviders} from '~/api/providers.js'
-import {PAGINATION_PARAM_TYPES} from '~/api/pagination.js'
-import {SEARCH_PARAM_TYPES} from '~/api/search.js'
-import {ORDER_PARAM_TYPES} from '~/api/order.js'
+} from '~api/groups.civet'
+import {runIndexProviders} from '~api/providers.civet'
+import {PAGINATION_PARAM_TYPES} from '~api/pagination.civet'
+import {SEARCH_PARAM_TYPES} from '~api/search.civet'
+import {ORDER_PARAM_TYPES} from '~api/order.civet'
 
-import pageNav from '~/admin/page_nav.js'
-import searchForm from '~/admin/search_form.js'
-import {batchOperation, runDoNextAction, runStopAllAction} from '~/admin/batch_operation.js'
+import pageNav from '~admin/page_nav.civet'
+import searchForm from '~admin/search_form.civet'
+import {batchOperation, runDoNextAction, runStopAllAction} from '~admin/batch_operation.civet'
 
 // mode
 //   loading: 読込中

@@ -3,16 +3,16 @@
 import {text, app} from 'hyperapp'
 import * as html from '@hyperapp/html'
 
-import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from '~/common/helper.js'
-import {objToUrlencoded} from '~/common/convert.js'
-import valueDisplay from '~/app/value_display.js'
+import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from '~/common/helper.civet'
+import {objToUrlencoded} from '~/common/convert.civet'
+import valueDisplay from '~/app/value_display.civet'
 
-import {runIndexProviders} from '~/api/providers.js'
-import {SHOW_GROUP_PARAM_TYPES, runShowGroup} from '~/api/groups.js'
+import {runIndexProviders} from '~api/providers.civet'
+import {SHOW_GROUP_PARAM_TYPES, runShowGroup} from '~api/groups.civet'
 
-import groupInfo from '~/admin/group_info.js'
-import groupProvider from '~/admin/group_provider.js'
-import groupOperation from '~/admin/group_operation.js'
+import groupInfo from '~admin/group_info.civet'
+import groupProvider from '~admin/group_provider.civet'
+import groupOperation from '~admin/group_operation.civet'
 
 // main
 

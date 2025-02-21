@@ -3,8 +3,8 @@
 import {text} from 'hyperapp'
 import * as html from '@hyperapp/html'
 
-import {entityLabel} from '~/common/helper.js'
-import valueDisplay from '~/app/value_display.js'
+import {entityLabel} from '~/common/helper.civet'
+import valueDisplay from '~/app/value_display.civet'
 
 // Views
 

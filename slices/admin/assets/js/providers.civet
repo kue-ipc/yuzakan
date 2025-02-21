@@ -3,7 +3,7 @@
 
 import {text, app} from 'hyperapp'
 import * as html from '@hyperapp/html'
-import {fetchJsonGet} from '~/api/fetch_json.js'
+import {fetchJsonGet} from '~api/fetch_json.civet'
 
 providerTr = ({provider}) ->
   html.tr {}, [

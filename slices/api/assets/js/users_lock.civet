@@ -3,9 +3,9 @@
 import {
   createRunCreate
   createRunDestroy
-} from '~/api/hyper_json.js'
+} from '~api/hyper_json.civet'
 
-import {SetUser, normalizeUser} from '~/api/users.js'
+import {SetUser, normalizeUser} from '~api/users.civet'
 
 // Contants
 

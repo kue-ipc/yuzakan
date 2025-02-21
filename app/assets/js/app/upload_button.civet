@@ -1,7 +1,7 @@
 import {text} from 'hyperapp'
 import * as html from '@hyperapp/html'
 
-import {csvToList} from '~/common/csv_helper.js'
+import {csvToList} from '~/common/csv_helper.civet'
 
 // Upload button view
 // @param {boolean} disabled - 無効にする

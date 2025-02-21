@@ -1,8 +1,8 @@
 import {text} from 'hyperapp'
 import * as html from '@hyperapp/html'
 
-import bsIcon from '~/app/bs_icon.js'
-import {convertToType, objToJson} from '~/common/convert.js'
+import bsIcon from '~/app/bs_icon.civet'
+import {convertToType, objToJson} from '~/common/convert.civet'
 
 export default valueDisplay = ({value, type = 'string', color = 'body', na = false}) ->
   unless value?

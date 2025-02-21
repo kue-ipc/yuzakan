@@ -1,7 +1,7 @@
 import {text} from 'hyperapp'
 import * as html from '@hyperapp/html'
 
-import ModalDialog from '~/app/modal_dialog.js'
+import ModalDialog from '~/app/modal_dialog.civet'
 
 export default class ConfirmDialog extends ModalDialog
   constructor: ({
