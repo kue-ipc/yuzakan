@@ -115,7 +115,7 @@ loginInfo = new LoginInfo {
 
 // Hyperapp Components
 
-//# Views
+// Views
 
 indexUsersOption = ({onchange: action, readonly = false, ...props}) ->
   onchange = (state, event) -> [action, {[event.target.name]: event.target.checked}]
@@ -286,7 +286,7 @@ userProviderDataTd = ({user, provider}) ->
       html.div {key: 'data', class: 'small'},
         preCode {code: objToJson(user.providers_data.get(provider.name), 2), language: 'json'}
 
-//# Action Creaters
+// Action Creaters
 
 createActionUser = (createEffecter, props = {}) ->
   (state, user) ->
@@ -307,7 +307,7 @@ createActionUser = (createEffecter, props = {}) ->
       [run, {...props, ...user, id: user.name, user_id: user.name}]
     ]
 
-//# Actions
+// Actions
 
 runShowLoginInfo = (_dispatch, {user, dateTime = DateTime.now()}) ->
   loginInfo.showPromise {user, dateTime, site: {}}
@@ -434,7 +434,7 @@ PopState = (state, params) ->
   }
   [ReloadIndexUsers, data]
 
-//# Effecters
+// Effecters
 
 runIndexUsers = createRunIndexWithPageUsers({action: SetIndexUsers})
 
@@ -443,18 +443,20 @@ runPushHistory = (dispatch, params) ->
   if (query != location.search)
     history.pushState(params, '', "#{location.pathname}#{query}")
 
-//# Subscribers
+// Subscribers
 
 onPopstateSubscriber = (dispatch, action) ->
   listener = (event) -> dispatch(action, event.state)
   window.addEventListener 'popstate', listener
   -> window.removeEventListener 'popstate', listener
 
-//# Subscription Generators
+// Subscription Generators
+
 onPopstate = (action) ->
   [onPopstateSubscriber, action]
 
 // main
+
 main = ->
   queryParams = getQueryParamsFromUrl(location)
 

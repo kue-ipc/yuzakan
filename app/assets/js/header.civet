@@ -114,7 +114,7 @@ headerNav = ({system, session}) ->
 //   if response.ok
 //     dispatch(SetSystem, {sesion: response.data})
 //   else if response.code == 404
-//     # no login
+//     // no login
 //     dispatch(SetSystem, {sesion: {}})
 //   else
 //     console.error response

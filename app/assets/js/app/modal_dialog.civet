@@ -29,10 +29,10 @@ export default class ModalDialog
     @fade = true
     @scrollable = true
     @centered = false
-    @size # 'sm', 'lg', 'xl'
-    @fullscreen # true, 'sm-down', 'md-down', 'lg-down', 'xl-down', 'xxl-down'
+    @size // 'sm', 'lg', 'xl'
+    @fullscreen // true, 'sm-down', 'md-down', 'lg-down', 'xl-down', 'xxl-down'
     @title
-    @status # see status.js
+    @status // see status.js
     @closable = true
     action = {}
     close = {}

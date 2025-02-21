@@ -140,7 +140,7 @@ export default class WebData
         reloadDelay = codeAction.reloadTime * 1000
         messages.push("約#{codeAction.reloadTime}秒後に画面を切り替えます。")
       else
-        reloadDelay = 0 # default 0 msec
+        reloadDelay = 0 // default 0 msec
         messages.push('画面を切り替えます。しばらくお待ち下さい。')
     else if codeAction?.reload
       closable = false

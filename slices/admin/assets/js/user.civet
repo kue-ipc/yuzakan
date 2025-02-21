@@ -25,7 +25,7 @@ import {InitUserAttrs} from '~admin/user_attrs.civet'
 
 SetAttrsWithInit = (state, attrs) -> [InitUserAttrs, {attrs}]
 
-//# Effecters
+// Effecters
 
 // runIndexAttrsWithInit = createRunIndexAttrs({action: SetAttrsWithInit})
 runIndexAttrsWithInit = createRunIndexAttrs()
