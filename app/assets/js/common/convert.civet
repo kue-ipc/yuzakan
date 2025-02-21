@@ -156,7 +156,7 @@ export paramNameToList = (str) ->
 
 // abc, def, hij -> abcDefHij
 export listToCamelCase = (...list) ->
-  (list[0]?.toLowerCase() ? '') +
+  (list[0]?.toLowerCase() ?? '') +
     (capitalize(str) for str in list[1..]).join('')
 
 // abc, def, hij -> AbcDefHij
@@ -180,7 +180,7 @@ export listToTrainCase = (...list) ->
   (capitalize(str) for str in list).join('-')
 
 export listToParamName = (...list) ->
-  (list[0] ? '') + ("[#{str}]" for str in list[1..]).join('')
+  (list[0] ?? '') + ("[#{str}]" for str in list[1..]).join('')
 
 // object -> other
 

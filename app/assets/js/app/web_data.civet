@@ -130,7 +130,7 @@ export default class WebData
 
     codeAction = @codeActions.get(response.code) || UNKNOWN_CODE_ACTION
 
-    messages = [(codeAction.message || responseData.message), (responseData.errors ? [])...]
+    messages = [(codeAction.message || responseData.message), ...(responseData.errors ?? [])]
       .filter (v) -> typeof v == 'string'
 
     if codeAction?.redirectTo?

@@ -116,7 +116,7 @@ export default class WebPostJson
           successLink: null
           messages: [
             data.message
-            (data.errors ? [])...
+            ...(data.errors ?? [])
             @messages[data.result]
           ]
         }
@@ -138,7 +138,7 @@ export default class WebPostJson
         successLink: null
         messages: [
           data.messages.failure
-          (data.messages.errors ? [])...
+          ...(data.messages.errors ?? [])
           @messages[data.result]
         ]
       }

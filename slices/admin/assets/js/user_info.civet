@@ -46,7 +46,7 @@ export default userInfo = ({mode, user, groups}) ->
               class: 'form-control'
               type: 'text'
               required: true
-              value: user.name ? ''
+              value: user.name ?? ''
               oninput: SetUserUsernameByEvent
             }
           when 'edit'
@@ -55,7 +55,7 @@ export default userInfo = ({mode, user, groups}) ->
               class: 'form-control-plaintext'
               readonly: true
               type: 'text'
-              value: user.name ? ''
+              value: user.name ?? ''
             }
           when 'show'
             text user.name
@@ -63,28 +63,28 @@ export default userInfo = ({mode, user, groups}) ->
         text '表示名'
       dlh.dd {},
         if mode == 'show'
-          text user.display_name ? ''
+          text user.display_name ?? ''
         else
           html.input {
             id: 'user-display_name'
             class: 'form-control'
             type: 'text'
             required: true
-            value: user.display_name ? ''
+            value: user.display_name ?? ''
             oninput: SetUserDisplayNameByEvent
           }
       dlh.dt {},
         text 'メールアドレス'
       dlh.dd {},
         if mode == 'show'
-          text user.email ? ''
+          text user.email ?? ''
         else
           html.input {
             id: 'user-display_name'
             class: 'form-control'
             type: 'text'
             required: true
-            value: user.email ? ''
+            value: user.email ?? ''
             oninput: SetUserEmailByEvent
           }
       dlh.dt {},
@@ -146,6 +146,6 @@ export default userInfo = ({mode, user, groups}) ->
       dlh.dt {},
         text '備考'
       dlh.dd {},
-        text user.note ? ''
+        text user.note ?? ''
     ]
   ]

@@ -69,7 +69,7 @@ providerAction = (state, {name, provider}) ->
 
   newState = {
     ...state
-    name: name ? state.name
+    name: name ?? state.name
     provider: {...state.provider, ...provider}
   }
 
@@ -227,14 +227,14 @@ view = ({name, provider, adapters}) ->
         else
           [
             html.option {selected: true}, text '選択してください。'
-            (for adapter in adapters
+            ...(for adapter in adapters
               html.option {value: adapter.name, selected: adapter.name == provider.adapter}, text adapter.label
-            )...
+            )
           ]
     ]
     adapterParams {
       params: provider.params
-      param_types: provider_adapter?.param_types ? []
+      param_types: provider_adapter?.param_types ?? []
       action: adapterParamAction
     }
     html.div {class: 'mb-1'},

@@ -53,7 +53,7 @@ ACTIONS = new Map([
 updateGroupList = (groups, group) -> updateList(groups, group.name, group, {key: 'name'})
 
 normalizeGroupUploaded = ({action, error, ...group}) ->
-  action = action?.slice(0, 3)?.toUpperCase() ? ''
+  action = action?.slice(0, 3)?.toUpperCase() ?? ''
   error = switch action
     when '', 'MOD', 'SYN'
       null

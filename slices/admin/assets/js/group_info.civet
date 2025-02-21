@@ -19,7 +19,7 @@ export default groupInfo = ({mode, group}) ->
       dlh.dt {},
         text '表示名'
       dlh.dd {},
-        text group.display_name ? ''
+        text group.display_name ?? ''
       dlh.dt {},
         text 'プライマリ'
       dlh.dd {},
@@ -44,6 +44,6 @@ export default groupInfo = ({mode, group}) ->
       dlh.dt {},
         text '備考'
       dlh.dd {},
-        text group.note ? ''
+        text group.note ?? ''
     ]
   ]

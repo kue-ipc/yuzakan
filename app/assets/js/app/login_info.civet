@@ -160,11 +160,11 @@ export default class LoginInfo extends ModalDialog
         html.h4 {}, text '管理者の連絡先'
         dlh.dl {}, [
           dlh.dt {}, text '管理者'
-          dlh.dd {}, text system.contact.name ? ''
+          dlh.dd {}, text system.contact.name ?? ''
           dlh.dt {}, text 'メールアドレス'
-          dlh.dd {}, text system.contact.email ? ''
+          dlh.dd {}, text system.contact.email ?? ''
           dlh.dt {}, text '電話番号'
-          dlh.dd {}, text system.contact.phone ? ''
+          dlh.dd {}, text system.contact.phone ?? ''
         ]
       ]
     ]

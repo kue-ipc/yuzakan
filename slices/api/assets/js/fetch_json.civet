@@ -92,7 +92,7 @@ createRequest = ({url, method, data = null, type = 'json', ...params}) ->
   new Request(url, init)
 
 parseResponse = (response) ->
-  location = response.headers.get('Content-Location') ? response.url
+  location = response.headers.get('Content-Location') ?? response.url
 
   contentType = response.headers.get('Content-Type')
   responseData =

@@ -65,7 +65,7 @@ ACTIONS = new Map([
 updateUserList = (users, user) -> updateList(users, user.name, user, {key: 'name'})
 
 normalizeUserUploaded = ({action, error, ...user}) ->
-  action = action?.slice(0, 3)?.toUpperCase() ? ''
+  action = action?.slice(0, 3)?.toUpperCase() ?? ''
   error = switch action
     when '', 'ADD', 'MOD', 'DEL', 'SYN', 'LOC', 'UNL'
       null
@@ -233,12 +233,12 @@ userTr = ({user, groups, providers}) ->
       html.span {class: 'ms-2 badge text-bg-warning'}, text '使用禁止' if user.prohibited
       html.span {class: 'ms-2 badge text-bg-danger'}, text '削除済み' if user.deleted
     ]
-    html.td {key: 'email'}, text user.email ? ''
-    html.td {key: 'clearance-level'}, text user.clearance_level ? ''
+    html.td {key: 'email'}, text user.email ?? ''
+    html.td {key: 'clearance-level'}, text user.clearance_level ?? ''
     html.td {key: 'primary-group'},
       if user.primary_group
         html.a {href: "/admin/groups/#{user.primary_group}"},
-          text entityLabel(findList(groups, user.primary_group, {key: 'name'})) ? user.primary_group
+          text entityLabel(findList(groups, user.primary_group, {key: 'name'})) ?? user.primary_group
       else
         undefined
     ...(userProviderTd({user, provider}) for provider in providers)
@@ -276,7 +276,7 @@ userDetailTr = ({user, providers}) ->
             preCode {code: objToJson(user.error, 2), language: 'json'}
     ]
     html.td {key: 'groups'},
-      html.div {}, text user.groups?.join(', ') ? ''
+      html.div {}, text user.groups?.join(', ') ?? ''
     ...(userProviderDataTd({user, provider}) for provider in providers)
   ]
 

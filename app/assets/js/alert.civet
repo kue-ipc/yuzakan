@@ -28,7 +28,7 @@ ALERT_LEVELS = [
 
 // アラートの追加
 export alertAdd = (message, level = 'error') ->
-  level_color = LEVELS_COLOR[level] ? DEFALT_COLOR
+  level_color = LEVELS_COLOR[level] ?? DEFALT_COLOR
   alert_class = "alert alert-#{level_color} alert-dismissible fade show"
 
   for alerts in document.getElementsByClassName(ALERTS_CLASS)

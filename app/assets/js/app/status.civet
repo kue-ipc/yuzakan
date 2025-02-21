@@ -28,4 +28,4 @@ export StatusIcon = ({status, ...props}) ->
       bsIcon {name: icon, alt: label, size: 32}
 
 export statusInfo = (status) ->
-  STATUSES.get(status) ? STATUSES.get(UNKNOWN_STATUS)
+  STATUSES.get(status) ?? STATUSES.get(UNKNOWN_STATUS)

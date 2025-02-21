@@ -133,7 +133,7 @@ runCreateUser = (dispatch, {user}) ->
     dispatch (state) ->
       state = ChangeUserName(state, user.name)
       state = ChangeMode(state, 'show')
-      [state, [runShowLoginInfo, {user: response.data, dateTime: response.dateTime ? DateTime.now()}]]
+      [state, [runShowLoginInfo, {user: response.data, dateTime: response.dateTime ?? DateTime.now()}]]
   else
     console.error response
 
@@ -176,7 +176,7 @@ runCreatePasswordUser = (dispatch, {user}) ->
     response = await createPasswordWebData.submitPromise {url: "/api/users/#{user.name}/password", data: csrf()}
     if response.ok
       dispatch (state) ->
-        [state, [runShowLoginInfo, {user: {...user, ...response.data}, dateTime: response.dateTime ? DateTime.now()}]]
+        [state, [runShowLoginInfo, {user: {...user, ...response.data}, dateTime: response.dateTime ?? DateTime.now()}]]
     else
       console.error response
 

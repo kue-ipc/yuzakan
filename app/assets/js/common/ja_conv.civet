@@ -60,7 +60,7 @@ export toRomaji = (str) ->
   str = toKatakana(str)
   str = str.replace /(.)[ヽヾ]/g, '$1$1'
   str = str.replace /[^ァィゥェォャュョヮ][ァィゥェォャュョヮ]?/g, (m) ->
-    ROMAJI_MAP[m] ? m
+    ROMAJI_MAP[m] ?? m
   str = str.replace /n([bmp])/g, 'm$1'
   str = str.replace /\*(.)/g, (m, p1) ->
     if p1 == 'c'

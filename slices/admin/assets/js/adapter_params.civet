@@ -24,7 +24,7 @@ inputControl = (props) ->
       name: formName(props.name, parentNames)
       type: props.inputType
       class: 'form-control'
-      value: props.value ? (if props.encrypted? then props.default else '')
+      value: props.value ?? (if props.encrypted? then props.default else '')
       'aria-describedby': describeId
       ...inputControlProps
       oninput: (state, event) -> [props.action, {name: props.name, value: event.target.value}]
@@ -65,7 +65,7 @@ inputTextarea = (props) ->
       id: id
       name: formName(props.name, parentNames)
       class: 'form-control'
-      value: props.value ? (if props.encrypted? then props.default else '')
+      value: props.value ?? (if props.encrypted? then props.default else '')
       'aria-edscribedby': describeId
       ...inputTextareaProps
       oninput: (state, event) -> [props.action, {name: props.name, value: event.target.value}]
@@ -78,7 +78,7 @@ inputList = (props) ->
   id = formId(props.name, parentNames)
   describeId = "#{id}-help"
 
-  selected = props.value ? props.default
+  selected = props.value ?? props.default
 
   html.div {class: 'mb-3'}, [
     html.label {class: 'form-label', for: id}, text props.label
@@ -98,7 +98,7 @@ inputParam = (props) ->
   if props.list?
     return inputList props
 
-  inputType = props.input ? switch props.type
+  inputType = props.input ?? switch props.type
     when 'boolean' then 'checkbox'
     when 'string' then 'text'
     when 'text' then 'textarea'
