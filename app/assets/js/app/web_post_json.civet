@@ -9,13 +9,13 @@ import bsIcon from '~/app/bs_icon.civet'
 export default class WebPostJson
   MESSAGE_EVENT = 'webpostjson.message'
 
-  constructor: ({
+  @({
     @form
     @title
     @messages = {}
     @successLink = null
     @reloadTime = 0
-  }) ->
+  })
     @modalNode = document.createElement('div')
     @modalNode.classList.add('modal')
     @modalNode.setAttribute('tabindex', -1)
@@ -50,7 +50,7 @@ export default class WebPostJson
       ]
     }
 
-  modalMessage: (state) ->
+  modalMessage(state)
     if state.closable
       @modal.backdrop = true
       @modal.keyboard = true
@@ -61,7 +61,7 @@ export default class WebPostJson
     event = new CustomEvent(WebPostJson.MESSAGE_EVENT, {detail: state})
     @modalNode.dispatchEvent(event)
 
-  submitPromise: ->
+  submitPromise()
     @modalMessage {
       status: 'running'
       title: "#{@title}中"

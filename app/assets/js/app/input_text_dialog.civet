@@ -6,14 +6,14 @@ import {modalDialog} from '~/app/modal.civet'
 export default class InputTextDialog
   MESSAGE_EVENT = 'inputtextdialog.message'
 
-  constructor: ({
+  @({
     @id
     @title
     @messages = []
     @siza
     action = {}
     close = {}
-  }) ->
+  })
     @action = {
       color: 'primary'
       label: 'OK'
@@ -77,7 +77,7 @@ export default class InputTextDialog
       close: @close
     }, @modalBody {messages, value, size, shown}
 
-  modalBody: ({messages, value, size, shown}) ->
+  modalBody({messages, value, size, shown})
     html.div {},
       if shown
         [
@@ -93,11 +93,11 @@ export default class InputTextDialog
       else
         html.p {}, text '...'
 
-  fireModalMessage: (state) ->
+  fireModalMessage(state)
     event = new CustomEvent(InputTextDialog.MESSAGE_EVENT, {detail: state})
     @modalNode.dispatchEvent(event)
 
-  messageRunner: (dispatch, {action, node}) ->
+  messageRunner(dispatch, {action, node})
     func = (e) -> dispatch(action, e.detail)
     node.addEventListener(InputTextDialog.MESSAGE_EVENT, func)
     -> node.removeEventListener(InputTextDialog.MESSAGE_EVENT, func)

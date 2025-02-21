@@ -4,16 +4,16 @@ import * as html from '@hyperapp/html'
 import ModalDialog from '~/app/modal_dialog.civet'
 
 export default class ConfirmDialog extends ModalDialog
-  constructor: ({
+  @({
     @confirmations = null
     @agreement_required = false
     ...props
-  }) ->
+  })
     super props
     @value = true
 
   // override
-  modalBody: ({messages, confirmations, agreement_required, agreed}) ->
+  modalBody({messages, confirmations, agreement_required, agreed})
     [
       super({messages})
       if confirmations?
@@ -41,12 +41,14 @@ export default class ConfirmDialog extends ModalDialog
         ]
     ].flat()
 
-  changeAgree: (state, agreed) -> {...state, agreed}
+  changeAgree(state, agreed)
+    {...state, agreed}
 
   // override
-  initState: (state = {}) -> {
-    confirmations: @confirmations
-    agreement_required: @agreement_required
-    agreed: false
-    ...super(state)
-  }
+  initState(state = {})
+    {
+      confirmations: @confirmations
+      agreement_required: @agreement_required
+      agreed: false
+      ...super(state)
+    }

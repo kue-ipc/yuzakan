@@ -9,7 +9,7 @@ import * as dlh from '~/app/dl_horizontal.civet'
 import {runShowSystem} from '~api/system.civet'
 
 export default class LoginInfo extends ModalDialog
-  constructor: ({service = {}, ...props}) ->
+  @({service = {}, ...props})
     super {
       title: 'ログイン情報'
       fullscreen: 'xl-down'
@@ -27,7 +27,7 @@ export default class LoginInfo extends ModalDialog
   appInit: => [@initState({}), runShowSystem]
 
   // override
-  modalAction: (state) ->
+  modalAction(state)
     for tagName in ['header', 'main', 'footer']
       for el in document.getElementsByTagName(tagName)
         el.classList.add('d-print-none')
@@ -44,7 +44,7 @@ export default class LoginInfo extends ModalDialog
     state
 
   // override
-  modalBody: ({messages, ...props}) ->
+  modalBody({messages, ...props})
     [
       ...super({messages})
       if props.user? && props.system?
@@ -52,7 +52,7 @@ export default class LoginInfo extends ModalDialog
           @loginInfo(props)
     ]
 
-  loginInfo: ({user, dateTime, system}) ->
+  loginInfo({user, dateTime, system})
     site = switch @service.name
       when 'google'
         {name: 'Google アカウント', url: 'https://accounts.google.com/'}
@@ -172,7 +172,7 @@ export default class LoginInfo extends ModalDialog
       ]
     ]
 
-  displayChars: ->
+  displayChars()
     html.div {class: 'd-print-block border rounded p-1'}, [
       html.h5 {}, text '文字サンプル'
       dlh.dl {class: 'mb-1'}, [

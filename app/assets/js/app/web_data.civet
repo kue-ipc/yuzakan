@@ -25,13 +25,13 @@ export default class WebData
   ]
   UNKNOWN_CODE_ACTION = {status: 'unknown'}
 
-  constructor: ({
+  @({
     @id
     @title
     @method = 'GET'
     @url = null
     codeActions = []
-  }) ->
+  })
     @codeActions = new Map [...DEFAULT_CODE_ACTIONS, ...codeActions]
 
     @modalNode = document.createElement('div')
@@ -86,12 +86,12 @@ export default class WebData
         }
     }, @messageList {messages: messages}
 
-  messageList: ({messages}) ->
+  messageList({messages})
     messages = [messages] unless messages instanceof Array
     html.div {}, messages.filter((x) -> typeof x == 'string').map (msg) ->
       html.div {}, text msg
 
-  modalMessage: (state) ->
+  modalMessage(state)
     // hack modal config
     // https://github.com/twbs/bootstrap/issues/35664
     if state.closable
@@ -104,7 +104,7 @@ export default class WebData
     event = new CustomEvent(WebData.MESSAGE_EVENT, {detail: state})
     @modalNode.dispatchEvent(event)
 
-  messageRunner: (dispatch, {action, node}) ->
+  messageRunner(dispatch, {action, node})
     func = (e) -> dispatch(action, e.detail)
     node.addEventListener(WebData.MESSAGE_EVENT, func)
     -> node.removeEventListener(WebData.MESSAGE_EVENT, func)
@@ -118,7 +118,7 @@ export default class WebData
     else
       newState
 
-  submitPromise: ({url = @url, method = @method, data, type}) ->
+  submitPromise({url = @url, method = @method, data, type})
     @modalMessage {
       status: 'running'
       title: "#{@title}中"

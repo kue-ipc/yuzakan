@@ -24,7 +24,7 @@ export default class ModalDialog
     label: '閉じる'
   }
 
-  constructor: ({
+  @({
     @id
     @fade = true
     @scrollable = true
@@ -38,7 +38,7 @@ export default class ModalDialog
     close = {}
     @messages = []
     @value
-  }) ->
+  })
     @action = if action then {...ModalDialog.DEFAULT_ACTION, ...action} else null
     @close = if close then {...ModalDialog.DEFAULT_CLOSE, ...close} else null
     @result = undefined
@@ -46,7 +46,7 @@ export default class ModalDialog
     @initNode()
 
   // モーダルウィンドウのノードを作成し、初期化する。
-  initNode: ->
+  initNode()
     @modalNode = document.createElement('div')
     @modalNode.id = "#{@id}-modal"
     @modalNode.classList.add('modal')
@@ -96,16 +96,16 @@ export default class ModalDialog
 
   hideModal: (_dispatch) => @modal.hide()
 
-  modalBody: ({messages}) ->
+  modalBody({messages})
     html.p {}, text message for message in messages ? []
 
   // fire event
-  fireModalMessage: (props) ->
+  fireModalMessage(props)
     event = new CustomEvent(ModalDialog.MESSAGE_EVENT, {detail: props})
     @modalNode.dispatchEvent(event)
 
   // Actions
-  receiveModalMessage: (state, props) ->
+  receiveModalMessage(state, props)
     {...state, ...props}
 
   initState: (state) => {
@@ -122,7 +122,7 @@ export default class ModalDialog
   }
 
   // show
-  showPromise: (state = {}) ->
+  showPromise(state = {})
     state = @initState(state)
     @fireModalMessage(state)
     @result = undefined
@@ -141,10 +141,10 @@ export default class ModalDialog
 
     return @result
   
-  hide: ->
+  hide()
     @modal.hide()
 
-  waitModalClosePromise: ->
+  waitModalClosePromise()
     new Promise (resolve, reject) =>
       @modalNode.addEventListener 'hidden.bs.modal', ->
         resolve()
@@ -152,20 +152,23 @@ export default class ModalDialog
 
   // Static Methods
   // Create Subscription
-  @onMessage: (node, action) => [@listenMessage, {node, action}]
-  @onShown: (node, action) => [@listenShown, {node, action}]
-  @onHidden: (node, action) => [@listenHidden, {node, action}]
+  @onMessage(node, action)
+    [ModalDialog.listenMessage, {node, action}]
+  @onShown(node, action)
+    [ModalDialog.listenShown, {node, action}]
+  @onHidden(node, action)
+    [ModalDialog.listenHidden, {node, action}]
 
   // SubscriberFn
-  @listenMessage: (dispatch, {node, action}) =>
+  @listenMessage(dispatch, {node, action})
     func = (e) -> dispatch(action, e.detail)
-    node.addEventListener(@MESSAGE_EVENT, func)
-    -> node.removeEventListener(@MESSAGE_EVENT, func)
-  @listenShown: (dispatch, {node, action}) ->
+    node.addEventListener(ModalDialog.MESSAGE_EVENT, func)
+    -> node.removeEventListener(ModalDialog.MESSAGE_EVENT, func)
+  @listenShown(dispatch, {node, action})
     func = -> dispatch(action)
     node.addEventListener('shown.bs.modal', func)
     -> node.removeEventListener('shown.bs.modal', func)
-  @listenHidden: (dispatch, {node, action}) ->
+  @listenHidden(dispatch, {node, action})
     func = -> dispatch(action)
     node.addEventListener('hidden.bs.modal', func)
     -> node.removeEventListener('hidden.bs.modal', func)
