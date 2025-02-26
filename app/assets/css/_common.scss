@@ -9,6 +9,7 @@
   $font-family-base: var(--yuzakan-font-base),
   $font-family-code: var(--yuzakan-font-code)
 );
+@use "sass:color";
 
 .login {
   width: 20rem;
