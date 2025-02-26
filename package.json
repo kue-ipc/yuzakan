@@ -12,9 +12,7 @@
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
-    "coffeescript": "^2.7.0",
     "csv": "^6.3.11",
-    "esbuild-coffeescript": "^2.2.0",
     "esbuild-sass-plugin": "^3.3.1",
     "file-saver": "^2.0.5",
     "firacode": "^6.2.0",
@@ -31,7 +29,6 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "@coffeelint/cli": "^5.2.11",
     "@types/bootstrap": "^5.2.10",
     "postcss-sass": "^0.5.0",
     "stylelint": "^16.13.1",
