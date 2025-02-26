@@ -1,6 +1,5 @@
 import * as assets from "hanami-assets";
 
-import coffeeScriptPlugin from 'esbuild-coffeescript';
 import civetPlugin from '@danielx/civet/esbuild-plugin';
 import {sassPlugin} from 'esbuild-sass-plugin';
 
@@ -20,7 +19,6 @@ await assets.run({
       'safari16', // for iOS 16
     ];
     esbuildOptions.plugins ??= [];
-    esbuildOptions.plugins.push(coffeeScriptPlugin());
     esbuildOptions.plugins.push(civetPlugin());
     esbuildOptions.plugins.push(sassPlugin({
       silenceDeprecations: ['mixed-decls', 'color-functions', 'global-builtin', 'import'],
