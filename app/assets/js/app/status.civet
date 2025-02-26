@@ -1,31 +1,36 @@
-import {text} from "hyperapp"
+import {text, ElementVNode} from "hyperapp"
 import * as html from "@hyperapp/html"
 import bsIcon from "~/app/bs_icon.civet"
+import {t} from "~/common/i18n.civet"
 
-STATUSES := new Map([
-  {status: "success", label: "成功", color: "success", icon: "check-circle-fill"}
-  {status: "failure", label: "失敗", color: "danger", icon: "x-circle-fill"}
-  {status: "fatal", label: "致命的エラー", color: "danger", icon: "slash-circle-fill"}
-  {status: "error", label: "エラー", color: "danger", icon: "exclamation-octagon-fill"}
-  {status: "warn", label: "警告", color: "warning", icon: "exclamation-triangle-fill"}
-  {status: "info", label: "情報", color: "info", icon: "info-square-fill"}
-  {status: "debug", label: "デバッグ", color: "secondary", icon: "bug-fill"}
-  {status: "alert", label: "アラート", color: "danger", icon: "exclamation-triangle-fill"}
-  {status: "caution", label: "注意", color: "warning", icon: "exclamation-triangle-fill"}
-  {status: "unknown", label: "不明", color: "primary", icon: "question-diamond-fill"}
+type Status = {status: string, color: string, icon: string}
+
+UNKNOWN_STATUS :=
+  {status: "unknown", color: "primary", icon: "question-diamond-fill"}
+
+STATUSES: Map<string, Status> := new Map([
+  {status: "success", color: "success", icon: "check-circle-fill"}
+  {status: "failure", color: "danger", icon: "x-circle-fill"}
+  {status: "fatal", color: "danger", icon: "slash-circle-fill"}
+  {status: "error", color: "danger", icon: "exclamation-octagon-fill"}
+  {status: "warn", color: "warning", icon: "exclamation-triangle-fill"}
+  {status: "info", color: "info", icon: "info-square-fill"}
+  {status: "debug", color: "secondary", icon: "bug-fill"}
+  {status: "alert", color: "danger", icon: "exclamation-triangle-fill"}
+  {status: "caution", color: "warning", icon: "exclamation-triangle-fill"}
+  UNKNOWN_STATUS
 ].map((status) -> [status.status, status]))
 
-UNKNOWN_STATUS := "unknown"
-RUNNING_LABEL := "読込中..."
-
-export StatusIcon := ({status, ...props}) ->
+export StatusIcon := ({status, ...props}: any): Promise<ElementVNode<any>> ->
   if status is "running"
+    label := await t("messages.now_loading")
     html.div {class: `spinner-border ${props.class}`, role: "status"},
-      html.span {class: "visually-hidden"}, text RUNNING_LABEL
+      html.span {class: "visually-hidden"}, text label
   else
-    {label, color, icon} = statusInfo(status)
+    {color, icon} := statusInfo(status)
+    label := await t(`statuses.${status}`)
     html.div {class: `text-${color} ${props.class}`},
       bsIcon {name: icon, alt: label, size: 32}
 
-export statusInfo := (status) ->
-  STATUSES.get(status) ?? STATUSES.get(UNKNOWN_STATUS)
+export statusInfo := (status: string): Status ->
+  STATUSES.get(status) ?? UNKNOWN_STATUS

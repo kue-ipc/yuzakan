@@ -82,6 +82,7 @@ ja:
   messages:
     unauthenticated: "ログインしていません。"
     session_timeout: "セッションがタイムアウトしました。"
+    now_loading: "読込中..."
   interactors:
     decrypt: 復号化
     encrypt: 暗号化
@@ -162,3 +163,14 @@ ja:
   view:
     buttons:
       toggle_navigation: ナビゲーション切替
+  statuses:
+    success: "成功"
+    failure: "失敗"
+    fatal: "致命的エラー"
+    error: "エラー"
+    warn: "警告"
+    info: "情報"
+    debug: "デバッグ"
+    alert: "アラート"
+    caution: "注意"
+    unknown: "不明"

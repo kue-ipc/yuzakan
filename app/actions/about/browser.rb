@@ -9,9 +9,6 @@ module Yuzakan
 
         def handle(request, response)
         end
-
-        def configurate!
-        end
       end
     end
   end

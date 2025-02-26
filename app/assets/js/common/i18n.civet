@@ -1,0 +1,16 @@
+messagesStore: any .= null
+
+fetchMessages := (): Promise<any> ->
+  response := await fetch("/locale/messages", {
+    headers: {Accept: "application/json"},
+  })
+  await response.json()
+
+getMessages := (): Promise<any> ->
+  unless messagesStore?
+    messagesStore = await fetchMessages()
+  messagesStore
+
+export t := (key: string): Promise<string> ->
+  messages := await getMessages()
+  messages[key]
