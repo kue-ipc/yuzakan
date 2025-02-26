@@ -1,16 +1,21 @@
 // Bootstrap Icons for hyperapp
 
+import {ElementVNode} from "hyperapp"
 import * as svg from "@hyperapp/svg"
 
-export default bsIcon := ({name, size = 24, alt, ...props}) ->
+interface BsIconProps
+  name: string
+  size?: number
+  alt?: string
+  class?: string[]
+
+export default bsIcon := ({name, size = 24, alt, class: klass}: BsIconProps): ElementVNode<any> ->
   svg_props := {
-    class: ["bi", ...(props.class ?? [])]
+    class: ["bi", ...(klass ?? [])]
     width: size
     height: size
     fill: "currentColor"
-    ...(if alt? then {role: "img", "aria-label": alt} else {})
-    role: "img"
-    "aria-label": alt
+    ...(if alt? then {role: "img", aria-label: alt} else {})
   }
 
   svg.svg svg_props,
