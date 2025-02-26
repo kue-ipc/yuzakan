@@ -47,7 +47,7 @@ a.card {
 
     &:hover {
       text-decoration: none;
-      background-color: darken($value, 15%) !important;
+      background-color: color.adjust($value, $lightness: -15%) !important;
       color: bootstrap.$white !important;
     }
   }
