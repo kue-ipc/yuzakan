@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@danielx/civet": "^0.9.6",
+    "@danielx/civet": "^0.9.7",
     "@hyperapp/dom": "^1.0.0",
     "@hyperapp/events": "^2.0.0",
     "@hyperapp/html": "^2.0.0",
@@ -29,10 +29,14 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
+    "@eslint/js": "^9.21.0",
     "@types/bootstrap": "^5.2.10",
+    "eslint": "^9.21.0",
+    "eslint-plugin-civet": "^0.0.6",
     "postcss-sass": "^0.5.0",
-    "stylelint": "^16.13.1",
+    "stylelint": "^16.14.1",
     "stylelint-config-standard": "^37.0.0",
-    "stylelint-config-standard-scss": "^14.0.0"
+    "stylelint-config-standard-scss": "^14.0.0",
+    "typescript-eslint": "^8.25.0"
   }
 }
