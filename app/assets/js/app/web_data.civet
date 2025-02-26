@@ -60,7 +60,7 @@ export default class WebData
     }
 
   messageList({messages})
-    messages := [messages] unless messages instanceof Array
+    messages = [messages] unless messages instanceof Array
     html.div {}, messages.filter((x) -> typeof x is "string").map (msg) ->
       html.div {}, text msg
 
@@ -118,7 +118,7 @@ export default class WebData
           {}
         else
           console.error `Unsupported respose type: ${response.type}`
-          responseData = {
+          {
             message: "異常なレスポンスが返されました。再度試してください。"
           }
 

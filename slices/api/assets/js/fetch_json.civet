@@ -36,7 +36,7 @@ export fetchJsonDelete := (params) ->
 createRequest := ({url, method, data = null, type = "json", ...params}) ->
   // create request
 
-  method := method.toUpperCase()
+  method = method.toUpperCase()
   unless ALLOWED_METHODS.includes(method)
     throw new Error(`Unknown or unsupported method: ${method}`)
 

@@ -12,7 +12,7 @@ export formDataToObj := (formData) ->
   root := {}
   for [key, value] of formData
     keyList := paramNameToList(key)
-    obj := root
+    obj .= root
     while subKey .= keyList.shift()
       if keyList.length is 0
         obj[subKey] = value
