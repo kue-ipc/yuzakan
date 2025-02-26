@@ -1,6 +1,6 @@
-import Pluralize from 'pluralize'
+import Pluralize from "pluralize"
 
-import {listToCamelCase, listToPascalCase, listToSnakeCase, listToKebabCase} from '~/common/convert.civet'
+import {listToCamelCase, listToPascalCase, listToSnakeCase, listToKebabCase} from "~/common/convert.civet"
 
 // Capitalize
 export capitalize = (str) ->

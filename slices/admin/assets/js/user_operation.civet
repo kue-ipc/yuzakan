@@ -1,118 +1,118 @@
-import {text} from 'hyperapp'
-import * as html from '@hyperapp/html'
-import {DateTime} from 'luxon'
+import {text} from "hyperapp"
+import * as html from "@hyperapp/html"
+import {DateTime} from "luxon"
 
-import {formName, formId} from '~/common/form_helper.civet'
-import csrf from '~/csrf.civet'
-import WebData from '~/app/web_data.civet'
-import ConfirmDialog from '~/app/confirm_dialog.civet'
-import LoginInfo from '~/app/login_info.civet'
+import {formName, formId} from "~/common/form_helper.civet"
+import csrf from "~/csrf.civet"
+import WebData from "~/app/web_data.civet"
+import ConfirmDialog from "~/app/confirm_dialog.civet"
+import LoginInfo from "~/app/login_info.civet"
 
-import {runGetUserWithInit} from '~admin/user_get_user.civet'
+import {runGetUserWithInit} from "~admin/user_get_user.civet"
 
-parentNames = ['user']
+parentNames = ["user"]
 
 // Confirm Dialog
 
 destroyConfirm = new ConfirmDialog {
-  id: formId('destroy', ['modal', 'confirm', ...parentNames])
-  status: 'alert'
-  title: 'ユーザーの削除'
+  id: formId("destroy", ["modal", "confirm", ...parentNames])
+  status: "alert"
+  title: "ユーザーの削除"
   action: {
-    color: 'danger'
-    label: '削除'
+    color: "danger"
+    label: "削除"
   }
 }
 
 createPasswordConfirm = new ConfirmDialog {
-  id: formId('create', ['modal', 'confirm', ...parentNames, 'password'])
-  status: 'warn'
-  title: 'パスワードのリセット'
+  id: formId("create", ["modal", "confirm", ...parentNames, "password"])
+  status: "warn"
+  title: "パスワードのリセット"
   action: {
-    color: 'warning'
-    label: 'パスワードリセット'
+    color: "warning"
+    label: "パスワードリセット"
   }
 }
 
 createLockConfirm = new ConfirmDialog {
-  id: formId('create', ['modal', 'confirm', ...parentNames, 'lock'])
-  status: 'info'
-  title: 'ユーザーのロック'
+  id: formId("create", ["modal", "confirm", ...parentNames, "lock"])
+  status: "info"
+  title: "ユーザーのロック"
   action: {
-    color: 'primary'
-    label: 'ユーザーロック'
+    color: "primary"
+    label: "ユーザーロック"
   }
 }
 
 destroyLockConfirm = new ConfirmDialog {
-  id: formId('destroy', ['modal', 'confirm', ...parentNames, 'lock'])
-  status: 'info'
-  title: 'ユーザーのアンロック'
+  id: formId("destroy", ["modal", "confirm", ...parentNames, "lock"])
+  status: "info"
+  title: "ユーザーのアンロック"
   action: {
-    color: 'secondary'
-    label: 'ユーザーロック'
+    color: "secondary"
+    label: "ユーザーロック"
   }
 }
 
 // Web Data
 
 createWebData = new WebData {
-  id: formId('create', ['modal', 'web', ...parentNames])
-  title: 'ユーザーの作成'
-  method: 'POST'
-  url: '/api/users'
+  id: formId("create", ["modal", "web", ...parentNames])
+  title: "ユーザーの作成"
+  method: "POST"
+  url: "/api/users"
   codeActions: new Map [
-    [201, {status: 'success', message: 'ユーザーを作成しました。', autoCloseTime: 1}]
+    [201, {status: "success", message: "ユーザーを作成しました。", autoCloseTime: 1}]
   ]
 }
 
 updateWebData = new WebData {
-  id: formId('update', ['modal', 'web', ...parentNames])
-  title: 'ユーザーの更新'
-  method: 'PATCH'
+  id: formId("update", ["modal", "web", ...parentNames])
+  title: "ユーザーの更新"
+  method: "PATCH"
   codeActions: new Map [
-    [200, {status: 'success', message: 'ユーザーを更新しました。'}]
+    [200, {status: "success", message: "ユーザーを更新しました。"}]
   ]
 }
 
 destroyWebData = new WebData {
-  id: formId('destroy', ['modal', 'web', ...parentNames])
-  title: 'ユーザーの削除'
-  method: 'DELETE'
+  id: formId("destroy", ["modal", "web", ...parentNames])
+  title: "ユーザーの削除"
+  method: "DELETE"
   codeActions: new Map [
-    [200, {status: 'success', message: 'ユーザーを削除しました。', redirectTo: '/admin/users', reloadTime: 10}]
+    [200, {status: "success", message: "ユーザーを削除しました。", redirectTo: "/admin/users", reloadTime: 10}]
   ]
 }
 
 createPasswordWebData = new WebData {
-  id: formId('create', ['modal', 'web', ...parentNames, 'password'])
-  title: 'パスワードのリセット'
-  method: 'POST'
+  id: formId("create", ["modal", "web", ...parentNames, "password"])
+  title: "パスワードのリセット"
+  method: "POST"
   codeActions: new Map [
-    [200, {status: 'success', message: 'パスワードをリセットしました。', autoCloseTime: 1}]
+    [200, {status: "success", message: "パスワードをリセットしました。", autoCloseTime: 1}]
   ]
 }
 
 createLockWebData = new WebData {
-  id: formId('create', ['modal', 'web', ...parentNames, 'lock'])
-  title: 'ユーザーのロック'
-  method: 'POST'
+  id: formId("create", ["modal", "web", ...parentNames, "lock"])
+  title: "ユーザーのロック"
+  method: "POST"
   codeActions: new Map [
-    [200, {status: 'success', message: 'ユーザーをロックしました。'}]
+    [200, {status: "success", message: "ユーザーをロックしました。"}]
   ]
 }
 
 destroyLockWebData = new WebData {
-  id: formId('destroy', ['modal', 'web', ...parentNames, 'lock'])
-  title: 'ユーザーのアンロック'
-  method: 'DELETE'
+  id: formId("destroy", ["modal", "web", ...parentNames, "lock"])
+  title: "ユーザーのアンロック"
+  method: "DELETE"
   codeActions: new Map [
-    [200, {status: 'success', message: 'ユーザーをアンロックしました。'}]
+    [200, {status: "success", message: "ユーザーをアンロックしました。"}]
   ]
 }
 
 loginInfo = new LoginInfo {
-  id: formId('login_inof', ['modal', 'login_info', ...parentNames])
+  id: formId("login_inof", ["modal", "login_info", ...parentNames])
 }
 
 // Effecters
@@ -132,14 +132,14 @@ runCreateUser = (dispatch, {user}) ->
   if response.ok
     dispatch (state) ->
       state = ChangeUserName(state, user.name)
-      state = ChangeMode(state, 'show')
+      state = ChangeMode(state, "show")
       [state, [runShowLoginInfo, {user: response.data, dateTime: response.dateTime ?? DateTime.now()}]]
   else
     console.error response
 
 runUpdateUser = (dispatch, {name, user}) ->
   response = await updateWebData.submitPromise {
-    url: "/api/users/#{name}"
+    url: `/api/users/${name}`
     data: {
       ...csrf()
       name: user.name
@@ -153,16 +153,16 @@ runUpdateUser = (dispatch, {name, user}) ->
   }
   if response.ok
     dispatch(ReadUser)
-    dispatch(ChangeMode, 'show')
+    dispatch(ChangeMode, "show")
   else
     console.error response
 
 runDestroyUser = (dispatch, {name}) ->
   confirm = await destroyConfirm.showPromise({
-    messages: ["ユーザー「#{name}」を削除してもよろしいですか？"]
+    messages: [`ユーザー「${name}」を削除してもよろしいですか？`]
   })
   if confirm
-    response = await destroyWebData.submitPromise {url: "/api/users/#{name}", data: csrf()}
+    response = await destroyWebData.submitPromise {url: `/api/users/${name}`, data: csrf()}
     if response.ok
       // ...redirect
     else
@@ -170,10 +170,10 @@ runDestroyUser = (dispatch, {name}) ->
 
 runCreatePasswordUser = (dispatch, {user}) ->
   confirm = await createPasswordConfirm.showPromise({
-    messages: ["ユーザー「#{user.name}」のパスワードをリセットしてもよろしいですか？"]
+    messages: [`ユーザー「${user.name}」のパスワードをリセットしてもよろしいですか？`]
   })
   if confirm
-    response = await createPasswordWebData.submitPromise {url: "/api/users/#{user.name}/password", data: csrf()}
+    response = await createPasswordWebData.submitPromise {url: `/api/users/${user.name}/password`, data: csrf()}
     if response.ok
       dispatch (state) ->
         [state, [runShowLoginInfo, {user: {...user, ...response.data}, dateTime: response.dateTime ?? DateTime.now()}]]
@@ -182,10 +182,10 @@ runCreatePasswordUser = (dispatch, {user}) ->
 
 runCreateLockUser = (dispatch, {name}) ->
   confirm = await createLockConfirm.showPromise({
-    messages: ["ユーザー「#{name}」をロックしてもよろしいですか？"]
+    messages: [`ユーザー「${name}」をロックしてもよろしいですか？`]
   })
   if confirm
-    response = await createLockWebData.submitPromise {url: "/api/users/#{name}/lock", data: csrf()}
+    response = await createLockWebData.submitPromise {url: `/api/users/${name}/lock`, data: csrf()}
     if response.ok
       dispatch(ReadUser)
     else
@@ -193,10 +193,10 @@ runCreateLockUser = (dispatch, {name}) ->
 
 runDestroyLockUser = (dispatch, {name}) ->
   confirm = await destroyLockConfirm.showPromise({
-    messages: ["ユーザー「#{name}」をアンロックしてもよろしいですか？"]
+    messages: [`ユーザー「${name}」をアンロックしてもよろしいですか？`]
   })
   if confirm
-    response = await destroyLockWebData.submitPromise {url: "/api/users/#{name}/lock", data: csrf()}
+    response = await destroyLockWebData.submitPromise {url: `/api/users/${name}/lock`, data: csrf()}
     if response.ok
       dispatch(ReadUser)
     else
@@ -223,70 +223,70 @@ DestroyLockUser = (state) -> [state, [runDestroyLockUser, {name: state.name}]]
 ChangeMode = (state, mode) -> {...state, mode}
 
 ChangeUserName = (state, name) ->
-  history.pushState(null, null, "/admin/users/#{name}") if name? && name is not state.name
+  history.pushState(null, null, `/admin/users/${name}`) if name? && name is not state.name
   {...state, name}
 
 export default userOperation = ({option}) ->
-  html.div {key: 'group-operation'}, [
-    html.h4 {}, text '操作メニュー'
+  html.div {key: "group-operation"}, [
+    html.h4 {}, text "操作メニュー"
     html.div {}, [
       html.button {
-        class: 'btn btn-warning'
+        class: "btn btn-warning"
         onclick: CreatPasswordUser
-      }, text 'パスワードリセット'
+      }, text "パスワードリセット"
     ]
-    html.p {}, text 'その他は準備中です...'
+    html.p {}, text "その他は準備中です..."
   ]
 
 // export default userOperation = ({mode}) ->
 //   html.div {}, [
-//     html.h4 {}, text '操作メニュー'
-//     html.div {class: 'form-check form-switch'}, [
+//     html.h4 {}, text "操作メニュー"
+//     html.div {class: "form-check form-switch"}, [
 //       html.input {
-//         id: 'user-mode-edit'
-//         class: 'form-check-input'
-//         type: 'checkbox'
-//         role: 'switch'
-//         checked: mode is not 'show'
-//         disabled: mode is 'new'
-//         onchange: [ChangeMode, if mode is 'show' then 'edit' else 'show']
+//         id: "user-mode-edit"
+//         class: "form-check-input"
+//         type: "checkbox"
+//         role: "switch"
+//         checked: mode is not "show"
+//         disabled: mode is "new"
+//         onchange: [ChangeMode, if mode is "show" then "edit" else "show"]
 //       }
 //       html.label {
-//         class: 'form-check-label'
-//         for: 'user-mode-edit'
-//       }, text '編集モード'
+//         class: "form-check-label"
+//         for: "user-mode-edit"
+//       }, text "編集モード"
 //     ]
 //     switch mode
-//       when 'new'
+//       when "new"
 //         html.div {},
 //           html.button {
-//             class: 'btn btn-primary'
+//             class: "btn btn-primary"
 //             onclick: CreateUser
-//           }, text '作成'
-//       when 'edit'
+//           }, text "作成"
+//       when "edit"
 //         html.div {}, [
 //           html.button {
-//             class: 'btn btn-warning'
+//             class: "btn btn-warning"
 //             onclick: UreateUser
-//           }, text '更新'
+//           }, text "更新"
 //           html.button {
-//             class: 'ms-1 btn btn-danger'
+//             class: "ms-1 btn btn-danger"
 //             onclick: DestroyUser
-//           }, text '削除'
+//           }, text "削除"
 //         ]
-//       when 'show'
+//       when "show"
 //         html.div {}, [
 //           html.button {
-//             class: 'btn btn-warning'
+//             class: "btn btn-warning"
 //             onclick: CreatPasswordUser
-//           }, text 'パスワードリセット'
+//           }, text "パスワードリセット"
 //           html.button {
-//             class: 'btn btn-primary ms-2'
+//             class: "btn btn-primary ms-2"
 //             onclick: CreatLockUser
-//           }, text 'ロック'
+//           }, text "ロック"
 //           html.button {
-//             class: 'btn btn-secondary ms-2'
+//             class: "btn btn-secondary ms-2"
 //             onclick: DestroyLockUser
-//           }, text 'アンロック'
+//           }, text "アンロック"
 //         ]
 //   ]

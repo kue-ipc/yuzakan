@@ -1,10 +1,10 @@
-import {Modal} from 'bootstrap'
-import {app, text} from 'hyperapp'
-import * as html from '@hyperapp/html'
-import {modalDialog} from '~/app/modal.civet'
+import {Modal} from "bootstrap"
+import {app, text} from "hyperapp"
+import * as html from "@hyperapp/html"
+import {modalDialog} from "~/app/modal.civet"
 
 export default class InputTextDialog
-  MESSAGE_EVENT = 'inputtextdialog.message'
+  MESSAGE_EVENT = "inputtextdialog.message"
 
   @({
     @id
@@ -15,26 +15,26 @@ export default class InputTextDialog
     close = {}
   })
     @action = {
-      color: 'primary'
-      label: 'OK'
-      side: 'right'
+      color: "primary"
+      label: "OK"
+      side: "right"
       ...action
     }
     @close = {
-      color: 'secondary'
-      label: 'キャンセル'
+      color: "secondary"
+      label: "キャンセル"
       ...close
     }
 
-    @modalNode = document.createElement('div')
-    @modalNode.id = "#{@id}-modal"
-    @modalNode.classList.add('modal', 'fade')
-    @modalNode.setAttribute('tabindex', -1)
-    @modalNode.setAttribute('aria-hidden', 'true')
+    @modalNode = document.createElement("div")
+    @modalNode.id = `${@id}-modal`
+    @modalNode.classList.add("modal", "fade")
+    @modalNode.setAttribute("tabindex", -1)
+    @modalNode.setAttribute("aria-hidden", "true")
 
-    modalDialogNode = document.createElement('div')
-    modalDialogNode.id = "#{@id}-modal-dialog"
-    modalDialogNode.classList.add('modal-dialog')
+    modalDialogNode = document.createElement("div")
+    modalDialogNode.id = `${@id}-modal-dialog`
+    modalDialogNode.classList.add("modal-dialog")
 
     @modalNode.appendChild(modalDialogNode)
     document.body.appendChild(@modalNode)
@@ -45,7 +45,7 @@ export default class InputTextDialog
       init: {
         title: @title
         messages: @messages
-        value: ''
+        value: ""
         size: @size
         action: @action
         close: @close
@@ -65,15 +65,15 @@ export default class InputTextDialog
         [
           ...(html.p({}, text message) for each message of messages)
           html.textarea {
-            id: "#{@id}-input-textarea"
-            class: 'form-control'
+            id: `${@id}-input-textarea`
+            class: "form-control"
             maxlength: size
             rows: 10
             oninput: (state, event) -> {...state, value: event.target.value}
           }, text value
         ]
       else
-        html.p {}, text '...'
+        html.p {}, text "..."
 
   fireModalMessage(state)
     event = new CustomEvent(InputTextDialog.MESSAGE_EVENT, {detail: state})
@@ -87,7 +87,7 @@ export default class InputTextDialog
   modalView = ({title, messages, value, size, action, close, shown}) =>
     modalDialog {
       id: @id,
-      size: 'lg'
+      size: "lg"
       centered: true
       title
       closable: true
@@ -97,7 +97,7 @@ export default class InputTextDialog
           onclick: (state) =>
             @result = value
             @modal.hide()
-            {...state, value: ''}
+            {...state, value: ""}
         }
       close: @close
     }, @modalBody {messages, value, size, shown}
@@ -105,19 +105,19 @@ export default class InputTextDialog
   messageSub = (action, {node}) => [@messageRunner, {action, node}]
 
   messageAction = (state, params) =>
-    [{...state, ...params}, focus("#{@id}-input-textarea")]
+    [{...state, ...params}, focus(`${@id}-input-textarea`)]
 
   shownRunner = (dispatch, {action}) =>
     func = -> dispatch(action)
-    @modalNode.addEventListener('shown.bs.modal', func)
-    => @modalNode.removeEventListener('shown.bs.modal', func)
+    @modalNode.addEventListener("shown.bs.modal", func)
+    => @modalNode.removeEventListener("shown.bs.modal", func)
 
   shownSub = (action) => [@shownRunner, {action}]
 
   hiddenRunner = (dispatch, {action}) =>
     func = -> dispatch(action)
-    @modalNode.addEventListener('hidden.bs.modal', func)
-    => @modalNode.removeEventListener('hidden.bs.modal', func)
+    @modalNode.addEventListener("hidden.bs.modal", func)
+    => @modalNode.removeEventListener("hidden.bs.modal", func)
 
   hiddenSub = (action) => [@hiddenRunner, {action}]
 
@@ -132,7 +132,7 @@ export default class InputTextDialog
 
   waitModalClose = =>
     new Promise (resolve, reject) =>
-      @modalNode.addEventListener 'hidden.bs.modal', ->
+      @modalNode.addEventListener "hidden.bs.modal", ->
         resolve()
       , {once: true}
 

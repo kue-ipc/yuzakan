@@ -1,25 +1,25 @@
-import {text} from 'hyperapp'
-import * as html from '@hyperapp/html'
+import {text} from "hyperapp"
+import * as html from "@hyperapp/html"
 
-import {compact} from '~/common/helper.civet'
+import {compact} from "~/common/helper.civet"
 
 // page navigatino view
 export default pageNav = ({page, per_page, total, start, end, onpage, readonly = false}) ->
   if total
     total_page = Math.ceil(total / per_page)
-    html.nav {class: 'd-flex', 'aria-label': 'ページナビゲーション'}, [
-      html.ul {class: 'pagination'},
+    html.nav {class: "d-flex", "aria-label": "ページナビゲーション"}, [
+      html.ul {class: "pagination"},
         pageList {page, total_page, onpage, readonly}
-      html.p {class: 'ms-2 mt-2'},
-        text "#{start + 1} - #{end + 1} / #{total} (#{page} / #{total_page} ページ)"
+      html.p {class: "ms-2 mt-2"},
+        text `${start + 1} - ${end + 1} / ${total} (${page} / ${total_page} ページ)`
     ]
   else
-    html.nav {class: 'd-flex', 'aria-label': 'ページナビゲーション'}, [
-      html.ul {class: 'pagination'}, [
-        pageItem {content: 'first', page: 1, disabled: true, onpage, readonly}
-        pageItem {content: 'prev', page: 1, disabled: true, onpage, readonly}
-        pageItem {content: 'next', page: 1, disabled: true, onpage, readonly}
-        pageItem {content: 'last', page: 1, disabled: true, onpage, readonly}
+    html.nav {class: "d-flex", "aria-label": "ページナビゲーション"}, [
+      html.ul {class: "pagination"}, [
+        pageItem {content: "first", page: 1, disabled: true, onpage, readonly}
+        pageItem {content: "prev", page: 1, disabled: true, onpage, readonly}
+        pageItem {content: "next", page: 1, disabled: true, onpage, readonly}
+        pageItem {content: "last", page: 1, disabled: true, onpage, readonly}
       ]
     ]
 
@@ -27,13 +27,13 @@ export default pageNav = ({page, per_page, total, start, end, onpage, readonly =
 
 pageList = ({page, total_page, onpage, readonly = false}) ->
   compact([
-    pageItem {content: 'first', page: 1, disabled: page is 1, onpage, readonly}
-    pageItem {content: 'prev', page: page - 1, disabled: page is 1, onpage, readonly}
+    pageItem {content: "first", page: 1, disabled: page is 1, onpage, readonly}
+    pageItem {content: "prev", page: page - 1, disabled: page is 1, onpage, readonly}
     pageEllipsis {start: 1, end: page - 3, onpage, readonly}
     ...(pageNumList {start: page - 2, end: page + 2, page, total_page, onpage, readonly})
     pageEllipsis {start: page + 3, end: total_page, onpage, readonly}
-    pageItem {content: 'next', page: page + 1, disabled: page is total_page, onpage, readonly}
-    pageItem {content: 'last', page: total_page, disabled: page is total_page, onpage, readonly}
+    pageItem {content: "next", page: page + 1, disabled: page is total_page, onpage, readonly}
+    pageItem {content: "last", page: total_page, disabled: page is total_page, onpage, readonly}
   ])
 
 pageNumList = ({start, end, page, total_page, onpage, readonly = false}) ->
@@ -44,21 +44,21 @@ pageNumList = ({start, end, page, total_page, onpage, readonly = false}) ->
       null
 
 pageItem = ({content, page, onpage, active = false, disabled = false, readonly = false}) ->
-  html.li {key: "page[#{content}]", class: {'page-item': true, active, disabled}},
+  html.li {key: `page[${content}]`, class: {"page-item": true, active, disabled}},
     html.button {
-      type: 'button'
-      class: 'page-link'
+      type: "button"
+      class: "page-link"
       disabled: readonly
       onclick: (state) -> [onpage, page]
     }, text pageText(content)
 
 pageText = (content) ->
-  if typeof content is 'string'
+  if typeof content is "string"
     {
-      first: '最初'
-      last: '最後'
-      prev: '前'
-      next: '次'
+      first: "最初"
+      last: "最後"
+      prev: "前"
+      next: "次"
     }[content] || content
   else
     String(content)
@@ -69,5 +69,5 @@ pageEllipsis = ({start, end, onpage, readonly = false}) ->
   else if start is end
     pageItem {content: start, page: start, onpage, readonly}
   else
-    html.li {key: "page[#{start}..#{end}]", class: ['page-item', 'disabled']},
-      html.span {class: 'page-link'}, text '...'
+    html.li {key: `page[${start}..${end}]`, class: ["page-item", "disabled"]},
+      html.span {class: "page-link"}, text "..."

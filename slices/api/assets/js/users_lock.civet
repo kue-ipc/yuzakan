@@ -3,14 +3,14 @@
 import {
   createRunCreate
   createRunDestroy
-} from '~api/hyper_json.civet'
+} from "~api/hyper_json.civet"
 
-import {SetUser, normalizeUser} from '~api/users.civet'
+import {SetUser, normalizeUser} from "~api/users.civet"
 
 // Contants
 
-export USER_ID_KEY_USERS_LOCK = 'user_id'
-export API_USERS_LOCK = "/api/users/:#{USER_ID_KEY_USERS_LOCK}/lock"
+export USER_ID_KEY_USERS_LOCK = "user_id"
+export API_USERS_LOCK = `/api/users/:${USER_ID_KEY_USERS_LOCK}/lock`
 
 // Functions
 

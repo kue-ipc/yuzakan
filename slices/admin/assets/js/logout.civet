@@ -1,1 +1,1 @@
-import '~/logout.js'
+import "~/logout.js"

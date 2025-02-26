@@ -1,10 +1,10 @@
 // /api/users
 
-import {pickType} from '~/common/helper.civet'
+import {pickType} from "~/common/helper.civet"
 
-import {PAGINATION_PARAM_TYPES} from '~api/pagination.civet'
-import {SEARCH_PARAM_TYPES} from '~api/search.civet'
-import {ORDER_PARAM_TYPES} from '~api/order.civet'
+import {PAGINATION_PARAM_TYPES} from "~api/pagination.civet"
+import {SEARCH_PARAM_TYPES} from "~api/search.civet"
+import {ORDER_PARAM_TYPES} from "~api/order.civet"
 import {
   createRunIndex
   createRunIndexWithPage
@@ -12,44 +12,44 @@ import {
   createRunCreateWithId
   createRunUpdateWithId
   createRunDestroyWithId
-} from '~api/hyper_json.civet'
+} from "~api/hyper_json.civet"
 
 // Contants
 
-export API_USERS = '/api/users'
+export API_USERS = "/api/users"
 
 export USER_PROPERTIES = {
-  name: 'string'
-  password: 'string'
-  display_name: 'string'
-  email: 'string'
-  note: 'string'
-  clearance_level: 'integer'
-  prohibited: 'boolean'
-  deleted: 'boolean'
-  deleted_at: 'datetime'
-  primary_group: 'string'
-  groups: 'list'
-  attrs: 'map'
+  name: "string"
+  password: "string"
+  display_name: "string"
+  email: "string"
+  note: "string"
+  clearance_level: "integer"
+  prohibited: "boolean"
+  deleted: "boolean"
+  deleted_at: "datetime"
+  primary_group: "string"
+  groups: "list"
+  attrs: "map"
 }
 
 export USER_DATA_PROPERTIES = {
-  username: 'string'
-  display_name: 'string'
-  email: 'string'
-  primary_group: 'string'
-  groups: 'list'
-  locked: 'boolean'
-  unmanageable: 'boolean'
-  mfa: 'boolean'
-  attrs: 'map'
+  username: "string"
+  display_name: "string"
+  email: "string"
+  primary_group: "string"
+  groups: "list"
+  locked: "boolean"
+  unmanageable: "boolean"
+  mfa: "boolean"
+  attrs: "map"
 }
 
 export INDEX_USERS_OPTION_PARAM_TYPES = {
-  no_sync: 'boolean'
-  hide_prohibited: 'boolean'
-  show_deleted: 'boolean'
-  all: 'boolean'
+  no_sync: "boolean"
+  hide_prohibited: "boolean"
+  show_deleted: "boolean"
+  all: "boolean"
 }
 
 export INDEX_USERS_PARAM_TYPES = {
@@ -68,16 +68,16 @@ export SHOW_USER_PARAM_TYPES = {
 
 export CREATE_USER_PARAM_TYPES = {
   ...USER_PROPERTIES
-  providers: 'list'
+  providers: "list"
 }
 
 export UPDATE_USER_PARAM_TYPES = {
   ...USER_PROPERTIES
-  providers: 'list'
+  providers: "list"
 }
 
 export DESTROY_USER_PARAM_TYPES = {
-  permanent: 'boolean'
+  permanent: "boolean"
 }
 
 // Functions

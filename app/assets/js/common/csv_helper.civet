@@ -1,6 +1,6 @@
-import {parse, stringify, transform} from 'csv'
+import {parse, stringify, transform} from "csv"
 
-import {objToRecord, recordToObj} from '~/common/convert.civet'
+import {objToRecord, recordToObj} from "~/common/convert.civet"
 
 // async csv and records utilities
 
@@ -11,12 +11,12 @@ recordsToCsv = (records, {columns} = {}) ->
       columns
       header: true
       quoted_string: true
-      record_delimiter: 'windows'
+      record_delimiter: "windows"
     }, (err, output) ->
       if err?
         reject(err)
       else
-        console.debug 'records to csv'
+        console.debug "records to csv"
         resolve(output)
 
 csvToRecords = (csv) ->
@@ -29,7 +29,7 @@ csvToRecords = (csv) ->
       if err?
         reject(err)
       else
-        console.debug 'csv to records'
+        console.debug "csv to records"
         resolve(records)
 
 transformRecords = (records, handler) ->

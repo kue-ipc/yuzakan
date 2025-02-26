@@ -1,7 +1,7 @@
-import {text} from 'hyperapp'
-import * as html from '@hyperapp/html'
+import {text} from "hyperapp"
+import * as html from "@hyperapp/html"
 
-import ModalDialog from '~/app/modal_dialog.civet'
+import ModalDialog from "~/app/modal_dialog.civet"
 
 export default class ConfirmDialog extends ModalDialog
   @({
@@ -20,23 +20,23 @@ export default class ConfirmDialog extends ModalDialog
         [
           html.hr {}
           html.p {}, text if agreement_required
-            '処理を実行する前に、下記全てを確認し、その内容について同意してください。'
+            "処理を実行する前に、下記全てを確認し、その内容について同意してください。"
           else
-            '処理を実行する前に、下記全てを確認してください。'
+            "処理を実行する前に、下記全てを確認してください。"
           ul {}, confirmations.map (confirmation) ->
             li {}, text confirmation
         ]
       if agreement_required
         [
           html.hr {}
-          html.div {class: 'form-check'}, [
+          html.div {class: "form-check"}, [
             input {
-              class: 'form-check-input', type: 'checkbox'
+              class: "form-check-input", type: "checkbox"
               value: agreed
               onchange: [changeAgree, !agreed]
             }
-            label {class: 'form-check-label'},
-              text '私は、上記全てについて同意します。'
+            label {class: "form-check-label"},
+              text "私は、上記全てについて同意します。"
           ]
         ]
     ].flat()

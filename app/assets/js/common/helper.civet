@@ -1,8 +1,8 @@
 // utils
 
-import * as R from 'ramda'
+import * as R from "ramda"
 
-import {convertToType} from '~/common/convert.civet'
+import {convertToType} from "~/common/convert.civet"
 
 export isNil = R.isNil
 
@@ -24,16 +24,16 @@ export uniq = R.uniq
 
 export compact = (obj) ->
   switch R.type(obj)
-    when 'Array'
+    when "Array"
       (v for each v of obj when v?)
-    when 'Object'
+    when "Object"
       Object.fromEntries(([k, v] for own k, v in obj when v?))
-    when 'Map'
+    when "Map"
       new Map(([k, v] for [k, v] of obj when v?))
-    when 'Set'
+    when "Set"
       new Set((v for v of obj when v?))
     else
-      console.warn "cannot compact type: #{R.type(obj)}"
+      console.warn `cannot compact type: ${R.type(obj)}`
       obj
 
 export pick = R.flip(R.pick)
@@ -41,17 +41,17 @@ export pick = R.flip(R.pick)
 export pickType = (obj, types) ->
   Object.fromEntries(([key, convertToType(obj[key], type)] for own key, type in types when key in obj))
 
-export basename = (path, suffix = '') ->
-  return '' unless path
+export basename = (path, suffix = "") ->
+  return "" unless path
 
-  base = path.split('/').reverse().find(identity) || '/'
+  base = path.split("/").reverse().find(identity) || "/"
 
   return base unless suffix
 
-  lastDot = base.lastIndexOf('.')
+  lastDot = base.lastIndexOf(".")
   return base if lastDot <= 0
 
-  if suffix is '.*' || suffix is base.slice(lastDot)
+  if suffix is ".*" || suffix is base.slice(lastDot)
     base.slice(0, lastDot)
   else
     base
@@ -59,7 +59,7 @@ export basename = (path, suffix = '') ->
 export entityLabel = (entity) ->
   return undefined unless entity?
 
-  entity.display_name || entity.name || ''
+  entity.display_name || entity.name || ""
 
 // URLから最後の文字列を取り出す。
 // 空文字列しかない場合は undefined を返す

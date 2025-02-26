@@ -2,7 +2,7 @@
 
 // see lib/yuzakan/utils/pager.rb
 
-import {pickType, getQueryParamsFromUrl} from '~/common/helper.civet'
+import {pickType, getQueryParamsFromUrl} from "~/common/helper.civet"
 
 export DEFAULT_PAGE = 1
 export DEFAULT_PER_PAGE = 20
@@ -11,13 +11,13 @@ export MAX_PAGE = 10000
 export MIN_PER_PAGE = 10
 export MAX_PER_PAGE = 100
 export PAGINATION_PARAM_TYPES = {
-  page: 'integer'
-  per_page: 'integer'
+  page: "integer"
+  per_page: "integer"
 }
 CONTENT_RANGE_TYPES = {
-  total: 'integer'
-  start: 'integer'
-  end: 'integer'
+  total: "integer"
+  start: "integer"
+  end: "integer"
 }
 
 CONTENT_RANGE_REGEXP = /^items\s+(?<start>\d+)-(?<end>\d+)\/(?<total>\d+)$/
@@ -30,5 +30,5 @@ export extractPagination = (contentRange, location) ->
       ...pickType(match.groups, CONTENT_RANGE_TYPES)
     }
   else
-    console.error 'invalid content range: %s', contentRange
+    console.error "invalid content range: %s", contentRange
     {}

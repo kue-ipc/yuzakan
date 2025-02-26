@@ -1,25 +1,25 @@
 // グループ
 
-import {text, app} from 'hyperapp'
-import * as html from '@hyperapp/html'
+import {text, app} from "hyperapp"
+import * as html from "@hyperapp/html"
 
-import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from '~/common/helper.civet'
-import {objToUrlencoded} from '~/common/convert.civet'
-import valueDisplay from '~/app/value_display.civet'
+import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from "~/common/helper.civet"
+import {objToUrlencoded} from "~/common/convert.civet"
+import valueDisplay from "~/app/value_display.civet"
 
-import {runIndexProviders} from '~api/providers.civet'
-import {SHOW_GROUP_PARAM_TYPES, runShowGroup} from '~api/groups.civet'
+import {runIndexProviders} from "~api/providers.civet"
+import {SHOW_GROUP_PARAM_TYPES, runShowGroup} from "~api/groups.civet"
 
-import groupInfo from '~admin/group_info.civet'
-import groupProvider from '~admin/group_provider.civet'
-import groupOperation from '~admin/group_operation.civet'
+import groupInfo from "~admin/group_info.civet"
+import groupProvider from "~admin/group_provider.civet"
+import groupOperation from "~admin/group_operation.civet"
 
 // main
 
 main = ->
   id = getBasenameFromUrl(location)
-  id = undefined if id is '*'
-  mode = if id? then 'show' else 'new'
+  id = undefined if id is "*"
+  mode = if id? then "show" else "new"
 
   queryParams = pickType(getQueryParamsFromUrl(location), SHOW_GROUP_PARAM_TYPES)
 
@@ -30,16 +30,16 @@ main = ->
   ]
 
   view = ({mode, id, group, providers, option}) ->
-    if mode is 'none'
+    if mode is "none"
       return html.div {},
-        html.strong {}, text 'グループが見つかりませんでした。'
+        html.strong {}, text "グループが見つかりませんでした。"
 
-    if mode is 'new'
+    if mode is "new"
       return html.div {},
-        html.strong {}, text 'グループの新規作成はできません。'
+        html.strong {}, text "グループの新規作成はできません。"
 
     unless group? && providers?
-      return html.div {}, text '読込中...'
+      return html.div {}, text "読込中..."
 
     html.div {}, [
       groupInfo {mode, group}
@@ -47,7 +47,7 @@ main = ->
       groupProvider {mode, group, providers}
     ]
 
-  node = document.getElementById('group')
+  node = document.getElementById("group")
 
   app {init, view, node}
 

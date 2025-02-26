@@ -1,23 +1,23 @@
-import {text} from 'hyperapp'
-import * as html from '@hyperapp/html'
+import {text} from "hyperapp"
+import * as html from "@hyperapp/html"
 
-import bsIcon from '~/app/bs_icon.civet'
-import {convertToType, objToJson} from '~/common/convert.civet'
+import bsIcon from "~/app/bs_icon.civet"
+import {convertToType, objToJson} from "~/common/convert.civet"
 
-export default valueDisplay = ({value, type = 'string', color = 'body', na = false}) ->
+export default valueDisplay = ({value, type = "string", color = "body", na = false}) ->
   unless value?
-    return html.span {class: 'text-muted'}, text if na then'N/A' else ''
+    return html.span {class: "text-muted"}, text if na then"N/A" else ""
 
   value = convertToType(value, type)
-  html.span {class: "text-#{color}"},
+  html.span {class: `text-${color}`},
     switch type
-      when 'string', 'text', 'date', 'time'
+      when "string", "text", "date", "time"
         text value
-      when 'boolean'
-        if value then bsIcon({name: 'check-square'}) else bsIcon({name: 'square'})
-      when 'integer', 'float', 'datatime'
+      when "boolean"
+        if value then bsIcon({name: "check-square"}) else bsIcon({name: "square"})
+      when "integer", "float", "datatime"
         text String(value)
-      when 'date', 'time'
+      when "date", "time"
         text value
-      when 'list', 'map', 'set'
+      when "list", "map", "set"
         text objToJson(value)

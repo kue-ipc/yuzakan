@@ -1,17 +1,17 @@
-import {app, text} from 'hyperapp'
-import * as html from '@hyperapp/html'
-import WebData from '~/app/web_data.civet'
-import bsIcon from '~/app/bs_icon.civet'
-import csrf from '~/csrf.civet'
+import {app, text} from "hyperapp"
+import * as html from "@hyperapp/html"
+import WebData from "~/app/web_data.civet"
+import bsIcon from "~/app/bs_icon.civet"
+import csrf from "~/csrf.civet"
 
 webData = new WebData {
-  id: 'logout'
-  title: 'ログアウト'
-  method: 'DELETE'
-  url: '/api/session'
+  id: "logout"
+  title: "ログアウト"
+  method: "DELETE"
+  url: "/api/session"
   codeActions: new Map [
-    [200, {status: 'success', message: 'ログアウトしました。', redirectTo: '/'}]
-    [410, {status: 'error', message: '既にログアウトしています。', reload: true}]
+    [200, {status: "success", message: "ログアウトしました。", redirectTo: "/"}]
+    [410, {status: "error", message: "既にログアウトしています。", reload: true}]
   ]
 }
 
@@ -24,14 +24,14 @@ view = (state) ->
     onclick: (state, event) ->
       [state, [logout]]
   }, [
-    bsIcon {name: 'box-arrow-right', class: 'flex-shrink-0 me-1'}
-    html.span {class: 'd-none d-md-inline'}, text 'ログアウト'
+    bsIcon {name: "box-arrow-right", class: "flex-shrink-0 me-1"}
+    html.span {class: "d-none d-md-inline"}, text "ログアウト"
   ]
 
-defaultButtonClassList = 'btn btn-sm btn-outline-light d-flex align-items-center'.split(' ').filter((_) -> _)
+defaultButtonClassList = "btn btn-sm btn-outline-light d-flex align-items-center".split(" ").filter((_) -> _)
 
-for each el of document.getElementsByClassName('logout-button')
+for each el of document.getElementsByClassName("logout-button")
   init = {
-    buttonClassList: [name for each name of el.classList when name is not 'logout-button'].concat(defaultButtonClassList)
+    buttonClassList: [name for each name of el.classList when name is not "logout-button"].concat(defaultButtonClassList)
   }
   app {init, view, node: el}

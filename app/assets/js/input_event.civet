@@ -1,30 +1,30 @@
 // 入力イベントの値を渡すアクションを生成する
 
-export createEventValueAction = (action, {type = 'string'} = {}) ->
+export createEventValueAction = (action, {type = "string"} = {}) ->
   switch type
-    when 'string', 'text', 'datetime', 'date', 'time'
+    when "string", "text", "datetime", "date", "time"
       (state, event) ->
         event.preventDefault()
         [action, event.target.value]
-    when 'boolean'
+    when "boolean"
       (state, event) ->
         event.preventDefault()
-        if event.type is 'checkbox'
+        if event.type is "checkbox"
           [action, Number(event.target.checked)]
-        else if event.target.value && !['n', 'no', 'f', 'false', 'off', '0'].includes(event.target.value.toLowerCase())
+        else if event.target.value && !["n", "no", "f", "false", "off", "0"].includes(event.target.value.toLowerCase())
           [action, true]
         else
           [action, false]
-    when 'integer'
+    when "integer"
       (state, event) ->
         event.preventDefault()
         [action, parseInt(event.target.value, 10)]
-    when 'float'
+    when "float"
       (state, event) ->
         event.preventDefault()
         [action, Number(event.target.value)]
     else
-      throw new Error("unknown type: #{type}")
+      throw new Error(`unknown type: ${type}`)
 
 export createEventAction = (action, opts = {}) ->
   event.preventDefault()

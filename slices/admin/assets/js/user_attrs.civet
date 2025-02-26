@@ -1,14 +1,14 @@
-import {toRomaji, toKatakana, toHiragana} from '~/common/ja_conv.civet'
-import {capitalize} from '~/common/string_helper.civet'
-import {xxh32, xxh64} from '~/common/hash.civet'
+import {toRomaji, toKatakana, toHiragana} from "~/common/ja_conv.civet"
+import {capitalize} from "~/common/string_helper.civet"
+import {xxh32, xxh64} from "~/common/hash.civet"
 
 calcUserAttrValue = ({user, attrs, code}) ->
   return unless code
 
-  code = "return (#{code});" unless /\breturn\b/.test(code)
+  code = `return (${code});` unless /\breturn\b/.test(code)
 
   try
-    func = new Function('{name, display_name, email, primary_group, attrs, tools}', code)
+    func = new Function("{name, display_name, email, primary_group, attrs, tools}", code)
     result = func {
       name: user.name
       display_name: user.display_name
@@ -18,7 +18,7 @@ calcUserAttrValue = ({user, attrs, code}) ->
       tools: {toRomaji, toKatakana, toHiragana, capitalize, xxh32, xxh64}
     }
   catch error
-    console.warn({msg: 'Failed to calcUserAttrValue', code: code, error: error})
+    console.warn({msg: "Failed to calcUserAttrValue", code: code, error: error})
     return
 
   result
@@ -32,7 +32,7 @@ export CalcUserAttrs = (state, {user, attrs}) ->
 
   for each attr of attrs when attr.code
     attrDefaults[attr.name] = calcUserAttrValue({user, attrs: attrValues, code: attr.code})
-    if user.attrSettings[attr.name] is 'default'
+    if user.attrSettings[attr.name] is "default"
       attrValues[attr.name] = attrDefaults[attr.name]
 
   {...state, user: {...user, attrs: attrValues, attrDefaults}, attrs}
@@ -49,18 +49,18 @@ export InitUserAttrs = (state, {user, attrs}) ->
   for each attr of attrs
     unless attr.code
       attrValues[attr.name] = user.userdata.attrs[attr.name]
-      attrSettings[attr.name] = 'input'
+      attrSettings[attr.name] = "input"
       continue
 
     attrDefaults[attr.name] = calcUserAttrValue({user, attrs: user.userdata.attrs, code: attr.code})
 
-    if state.mode is 'new' ||
+    if state.mode is "new" ||
         !user.userdata.attrs[attr.name]? ||
         user.userdata.attrs[attr.name] is attrDefaults[attr.name]
-      attrSettings[attr.name] = 'default'
+      attrSettings[attr.name] = "default"
       attrValues[attr.name] = attrDefaults[attr.name]
     else
-      attrSettings[attr.name] = 'custom'
+      attrSettings[attr.name] = "custom"
       attrValues[attr.name] = user.userdata.attrs[attr.name]
 
   {...state, user: {...user, attrs: attrValues, attrSettings, attrDefaults}, attrs}

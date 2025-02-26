@@ -1,79 +1,79 @@
-import {text} from 'hyperapp'
-import * as html from '@hyperapp/html'
+import {text} from "hyperapp"
+import * as html from "@hyperapp/html"
 
-import {entityLabel} from '~/common/helper.civet'
+import {entityLabel} from "~/common/helper.civet"
 
-import valueDisplay from '~/app/value_display.civet'
+import valueDisplay from "~/app/value_display.civet"
 
-import {CalcUserAttrs} from '~admin/user_attrs.civet'
+import {CalcUserAttrs} from "~admin/user_attrs.civet"
 
 SetUserAttr = (state, {attr_name, value}) ->
   user = {...state.user, attrs: {...state.user.attrs, [attr_name]: value}}
   [CalcUserAttrs, {user}]
 
-attrValue = ({attr_name, value, type = 'string', edit = false, color = 'body'}) ->
+attrValue = ({attr_name, value, type = "string", edit = false, color = "body"}) ->
   if edit
     switch type
-      when 'string'
+      when "string"
         html.input {
-          id: "value-#{name}"
-          class: 'form-control'
-          teype: 'text'
+          id: `value-${name}`
+          class: "form-control"
+          teype: "text"
           value
           oninput: (state, event) -> [SetUserAttr, {attr_name, value: event.target.value}]
         }
-      when 'boolean'
-        html.div {class: 'form-check'},
+      when "boolean"
+        html.div {class: "form-check"},
           html.input {
-            id: "value-#{name}"
-            class: 'form-check-input'
-            type: 'checkbox'
+            id: `value-${name}`
+            class: "form-check-input"
+            type: "checkbox"
             checked: value
             onchange: (state, event) -> [SetUserAttr, {attr_name, value: event.target.checked}]
           }
-      when 'integer'
+      when "integer"
         html.input {
-          id: "value-#{name}"
-          class: 'form-control'
-          teype: 'number'
+          id: `value-${name}`
+          class: "form-control"
+          teype: "number"
           value
           oninput: (state, event) -> [SetUserAttr, {attr_name, value: parseInt(event.target.value)}]
         }
-      when 'float'
+      when "float"
         html.input {
-          id: "value-#{name}"
-          class: 'form-control'
-          teype: 'number'
+          id: `value-${name}`
+          class: "form-control"
+          teype: "number"
           value
-          step: '0.001'
+          step: "0.001"
           oninput: (state, event) -> [SetUserAttr, {attr_name, value: Number(event.target.value)}]
         }
-      when 'datetime'
+      when "datetime"
         html.input {
-          id: "value-#{name}"
-          class: 'form-control'
-          teype: 'datetime-local'
+          id: `value-${name}`
+          class: "form-control"
+          teype: "datetime-local"
           value
           oninput: (state, event) -> [SetUserAttr, {attr_name, value: event.target.value}]
         }
-      when 'date'
+      when "date"
         html.input {
-          id: "value-#{name}"
-          class: 'form-control'
-          teype: 'date'
+          id: `value-${name}`
+          class: "form-control"
+          teype: "date"
           value
           oninput: (state, event) -> [SetUserAttr, {attr_name, value: event.target.value}]
         }
-      when 'time'
+      when "time"
         html.input {
-          id: "value-#{name}"
-          class: 'form-control'
-          teype: 'time'
+          id: `value-${name}`
+          class: "form-control"
+          teype: "time"
           value
           oninput: (state, event) -> [SetUserAttr, {attr_name, value: event.target.value}]
         }
       else
-        throw new Error("not implemented: #{type}")
+        throw new Error(`not implemented: ${type}`)
   else
     valueDisplay {value, type, color}
 
@@ -87,24 +87,24 @@ ChangeAttrSetting = (state, {attr_name, setting}) ->
 
 attrSetting = ({attr_name, checked, edit}) ->
   if edit
-    html.div {class: 'form-check'},
+    html.div {class: "form-check"},
       html.input {
-        id: "value-#{name}"
-        class: 'form-check-input'
-        type: 'checkbox'
+        id: `value-${name}`
+        class: "form-check-input"
+        type: "checkbox"
         checked: checked
-        onchange: [ChangeAttrSetting, {attr_name, setting: if checked then 'custom' else 'default'}]
+        onchange: [ChangeAttrSetting, {attr_name, setting: if checked then "custom" else "default"}]
       }
   else
-    valueDisplay({value: checked, type: 'boolean'})
+    valueDisplay({value: checked, type: "boolean"})
 
 attrSettingTd = ({mode, user, attr}) ->
   html.td {},
     switch user.attrSettings?[attr.name]
-      when 'default'
-        attrSetting {attr_name: attr.name, checked: true, edit: mode is not 'show'}
-      when 'custom'
-        attrSetting {attr_name: attr.name, checked: false, edit: mode is not 'show'}
+      when "default"
+        attrSetting {attr_name: attr.name, checked: true, edit: mode is not "show"}
+      when "custom"
+        attrSetting {attr_name: attr.name, checked: false, edit: mode is not "show"}
       else
         []
 
@@ -123,14 +123,14 @@ attrValueTd = ({mode, user, attr}) ->
       attr_name: attr.name
       value: value
       type: attr.type
-      edit: mode is not 'show' && user.attrSettings[attr.name] is not 'default' && !attr.readonly
+      edit: mode is not "show" && user.attrSettings[attr.name] is not "default" && !attr.readonly
       color:
         if !defaultValue?
-          'body'
+          "body"
         else if defaultValue is value
-          'success'
+          "success"
         else
-          'danger'
+          "danger"
     }
 
 providerTd = ({user, attr, provider}) ->
@@ -146,7 +146,7 @@ providerTd = ({user, attr, provider}) ->
     valueDisplay {
       value: provider_value
       type: attr.type
-      color: if provider_value is user.attrs.get(attr.name) then 'success' else 'danger'
+      color: if provider_value is user.attrs.get(attr.name) then "success" else "danger"
     }
 
 export default userAttr = ({mode, user, providers, attrs}) ->
@@ -155,15 +155,15 @@ export default userAttr = ({mode, user, providers, attrs}) ->
   //   (user.provider_userdatas.find (data) -> data.provider.name is provider.name)?.userdata
 
   html.div {}, [
-    html.h4 {}, text '属性一覧'
+    html.h4 {}, text "属性一覧"
 
-    html.table {class: 'table'}, [
+    html.table {class: "table"}, [
       html.thead {},
         html.tr {}, [
-          html.th {}, text '属性名'
-          // html.th {}, text 'デフォルト値'
-          // html.th {}, text 'デファルト'
-          html.th {}, text '設定値'
+          html.th {}, text "属性名"
+          // html.th {}, text "デフォルト値"
+          // html.th {}, text "デファルト"
+          html.th {}, text "設定値"
           ...(html.th({}, text entityLabel(provider)) for each provider of providers)
         ]
       html.tbody {},

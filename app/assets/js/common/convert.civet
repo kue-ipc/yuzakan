@@ -1,67 +1,67 @@
 // convert from/to primitive vaule and Object, Array, Map, Set, DateTime, ...etc
 
-import {DateTime} from 'luxon'
+import {DateTime} from "luxon"
 
-import {capitalize} from '~/common/string_helper.civet'
+import {capitalize} from "~/common/string_helper.civet"
 
 TRUE_STRINGS = new Set([
-  '1'
-  't'
-  'true'
-  'y'
-  'yes'
-  'on'
+  "1"
+  "t"
+  "true"
+  "y"
+  "yes"
+  "on"
 ])
 
 FALSE_STRINGS = new Set([
-  '0'
-  'f'
-  'false'
-  'n'
-  'no'
-  'off'
+  "0"
+  "f"
+  "false"
+  "n"
+  "no"
+  "off"
 ])
 
-export TRUE_STR = '1'
-export FALSE_STR = '0'
+export TRUE_STR = "1"
+export FALSE_STR = "0"
 
 // convert to the specified type
-export convertToType = (val, type = 'string') ->
+export convertToType = (val, type = "string") ->
   return val unless val?
 
   switch type
-    when 'string', 'text'
+    when "string", "text"
       toString(val)
-    when 'boolean'
+    when "boolean"
       toBoolean(val)
-    when 'integer'
+    when "integer"
       toInteger(val)
-    when 'float'
+    when "float"
       toFloat(val)
-    when 'datetime'
+    when "datetime"
       toDateTime(val)
-    when 'date'
+    when "date"
       toDate(val)
-    when 'time'
+    when "time"
       toTime(val)
-    when 'list'
+    when "list"
       toList(val)
-    when 'map'
+    when "map"
       toMap(val)
-    when 'set'
+    when "set"
       toSet(val)
-    when 'object'
+    when "object"
       toObject(val)
-    when 'any'
+    when "any"
       val
     else
-      console.warn "cannot convert to the unknown type: #{type}"
+      console.warn `cannot convert to the unknown type: ${type}`
       undefined
 
 export toString = (val) -> String(val)
 
 export toBoolean = (val) ->
-  if typeof val is 'string'
+  if typeof val is "string"
     lowerStr = val.toLowerCase()
     if TRUE_STRINGS.has(lowerStr)
       return true
@@ -76,25 +76,25 @@ export toFloat = (val) -> Number(val)
 
 export toDateTime = (val) ->
   dateTime = switch typeof val
-    when 'number'
+    when "number"
       DateTime.fromSeconds(val)
-    when 'bigint'
+    when "bigint"
       DateTime.fromSeconds(Number(val))
-    when 'string'
+    when "string"
       if val
         DateTime.fromISO(val)
       else
         null
-    when 'object'
+    when "object"
       if val instanceof Date
         DateTime.fromJSDate(val)
       else if val instanceof DateTime
         val
       else
-        console.warn 'no datetime object: %s', val
+        console.warn "no datetime object: %s", val
         DateTime.fromJSDate(Date(val))
     else
-      console.warn 'no datetime object: %s', val
+      console.warn "no datetime object: %s", val
       DateTime.fromJSDate(Date(val))
   dateTime?.toLocal()
 
@@ -103,24 +103,24 @@ export toDate = (val) -> toDateTime(val)?.toISODate()
 export toTime = (val) -> toDateTime(val)?.toISOTime({includeOffset: false})
 
 export toList = (val) ->
-  val = JSON.parse(val) if typeof val is 'string'
+  val = JSON.parse(val) if typeof val is "string"
   return val if val instanceof Array
 
   if val[Symbol.iterator]?
     [...val]
   else if val.length?
     (v for each v of val)
-  else if typeof val is 'object'
+  else if typeof val is "object"
     Object.entries(val)
   else
-    console.warn 'no list object: %s', val
+    console.warn "no list object: %s", val
     []
 
 export toMap = (val) ->
   return val if val instanceof Map
 
   new Map(toList(val).map((v) ->
-    if typeof v is 'string'
+    if typeof v is "string"
       [v, true]
     else
       toList(v)
@@ -133,7 +133,7 @@ export toSet = (val) ->
   new Set(toList(val))
 
 export toObject = (val) ->
-  if typeof val is 'string'
+  if typeof val is "string"
     JSON.parse(val)
   else if val[Symbol.iterator]?
     Object.fromEntries(val)
@@ -144,7 +144,7 @@ export toObject = (val) ->
 
 // abcDef_ghi-jkl -> abc def ghi jkl
 export strToList = (str) ->
-  str.replace(/[A-Z]+/g, '_$&').toLowerCase().split(/[-_\s]+/)
+  str.replace(/[A-Z]+/g, "_$&").toLowerCase().split(/[-_\s]+/)
 
 export paramNameToList = (str) ->
   list = []
@@ -156,31 +156,31 @@ export paramNameToList = (str) ->
 
 // abc, def, hij -> abcDefHij
 export listToCamelCase = (...list) ->
-  (list[0]?.toLowerCase() ?? '') +
-    (capitalize(str) for each str of list[1..]).join('')
+  (list[0]?.toLowerCase() ?? "") +
+    (capitalize(str) for each str of list[1..]).join("")
 
 // abc, def, hij -> AbcDefHij
 export listToPascalCase = (...list) ->
-  (capitalize(str) for each str of list).join('')
+  (capitalize(str) for each str of list).join("")
 
 // abc, def, hij -> abc_def_hij
 export listToSnakeCase = (...list) ->
-  (str.toLowerCase() for each str of list).join('_')
+  (str.toLowerCase() for each str of list).join("_")
 
 // abc, def, hij -> abc-def-hij
 export listToKebabCase = (...list) ->
-  (str.toLowerCase() for each str of list).join('-')
+  (str.toLowerCase() for each str of list).join("-")
 
 // abc, def, hij -> ABC_DEF_HIJ
 export listToAllCaps = (...list) ->
-  (str.toUpperCase() for each str of list).join('_')
+  (str.toUpperCase() for each str of list).join("_")
 
 // abc, def, hij -> Abc-Def-Hij
 export listToTrainCase = (...list) ->
-  (capitalize(str) for each str of list).join('-')
+  (capitalize(str) for each str of list).join("-")
 
 export listToParamName = (...list) ->
-  (list[0] ?? '') + ("[#{str}]" for each str of list[1..]).join('')
+  (list[0] ?? "") + (`[${str}]` for each str of list[1..]).join("")
 
 // object -> other
 
@@ -190,10 +190,10 @@ export objToJson = (obj, space = undefined) ->
 // bigint, Map, Set
 jsonReplacer = (key, value) ->
   switch typeof value
-    when 'bigint'
+    when "bigint"
       // 精度落ち
       Number(value)
-    when 'object'
+    when "object"
       if value instanceof Map
         Object.fromEntries([...value])
       else if value instanceof Set
@@ -211,7 +211,7 @@ export objToParams = (obj, parents = []) ->
   obj = Object.fromEntries(obj) if obj instanceof Map
   params = []
   for own key, value in obj
-    if typeof value is 'object'
+    if typeof value is "object"
       if value instanceof Map
         params.push(...objToParams(toObject(value), [...parents, key]))
       else if value instanceof Set
@@ -225,21 +225,21 @@ export objToParams = (obj, parents = []) ->
   params
 
 export objToUrlencoded = (obj) ->
-  objToUrlencodedParams(obj).join('&')
+  objToUrlencodedParams(obj).join("&")
 
 export objToUrlencodedParams = (obj) ->
   for each [key, value] of objToParams(obj) when value?
-    "#{encodeURIComponent(key)}=#{valueToUrlencoded(value)}"
+    `${encodeURIComponent(key)}=${valueToUrlencoded(value)}`
 
 // JavaScriptの値をUrlencodedの文字列に落とし込む前に変換する
 // true, fales -> 1, 0
 valueToUrlencoded = (value) ->
   if !value?
-    ''
+    ""
   else if value is true
-    '1'
+    "1"
   else if value is false
-    '0'
+    "0"
   else if value instanceof Date
     encodeURIComponent(String(toDateTime(value)))
   else
@@ -254,24 +254,24 @@ export recordToObj = (record) ->
     obj .= root
     while subKey = keyList.shift()
       if keyList.length is 0
-        obj[subKey] = value if value? && value is not ''
+        obj[subKey] = value if value? && value is not ""
       else
-        if keyList[0] is ''
+        if keyList[0] is ""
           unless keyList.length is 1
-            console.error 'empty key must be last: %s', key
-            throw new Error('ilegal subkey: empty key must be last')
-          obj[subKey] is (v for each v of Array(value) when v? && v is not '')
+            console.error "empty key must be last: %s", key
+            throw new Error("ilegal subkey: empty key must be last")
+          obj[subKey] is (v for each v of Array(value) when v? && v is not "")
         else if /^\d+$/.test(keyList[0])
           obj[subKey] ?= []
           unless obj[subKey] instanceof Array
-            console.warn 'mix numbers and words on object: %s', key
+            console.warn "mix numbers and words on object: %s", key
         else
           obj[subKey] ?= {}
-          unless typeof obj[subKey] is 'object'
-            console.error 'parent is not object: %s', key
-            throw new Error('ilegal subkey: parent is not object')
+          unless typeof obj[subKey] is "object"
+            console.error "parent is not object: %s", key
+            throw new Error("ilegal subkey: parent is not object")
           if obj[subKey] instanceof Array
-            console.warn 'mix numbers and words on array: %s', key
+            console.warn "mix numbers and words on array: %s", key
         obj = obj[subKey]
     
   root

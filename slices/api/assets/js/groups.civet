@@ -7,40 +7,40 @@ import {
   createRunCreateWithId
   createRunUpdateWithId
   createRunDestroyWithId
-} from '~api/hyper_json.civet'
+} from "~api/hyper_json.civet"
 
-import {PAGINATION_PARAM_TYPES} from '~api/pagination.civet'
-import {SEARCH_PARAM_TYPES} from '~api/search.civet'
-import {ORDER_PARAM_TYPES} from '~api/order.civet'
+import {PAGINATION_PARAM_TYPES} from "~api/pagination.civet"
+import {SEARCH_PARAM_TYPES} from "~api/search.civet"
+import {ORDER_PARAM_TYPES} from "~api/order.civet"
 
-import {pickType} from '~/common/helper.civet'
+import {pickType} from "~/common/helper.civet"
 
 // Contants
 
-export API_GROUPS = '/api/groups'
+export API_GROUPS = "/api/groups"
 
 export GROUP_PROPERTIES = {
-  name: 'string'
-  display_name: 'string'
-  note: 'string'
-  primary: 'boolean'
-  prohibited: 'boolean'
-  deleted: 'boolean'
-  deleted_at: 'datetime'
+  name: "string"
+  display_name: "string"
+  note: "string"
+  primary: "boolean"
+  prohibited: "boolean"
+  deleted: "boolean"
+  deleted_at: "datetime"
 }
 
 export GROUP_DATA_PROPERTIES = {
-  groupname: 'string'
-  display_name: 'string'
-  primary: 'boolean'
+  groupname: "string"
+  display_name: "string"
+  primary: "boolean"
 }
 
 export INDEX_GROUPS_OPTION_PARAM_TYPES = {
-  no_sync: 'boolean'
-  primary_only: 'boolean'
-  hide_prohibited: 'boolean'
-  show_deleted: 'boolean'
-  all: 'boolean'
+  no_sync: "boolean"
+  primary_only: "boolean"
+  hide_prohibited: "boolean"
+  show_deleted: "boolean"
+  all: "boolean"
 }
 
 export INDEX_GROUPS_PARAM_TYPES = {
@@ -66,7 +66,7 @@ export UPDATE_GROUP_PARAM_TYPES = {
 }
 
 export DESTROY_GROUP_PARAM_TYPES = {
-  permanent: 'boolean'
+  permanent: "boolean"
 }
 
 // Functions

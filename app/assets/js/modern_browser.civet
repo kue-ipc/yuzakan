@@ -5,4 +5,4 @@
 // https://github.com/mdn/browser-compat-data/blob/master/javascript/builtins/globals.json
 
 unless globalThis?
-  document.getElementById('legacy-browser').classList.remove('d-none')
+  document.getElementById("legacy-browser").classList.remove("d-none")

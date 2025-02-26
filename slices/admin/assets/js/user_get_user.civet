@@ -1,9 +1,9 @@
-import {fetchJsonGet} from '~api/fetch_json.civet'
+import {fetchJsonGet} from "~api/fetch_json.civet"
 
-import {InitUserAttrs} from '~admin/user_attrs.civet'
+import {InitUserAttrs} from "~admin/user_attrs.civet"
 
 newUser = {
-  name: ''
+  name: ""
   clearance_level: 1
   userdata: {attrs: {}}
   provider_userdatas: []
@@ -19,11 +19,11 @@ SetMode = (state, mode) -> {...state, mode}
 
 export runGetUserWithInit = (dispatch, {name}) ->
   if name?
-    response = await fetchJsonGet({url: "/api/users/#{name}"})
+    response = await fetchJsonGet({url: `/api/users/${name}`})
     if response.ok
       dispatch(SetUserWithInit, {user: response.data})
     else if response.code is 404
-      dispatch(SetMode, 'none')
+      dispatch(SetMode, "none")
     else
       console.error response
   else

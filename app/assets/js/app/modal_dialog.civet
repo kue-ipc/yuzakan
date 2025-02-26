@@ -2,26 +2,26 @@
 // モーダルダイアログを表示するベースクラス
 // 拡張して使用する
 
-import {app, text} from 'hyperapp'
-import * as html from '@hyperapp/html'
-import {focus} from '@hyperapp/dom'
+import {app, text} from "hyperapp"
+import * as html from "@hyperapp/html"
+import {focus} from "@hyperapp/dom"
 
-import {Modal} from 'bootstrap'
+import {Modal} from "bootstrap"
 
-import {modalDialog} from '~/app/modal.civet'
+import {modalDialog} from "~/app/modal.civet"
 
 export default class ModalDialog
-  MESSAGE_EVENT = 'modaldialog.message'
+  MESSAGE_EVENT = "modaldialog.message"
 
   DEFAULT_ACTION = Object.freeze {
-    color: 'primary'
-    label: 'OK'
-    side: 'right'
+    color: "primary"
+    label: "OK"
+    side: "right"
   }
 
   DEFAULT_CLOSE = Object.freeze {
-    color: 'secondary'
-    label: '閉じる'
+    color: "secondary"
+    label: "閉じる"
   }
 
   @({
@@ -29,8 +29,8 @@ export default class ModalDialog
     @fade = true
     @scrollable = true
     @centered = false
-    @size // 'sm', 'lg', 'xl'
-    @fullscreen // true, 'sm-down', 'md-down', 'lg-down', 'xl-down', 'xxl-down'
+    @size // "sm", "lg", "xl"
+    @fullscreen // true, "sm-down", "md-down", "lg-down", "xl-down", "xxl-down"
     @title
     @status // see status.js
     @closable = true
@@ -47,16 +47,16 @@ export default class ModalDialog
 
   // モーダルウィンドウのノードを作成し、初期化する。
   initNode()
-    @modalNode = document.createElement('div')
-    @modalNode.id = "#{@id}-modal"
-    @modalNode.classList.add('modal')
-    @modalNode.classList.add('fade') if @fade
-    @modalNode.setAttribute('tabindex', -1)
-    @modalNode.setAttribute('aria-hidden', 'true')
+    @modalNode = document.createElement("div")
+    @modalNode.id = `${@id}-modal`
+    @modalNode.classList.add("modal")
+    @modalNode.classList.add("fade") if @fade
+    @modalNode.setAttribute("tabindex", -1)
+    @modalNode.setAttribute("aria-hidden", "true")
 
-    modalDialogNode = document.createElement('div')
-    modalDialogNode.id = "#{@id}-modal-dialog"
-    modalDialogNode.classList.add('modal-dialog')
+    modalDialogNode = document.createElement("div")
+    modalDialogNode.id = `${@id}-modal-dialog`
+    modalDialogNode.classList.add("modal-dialog")
 
     @modalNode.appendChild(modalDialogNode)
     document.body.appendChild(@modalNode)
@@ -98,7 +98,7 @@ export default class ModalDialog
       @modal._config.backdrop = true
       @modal._config.keyboard = true
     else
-      @modal._config.backdrop = 'static'
+      @modal._config.backdrop = "static"
       @modal._config.keyboard = false
     @modal.show()
 
@@ -111,7 +111,7 @@ export default class ModalDialog
 
   waitModalClosePromise()
     new Promise (resolve, reject) =>
-      @modalNode.addEventListener 'hidden.bs.modal', ->
+      @modalNode.addEventListener "hidden.bs.modal", ->
         resolve()
       , {once: true}
 
@@ -146,7 +146,7 @@ export default class ModalDialog
     messages: @messages
     value: @value
     shwon: false
-    focus: "#{@id}-modal-close-button"
+    focus: `${@id}-modal-close-button`
     ...state
   }
 
@@ -166,9 +166,9 @@ export default class ModalDialog
     -> node.removeEventListener(ModalDialog.MESSAGE_EVENT, func)
   @listenShown(dispatch, {node, action})
     func = -> dispatch(action)
-    node.addEventListener('shown.bs.modal', func)
-    -> node.removeEventListener('shown.bs.modal', func)
+    node.addEventListener("shown.bs.modal", func)
+    -> node.removeEventListener("shown.bs.modal", func)
   @listenHidden(dispatch, {node, action})
     func = -> dispatch(action)
-    node.addEventListener('hidden.bs.modal', func)
-    -> node.removeEventListener('hidden.bs.modal', func)
+    node.addEventListener("hidden.bs.modal", func)
+    -> node.removeEventListener("hidden.bs.modal", func)

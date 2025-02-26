@@ -1,6 +1,6 @@
 // form helper
 
-import {listToKebabCase, listToParamName} from '~/common/convert.civet'
+import {listToKebabCase, listToParamName} from "~/common/convert.civet"
 
 export formName = (name, parents = []) ->
   listToParamName(...parents, name)
@@ -17,8 +17,8 @@ export formDataToObj = (formData) ->
       if keyList.length is 0
         obj[subKey] = value
       else
-        if keyList[0] is ''
-          throw new Error('Empty key must be last') unless keyList.length is 1
+        if keyList[0] is ""
+          throw new Error("Empty key must be last") unless keyList.length is 1
           obj[subKey] ?= []
           obj[subKey].push value
         else if keyList[0].match(/^\d+$/)
@@ -33,5 +33,5 @@ export formDataToJson = (formData) ->
   JSON.stringify(formDataToObj(formData))
 
 export formDataToUrlencoded = (formData) ->
-  throw new Error('Not implument')
+  throw new Error("Not implument")
 

@@ -1,5 +1,5 @@
-import * as html from '@hyperapp/html'
-import {classConcat} from '~/common/class_prop.civet'
+import * as html from "@hyperapp/html"
+import {classConcat} from "~/common/class_prop.civet"
 
 cols = {
   xs: 12
@@ -13,37 +13,37 @@ colPrint = 3
 
 calcDtClasses = ->
   list = []
-  list.push "col-#{cols.xs}" if cols.xs && cols.xs < 12
+  list.push `col-${cols.xs}` if cols.xs && cols.xs < 12
   pre = cols.xs
-  for each name of ['sm', 'md', 'lg', 'xl', 'xll']
-    list.push "col-#{name}-#{cols[name]}" if cols[name] is not pre
+  for each name of ["sm", "md", "lg", "xl", "xll"]
+    list.push `col-${name}-${cols[name]}` if cols[name] is not pre
     pre = cols[name]
-  list.push "col-print-#{colPrint}"
+  list.push `col-print-${colPrint}`
   list
 
 calcDdClasses = ->
   list = []
-  list.push "col-#{12 - cols.xs}" if cols.xs && cols.xs < 12
+  list.push `col-${12 - cols.xs}` if cols.xs && cols.xs < 12
   pre = cols.xs
-  for each name of ['sm', 'md', 'lg', 'xl', 'xll']
-    list.push "col-#{name}-#{12 - cols[name]}" if cols[name] is not pre
+  for each name of ["sm", "md", "lg", "xl", "xll"]
+    list.push `col-${name}-${12 - cols[name]}` if cols[name] is not pre
     pre = cols[name]
-  list.push "col-print-#{12 - colPrint}"
+  list.push `col-print-${12 - colPrint}`
   list
 
 calcDdSubClasses = ->
   list = calcDdClasses()
-  list.push "offset-#{cols.xs}" if cols.xs && cols.xs < 12
+  list.push `offset-${cols.xs}` if cols.xs && cols.xs < 12
   pre = cols.xs
-  for each name of ['sm', 'md', 'lg', 'xl', 'xll']
-    list.push "offset-#{name}-#{cols[name]}" if cols[name] is not pre
-    list.push "col-#{name}-#{12 - cols[name]}" if cols[name] is not pre
+  for each name of ["sm", "md", "lg", "xl", "xll"]
+    list.push `offset-${name}-${cols[name]}` if cols[name] is not pre
+    list.push `col-${name}-${12 - cols[name]}` if cols[name] is not pre
     pre = cols[name]
-  list.push "offset-print-#{colPrint}"
-  list.push "col-print-#{12 - colPrint}"
+  list.push `offset-print-${colPrint}`
+  list.push `col-print-${12 - colPrint}`
   list
 
-export dlClasses = Object.freeze ['row']
+export dlClasses = Object.freeze ["row"]
 export dtClasses = Object.freeze calcDtClasses()
 export ddClasses = Object.freeze calcDdClasses()
 export ddSubClasses = Object.freeze calcDdSubClasses()

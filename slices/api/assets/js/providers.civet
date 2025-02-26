@@ -6,32 +6,32 @@ import {
   createRunCreateWithId
   createRunUpdateWithId
   createRunDestroyWithId
-} from '~api/hyper_json.civet'
+} from "~api/hyper_json.civet"
 
-import {pickType} from '~/common/helper.civet'
+import {pickType} from "~/common/helper.civet"
 
 // Constants
 
-export API_PROVIDERS = '/api/providers'
+export API_PROVIDERS = "/api/providers"
 
 export PROVIDER_PROPERTIES = {
-  name: 'string'
-  display_name: 'string'
-  adapter: 'string'
-  order: 'integer'
-  readable: 'boolean'
-  writable: 'boolean'
-  authenticatable: 'boolean'
-  password_changeable: 'boolean'
-  lockable: 'boolean'
-  group: 'boolean'
-  individual_password: 'boolean'
-  self_management: 'boolean'
-  description: 'string'
+  name: "string"
+  display_name: "string"
+  adapter: "string"
+  order: "integer"
+  readable: "boolean"
+  writable: "boolean"
+  authenticatable: "boolean"
+  password_changeable: "boolean"
+  lockable: "boolean"
+  group: "boolean"
+  individual_password: "boolean"
+  self_management: "boolean"
+  description: "string"
 }
 
 export INDEX_PROVIDERS_PARAM_TYPES = {
-  has_group: 'boolean'
+  has_group: "boolean"
 }
 
 export SHOW_PROVIDER_PARAM_TYPES = {
@@ -56,7 +56,7 @@ export normalizeProviders = (providers, type = {}) ->
 export normalizeProvider = (provider, types = {}) ->
   pickType(provider, {
     ...PROVIDER_PROPERTIES
-    params: 'map'
+    params: "map"
     ...types
   })
 

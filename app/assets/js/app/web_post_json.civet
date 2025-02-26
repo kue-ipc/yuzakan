@@ -2,12 +2,12 @@
 // 受け取ったJSONをメッセージとして表示する。
 // その際、modalを使用する。
 
-import {h, text, app} from 'hyperapp'
-import {Modal} from 'bootstrap'
-import bsIcon from '~/app/bs_icon.civet'
+import {h, text, app} from "hyperapp"
+import {Modal} from "bootstrap"
+import bsIcon from "~/app/bs_icon.civet"
 
 export default class WebPostJson
-  MESSAGE_EVENT = 'webpostjson.message'
+  MESSAGE_EVENT = "webpostjson.message"
 
   @({
     @form
@@ -16,16 +16,16 @@ export default class WebPostJson
     @successLink = null
     @reloadTime = 0
   })
-    @modalNode = document.createElement('div')
-    @modalNode.classList.add('modal')
-    @modalNode.setAttribute('tabindex', -1)
-    @modalNode.setAttribute('aria-hidden', 'true')
+    @modalNode = document.createElement("div")
+    @modalNode.classList.add("modal")
+    @modalNode.setAttribute("tabindex", -1)
+    @modalNode.setAttribute("aria-hidden", "true")
 
-    modalDialogNode = document.createElement('div')
-    modalDialogNode.classList.add('modal-dialog', 'modal-dialog-centered')
+    modalDialogNode = document.createElement("div")
+    modalDialogNode.classList.add("modal-dialog", "modal-dialog-centered")
 
-    @modalContentNode = document.createElement('div')
-    @modalContentNode.classList.add('modal-content')
+    @modalContentNode = document.createElement("div")
+    @modalContentNode.classList.add("modal-content")
 
     modalDialogNode.appendChild(@modalContentNode)
     @modalNode.appendChild(modalDialogNode)
@@ -37,9 +37,9 @@ export default class WebPostJson
 
     app {
       init: {
-        status: 'unknown'
-        title: 'no title'
-        messages: 'n/a'
+        status: "unknown"
+        title: "no title"
+        messages: "n/a"
         closable: false
         successLink: null
       }
@@ -55,7 +55,7 @@ export default class WebPostJson
       @modal.backdrop = true
       @modal.keyboard = true
     else
-      @modal.backdrop = 'static'
+      @modal.backdrop = "static"
       @modal.keyboard = false
 
     event = new CustomEvent(WebPostJson.MESSAGE_EVENT, {detail: state})
@@ -63,23 +63,23 @@ export default class WebPostJson
 
   submitPromise()
     @modalMessage {
-      status: 'running'
-      title: "#{@title}中"
+      status: "running"
+      title: `${@title}中`
       messages: @messages.running
       closable: false
     }
-    @modal.backdrop = 'static'
+    @modal.backdrop = "static"
     @modal.keyboard = false
     @modal.show()
 
     try
       formData = new FormData(@form)
       response = await fetch @form.action, {
-        method: 'POST'
-        mode: 'same-origin'
-        credentials: 'same-origin'
+        method: "POST"
+        mode: "same-origin"
+        credentials: "same-origin"
         headers: {
-          'Accept': 'application/json'
+          "Accept": "application/json"
         }
         body: formData
       }
@@ -88,15 +88,15 @@ export default class WebPostJson
 
       resultTitle =
         switch data.result
-          when 'success' then '成功'
-          when 'failure' then '失敗'
-          when 'error' then 'エラー'
-          else ''
+          when "success" then "成功"
+          when "failure" then "失敗"
+          when "error" then "エラー"
+          else ""
 
-      if data.result is 'success'
+      if data.result is "success"
         @modalMessage {
           status: data.result
-          title: "#{@title}#{resultTitle}"
+          title: `${@title}${resultTitle}`
           closable: false
           successLink: @successLink
           messages: [
@@ -111,7 +111,7 @@ export default class WebPostJson
       else
         @modalMessage {
           status: data.result
-          title: "#{@title}#{resultTitle}"
+          title: `${@title}${resultTitle}`
           closable: true
           successLink: null
           messages: [
@@ -125,15 +125,15 @@ export default class WebPostJson
     catch error
       console.error error
       data = {
-        result: 'error'
+        result: "error"
         messages: {
-          failure: 'サーバー接続時にエラーが発生しました。しばらく待ってから、再度試してください。'
+          failure: "サーバー接続時にエラーが発生しました。しばらく待ってから、再度試してください。"
         }
       }
 
       @modalMessage {
-        status: 'error'
-        title: '接続エラー'
+        status: "error"
+        title: "接続エラー"
         closable: true
         successLink: null
         messages: [
@@ -162,60 +162,60 @@ messageAction = (state, params) -> {
 }
 
 ModalView = ({status, title, messages, closable, successLink}) ->
-  h 'div', {class: 'modal-content'}, [
-    h 'div', {class: 'modal-header'}, [
-      h 'h5', {class: 'modal-title'}, [
+  h "div", {class: "modal-content"}, [
+    h "div", {class: "modal-header"}, [
+      h "h5", {class: "modal-title"}, [
         StatusIcon {status: status}
-        text " #{title}"
+        text ` ${title}`
       ]
       if closable
-        h 'button', {
-          class: 'btn-close'
-          type: 'button'
-          'data-bs-dismiss': 'modal'
-          'aria-label': "閉じる"
+        h "button", {
+          class: "btn-close"
+          type: "button"
+          "data-bs-dismiss": "modal"
+          "aria-label": `閉じる`
         }
     ]
-    h 'div', {class: 'modal-body'},
+    h "div", {class: "modal-body"},
       MessageList {messages: messages}
     if closable || successLink?
-      h 'div', {class: 'modal-footer'}, [
+      h "div", {class: "modal-footer"}, [
         if successLink?
-          h 'a', {
-            class: 'btn btn-primary'
-            role: 'button'
+          h "a", {
+            class: "btn btn-primary"
+            role: "button"
             href: successLink
-          }, text 'すぐに移動'
+          }, text "すぐに移動"
         if closable
-          h 'button', {
-            class: 'btn btn-secondary'
-            type: 'button'
-            'data-bs-dismiss': 'modal'
-          }, text '閉じる'
+          h "button", {
+            class: "btn btn-secondary"
+            type: "button"
+            "data-bs-dismiss": "modal"
+          }, text "閉じる"
       ]
   ]
 
 STATUS_LEVELS = new Map([
-  ['success', {color: 'success', icon: 'check-circle-fill'}]
-  ['failure', {color: 'danger', icon: 'x-circle-fill'}]
-  ['fatal', {color: 'danger', icon: 'slash-circle-fill'}]
-  ['error', {color: 'danger', icon: 'exclamation-octagon-fill'}]
-  ['warn', {color: 'warning', icon: 'exclamation-triangle-fill'}]
-  ['info', {color: 'info', icon: 'info-square-fill'}]
-  ['debug', {color: 'secondary', icon: 'bug-fill'}]
-  ['unknown', {color: 'primary', icon: 'question-diamond-fill'}]
+  ["success", {color: "success", icon: "check-circle-fill"}]
+  ["failure", {color: "danger", icon: "x-circle-fill"}]
+  ["fatal", {color: "danger", icon: "slash-circle-fill"}]
+  ["error", {color: "danger", icon: "exclamation-octagon-fill"}]
+  ["warn", {color: "warning", icon: "exclamation-triangle-fill"}]
+  ["info", {color: "info", icon: "info-square-fill"}]
+  ["debug", {color: "secondary", icon: "bug-fill"}]
+  ["unknown", {color: "primary", icon: "question-diamond-fill"}]
 ])
 
 StatusIcon = ({status}) ->
-  if status is 'running'
-    return h 'div', {class: 'spinner-border', role: 'status'},
-      h 'span', {class: 'visually-hidden'}, text '読込中...'
+  if status is "running"
+    return h "div", {class: "spinner-border", role: "status"},
+      h "span", {class: "visually-hidden"}, text "読込中..."
   {color, icon} = STATUS_LEVELS.get(status)
-  h 'span', {class: ["text-#{color}", 'align-text-bottom']},
+  h "span", {class: [`text-${color}`, "align-text-bottom"]},
     bsIcon {name: icon, size: 24}
 
 MessageList = ({messages}) ->
   messages = [messages] unless messages instanceof Array
-  h 'div', {}, messages.filter((x) -> typeof x is 'string').map (msg) ->
-    h 'div', {},
+  h "div", {}, messages.filter((x) -> typeof x is "string").map (msg) ->
+    h "div", {},
       text msg

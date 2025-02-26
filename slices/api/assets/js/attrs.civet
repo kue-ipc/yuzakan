@@ -6,23 +6,23 @@ import {
   createRunCreateWithId
   createRunUpdateWithId
   createRunDestroyWithId
-} from '~api/hyper_json.civet'
+} from "~api/hyper_json.civet"
 
-import {pickType} from '~/common/helper.civet'
+import {pickType} from "~/common/helper.civet"
 
 // Constants
 
-export API_ATTRS = '/api/attrs'
+export API_ATTRS = "/api/attrs"
 
 export ATTR_PROPERTIES = {
-  name: 'string'
-  display_name: 'string'
-  type: 'string'
-  order: 'integer'
-  hidden: 'boolean'
-  readonly: 'boolean'
-  code: 'string'
-  description: 'string'
+  name: "string"
+  display_name: "string"
+  type: "string"
+  order: "integer"
+  hidden: "boolean"
+  readonly: "boolean"
+  code: "string"
+  description: "string"
 }
 
 export INDEX_ATTRS_PARAM_TYPES = {
@@ -50,7 +50,7 @@ export normalizeAttrs = (attrs, type = {}) ->
 export normalizeAttr = (attr, types = {}) ->
   pickType(attr, {
     ...ATTR_PROPERTIES
-    mappings: 'list'
+    mappings: "list"
     ...types
   })
 
