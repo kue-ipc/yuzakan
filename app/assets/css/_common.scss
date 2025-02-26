@@ -7,7 +7,8 @@
   $font-family-sans-serif: var(--yuazkan-font-sans-serif),
   $font-family-monospace: var(--yuzakan-font-monospace),
   $font-family-base: var(--yuzakan-font-base),
-  $font-family-code: var(--yuzakan-font-code));
+  $font-family-code: var(--yuzakan-font-code)
+);
 
 .login {
   width: 20rem;
@@ -70,7 +71,7 @@ code {
   font-family: var(--yuzakan-font-code);
 
   &.login-info {
-    letter-spacing: .2rem;
+    letter-spacing: 0.2rem;
     font-size: 1.5rem;
     font-variant-ligatures: none;
     color: bootstrap.$black;
@@ -84,7 +85,11 @@ code {
 }
 
 @media print {
-  a, a:link, a:visited, a:hover, a:active {
+  a,
+  a:link,
+  a:visited,
+  a:hover,
+  a:active {
     color: bootstrap.$black;
     text-decoration: none;
   }
