@@ -17,9 +17,9 @@ import {pickType} from "~/common/helper.civet"
 
 // Contants
 
-export API_GROUPS = "/api/groups"
+export API_GROUPS := "/api/groups"
 
-export GROUP_PROPERTIES = {
+export GROUP_PROPERTIES := {
   name: "string"
   display_name: "string"
   note: "string"
@@ -29,13 +29,13 @@ export GROUP_PROPERTIES = {
   deleted_at: "datetime"
 }
 
-export GROUP_DATA_PROPERTIES = {
+export GROUP_DATA_PROPERTIES := {
   groupname: "string"
   display_name: "string"
   primary: "boolean"
 }
 
-export INDEX_GROUPS_OPTION_PARAM_TYPES = {
+export INDEX_GROUPS_OPTION_PARAM_TYPES := {
   no_sync: "boolean"
   primary_only: "boolean"
   hide_prohibited: "boolean"
@@ -43,39 +43,39 @@ export INDEX_GROUPS_OPTION_PARAM_TYPES = {
   all: "boolean"
 }
 
-export INDEX_GROUPS_PARAM_TYPES = {
+export INDEX_GROUPS_PARAM_TYPES := {
   ...SEARCH_PARAM_TYPES
   ...ORDER_PARAM_TYPES
   ...INDEX_GROUPS_OPTION_PARAM_TYPES
 }
 
-export INDEX_WITH_PAGE_GROUPS_PARAM_TYPES = {
+export INDEX_WITH_PAGE_GROUPS_PARAM_TYPES := {
   ...PAGINATION_PARAM_TYPES
   ...INDEX_GROUPS_PARAM_TYPES
 }
 
-export SHOW_GROUP_PARAM_TYPES = {
+export SHOW_GROUP_PARAM_TYPES := {
 }
 
-export CREATE_GROUP_PARAM_TYPES = {
+export CREATE_GROUP_PARAM_TYPES := {
   ...GROUP_PROPERTIES
 }
 
-export UPDATE_GROUP_PARAM_TYPES = {
+export UPDATE_GROUP_PARAM_TYPES := {
   ...GROUP_PROPERTIES
 }
 
-export DESTROY_GROUP_PARAM_TYPES = {
+export DESTROY_GROUP_PARAM_TYPES := {
   permanent: "boolean"
 }
 
 // Functions
 
-export normalizeGroups = (groups, type = {}) ->
+export normalizeGroups := (groups, type = {}) ->
   normalizeGroup(group, type) for each group of groups
 
-export normalizeGroup = (group, types = {}) ->
-  providersData =
+export normalizeGroup := (group, types = {}) ->
+  providersData :=
     if !group.providers?
       {}
     else if group.providers instanceof Array
@@ -95,19 +95,19 @@ export normalizeGroup = (group, types = {}) ->
 
 // Actions
 
-export SetGroups = (state, groups) -> {
+export SetGroups := (state, groups) -> {
   ...state
   groups
 }
 
-export SetGroup = (state, group) -> {
+export SetGroup := (state, group) -> {
   ...state
   group
 }
 
 // create Effecters
 
-export createRunIndexGroupsNoSync = ({data = {}, ...params} = {}) ->
+export createRunIndexGroupsNoSync := ({data = {}, ...params} = {}) ->
   createRunIndex({
     action: SetGroups
     normalizer: normalizeGroups
@@ -117,7 +117,7 @@ export createRunIndexGroupsNoSync = ({data = {}, ...params} = {}) ->
     ...params
   })
 
-export createRunIndexWithPageGroups = (params = {}) ->
+export createRunIndexWithPageGroups := (params = {}) ->
   createRunIndexWithPage({
     action: SetGroups
     normalizer: normalizeGroups
@@ -126,7 +126,7 @@ export createRunIndexWithPageGroups = (params = {}) ->
     ...params
   })
 
-export createRunShowGroup = (params = {}) ->
+export createRunShowGroup := (params = {}) ->
   createRunShowWithId({
     action: SetGroup
     normalizer: normalizeGroup
@@ -135,7 +135,7 @@ export createRunShowGroup = (params = {}) ->
     ...params
   })
 
-export createRunCreateGroup = (params = {}) ->
+export createRunCreateGroup := (params = {}) ->
   createRunCreateWithId({
     action: SetGroup
     normalizer: normalizeGroup
@@ -144,7 +144,7 @@ export createRunCreateGroup = (params = {}) ->
     ...params
   })
 
-export createRunUpdateGroup = (params = {}) ->
+export createRunUpdateGroup := (params = {}) ->
   createRunUpdateWithId({
     action: SetGroup
     normalizer: normalizeGroup
@@ -153,7 +153,7 @@ export createRunUpdateGroup = (params = {}) ->
     ...params
   })
 
-export createRunDestroyGroup = (params = {}) ->
+export createRunDestroyGroup := (params = {}) ->
   createRunDestroyWithId({
     action: SetGroup
     normalizer: normalizeGroup
@@ -163,9 +163,9 @@ export createRunDestroyGroup = (params = {}) ->
   })
 
 // Effecters
-export runIndexGroupsNoSync = createRunIndexGroupsNoSync()
-export runIndexWithPageGroups = createRunIndexWithPageGroups()
-export runShowGroup = createRunShowGroup()
-export runCreateGroup = createRunCreateGroup()
-export runUpdateGroup = createRunUpdateGroup()
-export runDestroyGroup = createRunDestroyGroup()
+export runIndexGroupsNoSync := createRunIndexGroupsNoSync()
+export runIndexWithPageGroups := createRunIndexWithPageGroups()
+export runShowGroup := createRunShowGroup()
+export runCreateGroup := createRunCreateGroup()
+export runUpdateGroup := createRunUpdateGroup()
+export runDestroyGroup := createRunDestroyGroup()

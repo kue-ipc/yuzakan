@@ -10,8 +10,8 @@ import {fetchJson} from "~api/fetch_json.civet"
 import {modalDialog} from "~/app/modal.civet"
 
 export default class WebData
-  MESSAGE_EVENT = "webdata.message"
-  DEFAULT_CODE_ACTIONS = new Map [
+  @MESSAGE_EVENT := "webdata.message"
+  @DEFAULT_CODE_ACTIONS := new Map [
     [0, {status: "error"}]
     [400, {status: "error", message: "パラメーターが不正です。"}]
     [401, {status: "error", message: "ログインが必要です。", reload: true}]
@@ -23,15 +23,9 @@ export default class WebData
       reload: true
     }]
   ]
-  UNKNOWN_CODE_ACTION = {status: "unknown"}
+  @UNKNOWN_CODE_ACTION := {status: "unknown"}
 
-  @({
-    @id
-    @title
-    @method = "GET"
-    @url = null
-    codeActions = []
-  })
+  @({@id, @title, @method = "GET", @url = null, codeActions = []})
     @codeActions = new Map [...DEFAULT_CODE_ACTIONS, ...codeActions]
 
     @modalNode = document.createElement("div")
@@ -40,7 +34,7 @@ export default class WebData
     @modalNode.setAttribute("tabindex", -1)
     @modalNode.setAttribute("aria-hidden", "true")
 
-    modalDialogNode = document.createElement("div")
+    modalDialogNode := document.createElement("div")
     modalDialogNode.id = `${@id}-modal-dialog`
     modalDialogNode.classList.add("modal-dialog", "modal-dialog-centered")
 
@@ -66,7 +60,7 @@ export default class WebData
     }
 
   messageList({messages})
-    messages = [messages] unless messages instanceof Array
+    messages := [messages] unless messages instanceof Array
     html.div {}, messages.filter((x) -> typeof x is "string").map (msg) ->
       html.div {}, text msg
 
@@ -80,11 +74,11 @@ export default class WebData
       @modal._config.backdrop = "static"
       @modal._config.keyboard = false
 
-    event = new CustomEvent(WebData.MESSAGE_EVENT, {detail: state})
+    event := new CustomEvent(WebData.MESSAGE_EVENT, {detail: state})
     @modalNode.dispatchEvent(event)
 
   messageRunner(dispatch, {action, node})
-    func = (e) -> dispatch(action, e.detail)
+    func := (e) -> dispatch(action, e.detail)
     node.addEventListener(WebData.MESSAGE_EVENT, func)
     -> node.removeEventListener(WebData.MESSAGE_EVENT, func)
 
@@ -99,11 +93,11 @@ export default class WebData
     }
     @modal.show()
 
-    try
-      response = await fetchJson {url, method, data, type}
+    response := try
+      await fetchJson {url, method, data, type}
     catch error
       console.error error
-      response = {
+      {
         ok: false
         code: 0
         type: "json"
@@ -112,7 +106,7 @@ export default class WebData
         }
       }
 
-    responseData =
+    responseData :=
       switch response.type
         when "json"
           response.data
@@ -128,28 +122,29 @@ export default class WebData
             message: "異常なレスポンスが返されました。再度試してください。"
           }
 
-    codeAction = @codeActions.get(response.code) || UNKNOWN_CODE_ACTION
+    codeAction := @codeActions.get(response.code) || WebData.UNKNOWN_CODE_ACTION
 
-    messages = [(codeAction.message || responseData.message), ...(responseData.errors ?? [])]
+    messages := [(codeAction.message || responseData.message), ...(responseData.errors ?? [])]
       .filter (v) -> typeof v is "string"
 
-    if codeAction?.redirectTo?
-      closable = false
-      link = codeAction.redirectTo
-      if codeAction.reloadTime? and codeAction.reloadTime > 0
-        reloadDelay = codeAction.reloadTime * 1000
-        messages.push(`約${codeAction.reloadTime}秒後に画面を切り替えます。`)
+    {consable, link, reload, reloadDelay} :=
+      if codeAction?.redirectTo?
+        reloadDelay :=
+          if codeAction.reloadTime? and codeAction.reloadTime > 0
+            messages.push(`約${codeAction.reloadTime}秒後に画面を切り替えます。`)
+            codeAction.reloadTime * 1000
+          else
+            messages.push("画面を切り替えます。しばらくお待ち下さい。")
+            0 // default 0 msec
+        {
+          closable: false
+          link: codeAction.redirectTo
+          reloadDelay
+        }
+      else if codeAction?.reload
+        {closable: false,link: null, reload: true}
       else
-        reloadDelay = 0 // default 0 msec
-        messages.push("画面を切り替えます。しばらくお待ち下さい。")
-    else if codeAction?.reload
-      closable = false
-      link = null
-      reload = true
-    else
-      closable = true
-      link = null
-      reload = false
+        {closable: true, link: null, reload: false}
 
     @modalMessage {
       status: codeAction.status
@@ -197,7 +192,7 @@ export default class WebData
   messageSub = (action, {node}) => [@messageRunner, {action, node}]
 
   messageAction = (state, params) =>
-    newState = {...state, ...params}
+    newState := {...state, ...params}
     if newState.closable
       [newState, focus(`${@id}-modal-close-button`)]
     else

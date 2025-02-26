@@ -6,7 +6,7 @@ import WebData from "~/app/web_data.civet"
 import bsIcon from "~/app/bs_icon.civet"
 import csrf from "~/csrf.civet"
 
-webData = new WebData {
+webData := new WebData {
   id: "login"
   title: "ログイン"
   method: "POST"
@@ -19,9 +19,9 @@ webData = new WebData {
   ]
 }
 
-submittable = ({username, password, disabled}) -> not disabled and username and password
+submittable := ({username, password, disabled}) -> not disabled and username and password
 
-runLogin = (dispatch, payload) ->
+runLogin := (dispatch, payload) ->
   await webData.submitPromise {data: {
     ...csrf()
     ...payload
@@ -35,10 +35,10 @@ runLogin = (dispatch, payload) ->
     focus("session-username")
   ]
 
-login = ({username, password}) -> [runLogin, {username, password}]
+login := ({username, password}) -> [runLogin, {username, password}]
 
 
-enterToSubmitOrNextInput = (state, event) ->
+enterToSubmitOrNextInput := (state, event) ->
   if event.keyCode is 13
     if submittable(state)
       [{...state, disabled: true}, login(state)]
@@ -49,7 +49,7 @@ enterToSubmitOrNextInput = (state, event) ->
   else
     state
 
-init = [
+init := [
   {
     disabled: false
     username: null
@@ -58,7 +58,7 @@ init = [
   delay 10, (state) -> [state, focus("session-username")]
 ]
 
-view = ({username, password, disabled}) ->
+view := ({username, password, disabled}) ->
   html.div {id: "login", class: "login mx-auto p-3 border rounded"}, [
     html.h3 {class: "login-title text-center mb-2"}, text "ログイン"
     html.div {class: "mb-3"},
@@ -93,6 +93,6 @@ view = ({username, password, disabled}) ->
       ]
   ]
 
-node = document.getElementById("login")
+node := document.getElementById("login")
 
 app {init, view, node}

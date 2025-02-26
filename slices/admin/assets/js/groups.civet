@@ -35,10 +35,10 @@ import {batchOperation, runDoNextAction, runStopAllAction} from "~admin/batch_op
 
 // Cnostants
 
-GROUP_HEADERS = ["action"]
+GROUP_HEADERS := ["action"]
   .concat(key for key, type in GROUP_PROPERTIES when !(["list", "map", "set", "object"].includes(type)))
 
-ACTIONS = new Map([
+ACTIONS := new Map([
   ["ADD", "追加"]
   ["MOD", "変更"]
   ["DEL", "削除"]
@@ -50,11 +50,11 @@ ACTIONS = new Map([
 
 // Functions
 
-updateGroupList = (groups, group) -> updateList(groups, group.name, group, {key: "name"})
+updateGroupList := (groups, group) -> updateList(groups, group.name, group, {key: "name"})
 
-normalizeGroupUploaded = ({action, error, ...group}) ->
-  action = action?.slice(0, 3)?.toUpperCase() ?? ""
-  error = switch action
+normalizeGroupUploaded := ({action, error, ...group}) ->
+  action := action?.slice(0, 3)?.toUpperCase() ?? ""
+  error := switch action
     when "", "MOD", "SYN"
       null
     when "ADD", "DEL"
@@ -62,7 +62,7 @@ normalizeGroupUploaded = ({action, error, ...group}) ->
     when "ERR", "SUC", "ACT"
       error
     else
-      action = "ERR"
+      action := "ERR"
       "指定した処理が不正です。"
   {
     action
@@ -70,7 +70,7 @@ normalizeGroupUploaded = ({action, error, ...group}) ->
     ...normalizeGroup(group)
   }
 
-indexOptionFromState = (state) ->
+indexOptionFromState := (state) ->
   pick({
     ...state.pagination
     ...state.search
@@ -81,8 +81,8 @@ indexOptionFromState = (state) ->
 
 // Views
 
-indexGroupsOption = ({onchange: action, readonly = false, ...props}) ->
-  onchange = (state, event) -> [action, {[event.target.name]: event.target.checked}]
+indexGroupsOption := ({onchange: action, readonly := false, ...props}) ->
+  onchange := (state, event) -> [action, {[event.target.name]: event.target.checked}]
 
   html.div {class: "row mb-2"},
     for key, val in {
@@ -91,7 +91,7 @@ indexGroupsOption = ({onchange: action, readonly = false, ...props}) ->
       hide_prohibited: "使用禁止を隠す"
       show_deleted: "削除済みも表示"
     }
-      id = `option-${key}`
+      id := `option-${key}`
       html.div {key: `option[${key}]`, class: "col-md-3"},
         html.div {class: "form-check"}, [
           html.input {
@@ -107,13 +107,13 @@ indexGroupsOption = ({onchange: action, readonly = false, ...props}) ->
         ]
 
 
-groupsTable = ({groups, providers}) ->
+groupsTable := ({groups, providers}) ->
   html.table {key: "table", class: "table"}, [
     groupsThead({providers})
     groupsTbody({groups, providers})
   ]
 
-groupsThead = ({providers}) ->
+groupsThead := ({providers}) ->
   html.thead {key: "thead"},
     html.tr {key: "head"}, [
       html.th {key: "show"}, text ""
@@ -123,10 +123,10 @@ groupsThead = ({providers}) ->
       ...(providerTh({provider}) for each provider of providers)
     ]
 
-providerTh = ({provider}) ->
+providerTh := ({provider}) ->
   html.th {key: `provider[${provider.name}]`}, text entityLabel(provider)
 
-groupsTbody = ({groups, providers}) ->
+groupsTbody := ({groups, providers}) ->
   html.tbody {key: "tbody"},
     (for each group of groups
       [
@@ -135,8 +135,8 @@ groupsTbody = ({groups, providers}) ->
       ]
     ).flat()
 
-groupTr = ({group, providers}) ->
-  color = switch group.action
+groupTr := ({group, providers}) ->
+  color := switch group.action
     when "ADD"
       "primary"
     when "MOD"
@@ -194,14 +194,14 @@ groupTr = ({group, providers}) ->
     ...(groupProviderTd({group, provider}) for each provider of providers)
   ]
 
-groupProviderTd = ({group, provider}) ->
+groupProviderTd := ({group, provider}) ->
   html.td {key: `provider[${provider.name}]`},
     valueDisplay {
       value: group.providers?.includes(provider.name)
       type: "boolean"
     }
 
-groupDetailTr = ({group, providers}) ->
+groupDetailTr := ({group, providers}) ->
   html.tr {
     key: `group-detail[${group.name}]`
     class: {collapse: true, show: group.show_detail}
@@ -225,7 +225,7 @@ groupDetailTr = ({group, providers}) ->
     ...(groupProviderDataTd({group, provider}) for each provider of providers)
   ]
 
-groupProviderDataTd = ({group, provider}) ->
+groupProviderDataTd := ({group, provider}) ->
   html.td {key: `provider-data[${provider.name}]`},
     if group.providers_data?.has(provider.name)
       html.div {key: "data", class: "small"},
@@ -233,19 +233,19 @@ groupProviderDataTd = ({group, provider}) ->
 
 // Actions
 
-ReloadIndexGroups = (state, data) ->
+ReloadIndexGroups := (state, data) ->
   console.debug "reload index groups"
-  newState = {...state, ...data, mode: "loading"}
-  params = indexOptionFromState(newState)
+  newState := {...state, ...data, mode: "loading"}
+  params := indexOptionFromState(newState)
   [
     newState,
     [runPushHistory, params]
     [runIndexGroups, params]
   ]
 
-SetIndexGroups = (state, rawGroups) ->
+SetIndexGroups := (state, rawGroups) ->
   console.debug "finish load groups"
-  groups = for each group of rawGroups
+  groups := for each group of rawGroups
     {
       action: ""
       show_detail: false
@@ -258,26 +258,26 @@ SetIndexGroups = (state, rawGroups) ->
     groups
   }
 
-MovePage = (state, page) ->
+MovePage := (state, page) ->
   return state if state.page is page
 
   [ReloadIndexGroups, {pagination: {...state.pagination , page}}]
 
-Search = (state, query) ->
+Search := (state, query) ->
   return state if state.query is query
 
   // ページ情報を初期化
   [ReloadIndexGroups, {pagination: {...state.pagination , page: 1}, search: {query}}]
 
-ChangeOption = (state, option) ->
+ChangeOption := (state, option) ->
   // ページ情報を初期化
   [ReloadIndexGroups, {pagination: {...state.pagination , page: 1}, option: {...state.option, ...option}}]
 
-SortOrder = (state, order) ->
+SortOrder := (state, order) ->
   [ReloadIndexGroups, {order}]
 
-UploadGroups = (state, {list, filename}) ->
-  groups = for each group of list
+UploadGroups := (state, {list, filename}) ->
+  groups := for each group of list
     {
       show_detail: false
       ...normalizeGroupUploaded(group)
@@ -289,14 +289,14 @@ UploadGroups = (state, {list, filename}) ->
     filename
   }
 
-SetGroupInList = (state, group) ->
+SetGroupInList := (state, group) ->
   {
     ...state
     groups: updateGroupList(state.groups, group)
   }
 
-SetGroupInListNextIfDoAll = (state, group) ->
-  groups = updateGroupList(state.groups, group)
+SetGroupInListNextIfDoAll := (state, group) ->
+  groups := updateGroupList(state.groups, group)
   [
     {
       ...state
@@ -308,7 +308,7 @@ SetGroupInListNextIfDoAll = (state, group) ->
       [runDoNextAction, {list: groups, action: DoActionGroup}]
   ]
 
-DoActionGroup = (state, group) ->
+DoActionGroup := (state, group) ->
   document.getElementById(`group_tr-${group.name}`)?.scrollIntoView({block: "center"})
   switch group.action
     when "MOD"
@@ -319,16 +319,16 @@ DoActionGroup = (state, group) ->
       console.warn "not implemented action: %s", group.action
       state
 
-createActionGroup = (createEffecter, props = {}) ->
+createActionGroup := (createEffecter, props := {}) ->
   (state, group) ->
-    action = (_, data) ->
+    action := (_, data) ->
       if data?
         [SetGroupInListNextIfDoAll, {...group, ...data, action: "SUC", error: null}]
       else
         [SetGroupInListNextIfDoAll, {...group, action: "ERR", error: "存在しません。", show_detail: true}]
-    fallback = (_, error) ->
+    fallback := (_, error) ->
       [SetGroupInListNextIfDoAll, {...group, action: "ERR", error, show_detail: true}]
-    run = createEffecter({action, fallback})
+    run := createEffecter({action, fallback})
     [
       {
         ...state
@@ -338,12 +338,12 @@ createActionGroup = (createEffecter, props = {}) ->
       [run, {...props, ...group, id: group.name}]
     ]
 
-ModGroup = createActionGroup(createRunUpdateGroup)
+ModGroup := createActionGroup(createRunUpdateGroup)
 
-SyncGroup = createActionGroup(createRunShowGroup)
+SyncGroup := createActionGroup(createRunShowGroup)
 
-PopState = (state, params) ->
-  data = {
+PopState := (state, params) ->
+  data := {
     pagination: {...state.pagination, ...pickType(params, PAGINATION_PARAM_TYPES)}
     search: {...state.search, ...pickType(params, SEARCH_PARAM_TYPES)}
     option: {...state.option, ...pickType(params, INDEX_GROUPS_OPTION_PARAM_TYPES)}
@@ -353,30 +353,30 @@ PopState = (state, params) ->
 
 // Effecters
 
-runIndexGroups = createRunIndexWithPageGroups({action: SetIndexGroups})
+runIndexGroups := createRunIndexWithPageGroups({action: SetIndexGroups})
 
-runPushHistory = (dispatch, params) ->
-  query = `?${objToUrlencoded(params)}`
+runPushHistory := (dispatch, params) ->
+  query := `?${objToUrlencoded(params)}`
   if (query is not location.search)
     history.pushState(params, "", `${location.pathname}${query}`)
 
 // Subscribers
 
-onPopstateSubscriber = (dispatch, action) ->
-  listener = (event) -> dispatch(action, event.state)
+onPopstateSubscriber := (dispatch, action) ->
+  listener := (event) -> dispatch(action, event.state)
   window.addEventListener "popstate", listener
   -> window.removeEventListener "popstate", listener
 
 // create Subscriver
-onPopstate = (action) ->
+onPopstate := (action) ->
   [onPopstateSubscriber, action]
 
 // main
 
-main = ->
-  queryParams = getQueryParamsFromUrl(location)
+main := ->
+  queryParams := getQueryParamsFromUrl(location)
 
-  initState = {
+  initState := {
     mode: "loading"
     groups: []
     providers: []
@@ -387,13 +387,13 @@ main = ->
     filename: "groups.csv"
   }
 
-  init = [
+  init := [
     initState
     [runIndexProviders, {has_group: true}]
     [runIndexGroups, indexOptionFromState(initState)]
   ]
 
-  view = ({mode, groups, providers, pagination, search, option, order, filename}) ->
+  view := ({mode, groups, providers, pagination, search, option, order, filename}) ->
     html.div {}, [
       batchOperation {
         mode
@@ -420,9 +420,9 @@ main = ->
         groupsTable({groups, providers})
     ]
 
-  node = document.getElementById("groups")
+  node := document.getElementById("groups")
 
-  subscriptions = ({mode}) ->
+  subscriptions := ({mode}) ->
     [
       onPopstate(PopState) if ["loading", "loaded"].includes(mode)
     ]

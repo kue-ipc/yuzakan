@@ -9,7 +9,7 @@ import valueDisplay from "~/app/value_display.civet"
 
 // Views
 
-export default groupOperation = ({option}) ->
+export default groupOperation := ({option}) ->
   html.div {key: "group-operation"}, [
     html.h4 {}, text "操作メニュー"
     html.p {}, text "準備中..."

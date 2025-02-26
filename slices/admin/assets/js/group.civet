@@ -16,20 +16,20 @@ import groupOperation from "~admin/group_operation.civet"
 
 // main
 
-main = ->
-  id = getBasenameFromUrl(location)
-  id = undefined if id is "*"
-  mode = if id? then "show" else "new"
+main := ->
+  id := getBasenameFromUrl(location)
+  id := undefined if id is "*"
+  mode := if id? then "show" else "new"
 
-  queryParams = pickType(getQueryParamsFromUrl(location), SHOW_GROUP_PARAM_TYPES)
+  queryParams := pickType(getQueryParamsFromUrl(location), SHOW_GROUP_PARAM_TYPES)
 
-  init = [
+  init := [
     {mode, id, group: null, providers: [], option: queryParams}
     [runIndexProviders, {has_group: true}]
     [runShowGroup, {id, ...queryParams}]
   ]
 
-  view = ({mode, id, group, providers, option}) ->
+  view := ({mode, id, group, providers, option}) ->
     if mode is "none"
       return html.div {},
         html.strong {}, text "グループが見つかりませんでした。"
@@ -47,7 +47,7 @@ main = ->
       groupProvider {mode, group, providers}
     ]
 
-  node = document.getElementById("group")
+  node := document.getElementById("group")
 
   app {init, view, node}
 

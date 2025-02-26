@@ -3,8 +3,8 @@ import * as html from "@hyperapp/html"
 
 import bsIcon from "~/app/bs_icon.civet"
 
-export default searchForm = ({query, onsearch, ...props}) ->
-  searchInput = html.input {
+export default searchForm := ({query, onsearch, ...props}) ->
+  searchInput := html.input {
     class: "form-control"
     type: "search"
     value: query

@@ -4,7 +4,7 @@ import {DateTime} from "luxon"
 
 import {capitalize} from "~/common/string_helper.civet"
 
-TRUE_STRINGS = new Set([
+TRUE_STRINGS := new Set([
   "1"
   "t"
   "true"
@@ -13,7 +13,7 @@ TRUE_STRINGS = new Set([
   "on"
 ])
 
-FALSE_STRINGS = new Set([
+FALSE_STRINGS := new Set([
   "0"
   "f"
   "false"
@@ -22,11 +22,11 @@ FALSE_STRINGS = new Set([
   "off"
 ])
 
-export TRUE_STR = "1"
-export FALSE_STR = "0"
+export TRUE_STR := "1"
+export FALSE_STR := "0"
 
 // convert to the specified type
-export convertToType = (val, type = "string") ->
+export convertToType := (val, type = "string") ->
   return val unless val?
 
   switch type
@@ -58,9 +58,9 @@ export convertToType = (val, type = "string") ->
       console.warn `cannot convert to the unknown type: ${type}`
       undefined
 
-export toString = (val) -> String(val)
+export toString := (val) -> String(val)
 
-export toBoolean = (val) ->
+export toBoolean := (val) ->
   if typeof val is "string"
     lowerStr = val.toLowerCase()
     if TRUE_STRINGS.has(lowerStr)
@@ -70,11 +70,11 @@ export toBoolean = (val) ->
 
   Boolean(val)
 
-export toInteger = (val) -> Math.floor(Number(val))
+export toInteger := (val) -> Math.floor(Number(val))
 
-export toFloat = (val) -> Number(val)
+export toFloat := (val) -> Number(val)
 
-export toDateTime = (val) ->
+export toDateTime := (val) ->
   dateTime = switch typeof val
     when "number"
       DateTime.fromSeconds(val)
@@ -98,11 +98,11 @@ export toDateTime = (val) ->
       DateTime.fromJSDate(Date(val))
   dateTime?.toLocal()
 
-export toDate = (val) -> toDateTime(val)?.toISODate()
+export toDate := (val) -> toDateTime(val)?.toISODate()
 
-export toTime = (val) -> toDateTime(val)?.toISOTime({includeOffset: false})
+export toTime := (val) -> toDateTime(val)?.toISOTime({includeOffset: false})
 
-export toList = (val) ->
+export toList := (val) ->
   val = JSON.parse(val) if typeof val is "string"
   return val if val instanceof Array
 
@@ -116,7 +116,7 @@ export toList = (val) ->
     console.warn "no list object: %s", val
     []
 
-export toMap = (val) ->
+export toMap := (val) ->
   return val if val instanceof Map
 
   new Map(toList(val).map((v) ->
@@ -127,12 +127,12 @@ export toMap = (val) ->
     )
   )
 
-export toSet = (val) ->
+export toSet := (val) ->
   return val if val instanceof Set
 
   new Set(toList(val))
 
-export toObject = (val) ->
+export toObject := (val) ->
   if typeof val is "string"
     JSON.parse(val)
   else if val[Symbol.iterator]?
@@ -143,7 +143,7 @@ export toObject = (val) ->
 // string -> list
 
 // abcDef_ghi-jkl -> abc def ghi jkl
-export strToList = (str) ->
+export strToList := (str) ->
   str.replace(/[A-Z]+/g, "_$&").toLowerCase().split(/[-_\s]+/)
 
 export paramNameToList = (str) ->
@@ -155,40 +155,40 @@ export paramNameToList = (str) ->
 // list -> string
 
 // abc, def, hij -> abcDefHij
-export listToCamelCase = (...list) ->
+export listToCamelCase := (...list) ->
   (list[0]?.toLowerCase() ?? "") +
     (capitalize(str) for each str of list[1..]).join("")
 
 // abc, def, hij -> AbcDefHij
-export listToPascalCase = (...list) ->
+export listToPascalCase := (...list) ->
   (capitalize(str) for each str of list).join("")
 
 // abc, def, hij -> abc_def_hij
-export listToSnakeCase = (...list) ->
+export listToSnakeCase := (...list) ->
   (str.toLowerCase() for each str of list).join("_")
 
 // abc, def, hij -> abc-def-hij
-export listToKebabCase = (...list) ->
+export listToKebabCase := (...list) ->
   (str.toLowerCase() for each str of list).join("-")
 
 // abc, def, hij -> ABC_DEF_HIJ
-export listToAllCaps = (...list) ->
+export listToAllCaps := (...list) ->
   (str.toUpperCase() for each str of list).join("_")
 
 // abc, def, hij -> Abc-Def-Hij
-export listToTrainCase = (...list) ->
+export listToTrainCase := (...list) ->
   (capitalize(str) for each str of list).join("-")
 
-export listToParamName = (...list) ->
+export listToParamName := (...list) ->
   (list[0] ?? "") + (`[${str}]` for each str of list[1..]).join("")
 
 // object -> other
 
-export objToJson = (obj, space = undefined) ->
+export objToJson := (obj, space = undefined) ->
   JSON.stringify obj, jsonReplacer, space
 
 // bigint, Map, Set
-jsonReplacer = (key, value) ->
+jsonReplacer := (key, value) ->
   switch typeof value
     when "bigint"
       // 精度落ち
@@ -204,10 +204,10 @@ jsonReplacer = (key, value) ->
       value
 
 
-export objToRecord = (obj) ->
+export objToRecord := (obj) ->
   toObject(objToParams(obj))
 
-export objToParams = (obj, parents = []) ->
+export objToParams := (obj, parents = []) ->
   obj = Object.fromEntries(obj) if obj instanceof Map
   params = []
   for own key, value in obj
@@ -224,16 +224,16 @@ export objToParams = (obj, parents = []) ->
       params.push([listToParamName(...parents, key), value])
   params
 
-export objToUrlencoded = (obj) ->
+export objToUrlencoded := (obj) ->
   objToUrlencodedParams(obj).join("&")
 
-export objToUrlencodedParams = (obj) ->
+export objToUrlencodedParams := (obj) ->
   for each [key, value] of objToParams(obj) when value?
     `${encodeURIComponent(key)}=${valueToUrlencoded(value)}`
 
 // JavaScriptの値をUrlencodedの文字列に落とし込む前に変換する
 // true, fales -> 1, 0
-valueToUrlencoded = (value) ->
+valueToUrlencoded := (value) ->
   if !value?
     ""
   else if value is true
@@ -247,7 +247,7 @@ valueToUrlencoded = (value) ->
 
 // other -> object
 
-export recordToObj = (record) ->
+export recordToObj := (record) ->
   root := {}
   for key, value in record
     keyList := paramNameToList(key)

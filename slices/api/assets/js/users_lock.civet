@@ -9,7 +9,7 @@ import {SetUser, normalizeUser} from "~api/users.civet"
 
 // Contants
 
-export USER_ID_KEY_USERS_LOCK = "user_id"
+export USER_ID_KEY_USERS_LOCK := "user_id"
 export API_USERS_LOCK = `/api/users/:${USER_ID_KEY_USERS_LOCK}/lock`
 
 // Functions
@@ -18,7 +18,7 @@ export API_USERS_LOCK = `/api/users/:${USER_ID_KEY_USERS_LOCK}/lock`
 
 // create Effecters
 
-export createRunCreateUserLock = (params = {}) ->
+export createRunCreateUserLock := (params = {}) ->
   createRunCreate({
     action: SetUser
     normalizer: normalizeUser
@@ -27,7 +27,7 @@ export createRunCreateUserLock = (params = {}) ->
     ...params
   })
 
-export createRunDestroyUserLock = (params = {}) ->
+export createRunDestroyUserLock := (params = {}) ->
   createRunDestroy({
     action: SetUser
     normalizer: normalizeUser
@@ -38,5 +38,5 @@ export createRunDestroyUserLock = (params = {}) ->
 
 // Effecters
 
-export runCreateUserLock = createRunCreateUserLock()
-export runDestroyUserLock = createRunDestroyUserLock()
+export runCreateUserLock := createRunCreateUserLock()
+export runDestroyUserLock := createRunDestroyUserLock()

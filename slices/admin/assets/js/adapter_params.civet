@@ -4,18 +4,18 @@ import {text} from "hyperapp"
 import * as html from "@hyperapp/html"
 import {formName, formId} from "~/common/form_helper.civet"
 
-parentNames = ["provider", "params"]
+parentNames := ["provider", "params"]
 
-inputControlPropKeys = [
+inputControlPropKeys := [
   "required", "placeholder", "maxlength", "minlength", "pattern"
   "size", "max", "min", "step"
 ]
 
-inputControl = (props) ->
-  id = formId(props.name, parentNames)
-  describeId = `${id}-help`
+inputControl := (props) ->
+  id := formId(props.name, parentNames)
+  describeId := `${id}-help`
 
-  inputControlProps = Object.fromEntries([key, props[key]] for each key of inputControlPropKeys when props[key]?)
+  inputControlProps := Object.fromEntries([key, props[key]] for each key of inputControlPropKeys when props[key]?)
 
   html.div {class: "mb-3"}, [
     html.label {class: "form-label", for: id}, text props.label
@@ -33,9 +33,9 @@ inputControl = (props) ->
     if props.description then html.small {id: describeId, class: "form-text"}, text props.description
   ]
 
-inputCheckbox = (props) ->
-  id = formId(props.name, parentNames)
-  describeId = `${id}-help`
+inputCheckbox := (props) ->
+  id := formId(props.name, parentNames)
+  describeId := `${id}-help`
 
   html.div {class: "form-check"}, [
     html.input {
@@ -51,13 +51,13 @@ inputCheckbox = (props) ->
     if props.description? then html.small {id: describeId, class: "form-text"}, text props.description
   ]
 
-inputTextareaPropKeys = ["required", "placeholder", "maxlength", "minlength", "cols", "rows"]
+inputTextareaPropKeys := ["required", "placeholder", "maxlength", "minlength", "cols", "rows"]
 
-inputTextarea = (props) ->
-  id = formId(props.name, parentNames)
-  describeId = `${id}-help`
+inputTextarea := (props) ->
+  id := formId(props.name, parentNames)
+  describeId := `${id}-help`
 
-  inputTextareaProps = Object.fromEntries([key, props[key]] for each key of inputTextareaPropKeys when props[key]?)
+  inputTextareaProps := Object.fromEntries([key, props[key]] for each key of inputTextareaPropKeys when props[key]?)
 
   html.div {class: "mb-3"}, [
     html.label {class: "form-label", for: id}, text props.label
@@ -74,11 +74,11 @@ inputTextarea = (props) ->
     if props.description? then html.small {id: describeId, class: "form-text"}, text props.description
   ]
 
-inputList = (props) ->
-  id = formId(props.name, parentNames)
-  describeId = `${id}-help`
+inputList := (props) ->
+  id := formId(props.name, parentNames)
+  describeId := `${id}-help`
 
-  selected = props.value ?? props.default
+  selected := props.value ?? props.default
 
   html.div {class: "mb-3"}, [
     html.label {class: "form-label", for: id}, text props.label
@@ -94,11 +94,11 @@ inputList = (props) ->
     if props.description? then html.small {id: describeId, class: "form-text"}, text props.description
   ]
 
-inputParam = (props) ->
+inputParam := (props) ->
   if props.list?
     return inputList props
 
-  inputType = props.input ?? switch props.type
+  inputType := props.input ?? switch props.type
     when "boolean" then "checkbox"
     when "string" then "text"
     when "text" then "textarea"
@@ -122,7 +122,7 @@ inputParam = (props) ->
       text "未実装の形式です。"
 
 
-export default adapterParams = ({params, param_types, ...props}) ->
+export default adapterParams := ({params, param_types, ...props}) ->
   html.div {}, [
     html.h5 {},
       text "パラメーター"

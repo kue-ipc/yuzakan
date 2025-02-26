@@ -6,48 +6,48 @@ import {objToJson, objToUrlencoded, toInteger} from "~/common/convert.civet"
 
 import {extractPagination} from "~api/pagination.civet"
 
-ALLOWED_METHODS = ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"]
+ALLOWED_METHODS := ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"]
 
-export fetchJson = (params) ->
-  request = createRequest(params)
+export fetchJson := (params) ->
+  request := createRequest(params)
   console.debug "fetch request: %s %s", request.method, request.url
-  response = await fetch request
+  response := await fetch request
   console.debug "fetch response: %d %s", response.status, response.url
   parseResponse(response)
 
-export fetchJsonGet = (params) ->
+export fetchJsonGet := (params) ->
   await fetchJson({method: "GET", ...params})
 
-export fetchJsonHead = (params) ->
+export fetchJsonHead := (params) ->
   await fetchJson({method: "HEAD", ...params})
 
-export fetchJsonPost = (params) ->
+export fetchJsonPost := (params) ->
   await fetchJson({method: "POST", ...params})
 
-export fetchJsonPut = (params) ->
+export fetchJsonPut := (params) ->
   await fetchJson({method: "PUT", ...params})
 
-export fetchJsonPatch = (params) ->
+export fetchJsonPatch := (params) ->
   await fetchJson({method: "PATCH", ...params})
 
-export fetchJsonDelete = (params) ->
+export fetchJsonDelete := (params) ->
   await fetchJson({method: "DELETE", ...params})
 
-createRequest = ({url, method, data = null, type = "json", ...params}) ->
+createRequest := ({url, method, data = null, type = "json", ...params}) ->
   // create request
 
-  method = method.toUpperCase()
+  method := method.toUpperCase()
   unless ALLOWED_METHODS.includes(method)
     throw new Error(`Unknown or unsupported method: ${method}`)
 
-  init = {
+  init := {
     method: method
     mode: "same-origin"
     credentials: "same-origin"
     ...params
   }
 
-  headers = new Headers {
+  headers := new Headers {
     "Accept": "application/json"
   }
  
@@ -91,11 +91,11 @@ createRequest = ({url, method, data = null, type = "json", ...params}) ->
 
   new Request(url, init)
 
-parseResponse = (response) ->
-  location = response.headers.get("Content-Location") ?? response.url
+parseResponse := (response) ->
+  location := response.headers.get("Content-Location") ?? response.url
 
-  contentType = response.headers.get("Content-Type")
-  responseData =
+  contentType := response.headers.get("Content-Type")
+  responseData :=
     if not contentType?
       {type: undefined, data: null}
     else if contentType.startsWith("application/json")
@@ -105,15 +105,15 @@ parseResponse = (response) ->
     else
       throw new Error(`Unknown or unsupported content type: ${contentType}`)
 
-  contentRange = response.headers.get("Content-Range")
-  paginationInfo =
+  contentRange := response.headers.get("Content-Range")
+  paginationInfo :=
     if contentRange?
       {pagination: extractPagination(contentRange, location)}
     else
       {}
 
-  linkHeader = response.headers.get("Link")
-  linkInfo =
+  linkHeader := response.headers.get("Link")
+  linkInfo :=
     if linkHeader?
       {links: HttpLinkHeader.parse(linkHeader)}
     else

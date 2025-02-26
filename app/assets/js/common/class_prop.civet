@@ -2,7 +2,7 @@
 
 import {uniq, compact} from "~/common/helper.civet"
 
-export parseClassProp = (obj) ->
+export parseClassProp := (obj) ->
   if !obj?
     []
   else if typeof obj is "string"
@@ -15,5 +15,5 @@ export parseClassProp = (obj) ->
     console.warn "Not a string, an array, or an object."
     []
 
-export classConcat = (...objs) ->
+export classConcat := (...objs) ->
   compact(uniq(objs.map(parseClassProp).flat()))

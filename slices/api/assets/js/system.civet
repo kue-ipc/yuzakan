@@ -8,9 +8,9 @@ import {pickType} from "~/common/helper.civet"
 
 // Contants
 
-export API_SYSTEM = "/api/system"
+export API_SYSTEM := "/api/system"
 
-export SYSTEM_PROPERTIES = {
+export SYSTEM_PROPERTIES := {
   title: "string"
   url: "string"
   domain: "string"
@@ -18,13 +18,13 @@ export SYSTEM_PROPERTIES = {
   contact: "object"
 }
 
-SYSTEM_APP_PROPERTIES = {
+SYSTEM_APP_PROPERTIES := {
   name: "string"
   version: "string"
   license: "string"
 }
 
-SYSTEM_CONTACT_PROPERTIES = {
+SYSTEM_CONTACT_PROPERTIES := {
   name: "string"
   email: "string"
   phone: "string"
@@ -32,22 +32,22 @@ SYSTEM_CONTACT_PROPERTIES = {
 
 // Functions
 
-export normalizeSystem = (system, types = {}) ->
-  system = pickType(system, {...SYSTEM_PROPERTIES, ...types})
+export normalizeSystem := (system, types = {}) ->
+  system := pickType(system, {...SYSTEM_PROPERTIES, ...types})
   system.app = pickType(system.app, SYSTEM_APP_PROPERTIES) if system.app
   system.contact = pickType(system.contact, SYSTEM_CONTACT_PROPERTIES) if system.contact
   system
 
 // Actions
 
-export SetSystem = (state, system) -> {
+export SetSystem := (state, system) -> {
   ...state
   system
 }
 
 // create Effecters
 
-export createRunShowSystem = (params = {}) ->
+export createRunShowSystem := (params = {}) ->
   createRunShow({
     action: SetSystem
     normalizer: normalizeSystem
@@ -57,4 +57,4 @@ export createRunShowSystem = (params = {}) ->
 
 // Effecters
 
-export runShowSystem = createRunShowSystem()
+export runShowSystem := createRunShowSystem()

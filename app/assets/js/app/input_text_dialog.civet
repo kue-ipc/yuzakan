@@ -4,16 +4,9 @@ import * as html from "@hyperapp/html"
 import {modalDialog} from "~/app/modal.civet"
 
 export default class InputTextDialog
-  MESSAGE_EVENT = "inputtextdialog.message"
+  @MESSAGE_EVENT := "inputtextdialog.message"
 
-  @({
-    @id
-    @title
-    @messages = []
-    @siza
-    action = {}
-    close = {}
-  })
+  @({@id, @title, @messages = [], @siza, action = {}, close = {}})
     @action = {
       color: "primary"
       label: "OK"
@@ -32,7 +25,7 @@ export default class InputTextDialog
     @modalNode.setAttribute("tabindex", -1)
     @modalNode.setAttribute("aria-hidden", "true")
 
-    modalDialogNode = document.createElement("div")
+    modalDialogNode := document.createElement("div")
     modalDialogNode.id = `${@id}-modal-dialog`
     modalDialogNode.classList.add("modal-dialog")
 
@@ -76,13 +69,15 @@ export default class InputTextDialog
         html.p {}, text "..."
 
   fireModalMessage(state)
-    event = new CustomEvent(InputTextDialog.MESSAGE_EVENT, {detail: state})
+    event := new CustomEvent(InputTextDialog.MESSAGE_EVENT, {detail: state})
     @modalNode.dispatchEvent(event)
 
   messageRunner(dispatch, {action, node})
-    func = (e) -> dispatch(action, e.detail)
+    func := (e) -> dispatch(action, e.detail)
     node.addEventListener(InputTextDialog.MESSAGE_EVENT, func)
     -> node.removeEventListener(InputTextDialog.MESSAGE_EVENT, func)
+
+  // instance methods to which `this` is bound
 
   modalView = ({title, messages, value, size, action, close, shown}) =>
     modalDialog {
@@ -108,14 +103,14 @@ export default class InputTextDialog
     [{...state, ...params}, focus(`${@id}-input-textarea`)]
 
   shownRunner = (dispatch, {action}) =>
-    func = -> dispatch(action)
+    func := -> dispatch(action)
     @modalNode.addEventListener("shown.bs.modal", func)
     => @modalNode.removeEventListener("shown.bs.modal", func)
 
   shownSub = (action) => [@shownRunner, {action}]
 
   hiddenRunner = (dispatch, {action}) =>
-    func = -> dispatch(action)
+    func := -> dispatch(action)
     @modalNode.addEventListener("hidden.bs.modal", func)
     => @modalNode.removeEventListener("hidden.bs.modal", func)
 

@@ -7,7 +7,7 @@ import {Modal} from "bootstrap"
 import bsIcon from "~/app/bs_icon.civet"
 
 export default class WebPostJson
-  MESSAGE_EVENT = "webpostjson.message"
+  @MESSAGE_EVENT := "webpostjson.message"
 
   @({
     @form
@@ -21,7 +21,7 @@ export default class WebPostJson
     @modalNode.setAttribute("tabindex", -1)
     @modalNode.setAttribute("aria-hidden", "true")
 
-    modalDialogNode = document.createElement("div")
+    modalDialogNode := document.createElement("div")
     modalDialogNode.classList.add("modal-dialog", "modal-dialog-centered")
 
     @modalContentNode = document.createElement("div")
@@ -73,8 +73,8 @@ export default class WebPostJson
     @modal.show()
 
     try
-      formData = new FormData(@form)
-      response = await fetch @form.action, {
+      formData := new FormData(@form)
+      response := await fetch @form.action, {
         method: "POST"
         mode: "same-origin"
         credentials: "same-origin"
@@ -84,9 +84,9 @@ export default class WebPostJson
         body: formData
       }
 
-      data = await response.json()
+      data := await response.json()
 
-      resultTitle =
+      resultTitle :=
         switch data.result
           when "success" then "成功"
           when "failure" then "失敗"
@@ -124,7 +124,7 @@ export default class WebPostJson
 
     catch error
       console.error error
-      data = {
+      data := {
         result: "error"
         messages: {
           failure: "サーバー接続時にエラーが発生しました。しばらく待ってから、再度試してください。"
@@ -144,24 +144,24 @@ export default class WebPostJson
       }
       return data
 
-messageRunner = (dispatch, {action, node}) ->
-  func = (e) ->
+messageRunner := (dispatch, {action, node}) ->
+  func := (e) ->
     dispatch(action, e.detail)
   node.addEventListener(WebPostJson.MESSAGE_EVENT, func)
   -> node.removeEventListener(WebPostJson.MESSAGE_EVENT, func)
 
-messageSub = (action, {node}) ->
+messageSub := (action, {node}) ->
   [
     messageRunner
     {action, node}
   ]
 
-messageAction = (state, params) -> {
+messageAction := (state, params) -> {
   ...state
   ...params
 }
 
-ModalView = ({status, title, messages, closable, successLink}) ->
+ModalView := ({status, title, messages, closable, successLink}) ->
   h "div", {class: "modal-content"}, [
     h "div", {class: "modal-header"}, [
       h "h5", {class: "modal-title"}, [
@@ -195,7 +195,7 @@ ModalView = ({status, title, messages, closable, successLink}) ->
       ]
   ]
 
-STATUS_LEVELS = new Map([
+STATUS_LEVELS := new Map([
   ["success", {color: "success", icon: "check-circle-fill"}]
   ["failure", {color: "danger", icon: "x-circle-fill"}]
   ["fatal", {color: "danger", icon: "slash-circle-fill"}]
@@ -206,7 +206,7 @@ STATUS_LEVELS = new Map([
   ["unknown", {color: "primary", icon: "question-diamond-fill"}]
 ])
 
-StatusIcon = ({status}) ->
+StatusIcon := ({status}) ->
   if status is "running"
     return h "div", {class: "spinner-border", role: "status"},
       h "span", {class: "visually-hidden"}, text "読込中..."
@@ -214,7 +214,7 @@ StatusIcon = ({status}) ->
   h "span", {class: [`text-${color}`, "align-text-bottom"]},
     bsIcon {name: icon, size: 24}
 
-MessageList = ({messages}) ->
+MessageList := ({messages}) ->
   messages = [messages] unless messages instanceof Array
   h "div", {}, messages.filter((x) -> typeof x is "string").map (msg) ->
     h "div", {},

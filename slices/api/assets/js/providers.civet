@@ -12,9 +12,9 @@ import {pickType} from "~/common/helper.civet"
 
 // Constants
 
-export API_PROVIDERS = "/api/providers"
+export API_PROVIDERS := "/api/providers"
 
-export PROVIDER_PROPERTIES = {
+export PROVIDER_PROPERTIES := {
   name: "string"
   display_name: "string"
   adapter: "string"
@@ -30,30 +30,30 @@ export PROVIDER_PROPERTIES = {
   description: "string"
 }
 
-export INDEX_PROVIDERS_PARAM_TYPES = {
+export INDEX_PROVIDERS_PARAM_TYPES := {
   has_group: "boolean"
 }
 
-export SHOW_PROVIDER_PARAM_TYPES = {
+export SHOW_PROVIDER_PARAM_TYPES := {
 }
 
-export CREATE_PROVIDER_PARAM_TYPES = {
+export CREATE_PROVIDER_PARAM_TYPES := {
   ...PROVIDER_PROPERTIES
 }
 
-export UPDATE_PROVIDER_PARAM_TYPES = {
+export UPDATE_PROVIDER_PARAM_TYPES := {
   ...PROVIDER_PROPERTIES
 }
 
-export DESTROY_PROVIDER_PARAM_TYPES = {
+export DESTROY_PROVIDER_PARAM_TYPES := {
 }
 
 // Functions
 
-export normalizeProviders = (providers, type = {}) ->
+export normalizeProviders := (providers, type = {}) ->
   normalizeProvider(provider, type) for each provider of providers
 
-export normalizeProvider = (provider, types = {}) ->
+export normalizeProvider := (provider, types = {}) ->
   pickType(provider, {
     ...PROVIDER_PROPERTIES
     params: "map"
@@ -62,19 +62,19 @@ export normalizeProvider = (provider, types = {}) ->
 
 // Actiosn
 
-export SetProviders = (state, providers) -> {
+export SetProviders := (state, providers) -> {
   ...state
   providers
 }
 
-export SetProvider = (state, provider) -> {
+export SetProvider := (state, provider) -> {
   ...state
   provider
 }
 
 // create Effecters
 
-export createRunIndexProviders = (params = {}) ->
+export createRunIndexProviders := (params = {}) ->
   createRunIndex({
     action: SetProviders
     normalizer: normalizeProviders
@@ -83,7 +83,7 @@ export createRunIndexProviders = (params = {}) ->
     ...params
   })
 
-export createRunShowProvider = (params = {}) ->
+export createRunShowProvider := (params = {}) ->
   createRunShowWithId({
     action: SetProvider
     normalizer: normalizeProvider
@@ -92,7 +92,7 @@ export createRunShowProvider = (params = {}) ->
     ...params
   })
 
-export createRunCreateProvider = (params = {}) ->
+export createRunCreateProvider := (params = {}) ->
   createRunCreateWithId({
     action: SetProvider
     normalizer: normalizeProvider
@@ -101,7 +101,7 @@ export createRunCreateProvider = (params = {}) ->
     ...params
   })
 
-export createRunUpdateProvider = (params = {}) ->
+export createRunUpdateProvider := (params = {}) ->
   createRunUpdateWithId({
     action: SetProvider
     normalizer: normalizeProvider
@@ -110,7 +110,7 @@ export createRunUpdateProvider = (params = {}) ->
     ...params
   })
 
-export createRunDestroyProvider = (params = {}) ->
+export createRunDestroyProvider := (params = {}) ->
   createRunDestroyWithId({
     action: SetProvider
     normalizer: normalizeProvider
@@ -121,8 +121,8 @@ export createRunDestroyProvider = (params = {}) ->
 
 // Effecters
 
-export runIndexProviders = createRunIndexProviders()
-export runShowProvider = createRunShowProvider()
-export runCreateProvider = createRunCreateProvider()
-export runUpdateProvider = createRunUpdateProvider()
-export runDestroyProvider = createRunDestroyProvider()
+export runIndexProviders := createRunIndexProviders()
+export runShowProvider := createRunShowProvider()
+export runCreateProvider := createRunCreateProvider()
+export runUpdateProvider := createRunUpdateProvider()
+export runDestroyProvider := createRunDestroyProvider()

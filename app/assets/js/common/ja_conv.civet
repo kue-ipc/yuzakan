@@ -3,7 +3,7 @@
 // https://www.ezairyu.mofa.go.jp/passport/hebon.html
 // ただし、va vi vu ve vo は使用可とする。
 
-ROMAJI_MAP = {
+ROMAJI_MAP := {
   "ア": "a",   "イ": "i",   "ウ": "u",   "エ": "e",   "オ": "o",
   "カ": "ka",  "キ": "ki",  "ク": "ku",  "ケ": "ke",  "コ": "ko",
   "サ": "sa",  "シ": "shi", "ス": "su",  "セ": "se",  "ソ": "so",
@@ -54,7 +54,7 @@ ROMAJI_MAP = {
 }
 
 // 平仮名や片仮名をローマ字にする
-export toRomaji = (str) ->
+export toRomaji := (str) ->
   return str unless str
 
   str = toKatakana(str)
@@ -73,7 +73,7 @@ export toRomaji = (str) ->
   str
 
 // 正規化後に平仮名を片仮名にする
-export toKatakana = (str) ->
+export toKatakana := (str) ->
   return str unless str
 
   str = str.normalize "NFKC"
@@ -82,7 +82,7 @@ export toKatakana = (str) ->
   str
 
 // 正規化後に片仮名を平仮名にする
-export toHiragana = (str) ->
+export toHiragana := (str) ->
   return str unless str
 
   str = str.normalize "NFKC"

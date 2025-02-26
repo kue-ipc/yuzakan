@@ -2,24 +2,24 @@ import {fetchJsonGet} from "~api/fetch_json.civet"
 
 import {InitUserAttrs} from "~admin/user_attrs.civet"
 
-newUser = {
+newUser := {
   name: ""
   clearance_level: 1
   userdata: {attrs: {}}
   provider_userdatas: []
 }
 
-SetUserWithInit = (state, {user}) ->
-  providers = (provider_userdata.provider.name for each provider_userdata of user.provider_userdatas)
-  primary_group = user.userdata.primary_group
-  groups = user.userdata.groups || []
+SetUserWithInit := (state, {user}) ->
+  providers := (provider_userdata.provider.name for each provider_userdata of user.provider_userdatas)
+  primary_group := user.userdata.primary_group
+  groups := user.userdata.groups || []
   [InitUserAttrs, {user: {...user, providers, primary_group, groups}}]
 
-SetMode = (state, mode) -> {...state, mode}
+SetMode := (state, mode) -> {...state, mode}
 
-export runGetUserWithInit = (dispatch, {name}) ->
+export runGetUserWithInit := (dispatch, {name}) ->
   if name?
-    response = await fetchJsonGet({url: `/api/users/${name}`})
+    response := await fetchJsonGet({url: `/api/users/${name}`})
     if response.ok
       dispatch(SetUserWithInit, {user: response.data})
     else if response.code is 404

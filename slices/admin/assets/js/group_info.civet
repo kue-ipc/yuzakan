@@ -8,7 +8,7 @@ import bsIcon from "~/app/bs_icon.civet"
 
 // Views
 
-export default groupInfo = ({mode, group}) ->
+export default groupInfo := ({mode, group}) ->
   html.div {key: "group-info"}, [
     html.h4 {}, text "基本情報"
     dlh.dl {}, [

@@ -2,7 +2,7 @@ import {text} from "hyperapp"
 import * as html from "@hyperapp/html"
 import bsIcon from "~/app/bs_icon.civet"
 
-STATUSES = new Map([
+STATUSES := new Map([
   {status: "success", label: "成功", color: "success", icon: "check-circle-fill"}
   {status: "failure", label: "失敗", color: "danger", icon: "x-circle-fill"}
   {status: "fatal", label: "致命的エラー", color: "danger", icon: "slash-circle-fill"}
@@ -15,10 +15,10 @@ STATUSES = new Map([
   {status: "unknown", label: "不明", color: "primary", icon: "question-diamond-fill"}
 ].map((status) -> [status.status, status]))
 
-UNKNOWN_STATUS = "unknown"
-RUNNING_LABEL = "読込中..."
+UNKNOWN_STATUS := "unknown"
+RUNNING_LABEL := "読込中..."
 
-export StatusIcon = ({status, ...props}) ->
+export StatusIcon := ({status, ...props}) ->
   if status is "running"
     html.div {class: `spinner-border ${props.class}`, role: "status"},
       html.span {class: "visually-hidden"}, text RUNNING_LABEL
@@ -27,5 +27,5 @@ export StatusIcon = ({status, ...props}) ->
     html.div {class: `text-${color} ${props.class}`},
       bsIcon {name: icon, alt: label, size: 32}
 
-export statusInfo = (status) ->
+export statusInfo := (status) ->
   STATUSES.get(status) ?? STATUSES.get(UNKNOWN_STATUS)

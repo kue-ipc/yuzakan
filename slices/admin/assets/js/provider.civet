@@ -12,9 +12,9 @@ import ConfirmDialog from "~/app/confirm_dialog.civet"
 
 import adapterParams from "~admin/adapter_params.civet"
 
-parentNames = ["provider"]
+parentNames := ["provider"]
 
-abilities = [
+abilities := [
   {name: "readable", label: "読み取り"}
   {name: "writable", label: "書き込み"}
   {name: "authenticatable", label: "認証"}
@@ -22,7 +22,7 @@ abilities = [
   {name: "lockable", label: "ロック"}
 ]
 
-destroyConfirm = new ConfirmDialog {
+destroyConfirm := new ConfirmDialog {
   id: formId("destroy", ["modal", "confirm", ...parentNames])
   status: "alert"
   title: "プロバイダーの削除"
@@ -33,7 +33,7 @@ destroyConfirm = new ConfirmDialog {
   }
 }
 
-createWebData = new WebData {
+createWebData := new WebData {
   id: formId("create", ["modal", "web", ...parentNames])
   title: "プロバイダーの作成"
   method: "POST"
@@ -43,7 +43,7 @@ createWebData = new WebData {
   ]
 }
 
-updateWebData = new WebData {
+updateWebData := new WebData {
   id: formId("update", ["modal", "web", ...parentNames])
   title: "プロバイダーの更新"
   method: "PATCH"
@@ -52,7 +52,7 @@ updateWebData = new WebData {
   ]
 }
 
-destroyWebData = new WebData {
+destroyWebData := new WebData {
   id: formId("destroy", ["modal", "web", ...parentNames])
   title: "プロバイダーの削除"
   method: "DELETE"
@@ -61,13 +61,13 @@ destroyWebData = new WebData {
   ]
 }
 
-adapterParamAction = (state, {name, value}) ->
+adapterParamAction := (state, {name, value}) ->
   {...state, provider: {...state.provider, params: {...state.provider.params, [name]: value}}}
 
-providerAction = (state, {name, provider}) ->
+providerAction := (state, {name, provider}) ->
   history.pushState(null, null, `/admin/providers/${name}`) if name? && name is not state.name
 
-  newState = {
+  newState := {
     ...state
     name: name ?? state.name
     provider: {...state.provider, ...provider}
@@ -84,81 +84,81 @@ providerAction = (state, {name, provider}) ->
     [showAdapterRunner, {name: provider.adapter}]
   ]
 
-adapterAction = (state, {name, adapter}) ->
+adapterAction := (state, {name, adapter}) ->
   name ?= adapter.name
-  adapters = for each current of state.adapters
+  adapters := for each current of state.adapters
     if current.name is adapter.name
       {...current, ...adapter}
     else
       current
   {...state, adapters}
 
-showAdapterRunner = (dispatch, {name}) ->
+showAdapterRunner := (dispatch, {name}) ->
   return unless name?
 
-  response = await fetchJsonGet({url: `/api/adapters/${name}`})
+  response := await fetchJsonGet({url: `/api/adapters/${name}`})
   if response.ok
     dispatch(adapterAction, {name: name, adapter: response.data})
   else
     console.error response
 
-createProviderRunner = (dispatch, {provider}) ->
-  response = await createWebData.submitPromise {data: {...csrf(), ...provider}}
+createProviderRunner := (dispatch, {provider}) ->
+  response := await createWebData.submitPromise {data: {...csrf(), ...provider}}
   if response.ok
-    provider = response.data
+    provider := response.data
     dispatch(providerAction, {name: provider.name, provider})
   else
     console.error response
 
 
-updateProviderRunner = (dispatch, {name, provider}) ->
-  response = await updateWebData.submitPromise {url: `/api/providers/${name}`, data: {...csrf(), ...provider}}
+updateProviderRunner := (dispatch, {name, provider}) ->
+  response := await updateWebData.submitPromise {url: `/api/providers/${name}`, data: {...csrf(), ...provider}}
   if response.ok
-    provider = response.data
+    provider := response.data
     dispatch(providerAction, {name: provider.name, provider})
   else
     console.error response
 
-destroyProviderRunner = (dispatch, {name}) ->
-  confirm = await destroyConfirm.showPromise({message: `属性「${name}」を削除してもよろしいですか？`})
+destroyProviderRunner := (dispatch, {name}) ->
+  confirm := await destroyConfirm.showPromise({message: `属性「${name}」を削除してもよろしいですか？`})
   if confirm
-    response = await destroyWebData.submitPromise {url: `/api/providers/${name}`, data: csrf()}
+    response := await destroyWebData.submitPromise {url: `/api/providers/${name}`, data: csrf()}
     if response.ok
       // ...redirect
     else
       console.error response
 
 
-showProviderRunner = (dispatch, {name}) ->
+showProviderRunner := (dispatch, {name}) ->
   return unless name?
 
-  response = await fetchJsonGet({url: `/api/providers/${name}`})
+  response := await fetchJsonGet({url: `/api/providers/${name}`})
   if response.ok
     dispatch(providerAction, {provider: response.data})
   else
     console.error response
 
-initAllAdaptersAction = (state, {adapters}) ->
+initAllAdaptersAction := (state, {adapters}) ->
   {...state, adapters}
 
-indexAllAdaptersRunner = (dispatch) ->
-  response = await fetchJsonGet({url: "/api/adapters"})
+indexAllAdaptersRunner := (dispatch) ->
+  response := await fetchJsonGet({url: "/api/adapters"})
   if response.ok
     dispatch(initAllAdaptersAction, {adapters: response.data})
   else
     console.error response
 
-name = location.pathname.split("/").at(-1)
-name = undefined if name is "*"
+name := location.pathname.split("/").at(-1)
+name := undefined if name is "*"
 
-init = [
+init := [
   {name, provider: {params: {}}, adapters: []}
   [indexAllAdaptersRunner]
   [showProviderRunner, {name}]
 ]
 
-view = ({name, provider, adapters}) ->
-  provider_adapter = (adapter for each adapter of adapters when adapter.name is provider.adapter)[0]
+view := ({name, provider, adapters}) ->
+  provider_adapter := (adapter for each adapter of adapters when adapter.name is provider.adapter)[0]
   html.div {}, [
     html.div {class: "mb-3"}, [
       html.label {class: "form-label", for: "provider-name"}, text "名前"
@@ -258,6 +258,6 @@ view = ({name, provider, adapters}) ->
         ]
   ]
 
-node = document.getElementById("provider")
+node := document.getElementById("provider")
 
 app {init, view, node}

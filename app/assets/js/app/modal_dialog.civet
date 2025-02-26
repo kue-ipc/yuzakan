@@ -11,15 +11,15 @@ import {Modal} from "bootstrap"
 import {modalDialog} from "~/app/modal.civet"
 
 export default class ModalDialog
-  MESSAGE_EVENT = "modaldialog.message"
+  @MESSAGE_EVENT := "modaldialog.message"
 
-  DEFAULT_ACTION = Object.freeze {
+  @DEFAULT_ACTION := Object.freeze {
     color: "primary"
     label: "OK"
     side: "right"
   }
 
-  DEFAULT_CLOSE = Object.freeze {
+  @DEFAULT_CLOSE := Object.freeze {
     color: "secondary"
     label: "閉じる"
   }
@@ -54,7 +54,7 @@ export default class ModalDialog
     @modalNode.setAttribute("tabindex", -1)
     @modalNode.setAttribute("aria-hidden", "true")
 
-    modalDialogNode = document.createElement("div")
+    modalDialogNode := document.createElement("div")
     modalDialogNode.id = `${@id}-modal-dialog`
     modalDialogNode.classList.add("modal-dialog")
 
@@ -88,7 +88,7 @@ export default class ModalDialog
 
   // show
   showPromise(state = {})
-    state = @initState(state)
+    state := @initState(state)
     @fireModalMessage(state)
     @result = undefined
     waitModalClose = @waitModalClosePromise()

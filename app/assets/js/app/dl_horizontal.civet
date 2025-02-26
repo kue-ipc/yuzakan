@@ -1,7 +1,7 @@
 import * as html from "@hyperapp/html"
 import {classConcat} from "~/common/class_prop.civet"
 
-cols = {
+cols := {
   xs: 12
   sm: 4
   md: 3
@@ -9,22 +9,22 @@ cols = {
   xl: 2
   xll: 2
 }
-colPrint = 3
+colPrint := 3
 
-calcDtClasses = ->
-  list = []
+calcDtClasses := ->
+  list := []
   list.push `col-${cols.xs}` if cols.xs && cols.xs < 12
-  pre = cols.xs
+  pre := cols.xs
   for each name of ["sm", "md", "lg", "xl", "xll"]
     list.push `col-${name}-${cols[name]}` if cols[name] is not pre
     pre = cols[name]
   list.push `col-print-${colPrint}`
   list
 
-calcDdClasses = ->
-  list = []
+calcDdClasses := ->
+  list := []
   list.push `col-${12 - cols.xs}` if cols.xs && cols.xs < 12
-  pre = cols.xs
+  pre := cols.xs
   for each name of ["sm", "md", "lg", "xl", "xll"]
     list.push `col-${name}-${12 - cols[name]}` if cols[name] is not pre
     pre = cols[name]
@@ -32,9 +32,9 @@ calcDdClasses = ->
   list
 
 calcDdSubClasses = ->
-  list = calcDdClasses()
+  list := calcDdClasses()
   list.push `offset-${cols.xs}` if cols.xs && cols.xs < 12
-  pre = cols.xs
+  pre := cols.xs
   for each name of ["sm", "md", "lg", "xl", "xll"]
     list.push `offset-${name}-${cols[name]}` if cols[name] is not pre
     list.push `col-${name}-${12 - cols[name]}` if cols[name] is not pre
@@ -43,30 +43,30 @@ calcDdSubClasses = ->
   list.push `col-print-${12 - colPrint}`
   list
 
-export dlClasses = Object.freeze ["row"]
-export dtClasses = Object.freeze calcDtClasses()
-export ddClasses = Object.freeze calcDdClasses()
-export ddSubClasses = Object.freeze calcDdSubClasses()
+export dlClasses := Object.freeze ["row"]
+export dtClasses := Object.freeze calcDtClasses()
+export ddClasses := Object.freeze calcDdClasses()
+export ddSubClasses := Object.freeze calcDdSubClasses()
 
-export dl = (props, children) ->
+export dl := (props, children) ->
   html.dl {
     ...props
     class: classConcat(dlClasses, props.class)
   }, children
 
-export dt = (props, children) ->
+export dt := (props, children) ->
   html.dt {
     ...props
     class: classConcat(dtClasses, props.class)
   }, children
 
-export dd = (props, children) ->
+export dd := (props, children) ->
   html.dd {
     ...props
     class: classConcat(ddClasses, props.class)
   }, children
 
-export ddSub = (props, children) ->
+export ddSub := (props, children) ->
   html.dd {
     ...props
     class: classConcat(ddSubClasses, props.class)

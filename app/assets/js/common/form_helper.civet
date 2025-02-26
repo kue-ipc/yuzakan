@@ -2,18 +2,18 @@
 
 import {listToKebabCase, listToParamName} from "~/common/convert.civet"
 
-export formName = (name, parents = []) ->
+export formName := (name, parents = []) ->
   listToParamName(...parents, name)
 
-export formId = (name, parents = []) ->
+export formId := (name, parents = []) ->
   listToKebabCase(...parents, name)
 
-export formDataToObj = (formData) ->
-  root = {}
+export formDataToObj := (formData) ->
+  root := {}
   for [key, value] of formData
-    keyList = paramNameToList(key)
-    obj = root
-    while subKey = keyList.shift()
+    keyList := paramNameToList(key)
+    obj := root
+    while subKey .= keyList.shift()
       if keyList.length is 0
         obj[subKey] = value
       else
@@ -29,9 +29,9 @@ export formDataToObj = (formData) ->
 
   root
 
-export formDataToJson = (formData) ->
+export formDataToJson := (formData) ->
   JSON.stringify(formDataToObj(formData))
 
-export formDataToUrlencoded = (formData) ->
+export formDataToUrlencoded := (formData) ->
   throw new Error("Not implument")
 

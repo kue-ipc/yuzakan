@@ -1,6 +1,6 @@
 // 入力イベントの値を渡すアクションを生成する
 
-export createEventValueAction = (action, {type = "string"} = {}) ->
+export createEventValueAction := (action, {type = "string"} = {}) ->
   switch type
     when "string", "text", "datetime", "date", "time"
       (state, event) ->
@@ -26,6 +26,6 @@ export createEventValueAction = (action, {type = "string"} = {}) ->
     else
       throw new Error(`unknown type: ${type}`)
 
-export createEventAction = (action, opts = {}) ->
+export createEventAction := (action, opts = {}) ->
   event.preventDefault()
   [action, opts]

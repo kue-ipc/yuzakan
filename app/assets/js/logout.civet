@@ -4,7 +4,7 @@ import WebData from "~/app/web_data.civet"
 import bsIcon from "~/app/bs_icon.civet"
 import csrf from "~/csrf.civet"
 
-webData = new WebData {
+webData := new WebData {
   id: "logout"
   title: "ログアウト"
   method: "DELETE"
@@ -15,10 +15,10 @@ webData = new WebData {
   ]
 }
 
-logout = (dispatch) ->
+logout := (dispatch) ->
   await webData.submitPromise({data: csrf()})
   
-view = (state) ->
+view := (state) ->
   html.button {
     class: state.buttonClassList
     onclick: (state, event) ->
@@ -28,7 +28,7 @@ view = (state) ->
     html.span {class: "d-none d-md-inline"}, text "ログアウト"
   ]
 
-defaultButtonClassList = "btn btn-sm btn-outline-light d-flex align-items-center".split(" ").filter((_) -> _)
+defaultButtonClassList := "btn btn-sm btn-outline-light d-flex align-items-center".split(" ").filter((_) -> _)
 
 for each el of document.getElementsByClassName("logout-button")
   init = {

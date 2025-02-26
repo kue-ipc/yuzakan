@@ -14,11 +14,11 @@ import {updateList} from "~/common/list_helper.civet"
 
 // Functions
 
-updateAttrList = (attrs, attr) -> updateList(attrs, attr.name, attr, {key: "name"})
+updateAttrList := (attrs, attr) -> updateList(attrs, attr.name, attr, {key: "name"})
 
 // Dialogs
 
-deleteConfirm = new ConfirmDialog {
+deleteConfirm := new ConfirmDialog {
   id: "attrs_confirm"
   status: "alert"
   title: "属性の削除"
@@ -29,7 +29,7 @@ deleteConfirm = new ConfirmDialog {
   }
 }
 
-inputCode = new InputTextDialog {
+inputCode := new InputTextDialog {
   id: "attrs_input_code"
   title: "コードの入力"
   size: 4096
@@ -37,14 +37,14 @@ inputCode = new InputTextDialog {
 
 // Viwes
 
-providerTh = ({provider}) ->
+providerTh := ({provider}) ->
   html.th {}, text provider.display_name ?? provider.name
 
-attrMappingTd = ({attr, provider}) ->
+attrMappingTd := ({attr, provider}) ->
   unless attr.mappings?
     return html.td {}, text "読み込み中"
 
-  mapping = attr.mappings.find (mapping) ->
+  mapping := attr.mappings.find (mapping) ->
     mapping.provider is provider.name
   mapping ?= {key: "", conversion: null}
 
@@ -71,7 +71,7 @@ attrMappingTd = ({attr, provider}) ->
         }, text conversion.label
   ]
 
-attrTr = ({attr, index, providers}) ->
+attrTr := ({attr, index, providers}) ->
   html.tr {}, [
     html.td {},
       if attr.order?
@@ -176,31 +176,31 @@ attrTr = ({attr, index, providers}) ->
     ...(attrMappingTd({attr, provider}) for each provider of providers)
   ]
 
-attrAction = (state, {name, attr}) ->
+attrAction := (state, {name, attr}) ->
   name ?= attr.name
   if name
-    replaced = false
-    attrs = for each current of state.attrs
+    replaced := false
+    attrs := for each current of state.attrs
       if current.name is name
-        replaced = true
+        replaced := true
         {...current, ...attr}
       else
         current
     unless replaced
-      attrs = [...attrs, attr]
+      attrs := [...attrs, attr]
     {...state, attrs}
   else
     {...state, newAttr: {...state.newAttr, ...attr}}
 
-deleteAttrAction = (state, {name}) ->
-  attrs = state.attrs.filter (attr) -> attr.name is not name
+deleteAttrAction := (state, {name}) ->
+  attrs := state.attrs.filter (attr) -> attr.name is not name
   {...state, attrs}
 
-replaceAttrMapping = (mappings, mapping) ->
-  replaced = false
-  new_attr_mappings = for each current of mappings
+replaceAttrMapping := (mappings, mapping) ->
+  replaced := false
+  new_attr_mappings := for each current of mappings
     if current.provider is mapping.provider
-      replaced = true
+      replaced := true
       {...current, ...mapping}
     else
       current
@@ -210,9 +210,9 @@ replaceAttrMapping = (mappings, mapping) ->
   else
     [...new_attr_mappings, {key: "", conversion: null, ...mapping}]
 
-attrMappingAction = (state, {name, mapping}) ->
+attrMappingAction := (state, {name, mapping}) ->
   if name
-    attrs = for each attr of state.attrs
+    attrs := for each attr of state.attrs
       if attr.name is name
         {...attr, mappings: replaceAttrMapping(attr.mappings, mapping)}
       else
@@ -224,8 +224,8 @@ attrMappingAction = (state, {name, mapping}) ->
       newAttr: {...state.newAttr, mappings: replaceAttrMapping(state.newAttr.mappings, mapping)}
     }
 
-inputCodeRunner = (dispatch, {attr}) ->
-  code = await inputCode.inputPromise {
+inputCodeRunner := (dispatch, {attr}) ->
+  code := await inputCode.inputPromise {
     messages: [`${attr.name} のデフォルト値を生成するJavaScriptのコードを入力してください。`]
     value: attr.code ?? ""
   }
@@ -235,37 +235,37 @@ inputCodeRunner = (dispatch, {attr}) ->
     else
       dispatch(attrAction, {name: attr.name, attr: {code: null}})
 
-createAttrRunner = (dispatch, {attr}) ->
-  {name, newName, ...attr} = attr
-  attr = {...attr, name: newName}
-  response = await fetchJsonPost({url: `/api/attrs`, data: {...csrf(), ...attr}})
+createAttrRunner := (dispatch, {attr}) ->
+  {name, newName, ...attr} := attr
+  attr := {...attr, name: newName}
+  response := await fetchJsonPost({url: `/api/attrs`, data: {...csrf(), ...attr}})
   if response.ok
     dispatch(attrAction, {attr: response.data})
     dispatch(attrAction, {attr: initNewAttr})
   else
     console.error response
 
-updateAttrRunner = (dispatch, {attr}) ->
-  {name, newName, ...attr} = attr
-  attr = {...attr, name: newName} if newName?
-  response = await fetchJsonPatch({url: `/api/attrs/${name}`, data: {...csrf(), ...attr}})
+updateAttrRunner := (dispatch, {attr}) ->
+  {name, newName, ...attr} := attr
+  attr := {...attr, name: newName} if newName?
+  response := await fetchJsonPatch({url: `/api/attrs/${name}`, data: {...csrf(), ...attr}})
   if response.ok
     dispatch(attrAction, {name, attr: {...response.data, newName: undefined}})
   else
     console.error response
 
-destroyAttrRunner = (dispatch, {attr}) ->
-  confirm = await deleteConfirm.showPromise({messages: [`属性「${attr.name}」を削除してもよろしいですか？`]})
+destroyAttrRunner := (dispatch, {attr}) ->
+  confirm := await deleteConfirm.showPromise({messages: [`属性「${attr.name}」を削除してもよろしいですか？`]})
   if confirm
-    response = await fetchJsonDelete({url: `/api/attrs/${attr.name}`, data: csrf()})
+    response := await fetchJsonDelete({url: `/api/attrs/${attr.name}`, data: csrf()})
     if response.ok
       dispatch(deleteAttrAction, {name: attr.name})
     else
       console.error response
 
-upAttrAction = (state, {name}) ->
-  attrIndex = state.attrs.findIndex (attr) -> attr.name is name
-  newOrder =
+upAttrAction := (state, {name}) ->
+  attrIndex := state.attrs.findIndex (attr) -> attr.name is name
+  newOrder := 
     switch attrIndex
       when 0, 1
         state.attrs[0].order - 8
@@ -276,7 +276,7 @@ upAttrAction = (state, {name}) ->
     console.warn "移動できません。"
     return state
  
-  newAttr = {...state.attrs[attrIndex], order: newOrder}
+  newAttr := {...state.attrs[attrIndex], order: newOrder}
 
   [
     {
@@ -290,9 +290,9 @@ upAttrAction = (state, {name}) ->
     [updateAttrRunner, {attr: newAttr}]
   ]
 
-downAttrAction = (state, {name}) ->
-  attrIndex = state.attrs.findIndex (attr) -> attr.name is name
-  newOrder =
+downAttrAction := (state, {name}) ->
+  attrIndex := state.attrs.findIndex (attr) -> attr.name is name
+  newOrder :=
     switch attrIndex
       when state.attrs.length - 1, state.attrs.length - 2
         state.attrs.at(-1).order + 8
@@ -303,7 +303,7 @@ downAttrAction = (state, {name}) ->
     console.warn "移動できません。"
     return state
  
-  newAttr = {...state.attrs[attrIndex], order: newOrder}
+  newAttr := {...state.attrs[attrIndex], order: newOrder}
 
   [
     {
@@ -318,8 +318,8 @@ downAttrAction = (state, {name}) ->
   ]
 
 
-// showAttrRunner = (dispatch, {attr}) ->
-//   response = await fetchJsonGet({url: `/api/attrs/${attr.name}`})
+// showAttrRunner := (dispatch, {attr}) ->
+//   response := await fetchJsonGet({url: `/api/attrs/${attr.name}`})
 //   if response.ok
 //     dispatch(attrAction, {attr: response.data})
 //   else
@@ -327,14 +327,14 @@ downAttrAction = (state, {name}) ->
 
 // Actions
 
-SetAttrsThenShow = (state, attrs) ->
-  newAttrs = (normalizeAttr(attr) for each attr of attrs)
+SetAttrsThenShow := (state, attrs) ->
+  newAttrs := (normalizeAttr(attr) for each attr of attrs)
   [
     {...state, attrs: newAttrs}
     ...([runShowAttr, {id: attr.name}] for each attr of newAttrs)
   ]
 
-SetAttrInList = (state, attr) ->
+SetAttrInList := (state, attr) ->
   {
     ...state
     attrs: updateAttrList(state.attrs, normalizeAttr(attr))
@@ -342,15 +342,15 @@ SetAttrInList = (state, attr) ->
 
 // Effecters
 
-runShowAttr = createRunShowAttr({action: SetAttrInList})
+runShowAttr := createRunShowAttr({action: SetAttrInList})
 
-runIndexAttrs = createRunIndexAttrs({action: SetAttrsThenShow})
+runIndexAttrs := createRunIndexAttrs({action: SetAttrsThenShow})
 
-runIndexProviders = createRunIndexProviders()
+runIndexProviders := createRunIndexProviders()
 
 // Vars
 
-initNewAttr = {
+initNewAttr := {
   name: undefined
   newName: ""
   label: ""
@@ -359,9 +359,9 @@ initNewAttr = {
   mappings: []
 }
 
-main = ->
+main := ->
 
-  init = [
+  init := [
     {
       attrs: []
       providers: []
@@ -371,7 +371,7 @@ main = ->
     [runIndexAttrs]
   ]
 
-  view = ({attrs, providers, newAttr}) ->
+  view := ({attrs, providers, newAttr}) ->
     html.table {class: "table"}, [
       html.thead {}, [
         html.tr {}, [
@@ -387,7 +387,7 @@ main = ->
           attrTr({attr, index, providers: providers})
     ]
 
-  node = document.getElementById("attrs")
+  node := document.getElementById("attrs")
 
   app {init, view, node}
 

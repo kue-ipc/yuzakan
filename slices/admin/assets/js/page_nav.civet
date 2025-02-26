@@ -4,9 +4,9 @@ import * as html from "@hyperapp/html"
 import {compact} from "~/common/helper.civet"
 
 // page navigatino view
-export default pageNav = ({page, per_page, total, start, end, onpage, readonly = false}) ->
+export default pageNav := ({page, per_page, total, start, end, onpage, readonly := false}) ->
   if total
-    total_page = Math.ceil(total / per_page)
+    total_page := Math.ceil(total / per_page)
     html.nav {class: "d-flex", "aria-label": "ページナビゲーション"}, [
       html.ul {class: "pagination"},
         pageList {page, total_page, onpage, readonly}
@@ -25,7 +25,7 @@ export default pageNav = ({page, per_page, total, start, end, onpage, readonly =
 
 
 
-pageList = ({page, total_page, onpage, readonly = false}) ->
+pageList := ({page, total_page, onpage, readonly := false}) ->
   compact([
     pageItem {content: "first", page: 1, disabled: page is 1, onpage, readonly}
     pageItem {content: "prev", page: page - 1, disabled: page is 1, onpage, readonly}
@@ -36,14 +36,14 @@ pageList = ({page, total_page, onpage, readonly = false}) ->
     pageItem {content: "last", page: total_page, disabled: page is total_page, onpage, readonly}
   ])
 
-pageNumList = ({start, end, page, total_page, onpage, readonly = false}) ->
+pageNumList := ({start, end, page, total_page, onpage, readonly := false}) ->
   for each num of [start..end]
     if num > 0 && num <= total_page
       pageItem {content: num, page: num, active: page is num, onpage, readonly}
     else
       null
 
-pageItem = ({content, page, onpage, active = false, disabled = false, readonly = false}) ->
+pageItem := ({content, page, onpage, active := false, disabled := false, readonly := false}) ->
   html.li {key: `page[${content}]`, class: {"page-item": true, active, disabled}},
     html.button {
       type: "button"
@@ -52,7 +52,7 @@ pageItem = ({content, page, onpage, active = false, disabled = false, readonly =
       onclick: (state) -> [onpage, page]
     }, text pageText(content)
 
-pageText = (content) ->
+pageText := (content) ->
   if typeof content is "string"
     {
       first: "最初"
@@ -63,7 +63,7 @@ pageText = (content) ->
   else
     String(content)
 
-pageEllipsis = ({start, end, onpage, readonly = false}) ->
+pageEllipsis := ({start, end, onpage, readonly := false}) ->
   if start > end
     return null
   else if start is end

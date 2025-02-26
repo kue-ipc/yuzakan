@@ -50,7 +50,7 @@ export default class LoginInfo extends ModalDialog
     ]
 
   loginInfo({user, dateTime, system})
-    site = switch @service.name
+    site := switch @service.name
       when "google"
         {name: "Google アカウント", url: "https://accounts.google.com/"}
       when "microsoft"

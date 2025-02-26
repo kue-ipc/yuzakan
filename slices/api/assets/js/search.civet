@@ -1,15 +1,15 @@
 // search
 
-export SEARCH_PARAM_TYPES = {
+export SEARCH_PARAM_TYPES := {
   query: "string"
   match: "string"
 }
 
-export MATCH_LIST = [
+export MATCH_LIST := [
   "extract"
   "partial"
   "forward"
   "backward"
 ]
 
-export DEFAULT_MATCH = "partial"
+export DEFAULT_MATCH := "partial"

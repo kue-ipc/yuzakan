@@ -10,7 +10,7 @@ import uploadButton from "~/app/upload_button.civet"
 
 // Dialogs
 
-startAllActionConfirm = new ConfirmDialog {
+startAllActionConfirm := new ConfirmDialog {
   id: "modal.confirm.do_all_action"
   states: "alert"
   title: "すべて実行"
@@ -22,8 +22,8 @@ startAllActionConfirm = new ConfirmDialog {
 
 // Views
 
-export batchOperation = ({mode, list, header, filename, onupload, action}) ->
-  filename = `${basename(filename, ".*")}_${DateTime.now().toFormat("yyyyMMddHHmmss")}.csv`
+export batchOperation := ({mode, list, header, filename, onupload, action}) ->
+  filename := `${basename(filename, ".*")}_${DateTime.now().toFormat("yyyyMMddHHmmss")}.csv`
 
   html.div {key: "batch_operation", class: "row mb-2"}, [
     html.div {key: "upload", class: "col-md-2"},
@@ -44,7 +44,7 @@ export batchOperation = ({mode, list, header, filename, onupload, action}) ->
         startAllActionButton {list, action, disbaled: mode is "do_all"}
   ]
 
-startAllActionButton = ({disabled, ...props}) ->
+startAllActionButton := ({disabled, ...props}) ->
   html.button {
     class: "btn btn-danger"
     onclick: -> [StartAllActionWithConfirm, props]
@@ -52,20 +52,20 @@ startAllActionButton = ({disabled, ...props}) ->
 
 // Actions
 
-StartAllActionWithConfirm = (state, props) ->
+StartAllActionWithConfirm := (state, props) ->
   [state, [runStartAllActionWithConfirm, props]]
 
-StartAllAction = (state, props) ->
+StartAllAction := (state, props) ->
   [
     {...state, mode: "do_all"}
     [runDoNextAction, props]
   ]
 
-StopAllAction = (state) ->
+StopAllAction := (state) ->
   {...state, mode: "result"}
 
-DoNextAction = (state, {list, action}) ->
-  target = list.find (item) -> ["ADD", "MOD", "DEL", "SYN", "LOC", "UNL"].includes(item.action)
+DoNextAction := (state, {list, action}) ->
+  target := list.find (item) -> ["ADD", "MOD", "DEL", "SYN", "LOC", "UNL"].includes(item.action)
 
   if target
     [action, target]
@@ -74,8 +74,8 @@ DoNextAction = (state, {list, action}) ->
 
 // Effecters
 
-runStartAllActionWithConfirm = (dispatch, props) ->
-  confirm = await startAllActionConfirm.showPromise({
+runStartAllActionWithConfirm := (dispatch, props) ->
+  confirm := await startAllActionConfirm.showPromise({
     messages: [
       "すべての処理を実行します。"
       """
@@ -89,12 +89,11 @@ runStartAllActionWithConfirm = (dispatch, props) ->
   if confirm
     dispatch(StartAllAction, props)
 
-export runStartAllAction = (dispatch, props) ->
+export runStartAllAction := (dispatch, props) ->
   dispatch(StartAllAction, props)
 
-export runStopAllAction = (dispatch) ->
+export runStopAllAction := (dispatch) ->
   dispatch(StopAllAction)
 
-export runDoNextAction = (dispatch, props) ->
+export runDoNextAction := (dispatch, props) ->
   dispatch(DoNextAction, props)
-

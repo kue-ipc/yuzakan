@@ -7,14 +7,14 @@ import * as html from "@hyperapp/html"
 
 import {fetchJsonGet} from "~api/fetch_json.civet"
 
-USER_MENU = {path: "/", name: "利用者メニュー"}
-ADMIN_MENU = {path: "/admin", name: "管理者メニュー"}
+USER_MENU := {path: "/", name: "利用者メニュー"}
+ADMIN_MENU := {path: "/admin", name: "管理者メニュー"}
 
-USER_MENU_LIST = [
+USER_MENU_LIST := [
   {path: "/user/password/edit", name: "パスワード変更"}
 ]
 
-ADMIN_MENU_LIST = [
+ADMIN_MENU_LIST := [
   {path: "/admin/users/*", name: "ユーザー作成"}
   {path: "/admin/users", name: "ユーザー一覧"}
   {path: "/admin/groups", name: "グループ一覧"}
@@ -22,7 +22,7 @@ ADMIN_MENU_LIST = [
 
 
 
-headerNav = ({system, session}) ->
+headerNav := ({system, session}) ->
   html.nav {class: "navbar navbar-expand-sm navbar-dark bg-dark-bar"},
     html.div {class: "container-fluid"}
       if system? && session?

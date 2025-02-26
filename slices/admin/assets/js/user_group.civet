@@ -1,7 +1,7 @@
 import {text} from "hyperapp"
 import * as html from "@hyperapp/html"
 
-RemoveGroup = (state, name) ->
+RemoveGroup := (state, name) ->
   {
     ...state
     user: {
@@ -10,8 +10,8 @@ RemoveGroup = (state, name) ->
     }
   }
 
-groupLi = ({name, groups, removable = false}) ->
-  group = groups.find (item) -> item.name is name
+groupLi := ({name, groups, removable := false}) ->
+  group := groups.find (item) -> item.name is name
   html.li {class: "list-inline-item border border-success rounded px-1 mb-1"}, [
     text `${group.display_name} (${group.name})`
     // if removable
@@ -25,7 +25,7 @@ groupLi = ({name, groups, removable = false}) ->
     //   text ""
   ]
 
-export default userGroup = ({mode, user, groups}) ->
+export default userGroup := ({mode, user, groups}) ->
   html.div {}, [
     html.h4 {}, text "所属グループ"
     if user.groups?.length

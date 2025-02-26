@@ -23,24 +23,24 @@ import {runGetUserWithInit} from "~admin/user_get_user.civet"
 
 import {InitUserAttrs} from "~admin/user_attrs.civet"
 
-SetAttrsWithInit = (state, attrs) -> [InitUserAttrs, {attrs}]
+SetAttrsWithInit := (state, attrs) -> [InitUserAttrs, {attrs}]
 
 // Effecters
 
-// runIndexAttrsWithInit = createRunIndexAttrs({action: SetAttrsWithInit})
-runIndexAttrsWithInit = createRunIndexAttrs()
+// runIndexAttrsWithInit := createRunIndexAttrs({action: SetAttrsWithInit})
+runIndexAttrsWithInit := createRunIndexAttrs()
 
-// runIndexAttrsWithInit = createRunIndexAttrs({action: SetUserWithInit})
-runShowUserWithInit = createRunShowUser()
+// runIndexAttrsWithInit := createRunIndexAttrs({action: SetUserWithInit})
+runShowUserWithInit := createRunShowUser()
 
-main = ->
-  id = getBasenameFromUrl(location)
-  id = undefined if id is "*"
-  mode = if id? then "show" else "new"
+main := ->
+  id := getBasenameFromUrl(location)
+  id := undefined if id is "*"
+  mode := if id? then "show" else "new"
 
-  queryParams = pickType(getQueryParamsFromUrl(location), SHOW_USER_PARAM_TYPES)
+  queryParams := pickType(getQueryParamsFromUrl(location), SHOW_USER_PARAM_TYPES)
 
-  init = [
+  init := [
     {mode, id, user: null, providers: null, attrs: null, groups: null, system: null, option: queryParams}
     [runShowSystem]
     [runIndexProviders]
@@ -49,7 +49,7 @@ main = ->
     [runShowUserWithInit, {id}]
   ]
 
-  view = ({mode, id, user, providers, attrs, groups, system, option}) ->
+  view := ({mode, id, user, providers, attrs, groups, system, option}) ->
     if mode is "none"
       return html.div {},
         html.strong {}, text "ユーザーが見つかりませんでした。"
@@ -69,7 +69,7 @@ main = ->
       userAttr {mode, user, providers, attrs}
     ]
 
-  node = document.getElementById("user")
+  node := document.getElementById("user")
 
   app {init, view, node}
 

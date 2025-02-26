@@ -9,8 +9,8 @@ import {csvToList} from "~/common/csv_helper.civet"
 // アクションのprops
 //   list: データ(配列)
 //   filename: ファイル名
-export default uploadButton = ({disabled = false, onupload}) ->
-  inputFile = html.input {
+export default uploadButton := ({disabled = false, onupload}) ->
+  inputFile := html.input {
     class: "visually-hidden"
     type: "file"
     accept: ".csv,text/csv"
@@ -26,24 +26,24 @@ export default uploadButton = ({disabled = false, onupload}) ->
   ]
 
 // Upload CSV action
-UploadCsv = (state, {file, action}) ->
+UploadCsv := (state, {file, action}) ->
   return state unless file
 
   [{...state, mode: "loading"}, [runUploadCsv, {file, action}]]
 
 // Click upload buton action
-ClickUploadButton = (state, input) ->  [state, [runClickInput, input]]
+ClickUploadButton := (state, input) ->  [state, [runClickInput, input]]
 
 // Upload CSV Effecter
-runUploadCsv = (dispatch, {action, file}) ->
-  filename = file.name
+runUploadCsv := (dispatch, {action, file}) ->
+  filename := file.name
   console.debug "upload: %s", filename
-  csv = await file.text()
-  list = await csvToList(csv)
+  csv := await file.text()
+  list := await csvToList(csv)
   dispatch(action, {list, filename})
 
 // Click input effecter
-runClickInput = (dispatch, input) ->
+runClickInput := (dispatch, input) ->
   input.click()
 
 

@@ -4,25 +4,25 @@ import * as R from "ramda"
 
 import {convertToType} from "~/common/convert.civet"
 
-export isNil = R.isNil
+export isNil := R.isNil
 
-export isEmpty = R.isEmpty
+export isEmpty := R.isEmpty
 
-export isBlank = (obj) -> isNil(obj) || isEmpty(obj)
+export isBlank := (obj) -> isNil(obj) || isEmpty(obj)
 
-export isPresent = R.compose(R.not, isBlank)
+export isPresent := R.compose(R.not, isBlank)
 
-export identity = R.identity
+export identity := R.identity
 
-export presence = (obj) ->
+export presence := (obj) ->
   if isPresent(obj)
     obj
   else
     null
 
-export uniq = R.uniq
+export uniq := R.uniq
 
-export compact = (obj) ->
+export compact := (obj) ->
   switch R.type(obj)
     when "Array"
       (v for each v of obj when v?)
@@ -36,19 +36,19 @@ export compact = (obj) ->
       console.warn `cannot compact type: ${R.type(obj)}`
       obj
 
-export pick = R.flip(R.pick)
+export pick := R.flip(R.pick)
 
-export pickType = (obj, types) ->
+export pickType := (obj, types) ->
   Object.fromEntries(([key, convertToType(obj[key], type)] for own key, type in types when key in obj))
 
-export basename = (path, suffix = "") ->
+export basename := (path, suffix = "") ->
   return "" unless path
 
-  base = path.split("/").reverse().find(identity) || "/"
+  base := path.split("/").reverse().find(identity) || "/"
 
   return base unless suffix
 
-  lastDot = base.lastIndexOf(".")
+  lastDot := base.lastIndexOf(".")
   return base if lastDot <= 0
 
   if suffix is ".*" || suffix is base.slice(lastDot)
@@ -56,17 +56,17 @@ export basename = (path, suffix = "") ->
   else
     base
 
-export entityLabel = (entity) ->
+export entityLabel := (entity) ->
   return undefined unless entity?
 
   entity.display_name || entity.name || ""
 
 // URLから最後の文字列を取り出す。
 // 空文字列しかない場合は undefined を返す
-export getBasenameFromUrl = (url) ->
+export getBasenameFromUrl := (url) ->
   basename(url.pathname)
 
-export getQueryParamsFromUrl = (url) ->
+export getQueryParamsFromUrl := (url) ->
   Object.fromEntries(new URLSearchParams(url.search))
 
 // TODO

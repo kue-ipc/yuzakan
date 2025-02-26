@@ -4,11 +4,7 @@ import * as html from "@hyperapp/html"
 import ModalDialog from "~/app/modal_dialog.civet"
 
 export default class ConfirmDialog extends ModalDialog
-  @({
-    @confirmations = null
-    @agreement_required = false
-    ...props
-  })
+  @({@confirmations = null, @agreement_required = false, ...props})
     super props
     @value = true
 

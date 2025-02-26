@@ -3,12 +3,12 @@
 import {h, text, app} from "hyperapp"
 import WebPostJson from "~/app/web_post_json.civet"
 
-agreementCheck = (state, agreement) -> {
+agreementCheck := (state, agreement) -> {
   ...state
   agreement
 }
 
-AgreementCheck = ({agreement}) ->
+AgreementCheck := ({agreement}) ->
   id = "google-create-user-agreement"
   h "div", {class: "form-check"}, [
     h "input", {type: "hidden", name: "agreement", value: "0"}
@@ -24,7 +24,7 @@ AgreementCheck = ({agreement}) ->
     h "label", {class: "form-check-label", for: id}, text "上記について確認し、内容に同意します。"
   ]
 
-googleCreateUserRules = [
+googleCreateUserRules := [
   """
   アカウント作成にあたり、Google社へアカウント作成に必要な情報(氏名、メールアドレス、身分、グループ等)を送信します。
   """,
@@ -44,7 +44,7 @@ googleCreateUserRules = [
   """
 ]
 
-CreateUserContent = ({agreement}) ->
+CreateUserContent := ({agreement}) ->
   h "div", {}, [
     h "p", {},
     text "Google アカウントの作成を行います。下記を確認し、内容について同意する必要があります。"
@@ -55,16 +55,16 @@ CreateUserContent = ({agreement}) ->
     AgreementCheck {agreement}
   ]
 
-node = document.getElementById("google-create-user-child")
+node := document.getElementById("google-create-user-child")
 
-init = {
+init := {
   agreement: false
   newPassword: undefined
   created: false
   closable: true
 }
 
-view = (state) ->
+view := (state) ->
   ModalDialog {
     modalSize: "lg"
     labelId: "google-create-user"

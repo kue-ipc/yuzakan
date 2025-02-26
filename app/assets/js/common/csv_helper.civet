@@ -4,7 +4,7 @@ import {objToRecord, recordToObj} from "~/common/convert.civet"
 
 // async csv and records utilities
 
-recordsToCsv = (records, {columns} = {}) ->
+recordsToCsv := (records, {columns} = {}) ->
   new Promise (resolve, reject) ->
     stringify records, {
       bom: true
@@ -19,7 +19,7 @@ recordsToCsv = (records, {columns} = {}) ->
         console.debug "records to csv"
         resolve(output)
 
-csvToRecords = (csv) ->
+csvToRecords := (csv) ->
   new Promise (resolve, reject) ->
     parse csv, {
       bom: true
@@ -32,7 +32,7 @@ csvToRecords = (csv) ->
         console.debug "csv to records"
         resolve(records)
 
-transformRecords = (records, handler) ->
+transformRecords := (records, handler) ->
   new Promise (resolve, reject) ->
     transform records, handler, (err, output) ->
       if err?
@@ -40,18 +40,18 @@ transformRecords = (records, handler) ->
       else
         resolve(output)
 
-export listToCsv = (list, {header = {}} = {}) ->
-  records = await transformRecords(list, objToRecord)
-  csv = await recordsToCsv(records, {columns: mergeHeaders(records, header)})
+export listToCsv := (list, {header = {}} = {}) ->
+  records := await transformRecords(list, objToRecord)
+  csv := await recordsToCsv(records, {columns: mergeHeaders(records, header)})
   csv
 
-export csvToList = (csv) ->
-  records = await csvToRecords(csv)
-  list = await transformRecords(records, recordToObj)
+export csvToList := (csv) ->
+  records := await csvToRecords(csv)
+  list := await transformRecords(records, recordToObj)
   list
 
-mergeHeaders = (records, {includes = [], excludes = []} = {}) ->
-  set = new Set(includes)
+mergeHeaders := (records, {includes = [], excludes = []} = {}) ->
+  set := new Set(includes)
   for each record of records
     for each key of Object.keys(record)
       set.add(key)

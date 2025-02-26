@@ -1,8 +1,8 @@
 // 動的な警告の表示と削除
 
-ALERTS_CLASS = "alerts"
+ALERTS_CLASS := "alerts"
 
-LEVELS_COLOR = {
+LEVELS_COLOR := {
   success: "success"
   failure: "warning"
   fatal: "danger"
@@ -13,9 +13,9 @@ LEVELS_COLOR = {
   unknown: "primary"
 }
 
-DEFALT_COLOR = "primary"
+DEFALT_COLOR := "primary"
 
-ALERT_LEVELS = [
+ALERT_LEVELS := [
   "success"
   "failure"
   "fatal"
@@ -27,18 +27,18 @@ ALERT_LEVELS = [
 ]
 
 // アラートの追加
-export alertAdd = (message, level = "error") ->
-  level_color = LEVELS_COLOR[level] ?? DEFALT_COLOR
-  alert_class = `alert alert-${level_color} alert-dismissible fade show`
+export alertAdd := (message, level = "error") ->
+  level_color := LEVELS_COLOR[level] ?? DEFALT_COLOR
+  alert_class := `alert alert-${level_color} alert-dismissible fade show`
 
   for each alerts of document.getElementsByClassName(ALERTS_CLASS)
-    div = document.createElement("div")
+    div := document.createElement("div")
     div.className = alert_class
     div.setAttribute("role", "alert")
 
-    text = document.createTextNode(message)
+    text := document.createTextNode(message)
 
-    button = document.createElement("button")
+    button := document.createElement("button")
     button.className = "btn-close"
     button.setAttribute("type", "button")
     button.setAttribute("data-bs-dismiss", "alert")
@@ -49,12 +49,12 @@ export alertAdd = (message, level = "error") ->
     alerts.appendChild(div)
 
 // 全アラートを削除
-export alertClear = ->
+export alertClear := ->
   for each alerts of document.getElementsByClassName(ALERTS_CLASS)
     alerts.removeChild(alerts.firstChild) while alerts.firstChild
 
 // クリアしてメッセージをすべて表示
-export alertMessage = (messages) ->
+export alertMessage := (messages) ->
   alertClear()
   for each level of ALERT_LEVELS
     if messages[level]

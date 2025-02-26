@@ -7,11 +7,11 @@ import valueDisplay from "~/app/value_display.civet"
 
 import {CalcUserAttrs} from "~admin/user_attrs.civet"
 
-SetUserAttr = (state, {attr_name, value}) ->
-  user = {...state.user, attrs: {...state.user.attrs, [attr_name]: value}}
+SetUserAttr := (state, {attr_name, value}) ->
+  user := {...state.user, attrs: {...state.user.attrs, [attr_name]: value}}
   [CalcUserAttrs, {user}]
 
-attrValue = ({attr_name, value, type = "string", edit = false, color = "body"}) ->
+attrValue := ({attr_name, value, type := "string", edit := false, color := "body"}) ->
   if edit
     switch type
       when "string"
@@ -77,15 +77,15 @@ attrValue = ({attr_name, value, type = "string", edit = false, color = "body"}) 
   else
     valueDisplay {value, type, color}
 
-ChangeAttrSetting = (state, {attr_name, setting}) ->
-  user = {
+ChangeAttrSetting := (state, {attr_name, setting}) ->
+  user := {
     ...state.user
     attrSettings: {...state.user.attrSettings, [attr_name]: setting}
   }
   [CalcUserAttrs, {user}]
 
 
-attrSetting = ({attr_name, checked, edit}) ->
+attrSetting := ({attr_name, checked, edit}) ->
   if edit
     html.div {class: "form-check"},
       html.input {
@@ -98,7 +98,7 @@ attrSetting = ({attr_name, checked, edit}) ->
   else
     valueDisplay({value: checked, type: "boolean"})
 
-attrSettingTd = ({mode, user, attr}) ->
+attrSettingTd := ({mode, user, attr}) ->
   html.td {},
     switch user.attrSettings?[attr.name]
       when "default"
@@ -108,16 +108,16 @@ attrSettingTd = ({mode, user, attr}) ->
       else
         []
 
-attrDefaultTd = ({user, attr}) ->
+attrDefaultTd := ({user, attr}) ->
   html.td {},
     // valueDisplay {value: user.attrDefaults[attr.name], type: attr.type}
     valueDisplay {value: undefined, type: attr.type}
 
-attrValueTd = ({mode, user, attr}) ->
-  // defaultValue = user.attrDefaults[attr.name]
+attrValueTd := ({mode, user, attr}) ->
+  // defaultValue := user.attrDefaults[attr.name]
   // TDOO: デフォルトはnullで良いのか？
-  defaultValue = null
-  value = user.attrs.get(attr.name)
+  defaultValue := null
+  value := user.attrs.get(attr.name)
   html.td {},
     attrValue {
       attr_name: attr.name
@@ -133,14 +133,14 @@ attrValueTd = ({mode, user, attr}) ->
           "danger"
     }
 
-providerTd = ({user, attr, provider}) ->
+providerTd := ({user, attr, provider}) ->
   return html.td {} unless user.providers.includes(provider.name)
 
-  data = user.providers_data.get(provider.name)
-  // provider_userdata = (user.provider_userdatas.find (data) -> data.provider.name is provider.name)
+  data := user.providers_data.get(provider.name)
+  // provider_userdata := (user.provider_userdatas.find (data) -> data.provider.name is provider.name)
   return html.td {} unless data?
 
-  provider_value = data.attrs.get(attr.name)
+  provider_value := data.attrs.get(attr.name)
 
   html.td {},
     valueDisplay {
@@ -149,8 +149,8 @@ providerTd = ({user, attr, provider}) ->
       color: if provider_value is user.attrs.get(attr.name) then "success" else "danger"
     }
 
-export default userAttr = ({mode, user, providers, attrs}) ->
-  // provider_userdatas =
+export default userAttr := ({mode, user, providers, attrs}) ->
+  // provider_userdatas := 
   // for each provider of providers
   //   (user.provider_userdatas.find (data) -> data.provider.name is provider.name)?.userdata
 

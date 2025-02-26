@@ -9,7 +9,7 @@ import {DEFAULT_PAGE, DEFAULT_PER_PAGE} from "~api/pagination.civet"
 
 // データを受け取るアクションからレスポンスに対応した新しいアクションを作成する。
 // 404の場合はnull、それ以外はエラーでfallbackを実行する。
-export createResponseAction = ({action, fallback, normalizer}) ->
+export createResponseAction := ({action, fallback, normalizer}) ->
   normalizer ?= identity
   (state, response) ->
     if response.ok
@@ -27,9 +27,9 @@ export createResponseAction = ({action, fallback, normalizer}) ->
 
 // データを受け取るアクションからページ情報付きのレスポンスに対応した新しいアクションを作成する。
 // エラーの場合はページ情報を更新しない。
-export createResponseActionSetPage = (params) ->
-  responseAction = createResponseAction(params)
-  runResponseAction = (dispatch, props) -> dispatch(responseAction, props)
+export createResponseActionSetPage := (params) ->
+  responseAction := createResponseAction(params)
+  runResponseAction := (dispatch, props) -> dispatch(responseAction, props)
   (state, response) ->
     if response.ok
       [
@@ -41,9 +41,9 @@ export createResponseActionSetPage = (params) ->
 
 // データを受け取るアクションでIDを更新するレスポンスに対応した新しいアクションを作成する。
 // エラーの場合はIDを更新しない
-export createResponseActionSetId = ({idKey = "id", ...params}) ->
-  responseAction = createResponseAction(params)
-  runResponseAction = (dispatch, props) -> dispatch(responseAction, props)
+export createResponseActionSetId := ({idKey = "id", ...params}) ->
+  responseAction := createResponseAction(params)
+  runResponseAction := (dispatch, props) -> dispatch(responseAction, props)
   (state, response) ->
     if response.ok
       url = new URL(response.location)
@@ -59,7 +59,7 @@ export createResponseActionSetId = ({idKey = "id", ...params}) ->
 
 // レスポンスを直接渡すアクションを作成する。
 // pathKeys内の文字列はそれぞれ部分文字列になっていはいけない。
-export createRunResponse = ({
+export createRunResponse := ({
   action
   url: defaultUrl
   pathKeys = []
@@ -85,25 +85,25 @@ export createRunResponse = ({
 
 // RESTful Resources
 // GET /resources
-export createRunIndex = ({action, fallback, normalizer, ...params}) ->
+export createRunIndex := ({action, fallback, normalizer, ...params}) ->
   responseAction = createResponseAction({action, fallback, normalizer})
   createRunResponse({action: responseAction, method: "GET", ...params})
 
 // GET /resources?page=x&per_page=y
-export createRunIndexWithPage = ({action, fallback, normalizer, data = {}, ...params}) ->
+export createRunIndexWithPage := ({action, fallback, normalizer, data = {}, ...params}) ->
   responseAction = createResponseActionSetPage({action, fallback, normalizer})
   data = {page: DEFAULT_PAGE, per_page: DEFAULT_PER_PAGE, ...data}
   createRunResponse({action: responseAction, data, method: "GET", ...params})
 
 // GET /resources/:id
-export createRunShowWithId = ({action, fallback, normalizer, url, idKey = "id", ...params}) ->
+export createRunShowWithId := ({action, fallback, normalizer, url, idKey = "id", ...params}) ->
   responseAction = createResponseAction({action, fallback, normalizer})
   url = `${url}/:${idKey}` unless url.includes(`:${idKey}`)
   pathKeys = [idKey]
   createRunResponse({action: responseAction, url, pathKeys, method: "GET", ...params})
 
 // POST /resources
-export createRunCreateWithId = ({action, fallback, normalizer, idKey = "id", setId = false, ...params}) ->
+export createRunCreateWithId := ({action, fallback, normalizer, idKey = "id", setId = false, ...params}) ->
   responseAction = if setId
     createResponseActionSetId({action, fallback, normalizer, idKey})
   else
@@ -111,7 +111,7 @@ export createRunCreateWithId = ({action, fallback, normalizer, idKey = "id", set
   createRunResponse({action: responseAction, method: "POST", ...params})
 
 // PATCH /resources/:id
-export createRunUpdateWithId = ({action, fallback, normalizer, url, idKey = "id", setId = false, ...params}) ->
+export createRunUpdateWithId := ({action, fallback, normalizer, url, idKey = "id", setId = false, ...params}) ->
   responseAction = if setId
     createResponseActionSetId({action, fallback, normalizer, idKey})
   else
@@ -121,7 +121,7 @@ export createRunUpdateWithId = ({action, fallback, normalizer, url, idKey = "id"
   createRunResponse({action: responseAction, url, pathKeys, method: "PATCH", ...params})
 
 // DELETE /resources/:id
-export createRunDestroyWithId = ({action, fallback, normalizer, url, idKey = "id", ...params}) ->
+export createRunDestroyWithId := ({action, fallback, normalizer, url, idKey = "id", ...params}) ->
   responseAction = createResponseAction({action, fallback, normalizer})
   url = `${url}/:${idKey}` unless url.includes(`:${idKey}`)
   pathKeys = [idKey]
@@ -129,21 +129,21 @@ export createRunDestroyWithId = ({action, fallback, normalizer, url, idKey = "id
 
 // RESTful Resource
 // GET /resource
-export createRunShow = ({action, fallback, normalizer, ...params}) ->
+export createRunShow := ({action, fallback, normalizer, ...params}) ->
   responseAction = createResponseAction({action, fallback, normalizer})
   createRunResponse({action: responseAction, method: "GET", ...params})
 
 // POST /resource
-export createRunCreate = ({action, fallback, normalizer, ...params}) ->
+export createRunCreate := ({action, fallback, normalizer, ...params}) ->
   responseAction = createResponseAction({action, fallback, normalizer})
   createRunResponse({action: responseAction, method: "POST", ...params})
 
 // PATCH /resource
-export createRunUpdate = ({action, fallback, normalizer, ...params}) ->
+export createRunUpdate := ({action, fallback, normalizer, ...params}) ->
   responseAction = createResponseAction({action, fallback, normalizer})
   createRunResponse({action: responseAction, method: "PATCH", ...params})
 
 // DELETE /resource
-export createRunDestroy = ({action, fallback, normalizer, ...params}) ->
+export createRunDestroy := ({action, fallback, normalizer, ...params}) ->
   responseAction = createResponseAction({action, fallback, normalizer})
   createRunResponse({action: responseAction, method: "DELETE", ...params})

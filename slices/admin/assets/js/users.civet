@@ -45,10 +45,10 @@ import {setUserAttrsDefault} from "~admin/user_attrs.civet"
 
 // Cnostants
 
-USER_HEADERS = ["action"]
+USER_HEADERS := ["action"]
   .concat(key for key, type in USER_PROPERTIES when !(["list", "map", "set", "object"].includes(type)))
 
-ACTIONS = new Map([
+ACTIONS := new Map([
   ["ADD", "追加"]
   ["MOD", "変更"]
   ["DEL", "削除"]
@@ -62,11 +62,11 @@ ACTIONS = new Map([
 
 // Functions
 
-updateUserList = (users, user) -> updateList(users, user.name, user, {key: "name"})
+updateUserList := (users, user) -> updateList(users, user.name, user, {key: "name"})
 
-normalizeUserUploaded = ({action, error, ...user}) ->
-  action = action?.slice(0, 3)?.toUpperCase() ?? ""
-  error = switch action
+normalizeUserUploaded := ({action, error, ...user}) ->
+  action := action?.slice(0, 3)?.toUpperCase() ?? ""
+  error := switch action
     when "", "ADD", "MOD", "DEL", "SYN", "LOC", "UNL"
       null
     when "PAS"
@@ -74,7 +74,7 @@ normalizeUserUploaded = ({action, error, ...user}) ->
     when "ERR", "SUC", "ACT"
       error
     else
-      action = "ERR"
+      action := "ERR"
       "指定した処理が不正です。"
   {
     action
@@ -82,18 +82,18 @@ normalizeUserUploaded = ({action, error, ...user}) ->
     ...normalizeUser(user)
   }
 
-normalizeUserAttrs = (userAttrs, {attrs}) ->
-  newAttrs = for each attr of attrs when attr.name of userAttrs
+normalizeUserAttrs := (userAttrs, {attrs}) ->
+  newAttrs := for each attr of attrs when attr.name of userAttrs
     [attr.name, convertToType(userAttrs[attr.name], attr.type)]
   new Map(newAttrs)
 
-fillAddOrModUsers = ({users, attrs, domain}) ->
+fillAddOrModUsers := ({users, attrs, domain}) ->
   for each user of users
-    user = setUserAttrsDefault({user, attrs}) if user.attrs? && ["ADD", "MOD"].includes(user.action)
-    user = {...user, email: `${user.name}@${domain}`} if user.action is "ADD" && !user.email
+    user := setUserAttrsDefault({user, attrs}) if user.attrs? && ["ADD", "MOD"].includes(user.action)
+    user := {...user, email: `${user.name}@${domain}`} if user.action is "ADD" && !user.email
     user
 
-indexOptionFromState = (state) ->
+indexOptionFromState := (state) ->
   pick({
     ...state.pagination
     ...state.search
@@ -101,7 +101,7 @@ indexOptionFromState = (state) ->
     ...state.order
   }, Object.keys(INDEX_WITH_PAGE_USERS_PARAM_TYPES))
 
-userHeaders = ({attrs}) ->
+userHeaders := ({attrs}) ->
   [
     ...USER_HEADERS
     ...(listToParamName("attrs", attr.name) for each attr of attrs)
@@ -109,7 +109,7 @@ userHeaders = ({attrs}) ->
 
 // Dialogs
 
-loginInfo = new LoginInfo {
+loginInfo := new LoginInfo {
   id: "users-login_info"
 }
 
@@ -117,8 +117,8 @@ loginInfo = new LoginInfo {
 
 // Views
 
-indexUsersOption = ({onchange: action, readonly = false, ...props}) ->
-  onchange = (state, event) -> [action, {[event.target.name]: event.target.checked}]
+indexUsersOption := ({onchange: action, readonly := false, ...props}) ->
+  onchange := (state, event) -> [action, {[event.target.name]: event.target.checked}]
 
   html.div {class: "row mb-2"},
     for key, val in {
@@ -126,7 +126,7 @@ indexUsersOption = ({onchange: action, readonly = false, ...props}) ->
       hide_prohibited: "使用禁止を隠す"
       show_deleted: "削除済みも表示"
     }
-      id = `option-${key}`
+      id := `option-${key}`
       html.div {key: `option[${key}]`, class: "col-md-3"},
         html.div {class: "form-check"}, [
           html.input {
@@ -141,13 +141,13 @@ indexUsersOption = ({onchange: action, readonly = false, ...props}) ->
           html.label {class: "form-check-label", for: id}, text val
         ]
 
-usersTable = ({users, groups, providers}) ->
+usersTable := ({users, groups, providers}) ->
   html.table {key: "table", class: "table"}, [
     usersThead({providers})
     usersTbody({users, groups, providers})
   ]
 
-usersThead = ({providers}) ->
+usersThead := ({providers}) ->
   html.thead {key: "thead"},
     html.tr {key: "head"}, [
       html.th {key: "show"}, text ""
@@ -160,10 +160,10 @@ usersThead = ({providers}) ->
       ...(providerTh({provider}) for each provider of providers)
     ]
 
-providerTh = ({provider}) ->
+providerTh := ({provider}) ->
   html.th {key: `provider[${provider.name}]`}, text entityLabel(provider)
 
-usersTbody = ({users, groups, providers}) ->
+usersTbody := ({users, groups, providers}) ->
   html.tbody {key: "tbody"},
     (for each user of users
       [
@@ -172,8 +172,8 @@ usersTbody = ({users, groups, providers}) ->
       ]
     ).flat()
 
-userTr = ({user, groups, providers}) ->
-  color = switch user.action
+userTr := ({user, groups, providers}) ->
+  color := switch user.action
     when "ADD"
       "primary"
     when "MOD", "UNL"
@@ -244,14 +244,14 @@ userTr = ({user, groups, providers}) ->
     ...(userProviderTd({user, provider}) for each provider of providers)
   ]
 
-userProviderTd = ({user, provider}) ->
+userProviderTd := ({user, provider}) ->
   html.td {key: `provider[${provider.name}]`},
     valueDisplay {
       value: user.providers?.includes(provider.name)
       type: "boolean"
     }
 
-userDetailTr = ({user, providers}) ->
+userDetailTr := ({user, providers}) ->
   html.tr {
     key: `user-detail[${user.name}]`
     class: {collapse: true, show: user.show_detail}
@@ -280,7 +280,7 @@ userDetailTr = ({user, providers}) ->
     ...(userProviderDataTd({user, provider}) for each provider of providers)
   ]
 
-userProviderDataTd = ({user, provider}) ->
+userProviderDataTd := ({user, provider}) ->
   html.td {key: `provider-data[${provider.name}]`},
     if user.providers_data?.has(provider.name)
       html.div {key: "data", class: "small"},
@@ -288,16 +288,16 @@ userProviderDataTd = ({user, provider}) ->
 
 // Action Creaters
 
-createActionUser = (createEffecter, props = {}) ->
+createActionUser := (createEffecter, props := {}) ->
   (state, user) ->
-    action = (_, data) ->
+    action := (_, data) ->
       if data?
         [SetUserInListNextIfDoAll, {...user, ...data, action: "SUC", error: null}]
       else
         [SetUserInListNextIfDoAll, {...user, action: "ERR", error: "存在しません。", show_detail: true}]
-    fallback = (_, error) ->
+    fallback := (_, error) ->
       [SetUserInListNextIfDoAll, {...user, action: "ERR", error, show_detail: true}]
-    run = createEffecter({action, fallback})
+    run := createEffecter({action, fallback})
     [
       {
         ...state
@@ -309,22 +309,22 @@ createActionUser = (createEffecter, props = {}) ->
 
 // Actions
 
-runShowLoginInfo = (_dispatch, {user, dateTime = DateTime.now()}) ->
+runShowLoginInfo := (_dispatch, {user, dateTime := DateTime.now()}) ->
   loginInfo.showPromise {user, dateTime, site: {}}
 
-ReloadIndexUsers = (state, data) ->
+ReloadIndexUsers := (state, data) ->
   console.debug "reload index users"
-  newState = {...state, ...data, mode: "loading"}
-  params = indexOptionFromState(newState)
+  newState := {...state, ...data, mode: "loading"}
+  params := indexOptionFromState(newState)
   [
     newState,
     [runPushHistory, params]
     [runIndexUsers, params]
   ]
 
-SetIndexUsers = (state, rawUsers) ->
+SetIndexUsers := (state, rawUsers) ->
   console.debug "finish load users"
-  users = for each user of rawUsers
+  users := for each user of rawUsers
     {
       action: ""
       show_detail: false
@@ -337,27 +337,27 @@ SetIndexUsers = (state, rawUsers) ->
     users
   }
 
-MovePage = (state, page) ->
+MovePage := (state, page) ->
   return state if state.page is page
 
   [ReloadIndexUsers, {pagination: {...state.pagination , page}}]
 
-Search = (state, query) ->
+Search := (state, query) ->
   return state if state.query is query
 
   // ページ情報を初期化
   [ReloadIndexUsers, {pagination: {...state.pagination , page: 1}, search: {query}}]
 
-ChangeOption = (state, option) ->
+ChangeOption := (state, option) ->
   // ページ情報を初期化
   [ReloadIndexUsers, {pagination: {...state.pagination , page: 1}, option: {...state.option, ...option}}]
 
-SortOrder = (state, order) ->
+SortOrder := (state, order) ->
   [ReloadIndexUsers, {order}]
 
-UploadUsers = (state, {list, filename}) ->
-  users = for each user of list
-    userAttrs = if user.attrs?
+UploadUsers := (state, {list, filename}) ->
+  users := for each user of list
+    userAttrs := if user.attrs?
       {attrs: normalizeUserAttrs(user.attrs, {attrs: state.attrs})}
     else
       {}
@@ -375,14 +375,14 @@ UploadUsers = (state, {list, filename}) ->
     filename
   }
 
-SetUserInList = (state, user) ->
+SetUserInList := (state, user) ->
   {
     ...state
     users: updateUserList(state.users, user)
   }
 
-SetUserInListNextIfDoAll = (state, user) ->
-  users = updateUserList(state.users, user)
+SetUserInListNextIfDoAll := (state, user) ->
+  users := updateUserList(state.users, user)
   [
     {
       ...state
@@ -394,7 +394,7 @@ SetUserInListNextIfDoAll = (state, user) ->
       [runDoNextAction, {list: users, action: DoActionUser}]
   ]
 
-DoActionUser = (state, user) ->
+DoActionUser := (state, user) ->
   document.getElementById(`user_tr-${user.name}`)?.scrollIntoView({block: "center"})
   switch user.action
     when "ADD"
@@ -413,20 +413,20 @@ DoActionUser = (state, user) ->
       console.warn "not implemented action: %s", user.action
       state
 
-AddUser = createActionUser(createRunCreateUser)
+AddUser := createActionUser(createRunCreateUser)
 
-ModUser = createActionUser(createRunUpdateUser)
+ModUser := createActionUser(createRunUpdateUser)
 
-DelUser = createActionUser(createRunDestroyUser)
+DelUser := createActionUser(createRunDestroyUser)
 
-SyncUser = createActionUser(createRunShowUser)
+SyncUser := createActionUser(createRunShowUser)
 
-LockUser = createActionUser(createRunCreateUserLock)
+LockUser := createActionUser(createRunCreateUserLock)
 
-UnlockUser = createActionUser(createRunDestroyUserLock)
+UnlockUser := createActionUser(createRunDestroyUserLock)
 
-PopState = (state, params) ->
-  data = {
+PopState := (state, params) ->
+  data := {
     pagination: {...state.pagination, ...pickType(params, PAGINATION_PARAM_TYPES)}
     search: {...state.search, ...pickType(params, SEARCH_PARAM_TYPES)}
     option: {...state.option, ...pickType(params, INDEX_USERS_OPTION_PARAM_TYPES)}
@@ -436,31 +436,31 @@ PopState = (state, params) ->
 
 // Effecters
 
-runIndexUsers = createRunIndexWithPageUsers({action: SetIndexUsers})
+runIndexUsers := createRunIndexWithPageUsers({action: SetIndexUsers})
 
-runPushHistory = (dispatch, params) ->
-  query = `?${objToUrlencoded(params)}`
+runPushHistory := (dispatch, params) ->
+  query := `?${objToUrlencoded(params)}`
   if (query is not location.search)
     history.pushState(params, "", `${location.pathname}${query}`)
 
 // Subscribers
 
-onPopstateSubscriber = (dispatch, action) ->
-  listener = (event) -> dispatch(action, event.state)
+onPopstateSubscriber := (dispatch, action) ->
+  listener := (event) -> dispatch(action, event.state)
   window.addEventListener "popstate", listener
   -> window.removeEventListener "popstate", listener
 
 // Subscription Generators
 
-onPopstate = (action) ->
+onPopstate := (action) ->
   [onPopstateSubscriber, action]
 
 // main
 
-main = ->
-  queryParams = getQueryParamsFromUrl(location)
+main := ->
+  queryParams := getQueryParamsFromUrl(location)
 
-  initState = {
+  initState := {
     mode: "loading"
     users: []
     groups: []
@@ -473,7 +473,7 @@ main = ->
     filename: "users.csv"
   }
 
-  init = [
+  init := [
     initState
     [runShowSystem]
     [runIndexProviders]
@@ -482,7 +482,7 @@ main = ->
     [runIndexUsers, indexOptionFromState(initState)]
   ]
 
-  view = ({mode, users, groups, providers, attrs, pagination, search, option, order, filename}) ->
+  view := ({mode, users, groups, providers, attrs, pagination, search, option, order, filename}) ->
     html.div {}, [
       batchOperation {
         mode
@@ -509,9 +509,9 @@ main = ->
         usersTable({users, groups, providers})
     ]
 
-  node = document.getElementById("users")
+  node := document.getElementById("users")
 
-  subscriptions = ({mode}) ->
+  subscriptions := ({mode}) ->
     [
       onPopstate(PopState) if ["loading", "loaded"].includes(mode)
     ]

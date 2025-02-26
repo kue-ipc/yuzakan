@@ -6,7 +6,7 @@ import {entityLabel} from "~/common/helper.civet"
 import bsIcon from "~/app/bs_icon.civet"
 import valueDisplay from "~/app/value_display.civet"
 
-PROVIDER_REG_ITEMS = [
+PROVIDER_REG_ITEMS := [
   {name: "username", label: "ユーザー名", type: "string"}
   {name: "display_name", label: "表示名", type: "string"}
   {name: "email", label: "メールアドレス", type: "string"}
@@ -15,7 +15,7 @@ PROVIDER_REG_ITEMS = [
   {name: "mfa", label: "多要素", type: "boolean"}
 ]
 
-userAddProviderAction = (state, {provider_name}) ->
+userAddProviderAction := (state, {provider_name}) ->
   if state.user.providers.includes(provider_name)
     state
   else
@@ -27,7 +27,7 @@ userAddProviderAction = (state, {provider_name}) ->
       }
     }
 
-userRemoveProviderAction = (state, {provider_name}) ->
+userRemoveProviderAction := (state, {provider_name}) ->
   {
     ...state
     user: {
@@ -36,7 +36,7 @@ userRemoveProviderAction = (state, {provider_name}) ->
     }
   }
 
-providerCheck = ({provider_name, checked, edit = false}) ->
+providerCheck := ({provider_name, checked, edit := false}) ->
   if edit
     html.div {class: "form-check"},
       html.input {
@@ -58,10 +58,10 @@ providerCheck = ({provider_name, checked, edit = false}) ->
       html.span {class: `text-muted`},
         bsIcon({name: "square"})
 
-providerTd = ({user, provider, name, type}) ->
+providerTd := ({user, provider, name, type}) ->
   return html.td {} unless user.providers.includes(provider.name)
 
-  data = user.providers_data.get(provider.name)
+  data := user.providers_data.get(provider.name)
 
   html.td {},
     valueDisplay {
@@ -77,13 +77,13 @@ providerTd = ({user, provider, name, type}) ->
           "body"
     }
 
-providerTr = ({user, providers, name, label, type}) ->
+providerTr := ({user, providers, name, label, type}) ->
   html.tr {}, [
     html.th {}, text label
     ...(providerTd {user, provider, name, type} for each provider of providers)
   ]
 
-providerCheckTd = ({mode, user, provider}) ->
+providerCheckTd := ({mode, user, provider}) ->
   html.td {},
     providerCheck {
       provider_name: provider.name
@@ -91,7 +91,7 @@ providerCheckTd = ({mode, user, provider}) ->
       edit: mode is not "show"
     }
 
-export default userProvider = ({mode, user, providers}) ->
+export default userProvider := ({mode, user, providers}) ->
   html.div {}, [
     html.h4 {}, text "プロバイダー登録状況"
     html.table {class: "table"}, [

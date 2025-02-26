@@ -1,9 +1,8 @@
-
-submitBeforeAgreementSet = (form) ->
+submitBeforeAgreementSet := (form) ->
   return if form.tagName is not "FORM"
 
-  agreementInput = form.getElementsByClassName("agreement")[0]
-  submitButton = form.getElementsByClassName("submit")[0]
+  agreementInput := form.getElementsByClassName("agreement")[0]
+  submitButton := form.getElementsByClassName("submit")[0]
 
   if agreementInput? && submitButton?
     agreementInput.addEventListener "change", (e) ->

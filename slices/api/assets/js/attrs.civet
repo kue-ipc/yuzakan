@@ -12,9 +12,9 @@ import {pickType} from "~/common/helper.civet"
 
 // Constants
 
-export API_ATTRS = "/api/attrs"
+export API_ATTRS := "/api/attrs"
 
-export ATTR_PROPERTIES = {
+export ATTR_PROPERTIES := {
   name: "string"
   display_name: "string"
   type: "string"
@@ -25,29 +25,29 @@ export ATTR_PROPERTIES = {
   description: "string"
 }
 
-export INDEX_ATTRS_PARAM_TYPES = {
+export INDEX_ATTRS_PARAM_TYPES := {
 }
 
-export SHOW_ATTR_PARAM_TYPES = {
+export SHOW_ATTR_PARAM_TYPES := {
 }
 
-export CREATE_ATTR_PARAM_TYPES = {
+export CREATE_ATTR_PARAM_TYPES := {
   ...ATTR_PROPERTIES
 }
 
-export UPDATE_ATTR_PARAM_TYPES = {
+export UPDATE_ATTR_PARAM_TYPES := {
   ...ATTR_PROPERTIES
 }
 
-export DESTROY_ATTR_PARAM_TYPES = {
+export DESTROY_ATTR_PARAM_TYPES := {
 }
 
 // Functions
 
-export normalizeAttrs = (attrs, type = {}) ->
+export normalizeAttrs := (attrs, type = {}) ->
   normalizeAttr(attr, type) for each attr of attrs
 
-export normalizeAttr = (attr, types = {}) ->
+export normalizeAttr := (attr, types = {}) ->
   pickType(attr, {
     ...ATTR_PROPERTIES
     mappings: "list"
@@ -56,19 +56,19 @@ export normalizeAttr = (attr, types = {}) ->
 
 // Actiosn
 
-export SetAttrs = (state, attrs) -> {
+export SetAttrs := (state, attrs) -> {
   ...state
   attrs
 }
 
-export SetAttr = (state, attr) -> {
+export SetAttr := (state, attr) -> {
   ...state
   attr
 }
 
 // create Effecters
 
-export createRunIndexAttrs = (params = {}) ->
+export createRunIndexAttrs := (params = {}) ->
   createRunIndex({
     action: SetAttrs
     normalizer: normalizeAttrs
@@ -77,7 +77,7 @@ export createRunIndexAttrs = (params = {}) ->
     ...params
   })
 
-export createRunShowAttr = (params = {}) ->
+export createRunShowAttr := (params = {}) ->
   createRunShowWithId({
     action: SetAttr
     normalizer: normalizeAttr
@@ -86,7 +86,7 @@ export createRunShowAttr = (params = {}) ->
     ...params
   })
 
-export createRunCreateAttr = (params = {}) ->
+export createRunCreateAttr := (params = {}) ->
   createRunCreateWithId({
     action: SetAttr
     normalizer: normalizeAttr
@@ -95,7 +95,7 @@ export createRunCreateAttr = (params = {}) ->
     ...params
   })
 
-export createRunUpdateAttr = (params = {}) ->
+export createRunUpdateAttr := (params = {}) ->
   createRunUpdateWithId({
     action: SetAttr
     normalizer: normalizeAttr
@@ -104,7 +104,7 @@ export createRunUpdateAttr = (params = {}) ->
     ...params
   })
 
-export createRunDestroyAttr = (params = {}) ->
+export createRunDestroyAttr := (params = {}) ->
   createRunDestroyWithId({
     action: SetAttr
     normalizer: normalizeAttr
@@ -115,8 +115,8 @@ export createRunDestroyAttr = (params = {}) ->
 
 // Effecters
 
-export runIndexAttrs = createRunIndexAttrs()
-export runShowAttr = createRunShowAttr()
-export runCreateAttr = createRunCreateAttr()
-export runUpdateAttr = createRunUpdateAttr()
-export runDestroyAttr = createRunDestroyAttr()
+export runIndexAttrs := createRunIndexAttrs()
+export runShowAttr := createRunShowAttr()
+export runCreateAttr := createRunCreateAttr()
+export runUpdateAttr := createRunUpdateAttr()
+export runDestroyAttr := createRunDestroyAttr()
