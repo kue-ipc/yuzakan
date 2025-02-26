@@ -1,0 +1,121 @@
+@charset "utf-8";
+@use "firacode";
+@use "source-code-pro";
+@use "font";
+@use "~highlight.js/scss/default";
+@use "~bootstrap/scss/bootstrap" with (
+  $font-family-sans-serif: var(--yuazkan-font-sans-serif),
+  $font-family-monospace: var(--yuzakan-font-monospace),
+  $font-family-base: var(--yuzakan-font-base),
+  $font-family-code: var(--yuzakan-font-code));
+
+.login {
+  width: 20rem;
+}
+
+.change_password {
+  max-width: 40rem;
+}
+
+a.card.text-white {
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    text-decoration: none;
+    background-color: bootstrap.$gray-200 !important;
+    color: bootstrap.$black !important;
+  }
+}
+
+a.card {
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    text-decoration: none;
+    background-color: bootstrap.$gray-700 !important;
+    color: bootstrap.$white !important;
+  }
+}
+
+@each $color, $value in bootstrap.$theme-colors {
+  a.card.border-#{$color} {
+    text-decoration: none;
+    color: bootstrap.$black;
+
+    &:hover {
+      text-decoration: none;
+      background-color: darken($value, 15%) !important;
+      color: bootstrap.$white !important;
+    }
+  }
+}
+
+a.link-user {
+  text-decoration: none;
+  color: bootstrap.$gray-500;
+
+  &:hover {
+    text-decoration: none;
+    color: bootstrap.$light;
+  }
+}
+
+.text-serif {
+  font-family: var(--yuzakan-font-serif);
+}
+
+code {
+  font-family: var(--yuzakan-font-code);
+
+  &.login-info {
+    letter-spacing: .2rem;
+    font-size: 1.5rem;
+    font-variant-ligatures: none;
+    color: bootstrap.$black;
+  }
+
+  &.sample {
+    font-size: 0.9rem;
+    font-variant-ligatures: none;
+    color: bootstrap.$black;
+  }
+}
+
+@media print {
+  a, a:link, a:visited, a:hover, a:active {
+    color: bootstrap.$black;
+    text-decoration: none;
+  }
+
+  .print-fullscreen {
+    z-index: 8;
+    position: aboslute;
+    top: 0;
+    right: 0;
+    // height: 100%;
+    // width: 100%;
+  }
+
+  .col-print {
+    flex: 1 0 0%;
+  }
+
+  .col-print-auto {
+    @include bootstrap.make-col-auto();
+  }
+
+  @if bootstrap.$grid-columns > 0 {
+    @for $i from 1 through bootstrap.$grid-columns {
+      .col-print-#{$i} {
+        @include bootstrap.make-col($i, bootstrap.$grid-columns);
+      }
+    }
+    @for $i from 0 through (bootstrap.$grid-columns - 1) {
+      .offset-print-#{$i} {
+        @include bootstrap.make-col-offset($i, bootstrap.$grid-columns);
+      }
+    }
+  }
+}
