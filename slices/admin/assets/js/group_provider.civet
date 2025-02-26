@@ -33,7 +33,7 @@ export default groupProvider = ({mode, group, providers}) ->
                   value: groupdata?[name]
                   type
                   color: if group[name]
-                    if group[name] == groupdata?[name]
+                    if group[name] is groupdata?[name]
                       'success'
                     else
                       'danger'

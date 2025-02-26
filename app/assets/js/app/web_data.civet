@@ -67,7 +67,7 @@ export default class WebData
 
   messageList({messages})
     messages = [messages] unless messages instanceof Array
-    html.div {}, messages.filter((x) -> typeof x == 'string').map (msg) ->
+    html.div {}, messages.filter((x) -> typeof x is 'string').map (msg) ->
       html.div {}, text msg
 
   modalMessage(state)
@@ -131,7 +131,7 @@ export default class WebData
     codeAction = @codeActions.get(response.code) || UNKNOWN_CODE_ACTION
 
     messages = [(codeAction.message || responseData.message), ...(responseData.errors ?? [])]
-      .filter (v) -> typeof v == 'string'
+      .filter (v) -> typeof v is 'string'
 
     if codeAction?.redirectTo?
       closable = false

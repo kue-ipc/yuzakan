@@ -39,10 +39,10 @@ login = ({username, password}) -> [runLogin, {username, password}]
 
 
 enterToSubmitOrNextInput = (state, event) ->
-  if event.keyCode == 13
+  if event.keyCode is 13
     if submittable(state)
       [{...state, disabled: true}, login(state)]
-    else if event.target.id == 'session-username'
+    else if event.target.id is 'session-username'
       [state, focus('session-password')]
     else
       [state, focus('session-username')]

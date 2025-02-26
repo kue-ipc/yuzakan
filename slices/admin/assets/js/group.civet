@@ -18,7 +18,7 @@ import groupOperation from '~admin/group_operation.civet'
 
 main = ->
   id = getBasenameFromUrl(location)
-  id = undefined if id == '*'
+  id = undefined if id is '*'
   mode = if id? then 'show' else 'new'
 
   queryParams = pickType(getQueryParamsFromUrl(location), SHOW_GROUP_PARAM_TYPES)
@@ -30,11 +30,11 @@ main = ->
   ]
 
   view = ({mode, id, group, providers, option}) ->
-    if mode == 'none'
+    if mode is 'none'
       return html.div {},
         html.strong {}, text 'グループが見つかりませんでした。'
 
-    if mode == 'new'
+    if mode is 'new'
       return html.div {},
         html.strong {}, text 'グループの新規作成はできません。'
 

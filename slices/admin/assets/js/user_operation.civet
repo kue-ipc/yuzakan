@@ -223,7 +223,7 @@ DestroyLockUser = (state) -> [state, [runDestroyLockUser, {name: state.name}]]
 ChangeMode = (state, mode) -> {...state, mode}
 
 ChangeUserName = (state, name) ->
-  history.pushState(null, null, "/admin/users/#{name}") if name? && name != state.name
+  history.pushState(null, null, "/admin/users/#{name}") if name? && name is not state.name
   {...state, name}
 
 export default userOperation = ({option}) ->
@@ -247,9 +247,9 @@ export default userOperation = ({option}) ->
 //         class: 'form-check-input'
 //         type: 'checkbox'
 //         role: 'switch'
-//         checked: mode != 'show'
-//         disabled: mode == 'new'
-//         onchange: [ChangeMode, if mode == 'show' then 'edit' else 'show']
+//         checked: mode is not 'show'
+//         disabled: mode is 'new'
+//         onchange: [ChangeMode, if mode is 'show' then 'edit' else 'show']
 //       }
 //       html.label {
 //         class: 'form-check-label'

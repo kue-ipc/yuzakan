@@ -39,7 +39,7 @@ export modalFooter = ({id, closable, action, close}) ->
       disabled: action.disabled
     }, text action.label
   ]
-  buttons = buttons.reverse() if action?.side == 'left'
+  buttons = buttons.reverse() if action?.side is 'left'
   html.div {id: "#{id}-modal-footer", class: 'modal-footer'}, buttons
 
 export modalContent = ({id, title, status, closable, action, close}, children) ->
@@ -56,7 +56,7 @@ export modalDialog = ({id, scrollable, centered, size, fullscreen, ...props}, ch
     'modal-dialog-centered' if centered
     "modal-#{size}" if size
     if fullscreen
-      if typeof fullscreen == 'string'
+      if typeof fullscreen is 'string'
         "modal-fullscreen-#{fullscreen}"
       else
         'modal-fullscreen'

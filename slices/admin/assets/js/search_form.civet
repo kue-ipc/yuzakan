@@ -11,7 +11,7 @@ export default searchForm = ({query, onsearch, ...props}) ->
     placeholder: '検索...'
     ...props
     onkeypress: (state, event) ->
-      if event.keyCode == 13
+      if event.keyCode is 13
         [onsearch, event.target.value]
       else
         state

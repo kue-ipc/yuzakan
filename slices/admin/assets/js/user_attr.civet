@@ -102,9 +102,9 @@ attrSettingTd = ({mode, user, attr}) ->
   html.td {},
     switch user.attrSettings?[attr.name]
       when 'default'
-        attrSetting {attr_name: attr.name, checked: true, edit: mode != 'show'}
+        attrSetting {attr_name: attr.name, checked: true, edit: mode is not 'show'}
       when 'custom'
-        attrSetting {attr_name: attr.name, checked: false, edit: mode != 'show'}
+        attrSetting {attr_name: attr.name, checked: false, edit: mode is not 'show'}
       else
         []
 
@@ -123,11 +123,11 @@ attrValueTd = ({mode, user, attr}) ->
       attr_name: attr.name
       value: value
       type: attr.type
-      edit: mode != 'show' && user.attrSettings[attr.name] != 'default' && !attr.readonly
+      edit: mode is not 'show' && user.attrSettings[attr.name] is not 'default' && !attr.readonly
       color:
         if !defaultValue?
           'body'
-        else if defaultValue == value
+        else if defaultValue is value
           'success'
         else
           'danger'
@@ -137,7 +137,7 @@ providerTd = ({user, attr, provider}) ->
   return html.td {} unless user.providers.includes(provider.name)
 
   data = user.providers_data.get(provider.name)
-  // provider_userdata = (user.provider_userdatas.find (data) -> data.provider.name == provider.name)
+  // provider_userdata = (user.provider_userdatas.find (data) -> data.provider.name is provider.name)
   return html.td {} unless data?
 
   provider_value = data.attrs.get(attr.name)
@@ -146,13 +146,13 @@ providerTd = ({user, attr, provider}) ->
     valueDisplay {
       value: provider_value
       type: attr.type
-      color: if provider_value == user.attrs.get(attr.name) then 'success' else 'danger'
+      color: if provider_value is user.attrs.get(attr.name) then 'success' else 'danger'
     }
 
 export default userAttr = ({mode, user, providers, attrs}) ->
   // provider_userdatas =
   // for each provider of providers
-  //   (user.provider_userdatas.find (data) -> data.provider.name == provider.name)?.userdata
+  //   (user.provider_userdatas.find (data) -> data.provider.name is provider.name)?.userdata
 
   html.div {}, [
     html.h4 {}, text '属性一覧'

@@ -32,7 +32,7 @@ export CalcUserAttrs = (state, {user, attrs}) ->
 
   for each attr of attrs when attr.code
     attrDefaults[attr.name] = calcUserAttrValue({user, attrs: attrValues, code: attr.code})
-    if user.attrSettings[attr.name] == 'default'
+    if user.attrSettings[attr.name] is 'default'
       attrValues[attr.name] = attrDefaults[attr.name]
 
   {...state, user: {...user, attrs: attrValues, attrDefaults}, attrs}
@@ -54,9 +54,9 @@ export InitUserAttrs = (state, {user, attrs}) ->
 
     attrDefaults[attr.name] = calcUserAttrValue({user, attrs: user.userdata.attrs, code: attr.code})
 
-    if state.mode == 'new' ||
+    if state.mode is 'new' ||
         !user.userdata.attrs[attr.name]? ||
-        user.userdata.attrs[attr.name] == attrDefaults[attr.name]
+        user.userdata.attrs[attr.name] is attrDefaults[attr.name]
       attrSettings[attr.name] = 'default'
       attrValues[attr.name] = attrDefaults[attr.name]
     else

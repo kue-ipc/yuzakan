@@ -22,7 +22,7 @@ export runGetUserWithInit = (dispatch, {name}) ->
     response = await fetchJsonGet({url: "/api/users/#{name}"})
     if response.ok
       dispatch(SetUserWithInit, {user: response.data})
-    else if response.code == 404
+    else if response.code is 404
       dispatch(SetMode, 'none')
     else
       console.error response

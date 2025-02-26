@@ -19,7 +19,7 @@ UNKNOWN_STATUS = 'unknown'
 RUNNING_LABEL = '読込中...'
 
 export StatusIcon = ({status, ...props}) ->
-  if status == 'running'
+  if status is 'running'
     html.div {class: "spinner-border #{props.class}", role: 'status'},
       html.span {class: 'visually-hidden'}, text RUNNING_LABEL
   else

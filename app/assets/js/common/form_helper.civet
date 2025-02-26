@@ -14,11 +14,11 @@ export formDataToObj = (formData) ->
     keyList = paramNameToList(key)
     obj = root
     while subKey = keyList.shift()
-      if keyList.length == 0
+      if keyList.length is 0
         obj[subKey] = value
       else
-        if keyList[0] == ''
-          throw new Error('Empty key must be last') unless keyList.length == 1
+        if keyList[0] is ''
+          throw new Error('Empty key must be last') unless keyList.length is 1
           obj[subKey] ?= []
           obj[subKey].push value
         else if keyList[0].match(/^\d+$/)

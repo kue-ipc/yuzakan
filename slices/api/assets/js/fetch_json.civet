@@ -58,13 +58,13 @@ createRequest = ({url, method, data = null, type = 'json', ...params}) ->
           content_type = 'application/json'
           if data instanceof FormData
             data = formDataToJson(data)
-          else if typeof data != 'string'
+          else if typeof data is not 'string'
             data = objToJson(data)
         when 'urlencoded'
           content_type = 'application/x-www-form-urlencoded'
           if data instanceof FormData
             data = formDataToUrlencoded(data)
-          else if typeof data != 'string'
+          else if typeof data is not 'string'
             data = objToUrlencoded(data)
         when 'form-data'
           content_type = 'multipart/form-data'
@@ -81,7 +81,7 @@ createRequest = ({url, method, data = null, type = 'json', ...params}) ->
     else
       if data instanceof FormData
         query = formDataToUrlencoded(data)
-      else if typeof data == 'object'
+      else if typeof data is 'object'
         query = objToUrlencoded(data)
       else
         query = encodeURIComponent(data)

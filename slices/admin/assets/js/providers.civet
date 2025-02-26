@@ -18,7 +18,7 @@ providerTr = ({provider}) ->
         html.span {class: 'text-danger'}, text 'NG'
     else
       html.span {class: 'text-secondary'}, text '確認中'
-    html.td {}, if provider.adapter == "local"
+    html.td {}, if provider.adapter is "local"
       html.a {
         class: "btn btn-primary btn-sm"
         href: "/admin/providers/#{provider.name}/export"
@@ -32,7 +32,7 @@ providerTr = ({provider}) ->
 providerAction = (state, {name, provider}) ->
   name ?= provider.name
   providers = for each current of state.providers
-    if current.name == name
+    if current.name is name
       {...current, ...provider}
     else
       current

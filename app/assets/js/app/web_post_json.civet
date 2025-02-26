@@ -93,7 +93,7 @@ export default class WebPostJson
           when 'error' then 'エラー'
           else ''
 
-      if data.result == 'success'
+      if data.result is 'success'
         @modalMessage {
           status: data.result
           title: "#{@title}#{resultTitle}"
@@ -207,7 +207,7 @@ STATUS_LEVELS = new Map([
 ])
 
 StatusIcon = ({status}) ->
-  if status == 'running'
+  if status is 'running'
     return h 'div', {class: 'spinner-border', role: 'status'},
       h 'span', {class: 'visually-hidden'}, text '読込中...'
   {color, icon} = STATUS_LEVELS.get(status)
@@ -216,6 +216,6 @@ StatusIcon = ({status}) ->
 
 MessageList = ({messages}) ->
   messages = [messages] unless messages instanceof Array
-  h 'div', {}, messages.filter((x) -> typeof x == 'string').map (msg) ->
+  h 'div', {}, messages.filter((x) -> typeof x is 'string').map (msg) ->
     h 'div', {},
       text msg

@@ -217,7 +217,7 @@ groupDetailTr = ({group, providers}) ->
           html.pre {class: 'mb-0 text-info'}, text group.note
       if group.error
         html.div {key: 'error', class: 'small'},
-          if typeof group.error == 'string'
+          if typeof group.error is 'string'
             preCode {code: group.error, language: 'text'}
           else
             preCode {code: objToJson(group.error, 2), language: 'json'}
@@ -259,12 +259,12 @@ SetIndexGroups = (state, rawGroups) ->
   }
 
 MovePage = (state, page) ->
-  return state if state.page == page
+  return state if state.page is page
 
   [ReloadIndexGroups, {pagination: {...state.pagination , page}}]
 
 Search = (state, query) ->
-  return state if state.query == query
+  return state if state.query is query
 
   // ページ情報を初期化
   [ReloadIndexGroups, {pagination: {...state.pagination , page: 1}, search: {query}}]
@@ -302,9 +302,9 @@ SetGroupInListNextIfDoAll = (state, group) ->
       ...state
       groups
     }
-    if group.action == 'ERR'
+    if group.action is 'ERR'
       runStopAllAction
-    else if state.mode == 'do_all'
+    else if state.mode is 'do_all'
       [runDoNextAction, {list: groups, action: DoActionGroup}]
   ]
 
@@ -332,7 +332,7 @@ createActionGroup = (createEffecter, props = {}) ->
     [
       {
         ...state
-        mode: if state.mode == 'file' then 'result' else state.mode
+        mode: if state.mode is 'file' then 'result' else state.mode
         groups: updateGroupList(state.groups, {...group, action: 'ACT'})
       }
       [run, {...props, ...group, id: group.name}]
@@ -357,7 +357,7 @@ runIndexGroups = createRunIndexWithPageGroups({action: SetIndexGroups})
 
 runPushHistory = (dispatch, params) ->
   query = "?#{objToUrlencoded(params)}"
-  if (query != location.search)
+  if (query is not location.search)
     history.pushState(params, '', "#{location.pathname}#{query}")
 
 // Subscribers
@@ -406,15 +406,15 @@ main = ->
         onupload: UploadGroups
         action: DoActionGroup
       }
-      if mode == 'loaded' || mode == 'loading'
+      if mode is 'loaded' || mode is 'loading'
         html.div {key: 'index-params'}, [
-          searchForm {...search, onsearch: Search, readonly: mode == 'loading'}
-          indexGroupsOption {...option, onchange: ChangeOption, readonly: mode == 'loading'}
-          pageNav {...pagination, onpage: MovePage, readonly: mode == 'loading'}
+          searchForm {...search, onsearch: Search, readonly: mode is 'loading'}
+          indexGroupsOption {...option, onchange: ChangeOption, readonly: mode is 'loading'}
+          pageNav {...pagination, onpage: MovePage, readonly: mode is 'loading'}
         ]
-      if mode == 'loading'
+      if mode is 'loading'
         html.p {key: 'loading'}, text '読込中...'
-      else if groups.length == 0
+      else if groups.length is 0
         html.p {key: 'not-found'}, text 'グループが存在しません。'
       else
         groupsTable({groups, providers})

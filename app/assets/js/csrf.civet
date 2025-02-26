@@ -1,6 +1,6 @@
 getMetaContent = (name) ->
   for each metaEl of document.getElementsByTagName('meta')
-    if metaEl.name == name
+    if metaEl.name is name
       return metaEl.content
 
 export csrfParam = -> getMetaContent('csrf-param')

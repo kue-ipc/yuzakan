@@ -63,7 +63,7 @@ export toRomaji = (str) ->
     ROMAJI_MAP[m] ?? m
   str = str.replace /n([bmp])/g, 'm$1'
   str = str.replace /\*(.)/g, (m, p1) ->
-    if p1 == 'c'
+    if p1 is 'c'
       'tc'
     else
       "#{p1}#{p1}"

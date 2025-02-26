@@ -2,20 +2,20 @@
 
 export updateList = (list, id, data, {key = 'id'}) ->
   for each item of list
-    if item[key] == id
+    if item[key] is id
       {...item, ...data}
     else
       item
 
 export findList = (list, id, {key = 'id'}) ->
   for each item of list
-    if item[key] == id
+    if item[key] is id
       return item
   
   null
 
 export deleteList = (list, id, {key = 'id'}) ->
-  item for each item of list when item[key] != id
+  item for each item of list when item[key] is not id
 
 export createList = (list, data, {key = 'id'}) ->
   list.concat(data)

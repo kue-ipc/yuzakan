@@ -45,7 +45,7 @@ attrMappingTd = ({attr, provider}) ->
     return html.td {}, text '読み込み中'
 
   mapping = attr.mappings.find (mapping) ->
-    mapping.provider == provider.name
+    mapping.provider is provider.name
   mapping ?= {key: '', conversion: null}
 
   html.td {}, [
@@ -67,7 +67,7 @@ attrMappingTd = ({attr, provider}) ->
       }, MAPPING_CONVERSIONS.map (conversion) ->
         html.option {
           value: conversion.value
-          selected: conversion.value == mapping.conversion
+          selected: conversion.value is mapping.conversion
         }, text conversion.label
   ]
 
@@ -108,7 +108,7 @@ attrTr = ({attr, index, providers}) ->
       }, ATTR_TYPES.map (attrType) ->
         html.option {
           value: attrType.value
-          selected: attrType.value == attr.type
+          selected: attrType.value is attr.type
         }, text attrType.label
 
       html.div {class: 'btn-group', role: 'group'}, [
@@ -181,7 +181,7 @@ attrAction = (state, {name, attr}) ->
   if name
     replaced = false
     attrs = for each current of state.attrs
-      if current.name == name
+      if current.name is name
         replaced = true
         {...current, ...attr}
       else
@@ -193,13 +193,13 @@ attrAction = (state, {name, attr}) ->
     {...state, newAttr: {...state.newAttr, ...attr}}
 
 deleteAttrAction = (state, {name}) ->
-  attrs = state.attrs.filter (attr) -> attr.name != name
+  attrs = state.attrs.filter (attr) -> attr.name is not name
   {...state, attrs}
 
 replaceAttrMapping = (mappings, mapping) ->
   replaced = false
   new_attr_mappings = for each current of mappings
-    if current.provider == mapping.provider
+    if current.provider is mapping.provider
       replaced = true
       {...current, ...mapping}
     else
@@ -213,7 +213,7 @@ replaceAttrMapping = (mappings, mapping) ->
 attrMappingAction = (state, {name, mapping}) ->
   if name
     attrs = for each attr of state.attrs
-      if attr.name == name
+      if attr.name is name
         {...attr, mappings: replaceAttrMapping(attr.mappings, mapping)}
       else
         attr
@@ -264,7 +264,7 @@ destroyAttrRunner = (dispatch, {attr}) ->
       console.error response
 
 upAttrAction = (state, {name}) ->
-  attrIndex = state.attrs.findIndex (attr) -> attr.name == name
+  attrIndex = state.attrs.findIndex (attr) -> attr.name is name
   newOrder =
     switch attrIndex
       when 0, 1
@@ -272,7 +272,7 @@ upAttrAction = (state, {name}) ->
       else
         Math.floor((state.attrs[attrIndex - 1].order + state.attrs[attrIndex - 2].order) / 2)
 
-  if state.attrs[attrIndex].order == newOrder
+  if state.attrs[attrIndex].order is newOrder
     console.warn '移動できません。'
     return state
  
@@ -291,7 +291,7 @@ upAttrAction = (state, {name}) ->
   ]
 
 downAttrAction = (state, {name}) ->
-  attrIndex = state.attrs.findIndex (attr) -> attr.name == name
+  attrIndex = state.attrs.findIndex (attr) -> attr.name is name
   newOrder =
     switch attrIndex
       when state.attrs.length - 1, state.attrs.length - 2
@@ -299,7 +299,7 @@ downAttrAction = (state, {name}) ->
       else
         Math.floor((state.attrs[attrIndex + 1].order + state.attrs[attrIndex + 2].order) / 2)
 
-  if state.attrs[attrIndex].order == newOrder
+  if state.attrs[attrIndex].order is newOrder
     console.warn '移動できません。'
     return state
  

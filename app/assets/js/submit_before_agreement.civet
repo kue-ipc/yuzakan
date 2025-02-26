@@ -1,6 +1,6 @@
 
 submitBeforeAgreementSet = (form) ->
-  return if form.tagName != 'FORM'
+  return if form.tagName is not 'FORM'
 
   agreementInput = form.getElementsByClassName('agreement')[0]
   submitButton = form.getElementsByClassName('submit')[0]

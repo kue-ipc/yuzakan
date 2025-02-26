@@ -9,7 +9,7 @@ import {CalcUserAttrs} from '~admin/user_attrs.civet'
 
 SetUserUsername = (state, name) ->
   email =
-    if !state.user.email || state.user.email == "#{state.user.name}@#{state.system.domain}"
+    if !state.user.email || state.user.email is "#{state.user.name}@#{state.system.domain}"
       if name
         "#{name}@#{state.system.domain}"
       else
@@ -62,7 +62,7 @@ export default userInfo = ({mode, user, groups}) ->
       dlh.dt {},
         text '表示名'
       dlh.dd {},
-        if mode == 'show'
+        if mode is 'show'
           text user.display_name ?? ''
         else
           html.input {
@@ -76,7 +76,7 @@ export default userInfo = ({mode, user, groups}) ->
       dlh.dt {},
         text 'メールアドレス'
       dlh.dd {},
-        if mode == 'show'
+        if mode is 'show'
           text user.email ?? ''
         else
           html.input {
@@ -90,8 +90,8 @@ export default userInfo = ({mode, user, groups}) ->
       dlh.dt {},
         text '権限レベル'
       dlh.dd {},
-        if mode == 'show'
-          text (CLEARANCE_LEVELS.find (level) -> level.value == user.clearance_level).label
+        if mode is 'show'
+          text (CLEARANCE_LEVELS.find (level) -> level.value is user.clearance_level).label
         else
           html.select {
             class: 'form-select'
@@ -100,14 +100,14 @@ export default userInfo = ({mode, user, groups}) ->
             for each level of CLEARANCE_LEVELS
               html.option {
                 value: level.value
-                selected: level.value == user.clearance_level
+                selected: level.value is user.clearance_level
               }, text level.label
       dlh.dt {},
         text 'プライマリーグループ'
       dlh.dd {},
-        if mode == 'show'
+        if mode is 'show'
           if user.primary_group
-            primary_group = groups.find (group) -> group.name == user.primary_group
+            primary_group = groups.find (group) -> group.name is user.primary_group
             text if primary_group.display_name
               "#{primary_group.display_name} (#{primary_group.name})"
             else
@@ -119,7 +119,7 @@ export default userInfo = ({mode, user, groups}) ->
             class: 'form-select'
             oninput: SetUserPrimaryGroupByEvent
           }, [
-            if mode == 'new'
+            if mode is 'new'
               html.option {
                 selected: !user.primary_group?
               }, text "選択してください。"
@@ -127,7 +127,7 @@ export default userInfo = ({mode, user, groups}) ->
               for each group of groups
                 html.option {
                   value: group.name
-                  selected: group.name == user.primary_group
+                  selected: group.name is user.primary_group
                 }, text if group.display_name then "#{group.display_name} (#{group.name})" else group.name
             )...
           ]

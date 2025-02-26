@@ -6,12 +6,12 @@ RemoveGroup = (state, name) ->
     ...state
     user: {
       ...state.user
-      groups: (group for each group of state.user.groups when group != name)
+      groups: (group for each group of state.user.groups when group is not name)
     }
   }
 
 groupLi = ({name, groups, removable = false}) ->
-  group = groups.find (item) -> item.name == name
+  group = groups.find (item) -> item.name is name
   html.li {class: 'list-inline-item border border-success rounded px-1 mb-1'}, [
     text "#{group.display_name} (#{group.name})"
     // if removable
@@ -31,7 +31,7 @@ export default userGroup = ({mode, user, groups}) ->
     if user.groups?.length
       html.ul {class: 'list-inline'},
         for each name of user.groups
-          groupLi({name, groups, removable: name != user.primary_group})
+          groupLi({name, groups, removable: name is not user.primary_group})
     else
       html.p {}, text '所属しているグループはありません。'
     // html.button {class: 'btn btn-primary'}, text '追加'

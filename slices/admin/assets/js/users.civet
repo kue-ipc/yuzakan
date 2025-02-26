@@ -90,7 +90,7 @@ normalizeUserAttrs = (userAttrs, {attrs}) ->
 fillAddOrModUsers = ({users, attrs, domain}) ->
   for each user of users
     user = setUserAttrsDefault({user, attrs}) if user.attrs? && ['ADD', 'MOD'].includes(user.action)
-    user = {...user, email: "#{user.name}@#{domain}"} if user.action == 'ADD' && !user.email
+    user = {...user, email: "#{user.name}@#{domain}"} if user.action is 'ADD' && !user.email
     user
 
 indexOptionFromState = (state) ->
@@ -270,7 +270,7 @@ userDetailTr = ({user, providers}) ->
           html.pre {class: 'mb-0 text-info'}, text user.note
       if user.error
         html.div {key: 'error', class: 'small'},
-          if typeof user.error == 'string'
+          if typeof user.error is 'string'
             preCode {code: user.error, language: 'text'}
           else
             preCode {code: objToJson(user.error, 2), language: 'json'}
@@ -301,7 +301,7 @@ createActionUser = (createEffecter, props = {}) ->
     [
       {
         ...state
-        mode: if state.mode == 'file' then 'result' else state.mode
+        mode: if state.mode is 'file' then 'result' else state.mode
         users: updateUserList(state.users, {...user, action: 'ACT'})
       }
       [run, {...props, ...user, id: user.name, user_id: user.name}]
@@ -338,12 +338,12 @@ SetIndexUsers = (state, rawUsers) ->
   }
 
 MovePage = (state, page) ->
-  return state if state.page == page
+  return state if state.page is page
 
   [ReloadIndexUsers, {pagination: {...state.pagination , page}}]
 
 Search = (state, query) ->
-  return state if state.query == query
+  return state if state.query is query
 
   // ページ情報を初期化
   [ReloadIndexUsers, {pagination: {...state.pagination , page: 1}, search: {query}}]
@@ -388,9 +388,9 @@ SetUserInListNextIfDoAll = (state, user) ->
       ...state
       users
     }
-    if user.action == 'ERR'
+    if user.action is 'ERR'
       runStopAllAction
-    else if state.mode == 'do_all'
+    else if state.mode is 'do_all'
       [runDoNextAction, {list: users, action: DoActionUser}]
   ]
 
@@ -440,7 +440,7 @@ runIndexUsers = createRunIndexWithPageUsers({action: SetIndexUsers})
 
 runPushHistory = (dispatch, params) ->
   query = "?#{objToUrlencoded(params)}"
-  if (query != location.search)
+  if (query is not location.search)
     history.pushState(params, '', "#{location.pathname}#{query}")
 
 // Subscribers
@@ -495,15 +495,15 @@ main = ->
         onupload: UploadUsers
         action: DoActionUser
       }
-      if mode == 'loaded' || mode == 'loading'
+      if mode is 'loaded' || mode is 'loading'
         html.div {key: 'index-params'}, [
-          searchForm {...search, onsearch: Search, readonly: mode == 'loading'}
-          indexUsersOption {...option, onchange: ChangeOption, readonly: mode == 'loading'}
-          pageNav {...pagination, onpage: MovePage, readonly: mode == 'loading'}
+          searchForm {...search, onsearch: Search, readonly: mode is 'loading'}
+          indexUsersOption {...option, onchange: ChangeOption, readonly: mode is 'loading'}
+          pageNav {...pagination, onpage: MovePage, readonly: mode is 'loading'}
         ]
-      if mode == 'loading'
+      if mode is 'loading'
         html.p {}, text '読込中...'
-      else if users.length == 0
+      else if users.length is 0
         html.p {}, text 'ユーザーが存在しません。'
       else
         usersTable({users, groups, providers})

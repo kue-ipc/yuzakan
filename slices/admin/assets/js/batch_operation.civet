@@ -41,7 +41,7 @@ export batchOperation = ({mode, list, header, filename, onupload, action}) ->
     html.div {key: 'do_all_action', class: 'col-md-2'},
       // result の場合は、既に実行したエントリー(エラー含む)を除いて実行
       unless ['loading', 'loaded'].includes(mode)
-        startAllActionButton {list, action, disbaled: mode == 'do_all'}
+        startAllActionButton {list, action, disbaled: mode is 'do_all'}
   ]
 
 startAllActionButton = ({disabled, ...props}) ->

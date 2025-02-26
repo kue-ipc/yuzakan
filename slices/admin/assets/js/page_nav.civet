@@ -27,19 +27,19 @@ export default pageNav = ({page, per_page, total, start, end, onpage, readonly =
 
 pageList = ({page, total_page, onpage, readonly = false}) ->
   compact([
-    pageItem {content: 'first', page: 1, disabled: page == 1, onpage, readonly}
-    pageItem {content: 'prev', page: page - 1, disabled: page == 1, onpage, readonly}
+    pageItem {content: 'first', page: 1, disabled: page is 1, onpage, readonly}
+    pageItem {content: 'prev', page: page - 1, disabled: page is 1, onpage, readonly}
     pageEllipsis {start: 1, end: page - 3, onpage, readonly}
     ...(pageNumList {start: page - 2, end: page + 2, page, total_page, onpage, readonly})
     pageEllipsis {start: page + 3, end: total_page, onpage, readonly}
-    pageItem {content: 'next', page: page + 1, disabled: page == total_page, onpage, readonly}
-    pageItem {content: 'last', page: total_page, disabled: page == total_page, onpage, readonly}
+    pageItem {content: 'next', page: page + 1, disabled: page is total_page, onpage, readonly}
+    pageItem {content: 'last', page: total_page, disabled: page is total_page, onpage, readonly}
   ])
 
 pageNumList = ({start, end, page, total_page, onpage, readonly = false}) ->
   for each num of [start..end]
     if num > 0 && num <= total_page
-      pageItem {content: num, page: num, active: page == num, onpage, readonly}
+      pageItem {content: num, page: num, active: page is num, onpage, readonly}
     else
       null
 
@@ -53,7 +53,7 @@ pageItem = ({content, page, onpage, active = false, disabled = false, readonly =
     }, text pageText(content)
 
 pageText = (content) ->
-  if typeof content == 'string'
+  if typeof content is 'string'
     {
       first: '最初'
       last: '最後'
@@ -66,7 +66,7 @@ pageText = (content) ->
 pageEllipsis = ({start, end, onpage, readonly = false}) ->
   if start > end
     return null
-  else if start == end
+  else if start is end
     pageItem {content: start, page: start, onpage, readonly}
   else
     html.li {key: "page[#{start}..#{end}]", class: ['page-item', 'disabled']},

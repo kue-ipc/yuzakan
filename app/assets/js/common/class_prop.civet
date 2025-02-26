@@ -5,11 +5,11 @@ import {uniq, compact} from '~/common/helper.civet'
 export parseClassProp = (obj) ->
   if !obj?
     []
-  else if typeof obj == 'string'
+  else if typeof obj is 'string'
     (item for each item of obj.split(/\s+/) when item)
   else if obj instanceof Array
     obj
-  else if typeof obj == 'object'
+  else if typeof obj is 'object'
     (String(key) for own key, value in obj when value)
   else
     console.warn 'Not a string, an array, or an object.'

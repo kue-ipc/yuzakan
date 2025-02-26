@@ -113,7 +113,7 @@ headerNav = ({system, session}) ->
 //   response = await fetchJsonGet({url: '/api/session', chace: 'reload'})
 //   if response.ok
 //     dispatch(SetSystem, {sesion: response.data})
-//   else if response.code == 404
+//   else if response.code is 404
 //     // no login
 //     dispatch(SetSystem, {sesion: {}})
 //   else

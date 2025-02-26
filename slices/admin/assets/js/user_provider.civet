@@ -32,7 +32,7 @@ userRemoveProviderAction = (state, {provider_name}) ->
     ...state
     user: {
       ...state.user
-      providers: state.user.providers.filter (item) -> item != provider_name
+      providers: state.user.providers.filter (item) -> item is not provider_name
     }
   }
 
@@ -69,7 +69,7 @@ providerTd = ({user, provider, name, type}) ->
       type
       color:
         if user[name]
-          if user[name] == data?[name]
+          if user[name] is data?[name]
             'success'
           else
             'danger'
@@ -88,7 +88,7 @@ providerCheckTd = ({mode, user, provider}) ->
     providerCheck {
       provider_name: provider.name
       checked: user.providers.includes(provider.name)
-      edit: mode != 'show'
+      edit: mode is not 'show'
     }
 
 export default userProvider = ({mode, user, providers}) ->
@@ -105,7 +105,7 @@ export default userProvider = ({mode, user, providers}) ->
           html.th {}, text '登録'
           ...(providerCheckTd({mode, user, provider}) for each provider of providers)
         ]
-        ...(if mode != 'new' then (providerTr {user, providers, ...item} for each item of PROVIDER_REG_ITEMS) else [])
+        ...(if mode is not 'new' then (providerTr {user, providers, ...item} for each item of PROVIDER_REG_ITEMS) else [])
       ]
     ]
   ]

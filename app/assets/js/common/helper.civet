@@ -51,7 +51,7 @@ export basename = (path, suffix = '') ->
   lastDot = base.lastIndexOf('.')
   return base if lastDot <= 0
 
-  if suffix == '.*' || suffix == base.slice(lastDot)
+  if suffix is '.*' || suffix is base.slice(lastDot)
     base.slice(0, lastDot)
   else
     base

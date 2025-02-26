@@ -9,7 +9,7 @@ export createEventValueAction = (action, {type = 'string'} = {}) ->
     when 'boolean'
       (state, event) ->
         event.preventDefault()
-        if event.type == 'checkbox'
+        if event.type is 'checkbox'
           [action, Number(event.target.checked)]
         else if event.target.value && !['n', 'no', 'f', 'false', 'off', '0'].includes(event.target.value.toLowerCase())
           [action, true]

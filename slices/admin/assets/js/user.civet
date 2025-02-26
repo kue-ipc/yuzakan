@@ -35,7 +35,7 @@ runShowUserWithInit = createRunShowUser()
 
 main = ->
   id = getBasenameFromUrl(location)
-  id = undefined if id == '*'
+  id = undefined if id is '*'
   mode = if id? then 'show' else 'new'
 
   queryParams = pickType(getQueryParamsFromUrl(location), SHOW_USER_PARAM_TYPES)
@@ -50,11 +50,11 @@ main = ->
   ]
 
   view = ({mode, id, user, providers, attrs, groups, system, option}) ->
-    if mode == 'none'
+    if mode is 'none'
       return html.div {},
         html.strong {}, text 'ユーザーが見つかりませんでした。'
 
-    if mode == 'new'
+    if mode is 'new'
       return html.div {},
         html.strong {}, text '準備中です。'
 

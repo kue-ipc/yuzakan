@@ -14,7 +14,7 @@ export createResponseAction = ({action, fallback, normalizer}) ->
   (state, response) ->
     if response.ok
       [action, normalizer(response.data)]
-    else if response.code == 404
+    else if response.code is 404
       console.warn response
       [action, null]
     else
