@@ -35,7 +35,7 @@ export default class APIDialog
   readonly #path: string
   readonly #codeActions: Map<number, CodeAction>?
 
-  @({#id, #title, #method = "GET", @url, #codeActions}:
+  @({#id, #title, #method = "GET", #path, #codeActions}:
     {id: string, title: string, method: Method, path?: string, codeActions?: Map<number, CodeAction>})
     #codeActions = new Map [...DEFAULT_CODE_ACTIONS, ...codeActions]
 

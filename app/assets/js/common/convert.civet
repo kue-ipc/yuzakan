@@ -4,7 +4,16 @@ import {DateTime} from "luxon"
 
 import {capitalize} from "~/common/string_helper.civet"
 
-TRUE_STRINGS := new Set([
+type BooleanString = 
+  "1" | "0" |
+  "t" | "f" |
+  "true" | "false" |
+  "y" | "n" |
+  "yes" | "no" |
+  "on" | "off"
+
+
+TRUE_STRINGS: Set<BooleanString> := new Set([
   "1"
   "t"
   "true"
@@ -13,7 +22,7 @@ TRUE_STRINGS := new Set([
   "on"
 ])
 
-FALSE_STRINGS := new Set([
+FALSE_STRINGS: Set<BooleanString> := new Set([
   "0"
   "f"
   "false"
@@ -22,11 +31,16 @@ FALSE_STRINGS := new Set([
   "off"
 ])
 
-export TRUE_STR := "1"
-export FALSE_STR := "0"
+export TRUE_STR: BooleanString := "1"
+export FALSE_STR: BooleanString := "0"
+
+type Type = "string" | "text" |
+  "boolean" | "integer" | "float" |
+  "datetime" | "date" | "time" |
+  "list" | "map" | "set" | "object"| "any"
 
 // convert to the specified type
-export convertToType := (val, type = "string") ->
+export convertToType := (val: any, type: Type = "string") ->
   return val unless val?
 
   switch type
@@ -155,31 +169,31 @@ export paramNameToList = (str) ->
 // list -> string
 
 // abc, def, hij -> abcDefHij
-export listToCamelCase := (...list) ->
+export listToCamelCase := (...list: string[]): string ->
   (list[0]?.toLowerCase() ?? "") +
     (capitalize(str) for each str of list[1..]).join("")
 
 // abc, def, hij -> AbcDefHij
-export listToPascalCase := (...list) ->
+export listToPascalCase := (...list: string[]): string ->
   (capitalize(str) for each str of list).join("")
 
 // abc, def, hij -> abc_def_hij
-export listToSnakeCase := (...list) ->
+export listToSnakeCase := (...list: string[]): string ->
   (str.toLowerCase() for each str of list).join("_")
 
 // abc, def, hij -> abc-def-hij
-export listToKebabCase := (...list) ->
+export listToKebabCase := (...list: string[]): string ->
   (str.toLowerCase() for each str of list).join("-")
 
 // abc, def, hij -> ABC_DEF_HIJ
-export listToAllCaps := (...list) ->
+export listToAllCaps := (...list: string[]): string ->
   (str.toUpperCase() for each str of list).join("_")
 
 // abc, def, hij -> Abc-Def-Hij
-export listToTrainCase := (...list) ->
+export listToTrainCase := (...list: string[]): string ->
   (capitalize(str) for each str of list).join("-")
 
-export listToParamName := (...list) ->
+export listToParamName := (...list: string[]): string ->
   (list[0] ?? "") + (`[${str}]` for each str of list[1..]).join("")
 
 // object -> other

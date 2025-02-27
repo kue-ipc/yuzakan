@@ -1,31 +1,31 @@
 import Pluralize from "pluralize"
 
-import {listToCamelCase, listToPascalCase, listToSnakeCase, listToKebabCase} from "~/common/convert.civet"
+import {listToCamelCase, listToPascalCase, listToSnakeCase, listToKebabCase, strToList} from "~/common/convert.civet"
 
 // Capitalize
-export capitalize := (str) ->
+export capitalize := (str: string): string ->
   str && str[0].toUpperCase() + str[1..].toLowerCase()
 
 // camelCase
-export camelize := (str) ->
+export camelize := (str: string): string ->
   listToCamelCase(...strToList(str))
 
 // PascalCase
-export pascalize := (str) ->
+export pascalize := (str: string): string ->
   listToPascalCase(...strToList(str))
 
 // snake_case
-export snakize := (str) ->
+export snakize := (str: string): string ->
   listToSnakeCase(...strToList(str))
 
 // kebab-case
-export kebabize := (str) ->
+export kebabize := (str: string): string ->
   listToKebabCase(...strToList(str))
 
 // names
-export pluralize := (str) ->
+export pluralize := (str: string): string ->
   Pluralize.plural(str)
 
 // name
-export singularize := (str) ->
+export singularize := (str: string): string ->
   Pluralize.singular(str)
