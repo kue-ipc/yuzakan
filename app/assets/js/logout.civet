@@ -1,10 +1,10 @@
 import {app, text} from "hyperapp"
 import * as html from "@hyperapp/html"
-import WebData from "~/app/web_data.civet"
+import APIDialog from "~/app/web_data.civet"
 import bsIcon from "~/app/bs_icon.civet"
 import csrf from "~/csrf.civet"
 
-webData := new WebData {
+apiDialog := new APIDialog {
   id: "logout"
   title: "ログアウト"
   method: "DELETE"
@@ -16,7 +16,7 @@ webData := new WebData {
 }
 
 logout := (dispatch) ->
-  await webData.submitPromise({data: csrf()})
+  await apiDialog.submitPromise({data: csrf()})
   
 view := (state) ->
   html.button {

@@ -4,11 +4,11 @@ import {app, text} from "hyperapp"
 import * as html from "@hyperapp/html"
 import {focus} from "@hyperapp/dom"
 import {delay} from "@hyperapp/time"
-import WebData from "~/app/web_data.civet"
+import APIDialog from "~/app/web_data.civet"
 import bsIcon from "~/app/bs_icon.civet"
 import csrf from "~/csrf.civet"
 
-webData := new WebData {
+apiDialog := new APIDialog {
   id: "login"
   title: "ログイン"
   method: "POST"
@@ -24,7 +24,7 @@ webData := new WebData {
 submittable := ({username, password, disabled}) -> not disabled and username and password
 
 runLogin := (dispatch, payload) ->
-  await webData.submitPromise {data: {
+  await apiDialog.submitPromise {data: {
     ...csrf()
     ...payload
   }}

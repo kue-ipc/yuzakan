@@ -4,7 +4,7 @@ import {DateTime} from "luxon"
 
 import {formName, formId} from "~/common/form_helper.civet"
 import csrf from "~/csrf.civet"
-import WebData from "~/app/web_data.civet"
+import APIDialog from "~/app/web_data.civet"
 import ConfirmDialog from "~/app/confirm_dialog.civet"
 import LoginInfo from "~/app/login_info.civet"
 
@@ -56,7 +56,7 @@ destroyLockConfirm := new ConfirmDialog {
 
 // Web Data
 
-createWebData := new WebData {
+createAPIDialog := new APIDialog {
   id: formId("create", ["modal", "web", ...parentNames])
   title: "ユーザーの作成"
   method: "POST"
@@ -66,7 +66,7 @@ createWebData := new WebData {
   ]
 }
 
-updateWebData := new WebData {
+updateAPIDialog := new APIDialog {
   id: formId("update", ["modal", "web", ...parentNames])
   title: "ユーザーの更新"
   method: "PATCH"
@@ -75,7 +75,7 @@ updateWebData := new WebData {
   ]
 }
 
-destroyWebData := new WebData {
+destroyAPIDialog := new APIDialog {
   id: formId("destroy", ["modal", "web", ...parentNames])
   title: "ユーザーの削除"
   method: "DELETE"
@@ -84,7 +84,7 @@ destroyWebData := new WebData {
   ]
 }
 
-createPasswordWebData := new WebData {
+createPasswordAPIDialog := new APIDialog {
   id: formId("create", ["modal", "web", ...parentNames, "password"])
   title: "パスワードのリセット"
   method: "POST"
@@ -93,7 +93,7 @@ createPasswordWebData := new WebData {
   ]
 }
 
-createLockWebData := new WebData {
+createLockAPIDialog := new APIDialog {
   id: formId("create", ["modal", "web", ...parentNames, "lock"])
   title: "ユーザーのロック"
   method: "POST"
@@ -102,7 +102,7 @@ createLockWebData := new WebData {
   ]
 }
 
-destroyLockWebData := new WebData {
+destroyLockAPIDialog := new APIDialog {
   id: formId("destroy", ["modal", "web", ...parentNames, "lock"])
   title: "ユーザーのアンロック"
   method: "DELETE"
@@ -117,7 +117,7 @@ loginInfo := new LoginInfo {
 
 // Effecters
 runCreateUser := (dispatch, {user}) ->
-  response := await createWebData.submitPromise {
+  response := await createAPIDialog.submitPromise {
     data: {
       ...csrf()
       name: user.name
@@ -138,7 +138,7 @@ runCreateUser := (dispatch, {user}) ->
     console.error response
 
 runUpdateUser := (dispatch, {name, user}) ->
-  response := await updateWebData.submitPromise {
+  response := await updateAPIDialog.submitPromise {
     url: `/api/users/${name}`
     data: {
       ...csrf()
@@ -162,7 +162,7 @@ runDestroyUser := (dispatch, {name}) ->
     messages: [`ユーザー「${name}」を削除してもよろしいですか？`]
   })
   if confirm
-    response := await destroyWebData.submitPromise {url: `/api/users/${name}`, data: csrf()}
+    response := await destroyAPIDialog.submitPromise {url: `/api/users/${name}`, data: csrf()}
     if response.ok
       // ...redirect
     else
@@ -173,7 +173,7 @@ runCreatePasswordUser := (dispatch, {user}) ->
     messages: [`ユーザー「${user.name}」のパスワードをリセットしてもよろしいですか？`]
   })
   if confirm
-    response := await createPasswordWebData.submitPromise {url: `/api/users/${user.name}/password`, data: csrf()}
+    response := await createPasswordAPIDialog.submitPromise {url: `/api/users/${user.name}/password`, data: csrf()}
     if response.ok
       dispatch (state) ->
         [state, [runShowLoginInfo, {user: {...user, ...response.data}, dateTime: response.dateTime ?? DateTime.now()}]]
@@ -185,7 +185,7 @@ runCreateLockUser := (dispatch, {name}) ->
     messages: [`ユーザー「${name}」をロックしてもよろしいですか？`]
   })
   if confirm
-    response := await createLockWebData.submitPromise {url: `/api/users/${name}/lock`, data: csrf()}
+    response := await createLockAPIDialog.submitPromise {url: `/api/users/${name}/lock`, data: csrf()}
     if response.ok
       dispatch(ReadUser)
     else
@@ -196,7 +196,7 @@ runDestroyLockUser := (dispatch, {name}) ->
     messages: [`ユーザー「${name}」をアンロックしてもよろしいですか？`]
   })
   if confirm
-    response := await destroyLockWebData.submitPromise {url: `/api/users/${name}/lock`, data: csrf()}
+    response := await destroyLockAPIDialog.submitPromise {url: `/api/users/${name}/lock`, data: csrf()}
     if response.ok
       dispatch(ReadUser)
     else

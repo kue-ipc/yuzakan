@@ -7,7 +7,7 @@ import {fetchJsonGet} from "~api/fetch_json.civet"
 import {formName, formId} from "~/common/form_helper.civet"
 import csrf from "~/csrf.civet"
 
-import WebData from "~/app/web_data.civet"
+import APIDialog from "~/app/web_data.civet"
 import ConfirmDialog from "~/app/confirm_dialog.civet"
 
 import adapterParams from "~admin/adapter_params.civet"
@@ -33,7 +33,7 @@ destroyConfirm := new ConfirmDialog {
   }
 }
 
-createWebData := new WebData {
+createAPIDialog := new APIDialog {
   id: formId("create", ["modal", "web", ...parentNames])
   title: "プロバイダーの作成"
   method: "POST"
@@ -43,7 +43,7 @@ createWebData := new WebData {
   ]
 }
 
-updateWebData := new WebData {
+updateAPIDialog := new APIDialog {
   id: formId("update", ["modal", "web", ...parentNames])
   title: "プロバイダーの更新"
   method: "PATCH"
@@ -52,7 +52,7 @@ updateWebData := new WebData {
   ]
 }
 
-destroyWebData := new WebData {
+destroyAPIDialog := new APIDialog {
   id: formId("destroy", ["modal", "web", ...parentNames])
   title: "プロバイダーの削除"
   method: "DELETE"
@@ -103,7 +103,7 @@ showAdapterRunner := (dispatch, {name}) ->
     console.error response
 
 createProviderRunner := (dispatch, {provider}) ->
-  response := await createWebData.submitPromise {data: {...csrf(), ...provider}}
+  response := await createAPIDialog.submitPromise {data: {...csrf(), ...provider}}
   if response.ok
     provider := response.data
     dispatch(providerAction, {name: provider.name, provider})
@@ -112,7 +112,7 @@ createProviderRunner := (dispatch, {provider}) ->
 
 
 updateProviderRunner := (dispatch, {name, provider}) ->
-  response := await updateWebData.submitPromise {url: `/api/providers/${name}`, data: {...csrf(), ...provider}}
+  response := await updateAPIDialog.submitPromise {url: `/api/providers/${name}`, data: {...csrf(), ...provider}}
   if response.ok
     provider := response.data
     dispatch(providerAction, {name: provider.name, provider})
@@ -122,7 +122,7 @@ updateProviderRunner := (dispatch, {name, provider}) ->
 destroyProviderRunner := (dispatch, {name}) ->
   confirm := await destroyConfirm.showPromise({message: `属性「${name}」を削除してもよろしいですか？`})
   if confirm
-    response := await destroyWebData.submitPromise {url: `/api/providers/${name}`, data: csrf()}
+    response := await destroyAPIDialog.submitPromise {url: `/api/providers/${name}`, data: csrf()}
     if response.ok
       // ...redirect
     else

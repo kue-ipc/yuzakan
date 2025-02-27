@@ -1,6 +1,6 @@
 /**
- * WebData class
- * データをJSONとしてfetchし、受け取ったJSONをメッセージとして表示する。
+ * ApiDialog class
+ * データをJSONとしてAPIにfetchし、受け取ったJSONをメッセージとして表示する。
  * 完了するまではmodalを使用して、操作できないようにする。
  */ 
 
@@ -12,8 +12,8 @@ import {StatusIcon, getStatus} from "~/app/status.civet"
 import {fetchJson} from "~api/fetch_json.civet"
 import {modalDialog} from "~/app/modal.civet"
 
-export default class WebData
-  @MESSAGE_EVENT := "webdata.message"
+export default class APIDialog
+  @MESSAGE_EVENT := "apidialog.message"
   @DEFAULT_CODE_ACTIONS := new Map [
     [0, {status: "error"}]
     [400, {status: "error", message: "パラメーターが不正です。"}]
@@ -77,13 +77,13 @@ export default class WebData
       @modal._config.backdrop = "static"
       @modal._config.keyboard = false
 
-    event := new CustomEvent(WebData.MESSAGE_EVENT, {detail: state})
+    event := new CustomEvent(APIDialog.MESSAGE_EVENT, {detail: state})
     @modalNode.dispatchEvent(event)
 
   messageRunner(dispatch, {action, node})
     func := (e) -> dispatch(action, e.detail)
-    node.addEventListener(WebData.MESSAGE_EVENT, func)
-    -> node.removeEventListener(WebData.MESSAGE_EVENT, func)
+    node.addEventListener(APIDialog.MESSAGE_EVENT, func)
+    -> node.removeEventListener(APIDialog.MESSAGE_EVENT, func)
 
   submitPromise({url = @url, method = @method, data, type})
     @modalMessage {
@@ -125,7 +125,7 @@ export default class WebData
             message: "異常なレスポンスが返されました。再度試してください。"
           }
 
-    codeAction := @codeActions.get(response.code) || WebData.UNKNOWN_CODE_ACTION
+    codeAction := @codeActions.get(response.code) || APIDialog.UNKNOWN_CODE_ACTION
 
     messages := [(codeAction.message || responseData.message), ...(responseData.errors ?? [])]
       .filter (v) -> typeof v is "string"
