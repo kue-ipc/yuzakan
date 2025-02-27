@@ -9,41 +9,52 @@ import {formDataToJson, formDataToUrlencoded} from "~/common/form_helper.civet"
 import {objToJson, objToUrlencoded, toInteger} from "~/common/convert.civet"
 import {extractPagination} from "~api/pagination.civet"
 
-ALLOWED_METHODS := ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"]
+export type Method = "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE"
 
-export fetchJson := (params) ->
+type Type = "json" | "urlencoded" | "form-data" | "text"
+
+type RequestParams = RequestInit &
+  {path: string, methed?: Method, data?: {}, type?: Type}
+
+type ResponseData = {
+  links?: any
+  pagination: any
+  type: undefined
+  data: null
+  ok: boolean
+  code: number
+  location: string
+}
+
+export fetchJson := (params: RequestParams) ->
   request := createRequest(params)
   console.debug "fetch request: %s %s", request.method, request.url
   response := await fetch request
   console.debug "fetch response: %d %s", response.status, response.url
   parseResponse(response)
 
-export fetchJsonGet := (params) ->
-  await fetchJson({method: "GET", ...params})
+export fetchJsonGet := (params: RequestParams) ->
+  fetchJson({...params, method: "GET"})
 
-export fetchJsonHead := (params) ->
-  await fetchJson({method: "HEAD", ...params})
+export fetchJsonHead := (params: RequestParams) ->
+  fetchJson({...params, method: "HEAD"})
 
-export fetchJsonPost := (params) ->
-  await fetchJson({method: "POST", ...params})
+export fetchJsonPost := (params: RequestParams) ->
+  fetchJson({...params, method: "POST"})
 
-export fetchJsonPut := (params) ->
-  await fetchJson({method: "PUT", ...params})
+export fetchJsonPut := (params: RequestParams) ->
+  fetchJson({...params, method: "PUT"})
 
-export fetchJsonPatch := (params) ->
-  await fetchJson({method: "PATCH", ...params})
+export fetchJsonPatch := (params: RequestParams) ->
+  fetchJson({...params, method: "PATCH"})
 
-export fetchJsonDelete := (params) ->
-  await fetchJson({method: "DELETE", ...params})
+export fetchJsonDelete := (params: RequestParams) ->
+  fetchJson({...params, method: "DELETE"})
 
-createRequest := ({url, method, data = null, type = "json", ...params}) ->
-  // create request
-
-  method = method.toUpperCase()
-  unless ALLOWED_METHODS.includes(method)
-    throw new Error(`Unknown or unsupported method: ${method}`)
-
-  init := {
+// create request
+createRequest := ({path, method = "GET", data = {}, type = "json", ...params}:
+  RequestParams): Request ->
+  init: RequestInit := {
     method: method
     mode: "same-origin"
     credentials: "same-origin"
@@ -94,7 +105,7 @@ createRequest := ({url, method, data = null, type = "json", ...params}) ->
 
   new Request(url, init)
 
-parseResponse := (response) ->
+parseResponse := (response: Response) ->
   location := response.headers.get("Content-Location") ?? response.url
 
   contentType := response.headers.get("Content-Type")

@@ -9,27 +9,35 @@ import * as html from "@hyperapp/html"
 import {focus} from "@hyperapp/dom"
 import {Modal} from "bootstrap"
 import {StatusIcon, getStatus} from "~/app/status.civet"
-import {fetchJson} from "~api/fetch_json.civet"
+import {fetchJson, Method} from "~api/fetch_json.civet"
 import {modalDialog} from "~/app/modal.civet"
 
-export default class APIDialog
-  @MESSAGE_EVENT := "apidialog.message"
-  @DEFAULT_CODE_ACTIONS := new Map [
-    [0, {status: "error"}]
-    [400, {status: "error", message: "パラメーターが不正です。"}]
-    [401, {status: "error", message: "ログインが必要です。", reload: true}]
-    [403, {status: "error", message: "アクセスする権限がありません。", reload: true}]
-    [422, {status: "failure", message: "失敗しました。"}]
-    [500, {
-      status: "fatal"
-      message: "サーバー側で致命的なエラーが発生しました。管理者に連絡してください。"
-      reload: true
-    }]
-  ]
-  @UNKNOWN_CODE_ACTION := {status: "unknown"}
+type CodeAction = {status: string, message: string, reload?: boolean,
+  redirectTo?: string}
 
-  @({@id, @title, @method = "GET", @url = null, codeActions = []})
-    @codeActions = new Map [...DEFAULT_CODE_ACTIONS, ...codeActions]
+export default class APIDialog
+  @API_ROOT_PATH: URL := new URL("/api", )
+
+  @MESSAGE_EVENT := "apidialog.message"
+  @DEFAULT_CODE_ACTIONS: Map<number, CodeAction> := new Map [
+    [200, {status: "success", message: "ok"}]
+    [400, {status: "error", message: "bad_request"}]
+    [401, {status: "error", message: "unauthorized", reload: true}]
+    [403, {status: "error", message: "forbidden", reload: true}]
+    [422, {status: "failure", message: "unprocessable_content"}]
+    [500, {status: "fatal", message: "internal_server_error", reload: true}]
+  ]
+  @UNKNOWN_CODE_ACTION: CodeAction := {status: "unknown", message: "unknown"}
+
+  readonly #id: string
+  readonly #title: string
+  readonly #method: Method
+  readonly #path: string
+  readonly #codeActions: Map<number, CodeAction>?
+
+  @({#id, #title, #method = "GET", @url, #codeActions}:
+    {id: string, title: string, method: Method, path?: string, codeActions?: Map<number, CodeAction>})
+    #codeActions = new Map [...DEFAULT_CODE_ACTIONS, ...codeActions]
 
     @modalNode = document.createElement("div")
     @modalNode.id = `${@id}-modal`
@@ -61,6 +69,8 @@ export default class APIDialog
         @messageSub @messageAction, {node: @modalNode}
       ]
     }
+
+  #getCodeAction(code)
 
   messageList({messages})
     messages = [messages] unless messages instanceof Array
@@ -125,7 +135,7 @@ export default class APIDialog
             message: "異常なレスポンスが返されました。再度試してください。"
           }
 
-    codeAction := @codeActions.get(response.code) || APIDialog.UNKNOWN_CODE_ACTION
+    codeAction := #codeActions.get(response.code) || APIDialog.UNKNOWN_CODE_ACTION
 
     messages := [(codeAction.message || responseData.message), ...(responseData.errors ?? [])]
       .filter (v) -> typeof v is "string"

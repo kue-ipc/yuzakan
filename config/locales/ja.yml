@@ -191,4 +191,20 @@ ja:
     timeout: タイムアウト
     loading: 読込中
     loaded: 読込済み
+  response_messages:
+    # 2xx
+    ok: 成功しました。
+    created: 作成しました。
+    accepted: 受理しました。
+    no_content: 成功しました。
+    # 4xx
+    bad_request: パラメーターが不正です。
+    unauthorized: ログインが必要です。
+    forbidden: アクセスする権限がありません。
+    unprocessable_content: 失敗しました。
+    # 5xx
+    internal_server_error: >-
+      サーバーで致命的なエラーが発生しました。
+      管理者に連絡してください。
+
 
