@@ -80,9 +80,8 @@ ja:
         再度%{action}を実行してください。
     invalid_csrf_token: CSRFトークンが不正です。
   messages:
-    unauthenticated: "ログインしていません。"
-    session_timeout: "セッションがタイムアウトしました。"
-    now_loading: "読込中..."
+    unauthenticated: ログインしていません。
+    session_timeout: セッションがタイムアウトしました。
   interactors:
     decrypt: 復号化
     encrypt: 暗号化
@@ -164,13 +163,32 @@ ja:
     buttons:
       toggle_navigation: ナビゲーション切替
   statuses:
-    success: "成功"
-    failure: "失敗"
-    fatal: "致命的エラー"
-    error: "エラー"
-    warn: "警告"
-    info: "情報"
-    debug: "デバッグ"
-    alert: "アラート"
-    caution: "注意"
-    unknown: "不明"
+    # 成功失敗
+    success: 成功
+    failure: 失敗
+    # ログレベル
+    debug: デバッグ
+    info: 情報
+    warn: 警告
+    error: エラー
+    fatal: 致命的
+    unknown: 不明
+    # 注意喚起
+    alert: 警戒
+    caution: 注意
+    warnig: 警告
+    danger: 危険
+    # 状態
+    waiting: 待機中
+    starting: 開始中
+    running: 実行中
+    stopping: 停止中
+    stopped: 停止
+    succeeded: 成功
+    failed: 失敗
+    cancel: キャンセル
+    errored: エラー
+    timeout: タイムアウト
+    loading: 読込中
+    loaded: 読込済み
+

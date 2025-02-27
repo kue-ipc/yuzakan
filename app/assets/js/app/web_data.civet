@@ -1,13 +1,14 @@
-/** WebData class
-* データをJSONとしてfetchし、受け取ったJSONをメッセージとして表示する。
-* その際、modalを使用する。
-*/ 
+/**
+ * WebData class
+ * データをJSONとしてfetchし、受け取ったJSONをメッセージとして表示する。
+ * 完了するまではmodalを使用して、操作できないようにする。
+ */ 
 
 import {app, text} from "hyperapp"
 import * as html from "@hyperapp/html"
 import {focus} from "@hyperapp/dom"
 import {Modal} from "bootstrap"
-import {StatusIcon, statusInfo} from "~/app/status.civet"
+import {StatusIcon, getStatus} from "~/app/status.civet"
 import {fetchJson} from "~api/fetch_json.civet"
 import {modalDialog} from "~/app/modal.civet"
 
@@ -150,7 +151,7 @@ export default class WebData
 
     @modalMessage {
       status: codeAction.status
-      title: `${@title}${statusInfo(codeAction.status).label}`
+      title: `${@title}${getStatus(codeAction.status).label}`
       messages
       closable
       link

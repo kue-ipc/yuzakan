@@ -1,9 +1,12 @@
-import HttpLinkHeader from "http-link-header"
+/**
+ * fetchJson
+ * APIと連携してデータをJSONで受け取る処理をする。
+ */
 
+import HttpLinkHeader from "http-link-header"
 import {isPresent} from "~/common/helper.civet"
 import {formDataToJson, formDataToUrlencoded} from "~/common/form_helper.civet"
 import {objToJson, objToUrlencoded, toInteger} from "~/common/convert.civet"
-
 import {extractPagination} from "~api/pagination.civet"
 
 ALLOWED_METHODS := ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"]
