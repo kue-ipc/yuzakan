@@ -1,6 +1,10 @@
+/**
+ * string helper
+ */
+
 import Pluralize from "pluralize"
 
-import {listToCamelCase, listToPascalCase, listToSnakeCase, listToKebabCase, strToList} from "~/common/convert.civet"
+// string -> string
 
 // Capitalize
 export capitalize := (str: string): string ->
@@ -29,3 +33,36 @@ export pluralize := (str: string): string ->
 // name
 export singularize := (str: string): string ->
   Pluralize.singular(str)
+
+// string -> string[]
+
+// abcDef_ghi-jkl -> abc def ghi jkl
+export strToList := (str: string): string[] ->
+  str.replace(/[A-Z]+/g, "_$&").toLowerCase().split(/[-_\s]+/)
+
+// list -> string
+
+// abc, def, hij -> abcDefHij
+export listToCamelCase := (...list: string[]): string ->
+  (list[0]?.toLowerCase() ?? "") +
+    (capitalize(str) for each str of list[1..]).join("")
+
+// abc, def, hij -> AbcDefHij
+export listToPascalCase := (...list: string[]): string ->
+  (capitalize(str) for each str of list).join("")
+
+// abc, def, hij -> abc_def_hij
+export listToSnakeCase := (...list: string[]): string ->
+  (str.toLowerCase() for each str of list).join("_")
+
+// abc, def, hij -> abc-def-hij
+export listToKebabCase := (...list: string[]): string ->
+  (str.toLowerCase() for each str of list).join("-")
+
+// abc, def, hij -> ABC_DEF_HIJ
+export listToAllCaps := (...list: string[]): string ->
+  (str.toUpperCase() for each str of list).join("_")
+
+// abc, def, hij -> Abc-Def-Hij
+export listToTrainCase := (...list: string[]): string ->
+  (capitalize(str) for each str of list).join("-")

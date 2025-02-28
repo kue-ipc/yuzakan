@@ -1,9 +1,9 @@
 // form helper
 
-import {listToKebabCase, listToParamName} from "~/common/convert.civet"
+import {listToKebabCase, generateParamName} from "~/common/string_helper.civet"
 
 export formName := (name, parents = []) ->
-  listToParamName(...parents, name)
+  generateParamName(...parents, name)
 
 export formId := (name, parents = []) ->
   listToKebabCase(...parents, name)
@@ -11,7 +11,7 @@ export formId := (name, parents = []) ->
 export formDataToObj := (formData) ->
   root := {}
   for [key, value] of formData
-    keyList := paramNameToList(key)
+    keyList := parseParamName(key)
     obj .= root
     while subKey .= keyList.shift()
       if keyList.length is 0

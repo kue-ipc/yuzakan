@@ -5,7 +5,7 @@ import * as html from "@hyperapp/html"
 import {DateTime} from "luxon"
 
 import {pick, pickType, getQueryParamsFromUrl, entityLabel} from "~/common/helper.civet"
-import {convertToType, objToUrlencoded, objToJson, listToParamName} from "~/common/convert.civet"
+import {convertToType, objToUrlencoded, objToJson, generateParamName} from "~/common/convert.civet"
 import {updateList, findList} from "~/common/list_helper.civet"
 
 import bsIcon from "~/app/bs_icon.civet"
@@ -104,7 +104,7 @@ indexOptionFromState := (state) ->
 userHeaders := ({attrs}) ->
   [
     ...USER_HEADERS
-    ...(listToParamName("attrs", attr.name) for each attr of attrs)
+    ...(generateParamName("attrs", attr.name) for each attr of attrs)
   ]
 
 // Dialogs

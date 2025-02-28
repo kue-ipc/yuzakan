@@ -4,7 +4,7 @@ import {text, app} from "hyperapp"
 import * as html from "@hyperapp/html"
 
 import {pick, pickType, getQueryParamsFromUrl, entityLabel} from "~/common/helper.civet"
-import {objToUrlencoded, objToJson, listToParamName} from "~/common/convert.civet"
+import {objToUrlencoded, objToJson, generateParamName} from "~/common/convert.civet"
 import {updateList} from "~/common/list_helper.civet"
 
 import bsIcon from "~/app/bs_icon.civet"

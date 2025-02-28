@@ -107,6 +107,7 @@ $ bundle exec rake build
 
 ```
 $ bundle exec rake
+$ npm run test
 ```
 
 開発コンソール起動:
