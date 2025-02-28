@@ -14,7 +14,7 @@
 
 export API_ATTRS := "/api/attrs"
 
-export ATTR_PROPERTIES := {
+export ATTR_PROPERTIES := {}
   name: "string"
   display_name: "string"
   type: "string"
@@ -23,24 +23,18 @@ export ATTR_PROPERTIES := {
   readonly: "boolean"
   code: "string"
   description: "string"
-}
 
-export INDEX_ATTRS_PARAM_TYPES := {
-}
+export INDEX_ATTRS_PARAM_TYPES := {}
 
-export SHOW_ATTR_PARAM_TYPES := {
-}
+export SHOW_ATTR_PARAM_TYPES := {}
 
-export CREATE_ATTR_PARAM_TYPES := {
+export CREATE_ATTR_PARAM_TYPES := {}
   ...ATTR_PROPERTIES
-}
 
-export UPDATE_ATTR_PARAM_TYPES := {
+export UPDATE_ATTR_PARAM_TYPES := {}
   ...ATTR_PROPERTIES
-}
 
-export DESTROY_ATTR_PARAM_TYPES := {
-}
+export DESTROY_ATTR_PARAM_TYPES := {}
 
 // Functions
 
@@ -56,15 +50,13 @@ export normalizeAttr := (attr, types = {}) ->
 
 // Actiosn
 
-export SetAttrs := (state, attrs) -> {
+export SetAttrs := (state, attrs) -> {}
   ...state
   attrs
-}
 
-export SetAttr := (state, attr) -> {
+export SetAttr := (state, attr) -> {}
   ...state
   attr
-}
 
 // create Effecters
 

@@ -119,10 +119,9 @@ headerNav := ({system, session}) ->
 //   else
 //     console.error response
 
-// initState = {
+// initState = {}
 //   system: null
 //   current_user: null
-// }
 
 // view = (state) ->
 //   html.header {id: "header"},

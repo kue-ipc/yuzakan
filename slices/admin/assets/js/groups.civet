@@ -343,12 +343,12 @@ ModGroup := createActionGroup(createRunUpdateGroup)
 SyncGroup := createActionGroup(createRunShowGroup)
 
 PopState := (state, params) ->
-  data := {
+  data := {}
     pagination: {...state.pagination, ...pickType(params, PAGINATION_PARAM_TYPES)}
     search: {...state.search, ...pickType(params, SEARCH_PARAM_TYPES)}
     option: {...state.option, ...pickType(params, INDEX_GROUPS_OPTION_PARAM_TYPES)}
     order: {...state.order, ...pickType(params, ORDER_PARAM_TYPES)}
-  }
+
   [ReloadIndexGroups, data]
 
 // Effecters
@@ -376,7 +376,7 @@ onPopstate := (action) ->
 main := ->
   queryParams := getQueryParamsFromUrl(location)
 
-  initState := {
+  initState := {}
     mode: "loading"
     groups: []
     providers: []
@@ -385,7 +385,6 @@ main := ->
     option: pickType(queryParams, INDEX_GROUPS_OPTION_PARAM_TYPES)
     order: pickType(queryParams, ORDER_PARAM_TYPES)
     filename: "groups.csv"
-  }
 
   init := [
     initState

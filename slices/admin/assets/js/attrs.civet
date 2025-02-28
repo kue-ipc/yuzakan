@@ -350,14 +350,13 @@ runIndexProviders := createRunIndexProviders()
 
 // Vars
 
-initNewAttr := {
+initNewAttr := {}
   name: undefined
   newName: ""
   label: ""
   type: "string"
   hidden: false
   mappings: []
-}
 
 main := ->
 

@@ -54,12 +54,11 @@ export fetchJsonDelete := (params: RequestParams) ->
 // create request
 createRequest := ({path, method = "GET", data = {}, type = "json", ...params}:
   RequestParams): Request ->
-  init: RequestInit := {
+  init: RequestInit := {}
     method: method
     mode: "same-origin"
     credentials: "same-origin"
     ...params
-  }
 
   headers := new Headers {
     "Accept": "application/json"

@@ -67,11 +67,10 @@ adapterParamAction := (state, {name, value}) ->
 providerAction := (state, {name, provider}) ->
   history.pushState(null, null, `/admin/providers/${name}`) if name? && name is not state.name
 
-  newState := {
+  newState := {}
     ...state
     name: name ?? state.name
     provider: {...state.provider, ...provider}
-  }
 
   return newState unless provider.adapter?
 

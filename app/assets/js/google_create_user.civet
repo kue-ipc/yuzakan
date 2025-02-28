@@ -3,10 +3,11 @@
 {h, text, app} from hyperapp
 WebPostJson from ~/app/web_post_json.civet
 
-agreementCheck := (state, agreement) -> {
-  ...state
-  agreement
-}
+agreementCheck := (state, agreement) ->
+  {
+    ...state
+    agreement
+  }
 
 AgreementCheck := ({agreement}) ->
   id = "google-create-user-agreement"
@@ -57,12 +58,11 @@ CreateUserContent := ({agreement}) ->
 
 node := document.getElementById("google-create-user-child")
 
-init := {
+init := {}
   agreement: false
   newPassword: undefined
   created: false
   closable: true
-}
 
 view := (state) ->
   ModalDialog {

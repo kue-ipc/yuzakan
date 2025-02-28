@@ -9,13 +9,12 @@ interface BsIconProps
   class?: string[]
 
 export default bsIcon := ({name, size = 24, alt, class: klass}: BsIconProps) ->
-  svg_props := {
+  svg_props := {}
     class: ["bi", ...(klass ?? [])]
     width: size
     height: size
     fill: "currentColor"
     ...(if alt? then {role: "img", aria-label: alt} else {})
-  }
 
   svg.svg svg_props,
     svg.use {href: `/assets/vendor/bootstrap-icons.svg#${name}`}

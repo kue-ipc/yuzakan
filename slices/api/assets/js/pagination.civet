@@ -10,15 +10,14 @@ export MIN_PAGE := 1
 export MAX_PAGE := 10000
 export MIN_PER_PAGE := 10
 export MAX_PER_PAGE := 100
-export PAGINATION_PARAM_TYPES := {
+export PAGINATION_PARAM_TYPES := {}
   page: "integer"
   per_page: "integer"
-}
-CONTENT_RANGE_TYPES := {
+
+CONTENT_RANGE_TYPES := {}
   total: "integer"
   start: "integer"
   end: "integer"
-}
 
 CONTENT_RANGE_REGEXP := /^items\s+(?<start>\d+)-(?<end>\d+)\/(?<total>\d+)$/
 

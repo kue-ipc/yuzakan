@@ -426,12 +426,12 @@ LockUser := createActionUser(createRunCreateUserLock)
 UnlockUser := createActionUser(createRunDestroyUserLock)
 
 PopState := (state, params) ->
-  data := {
+  data := {}
     pagination: {...state.pagination, ...pickType(params, PAGINATION_PARAM_TYPES)}
     search: {...state.search, ...pickType(params, SEARCH_PARAM_TYPES)}
     option: {...state.option, ...pickType(params, INDEX_USERS_OPTION_PARAM_TYPES)}
     order: {...state.order, ...pickType(params, ORDER_PARAM_TYPES)}
-  }
+
   [ReloadIndexUsers, data]
 
 // Effecters
@@ -460,7 +460,7 @@ onPopstate := (action) ->
 main := ->
   queryParams := getQueryParamsFromUrl(location)
 
-  initState := {
+  initState := {}
     mode: "loading"
     users: []
     groups: []
@@ -471,7 +471,6 @@ main := ->
     option: pickType(queryParams, INDEX_USERS_OPTION_PARAM_TYPES)
     order: pickType(queryParams, ORDER_PARAM_TYPES)
     filename: "users.csv"
-  }
 
   init := [
     initState

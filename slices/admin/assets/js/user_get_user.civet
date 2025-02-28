@@ -2,12 +2,11 @@
 
 {InitUserAttrs} from ~admin/user_attrs.civet
 
-newUser := {
+newUser := {}
   name: ""
   clearance_level: 1
   userdata: {attrs: {}}
   provider_userdatas: []
-}
 
 SetUserWithInit := (state, {user}) ->
   providers := (provider_userdata.provider.name for each provider_userdata of user.provider_userdatas)

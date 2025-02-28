@@ -126,12 +126,10 @@ export default class WebPostJson
 
     catch error
       console.error error
-      data := {
+      data := {}
         result: "error"
-        messages: {
+        messages:
           failure: "サーバー接続時にエラーが発生しました。しばらく待ってから、再度試してください。"
-        }
-      }
 
       @modalMessage {
         status: "error"
@@ -158,10 +156,11 @@ messageSub := (action, {node}) ->
     {action, node}
   ]
 
-messageAction := (state, params) -> {
-  ...state
-  ...params
-}
+messageAction := (state, params) ->
+  {
+    ...state
+    ...params
+  }
 
 ModalView := ({status, title, messages, closable, successLink}) ->
   h "div", {class: "modal-content"}, [

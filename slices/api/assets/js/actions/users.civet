@@ -18,7 +18,7 @@
 
 export API_USERS = "/api/users"
 
-export USER_PROPERTIES = {
+export USER_PROPERTIES = {}
   name: "string"
   password: "string"
   display_name: "string"
@@ -31,9 +31,8 @@ export USER_PROPERTIES = {
   primary_group: "string"
   groups: "list"
   attrs: "map"
-}
 
-export USER_DATA_PROPERTIES = {
+export USER_DATA_PROPERTIES = {}
   username: "string"
   display_name: "string"
   email: "string"
@@ -43,42 +42,34 @@ export USER_DATA_PROPERTIES = {
   unmanageable: "boolean"
   mfa: "boolean"
   attrs: "map"
-}
 
-export INDEX_USERS_OPTION_PARAM_TYPES = {
+export INDEX_USERS_OPTION_PARAM_TYPES = {}
   no_sync: "boolean"
   hide_prohibited: "boolean"
   show_deleted: "boolean"
   all: "boolean"
-}
 
-export INDEX_USERS_PARAM_TYPES = {
+export INDEX_USERS_PARAM_TYPES = {}
   ...SEARCH_PARAM_TYPES
   ...ORDER_PARAM_TYPES
   ...INDEX_USERS_OPTION_PARAM_TYPES
-}
 
-export INDEX_WITH_PAGE_USERS_PARAM_TYPES = {
+export INDEX_WITH_PAGE_USERS_PARAM_TYPES = {}
   ...PAGINATION_PARAM_TYPES
   ...INDEX_USERS_PARAM_TYPES
-}
 
-export SHOW_USER_PARAM_TYPES = {
-}
+export SHOW_USER_PARAM_TYPES = {}
 
-export CREATE_USER_PARAM_TYPES = {
+export CREATE_USER_PARAM_TYPES = {}
   ...USER_PROPERTIES
   providers: "list"
-}
 
-export UPDATE_USER_PARAM_TYPES = {
+export UPDATE_USER_PARAM_TYPES = {}
   ...USER_PROPERTIES
   providers: "list"
-}
 
-export DESTROY_USER_PARAM_TYPES = {
+export DESTROY_USER_PARAM_TYPES = {}
   permanent: "boolean"
-}
 
 // Functions
 
@@ -105,15 +96,17 @@ export normalizeUser = (user, types = {}) ->
 
 // Actions
 
-export SetUsers = (state, users) -> {
-  ...state
-  users
-}
+export SetUsers = (state, users) ->
+  {
+    ...state
+    users
+  }
 
-export SetUser = (state, user) -> {
-  ...state
-  user
-}
+export SetUser = (state, user) ->
+  {
+    ...state
+    user
+  }
 
 // create Effecters
 

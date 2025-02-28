@@ -31,7 +31,7 @@ view := (state) ->
 defaultButtonClassList := "btn btn-sm btn-outline-light d-flex align-items-center".split(" ").filter((_) -> _)
 
 for each el of document.getElementsByClassName("logout-button")
-  init = {
+  init := {}
     buttonClassList: [name for each name of el.classList when name is not "logout-button"].concat(defaultButtonClassList)
-  }
+
   app {init, view, node: el}

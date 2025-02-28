@@ -7,17 +7,16 @@ export default class InputTextDialog
   @MESSAGE_EVENT := "inputtextdialog.message"
 
   @({@id, @title, @messages = [], @siza, action = {}, close = {}})
-    @action = {
+    @action = {}
       color: "primary"
       label: "OK"
       side: "right"
       ...action
-    }
-    @close = {
+
+    @close = {}
       color: "secondary"
       label: "キャンセル"
       ...close
-    }
 
     @modalNode = document.createElement("div")
     @modalNode.id = `${@id}-modal`

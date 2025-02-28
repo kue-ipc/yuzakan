@@ -78,10 +78,10 @@ attrValue := ({attr_name, value, type := "string", edit := false, color := "body
     valueDisplay {value, type, color}
 
 ChangeAttrSetting := (state, {attr_name, setting}) ->
-  user := {
+  user := {}
     ...state.user
     attrSettings: {...state.user.attrSettings, [attr_name]: setting}
-  }
+
   [CalcUserAttrs, {user}]
 
 

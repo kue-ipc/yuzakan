@@ -1,14 +1,14 @@
 * as html from @hyperapp/html
 {classConcat} from ~/common/class_prop.civet
 
-cols := {
+cols := {}
   xs: 12
   sm: 4
   md: 3
   lg: 2
   xl: 2
   xll: 2
-}
+
 colPrint := 3
 
 calcDtClasses := ->
