@@ -9,14 +9,17 @@ HttpLinkHeader from http-link-header
 {objToJson, objToUrlencoded, toInteger} from ~/common/convert.civet
 {extractPagination} from ~api/pagination.civet
 
-export type Method = "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE"
+export Method ::= "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE"
 
-type Type = "json" | "urlencoded" | "form-data" | "text"
+Type ::= "json" | "urlencoded" | "form-data" | "text"
 
-type RequestParams = RequestInit &
-  {path: string, methed?: Method, data?: {}, type?: Type}
+interface RequestParams < RequestInit
+  path: string
+  methed?: Method
+  data?: {}
+  type?: Type
 
-type ResponseData = {
+interface ResponseData
   links?: any
   pagination: any
   type: undefined
@@ -24,7 +27,6 @@ type ResponseData = {
   ok: boolean
   code: number
   location: string
-}
 
 export fetchJson := (params: RequestParams) ->
   request := createRequest(params)

@@ -2,14 +2,34 @@
 
 {DateTime} from luxon
 
-type BooleanString = 
-  "1" | "0" |
-  "t" | "f" |
-  "true" | "false" |
-  "y" | "n" |
-  "yes" | "no" |
-  "on" | "off"
+type BooleanString
+  | "1"
+  | "0"
+  | "t"
+  | "f"
+  | "true"
+  | "false"
+  | "y"
+  | "n"
+  | "yes"
+  | "no"
+  | "on"
+  | "off"
 
+type Type
+  | "string"
+  | "text"
+  | "boolean"
+  | "integer"
+  | "float"
+  | "datetime"
+  | "date"
+  | "time"
+  | "list"
+  | "map"
+  | "set"
+  | "object"
+  | "any"
 
 TRUE_STRINGS: Set<BooleanString> := new Set([
   "1"
@@ -31,11 +51,6 @@ FALSE_STRINGS: Set<BooleanString> := new Set([
 
 export TRUE_STR: BooleanString := "1"
 export FALSE_STR: BooleanString := "0"
-
-type Type = "string" | "text" |
-  "boolean" | "integer" | "float" |
-  "datetime" | "date" | "time" |
-  "list" | "map" | "set" | "object"| "any"
 
 // convert to the specified type
 export convertToType := (val: any, type: Type = "string") ->

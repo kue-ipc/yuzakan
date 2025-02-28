@@ -12,8 +12,11 @@
 {fetchJson, Method} from ~api/fetch_json.civet
 {modalDialog} from ~/app/modal.civet
 
-type CodeAction = {status: string, message: string, reload?: boolean,
-  redirectTo?: string}
+interface CodeAction
+  status: string
+  message: string
+  reload?: boolean
+  redirectTo?: string
 
 export default class APIDialog
   @API_ROOT_PATH: URL := new URL("/api", )

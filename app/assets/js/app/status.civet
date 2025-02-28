@@ -3,9 +3,22 @@
 bsIcon from ~/app/bs_icon.civet
 {t} from ~/common/i18n.civet
 
-type Color = "primary" | "secondary" | "success" | "danger" | "warning" |
-  "info" | "light" | "dark" | "body" 
-type Status = {name: string, color: Color, icon: string, label?: string}
+type Color
+  | "primary"
+  | "secondary"
+  | "success"
+  | "danger"
+  | "warning"
+  | "info"
+  | "light"
+  | "dark"
+  | "body" 
+
+interface Status
+  name: string
+  color: Color
+  icon: string
+  label?: string
 
 STATUSES: Status[] := [
   // success or failure
