@@ -2,7 +2,7 @@
 
 import * as R from "ramda"
 
-import {convertToType} from "~/common/convert.civet"
+import {convertToType} from "./convert.civet"
 
 export isNil := R.isNil
 
