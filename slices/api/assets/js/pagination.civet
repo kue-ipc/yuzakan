@@ -5,39 +5,41 @@
 {pickType} from ~/common/convert.civet
 {getQueryParamsFromURL} from ~/common/url_helper.civet
 
-export interface PaginationParams
-  page: number
-  per_page: number
-  total: number
-  start: number
-  end: number
+export default class Pagination
+  @DEFAULT_PAGE := 1
+  @DEFAULT_PER_PAGE := 20
+  @MIN_PAGE := 1
+  @MAX_PAGE := 10000
+  @MIN_PER_PAGE := 10
+  @MAX_PER_PAGE := 100
 
-export DEFAULT_PAGE := 1
-export DEFAULT_PER_PAGE := 20
-export MIN_PAGE := 1
-export MAX_PAGE := 10000
-export MIN_PER_PAGE := 10
-export MAX_PER_PAGE := 100
-export PAGINATION_PARAM_TYPES := {}
-  page: "integer"
-  per_page: "integer"
+  @CONTENT_RANGE_REGEXP := /^items\s+(?<start>\d+)-(?<end>\d+)\/(?<total>\d+)$/
 
-CONTENT_RANGE_TYPES := {}
-  total: "integer"
-  start: "integer"
-  end: "integer"
+  page: number = Pagination.DEFAULT_PAGE
+  per_page: number = Pagination.DEFAULT_PER_PAGE
+  total: number = 0
+  start: number = 0
+  end: number = 0
 
-CONTENT_RANGE_REGEXP := /^items\s+(?<start>\d+)-(?<end>\d+)\/(?<total>\d+)$/
+  @(response?: Response)
+    return unless response?
 
-export extractPagination := (contentRange: string, location: string | URL) ->
-  match := CONTENT_RANGE_REGEXP.exec(contentRange)
-  unless match?
-    console.warn "invalid content range: %s", contentRange
-    return {}
+    location := response.headers.get("Content-Location") ?? response.url
+    contentRange := response.headers.get("Content-Range")
 
-  queryParams := getQueryParamsFromURL(location)
+    match := Pagination.CONTENT_RANGE_REGEXP.exec(contentRange)
+    unless match?
+      console.warn "invalid content range: %s", contentRange
+      return {}
 
-  {
-    ...pickType(queryParams, PAGINATION_PARAM_TYPES)
-    ...pickType(match.groups, CONTENT_RANGE_TYPES)
-  }
+    queryParams := getQueryParamsFromURL(location)
+
+
+    @
+
+
+    {
+      page: number, per_page: number, total: number, start: number, end: number
+      ...pickType(queryParams, PAGINATION_PARAM_TYPES)
+      ...pickType(match.groups, CONTENT_RANGE_TYPES)
+    }
