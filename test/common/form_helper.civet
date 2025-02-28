@@ -1,0 +1,7 @@
+{assert} from chai
+
+{formName} from ../../app/assets/js/common/form_helper.civet
+
+describe "form name", ->
+  it "paramNametoList", ->
+    assert.equal formName("abc", ["def", "ghi"]), "abc[def][ghi]"
