@@ -2,7 +2,15 @@
 
 // see lib/yuzakan/utils/pager.rb
 
-{pickType, getQueryParamsFromUrl} from ~/common/helper.civet
+{pickType} from ~/common/convert.civet
+{getQueryParamsFromURL} from ~/common/url_helper.civet
+
+export interface PaginationParams
+  page: number
+  per_page: number
+  total: number
+  start: number
+  end: number
 
 export DEFAULT_PAGE := 1
 export DEFAULT_PER_PAGE := 20
@@ -23,11 +31,13 @@ CONTENT_RANGE_REGEXP := /^items\s+(?<start>\d+)-(?<end>\d+)\/(?<total>\d+)$/
 
 export extractPagination := (contentRange: string, location: string | URL) ->
   match := CONTENT_RANGE_REGEXP.exec(contentRange)
-  if match
-    {
-      ...pickType(getQueryParamsFromUrl(new URL(location, globalThis.location.href)), PAGINATION_PARAM_TYPES)
-      ...pickType(match.groups, CONTENT_RANGE_TYPES)
-    }
-  else
-    console.error "invalid content range: %s", contentRange
-    {}
+  unless match?
+    console.warn "invalid content range: %s", contentRange
+    return {}
+
+  queryParams := getQueryParamsFromURL(location)
+
+  {
+    ...pickType(queryParams, PAGINATION_PARAM_TYPES)
+    ...pickType(match.groups, CONTENT_RANGE_TYPES)
+  }

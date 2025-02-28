@@ -273,3 +273,7 @@ export parseParamName = (str: string): string[] ->
 export generateParamName := (...list: string[]): string ->
   (list[0] ?? "") + (`[${str}]` for each str of list[1..]).join("")
 
+// pick with types
+export pickType := (obj, types) ->
+  Object.fromEntries(([key, convertToType(obj[key], type)] for own key, type in types when key in obj))
+

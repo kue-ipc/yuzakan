@@ -4,29 +4,28 @@
  */
 
 HttpLinkHeader from http-link-header
-{isPresent} from ~/common/helper.civet
 {formDataToJson, formDataToUrlencoded} from ~/common/form_helper.civet
 {objToJson, objToUrlencoded, toInteger} from ~/common/convert.civet
 {extractPagination} from ~api/pagination.civet
+type {PaginationParams} from ~api/pagination.civet
 
 export Method ::= "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE"
 
-Type ::= "json" | "urlencoded" | "form-data" | "text"
-
 interface RequestParams < RequestInit
-  path: string
+  path: string | string[]
   methed?: Method
   data?: {}
-  type?: Type
 
 interface ResponseData
-  links?: any
-  pagination: any
-  type: undefined
-  data: null
   ok: boolean
   code: number
   location: string
+  type?: "json" | "text"
+  data: any
+  pagination?: PaginationParams
+  links?: HttpLinkHeader
+
+API_URL := new URL("/api", document.baseURI)
 
 export fetchJson := (params: RequestParams) ->
   request := createRequest(params)
@@ -53,66 +52,56 @@ export fetchJsonPatch := (params: RequestParams) ->
 export fetchJsonDelete := (params: RequestParams) ->
   fetchJson({...params, method: "DELETE"})
 
+normalizePath := (path: string | string[]) ->
+  path = path.split("/") if path <? "string"
+  path.map(encodeURIComponent).join("/")
+
 // create request
-createRequest := ({path, method = "GET", data = {}, type = "json", ...params}:
+createRequest := ({path, method = "GET", data = {}, ...params}:
   RequestParams): Request ->
+  url := new URL(normalizePath(path), API_URL)
+  headers := new Headers {}
+    "Accept": "application/json"
+  let body
+ 
+  if data?
+    switch method
+      when "GET", "HEAD"
+        query :=
+          if data <? "string"
+            encodeURIComponent(data)
+          else if data <? FormData
+            formDataToUrlencoded(data)
+          else
+            objToUrlencoded(data)
+        url.search = query
+      when "POST", "PUT", "PATCH", "DELETE"
+        body =
+          if data <? "string"
+            data
+          else if data <? FormData
+            formDataToJson(data)
+          else
+            objToJson(data)
+        headers.append("Content-Type", "application/json")
+        headers.append("Content-Length", body.length.toString())
+
   init: RequestInit := {}
     method: method
     mode: "same-origin"
     credentials: "same-origin"
+    headers
+    body
     ...params
-
-  headers := new Headers {
-    "Accept": "application/json"
-  }
- 
-  if isPresent(data)
-    if ["POST", "PUT", "PATCH", "DELETE"].includes(method)
-      switch type
-        when "json"
-          content_type = "application/json"
-          if data instanceof FormData
-            data = formDataToJson(data)
-          else if typeof data is not "string"
-            data = objToJson(data)
-        when "urlencoded"
-          content_type = "application/x-www-form-urlencoded"
-          if data instanceof FormData
-            data = formDataToUrlencoded(data)
-          else if typeof data is not "string"
-            data = objToUrlencoded(data)
-        when "form-data"
-          content_type = "multipart/form-data"
-          unless data intanceof FormData
-            throw new Error("Not implument")
-        when "text"
-          content_type = "text/plain"
-          data = String(data)
-        else
-          throw new Error(`Unknown or unsupported type: ${type}`)
-      headers.append("Content-Type", content_type)
-      headers.append("Content-Length", data.length.toString())
-      init.body = data
-    else
-      if data instanceof FormData
-        query = formDataToUrlencoded(data)
-      else if typeof data is "object"
-        query = objToUrlencoded(data)
-      else
-        query = encodeURIComponent(data)
-      url += "?" + query
-
-  init.headers = headers
 
   new Request(url, init)
 
 parseResponse := (response: Response) ->
   location := response.headers.get("Content-Location") ?? response.url
-
   contentType := response.headers.get("Content-Type")
   responseData :=
     if not contentType?
-      {type: undefined, data: null}
+      {data: null}
     else if contentType.startsWith("application/json")
       {type: "json", data: await response.json()}
     else if contentType.startsWith("text/plain")
