@@ -1,12 +1,12 @@
-import {DateTime} from "luxon"
-import {text} from "hyperapp"
-import * as html from "@hyperapp/html"
+{DateTime} from luxon
+{text} from hyperapp
+* as html from @hyperapp/html
 
-import ConfirmDialog from "~/app/confirm_dialog.civet"
-import {basename} from "~/common/helper.civet"
+ConfirmDialog from ~/app/confirm_dialog.civet
+{basename} from ~/common/helper.civet
 
-import downloadButton from "~/app/download_button.civet"
-import uploadButton from "~/app/upload_button.civet"
+downloadButton from ~/app/download_button.civet
+uploadButton from ~/app/upload_button.civet
 
 // Dialogs
 

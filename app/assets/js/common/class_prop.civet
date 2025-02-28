@@ -1,6 +1,6 @@
 // class in props
 
-import {uniq, compact} from "./helper.civet"
+{uniq, compact} from ./helper.civet
 
 export parseClassProp := (obj) ->
   if !obj?

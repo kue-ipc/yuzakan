@@ -1,7 +1,7 @@
-import {text} from "hyperapp"
-import * as html from "@hyperapp/html"
+{text} from hyperapp
+* as html from @hyperapp/html
 
-import ModalDialog from "~/app/modal_dialog.civet"
+ModalDialog from ~/app/modal_dialog.civet
 
 export default class ConfirmDialog extends ModalDialog
   @({@confirmations = null, @agreement_required = false, ...props})

@@ -1,18 +1,18 @@
 // グループ
 
-import {text, app} from "hyperapp"
-import * as html from "@hyperapp/html"
+{text, app} from hyperapp
+* as html from @hyperapp/html
 
-import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from "~/common/helper.civet"
-import {objToUrlencoded} from "~/common/convert.civet"
-import valueDisplay from "~/app/value_display.civet"
+{pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from ~/common/helper.civet
+{objToUrlencoded} from ~/common/convert.civet
+valueDisplay from ~/app/value_display.civet
 
-import {runIndexProviders} from "~api/providers.civet"
-import {SHOW_GROUP_PARAM_TYPES, runShowGroup} from "~api/groups.civet"
+{runIndexProviders} from ~api/providers.civet
+{SHOW_GROUP_PARAM_TYPES, runShowGroup} from ~api/groups.civet
 
-import groupInfo from "~admin/group_info.civet"
-import groupProvider from "~admin/group_provider.civet"
-import groupOperation from "~admin/group_operation.civet"
+groupInfo from ~admin/group_info.civet
+groupProvider from ~admin/group_provider.civet
+groupOperation from ~admin/group_operation.civet
 
 // main
 

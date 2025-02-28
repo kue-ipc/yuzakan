@@ -1,8 +1,8 @@
 // プロバイダーのパラメーター
 
-import {text} from "hyperapp"
-import * as html from "@hyperapp/html"
-import {formName, formId} from "~/common/form_helper.civet"
+{text} from hyperapp
+* as html from @hyperapp/html
+{formName, formId} from ~/common/form_helper.civet
 
 parentNames := ["provider", "params"]
 

@@ -1,8 +1,8 @@
-import {text} from "hyperapp"
-import * as html from "@hyperapp/html"
-import FileSaver from "file-saver"
+{text} from hyperapp
+* as html from @hyperapp/html
+FileSaver from file-saver
 
-import {listToCsv} from "~/common/csv_helper.civet"
+{listToCsv} from ~/common/csv_helper.civet
 
 // Downolad button view
 // @param {boolean} disabled - 無効にする

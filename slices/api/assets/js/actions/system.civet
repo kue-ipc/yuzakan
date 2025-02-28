@@ -1,10 +1,10 @@
 // /api/system
 
-import {
+{
   createRunShow
-} from "~api/hyper_json.civet"
+} from ~api/hyper_json.civet
 
-import {pickType} from "~/common/helper.civet"
+{pickType} from ~/common/helper.civet
 
 // Contants
 

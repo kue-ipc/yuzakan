@@ -1,18 +1,18 @@
 // /api/users
 
-import {pickType} from "~/common/helper.civet"
+{pickType} from ~/common/helper.civet
 
-import {PAGINATION_PARAM_TYPES} from "~api/pagination.civet"
-import {SEARCH_PARAM_TYPES} from "~api/search.civet"
-import {ORDER_PARAM_TYPES} from "~api/order.civet"
-import {
+{PAGINATION_PARAM_TYPES} from ~api/pagination.civet
+{SEARCH_PARAM_TYPES} from ~api/search.civet
+{ORDER_PARAM_TYPES} from ~api/order.civet
+{
   createRunIndex
   createRunIndexWithPage
   createRunShowWithId
   createRunCreateWithId
   createRunUpdateWithId
   createRunDestroyWithId
-} from "~api/hyper_json.civet"
+} from ~api/hyper_json.civet
 
 // Contants
 

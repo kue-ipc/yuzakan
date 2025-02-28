@@ -1,8 +1,8 @@
-import {app, text} from "hyperapp"
-import * as html from "@hyperapp/html"
-import APIDialog from "~/app/web_data.civet"
-import bsIcon from "~/app/bs_icon.civet"
-import csrf from "~/csrf.civet"
+{app, text} from hyperapp
+* as html from @hyperapp/html
+APIDialog from ~/app/web_data.civet
+bsIcon from ~/app/bs_icon.civet
+csrf from ~/csrf.civet
 
 apiDialog := new APIDialog {
   id: "logout"

@@ -1,4 +1,4 @@
-import XXH from "xxhashjs"
+XXH from xxhashjs
 
 zeroPadding := (str, size) ->
   ("0".repeat(size) + str).slice(-size)

@@ -1,14 +1,14 @@
 // /api/attrs
 
-import {
+{
   createRunIndex
   createRunShowWithId
   createRunCreateWithId
   createRunUpdateWithId
   createRunDestroyWithId
-} from "~api/hyper_json.civet"
+} from ~api/hyper_json.civet
 
-import {pickType} from "~/common/helper.civet"
+{pickType} from ~/common/helper.civet
 
 // Constants
 

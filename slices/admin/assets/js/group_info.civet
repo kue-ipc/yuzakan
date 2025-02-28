@@ -1,10 +1,10 @@
 // グループ
 
-import {text, app} from "hyperapp"
-import * as html from "@hyperapp/html"
+{text, app} from hyperapp
+* as html from @hyperapp/html
 
-import * as dlh from "~/app/dl_horizontal.civet"
-import bsIcon from "~/app/bs_icon.civet"
+* as dlh from ~/app/dl_horizontal.civet
+bsIcon from ~/app/bs_icon.civet
 
 // Views
 

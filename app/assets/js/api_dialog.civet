@@ -4,13 +4,13 @@
  * 完了するまではmodalを使用して、操作できないようにする。
  */ 
 
-import {app, text} from "hyperapp"
-import * as html from "@hyperapp/html"
-import {focus} from "@hyperapp/dom"
-import {Modal} from "bootstrap"
-import {StatusIcon, getStatus} from "~/app/status.civet"
-import {fetchJson, Method} from "~api/fetch_json.civet"
-import {modalDialog} from "~/app/modal.civet"
+{app, text} from hyperapp
+* as html from @hyperapp/html
+{focus} from @hyperapp/dom
+{Modal} from bootstrap
+{StatusIcon, getStatus} from ~/app/status.civet
+{fetchJson, Method} from ~api/fetch_json.civet
+{modalDialog} from ~/app/modal.civet
 
 type CodeAction = {status: string, message: string, reload?: boolean,
   redirectTo?: string}

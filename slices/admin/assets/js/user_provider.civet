@@ -1,10 +1,10 @@
-import {text} from "hyperapp"
-import * as html from "@hyperapp/html"
+{text} from hyperapp
+* as html from @hyperapp/html
 
-import {entityLabel} from "~/common/helper.civet"
+{entityLabel} from ~/common/helper.civet
 
-import bsIcon from "~/app/bs_icon.civet"
-import valueDisplay from "~/app/value_display.civet"
+bsIcon from ~/app/bs_icon.civet
+valueDisplay from ~/app/value_display.civet
 
 PROVIDER_REG_ITEMS := [
   {name: "username", label: "ユーザー名", type: "string"}

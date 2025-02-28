@@ -1,6 +1,6 @@
-import {parse, stringify, transform} from "csv"
+{parse, stringify, transform} from csv
 
-import {objToRecord, recordToObj} from "./convert.civet"
+{objToRecord, recordToObj} from ./convert.civet
 
 // async csv and records utilities
 

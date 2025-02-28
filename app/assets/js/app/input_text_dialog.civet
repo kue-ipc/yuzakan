@@ -1,7 +1,7 @@
-import {Modal} from "bootstrap"
-import {app, text} from "hyperapp"
-import * as html from "@hyperapp/html"
-import {modalDialog} from "~/app/modal.civet"
+{Modal} from bootstrap
+{app, text} from hyperapp
+* as html from @hyperapp/html
+{modalDialog} from ~/app/modal.civet
 
 export default class InputTextDialog
   @MESSAGE_EVENT := "inputtextdialog.message"

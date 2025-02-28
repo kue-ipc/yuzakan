@@ -1,12 +1,12 @@
 // Login
 
-import {app, text} from "hyperapp"
-import * as html from "@hyperapp/html"
-import {focus} from "@hyperapp/dom"
-import {delay} from "@hyperapp/time"
-import APIDialog from "~/app/web_data.civet"
-import bsIcon from "~/app/bs_icon.civet"
-import csrf from "~/csrf.civet"
+{app, text} from hyperapp
+* as html from @hyperapp/html
+{focus} from @hyperapp/dom
+{delay} from @hyperapp/time
+APIDialog from ~/app/web_data.civet
+bsIcon from ~/app/bs_icon.civet
+csrf from ~/csrf.civet
 
 apiDialog := new APIDialog {
   id: "login"

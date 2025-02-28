@@ -2,10 +2,10 @@
 
 // TODO
 
-import {app, text} from "hyperapp"
-import * as html from "@hyperapp/html"
+{app, text} from hyperapp
+* as html from @hyperapp/html
 
-import {fetchJsonGet} from "~api/fetch_json.civet"
+{fetchJsonGet} from ~api/fetch_json.civet
 
 USER_MENU := {path: "/", name: "利用者メニュー"}
 ADMIN_MENU := {path: "/admin", name: "管理者メニュー"}

@@ -1,12 +1,12 @@
-import {app, text} from "hyperapp"
-import * as html from "@hyperapp/html"
-import {DateTime} from "luxon"
+{app, text} from hyperapp
+* as html from @hyperapp/html
+{DateTime} from luxon
 
-import ModalDialog from "~/app/modal_dialog.civet"
-import bsIcon from "~/app/bs_icon.civet"
-import * as dlh from "~/app/dl_horizontal.civet"
+ModalDialog from ~/app/modal_dialog.civet
+bsIcon from ~/app/bs_icon.civet
+* as dlh from ~/app/dl_horizontal.civet
 
-import {runShowSystem} from "~api/system.civet"
+{runShowSystem} from ~api/system.civet
 
 export default class LoginInfo extends ModalDialog
   @({service = {}, ...props})

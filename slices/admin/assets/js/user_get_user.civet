@@ -1,6 +1,6 @@
-import {fetchJsonGet} from "~api/fetch_json.civet"
+{fetchJsonGet} from ~api/fetch_json.civet
 
-import {InitUserAttrs} from "~admin/user_attrs.civet"
+{InitUserAttrs} from ~admin/user_attrs.civet
 
 newUser := {
   name: ""

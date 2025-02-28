@@ -1,9 +1,9 @@
 // path: /admin/providers
 // node: providers
 
-import {text, app} from "hyperapp"
-import * as html from "@hyperapp/html"
-import {fetchJsonGet} from "~api/fetch_json.civet"
+{text, app} from hyperapp
+* as html from @hyperapp/html
+{fetchJsonGet} from ~api/fetch_json.civet
 
 providerTr := ({provider}) ->
   html.tr {}, [

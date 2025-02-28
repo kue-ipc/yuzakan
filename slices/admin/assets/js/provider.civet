@@ -1,16 +1,16 @@
 // path: /admin/providers/:name
 // node: provider
 
-import {text, app} from "hyperapp"
-import * as html from "@hyperapp/html"
-import {fetchJsonGet} from "~api/fetch_json.civet"
-import {formName, formId} from "~/common/form_helper.civet"
-import csrf from "~/csrf.civet"
+{text, app} from hyperapp
+* as html from @hyperapp/html
+{fetchJsonGet} from ~api/fetch_json.civet
+{formName, formId} from ~/common/form_helper.civet
+csrf from ~/csrf.civet
 
-import APIDialog from "~/app/web_data.civet"
-import ConfirmDialog from "~/app/confirm_dialog.civet"
+APIDialog from ~/app/web_data.civet
+ConfirmDialog from ~/app/confirm_dialog.civet
 
-import adapterParams from "~admin/adapter_params.civet"
+adapterParams from ~admin/adapter_params.civet
 
 parentNames := ["provider"]
 

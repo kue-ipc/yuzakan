@@ -3,11 +3,11 @@
  * APIと連携してデータをJSONで受け取る処理をする。
  */
 
-import HttpLinkHeader from "http-link-header"
-import {isPresent} from "~/common/helper.civet"
-import {formDataToJson, formDataToUrlencoded} from "~/common/form_helper.civet"
-import {objToJson, objToUrlencoded, toInteger} from "~/common/convert.civet"
-import {extractPagination} from "~api/pagination.civet"
+HttpLinkHeader from http-link-header
+{isPresent} from ~/common/helper.civet
+{formDataToJson, formDataToUrlencoded} from ~/common/form_helper.civet
+{objToJson, objToUrlencoded, toInteger} from ~/common/convert.civet
+{extractPagination} from ~api/pagination.civet
 
 export type Method = "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE"
 

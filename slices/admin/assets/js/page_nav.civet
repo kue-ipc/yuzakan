@@ -1,7 +1,7 @@
-import {text} from "hyperapp"
-import * as html from "@hyperapp/html"
+{text} from hyperapp
+* as html from @hyperapp/html
 
-import {compact} from "~/common/helper.civet"
+{compact} from ~/common/helper.civet
 
 // page navigatino view
 export default pageNav := ({page, per_page, total, start, end, onpage, readonly := false}) ->

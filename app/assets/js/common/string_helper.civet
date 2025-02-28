@@ -2,7 +2,7 @@
  * string helper
  */
 
-import Pluralize from "pluralize"
+Pluralize from pluralize
 
 // string -> string
 

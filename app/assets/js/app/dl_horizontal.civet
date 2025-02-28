@@ -1,5 +1,5 @@
-import * as html from "@hyperapp/html"
-import {classConcat} from "~/common/class_prop.civet"
+* as html from @hyperapp/html
+{classConcat} from ~/common/class_prop.civet
 
 cols := {
   xs: 12

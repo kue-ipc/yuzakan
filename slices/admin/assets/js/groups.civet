@@ -1,30 +1,30 @@
 // /admin/gorups
 
-import {text, app} from "hyperapp"
-import * as html from "@hyperapp/html"
+{text, app} from hyperapp
+* as html from @hyperapp/html
 
-import {pick, pickType, getQueryParamsFromUrl, entityLabel} from "~/common/helper.civet"
-import {objToUrlencoded, objToJson, generateParamName} from "~/common/convert.civet"
-import {updateList} from "~/common/list_helper.civet"
+{pick, pickType, getQueryParamsFromUrl, entityLabel} from ~/common/helper.civet
+{objToUrlencoded, objToJson, generateParamName} from ~/common/convert.civet
+{updateList} from ~/common/list_helper.civet
 
-import bsIcon from "~/app/bs_icon.civet"
-import valueDisplay from "~/app/value_display.civet"
-import preCode from "~/app/pre_code.civet"
+bsIcon from ~/app/bs_icon.civet
+valueDisplay from ~/app/value_display.civet
+preCode from ~/app/pre_code.civet
 
-import {
+{
   GROUP_PROPERTIES, GROUP_DATA_PROPERTIES,
   INDEX_GROUPS_OPTION_PARAM_TYPES, INDEX_WITH_PAGE_GROUPS_PARAM_TYPES,
   normalizeGroup
   createRunIndexWithPageGroups, createRunShowGroup, createRunUpdateGroup
-} from "~api/groups.civet"
-import {runIndexProviders} from "~api/providers.civet"
-import {PAGINATION_PARAM_TYPES} from "~api/pagination.civet"
-import {SEARCH_PARAM_TYPES} from "~api/search.civet"
-import {ORDER_PARAM_TYPES} from "~api/order.civet"
+} from ~api/groups.civet
+{runIndexProviders} from ~api/providers.civet
+{PAGINATION_PARAM_TYPES} from ~api/pagination.civet
+{SEARCH_PARAM_TYPES} from ~api/search.civet
+{ORDER_PARAM_TYPES} from ~api/order.civet
 
-import pageNav from "~admin/page_nav.civet"
-import searchForm from "~admin/search_form.civet"
-import {batchOperation, runDoNextAction, runStopAllAction} from "~admin/batch_operation.civet"
+pageNav from ~admin/page_nav.civet
+searchForm from ~admin/search_form.civet
+{batchOperation, runDoNextAction, runStopAllAction} from ~admin/batch_operation.civet
 
 // mode
 //   loading: 読込中

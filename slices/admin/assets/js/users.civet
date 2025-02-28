@@ -1,39 +1,39 @@
 // /admin/users
 
-import {text, app} from "hyperapp"
-import * as html from "@hyperapp/html"
-import {DateTime} from "luxon"
+{text, app} from hyperapp
+* as html from @hyperapp/html
+{DateTime} from luxon
 
-import {pick, pickType, getQueryParamsFromUrl, entityLabel} from "~/common/helper.civet"
-import {convertToType, objToUrlencoded, objToJson, generateParamName} from "~/common/convert.civet"
-import {updateList, findList} from "~/common/list_helper.civet"
+{pick, pickType, getQueryParamsFromUrl, entityLabel} from ~/common/helper.civet
+{convertToType, objToUrlencoded, objToJson, generateParamName} from ~/common/convert.civet
+{updateList, findList} from ~/common/list_helper.civet
 
-import bsIcon from "~/app/bs_icon.civet"
-import valueDisplay from "~/app/value_display.civet"
-import preCode from "~/app/pre_code.civet"
-import LoginInfo from "~/app/login_info.civet"
+bsIcon from ~/app/bs_icon.civet
+valueDisplay from ~/app/value_display.civet
+preCode from ~/app/pre_code.civet
+LoginInfo from ~/app/login_info.civet
 
-import {
+{
   USER_PROPERTIES, USER_DATA_PROPERTIES
   INDEX_USERS_OPTION_PARAM_TYPES, INDEX_WITH_PAGE_USERS_PARAM_TYPES
   normalizeUser
   createRunIndexWithPageUsers
   createRunShowUser, createRunCreateUser, createRunUpdateUser, createRunDestroyUser
-} from "~api/users.civet"
-import {createRunCreateUserLock, createRunDestroyUserLock} from "~api/users_lock.civet"
-import {runIndexGroupsNoSync} from "~api/groups.civet"
-import {runIndexProviders} from "~api/providers.civet"
-import {runIndexAttrs} from "~api/attrs.civet"
-import {runShowSystem} from "~api/system.civet"
+} from ~api/users.civet
+{createRunCreateUserLock, createRunDestroyUserLock} from ~api/users_lock.civet
+{runIndexGroupsNoSync} from ~api/groups.civet
+{runIndexProviders} from ~api/providers.civet
+{runIndexAttrs} from ~api/attrs.civet
+{runShowSystem} from ~api/system.civet
 
-import {PAGINATION_PARAM_TYPES} from "~api/pagination.civet"
-import {SEARCH_PARAM_TYPES} from "~api/search.civet"
-import {ORDER_PARAM_TYPES} from "~api/order.civet"
+{PAGINATION_PARAM_TYPES} from ~api/pagination.civet
+{SEARCH_PARAM_TYPES} from ~api/search.civet
+{ORDER_PARAM_TYPES} from ~api/order.civet
 
-import pageNav from "~admin/page_nav.civet"
-import searchForm from "~admin/search_form.civet"
-import {batchOperation, runDoNextAction, runStopAllAction} from "~admin/batch_operation.civet"
-import {setUserAttrsDefault} from "~admin/user_attrs.civet"
+pageNav from ~admin/page_nav.civet
+searchForm from ~admin/search_form.civet
+{batchOperation, runDoNextAction, runStopAllAction} from ~admin/batch_operation.civet
+{setUserAttrsDefault} from ~admin/user_attrs.civet
 
 
 // mode

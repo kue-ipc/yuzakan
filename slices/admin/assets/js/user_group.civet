@@ -1,5 +1,5 @@
-import {text} from "hyperapp"
-import * as html from "@hyperapp/html"
+{text} from hyperapp
+* as html from @hyperapp/html
 
 RemoveGroup := (state, name) ->
   {

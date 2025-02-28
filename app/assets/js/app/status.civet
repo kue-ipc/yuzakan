@@ -1,7 +1,7 @@
-import {text} from "hyperapp"
-import * as html from "@hyperapp/html"
-import bsIcon from "~/app/bs_icon.civet"
-import {t} from "~/common/i18n.civet"
+{text} from hyperapp
+* as html from @hyperapp/html
+bsIcon from ~/app/bs_icon.civet
+{t} from ~/common/i18n.civet
 
 type Color = "primary" | "secondary" | "success" | "danger" | "warning" |
   "info" | "light" | "dark" | "body" 

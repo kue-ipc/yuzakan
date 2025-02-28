@@ -1,8 +1,8 @@
 // utils
 
-import * as R from "ramda"
+* as R from ramda
 
-import {convertToType} from "./convert.civet"
+{convertToType} from ./convert.civet
 
 export isNil := R.isNil
 

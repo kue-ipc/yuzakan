@@ -1,7 +1,7 @@
 // form helper
 
-import {listToKebabCase} from "./string_helper.civet"
-import {generateParamName} from "./convert.civet"
+{listToKebabCase} from ./string_helper.civet
+{generateParamName} from ./convert.civet
 
 export formName := (name: string, parents: string[] = []): string ->
   generateParamName(...parents, name)

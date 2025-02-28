@@ -1,11 +1,11 @@
 // グループ
 
-import {text} from "hyperapp"
-import * as html from "@hyperapp/html"
+{text} from hyperapp
+* as html from @hyperapp/html
 
-import {entityLabel} from "~/common/helper.civet"
+{entityLabel} from ~/common/helper.civet
 
-import valueDisplay from "~/app/value_display.civet"
+valueDisplay from ~/app/value_display.civet
 
 // Views
 

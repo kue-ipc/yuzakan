@@ -2,7 +2,7 @@
 
 // see lib/yuzakan/utils/pager.rb
 
-import {pickType, getQueryParamsFromUrl} from "~/common/helper.civet"
+{pickType, getQueryParamsFromUrl} from ~/common/helper.civet
 
 export DEFAULT_PAGE := 1
 export DEFAULT_PER_PAGE := 20

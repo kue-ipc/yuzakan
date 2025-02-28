@@ -1,11 +1,11 @@
 // /api/users/:user_id/lock
 
-import {
+{
   createRunCreate
   createRunDestroy
-} from "~api/hyper_json.civet"
+} from ~api/hyper_json.civet
 
-import {SetUser, normalizeUser} from "~api/users.civet"
+{SetUser, normalizeUser} from ~api/users.civet
 
 // Contants
 

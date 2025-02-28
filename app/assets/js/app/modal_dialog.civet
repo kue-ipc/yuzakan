@@ -2,13 +2,13 @@
 // モーダルダイアログを表示するベースクラス
 // 拡張して使用する
 
-import {app, text} from "hyperapp"
-import * as html from "@hyperapp/html"
-import {focus} from "@hyperapp/dom"
+{app, text} from hyperapp
+* as html from @hyperapp/html
+{focus} from @hyperapp/dom
 
-import {Modal} from "bootstrap"
+{Modal} from bootstrap
 
-import {modalDialog} from "~/app/modal.civet"
+{modalDialog} from ~/app/modal.civet
 
 export default class ModalDialog
   @MESSAGE_EVENT := "modaldialog.message"

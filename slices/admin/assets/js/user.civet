@@ -1,27 +1,27 @@
 // /admin/user/*
 
-import {text, app} from "hyperapp"
-import * as html from "@hyperapp/html"
+{text, app} from hyperapp
+* as html from @hyperapp/html
 
-import {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from "~/common/helper.civet"
+{pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from ~/common/helper.civet
 
-import {fetchJsonGet} from "~api/fetch_json.civet"
+{fetchJsonGet} from ~api/fetch_json.civet
 
-import {runShowSystem} from "~api/system.civet"
-import {runIndexProviders} from "~api/providers.civet"
-import {runIndexGroupsNoSync} from "~api/groups.civet"
-import {createRunIndexAttrs} from "~api/attrs.civet"
-import {SHOW_USER_PARAM_TYPES, createRunShowUser} from "~api/users.civet"
+{runShowSystem} from ~api/system.civet
+{runIndexProviders} from ~api/providers.civet
+{runIndexGroupsNoSync} from ~api/groups.civet
+{createRunIndexAttrs} from ~api/attrs.civet
+{SHOW_USER_PARAM_TYPES, createRunShowUser} from ~api/users.civet
 
-import userInfo from "~admin/user_info.civet"
-import userOperation from "~admin/user_operation.civet"
-import userGroup from "~admin/user_group.civet"
-import userProvider from "~admin/user_provider.civet"
-import userAttr from "~admin/user_attr.civet"
+userInfo from ~admin/user_info.civet
+userOperation from ~admin/user_operation.civet
+userGroup from ~admin/user_group.civet
+userProvider from ~admin/user_provider.civet
+userAttr from ~admin/user_attr.civet
 
-import {runGetUserWithInit} from "~admin/user_get_user.civet"
+{runGetUserWithInit} from ~admin/user_get_user.civet
 
-import {InitUserAttrs} from "~admin/user_attrs.civet"
+{InitUserAttrs} from ~admin/user_attrs.civet
 
 SetAttrsWithInit := (state, attrs) -> [InitUserAttrs, {attrs}]
 

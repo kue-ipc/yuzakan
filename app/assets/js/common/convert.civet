@@ -1,6 +1,6 @@
 // convert from/to primitive vaule and Object, Array, Map, Set, DateTime, ...etc
 
-import {DateTime} from "luxon"
+{DateTime} from luxon
 
 type BooleanString = 
   "1" | "0" |
