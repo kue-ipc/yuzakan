@@ -1,4 +1,4 @@
-{parse, stringify, transform} from csv
+{parse, stringify, transform} from csv/browser/esm
 
 {objToRecord, recordToObj} from ./convert.civet
 
