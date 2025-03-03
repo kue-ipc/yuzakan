@@ -33,7 +33,7 @@ gem "activesupport", "~> 8.0"
 gem "i18n"
 gem "bcrypt"
 gem "zxcvbn-js", require: "zxcvbn"
-gem "xxhash"
+gem "digest-xxhash"
 
 ## for adapter ##
 

@@ -50,6 +50,7 @@ GEM
     debug_inspector (1.2.0)
     declarative (0.0.20)
     diff-lcs (1.6.0)
+    digest-xxhash (0.2.9)
     dotenv (3.1.7)
     drb (2.2.1)
     dry-auto_inject (1.1.0)
@@ -422,7 +423,6 @@ GEM
     uri (1.0.2)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    xxhash (0.6.0)
     zeitwerk (2.7.2)
     zxcvbn-js (4.4.3)
       execjs
@@ -437,6 +437,7 @@ DEPENDENCIES
   capybara
   database_cleaner-sequel
   debug
+  digest-xxhash
   dotenv
   dry-operation
   dry-types (~> 1.7)
@@ -468,7 +469,6 @@ DEPENDENCIES
   ruby-lsp
   slim
   smbhash
-  xxhash
   zxcvbn-js
 
 BUNDLED WITH
