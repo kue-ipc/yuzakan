@@ -8,7 +8,12 @@ module Yuzakan
 
         def handle(_request, response)
           response.format = :json
-          response.body = I18n.backend.translations[I18n.locale].to_json
+          translations = I18n.backend.translations[I18n.locale]
+          response.body = {
+            language: I18n.locale,
+            hash: [translations.hash].pack("q<").unpack1("H16"),
+            translations: translations,
+          }.to_json
         end
       end
     end
