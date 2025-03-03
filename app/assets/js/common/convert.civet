@@ -277,3 +277,29 @@ export generateParamName := (...list: string[]): string ->
 export pickType := (obj, types) ->
   Object.fromEntries(([key, convertToType(obj[key], type)] for own key, type in types when key in obj))
 
+// normalize
+
+export NumberValue ::= bigint | number | string | undefined
+export NumberRange ::= {min?: bigint | number, max?: bigint | number}
+
+export normalizeInteger := (value: NumberValue, {min, max}: NumberRange = {}):
+  bigint | undefined ->
+  return unless value?
+
+  value = BigInt(value) unless value <? "bigint"
+  if value < min? or value > max?
+    console.warn "out of range: %i", value
+    return 
+
+  value
+
+export normalizeFloat := (value: NumberValue, {min, max}: NumberRange = {}):
+  number | undefined ->
+  return unless value?
+
+  value = Number(value) unless value <? "number"
+  if value < min? or value > max?
+    console.warn "out of range: %f", value
+    return 
+
+  value

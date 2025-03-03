@@ -6,8 +6,8 @@
 HttpLinkHeader from http-link-header
 {formDataToJson, formDataToUrlencoded} from ~/common/form_helper.civet
 {objToJson, objToUrlencoded, toInteger} from ~/common/convert.civet
-{extractPagination} from ~api/pagination.civet
-type {PaginationParams} from ~api/pagination.civet
+{normalizeURL} from ~/common/url_helper.civet
+Pagination from ~api/pagination.civet
 
 export Method ::= "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE"
 
@@ -22,7 +22,7 @@ interface ResponseData
   location: string
   type?: "json" | "text"
   data: any
-  pagination?: PaginationParams
+  pagination?: Pagination
   links?: HttpLinkHeader
 
 API_URL := new URL("/api", document.baseURI)
@@ -97,7 +97,9 @@ createRequest := ({path, method = "GET", data = {}, ...params}:
   new Request(url, init)
 
 parseResponse := (response: Response) ->
-  location := response.headers.get("Content-Location") ?? response.url
+  location :=
+    normalizeURL(response.headers.get("Content-Location") ?? response.url)
+
   contentType := response.headers.get("Content-Type")
   responseData :=
     if not contentType?
@@ -112,7 +114,7 @@ parseResponse := (response: Response) ->
   contentRange := response.headers.get("Content-Range")
   paginationInfo :=
     if contentRange?
-      {pagination: extractPagination(contentRange, location)}
+      {pagination: new Pagination(location, contentRange)}
     else
       {}
 
