@@ -1,11 +1,16 @@
+// Bootstrap Modal app
+
 {text} from hyperapp
 * as html from @hyperapp/html
 {StatusIcon} from ~/app/status.civet
 
-export modalHeader := ({id, title, status, closable}) ->
-  titleProps := {class: "modal-title"}
-  titleProps.id = labelId if labelId?
+interface ModalHeaderPros
+  id: string
+  title: string
+  status: string
+  closable?: boolean
 
+export modalHeader := ({id, title, status, closable = true}: ModalHeaderPros) ->
   html.div {id: `${id}-modal-header`, class: "modal-header"}, [
     html.h5 {id: `${id}-modal-title`, class: "modal-title d-flex align-items-center"}, [
       StatusIcon {status, class: "flex-shrink-0 me-2"} if status

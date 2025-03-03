@@ -1,3 +1,7 @@
+// I18n
+
+LOCALE_PATH := "/locales"
+
 messagesStore: any .= null
 
 fetchMessages := (): Promise<any> ->
@@ -11,6 +15,12 @@ getMessages := (): Promise<any> ->
     messagesStore = await fetchMessages()
   messagesStore
 
-export t := (key: string): Promise<string> ->
+
+
+export t := (key: string): string ->
+  localStorage.getItem("i18n")
+
+  `locale.${navigator.language}.${key}
+
   messages := await getMessages()
   messages[key]

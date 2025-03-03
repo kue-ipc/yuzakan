@@ -7,7 +7,7 @@ module Yuzakan
     get "/about", to: "about.index", as: :about
     get "/about/browser", to: "about.browser", as: :about_browser
 
-    get "/locale/messages", to: "locale.messages"
+    get "/locale", to: "locale.index"
 
     # TODO: 実装がまだのため、コメントアウトしておく
     # slice :admin, at: "/admin"

@@ -3,7 +3,7 @@
 module Yuzakan
   module Actions
     module Locale
-      class Messages < Yuzakan::Action
+      class Index < Yuzakan::Action
         security_level 0
 
         def handle(_request, response)

@@ -66,7 +66,7 @@ export getStatus := (name: string): Promise<Status> ->
   {...status, label}
 
 // Hyperapp View
-export StatusIcon := ({status, class: klass = []}:
+export statusIcon := ({status, class: klass = []}:
   {status: string | Status, class: string | string[]}) ->
   if typeof status is "string"
     status = await getStatus(status)

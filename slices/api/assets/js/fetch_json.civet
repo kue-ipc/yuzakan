@@ -18,16 +18,15 @@ interface RequestParams < RequestInit
 
 interface ResponseData
   ok: boolean
-  code: number
-  location: string
-  type?: "json" | "text"
-  data: any
+  code: bigint
+  location: URL
+  data?: any
   pagination?: Pagination
   links?: HttpLinkHeader
 
 API_URL := new URL("/api", document.baseURI)
 
-export fetchJson := (params: RequestParams) ->
+export fetchJson := (params: RequestParams): Promise<ResponseData> ->
   request := createRequest(params)
   console.debug "fetch request: %s %s", request.method, request.url
   response := await fetch request
@@ -96,40 +95,34 @@ createRequest := ({path, method = "GET", data = {}, ...params}:
 
   new Request(url, init)
 
-parseResponse := (response: Response) ->
+parseResponse := (response: Response): Promise<ResponseData> ->
   location :=
     normalizeURL(response.headers.get("Content-Location") ?? response.url)
 
+  data: ResponseData := {}
+    ok: response.ok
+    code: BigInt(response.status)
+    location
+
   contentType := response.headers.get("Content-Type")
-  responseData :=
-    if not contentType?
-      {data: null}
-    else if contentType.startsWith("application/json")
-      {type: "json", data: await response.json()}
-    else if contentType.startsWith("text/plain")
-      {type: "text", data: await response.text()}
-    else
-      throw new Error(`Unknown or unsupported content type: ${contentType}`)
+  if contentType?
+    list := contentType.split(";").map(String.prototype.trim)
+    mimeType := list.shift()?.toLowerCase()
+    // TODO: charsetやboundaryがある場合の処理
+    switch mimeType
+      "application/json"
+        await response.json()
+      "text/plain"
+        await response.text()
+      else
+        throw new Error(`Unsupported content type: ${contentType}`)
 
   contentRange := response.headers.get("Content-Range")
-  paginationInfo :=
-    if contentRange?
-      {pagination: new Pagination(location, contentRange)}
-    else
-      {}
+  if contentRange?
+    data.pagination = new Pagination(location, contentRange)
 
   linkHeader := response.headers.get("Link")
-  linkInfo :=
-    if linkHeader?
-      {links: HttpLinkHeader.parse(linkHeader)}
-    else
-      {}
-
-  {
-    ok: response.ok
-    code: toInteger(response.status)
-    location
-    ...responseData
-    ...paginationInfo
-    ...linkInfo
-  }
+  if linkHeader?
+    data.links = HttpLinkHeader.parse(linkHeader)
+  
+  data

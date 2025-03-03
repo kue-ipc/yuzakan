@@ -35,45 +35,71 @@ export default class APIDialog
   readonly #id: string
   readonly #title: string
   readonly #method: Method
-  readonly #path: string
-  readonly #codeActions: Map<number, CodeAction>?
+  readonly #path: string[]
+  #codeActions: Map<number, CodeAction> := new Map(APIDialog.DEFAULT_CODE_ACTIONS)
 
-  @({#id, #title, #method = "GET", #path, #codeActions}:
-    {id: string, title: string, method: Method, path?: string, codeActions?: Map<number, CodeAction>})
-    #codeActions = new Map [...DEFAULT_CODE_ACTIONS, ...codeActions]
+  readonly #modalNode: HTMLDivElement
+  readonly #modalDialogNode: HTMLDivElement
+  readonly #modal: Modal
 
-    @modalNode = document.createElement("div")
-    @modalNode.id = `${@id}-modal`
-    @modalNode.classList.add("modal")
-    @modalNode.setAttribute("tabindex", -1)
-    @modalNode.setAttribute("aria-hidden", "true")
+  @({#id, #title, #method = "GET", #path, codeActions}:
+    {id: string, title: string, method: Method, path: string[], codeActions?: Map<number, CodeAction>})
 
-    modalDialogNode := document.createElement("div")
-    modalDialogNode.id = `${@id}-modal-dialog`
-    modalDialogNode.classList.add("modal-dialog", "modal-dialog-centered")
+    if codeActions?
+      #codeActions.set(key, value) for [key, value] of codeActions
+  
+    #modalDialogNode := document.createElement("div")
+    #modalDialogNode.id = `${#id}-modal-dialog`
+    #modalDialogNode.classList.add("modal-dialog")
 
-    @modalNode.appendChild(modalDialogNode)
-    document.body.appendChild(@modalNode)
+    #modalNode = document.createElement("div")
+    #modalNode.id = `${#id}-modal`
+    #modalNode.classList.add("modal")
+    #modalNode.setAttribute("tabindex", "-1")
+    #modalNode.setAttribute("aria-hidden", "true")
+    #modalNode.appendChild(#modalDialogNode)
 
-    @modal = new Modal(@modalNode)
+    document.body.appendChild(#modalNode)
 
-    app {
-      init: {
-        status: "unknown"
-        title: "no title"
-        messages: "n/a"
-        closable: true
-        link: null
-        reload: false
-      }
-      view: @modalView
-      node: modalDialogNode
-      subscriptions: (state) => [
-        @messageSub @messageAction, {node: @modalNode}
-      ]
-    }
+    #modal = new Modal(#modalNode)
 
-  #getCodeAction(code)
+    modalView = ({status, title, messages, closable, link, reload}) =>
+      modalDialog {
+        id: #id,
+        centered: true
+        title
+        status
+        closable
+        action: if link?
+          {
+            label: "すぐに移動する"
+            color: "primary"
+            onclick: (state) -> [state, [ -> location.href = link]]
+          }
+        else if reload
+          {
+            label: "ページの再読み込み"
+            color: "danger"
+            onclick: (state) -> [state, [ -> location.reload()]]
+          }
+      }, @messageList {messages: messages}
+
+
+    init := {}
+      status: "unknown"
+      title: "no title"
+      messages: "n/a"
+      closable: true
+      link: null
+      reload: false
+    view := modalView
+    node := #modalDialogNode
+    subscriptions := [
+      () => [@messageSub @messageAction, {node: #modalNode}]
+    ]
+
+    app {init, view, node, subscriptions}
+
 
   messageList({messages})
     messages = [messages] unless messages instanceof Array
@@ -91,7 +117,7 @@ export default class APIDialog
       @modal._config.keyboard = false
 
     event := new CustomEvent(APIDialog.MESSAGE_EVENT, {detail: state})
-    @modalNode.dispatchEvent(event)
+    #modalNode.dispatchEvent(event)
 
   messageRunner(dispatch, {action, node})
     func := (e) -> dispatch(action, e.detail)
@@ -184,38 +210,18 @@ export default class APIDialog
 
     return response
 
-  modalView = ({status, title, messages, closable, link, reload}) =>
-    modalDialog {
-      id: @id,
-      centered: true
-      title
-      status
-      closable
-      action: if link?
-        {
-          label: "すぐに移動する"
-          color: "primary"
-          onclick: (state) -> [state, [ -> location.href = link]]
-        }
-      else if reload
-        {
-          label: "ページの再読み込み"
-          color: "danger"
-          onclick: (state) -> [state, [ -> location.reload()]]
-        }
-    }, @messageList {messages: messages}
 
   messageSub = (action, {node}) => [@messageRunner, {action, node}]
 
   messageAction = (state, params) =>
     newState := {...state, ...params}
     if newState.closable
-      [newState, focus(`${@id}-modal-close-button`)]
+      [newState, focus(`${#id}-modal-close-button`)]
     else
       newState
 
   waitModalClose = =>
     new Promise (resolve, reject) =>
-      @modalNode.addEventListener "hidden.bs.modal", ->
+      #modalNode.addEventListener "hidden.bs.modal", ->
         resolve()
       , {once: true}
