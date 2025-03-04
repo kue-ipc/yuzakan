@@ -46,7 +46,7 @@ modalHeader := ({
   id:: string
   title:: string
   status?:: string | Status
-  closable?:: boolean = true
+  closable?:: boolean = false
 }) ->
   html.div {id: `${id}-modal-header`, class: "modal-header"}, [
     html.h5 {id: `${id}-modal-title`, class: "modal-title d-flex align-items-center"}, [
@@ -62,7 +62,7 @@ modalBody := <S>({id:: string},
 
 modalFooter := <S>({
   id:: string
-  closable?:: boolean = true
+  closable?:: boolean = false
   action?:: ModalAction S
   close?:: ModalAction S
 }) ->
@@ -85,7 +85,7 @@ modalContent := <S>({
   id
   title
   status
-  closable = true
+  closable = false
   action
   close
 }: ModalContentProps<S>, children: MaybeVNode S | readonly MaybeVNode<S>[]) ->

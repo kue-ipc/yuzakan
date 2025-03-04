@@ -14,17 +14,17 @@ export Method ::= "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE"
 interface RequestParams < RequestInit
   path: string | string[]
   methed?: Method
-  data?: {}
+  data?: any
 
-interface ResponseData
+export interface ResponseData
   ok: boolean
   code: bigint
-  location: URL
+  location?: URL
   data?: any
   pagination?: Pagination
   links?: HttpLinkHeader
 
-API_URL := new URL("/api", document.baseURI)
+API_URL := normalizeURL("/api")
 
 export fetchJson := (params: RequestParams): Promise<ResponseData> ->
   request := createRequest(params)
@@ -55,10 +55,13 @@ normalizePath := (path: string | string[]) ->
   path = path.split("/") if path <? "string"
   path.map(encodeURIComponent).join("/")
 
+apiURL := (path: RequestParams["path"]): URL ->
+  new URL(normalizePath(path), API_URL)
+
 // create request
-createRequest := ({path, method = "GET", data = {}, ...params}:
-  RequestParams): Request ->
-  url := new URL(normalizePath(path), API_URL)
+createRequest := ({path, method = "GET", data, ...params}: RequestParams):
+    Request ->
+  url := apiURL(path)
   headers := new Headers {}
     "Accept": "application/json"
   let body

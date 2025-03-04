@@ -4,198 +4,230 @@
  * 完了するまではmodalを使用して、操作できないようにする。
  */ 
 
-{app, text} from hyperapp
+{app, text, type Subscription, type Action} from hyperapp
 * as html from @hyperapp/html
 {focus} from @hyperapp/dom
 {Modal} from bootstrap
-{StatusIcon, getStatus} from ~/app/status.civet
-{fetchJson, Method} from ~api/fetch_json.civet
+Status from ~/common/status.civet
+{fetchJson, type Method, type ResponseData} from ~api/fetch_json.civet
 {modalDialog} from ~/app/modal.civet
+{t} from ~/common/i18n.civet
+
+declare global
+  interface HTMLElementEventMap
+    "apidialog.message": CustomEvent<string>;
 
 interface CodeAction
   status: string
   message: string
   reload?: boolean
-  redirectTo?: string
+  redirectTo?: URL
+  reloadTime?: number
+
+interface ModalState
+  status: string | Status
+  messages: string | string[]
+  link?: URL??
+  closable?: boolean
+  reload?: boolean
+
+declare global
+  interface HTMLElementEventMap
+    "apidialog.message": CustomEvent<string>;
 
 export default class APIDialog
   @API_ROOT_PATH: URL := new URL("/api", )
 
   @MESSAGE_EVENT := "apidialog.message"
-  @DEFAULT_CODE_ACTIONS: Map<number, CodeAction> := new Map [
-    [200, {status: "success", message: "ok"}]
-    [400, {status: "error", message: "bad_request"}]
-    [401, {status: "error", message: "unauthorized", reload: true}]
-    [403, {status: "error", message: "forbidden", reload: true}]
-    [422, {status: "failure", message: "unprocessable_content"}]
-    [500, {status: "fatal", message: "internal_server_error", reload: true}]
+  @DEFAULT_CODE_ACTIONS: Map<bigint, CodeAction> := new Map [
+    [0n, {status: "error", message: "error", reload: true}]
+    [200n, {status: "success", message: "ok"}]
+    [400n, {status: "error", message: "bad_request"}]
+    [401n, {status: "error", message: "unauthorized", reload: true}]
+    [403n, {status: "error", message: "forbidden", reload: true}]
+    [422n, {status: "failure", message: "unprocessable_content"}]
+    [500n, {status: "fatal", message: "internal_server_error", reload: true}]
   ]
-  @UNKNOWN_CODE_ACTION: CodeAction := {status: "unknown", message: "unknown"}
+  @UNKNOWN_CODE_ACTION: CodeAction := {status: "unknown", message: "unknown",
+    reload: true}
 
   readonly #id: string
-  readonly #title: string
+  readonly #name: string
+  readonly #path: string
   readonly #method: Method
-  readonly #path: string[]
-  #codeActions: Map<number, CodeAction> := new Map(APIDialog.DEFAULT_CODE_ACTIONS)
+  #codeActions: Map<bigint, CodeAction> := new Map(APIDialog.DEFAULT_CODE_ACTIONS)
 
   readonly #modalNode: HTMLDivElement
-  readonly #modalDialogNode: HTMLDivElement
   readonly #modal: Modal
 
-  @({#id, #title, #method = "GET", #path, codeActions}:
-    {id: string, title: string, method: Method, path: string[], codeActions?: Map<number, CodeAction>})
-
+  @({
+    #id:: string
+    #name:: string
+    #path:: string
+    #method:: Method = "GET"
+    codeActions?:: Map<bigint | number, CodeAction>
+  })
     if codeActions?
-      #codeActions.set(key, value) for [key, value] of codeActions
+      #codeActions.set(BigInt(key), value) for [key, value] of codeActions
   
-    #modalDialogNode := document.createElement("div")
-    #modalDialogNode.id = `${#id}-modal-dialog`
-    #modalDialogNode.classList.add("modal-dialog")
+    modalDialogNode := document.createElement("div")
+    modalDialogNode.id = `${#id}-modal-dialog`
+    modalDialogNode.classList.add("modal-dialog")
 
     #modalNode = document.createElement("div")
     #modalNode.id = `${#id}-modal`
     #modalNode.classList.add("modal")
     #modalNode.setAttribute("tabindex", "-1")
     #modalNode.setAttribute("aria-hidden", "true")
-    #modalNode.appendChild(#modalDialogNode)
+    #modalNode.appendChild(modalDialogNode)
 
     document.body.appendChild(#modalNode)
 
     #modal = new Modal(#modalNode)
 
-    modalView = ({status, title, messages, closable, link, reload}) =>
-      modalDialog {
-        id: #id,
-        centered: true
-        title
-        status
-        closable
-        action: if link?
-          {
-            label: "すぐに移動する"
-            color: "primary"
-            onclick: (state) -> [state, [ -> location.href = link]]
-          }
-        else if reload
-          {
-            label: "ページの再読み込み"
-            color: "danger"
-            onclick: (state) -> [state, [ -> location.reload()]]
-          }
-      }, @messageList {messages: messages}
-
-
-    init := {}
+    init: ModalState := {}
       status: "unknown"
       title: "no title"
       messages: "n/a"
       closable: true
       link: null
       reload: false
-    view := modalView
-    node := #modalDialogNode
-    subscriptions := [
-      () => [@messageSub @messageAction, {node: #modalNode}]
+    view := #modalView
+    node := modalDialogNode
+    subscriptions := (state: ModalState) =>[
+      #messageSub(#messageAction, {node: #modalNode})
     ]
 
     app {init, view, node, subscriptions}
 
+  // Hyperapp Views
 
-  messageList({messages})
-    messages = [messages] unless messages instanceof Array
-    html.div {}, messages.filter((x) -> typeof x is "string").map (msg) ->
-      html.div {}, text msg
+  #modalView := ({status, messages, closable, link, reload}: ModalState) =>
+    status = Status.get(status) if status <? "string"
+    modalDialog {
+      id: #id,
+      centered: true
+      title: `${#name} ${status.label}`
+      status
+      closable
+      action: if link?
+        {
+          label: t("view.buttons.move_immediately")
+          color: "primary"
+          onclick: (state) -> [state, [-> location.href = link.href]]
+        }
+      else if reload
+        {
+          label: t("view.buttons.reload_page")
+          color: "danger"
+          onclick: (state) -> [state, [-> location.reload()]]
+        }
+    }, #messageList {messages}
 
-  modalMessage(state)
+  #messageList({messages:: string | string[]})
+    messages = [messages] if messages <? "string"
+    html.div {}, messages.map (msg) ->
+      html.div {},
+        text msg
+
+  // Hyperapp Action
+
+  #messageAction: Action<ModalState> = (state: ModalState, params) =>
+    newState := {...state, ...params}
+    if newState.closable
+      [newState, focus(`${#id}-modal-close-button`)]
+    else
+      newState
+
+  // Hyperapp create Subscription 
+
+  #messageSub = (action: Action<ModalState>, {node:: HTMLElement}):
+      Subscription<ModalState> =>
+    [#messageRunner, {action, node}]
+
+  // Hyperapp Subscriber
+
+  #messageRunner: Subscription<ModalState>.0 = (dispatch, {action:: Action<ModalState>, node:: HTMLElement}) ->
+    func := (e: CustomEvent) -> dispatch(action, e.detail)
+    node.addEventListener(APIDialog.MESSAGE_EVENT, func)
+    -> node.removeEventListener(APIDialog.MESSAGE_EVENT, func)
+
+
+  #modalMessage(state: ModalState): void
     // hack modal config
     // https://github.com/twbs/bootstrap/issues/35664
     if state.closable
-      @modal._config.backdrop = true
-      @modal._config.keyboard = true
+      (#modal as any)._config.backdrop = true
+      (#modal as any)._config.keyboard = true
     else
-      @modal._config.backdrop = "static"
-      @modal._config.keyboard = false
+      (#modal as any)._config.backdrop = "static"
+      (#modal as any)._config.keyboard = false
 
     event := new CustomEvent(APIDialog.MESSAGE_EVENT, {detail: state})
     #modalNode.dispatchEvent(event)
 
-  messageRunner(dispatch, {action, node})
-    func := (e) -> dispatch(action, e.detail)
-    node.addEventListener(APIDialog.MESSAGE_EVENT, func)
-    -> node.removeEventListener(APIDialog.MESSAGE_EVENT, func)
-
-  submitPromise({url = @url, method = @method, data, type})
-    @modalMessage {
+  submitPromise({params?:: {[key: string]: string}, data?:: any}): ResponseData
+    runningMessageState: ModalState := {}
       status: "running"
-      title: `${@title}中`
-      messages: `${@title}を実施しています。しばらくお待ち下さい。`
+      messages: t("view.messages.running", {#name})
       closable: false
       link: null
       reload: false
-    }
-    @modal.show()
+    #modalMessage(runningMessageState)
+    #modal.show()
 
-    response := try
-      await fetchJson {url, method, data, type}
+    path .= #path
+    for name, replace in params
+      path = path.replaceAll(`%{name}`, replace)
+
+    response: ResponseData := try
+      await fetchJson {path, #method, data}
     catch error
       console.error error
       {
         ok: false
-        code: 0
-        type: "json"
-        data: {
-          message: "サーバー接続時にエラーが発生しました。しばらく待ってから、再度試してください。"
-        }
+        code: 0n
+        data: {message: t("view.messages.fetch_error")}
       }
 
-    responseData :=
-      switch response.type
-        when "json"
-          response.data
-        when "text"
-          {
-            message: response.data
-          }
-        when null, undefined
-          {}
+    codeAction := #codeActions.get(response.code) ??
+      APIDialog.UNKNOWN_CODE_ACTION
+
+    messages := [
+      (response.data?.message ?? codeAction.message)
+      ...(response.data?.errors ?? [])
+    ].filter & <? "string"
+
+    reloadDelay: number .= 0
+    {closable, link, reload} :=
+      if codeAction.redirectTo?
+        if codeAction.reloadTime
+          messages.push(t("view.messages.reload_after",
+            {sec: codeAction.reloadTime.toString()}))
+          reloadDelay = codeAction.reloadTime * 1000
         else
-          console.error `Unsupported respose type: ${response.type}`
-          {
-            message: "異常なレスポンスが返されました。再度試してください。"
-          }
-
-    codeAction := #codeActions.get(response.code) || APIDialog.UNKNOWN_CODE_ACTION
-
-    messages := [(codeAction.message || responseData.message), ...(responseData.errors ?? [])]
-      .filter (v) -> typeof v is "string"
-
-    {consable, link, reload, reloadDelay} :=
-      if codeAction?.redirectTo?
-        reloadDelay :=
-          if codeAction.reloadTime? and codeAction.reloadTime > 0
-            messages.push(`約${codeAction.reloadTime}秒後に画面を切り替えます。`)
-            codeAction.reloadTime * 1000
-          else
-            messages.push("画面を切り替えます。しばらくお待ち下さい。")
-            0 // default 0 msec
-        {
-          closable: false
-          link: codeAction.redirectTo
-          reloadDelay
-        }
-      else if codeAction?.reload
+          messages.push(t("view.messages.reload_immediately"))
+        {closable: false, link: codeAction.redirectTo, reload: false}
+      else if codeAction.reload
         {closable: false,link: null, reload: true}
       else
         {closable: true, link: null, reload: false}
 
-    @modalMessage {
+    resultMessageState: ModalState := {}
+      status: codeAction.status
+      messages
+      closable
+      link
+      reload
+
+
+    #modalMessage {}
       status: codeAction.status
       title: `${@title}${getStatus(codeAction.status).label}`
       messages
       closable
       link
       reload
-    }
 
     if link?
       setTimeout ->
@@ -209,16 +241,6 @@ export default class APIDialog
     await @waitModalClose()
 
     return response
-
-
-  messageSub = (action, {node}) => [@messageRunner, {action, node}]
-
-  messageAction = (state, params) =>
-    newState := {...state, ...params}
-    if newState.closable
-      [newState, focus(`${#id}-modal-close-button`)]
-    else
-      newState
 
   waitModalClose = =>
     new Promise (resolve, reject) =>

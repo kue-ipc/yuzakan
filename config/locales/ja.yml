@@ -205,9 +205,22 @@ ja:
     internal_server_error: >-
       サーバーで致命的なエラーが発生しました。
       管理者に連絡してください。
+    # others
+    error: エラーが発生しました。
+    unknown: 不明な状況が発生しました。
   view:
     buttons:
       toggle_navigation: ナビゲーション切替
       close: 閉じる
-
+      reload_page: ページの再読み込み
+      move_immediately: すぐに移動
+    messages:
+      running: >-
+        %{name}を実施しています。
+        しばらくお待ち下さい。
+      fetch_error: >-
+        サーバー接続時にエラーが発生しました
+        しばらく待ってから、再度試してください。
+      reload_after: '約%{sec}秒後に画面を切り替えます。'
+      reload_immediately: 画面を切り替えます。しばらくお待ち下さい。
 
