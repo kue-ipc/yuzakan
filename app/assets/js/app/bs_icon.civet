@@ -9,7 +9,10 @@ interface BsIconProps
   alt?: string
   class?: string[]
 
-export default bsIcon := <S>({name, size = 24, alt, class: klass}: BsIconProps): ElementVNode<S> ->
+// Hyperapp Views
+
+export default bsIcon := <S>({name, size = 24, alt, class: klass}: BsIconProps):
+    ElementVNode<S> ->
   svg_props := {}
     class: ["bi", ...(klass ?? [])]
     width: size

@@ -191,6 +191,8 @@ ja:
     timeout: タイムアウト
     loading: 読込中
     loaded: 読込済み
+    # その他
+    null: (無)
   response_messages:
     # 2xx
     ok: 成功しました。
