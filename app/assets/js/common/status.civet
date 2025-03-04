@@ -1,26 +1,15 @@
 // Status
 
-{t} from ~/common/i18n.civet
-
-type Color
-  | "primary"
-  | "secondary"
-  | "success"
-  | "danger"
-  | "warning"
-  | "info"
-  | "light"
-  | "dark"
-  | "body" 
+{type BsColor} from ./bs.civet
+{t} from ./i18n.civet
 
 export default class Status
   readonly #name: string
-  readonly #color: Color
+  readonly #color: BsColor
   readonly #icon: string?
   readonly #spinner: string?
 
-  @({#name, #color, #icon, #spinner}: {name: string, color: Color,
-      icon?: string, spinner?: string})
+  @({#name:: string, #color:: BsColor, #icon?:: string, #spinner?:: string})
 
   get #name
   get #color

@@ -159,9 +159,6 @@ ja:
       display_name: 表示名
     attr:
       name: 属性名
-  view:
-    buttons:
-      toggle_navigation: ナビゲーション切替
   statuses:
     # 成功失敗
     success: 成功
@@ -208,5 +205,9 @@ ja:
     internal_server_error: >-
       サーバーで致命的なエラーが発生しました。
       管理者に連絡してください。
+  view:
+    buttons:
+      toggle_navigation: ナビゲーション切替
+      close: 閉じる
 
 

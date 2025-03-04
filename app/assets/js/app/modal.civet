@@ -1,67 +1,115 @@
 // Bootstrap Modal app
 
-{text} from hyperapp
+{text, type MaybeVNode, type Action} from hyperapp
 * as html from @hyperapp/html
-{StatusIcon} from ~/app/status.civet
+Status from ~/common/status.civet
+{statusIcon} from ~/app/status_icon.civet
+{t} from ~/common/i18n.civet
+{type BsColor, BsGridSize, BsModalSize} from ~/common/bs.civet
 
-interface ModalHeaderPros
-  id: string
-  title: string
-  status: string
-  closable?: boolean
+ModalAction<S> ::=
+  label: string
+  color: BsColor
+  onclick?: Action<S, Event> | readonly [action: Action<S>, payload: unknown]
+  disabled?: boolean
+  side?: "right" | "left"
 
-export modalHeader := ({id, title, status, closable = true}: ModalHeaderPros) ->
+// Hyperapp views
+
+modalHeaderCloseButton := ({id:: string}) ->
+  html.button {
+    id: `${id}-modal-header-close-button`
+    class: "btn-close",
+    type: "button",
+    data-bs-dismiss: "modal",
+    aria-label: t("view.buttons.close")
+  }
+
+modalCloseButton := <S>({id:: string, action?:: ModalAction S}) ->
+  html.button {
+    id: `${id}-modal-close-button`
+    class: `btn btn-${action?.color ?? "secondary"}`
+    type: "button"
+    data-bs-dismiss: "modal"
+  }, text action?.label ?? t("view.buttons.close")
+
+modalActionButton := <S>({id:: string, action:: ModalAction S}) ->
+  html.button {
+    id: `${id}-modal-action-button`
+    class: `btn btn-${action.color}`
+    type: "button"
+    onclick: action.onclick
+    disabled: action.disabled
+  }, text action.label
+
+modalHeader := ({
+  id:: string
+  title:: string
+  status?:: string | Status
+  closable?:: boolean = true
+}) ->
   html.div {id: `${id}-modal-header`, class: "modal-header"}, [
     html.h5 {id: `${id}-modal-title`, class: "modal-title d-flex align-items-center"}, [
-      StatusIcon {status, class: "flex-shrink-0 me-2"} if status
+      statusIcon {status, class: "flex-shrink-0 me-2"} if status
       html.div {}, text title
     ]
-    if closable then html.button {
-      id: `${id}-modal-header-close`
-      class: "btn-close",
-      type: "button",
-      "data-bs-dismiss": "modal",
-      "aria-label": "閉じる"
-    }
+    modalHeaderCloseButton({id}) if closable
   ]
 
-export modalBody := ({id}, children) ->
+modalBody := <S>({id:: string},
+    children: MaybeVNode S | readonly MaybeVNode<S>[]) ->
   html.div {id: `${id}-modal-body`, class: "modal-body"}, children
 
-export modalFooter := ({id, closable, action, close}) ->
+modalFooter := <S>({
+  id:: string
+  closable?:: boolean = true
+  action?:: ModalAction S
+  close?:: ModalAction S
+}) ->
   buttons := [
-    if closable then html.button {
-      id: `${id}-modal-close-button`
-      class: `btn btn-${close?.color || "secondary"}`
-      type: "button"
-      "data-bs-dismiss": "modal"
-    }, text close?.label || "閉じる"
-    if action? then html.button {
-      id: `${id}-modal-action-button`
-      class: `btn btn-${action.color}`
-      type: "button"
-      onclick: action.onclick
-      disabled: action.disabled
-    }, text action.label
+    modalCloseButton({id, action: close}) if closable
+    modalActionButton({id, action}) if action?
   ]
   html.div {id: `${id}-modal-footer`, class: "modal-footer"},
     if action?.side is "left" then buttons else buttons.reverse()
 
-export modalContent = ({id, title, status, closable, action, close}, children) ->
+ModalContentProps<S> ::=
+  id: string
+  title: string
+  status: string | Status
+  closable?: boolean
+  action?: ModalAction S
+  close?: ModalAction S
+
+modalContent := <S>({
+  id
+  title
+  status
+  closable = true
+  action
+  close
+}: ModalContentProps<S>, children: MaybeVNode S | readonly MaybeVNode<S>[]) ->
   html.div {class: "modal-content"}, [
     modalHeader {id, title, status, closable}
     modalBody {id}, children
     modalFooter {id, closable, action, close} if closable || action?
   ]
 
-export modalDialog = ({id, scrollable, centered, size, fullscreen, ...props}, children) ->
+export modalDialog := <S>({
+  id:: string
+  scrollable?:: boolean = false
+  centered?:: boolean = false
+  size?:: BsModalSize
+  fullscreen?:: BsGridSize | boolean
+  ...props:: ModalContentProps<S>
+}, children: MaybeVNode S | readonly MaybeVNode<S>[]) ->
   dialogClasses := [
     "modal-dialog"
     "modal-dialog-scrollable" if scrollable
     "modal-dialog-centered" if centered
     `modal-${size}` if size
     if fullscreen
-      if typeof fullscreen is "string"
+      if fullscreen <? "string"
         `modal-fullscreen-${fullscreen}`
       else
         "modal-fullscreen"

@@ -1,25 +1,28 @@
 // Status Icon app
 
-type {ElementVNode} from hyperapp
-{text} from hyperapp
+{text, type ClassProp} from hyperapp
 * as html from @hyperapp/html
 bsIcon from ~/app/bs_icon.civet
 Status from ~/common/status.civet
+{bsTextColorClass} from ~/common/bs.civet
 
 // Hyperapp Views
 
-export statusIcon := <S>({status, class: klass = []}: {status: string | Status,
-    class: string | string[]}): ElementVNode<S> ->
+export statusIcon := ({
+  status:: string | Status
+  class: klass:: ClassProp = []
+}) ->
   if typeof status is "string"
     status = Status.get(status)
 
+  divClass := [bsTextColorClass(status.color), klass]
   if status.spinner?
-    html.div {class: [`spinner-${status.spinner}`, klass], role: "status"},
+    html.div {class: [`spinner-${status.spinner}`, divClass], role: "status"},
       html.span {class: "visually-hidden"},
         text status.label
   else if status.icon?
-    html.div {class: [`text-${status.color}`, klass]},
+    html.div {class: divClass},
       bsIcon {name: status.icon, alt: status.label ?? status.name, size: 32}
   else
-    html.div {class: [`text-${status.color}`, klass]},
+    html.div {class: divClass},
       text status.label

@@ -283,7 +283,7 @@ export NumberValue ::= bigint | number | string | undefined
 export NumberRange ::= {min?: bigint | number, max?: bigint | number}
 
 export normalizeInteger := (value: NumberValue, {min, max}: NumberRange = {}):
-  bigint | undefined ->
+    bigint? ->
   return unless value?
 
   value = BigInt(value) unless value <? "bigint"
@@ -294,7 +294,7 @@ export normalizeInteger := (value: NumberValue, {min, max}: NumberRange = {}):
   value
 
 export normalizeFloat := (value: NumberValue, {min, max}: NumberRange = {}):
-  number | undefined ->
+    number? ->
   return unless value?
 
   value = Number(value) unless value <? "number"
