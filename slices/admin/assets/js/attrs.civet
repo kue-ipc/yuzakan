@@ -6,7 +6,7 @@ ConfirmDialog from ~/app/confirm_dialog.civet
 InputTextDialog from ~/app/input_text_dialog.civet
 {ATTR_TYPES, MAPPING_CONVERSIONS} from ~/definition.civet
 
-{fetchJsonGet, fetchJsonPost, fetchJsonPatch, fetchJsonDelete} from ~api/fetch_json.civet
+{fetchAPIGet, fetchAPIPost, fetchAPIPatch, fetchAPIDelete} from ~api/fetch_api.civet
 {createRunIndexProviders} from ~api/providers.civet
 {normalizeAttr, createRunIndexAttrs, createRunShowAttr} from ~api/attrs.civet
 
@@ -238,7 +238,7 @@ inputCodeRunner := (dispatch, {attr}) ->
 createAttrRunner := (dispatch, {attr}) ->
   {name, newName, ...attr} := attr
   attr := {...attr, name: newName}
-  response := await fetchJsonPost({url: `/api/attrs`, data: {...csrf(), ...attr}})
+  response := await fetchAPIPost({url: `/api/attrs`, data: {...csrf(), ...attr}})
   if response.ok
     dispatch(attrAction, {attr: response.data})
     dispatch(attrAction, {attr: initNewAttr})
@@ -248,7 +248,7 @@ createAttrRunner := (dispatch, {attr}) ->
 updateAttrRunner := (dispatch, {attr}) ->
   {name, newName, ...attr} := attr
   attr := {...attr, name: newName} if newName?
-  response := await fetchJsonPatch({url: `/api/attrs/${name}`, data: {...csrf(), ...attr}})
+  response := await fetchAPIPatch({url: `/api/attrs/${name}`, data: {...csrf(), ...attr}})
   if response.ok
     dispatch(attrAction, {name, attr: {...response.data, newName: undefined}})
   else
@@ -257,7 +257,7 @@ updateAttrRunner := (dispatch, {attr}) ->
 destroyAttrRunner := (dispatch, {attr}) ->
   confirm := await deleteConfirm.showPromise({messages: [`属性「${attr.name}」を削除してもよろしいですか？`]})
   if confirm
-    response := await fetchJsonDelete({url: `/api/attrs/${attr.name}`, data: csrf()})
+    response := await fetchAPIDelete({url: `/api/attrs/${attr.name}`, data: csrf()})
     if response.ok
       dispatch(deleteAttrAction, {name: attr.name})
     else
@@ -319,7 +319,7 @@ downAttrAction := (state, {name}) ->
 
 
 // showAttrRunner := (dispatch, {attr}) ->
-//   response := await fetchJsonGet({url: `/api/attrs/${attr.name}`})
+//   response := await fetchAPIGet({url: `/api/attrs/${attr.name}`})
 //   if response.ok
 //     dispatch(attrAction, {attr: response.data})
 //   else

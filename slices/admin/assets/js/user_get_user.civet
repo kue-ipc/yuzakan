@@ -1,4 +1,4 @@
-{fetchJsonGet} from ~api/fetch_json.civet
+{fetchAPIGet} from ~api/fetch_api.civet
 
 {InitUserAttrs} from ~admin/user_attrs.civet
 
@@ -18,7 +18,7 @@ SetMode := (state, mode) -> {...state, mode}
 
 export runGetUserWithInit := (dispatch, {name}) ->
   if name?
-    response := await fetchJsonGet({url: `/api/users/${name}`})
+    response := await fetchAPIGet({url: `/api/users/${name}`})
     if response.ok
       dispatch(SetUserWithInit, {user: response.data})
     else if response.code is 404

@@ -5,7 +5,7 @@
 {app, text} from hyperapp
 * as html from @hyperapp/html
 
-{fetchJsonGet} from ~api/fetch_json.civet
+{fetchAPIGet} from ~api/fetch_api.civet
 
 USER_MENU := {path: "/", name: "利用者メニュー"}
 ADMIN_MENU := {path: "/admin", name: "管理者メニュー"}
@@ -102,7 +102,7 @@ headerNav := ({system, session}) ->
 //   {...state, menu}
 
 // runGetSystem = (dispatch) ->
-//   response = await fetchJsonGet({url: "/api/system"})
+//   response = await fetchAPIGet({url: "/api/system"})
 //   if response.ok
 //     dispatch(SetSystem, {system: response.data})
 //   else
@@ -110,7 +110,7 @@ headerNav := ({system, session}) ->
 
 
 // runGetSession = (dispatch) ->
-//   response = await fetchJsonGet({url: "/api/session", chace: "reload"})
+//   response = await fetchAPIGet({url: "/api/session", chace: "reload"})
 //   if response.ok
 //     dispatch(SetSystem, {sesion: response.data})
 //   else if response.code is 404

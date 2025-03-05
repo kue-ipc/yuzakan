@@ -9,7 +9,7 @@
 {focus} from @hyperapp/dom
 {Modal} from bootstrap
 Status from ~/common/status.civet
-{fetchJson, type Method, type ResponseData} from ~api/fetch_json.civet
+{fetchAPI, type Method, type ResponseData} from ~api/fetch_api.civet
 {modalDialog} from ~/app/modal.civet
 {t} from ~/common/i18n.civet
 
@@ -185,7 +185,7 @@ export default class APIDialog
       path = path.replaceAll(`%{name}`, replace)
 
     response: ResponseData := try
-      await fetchJson {path, #method, data}
+      await fetchAPI {path, #method, data}
     catch error
       console.error error
       {

@@ -3,7 +3,7 @@
 
 {text, app} from hyperapp
 * as html from @hyperapp/html
-{fetchJsonGet} from ~api/fetch_json.civet
+{fetchAPIGet} from ~api/fetch_api.civet
 {formName, formId} from ~/common/form_helper.civet
 csrf from ~/csrf.civet
 
@@ -95,7 +95,7 @@ adapterAction := (state, {name, adapter}) ->
 showAdapterRunner := (dispatch, {name}) ->
   return unless name?
 
-  response := await fetchJsonGet({url: `/api/adapters/${name}`})
+  response := await fetchAPIGet({url: `/api/adapters/${name}`})
   if response.ok
     dispatch(adapterAction, {name: name, adapter: response.data})
   else
@@ -131,7 +131,7 @@ destroyProviderRunner := (dispatch, {name}) ->
 showProviderRunner := (dispatch, {name}) ->
   return unless name?
 
-  response := await fetchJsonGet({url: `/api/providers/${name}`})
+  response := await fetchAPIGet({url: `/api/providers/${name}`})
   if response.ok
     dispatch(providerAction, {provider: response.data})
   else
@@ -141,7 +141,7 @@ initAllAdaptersAction := (state, {adapters}) ->
   {...state, adapters}
 
 indexAllAdaptersRunner := (dispatch) ->
-  response := await fetchJsonGet({url: "/api/adapters"})
+  response := await fetchAPIGet({url: "/api/adapters"})
   if response.ok
     dispatch(initAllAdaptersAction, {adapters: response.data})
   else

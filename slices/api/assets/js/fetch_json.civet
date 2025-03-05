@@ -1,5 +1,5 @@
 /**
- * fetchJson
+ * fetchAPI
  * APIと連携してデータをJSONで受け取る処理をする。
  */
 
@@ -26,30 +26,30 @@ export interface ResponseData
 
 API_URL := normalizeURL("/api")
 
-export fetchJson := (params: RequestParams): Promise<ResponseData> ->
+export fetchAPI := (params: RequestParams): Promise<ResponseData> ->
   request := createRequest(params)
   console.debug "fetch request: %s %s", request.method, request.url
   response := await fetch request
   console.debug "fetch response: %d %s", response.status, response.url
   parseResponse(response)
 
-export fetchJsonGet := (params: RequestParams) ->
-  fetchJson({...params, method: "GET"})
+export fetchAPIGet := (params: RequestParams) ->
+  fetchAPI({...params, method: "GET"})
 
-export fetchJsonHead := (params: RequestParams) ->
-  fetchJson({...params, method: "HEAD"})
+export fetchAPIHead := (params: RequestParams) ->
+  fetchAPI({...params, method: "HEAD"})
 
-export fetchJsonPost := (params: RequestParams) ->
-  fetchJson({...params, method: "POST"})
+export fetchAPIPost := (params: RequestParams) ->
+  fetchAPI({...params, method: "POST"})
 
-export fetchJsonPut := (params: RequestParams) ->
-  fetchJson({...params, method: "PUT"})
+export fetchAPIPut := (params: RequestParams) ->
+  fetchAPI({...params, method: "PUT"})
 
-export fetchJsonPatch := (params: RequestParams) ->
-  fetchJson({...params, method: "PATCH"})
+export fetchAPIPatch := (params: RequestParams) ->
+  fetchAPI({...params, method: "PATCH"})
 
-export fetchJsonDelete := (params: RequestParams) ->
-  fetchJson({...params, method: "DELETE"})
+export fetchAPIDelete := (params: RequestParams) ->
+  fetchAPI({...params, method: "DELETE"})
 
 normalizePath := (path: string | string[]) ->
   path = path.split("/") if path <? "string"

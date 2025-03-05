@@ -5,7 +5,7 @@
 
 {pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from ~/common/helper.civet
 
-{fetchJsonGet} from ~api/fetch_json.civet
+{fetchAPIGet} from ~api/fetch_api.civet
 
 {runShowSystem} from ~api/system.civet
 {runIndexProviders} from ~api/providers.civet

@@ -3,7 +3,7 @@
 {pick, pickType, identity} from ~/common/helper.civet
 csrf from ~/csrf.civet
 
-{fetchJson} from ~api/fetch_json.civet
+{fetchAPI} from ~api/fetch_api.civet
 {DEFAULT_PAGE, DEFAULT_PER_PAGE} from ~api/pagination.civet
 // create Actions
 
@@ -80,7 +80,7 @@ export createRunResponse := ({
     if ["POST", "PUT", "PATCH", "DELETE"].includes(method.toUpperCase())
       data = {...data, ...csrf()}
 
-    response = await fetchJson({method, url, data, ...params})
+    response = await fetchAPI({method, url, data, ...params})
     dispatch(action, response)
 
 // RESTful Resources

@@ -3,7 +3,7 @@
 
 {text, app} from hyperapp
 * as html from @hyperapp/html
-{fetchJsonGet} from ~api/fetch_json.civet
+{fetchAPIGet} from ~api/fetch_api.civet
 
 providerTr := ({provider}) ->
   html.tr {}, [
@@ -45,14 +45,14 @@ initAllProvidersAction := (state, {providers}) ->
   ]
 
 checkProviderRunner := (dispatch, {provider}) ->
-  response := await fetchJsonGet({url: `/api/providers/${provider.name}/check`})
+  response := await fetchAPIGet({url: `/api/providers/${provider.name}/check`})
   if response.ok
     dispatch(providerAction, {name: provider.name, provider: response.data})
   else
     console.error response
 
 indexAllProvidersRunner := (dispatch) ->
-  response := await fetchJsonGet({url: "/api/providers"})
+  response := await fetchAPIGet({url: "/api/providers"})
   if response.ok
     dispatch(initAllProvidersAction, {providers: response.data})
   else
