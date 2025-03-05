@@ -2,9 +2,9 @@
 * as html from @hyperapp/html
 {DateTime} from luxon
 
-{formName, formId} from ~/common/form_helper.civet
+{formName, formId} from ~/helpers/form_helper.civet
 csrf from ~/csrf.civet
-APIDialog from ~/app/web_data.civet
+APIDialog from ~/api_dialog.civet
 ConfirmDialog from ~/app/confirm_dialog.civet
 LoginInfo from ~/app/login_info.civet
 

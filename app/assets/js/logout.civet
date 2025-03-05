@@ -1,6 +1,6 @@
 {app, text} from hyperapp
 * as html from @hyperapp/html
-APIDialog from ~/app/web_data.civet
+APIDialog from ~/api_dialog.civet
 bsIcon from ~/app/bs_icon.civet
 csrf from ~/csrf.civet
 

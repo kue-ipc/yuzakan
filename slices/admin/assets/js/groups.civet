@@ -5,7 +5,7 @@
 
 {pick, pickType, getQueryParamsFromUrl, entityLabel} from ~/common/helper.civet
 {objToUrlencoded, objToJson, generateParamName} from ~/common/convert.civet
-{updateList} from ~/common/list_helper.civet
+{updateList} from ~/helpers/list_helper.civet
 
 bsIcon from ~/app/bs_icon.civet
 valueDisplay from ~/app/value_display.civet

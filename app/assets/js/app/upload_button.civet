@@ -1,7 +1,7 @@
 {text} from hyperapp
 * as html from @hyperapp/html
 
-{csvToList} from ~/common/csv_helper.civet
+{csvToList} from ~/helpers/csv_helper.civet
 
 // Upload button view
 // @param {boolean} disabled - 無効にする

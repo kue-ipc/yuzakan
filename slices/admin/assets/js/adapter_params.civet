@@ -2,7 +2,7 @@
 
 {text} from hyperapp
 * as html from @hyperapp/html
-{formName, formId} from ~/common/form_helper.civet
+{formName, formId} from ~/helpers/form_helper.civet
 
 parentNames := ["provider", "params"]
 

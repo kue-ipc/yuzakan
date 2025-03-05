@@ -4,9 +4,9 @@
  */
 
 HttpLinkHeader from http-link-header
-{formDataToJson, formDataToUrlencoded} from ~/common/form_helper.civet
+{formDataToJson, formDataToUrlencoded} from ~/helpers/form_helper.civet
 {objToJson, objToUrlencoded, toInteger} from ~/common/convert.civet
-{normalizeURL} from ~/common/url_helper.civet
+{normalizeURL} from ~/helpers/url_helper.civet
 Pagination from ~api/pagination.civet
 
 export Method ::= "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE"

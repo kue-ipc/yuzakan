@@ -10,7 +10,7 @@ InputTextDialog from ~/app/input_text_dialog.civet
 {createRunIndexProviders} from ~api/providers.civet
 {normalizeAttr, createRunIndexAttrs, createRunShowAttr} from ~api/attrs.civet
 
-{updateList} from ~/common/list_helper.civet
+{updateList} from ~/helpers/list_helper.civet
 
 // Functions
 
