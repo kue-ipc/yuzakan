@@ -23,6 +23,7 @@ interface CodeAction
   reload?: boolean
   redirectTo?: URL
   reloadTime?: number
+  autoCloseTime?: number
 
 interface ModalState
   status: string | Status
@@ -87,7 +88,6 @@ export default class APIDialog
 
     init: ModalState := {}
       status: "unknown"
-      title: "no title"
       messages: "n/a"
       closable: true
       link: null
@@ -166,6 +166,10 @@ export default class APIDialog
     event := new CustomEvent(APIDialog.MESSAGE_EVENT, {detail: state})
     #modalNode.dispatchEvent(event)
 
+  #waitModalClose = =>
+    new Promise<void> (resolve, reject) =>
+      #modalNode.addEventListener "hidden.bs.modal", -> resolve(), once: true
+
   submitPromise({params?:: {[key: string]: string}, data?:: any}): ResponseData
     runningMessageState: ModalState := {}
       status: "running"
@@ -198,13 +202,11 @@ export default class APIDialog
       ...(response.data?.errors ?? [])
     ].filter & <? "string"
 
-    reloadDelay: number .= 0
     {closable, link, reload} :=
       if codeAction.redirectTo?
         if codeAction.reloadTime
           messages.push(t("view.messages.reload_after",
             {sec: codeAction.reloadTime.toString()}))
-          reloadDelay = codeAction.reloadTime * 1000
         else
           messages.push(t("view.messages.reload_immediately"))
         {closable: false, link: codeAction.redirectTo, reload: false}
@@ -220,30 +222,17 @@ export default class APIDialog
       link
       reload
 
-
-    #modalMessage {}
-      status: codeAction.status
-      title: `${@title}${getStatus(codeAction.status).label}`
-      messages
-      closable
-      link
-      reload
+    #modalMessage(resultMessageState)
 
     if link?
       setTimeout ->
-        location.href = link
-      , reloadDelay
-    else if codeAction?.autoCloseTime
+        location.href = link.href
+      , (codeAction.reloadTime ?? 0) * 1000
+    else if codeAction.autoCloseTime
       setTimeout =>
-        @modal.hide()
+        #modal.hide()
       , codeAction.autoCloseTime * 1000
 
-    await @waitModalClose()
+    await #waitModalClose()
 
-    return response
-
-  waitModalClose = =>
-    new Promise (resolve, reject) =>
-      #modalNode.addEventListener "hidden.bs.modal", ->
-        resolve()
-      , {once: true}
+    response
