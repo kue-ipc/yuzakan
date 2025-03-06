@@ -9,21 +9,14 @@
 {focus} from @hyperapp/dom
 {Modal} from bootstrap
 Status from ~/common/status.civet
-{fetchAPI, type Method, type ResponseData} from ~api/fetch_api.civet
-{modalDialog} from ~/app/modal.civet
+ResponseMessage from ~/common/response_message.civet
 {t} from ~/common/i18n.civet
+{modalDialog} from ~/app/modal.civet
+{fetchAPI, type Method, type ResponseData} from ~api/fetch_api.civet
 
 declare global
   interface HTMLElementEventMap
     "apidialog.message": CustomEvent<string>;
-
-interface CodeAction
-  status: string
-  message: string
-  reload?: boolean
-  redirectTo?: URL
-  reloadTime?: number
-  autoCloseTime?: number
 
 interface ModalState
   status: string | Status
@@ -40,23 +33,28 @@ export default class APIDialog
   @API_ROOT_PATH: URL := new URL("/api", )
 
   @MESSAGE_EVENT := "apidialog.message"
-  @DEFAULT_CODE_ACTIONS: Map<bigint, CodeAction> := new Map [
-    [0n, {status: "error", message: "error", reload: true}]
-    [200n, {status: "success", message: "ok"}]
-    [400n, {status: "error", message: "bad_request"}]
-    [401n, {status: "error", message: "unauthorized", reload: true}]
-    [403n, {status: "error", message: "forbidden", reload: true}]
-    [422n, {status: "failure", message: "unprocessable_content"}]
-    [500n, {status: "fatal", message: "internal_server_error", reload: true}]
+  @DEFAULT_RESPONSE_MESSAGE_CODE_MAP: Map<bigint, ResponseMessage> := new Map [
+    [0n, new ResponseMessage({status: "error", message: "error", reload: true})]
+    [200n, new ResponseMessage({status: "success", message: "ok"})]
+    [400n, new ResponseMessage({status: "error", message: "bad_request"})]
+    [401n, new ResponseMessage({status: "error", message: "unauthorized",
+      reload: true})]
+    [403n, new ResponseMessage({status: "error", message: "forbidden",
+      reload: true})]
+    [422n, new ResponseMessage({status: "failure",
+      message: "unprocessable_content"})]
+    [500n, new ResponseMessage({status: "fatal",
+      message: "internal_server_error", reload: true})]
   ]
-  @UNKNOWN_CODE_ACTION: CodeAction := {status: "unknown", message: "unknown",
-    reload: true}
+  @UNKNOWN_RESPONSE_MESSAGE: ResponseMessage :=
+    new ResponseMessage({status: "unknown", message: "unknown", reload: true})
 
   readonly #id: string
   readonly #name: string
-  readonly #path: string
   readonly #method: Method
-  #codeActions: Map<bigint, CodeAction> := new Map(APIDialog.DEFAULT_CODE_ACTIONS)
+  readonly #path: string
+  #responseMessageCodeMap: Map<bigint, ResponseMessage> :=
+    new Map(APIDialog.DEFAULT_RESPONSE_MESSAGE_CODE_MAP)
 
   readonly #modalNode: HTMLDivElement
   readonly #modal: Modal
@@ -64,12 +62,20 @@ export default class APIDialog
   @({
     #id:: string
     #name:: string
-    #path:: string
     #method:: Method = "GET"
-    codeActions?:: Map<bigint | number, CodeAction>
+    #path:: string
+    responseMessageCodeMap?::
+      Map<bigint | number,
+        ResponseMessage | ConstructorParameters<typeof ResponseMessage>.0>
   })
-    if codeActions?
-      #codeActions.set(BigInt(key), value) for [key, value] of codeActions
+    if responseMessageCodeMap?
+      for [key, value] of responseMessageCodeMap
+        responseMessage :=
+          if value <? ResponseMessage
+            value
+          else
+            new ResponseMessage(value) 
+        #responseMessageCodeMap.set(BigInt(key), responseMessage) 
   
     modalDialogNode := document.createElement("div")
     modalDialogNode.id = `${#id}-modal-dialog`
@@ -152,6 +158,7 @@ export default class APIDialog
     node.addEventListener(APIDialog.MESSAGE_EVENT, func)
     -> node.removeEventListener(APIDialog.MESSAGE_EVENT, func)
 
+  // modal control
 
   #modalMessage(state: ModalState): void
     // hack modal config
@@ -194,29 +201,29 @@ export default class APIDialog
         data: {message: t("view.messages.fetch_error")}
       }
 
-    codeAction := #codeActions.get(response.code) ??
-      APIDialog.UNKNOWN_CODE_ACTION
+    responseMessage := #responseMessageCodeMap.get(response.code) ??
+      APIDialog.UNKNOWN_RESPONSE_MESSAGE
 
     messages := [
-      (response.data?.message ?? codeAction.message)
+      (response.data?.message ?? responseMessage.message)
       ...(response.data?.errors ?? [])
     ].filter & <? "string"
 
     {closable, link, reload} :=
-      if codeAction.redirectTo?
-        if codeAction.reloadTime
+      if responseMessage.redirectTo?
+        if responseMessage.reloadTime > 0
           messages.push(t("view.messages.reload_after",
-            {sec: codeAction.reloadTime.toString()}))
+            {sec: responseMessage.reloadTime.toString()}))
         else
           messages.push(t("view.messages.reload_immediately"))
-        {closable: false, link: codeAction.redirectTo, reload: false}
-      else if codeAction.reload
+        {closable: false, link: responseMessage.redirectTo, reload: false}
+      else if responseMessage.reload
         {closable: false,link: null, reload: true}
       else
         {closable: true, link: null, reload: false}
 
     resultMessageState: ModalState := {}
-      status: codeAction.status
+      status: responseMessage.status
       messages
       closable
       link
@@ -227,11 +234,11 @@ export default class APIDialog
     if link?
       setTimeout ->
         location.href = link.href
-      , (codeAction.reloadTime ?? 0) * 1000
-    else if codeAction.autoCloseTime
+      , responseMessage.reloadTime * 1000
+    else if responseMessage.autoCloseTime > 0
       setTimeout =>
         #modal.hide()
-      , codeAction.autoCloseTime * 1000
+      , responseMessage.autoCloseTime * 1000
 
     await #waitModalClose()
 

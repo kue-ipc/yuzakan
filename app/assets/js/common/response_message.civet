@@ -1,0 +1,30 @@
+Status from ./status.civet
+{t} from ./i18n.civet
+
+export default class ResponseMessage
+  readonly #status: Status
+  readonly #message: string
+  readonly #reload: boolean
+  readonly #redirectTo: URL??
+  readonly #reloadTime: number
+  readonly #autoCloseTime: number
+
+  @({
+    status:: string | Status
+    #message:: string
+    #reload?:: boolean = false
+    #redirectTo?:: URL?? = null
+    #reloadTime?:: number = 0
+    #autoCloseTime?:: number = 0
+  })
+    status = Status.get(status) if status <? "string"
+    #status = status
+
+  get #status
+  get #reload
+  get #redirectTo
+  get #reloadTime
+  get #autoCloseTime
+
+  get message
+    t(`response_messages.${#message}`)

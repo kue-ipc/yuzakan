@@ -7,13 +7,14 @@
 APIDialog from ~/api_dialog.civet
 bsIcon from ~/app/bs_icon.civet
 csrf from ~/csrf.civet
+{t} from ~/common/i18n.civet
 
 apiDialog := new APIDialog {
   id: "login"
-  title: "ログイン"
+  name: "ログイン"
   method: "POST"
-  url: "/api/session"
-  codeActions: new Map [
+  path: "session"
+  responseMessageCodeMap: new Map [
     [201, {status: "success", message: "ログインに成功しました。", redirectTo: "/"}]
     [400, {status: "failure", message: "ログインに失敗しました。"}]
     [403, {status: "error", message: "アクセスする権限がありません。"}]
