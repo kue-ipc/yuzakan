@@ -1,0 +1,5 @@
+$bootstrap-icons-path: "../../../node_modules/bootstrap-icons";
+
+.bootstrap-icons-dummy-bg {
+  background-image: url("#{$bootstrap-icons-path}/bootstrap-icons.svg")
+}
