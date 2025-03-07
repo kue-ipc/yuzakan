@@ -1,22 +1,23 @@
 // I18n
 
-LOCALE_PATH := "/locale"
+export I18N_TRANSLATIONS_KEY := "i18n.translations"
 
-translationStore: any .= null
+translationsStore: any .= null
 
-fetchTranslation := (): Promise<{}> ->
-  response := await fetch(LOCALE_PATH, {
-    headers: {Accept: "application/json"},
-  })
-  translationStore = await response.json()
-  translationStore
+getTranslationsStore := (): any ->
+  return translationsStore if translationsStore?
+
+  translations := localStorage.getItem(I18N_TRANSLATIONS_KEY)
+  return null unless translations?
+
+  translationsStore = JSON.parse(translations)
 
 export t := (key: string, opts: {[key: string]: string} = {}): string ->
-  unless translationStore?
+  current: any .= getTranslationsStore()
+  unless current?
     console.warn "not yet get a translation"
     return key
 
-  current: any .= translationStore
   for each str of key.split(".")
     current = current[str]
     break unless current?
@@ -29,6 +30,3 @@ export t := (key: string, opts: {[key: string]: string} = {}): string ->
     current = current.replaceAll(`%{${name}}`, replace)
   
   current
-
-// fetch translationStore
-fetchTranslation()

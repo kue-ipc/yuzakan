@@ -1,0 +1,30 @@
+// load loacle
+
+{I18N_TRANSLATIONS_KEY} from ~/common/i18n.civet
+
+LOCALE_PATH := "/locale"
+
+export loadLocale := (): string ->
+  currentTranslations := localStorage.getItem(I18N_TRANSLATIONS_KEY)
+  return currentTranslations if currentTranslations?
+
+  console.debug "fecch locale: %s", LOCALE_PATH
+  response := await fetch(LOCALE_PATH, {headers: {Accept: "application/json"}})
+  console.debug "response locale: %d", response.status
+  translations := await response.text()
+  localStorage.setItem(I18N_TRANSLATIONS_KEY, translations)
+  translations
+
+export waitLoadLocale := (): Promise<string> ->
+  new Promise<string> (resolve, reject) ->
+    currentTranslations := localStorage.getItem(I18N_TRANSLATIONS_KEY)
+    return resolve(currentTranslations) if currentTranslations
+
+    checkTranslation := (e: StorageEvent) ->
+      return unless e.key is I18N_TRANSLATIONS_KEY
+      return unless e.newValue?
+
+      window.removeEventListener "storage", checkTranslation
+      resolve(e.newValue)
+    
+    window.addEventListener "storage", checkTranslation
