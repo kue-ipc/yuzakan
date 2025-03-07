@@ -1,7 +1,18 @@
 // form helper
 
 {listToKebabCase} from ./string_helper.civet
-{generateParamName} from ./convert.civet
+
+// abc[def][ghi] -> abc def ghi
+export parseParamName = (str: string): string[] ->
+  list: string[] := []
+  list.push str.match(/^([^\[]*)/)[0]
+  list.push ...(r[1] for r of str.matchAll(/\[([^\]]*)\]/g))
+  list
+
+// abc, def, hij -> abc[def][hij]
+export generateParamName := (...list: string[]): string ->
+  (list[0] ?? "") + (`[${str}]` for each str of list[1..]).join("")
+
 
 export formName := (name: string, parents: string[] = []): string ->
   generateParamName(...parents, name)

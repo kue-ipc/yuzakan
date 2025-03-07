@@ -260,19 +260,6 @@ export recordToObj := (record) ->
     
   root
 
-// param name
-
-// abc[def][ghi] -> abc def ghi
-export parseParamName = (str: string): string[] ->
-  list: string[] := []
-  list.push str.match(/^([^\[]*)/)[0]
-  list.push ...(r[1] for r of str.matchAll(/\[([^\]]*)\]/g))
-  list
-
-// abc, def, hij -> abc[def][hij]
-export generateParamName := (...list: string[]): string ->
-  (list[0] ?? "") + (`[${str}]` for each str of list[1..]).join("")
-
 // pick with types
 export pickType := (obj, types) ->
   Object.fromEntries(([key, convertToType(obj[key], type)] for own key, type in types when key in obj))

@@ -35,3 +35,4 @@ export waitLoadLocale := (): Promise<string> ->
       resolve(e.newValue)
     
     window.addEventListener "storage", checkTranslation
+    console.debug "wait load locale"

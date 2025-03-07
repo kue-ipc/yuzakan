@@ -5,7 +5,7 @@
 Status from ~/common/status.civet
 {statusIcon} from ~/app/status_icon.civet
 {t} from ~/common/i18n.civet
-{type BsColor, BsGridSize, BsModalSize} from ~/common/bs.civet
+{type BsColor, type BsGridSize, type BsModalSize} from ~/common/bs.civet
 
 ModalAction<S> ::=
   label: string

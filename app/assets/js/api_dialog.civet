@@ -30,8 +30,6 @@ declare global
     "apidialog.message": CustomEvent<string>;
 
 export default class APIDialog
-  @API_ROOT_PATH: URL := new URL("/api", )
-
   @MESSAGE_EVENT := "apidialog.message"
   @DEFAULT_RESPONSE_MESSAGE_CODE_MAP: Map<bigint, ResponseMessage> := new Map [
     [0n, new ResponseMessage({status: "error", message: "error", reload: true})]
