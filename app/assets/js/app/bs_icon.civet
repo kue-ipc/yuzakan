@@ -1,18 +1,18 @@
 // Bootstrap Icon app
 
+{type ClassProp} from hyperapp
 * as svg from @hyperapp/svg
-
-interface BsIconProps
-  name: string
-  size?: number
-  alt?: string
-  class?: string[]
 
 // Hyperapp Views
 
-export default bsIcon := ({name, size = 24, alt, class: klass}: BsIconProps) ->
+export default bsIcon := ({
+  name:: string
+  size?:: number = 24
+  alt?:: string
+  class: klass?:: ClassProp
+}) ->
   svg_props := {}
-    class: ["bi", ...(klass ?? [])]
+    class: ["bi", klass]
     width: size
     height: size
     fill: "currentColor"

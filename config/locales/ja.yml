@@ -208,6 +208,12 @@ ja:
     # others
     error: エラーが発生しました。
     unknown: 不明な状況が発生しました。
+    login_succeeded: ログインに成功しました。
+    logout_failed: ログインに失敗しました。
+  actions:
+    login: ログイン
+    logout: ログアウト
+
   view:
     buttons:
       toggle_navigation: ナビゲーション切替
@@ -223,4 +229,6 @@ ja:
         しばらく待ってから、再度試してください。
       reload_after: '約%{sec}秒後に画面を切り替えます。'
       reload_immediately: 画面を切り替えます。しばらくお待ち下さい。
-
+    labels:
+      username: ユーザー名
+      password: パスワード
