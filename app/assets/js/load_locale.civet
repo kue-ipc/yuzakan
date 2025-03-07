@@ -8,9 +8,16 @@ export loadLocale := (): string ->
   currentTranslations := localStorage.getItem(I18N_TRANSLATIONS_KEY)
   return currentTranslations if currentTranslations?
 
-  console.debug "fecch locale: %s", LOCALE_PATH
-  response := await fetch(LOCALE_PATH, {headers: {Accept: "application/json"}})
-  console.debug "response locale: %d", response.status
+  console.debug "fetch locale: %s", LOCALE_PATH
+  response := await fetch(LOCALE_PATH)
+  console.debug "response locale: %d %s", response.status, response.statusText
+  unless response.ok
+    throw new Error(`failed to fetch locale: ${response.statusText}`)
+  responseContentType := response.headers.get("Content-Type")
+  console.debug "response locale content type: %s", responseContentType
+  unless responseContentType?.split(";")[0].trim() is "application/json"
+    throw new Error(`response is not json for locale: ${responseContentType}`)
+
   translations := await response.text()
   localStorage.setItem(I18N_TRANSLATIONS_KEY, translations)
   translations
