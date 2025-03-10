@@ -1,8 +1,8 @@
 @charset "utf-8";
 @use "firacode";
 @use "source-code-pro";
-@use "font";
 @use "bootstrap-icons";
+@use "font";
 @use "~highlight.js/scss/default";
 @use "~bootstrap/scss/bootstrap" with (
   $font-family-sans-serif: var(--yuazkan-font-sans-serif),

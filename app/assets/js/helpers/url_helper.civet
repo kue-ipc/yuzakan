@@ -1,13 +1,24 @@
 {basename} from ./file_helper.civet
 
-export normalizeURL := (url: URL | string): URL ->
-  return url if url <? URL
+getBaseURLPath := (): string ->
+  globalThis.location.href
 
-  new URL(url, globalThis.location.href)
+getBaseURL := (): URL ->
+  new URL(globalThis.location.href)
 
-// URLから最後の文字列を取り出す。
-export getBasenameFromURL := (url: URL | string): string ->
-  basename(normalizeURL(url).pathname)
+export normalizeURL := (url: URL | string): Readonly<URL> ->
+  if url <? "string"
+    Object.freeze(new URL(url, getBaseURLPath()))
+  else if Object.isFrozen(url)
+    url
+  else
+    Object.freeze(new URL(url.href))
+
+export getBasenameFromURL := (url: URL | string, suffix: string =""): string ->
+  basename(normalizeURL(url).pathname, suffix)
 
 export getQueryParamsFromURL := (url: URL | string): Map string, string ->
   new Map(new URLSearchParams(normalizeURL(url).search))
+
+export relativePath := (url: URL, base: URL = getBaseURL()): string ->
+  url.href.replace(base.origin, "")

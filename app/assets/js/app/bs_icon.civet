@@ -2,6 +2,25 @@
 
 {type ClassProp} from hyperapp
 * as svg from @hyperapp/svg
+{getCustomPropertyValue} from ~/common/css.civet
+{normalizeURL, relativePath} from ~/helpers/url_helper.civet
+
+ASSETS_URL := normalizeURL("/assets/")
+DEAFULT_BOOTSTRAP_ICONS_SVG_URL := new URL("./bootstrap-icons.svg", ASSETS_URL)
+
+bootstrapIconsSvgURL: URL? .= undefined
+
+getBootstrapIconsSvgURL := ->
+  return bootstrapIconsSvgURL if bootstrapIconsSvgURL
+
+  bootstrapIconsSvgProperty := getCustomPropertyValue("--bootstrap-icons-svg")
+  match := /^url\(["']?([^"')]*)["']?\)$/.exec(bootstrapIconsSvgProperty)
+  if match
+    bootstrapIconsSvgURL = new URL(match[1], ASSETS_URL)
+  else
+    bootstrapIconsSvgURL = DEAFULT_BOOTSTRAP_ICONS_SVG_URL
+  
+  bootstrapIconsSvgURL
 
 // Hyperapp Views
 
@@ -11,12 +30,14 @@ export default bsIcon := ({
   alt?:: string
   class: klass?:: ClassProp
 }) ->
+  url := new URL(getBootstrapIconsSvgURL())
+  url.hash = name
+  href := relativePath(url)
   svg_props := {}
     class: ["bi", klass]
     width: size
     height: size
     fill: "currentColor"
     ...(if alt? then {role: "img", aria-label: alt} else {})
-
   svg.svg svg_props,
-    svg.use {href: `/assets/bootstrap-icons.svg#${name}`}
+    svg.use {href}
