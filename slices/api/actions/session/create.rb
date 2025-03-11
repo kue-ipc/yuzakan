@@ -6,17 +6,10 @@ module API
       class Create < API::Action
         security_level 0
 
-        class Params < Hanami::Action::Params
-          predicates NamePredicates
-          messages :i18n
-
-          params do
-            required(:username).filled(:str?, :name?, max_size?: 255)
-            required(:password).filled(:str?, max_size?: 255)
-          end
+        params do
+          required(:username).value(Yuzakan::Types::NameString, max_size?: 255)
+          required(:password).filled(:string, max_size?: 255)
         end
-
-        params Params
 
         def initialize(user_repository: UserRepository.new,
           provider_repository: ProviderRepository.new,
