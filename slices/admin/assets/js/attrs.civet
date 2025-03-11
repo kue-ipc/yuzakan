@@ -1,0 +1,393 @@
+{text, app} from hyperapp
+* as html from @hyperapp/html
+
+csrf from ~/csrf.civet
+ConfirmDialog from ~/app/confirm_dialog.civet
+InputTextDialog from ~/app/input_text_dialog.civet
+{ATTR_TYPES, MAPPING_CONVERSIONS} from ~/definition.civet
+
+{fetchAPIGet, fetchAPIPost, fetchAPIPatch, fetchAPIDelete} from ~api/fetch_api.civet
+{createRunIndexProviders} from ~api/providers.civet
+{normalizeAttr, createRunIndexAttrs, createRunShowAttr} from ~api/attrs.civet
+
+{updateList} from ~/helpers/list_helper.civet
+
+// Functions
+
+updateAttrList := (attrs, attr) -> updateList(attrs, attr.name, attr, {key: "name"})
+
+// Dialogs
+
+deleteConfirm := new ConfirmDialog {
+  id: "attrs_confirm"
+  status: "alert"
+  title: "属性の削除"
+  message: "属性を削除してもよろしいですか？"
+  action: {
+    color: "danger"
+    label: "削除"
+  }
+}
+
+inputCode := new InputTextDialog {
+  id: "attrs_input_code"
+  title: "コードの入力"
+  size: 4096
+}
+
+// Viwes
+
+providerTh := ({provider}) ->
+  html.th {}, text provider.display_name ?? provider.name
+
+attrMappingTd := ({attr, provider}) ->
+  unless attr.mappings?
+    return html.td {}, text "読み込み中"
+
+  mapping := attr.mappings.find (mapping) ->
+    mapping.provider is provider.name
+  mapping ?= {key: "", conversion: null}
+
+  html.td {}, [
+    html.input {
+      class: "form-control mb-1"
+      type: "text"
+      value: mapping.key
+      oninput: (state, event) -> [
+        attrMappingAction
+        {name: attr.name, mapping: {key: event.target.value, provider: provider.name}}
+      ]
+    }
+    html.select {
+      class: "form-select"
+      oninput: (state, event) -> [
+        attrMappingAction
+        {name: attr.name, mapping: {conversion: event.target.value, provider: provider.name}}
+      ]
+      }, MAPPING_CONVERSIONS.map (conversion) ->
+        html.option {
+          value: conversion.value
+          selected: conversion.value is mapping.conversion
+        }, text conversion.label
+  ]
+
+attrTr := ({attr, index, providers}) ->
+  html.tr {}, [
+    html.td {},
+      if attr.order?
+        [
+          html.div {class: "mb-1"}, html.button {
+            class: "btn btn-secondary"
+            onclick: (state) -> [upAttrAction, {name: attr.name}]
+          }, text "上"
+          html.div {}, html.button {
+            class: "btn btn-secondary"
+            onclick: (state) -> [downAttrAction, {name: attr.name}]
+          }, text "下"
+        ]
+    html.td {class: "table-primary"}, [
+      html.input {
+        class: "form-control mb-1"
+        type: "text"
+        value: attr.newName ?? attr.name
+        required: true
+        oninput: (state, event) -> [attrAction, {name: attr.name, attr: {newName: event.target.value}}]
+      }
+      html.input {
+        class: "form-control"
+        type: "text"
+        value: attr.display_name
+        required: true
+        oninput: (state, event) -> [attrAction, {name: attr.name, attr: {display_name: event.target.value}}]
+      }
+    ]
+    html.td {class: "table-primary"}, [
+      html.select {
+        class: "form-select mb-1"
+        onchange: (state, event) -> [attrAction, {name: attr.name, attr: {type: event.target.value}}]
+      }, ATTR_TYPES.map (attrType) ->
+        html.option {
+          value: attrType.value
+          selected: attrType.value is attr.type
+        }, text attrType.label
+
+      html.div {class: "btn-group", role: "group"}, [
+        html.input {
+          id: `${attr.name}-hidden-check`
+          class: "btn-check"
+          type: "checkbox"
+          autocomplete: "off"
+          checked: attr.hidden
+          onchange: (state, event) -> [attrAction, {name: attr.name, attr: {hidden: !attr.hidden}}]
+        }
+
+        html.label {
+          class:
+            if attr.hidden
+              "btn btn-primary"
+            else
+              "btn btn-outline-primary"
+          for: `${attr.name}-hidden-check`
+        }, text "隠し"
+
+        html.input {
+          id: `${attr.name}-readonly-check`
+          class: "btn-check"
+          type: "checkbox"
+          autocomplete: "off"
+          checked: attr.readonly
+          onchange: (state, event) -> [attrAction, {name: attr.name, attr: {readonly: !attr.readonly}}]
+        }
+
+        html.label {
+          class:
+            if attr.readonly
+              "btn btn-primary"
+            else
+              "btn btn-outline-primary"
+          for: `${attr.name}-readonly-check`
+        }, text "読取専用"
+
+        html.button {
+          class: if attr.code then "btn btn-primary" else "btn btn-outline-primary"
+          onclick: (state) -> [state, [inputCodeRunner, {attr}]]
+        }, text "コード"
+      ]
+    ]
+    html.td {},
+      if attr.order?
+        [
+          html.div {class: "mb-1"}, html.button {
+            class: "btn btn-warning"
+            onclick: (state) -> [state, [updateAttrRunner, {attr}]]
+          }, text "更新"
+          html.div {}, html.button {
+            class: "btn btn-danger"
+            onclick: (state) -> [state, [destroyAttrRunner, {attr}]]
+          }, text "削除"
+        ]
+      else
+        [
+          html.div {class: "mb-1"}, html.button {
+            class: "btn btn-primary"
+            onclick: (state) -> [state, [createAttrRunner, {attr}]]
+          }, text "作成"
+        ]
+    ...(attrMappingTd({attr, provider}) for each provider of providers)
+  ]
+
+attrAction := (state, {name, attr}) ->
+  name ?= attr.name
+  if name
+    replaced := false
+    attrs := for each current of state.attrs
+      if current.name is name
+        replaced := true
+        {...current, ...attr}
+      else
+        current
+    unless replaced
+      attrs := [...attrs, attr]
+    {...state, attrs}
+  else
+    {...state, newAttr: {...state.newAttr, ...attr}}
+
+deleteAttrAction := (state, {name}) ->
+  attrs := state.attrs.filter (attr) -> attr.name is not name
+  {...state, attrs}
+
+replaceAttrMapping := (mappings, mapping) ->
+  replaced := false
+  new_attr_mappings := for each current of mappings
+    if current.provider is mapping.provider
+      replaced := true
+      {...current, ...mapping}
+    else
+      current
+
+  if replaced
+    new_attr_mappings
+  else
+    [...new_attr_mappings, {key: "", conversion: null, ...mapping}]
+
+attrMappingAction := (state, {name, mapping}) ->
+  if name
+    attrs := for each attr of state.attrs
+      if attr.name is name
+        {...attr, mappings: replaceAttrMapping(attr.mappings, mapping)}
+      else
+        attr
+    {...state, attrs}
+  else
+    {
+      ...state
+      newAttr: {...state.newAttr, mappings: replaceAttrMapping(state.newAttr.mappings, mapping)}
+    }
+
+inputCodeRunner := (dispatch, {attr}) ->
+  code := await inputCode.inputPromise {
+    messages: [`${attr.name} のデフォルト値を生成するJavaScriptのコードを入力してください。`]
+    value: attr.code ?? ""
+  }
+  if code?
+    if code
+      dispatch(attrAction, {name: attr.name, attr: {code}})
+    else
+      dispatch(attrAction, {name: attr.name, attr: {code: null}})
+
+createAttrRunner := (dispatch, {attr}) ->
+  {name, newName, ...attr} := attr
+  attr := {...attr, name: newName}
+  response := await fetchAPIPost({url: `/api/attrs`, data: {...csrf(), ...attr}})
+  if response.ok
+    dispatch(attrAction, {attr: response.data})
+    dispatch(attrAction, {attr: initNewAttr})
+  else
+    console.error response
+
+updateAttrRunner := (dispatch, {attr}) ->
+  {name, newName, ...attr} := attr
+  attr := {...attr, name: newName} if newName?
+  response := await fetchAPIPatch({url: `/api/attrs/${name}`, data: {...csrf(), ...attr}})
+  if response.ok
+    dispatch(attrAction, {name, attr: {...response.data, newName: undefined}})
+  else
+    console.error response
+
+destroyAttrRunner := (dispatch, {attr}) ->
+  confirm := await deleteConfirm.showPromise({messages: [`属性「${attr.name}」を削除してもよろしいですか？`]})
+  if confirm
+    response := await fetchAPIDelete({url: `/api/attrs/${attr.name}`, data: csrf()})
+    if response.ok
+      dispatch(deleteAttrAction, {name: attr.name})
+    else
+      console.error response
+
+upAttrAction := (state, {name}) ->
+  attrIndex := state.attrs.findIndex (attr) -> attr.name is name
+  newOrder := 
+    switch attrIndex
+      when 0, 1
+        state.attrs[0].order - 8
+      else
+        Math.floor((state.attrs[attrIndex - 1].order + state.attrs[attrIndex - 2].order) / 2)
+
+  if state.attrs[attrIndex].order is newOrder
+    console.warn "移動できません。"
+    return state
+ 
+  newAttr := {...state.attrs[attrIndex], order: newOrder}
+
+  [
+    {
+      ...state
+      attrs: [
+        ...state.attrs[...(attrIndex)]
+        ...state.attrs[(attrIndex + 1)..]
+        newAttr
+      ].sort (a, b) -> a.order - b.order || a.name.localeCompare(b.name)
+    }
+    [updateAttrRunner, {attr: newAttr}]
+  ]
+
+downAttrAction := (state, {name}) ->
+  attrIndex := state.attrs.findIndex (attr) -> attr.name is name
+  newOrder :=
+    switch attrIndex
+      when state.attrs.length - 1, state.attrs.length - 2
+        state.attrs.at(-1).order + 8
+      else
+        Math.floor((state.attrs[attrIndex + 1].order + state.attrs[attrIndex + 2].order) / 2)
+
+  if state.attrs[attrIndex].order is newOrder
+    console.warn "移動できません。"
+    return state
+ 
+  newAttr := {...state.attrs[attrIndex], order: newOrder}
+
+  [
+    {
+      ...state
+      attrs: [
+        ...state.attrs[...(attrIndex)]
+        ...state.attrs[(attrIndex + 1)..]
+        newAttr
+      ].sort (a, b) -> a.order - b.order || a.name.localeCompare(b.name)
+    }
+    [updateAttrRunner, {attr: newAttr}]
+  ]
+
+
+// showAttrRunner := (dispatch, {attr}) ->
+//   response := await fetchAPIGet({url: `/api/attrs/${attr.name}`})
+//   if response.ok
+//     dispatch(attrAction, {attr: response.data})
+//   else
+//     console.error response
+
+// Actions
+
+SetAttrsThenShow := (state, attrs) ->
+  newAttrs := (normalizeAttr(attr) for each attr of attrs)
+  [
+    {...state, attrs: newAttrs}
+    ...([runShowAttr, {id: attr.name}] for each attr of newAttrs)
+  ]
+
+SetAttrInList := (state, attr) ->
+  {
+    ...state
+    attrs: updateAttrList(state.attrs, normalizeAttr(attr))
+  }
+
+// Effecters
+
+runShowAttr := createRunShowAttr({action: SetAttrInList})
+
+runIndexAttrs := createRunIndexAttrs({action: SetAttrsThenShow})
+
+runIndexProviders := createRunIndexProviders()
+
+// Vars
+
+initNewAttr := {}
+  name: undefined
+  newName: ""
+  label: ""
+  type: "string"
+  hidden: false
+  mappings: []
+
+main := ->
+
+  init := [
+    {
+      attrs: []
+      providers: []
+      newAttr: initNewAttr
+    }
+    [runIndexProviders]
+    [runIndexAttrs]
+  ]
+
+  view := ({attrs, providers, newAttr}) ->
+    html.table {class: "table"}, [
+      html.thead {}, [
+        html.tr {}, [
+          html.th {}, text "順番"
+          html.th {}, text "名前/表示名"
+          html.th {}, text "型/オプション"
+          html.th {}, text "操作"
+          ...(providerTh({provider}) for each provider of providers)
+        ]
+      ]
+      html.tbody {},
+        for each attr, index of [...attrs, newAttr]
+          attrTr({attr, index, providers: providers})
+    ]
+
+  node := document.getElementById("attrs")
+
+  app {init, view, node}
+
+main()

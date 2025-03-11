@@ -1,0 +1,38 @@
+// bs for Boootstrap
+
+export type BsColor
+  | "primary"
+  | "secondary"
+  | "success"
+  | "danger"
+  | "warning"
+  | "info"
+  | "light"
+  | "dark"
+  | "body" 
+  | "tertiary"
+  | "black"
+  | "white"
+
+export type BsGridSize
+  | "sm"
+  | "md"
+  | "lg"
+  | "xl"
+  | "xxl"
+
+export type BsModalSize
+  | "sm"
+  | "lg"
+  | "xl"
+
+// TODO: バックグラウンドの色もできるようにする
+export bsTextColorClass := (color: BsColor, {
+  emphasis?:: boolean = false
+} = {}): string ->
+  if color is "tertiary"
+    `text-body-tertiary`
+  else if emphasis and color is not in ["black", "white"]
+    `text-${color}-emphasis`
+  else
+    `text-${color}`

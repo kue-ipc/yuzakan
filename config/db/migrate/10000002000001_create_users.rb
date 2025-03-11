@@ -8,7 +8,7 @@ ROM::SQL.migration do
       column :name, String, null: false
       column :display_name, String
       column :email, String
-      column :note, String, size: 4096
+      column :note, "text"
 
       column :clearance_level, Integer, null: false, default: 1
 

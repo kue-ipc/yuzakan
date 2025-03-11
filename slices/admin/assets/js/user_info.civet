@@ -1,0 +1,151 @@
+{text} from hyperapp
+* as html from @hyperapp/html
+
+* as dlh from ~/app/dl_horizontal.civet
+{CLEARANCE_LEVELS} from ~/definition.civet
+{createEventValueAction} from ~/input_event.civet
+
+{CalcUserAttrs} from ~admin/user_attrs.civet
+
+SetUserUsername := (state, name) ->
+  email := 
+    if !state.user.email || state.user.email is `${state.user.name}@${state.system.domain}`
+      if name
+        `${name}@${state.system.domain}`
+      else
+        ""
+    else
+      state.user.email
+
+  [CalcUserAttrs, {user: {...state.user, name, email}}]
+SetUserUsernameByEvent := createEventValueAction(SetUserUsername)
+
+SetUserDisplayName := (state, display_name) -> [CalcUserAttrs, {user: {...state.user, display_name}}]
+SetUserDisplayNameByEvent := createEventValueAction(SetUserDisplayName)
+
+SetUserEmail := (state, email) -> [CalcUserAttrs, {user: {...state.user, email}}]
+SetUserEmailByEvent := createEventValueAction(SetUserEmail)
+
+SetUserClearanceLevel := (state, clearance_level) -> {...state, user: {...state.user, clearance_level}}
+SetUserClearanceLevelByEvent := createEventValueAction(SetUserClearanceLevel, {type: "integer"})
+
+SetUserPrimaryGroup := (state, primary_group) -> [CalcUserAttrs, {user: {...state.user, primary_group}}]
+SetUserPrimaryGroupByEvent := createEventValueAction(SetUserPrimaryGroup)
+
+export default userInfo := ({mode, user, groups}) ->
+  html.div {}, [
+    html.h4 {}, text "基本情報"
+    dlh.dl {}, [
+      dlh.dt {},
+        html.label {class: "form-label", for: "user-name"}, text "ユーザー名"
+      dlh.dd {},
+        switch mode
+          when "new"
+            html.input {
+              id: "user-name"
+              class: "form-control"
+              type: "text"
+              required: true
+              value: user.name ?? ""
+              oninput: SetUserUsernameByEvent
+            }
+          when "edit"
+            html.input {
+              id: "user-name"
+              class: "form-control-plaintext"
+              readonly: true
+              type: "text"
+              value: user.name ?? ""
+            }
+          when "show"
+            text user.name
+      dlh.dt {},
+        text "表示名"
+      dlh.dd {},
+        if mode is "show"
+          text user.display_name ?? ""
+        else
+          html.input {
+            id: "user-display_name"
+            class: "form-control"
+            type: "text"
+            required: true
+            value: user.display_name ?? ""
+            oninput: SetUserDisplayNameByEvent
+          }
+      dlh.dt {},
+        text "メールアドレス"
+      dlh.dd {},
+        if mode is "show"
+          text user.email ?? ""
+        else
+          html.input {
+            id: "user-display_name"
+            class: "form-control"
+            type: "text"
+            required: true
+            value: user.email ?? ""
+            oninput: SetUserEmailByEvent
+          }
+      dlh.dt {},
+        text "権限レベル"
+      dlh.dd {},
+        if mode is "show"
+          text (CLEARANCE_LEVELS.find (level) -> level.value is user.clearance_level).label
+        else
+          html.select {
+            class: "form-select"
+            oninput: SetUserClearanceLevelByEvent
+          },
+            for each level of CLEARANCE_LEVELS
+              html.option {
+                value: level.value
+                selected: level.value is user.clearance_level
+              }, text level.label
+      dlh.dt {},
+        text "プライマリーグループ"
+      dlh.dd {},
+        if mode is "show"
+          if user.primary_group
+            primary_group := groups.find (group) -> group.name is user.primary_group
+            text if primary_group.display_name
+              `${primary_group.display_name} (${primary_group.name})`
+            else
+              primary_group.name
+          else
+            text `(無し)`
+        else
+          html.select {
+            class: "form-select"
+            oninput: SetUserPrimaryGroupByEvent
+          }, [
+            if mode is "new"
+              html.option {
+                selected: !user.primary_group?
+              }, text `選択してください。`
+            (
+              for each group of groups
+                html.option {
+                  value: group.name
+                  selected: group.name is user.primary_group
+                }, text if group.display_name then `${group.display_name} (${group.name})` else group.name
+            )...
+          ]
+      dlh.dt {},
+        text "状態"
+      dlh.dd {},
+        if user.deleted
+          html.span {class: "text-danger"},
+            text `削除済み (${user.deleted_at})`
+        else if user.prohibited
+          html.span {class: "text-muted"},
+            text "使用禁止"
+        else
+          html.span {class: "text-success"},
+            text "正常"
+      dlh.dt {},
+        text "備考"
+      dlh.dd {},
+        text user.note ?? ""
+    ]
+  ]

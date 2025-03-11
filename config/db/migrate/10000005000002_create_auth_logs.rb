@@ -7,16 +7,17 @@ ROM::SQL.migration do
 
       column :uuid, String, null: false
       column :client, String, null: false
-      column :username, String, null: false
+      column :user, String, null: false
 
       column :result, String, null: false
+      column :code, String
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
 
       index :uuid
       index :client
-      index :username
+      index :user
     end
   end
 end

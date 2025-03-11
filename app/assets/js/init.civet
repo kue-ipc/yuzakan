@@ -1,0 +1,3 @@
+{loadLocale} from ~/load_locale.civet
+
+loadLocale()

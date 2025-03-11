@@ -1,0 +1,13 @@
+export basename := (path: string, suffix: string = ""): string ->
+  base := path.split("/").reverse().find((_) => _) || ""
+
+  return base unless base
+  return base unless suffix
+
+  lastDot := base.lastIndexOf(".")
+  return base if lastDot <= 0
+
+  if suffix is ".*" || suffix is base.slice(lastDot)
+    base.slice(0, lastDot)
+  else
+    base

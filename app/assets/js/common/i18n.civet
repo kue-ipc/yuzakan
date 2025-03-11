@@ -1,0 +1,32 @@
+// I18n
+
+export I18N_TRANSLATIONS_KEY := "i18n.translations"
+
+translationsStore: any .= null
+
+getTranslationsStore := (): any ->
+  return translationsStore if translationsStore?
+
+  translations := localStorage.getItem(I18N_TRANSLATIONS_KEY)
+  return null unless translations?
+
+  translationsStore = JSON.parse(translations)
+
+export t := (key: string, opts: {[key: string]: string} = {}): string ->
+  current: any .= getTranslationsStore()
+  unless current?
+    console.warn "not yet get a translation"
+    return key
+
+  for each str of key.split(".")
+    current = current[str]
+    break unless current?
+
+  unless current <? "string"
+    console.warn "no translaiton fond: %s", key
+    return key
+
+  for own name, replace in opts
+    current = current.replaceAll(`%{${name}}`, replace)
+  
+  current

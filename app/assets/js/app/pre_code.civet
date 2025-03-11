@@ -1,0 +1,23 @@
+hljs from highlight.js/lib/core
+
+javascript from highlight.js/lib/languages/javascript
+json from highlight.js/lib/languages/json
+plaintext from highlight.js/lib/languages/plaintext
+ruby from highlight.js/lib/languages/ruby
+yaml from highlight.js/lib/languages/yaml
+
+hljs.registerLanguage("javascript", javascript)
+hljs.registerLanguage("json", json)
+hljs.registerLanguage("plaintext", plaintext)
+hljs.registerLanguage("ruby", ruby)
+hljs.registerLanguage("yaml", yaml)
+
+* as html from @hyperapp/html
+
+export default preCode := ({code, language, ignoreIllegals = true}) ->
+  hljsResult := hljs.highlight(code, {language, ignoreIllegals})
+  html.pre {class: "m-0"},
+    html.code {
+      class: `hljs p-1`
+      innerHTML: hljsResult.value
+    }

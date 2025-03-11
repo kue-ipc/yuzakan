@@ -1,0 +1,63 @@
+// 動的な警告の表示と削除
+
+ALERTS_CLASS := "alerts"
+
+LEVELS_COLOR := {}
+  success: "success"
+  failure: "warning"
+  fatal: "danger"
+  error: "danger"
+  warn: "warning"
+  info: "info"
+  debug: "secondary"
+  unknown: "primary"
+
+DEFALT_COLOR := "primary"
+
+ALERT_LEVELS := [
+  "success"
+  "failure"
+  "fatal"
+  "error"
+  "warn"
+  "info"
+  "debug"
+  "unknown"
+]
+
+// アラートの追加
+export alertAdd := (message, level = "error") ->
+  level_color := LEVELS_COLOR[level] ?? DEFALT_COLOR
+  alert_class := `alert alert-${level_color} alert-dismissible fade show`
+
+  for each alerts of document.getElementsByClassName(ALERTS_CLASS)
+    div := document.createElement("div")
+    div.className = alert_class
+    div.setAttribute("role", "alert")
+
+    text := document.createTextNode(message)
+
+    button := document.createElement("button")
+    button.className = "btn-close"
+    button.setAttribute("type", "button")
+    button.setAttribute("data-bs-dismiss", "alert")
+    button.setAttribute("aria-label", "閉じる")
+
+    div.appendChild(button)
+    div.appendChild(text)
+    alerts.appendChild(div)
+
+// 全アラートを削除
+export alertClear := ->
+  for each alerts of document.getElementsByClassName(ALERTS_CLASS)
+    alerts.removeChild(alerts.firstChild) while alerts.firstChild
+
+// クリアしてメッセージをすべて表示
+export alertMessage := (messages) ->
+  alertClear()
+  for each level of ALERT_LEVELS
+    if messages[level]
+      alertAdd(messages[level], level)
+  if messages["errors"]?.length > 0
+    for each error of messages["errors"]
+      alertAdd(error, "error")

@@ -1,0 +1,11 @@
+// Bootstrap icons
+// ../../../node_modules/bootstrap-icons/font/bootstrap-icons.scss
+
+$bootstrap-icons-dir: "../../../node_modules/bootstrap-icons";
+
+@use "~bootstrap-icons/font/bootstrap-icons.scss" with
+  ($bootstrap-icons-font-dir: "#{$bootstrap-icons-dir}/font/fonts");
+
+:root {
+  --bootstrap-icons-svg: url("#{$bootstrap-icons-dir}/bootstrap-icons.svg");
+}

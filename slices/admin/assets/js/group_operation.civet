@@ -1,0 +1,17 @@
+// グループ
+
+{text} from hyperapp
+* as html from @hyperapp/html
+
+{entityLabel} from ~/common/helper.civet
+
+valueDisplay from ~/app/value_display.civet
+
+// Views
+
+export default groupOperation := ({option}) ->
+  html.div {key: "group-operation"}, [
+    html.h4 {}, text "操作メニュー"
+    html.p {}, text "準備中..."
+  ]
+

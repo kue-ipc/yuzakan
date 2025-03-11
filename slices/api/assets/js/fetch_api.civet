@@ -1,0 +1,129 @@
+/**
+ * fetchAPI
+ * APIと連携してデータをJSONで受け取る処理をする。
+ */
+
+HttpLinkHeader from http-link-header
+{formDataToJson, formDataToUrlencoded} from ~/helpers/form_helper.civet
+{objToJson, objToUrlencoded, toInteger} from ~/common/convert.civet
+{normalizeURL} from ~/helpers/url_helper.civet
+Pagination from ~api/pagination.civet
+
+export Method ::= "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE"
+
+interface RequestParams < RequestInit
+  path: string | string[]
+  methed?: Method
+  data?: any
+
+export interface ResponseData
+  ok: boolean
+  code: bigint
+  location?: URL
+  data?: any
+  pagination?: Pagination
+  links?: HttpLinkHeader
+
+API_URL := normalizeURL("/api/")
+
+export fetchAPI := (params: RequestParams): Promise<ResponseData> ->
+  request := createRequest(params)
+  console.debug "fetch request: %s %s", request.method, request.url
+  response := await fetch request
+  console.debug "fetch response: %d %s", response.status, response.url
+  parseResponse(response)
+
+export fetchAPIGet := (params: RequestParams) ->
+  fetchAPI({...params, method: "GET"})
+
+export fetchAPIHead := (params: RequestParams) ->
+  fetchAPI({...params, method: "HEAD"})
+
+export fetchAPIPost := (params: RequestParams) ->
+  fetchAPI({...params, method: "POST"})
+
+export fetchAPIPut := (params: RequestParams) ->
+  fetchAPI({...params, method: "PUT"})
+
+export fetchAPIPatch := (params: RequestParams) ->
+  fetchAPI({...params, method: "PATCH"})
+
+export fetchAPIDelete := (params: RequestParams) ->
+  fetchAPI({...params, method: "DELETE"})
+
+normalizePath := (path: string | string[]) ->
+  path = path.split("/") if path <? "string"
+  path.map(encodeURIComponent).join("/")
+
+apiURL := (path: RequestParams["path"]): URL ->
+  new URL(normalizePath(path), API_URL)
+
+// create request
+createRequest := ({path, method = "GET", data, ...params}: RequestParams):
+    Request ->
+  url := apiURL(path)
+  headers := new Headers {}
+    "Accept": "application/json"
+  let body
+ 
+  if data?
+    switch method
+      when "GET", "HEAD"
+        query :=
+          if data <? "string"
+            encodeURIComponent(data)
+          else if data <? FormData
+            formDataToUrlencoded(data)
+          else
+            objToUrlencoded(data)
+        url.search = query
+      when "POST", "PUT", "PATCH", "DELETE"
+        body =
+          if data <? "string"
+            data
+          else if data <? FormData
+            formDataToJson(data)
+          else
+            objToJson(data)
+        headers.append("Content-Type", "application/json")
+        headers.append("Content-Length", body.length.toString())
+
+  init: RequestInit := {}
+    method: method
+    mode: "same-origin"
+    credentials: "same-origin"
+    headers
+    body
+    ...params
+
+  new Request(url, init)
+
+parseResponse := (response: Response): Promise<ResponseData> ->
+  location :=
+    normalizeURL(response.headers.get("Content-Location") ?? response.url)
+
+  data: ResponseData := {}
+    ok: response.ok
+    code: BigInt(response.status)
+    location
+
+  contentType := response.headers.get("Content-Type")
+  if contentType?
+    mimeType := contentType.split(";")[0].trim().toLowerCase()
+    switch mimeType
+      "application/json"
+        await response.json()
+      "text/plain"
+        await response.text()
+      else
+        throw new Error(`Unsupported content type: ${contentType}`)
+
+  contentRange := response.headers.get("Content-Range")
+  if contentRange?
+    data.pagination = new Pagination(location, contentRange)
+
+  linkHeader := response.headers.get("Link")
+  if linkHeader?
+    data.links = HttpLinkHeader.parse(linkHeader)
+  
+  data

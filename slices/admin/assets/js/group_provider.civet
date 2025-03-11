@@ -1,0 +1,46 @@
+// グループ
+
+{text} from hyperapp
+* as html from @hyperapp/html
+
+{entityLabel} from ~/common/helper.civet
+valueDisplay from ~/app/value_display.civet
+
+// Views
+
+export default groupProvider := ({mode, group, providers}) ->
+  html.div {key: "group-provider"}, [
+    html.h4 {}, text "登録状況"
+    html.table {class: "table"}, [
+      html.thead {},
+        html.tr {}, [
+          html.th {}, text ""
+          ...(html.th({}, text entityLabel(provider)) for each provider of providers)
+        ]
+      html.tbody {},
+        for each {name, label, type} of [
+          {name: "name", label: "グループ名", type: "string"}
+          {name: "display_name", label: "表示名", type: "string"}
+          {name: "primary", label: "プライマリ", type: "boolean"}
+        ]
+          html.tr {}, [
+            html.td {}, text label
+            // html.td {}, valueDisplay {value: group[name], type}
+            (for each provider of providers
+              groupdata := group.providers_data?.get(provider.name)
+              html.td {},
+                valueDisplay {
+                  value: groupdata?[name]
+                  type
+                  color: if group[name]
+                    if group[name] is groupdata?[name]
+                      "success"
+                    else
+                      "danger"
+                  else
+                    "body"
+                }
+            )...
+          ]
+    ]
+  ]

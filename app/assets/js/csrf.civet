@@ -1,0 +1,8 @@
+getMetaContent := (name) ->
+  for each metaEl of document.getElementsByTagName("meta")
+    if metaEl.name is name
+      return metaEl.content
+
+export csrfParam := -> getMetaContent("csrf-param")
+export csrfToken := -> getMetaContent("csrf-token")
+export default csrf := -> {[csrfParam()]: csrfToken()}

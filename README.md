@@ -14,6 +14,11 @@
 
 Hanami 2 へアップデート中です。
 
+## 既知の不具合
+
+- PostgreSQLでは、`bundle exec hanami db drop` でデータベースが消えない。
+    開発時にデータベースを再作成したい場合は、`dropdb yuzakan_development` と `dropdb yuzakan_test` で消すこと。
+
 ## TODO
 
 * 機能
@@ -55,35 +60,29 @@ Hanami 2 へアップデート中です。
 
 ### プログラミング言語
 
-* Ruby >= 2.7 < 3.0
-* Node.js >= 18
-
-Node.jsは必須です。
+* Ruby >= 3.3
+* Node.js >= 22
 
 ### データベース
 
+* [x] PostgreSQL
+* [ ] MariaDB
 * [ ] SQLite (本番環境では非推奨)
-* [x] MariaDB
-* [ ] PostgreSQL
 
-現在はMariaDBのみテストしていますが、他DBもサポート予定です。
-
-MariaDBはutf8mb4にしてください。DATABES_URLでは"?encoding=utf8mb4"を付ける必要があります。
+現在はPostgreSQLのみ対応しています。他のDBもサポートできるかはわかりません。
 
 ### セッション管理key-valueデータベース
 
 * [x] redis (デフォルト)
-* [ ] memcaced (未テスト、キャッシュ機能は未実装)
+* [ ] memcaced
+
+reidsが無い場合は、クッキーセッション、オンメモリキャッシュを使用します。
 
 ### サポートするOS/ディストリビューション
 
-* [x] Rocky Linux 8
-* [x] Ubuntu 20.04 LTS
-* [ ] CentOS 8
-* [ ] CentOS Stream 8
-* [ ] Ubuntu 22.04 LTS (予定)
-
-現在はRocky Linux 8とUbuntu 20.04 LTSでのみテストしています。
+* [x] Ubuntu 24.04 LTS
+* [x] Rocky 9
+* [ ] Rocky 10
 
 ## セットアップ
 
@@ -108,6 +107,7 @@ $ bundle exec rake build
 
 ```
 $ bundle exec rake
+$ npm run test
 ```
 
 開発コンソール起動:

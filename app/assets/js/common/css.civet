@@ -1,0 +1,4 @@
+// CSS
+
+export getCustomPropertyValue := (name: string): string ->
+  getComputedStyle(document.documentElement).getPropertyValue(name)

@@ -7,20 +7,33 @@ AllCops:
   TargetRubyVersion: 3.3
   NewCops: enable
 
-Layout/LineLength:
-  Max: 120
-  Exclude:
-    - spec/**/*_spec.rb
+Layout/ArgumentAlignment:
+  EnforcedStyle: with_fixed_indentation
+Layout/ArrayAlignment:
+  EnforcedStyle: with_fixed_indentation
 Layout/EndOfLine:
   EnforcedStyle: lf
 Layout/FirstHashElementIndentation:
   EnforcedStyle: consistent
+Layout/HashAlignment:
+  EnforcedLastArgumentHashStyle: ignore_implicit
+Layout/LineLength:
+  Max: 80
+  Exclude:
+    - spec/**/*_spec.rb
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
 Layout/MultilineMethodCallBraceLayout:
   EnforcedStyle: same_line
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+Layout/ParameterAlignment:
+  EnforcedStyle: with_fixed_indentation
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
+
+Lint/Void:
+  Enabled: false
 
 # double size metrics
 Metrics/AbcSize:

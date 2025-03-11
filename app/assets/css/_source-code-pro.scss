@@ -1,0 +1,108 @@
+// Source Code Pro web fonts
+// ../../../node_modules/source-code-pro/source-code-pro.css
+// ../../../node_modules/source-code-pro/source-code-variable.css
+$source-code-pro-path: "../../../node_modules/source-code-pro";
+
+$source-code-pro-fonts: (
+  "ExtraLight": (
+    "weight": 200,
+    "style": normal,
+  ),
+  "ExtraLightIt": (
+    "weight": 200,
+    "style": italic,
+  ),
+  "Light": (
+    "weight": 300,
+    "style": normal,
+  ),
+  "LightIt": (
+    "weight": 300,
+    "style": italic,
+  ),
+  "Regular": (
+    "weight": 400,
+    "style": normal,
+  ),
+  "It": (
+    "weight": 400,
+    "style": italic,
+  ),
+  "Medium": (
+    "weight": 500,
+    "style": normal,
+  ),
+  "MediumIt": (
+    "weight": 500,
+    "style": italic,
+  ),
+  "Semibold": (
+    "weight": 600,
+    "style": normal,
+  ),
+  "SemiboldIt": (
+    "weight": 600,
+    "style": italic,
+  ),
+  "Bold": (
+    "weight": 700,
+    "style": normal,
+  ),
+  "BoldIt": (
+    "weight": 700,
+    "style": italic,
+  ),
+  "Black": (
+    "weight": 900,
+    "style": normal,
+  ),
+  "BlackIt": (
+    "weight": 900,
+    "style": italic,
+  ),
+);
+
+@each $name, $attr in $source-code-pro-fonts {
+  @font-face {
+    font-family: "Source Code Pro";
+    font-stretch: normal;
+    @each $key, $value in $attr {
+      font-#{$key}: $value;
+    }
+    src: url("#{$source-code-pro-path}/WOFF2/TTF/SourceCodePro-#{$name}.ttf.woff2")
+        format("woff2"),
+      url("#{$source-code-pro-path}/WOFF/OTF/SourceCodePro-#{$name}.otf.woff")
+        format("woff"),
+      url("#{$source-code-pro-path}/OTF/SourceCodePro-#{$name}.otf")
+        format("opentype"),
+      url("#{$source-code-pro-path}/TTF/SourceCodePro-#{$name}.ttf")
+        format("truetype");
+  }
+}
+
+$source-code-variable-fonts: (
+  "Roman": (
+    "weight": 200 900,
+    "style": normal,
+  ),
+  "Italic": (
+    "weight": 200 900,
+    "style": italic,
+  ),
+);
+
+@each $name, $attr in $source-code-variable-fonts {
+  @font-face {
+    font-family: "Source Code Variable";
+    font-stretch: normal;
+    @each $key, $value in $attr {
+      font-#{$key}: $value;
+    }
+    src: url("#{$source-code-pro-path}/WOFF2/VAR/SourceCodeVariable-#{$name}.ttf.woff2")
+        format("woff2"),
+      url("#{$source-code-pro-path}/WOFF/VAR/SourceCodeVariable-#{$name}.ttf.woff")
+        format("woff"),
+      url("#{$source-code-pro-path}/VAR/SourceCodeVariable-#{$name}.ttf")
+        format("truetype");
+  }
+}

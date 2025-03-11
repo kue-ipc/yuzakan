@@ -1,5 +1,0 @@
-# order
-
-export ORDER_PARAM_TYPES = {
-  order: 'string'
-}

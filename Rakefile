@@ -29,7 +29,8 @@ task build_errors: %w[
   500 502 503 504
 ].map { |code| "public/errors/#{code}.html" }
 
-rule %r{^public/errors/\d+\.html$} => ["apps/web/templates/%n.html.slim", "public/errors"] do |t|
+rule %r{^public/errors/\d+\.html$} => ["apps/web/templates/%n.html.slim",
+  "public/errors",] do |t|
   sh "bundle exec slimrb #{t.source} > #{t.name}"
 end
 
@@ -39,91 +40,12 @@ end
 
 namespace :vendor do
   root_dir = "vendor/assets"
-  js_dir = "#{root_dir}/javascripts"
   image_dir = "#{root_dir}/images"
-  font_dir = "#{root_dir}/fonts"
   directory root_dir
-  directory js_dir
   directory image_dir
-  directory font_dir
 
   desc "ベンダーファイル生成"
-  task build: [:build_js, :build_font, :build_image]
-
-  task build_js: [:build_js_rollup, :build_js_hyperapp, :build_js_opal]
-
-  task build_js_rollup: ["rollup.config.mjs", "node_modules/.bin/rollup"] do
-    sh "npx rollup -c"
-  end
-
-  rule ".mjs" => [".coffee", "node_modules/.bin/coffee"] do |t|
-    sh "npx coffee -o #{t.name} -c #{t.source}"
-  end
-
-  rule %r{^node_modules/.*$} do
-    sh "npm install"
-  end
-
-  directory "#{js_dir}/@hyperapp"
-
-  hyperapp_pkgs = ["dom", "events", "html", "svg", "time"]
-
-  task build_js_hyperapp: hyperapp_pkgs.map { |name| "#{js_dir}/@hyperapp/#{name}.js" }
-
-  rule %r{^#{js_dir}/@hyperapp/.*\.js$} => ["node_modules/@hyperapp/%n/index.js", "#{js_dir}/@hyperapp"] do |t|
-    cp t.source, t.name
-  end
-
-  task build_js_opal: [js_dir] do
-    stdlibs = %w[
-      js
-      native
-    ]
-
-    Tempfile.open do |fp|
-      fp.puts "`Opal`"
-      fp.close
-
-      cmd = %w[
-        opal
-        --no-source-map
-        --no-exit
-        --esm
-        --no-cache
-        --compile
-        --output vendor/assets/javascripts/opal.js
-      ]
-      stdlibs.each do |lib|
-        cmd << "--require"
-        cmd << lib
-      end
-      cmd << "--"
-      cmd << fp.path
-
-      sh(*cmd)
-    end
-  end
-
-  task build_font: [font_dir] do
-    bootstrap_icons_dir = "node_modules/bootstrap-icons/font"
-    cp Dir.glob("#{bootstrap_icons_dir}/fonts/*.{woff,woff2}"), font_dir
-
-    source_code_pro_dir = "node_modules/source-code-pro"
-    ["OTF", "VAR"].each do |type|
-      ["woff", "woff2"].each do |ext|
-        Dir.glob("#{source_code_pro_dir}/#{ext.upcase}/#{type}/*.otf.#{ext}").each do |path|
-          cp path, "#{font_dir}/#{File.basename(path, ".otf.#{ext}")}.#{ext}"
-        end
-      end
-    end
-
-    firacode_dir = "node_modules/firacode"
-    cp Dir.glob("#{firacode_dir}/distr/woff/*.woff"), font_dir
-    cp Dir.glob("#{firacode_dir}/distr/woff2/*.woff2"), font_dir
-
-    typopro_web_iosevka_dir = "node_modules/@typopro/web-iosevka"
-    cp Dir.glob("#{typopro_web_iosevka_dir}/*.woff"), font_dir
-  end
+  task build: [:build_image]
 
   task build_image: [image_dir] do
     bootstrap_icons_dir = "node_modules/bootstrap-icons"

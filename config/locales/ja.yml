@@ -79,6 +79,10 @@ ja:
         実行されていない%{target}が存在する可能性があるため、
         再度%{action}を実行してください。
     invalid_csrf_token: CSRFトークンが不正です。
+  messages:
+    uninitialized: 初期化されてません。
+    unauthenticated: ログインしていません。
+    session_timeout: セッションがタイムアウトしました。
   interactors:
     decrypt: 復号化
     encrypt: 暗号化
@@ -156,3 +160,82 @@ ja:
       display_name: 表示名
     attr:
       name: 属性名
+  statuses:
+    # 成功失敗
+    success: 成功
+    failure: 失敗
+    # ログレベル
+    debug: デバッグ
+    info: 情報
+    warn: 警告
+    error: エラー
+    fatal: 致命的
+    unknown: 不明
+    # 注意喚起
+    alert: 警戒
+    caution: 注意
+    warnig: 警告
+    danger: 危険
+    # 状態
+    waiting: 待機中
+    starting: 開始中
+    running: 実行中
+    stopping: 停止中
+    stopped: 停止
+    succeeded: 成功
+    failed: 失敗
+    cancel: キャンセル
+    errored: エラー
+    timeout: タイムアウト
+    loading: 読込中
+    loaded: 読込済み
+    # その他
+    null: (無)
+  response_messages:
+    # 2xx
+    ok: 成功しました。
+    created: 作成しました。
+    accepted: 受理しました。
+    no_content: 成功しました。
+    # 3xx
+    moved_permanently: 永久に移動しました。
+    found: 移動しました。
+    see_other: 参照してください。
+    not_modified: 変更はありません。
+    # 4xx
+    bad_request: パラメーターが不正です。
+    unauthorized: ログインが必要です。
+    forbidden: アクセスする権限がありません。
+    not_found: ページが存在しません。
+    unprocessable_content: 失敗しました。
+    # 5xx
+    internal_server_error: >-
+      サーバーで致命的なエラーが発生しました。
+      管理者に連絡してください。
+    # others
+    error: エラーが発生しました。
+    unknown: 不明な状況が発生しました。
+    login_succeeded: ログインに成功しました。
+    logout_failed: ログインに失敗しました。
+  actions:
+    login: ログイン
+    logout: ログアウト
+
+  view:
+    buttons:
+      toggle_navigation: ナビゲーション切替
+      close: 閉じる
+      reload_page: ページの再読み込み
+      move_immediately: すぐに移動
+    messages:
+      running: >-
+        %{name}を実施しています。
+        しばらくお待ち下さい。
+      fetch_error: >-
+        サーバー接続時にエラーが発生しました
+        しばらく待ってから、再度試してください。
+      reload_after: '約%{sec}秒後に画面を切り替えます。'
+      reload_immediately: 画面を切り替えます。しばらくお待ち下さい。
+    labels:
+      username: ユーザー名
+      password: パスワード

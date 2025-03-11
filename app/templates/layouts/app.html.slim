@@ -1,0 +1,19 @@
+doctype html
+html lang="ja"
+  head
+    meta charset="UTF-8"
+    meta name="viewport" content="width=device-width, initial-scale=1.0"
+    = csrf_param_meta_tag 
+    = csrf_token_meta_tag
+    = current_config.config_tag
+    / TODO: esbuildでbundleしない時に必要になるかもしれない。
+    / = importmap_tag
+    = favicon_tag
+    = stylesheet_tag "app"
+    = javascript_tag "app", type: "module"
+  body
+    = render "partial/header"
+    .container-fluid.mt-2
+      / = render "partial/alert"
+      = yield
+    = render "partial/footer"

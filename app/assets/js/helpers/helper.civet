@@ -1,0 +1,66 @@
+// utils
+
+* as R from ramda
+
+{convertToType} from ./convert.civet
+
+export isNil := R.isNil
+
+export isEmpty := R.isEmpty
+
+export isBlank := (obj: any) -> isNil(obj) || isEmpty(obj)
+
+export isPresent := R.compose(R.not, isBlank)
+
+export identity := R.identity
+
+export presence: <T>(obj: T) => T | null := (obj) ->
+  if isPresent(obj)
+    obj
+  else
+    null
+
+export uniq := R.uniq
+
+export compact: <T>(obj: T) => T := (obj) ->
+  switch R.type(obj)
+    when "Array"
+      (v for each v of obj when v?)
+    when "Object"
+      Object.fromEntries(([k, v] for own k, v in obj when v?))
+    when "Map"
+      new Map(([k, v] for [k, v] of obj when v?))
+    when "Set"
+      new Set((v for v of obj when v?))
+    else
+      console.warn `cannot compact type: ${R.type(obj)}`
+      obj
+
+export pick := R.flip(R.pick)
+
+export entityLabel := (entity) ->
+  return undefined unless entity?
+
+  entity.display_name || entity.name || ""
+
+
+// TODO
+// export deepFreeze = (obj)
+//   return obj if Object.isFrozen(obj)
+
+//   Object.freeze(obj)
+//   switch Object.getPrototypeOf(obj).constructor
+//     when Object
+//       deepFreeze(value) for own key, value in obj
+//     when Array
+//       deepFreeze(value) for each value of obj
+//     when Map
+//       deepFreeze(value) for value of obj.values()
+//     when Set
+//       deepFreeze(value) for value of obj
+//   obj
+
+// export clone
+
+// export deepClone
+

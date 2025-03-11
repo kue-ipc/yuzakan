@@ -1,0 +1,23 @@
+{text} from hyperapp
+* as html from @hyperapp/html
+
+bsIcon from ~/app/bs_icon.civet
+{convertToType, objToJson} from ~/common/convert.civet
+
+export default valueDisplay := ({value, type = "string", color = "body", na = false}) ->
+  unless value?
+    return html.span {class: "text-muted"}, text if na then"N/A" else ""
+
+  convertedValue := convertToType(value, type)
+  html.span {class: `text-${color}`},
+    switch type
+      when "string", "text", "date", "time"
+        text convertedValue
+      when "boolean"
+        if convertedValue then bsIcon({name: "check-square"}) else bsIcon({name: "square"})
+      when "integer", "float", "datatime"
+        text String(convertedValue)
+      when "date", "time"
+        text convertedValue
+      when "list", "map", "set"
+        text objToJson(convertedValue)

@@ -16,36 +16,35 @@ gem "puma"
 gem "rake"
 
 # Database
-gem "mysql2"
 gem "pg"
-gem "sqlite3"
+# gem "mysql2"
+# gem "sqlite3"
 
+# Template
 gem "slim"
 
-gem "sassc"
+# Redis
+gem "hiredis"
+gem "redis", require: ["redis", "redis/connection/hiredis"]
+gem "redis-rack"
 
-gem "opal"
-gem "coffee-script"
-gem "terser"
-
+# Uitls
+gem "activesupport", "~> 8.0"
+gem "i18n"
 gem "bcrypt"
 gem "zxcvbn-js", require: "zxcvbn"
+gem "digest-xxhash"
 
-gem "i18n"
-
-# key-value storage
-gem "redis-rack"
-gem "readthis"
+## for adapter ##
 
 # LDAP
 gem "net-ldap"
+# FIXME: https://github.com/ruby-ldap/ruby-net-ldap/issues/431
+gem "ostruct"
 gem "smbhash"
 
 # Google Workspace
 gem "google-apis-admin_directory_v1"
-
-# xxHash
-gem "xxhash"
 
 group :development do
   gem "hanami-webconsole", "~> 2.2"

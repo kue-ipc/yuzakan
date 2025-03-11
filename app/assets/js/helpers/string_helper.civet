@@ -1,0 +1,68 @@
+/**
+ * string helper
+ */
+
+Pluralize from pluralize
+
+// string -> string
+
+// Capitalize
+export capitalize := (str: string): string ->
+  str && str[0].toUpperCase() + str[1..].toLowerCase()
+
+// camelCase
+export camelize := (str: string): string ->
+  listToCamelCase(...strToList(str))
+
+// PascalCase
+export pascalize := (str: string): string ->
+  listToPascalCase(...strToList(str))
+
+// snake_case
+export snakize := (str: string): string ->
+  listToSnakeCase(...strToList(str))
+
+// kebab-case
+export kebabize := (str: string): string ->
+  listToKebabCase(...strToList(str))
+
+// names
+export pluralize := (str: string): string ->
+  Pluralize.plural(str)
+
+// name
+export singularize := (str: string): string ->
+  Pluralize.singular(str)
+
+// string -> string[]
+
+// abcDef_ghi-jkl -> abc def ghi jkl
+export strToList := (str: string): string[] ->
+  str.replace(/[A-Z]+/g, "_$&").toLowerCase().split(/[-_\s]+/)
+
+// list -> string
+
+// abc, def, hij -> abcDefHij
+export listToCamelCase := (...list: string[]): string ->
+  (list[0]?.toLowerCase() ?? "") +
+    (capitalize(str) for each str of list[1..]).join("")
+
+// abc, def, hij -> AbcDefHij
+export listToPascalCase := (...list: string[]): string ->
+  (capitalize(str) for each str of list).join("")
+
+// abc, def, hij -> abc_def_hij
+export listToSnakeCase := (...list: string[]): string ->
+  (str.toLowerCase() for each str of list).join("_")
+
+// abc, def, hij -> abc-def-hij
+export listToKebabCase := (...list: string[]): string ->
+  (str.toLowerCase() for each str of list).join("-")
+
+// abc, def, hij -> ABC_DEF_HIJ
+export listToAllCaps := (...list: string[]): string ->
+  (str.toUpperCase() for each str of list).join("_")
+
+// abc, def, hij -> Abc-Def-Hij
+export listToTrainCase := (...list: string[]): string ->
+  (capitalize(str) for each str of list).join("-")

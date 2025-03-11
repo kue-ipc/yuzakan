@@ -2,29 +2,42 @@
 
 require "hanami"
 
-# CoffeeScript v2 (from node_modulses)
-ENV["COFFEESCRIPT_SOURCE_PATH"] ||= File.expand_path(
-  "../node_modules/coffeescript/lib/coffeescript-browser-compiler-legacy/coffeescript.js", __dir__)
+require "rack/session/redis"
+
+# Sequel timezone
+Sequel.default_timezone = :local
 
 # i18n
+require "i18n"
 I18n.load_path << Dir["#{File.expand_path('locales', __dir__)}/*.yml"]
 I18n.default_locale = :ja
 
-# Sequel timezone
-Sequel.application_timezone = :local
-
-# Adapter
-requrie_relative "../lib/yuzakan/adapters"
-ADAPTERS_MANAGER = Yuzakan::Adapters::Manager.new
-
 module Yuzakan
   class App < Hanami::App
-    config.actions.sessions = :cookie, {
-      key: "bookshelf.session",
-      secret: settings.session_secret,
-      expire_after: 60 * 60 * 24 * 365,
-    }
+    config.actions.sessions =
+      if settings.redis_url
+        [:redis, {
+          key: "yuzakan.session",
+          expire_after: settings.session_expire,
+          redis_server: "#{settings.redis_url}/yuzakan:session",
+          expires_in: settings.session_expire,
+        },]
+      elsif settings.session_secret
+        [:cookie, {
+          key: "yuzakan.session",
+          expire_after: settings.session_expire,
+          secret: settings.session_secret,
+        },]
+      else
+        [:pool, {
+          key: "yuzakan.session",
+          expire_after: settings.session_expire,
+        },]
+      end
+    config.inflections do |inflections|
+      inflections.acronym "AD"
+    end
+    config.actions.format :html
     # config.shared_app_component_keys += ["repos.*_repo"]
-    config.middleware.use :body_parser, :json
   end
 end

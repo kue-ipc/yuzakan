@@ -24,9 +24,9 @@ module Yuzakan
       DEFAULT_SALT_SIZE = 8
 
       def initialize(password,
-                     algorithm: DEFAULT_ALGORITHM,
-                     iteration: DEFAULT_ITERATION,
-                     salt_size: DEFAULT_SALT_SIZE)
+        algorithm: DEFAULT_ALGORITHM,
+        iteration: DEFAULT_ITERATION,
+        salt_size: DEFAULT_SALT_SIZE)
         @password = password
         @algorithm = algorithm
         @iteration = iteration

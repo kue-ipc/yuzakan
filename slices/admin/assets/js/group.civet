@@ -1,0 +1,54 @@
+// グループ
+
+{text, app} from hyperapp
+* as html from @hyperapp/html
+
+{pick, pickType, getBasenameFromUrl, getQueryParamsFromUrl, entityLabel} from ~/common/helper.civet
+{objToUrlencoded} from ~/common/convert.civet
+valueDisplay from ~/app/value_display.civet
+
+{runIndexProviders} from ~api/providers.civet
+{SHOW_GROUP_PARAM_TYPES, runShowGroup} from ~api/groups.civet
+
+groupInfo from ~admin/group_info.civet
+groupProvider from ~admin/group_provider.civet
+groupOperation from ~admin/group_operation.civet
+
+// main
+
+main := ->
+  id := getBasenameFromUrl(location)
+  id := undefined if id is "*"
+  mode := if id? then "show" else "new"
+
+  queryParams := pickType(getQueryParamsFromUrl(location), SHOW_GROUP_PARAM_TYPES)
+
+  init := [
+    {mode, id, group: null, providers: [], option: queryParams}
+    [runIndexProviders, {has_group: true}]
+    [runShowGroup, {id, ...queryParams}]
+  ]
+
+  view := ({mode, id, group, providers, option}) ->
+    if mode is "none"
+      return html.div {},
+        html.strong {}, text "グループが見つかりませんでした。"
+
+    if mode is "new"
+      return html.div {},
+        html.strong {}, text "グループの新規作成はできません。"
+
+    unless group? && providers?
+      return html.div {}, text "読込中..."
+
+    html.div {}, [
+      groupInfo {mode, group}
+      groupOperation {option}
+      groupProvider {mode, group, providers}
+    ]
+
+  node := document.getElementById("group")
+
+  app {init, view, node}
+
+main()

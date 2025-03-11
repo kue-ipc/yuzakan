@@ -1,0 +1,14 @@
+// search
+
+export SEARCH_PARAM_TYPES := {}
+  query: "string"
+  match: "string"
+
+export MATCH_LIST := [
+  "extract"
+  "partial"
+  "forward"
+  "backward"
+]
+
+export DEFAULT_MATCH := "partial"

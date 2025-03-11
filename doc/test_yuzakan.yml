@@ -18,7 +18,7 @@ config:
 providers:
 - name: local
   display_name: ローカル
-  adapter_name: local
+  adapter: local
   readable: true
   writable: true
   authenticatable: true
@@ -30,7 +30,7 @@ providers:
   params: {}
 - name: ldap
   display_name: 普通のLDAP
-  adapter_name: ldap
+  adapter: ldap
   readable: true
   writable: true
   authenticatable: true
@@ -66,7 +66,7 @@ providers:
     create_user_object_classes: inetOrgPerson,eduPerson,mozillaAbPersonAlpha
 - name: posix_samba
   display_name: PosixとSamba
-  adapter_name: samba_ldap
+  adapter: samba_ldap
   readable: true
   writable: true
   authenticatable: true

@@ -7,9 +7,9 @@ ROM::SQL.migration do
 
       column :name, String, null: false
       column :display_name, String
-      column :description, String, size: 4096
+      column :description, "text"
 
-      column :adapter_name, String, null: false
+      column :adapter, String, null: false
       column :order, Integer, null: false
 
       column :readable, TrueClass, null: false, default: false
@@ -28,7 +28,6 @@ ROM::SQL.migration do
       column :updated_at, DateTime, null: false
 
       index :name, unique: true
-      index :adapter_name
     end
   end
 end
