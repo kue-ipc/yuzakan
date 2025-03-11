@@ -80,6 +80,7 @@ ja:
         再度%{action}を実行してください。
     invalid_csrf_token: CSRFトークンが不正です。
   messages:
+    uninitialized: 初期化されてません。
     unauthenticated: ログインしていません。
     session_timeout: セッションがタイムアウトしました。
   interactors:

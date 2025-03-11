@@ -4,7 +4,6 @@ module Yuzakan
   module Actions
     module About
       class Browser < Yuzakan::Action
-        accept :html
         security_level 0
 
         def handle(request, response)

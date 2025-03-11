@@ -45,10 +45,6 @@ module Yuzakan
     end
 
     private def connect!(request, response)
-      puts "--------------------------------"
-      pp response.session[CSRF_TOKEN]
-      puts "================================"
-
       response[:current_time] = Time.now
       response[:current_uuid] = request.session[:uuid] || SecureRandom.uuid
       response[:current_config] = config_repo.current
@@ -77,8 +73,7 @@ module Yuzakan
       response.session[:created_at] = nil
       response.session[:updated_at] = nil
 
-      flash[:warn] = I18n.t("messages.session_timeout")
-      response.redirect_to(Hanami.app["routes"].path(:root))
+      reply_session_timeout(request, response)
     end
 
     private def configurate!(request, response)
@@ -114,6 +109,8 @@ module Yuzakan
       activity_log_repo.create(**log_info)
     end
 
+    # reply
+
     private def reply_uninitialized(_request, response)
       response.redirect_to(Hanami.app["routes"].path(:root))
     end
@@ -127,6 +124,11 @@ module Yuzakan
 
     private def reply_unauthorized(_request, _response)
       halt 403
+    end
+
+    private def reply_session_timeout(_request, response)
+      flash[:warn] = I18n.t("messages.session_timeout")
+      response.redirect_to(Hanami.app["routes"].path(:root))
     end
 
     private def handle_standard_error(request, response, exception)

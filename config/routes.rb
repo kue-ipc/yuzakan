@@ -9,9 +9,10 @@ module Yuzakan
 
     get "/locale", to: "locale.index"
 
+    slice :api, at: "/api"
+
     # TODO: 実装がまだのため、コメントアウトしておく
     # slice :admin, at: "/admin"
-    # slice :api, at: "/api"
     # slice :user, at: "/user"
     # slice :vendor, at: "/vendor"
   end
