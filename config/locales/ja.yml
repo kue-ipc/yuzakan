@@ -196,10 +196,16 @@ ja:
     created: 作成しました。
     accepted: 受理しました。
     no_content: 成功しました。
+    # 3xx
+    moved_permanently: 永久に移動しました。
+    found: 移動しました。
+    see_other: 参照してください。
+    not_modified: 変更はありません。
     # 4xx
     bad_request: パラメーターが不正です。
     unauthorized: ログインが必要です。
     forbidden: アクセスする権限がありません。
+    not_found: ページが存在しません。
     unprocessable_content: 失敗しました。
     # 5xx
     internal_server_error: >-

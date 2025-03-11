@@ -34,10 +34,15 @@ export default class APIDialog
   @DEFAULT_RESPONSE_MESSAGE_CODE_MAP: Map<bigint, ResponseMessage> := new Map [
     [0n, new ResponseMessage({status: "error", message: "error", reload: true})]
     [200n, new ResponseMessage({status: "success", message: "ok"})]
+    [201n, new ResponseMessage({status: "success", message: "created"})]
+    [202n, new ResponseMessage({status: "success", message: "accepted"})]
+    [204n, new ResponseMessage({status: "success", message: "no_content"})]
     [400n, new ResponseMessage({status: "error", message: "bad_request"})]
     [401n, new ResponseMessage({status: "error", message: "unauthorized",
       reload: true})]
     [403n, new ResponseMessage({status: "error", message: "forbidden",
+      reload: true})]
+    [404n, new ResponseMessage({status: "error", message: "not_found",
       reload: true})]
     [422n, new ResponseMessage({status: "failure",
       message: "unprocessable_content"})]

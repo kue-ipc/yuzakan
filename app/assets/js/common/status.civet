@@ -16,7 +16,7 @@ export default class Status
   get #icon
   get #spinner
   get label
-    t(`statuses.${name}`)
+    t(`statuses.${#name}`)
 
   @LIST: Status[] := [
     // success or failure

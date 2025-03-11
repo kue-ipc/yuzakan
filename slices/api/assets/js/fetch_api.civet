@@ -24,7 +24,7 @@ export interface ResponseData
   pagination?: Pagination
   links?: HttpLinkHeader
 
-API_URL := normalizeURL("/api")
+API_URL := normalizeURL("/api/")
 
 export fetchAPI := (params: RequestParams): Promise<ResponseData> ->
   request := createRequest(params)
@@ -109,9 +109,7 @@ parseResponse := (response: Response): Promise<ResponseData> ->
 
   contentType := response.headers.get("Content-Type")
   if contentType?
-    list := contentType.split(";").map(String.prototype.trim)
-    mimeType := list.shift()?.toLowerCase()
-    // TODO: charsetやboundaryがある場合の処理
+    mimeType := contentType.split(";")[0].trim().toLowerCase()
     switch mimeType
       "application/json"
         await response.json()
