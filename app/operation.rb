@@ -10,12 +10,16 @@ module Yuzakan
     # logging
     private def on_failure(failure)
       case failure
+      in [:failure, message]
+        logger.info "failure", operation: self.class.name, message:
+      in [:invalid, validation]
+        logger.warn "invalid", operation: self.class.name, validation:
       in [:error, e]
-        logger.error e
-      in [type, msg]
-        logger.warn type, message: msg
+        logger.error e, operation: self.class.name
+      in [type, message]
+        logger.warn type, operation: self.class.name, message:
       else
-        logger.error "failure is invalid format", failure.inspcet
+        logger.error "unknwon failure", operation: self.class.name, failure:
       end
     end
 

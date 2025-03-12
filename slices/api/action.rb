@@ -25,15 +25,16 @@ module API
 
     # override handle
 
-    def handle_standard_error(e)
-      logger.error e
+    def handle_standard_error(request, response, exception)
+      logger.error exception
       halt_json 500
     end
 
     # override handle
-    def handle_invalid_csrf_token
-      logger.warn "CSRF attack: expected #{session[:_csrf_token]}, was #{params[:_csrf_token]}"
-      halt_json 400, errors: [I18n.t("errors.invalid_csrf_token")]
+    def handle_invalid_csrf_token(request, response)
+      logger.warn "CSRF attack", expected:  request.session[:_csrf_token],
+        was: request.params[:_csrf_token]
+      halt_json 422, errors: [I18n.t("errors.invalid_csrf_token")]
     end
   end
 end

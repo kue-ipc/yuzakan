@@ -45,6 +45,8 @@ module Yuzakan
       handle_exception StandardError => :handle_standard_error
     end
 
+    # callback methods
+
     private def connect!(request, response)
       response[:current_time] = Time.now
       response[:current_uuid] = request.session[:uuid] || SecureRandom.uuid
@@ -131,6 +133,8 @@ module Yuzakan
       flash[:warn] = I18n.t("messages.session_timeout")
       response.redirect_to(Hanami.app["routes"].path(:root))
     end
+
+    # handle
 
     private def handle_standard_error(request, response, exception)
       logger.error exception

@@ -79,6 +79,7 @@ ja:
         実行されていない%{target}が存在する可能性があるため、
         再度%{action}を実行してください。
     invalid_csrf_token: CSRFトークンが不正です。
+    wrong_username_or_password: 'ユーザー名またはパスワードが違います。'
   messages:
     uninitialized: 初期化されてません。
     unauthenticated: ログインしていません。
@@ -141,7 +142,6 @@ ja:
       too_many_failure: >-
         時間あたりのログイン試行が規定の回数を超えたため、現在ログインが禁止されています。
         しばらく待ってから再度ログインを試してください。
-      incorrect: 'ユーザー名またはパスワードが違います。'
       deny_network: '現在のネットワークからのログインは許可されていません。'
       prohibited: '管理者より使用が禁止されています。ログインが必要な場合は、管理者にお問い合わせください。'
       no_clearance: 'ゲストユーザーであるため、システムを使用することができません。'

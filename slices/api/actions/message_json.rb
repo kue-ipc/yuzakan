@@ -33,46 +33,46 @@ module API
         when Time
           # 日時はISO8601形式の文字列にする
           obj.iso8601
-        when Hanami::Entity
-          convert_for_json(convert_entity(obj, assoc: assoc), assoc: assoc)
+        when Yuzakan::DB::Struct
+          convert_for_json(convert_struct(obj, assoc: assoc), assoc: assoc)
         else
           obj
         end
       end
 
-      private def convert_entity(entity, assoc: false)
-        data = entity.to_h
+      private def convert_struct(struct, assoc: false)
+        data = struct.to_h
           .except(:id, :created_at, :updated_at)
           .reject do |k, v|
-            k.end_with?("_id") || v.is_a?(Hanami::Entity) || v.is_a?(Array)
+            k.end_with?("_id") || v.is_a?(Hanami::struct) || v.is_a?(Array)
           end
-        case entity
-        when Attr
-          if assoc && entity.mappings
-            mappings = entity.mappings.map do |mapping|
-              {**convert_entity(mapping), provider: mapping.provider&.name}
+        case struct
+        when Yuzakan::Structs::Attr
+          if assoc && struct.mappings
+            mappings = struct.mappings.map do |mapping|
+              {**convert_struct(mapping), provider: mapping.provider&.name}
             end
             data.merge!({mappings: mappings})
           end
-        when Provider
-          data.merge!({params: entity.params}) if assoc && entity.params
+        when Yuzakan::Structs::Provider
+          data.merge!({params: struct.params}) if assoc && struct.params
         when User
-          if assoc && entity.members
+          if assoc && struct.members
             data.merge!({
-              primary_group: entity.primary_group&.name,
-              groups: entity.groups&.map(&:name),
+              primary_group: struct.primary_group&.name,
+              groups: struct.groups&.map(&:name),
             })
           end
-        when Group
-          if assoc && entity.members
+        when Yuzakan::Structs::Group
+          if assoc && struct.members
             data.merge!({
-              users: entity.users&.map(&:name),
+              users: struct.users&.map(&:name),
             })
           end
-        when Member
+        when Yuzakan::Structs::Member
           if assoc
-            data.merge!(user: entity.user.name) if entity.user
-            data.merge!(user: entity.group.name) if entity.group
+            data.merge!(user: struct.user.name) if struct.user
+            data.merge!(user: struct.group.name) if struct.group
           end
         else
           data

@@ -28,7 +28,7 @@ CREATE TABLE public.activity_logs (
     id integer NOT NULL,
     uuid text NOT NULL,
     client text NOT NULL,
-    username text,
+    "user" text,
     action text NOT NULL,
     method text NOT NULL,
     path text NOT NULL,
@@ -151,9 +151,9 @@ CREATE TABLE public.auth_logs (
     id integer NOT NULL,
     uuid text NOT NULL,
     client text NOT NULL,
-    username text NOT NULL,
+    "user" text NOT NULL,
     result text NOT NULL,
-    code text,
+    provider text,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -590,10 +590,10 @@ CREATE INDEX activity_logs_client_index ON public.activity_logs USING btree (cli
 
 
 --
--- Name: activity_logs_username_index; Type: INDEX; Schema: public; Owner: -
+-- Name: activity_logs_user_index; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX activity_logs_username_index ON public.activity_logs USING btree (username);
+CREATE INDEX activity_logs_user_index ON public.activity_logs USING btree ("user");
 
 
 --
@@ -674,10 +674,10 @@ CREATE INDEX auth_logs_client_index ON public.auth_logs USING btree (client);
 
 
 --
--- Name: auth_logs_username_index; Type: INDEX; Schema: public; Owner: -
+-- Name: auth_logs_user_index; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX auth_logs_username_index ON public.auth_logs USING btree (username);
+CREATE INDEX auth_logs_user_index ON public.auth_logs USING btree ("user");
 
 
 --
