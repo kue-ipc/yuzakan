@@ -4,6 +4,11 @@ module API
   module Actions
     module Session
       class Create < API::Action
+        include Deps[
+          "repos.auth_log_repo",
+          "providers.authenticate",
+        ]
+
         security_level 0
 
         params do
@@ -11,44 +16,44 @@ module API
           required(:password).filled(:string, max_size?: 255)
         end
 
-        def initialize(user_repository: UserRepository.new,
-          provider_repository: ProviderRepository.new,
-          auth_log_repository: AuthLogRepository.new,
-          group_repository: GroupRepository.new,
-          member_repository: MemberRepository.new,
-          **opts)
-          super
-          @user_repository ||= user_repository
-          @provider_repository ||= provider_repository
-          @auth_log_repository ||= auth_log_repository
-          @group_repository ||= group_repository
-          @member_repository ||= member_repository
-        end
+        # def initialize(user_repository: UserRepository.new,
+        #   provider_repository: ProviderRepository.new,
+        #   auth_log_repository: AuthLogRepository.new,
+        #   group_repository: GroupRepository.new,
+        #   member_repository: MemberRepository.new,
+        #   **opts)
+        #   super
+        #   @user_repository ||= user_repository
+        #   @provider_repository ||= provider_repository
+        #   auth_log_repo ||= auth_log_repository
+        #   @group_repository ||= group_repository
+        #   @member_repository ||= member_repository
+        # end
 
-        def handle(_request, _response)
-          unless params.valid?
-            halt_json 400,
-              errors: [only_first_errors(params.errors)]
+        def handle(request, response)
+          unless request.params.valid?
+            halt_json 422, errors: [only_first_errors(params.errors)]
           end
 
-          unless current_network.trusted
-            halt_json 403,
-              errors: [I18n.t("session.errors.deny_network")]
+          unless response[:current_network].trusted
+            halt_json 403, errors: [I18n.t("session.errors.deny_network")]
           end
 
-          redirect_to_json routes.path(:session), status: 303 if current_user
+          if response[:current_user]
+            redirect_to_json routes.path(:session), status: 303
+          end
 
           auth_log_params = {
-            uuid: uuid,
-            client: client,
-            username: params[:username],
+            uuid: response[:current_uuid],
+            client: request.ip,
+            username: request.params[:username],
           }
 
           failure_count = 0
 
           # 10 minutes
-          @auth_log_repository.recent_by_username(params[:username],
-            600).each do |auth_log|
+          auth_log_repo.recent_by_username(request.params[:username], 600)
+            .each do |auth_log|
             case auth_log.result
             when "success", "recover"
               break
@@ -58,25 +63,28 @@ module API
           end
 
           if failure_count >= 5
-            @auth_log_repository.create(**auth_log_params, result: "reject")
+            auth_log_repo.create(**auth_log_params, result: "reject")
             halt_json 403, errors: [I18n.t("session.errors.too_many_failure")]
           end
 
-          auth_result = ProviderAuthenticate.new(provider_repository: @provider_repository).call(params)
-
+          auth_result = authenticate.call(params)
+          case auth_result
+          in Success(provider)
+          in Failure[:invalid, validation]
+          end
           if auth_result.failure?
-            @auth_log_repository.create(**auth_log_params, result: "error")
+            auth_log_repo.create(**auth_log_params, result: "error")
             halt_json 500, errors: auth_result.errors
           end
 
           provider = auth_result.provider
           if provider.nil?
-            @auth_log_repository.create(**auth_log_params, result: "failure")
+            auth_log_repo.create(**auth_log_params, result: "failure")
             halt_json 422, errors: [I18n.t("session.errors.incorrect")]
           end
 
-          @auth_log_repository.create(**auth_log_params,
-result: "success:#{provider.name}")
+          auth_log_repo.create(**auth_log_params,
+            result: "success:#{provider.name}")
 
           user = @user_repository.find_by_name(params[:username])
           if user.nil?
@@ -95,13 +103,13 @@ result: "success:#{provider.name}")
 
           # 使用禁止を確認
           if user.prohibited
-            @auth_log_repository.create(**auth_log_params, result: "prohibited")
+            auth_log_repo.create(**auth_log_params, result: "prohibited")
             halt_json 403, errors: [I18n.t("session.errors.prohibited")]
           end
 
           # クリアランスレベルを確認
           if user.clearance_level.zero?
-            @auth_log_repository.create(**auth_log_params,
+            auth_log_repo.create(**auth_log_params,
 result: "no_clearance")
             halt_json 403, errors: [I18n.t("session.errors.no_clearance")]
           end
