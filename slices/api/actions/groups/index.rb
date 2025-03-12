@@ -204,7 +204,7 @@ module API
             provider_repository: @provider_repository, group_repository: @group_repository)
           result = @sync_group.call({groupname: groupname})
           if result.failure?
-            Hanami.logger.error "[#{self.class.name}] Failed sync group: #{groupname} - #{result.errors}"
+            logger.error "[#{self.class.name}] Failed sync group: #{groupname} - #{result.errors}"
             halt_json 500, errors: result.errors
           end
           result.group

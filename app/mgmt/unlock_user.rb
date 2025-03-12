@@ -95,7 +95,7 @@ module Yuzakan
           user_data = provider.user_unlock(@username, @password)
           @user_datas[provider.name] = user_data if user_data
         rescue => e
-          Hanami.logger.error e
+          logger.error e
           unless @user_datas.empty?
             error <<~ERROR_MESSAGE
               一部のシステムについてはロックが解除されましたが、
@@ -120,7 +120,7 @@ module Yuzakan
       private def valid?(params)
         result = Validator.new(params).validate
         if result.failure?
-          Hanami.logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
+          logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
           error(result.messages)
           return false
         end

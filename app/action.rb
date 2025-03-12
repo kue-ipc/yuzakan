@@ -12,6 +12,7 @@ module Yuzakan
     include Dry::Monads[:maybe]
 
     include Deps[
+      "logger",
       "repos.config_repo",
       "repos.network_repo",
       "repos.user_repo",
@@ -105,7 +106,7 @@ module Yuzakan
         path: request.path,
         status: response.status,
       }
-      Hanami.logger.info(log_info)
+      logger.info(log_info)
       activity_log_repo.create(**log_info)
     end
 
@@ -132,7 +133,7 @@ module Yuzakan
     end
 
     private def handle_standard_error(request, response, exception)
-      Hanami.logger.error exception
+      logger.error exception
       halt 500
     end
   end

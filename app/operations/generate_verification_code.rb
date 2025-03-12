@@ -70,7 +70,7 @@ module Yuzakan
           user_data = provider.user_generate_code(@username)
           @user_datas[provider.name] = user_data if user_data
         rescue => e
-          Hanami.logger.error e
+          logger.error e
           error("バックアップコード生成時にエラーが発生しました。: #{e.message}")
           result = :error
         end
@@ -87,7 +87,7 @@ module Yuzakan
       private def valid?(params)
         result = Validator.new(params).validate
         if result.failure?
-          Hanami.logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
+          logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
           error(result.messages)
           return false
         end

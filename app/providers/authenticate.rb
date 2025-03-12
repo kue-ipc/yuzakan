@@ -31,8 +31,8 @@ module Yuzakan
         providers.find do |provider|
           provider.user_auth(username, password)
         rescue => e
-          Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
-          Hanami.logger.error e
+          logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
+          logger.error e
           error(I18n.t("errors.action.error", action: I18n.t("interactors.provider_authenticate"),
             target: provider.label))
           error(e.message)
@@ -44,8 +44,8 @@ module Yuzakan
         providers.each do |provider|
           return Success(provider) if provider.user_auth(username, password)
         rescue => e
-          Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
-          Hanami.logger.error e
+          logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
+          logger.error e
           error(I18n.t("errors.action.error", action: I18n.t("interactors.provider_authenticate"),
             target: provider.label))
           error(e.message)

@@ -66,7 +66,7 @@ module Yuzakan
 
       begin
         adapter = adapter_class.new(adapter_params, group: provider.group,
-          logger: Hanami.logger)
+          logger: logger)
         Success(adapter)
       rescue => e
         Failure([:error, e])

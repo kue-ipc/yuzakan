@@ -83,7 +83,7 @@ module Yuzakan
         user = service.get_user(email)
         normalize_user(user)
       rescue Google::Apis::ClientError => e
-        Hanami.logger.error e
+        logger.error e
         nil
       end
 

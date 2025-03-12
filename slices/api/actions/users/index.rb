@@ -205,7 +205,7 @@ module API
             member_repository: @member_repository)
           result = @sync_user.call({username: username})
           if result.failure?
-            Hanami.logger.error "[#{self.class.name}] failed sync user: #{username} - #{result.errors}"
+            logger.error "[#{self.class.name}] failed sync user: #{username} - #{result.errors}"
             halt_json 500, errors: result.errors
           end
           result.user

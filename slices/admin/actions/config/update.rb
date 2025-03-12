@@ -43,7 +43,7 @@ module Admin
           flash[:success] = "設定を更新しました。"
           redirect_to routes.path(:edit_config)
         rescue => e
-          Hanami.logger.error e
+          logger.error e
           flash[:errors] << e.message
           flash[:error] = "エラーが発生しました。"
           self.body = Admin::Views::Config::Edit.render(exposures)

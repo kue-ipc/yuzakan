@@ -48,7 +48,7 @@ module Yuzakan
       private def valid?(params)
         result = Validator.new(params).validate
         if result.failure?
-          Hanami.logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
+          logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
           error(result.messages)
           return false
         end

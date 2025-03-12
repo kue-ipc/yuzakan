@@ -37,8 +37,8 @@ module Yuzakan
           @changed = true if data
           [provider.name, data]
         rescue => e
-          Hanami.logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
-          Hanami.logger.error e
+          logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
+          logger.error e
           error(I18n.t("errors.action.error", action: I18n.t("interactors.provider_change_password"),
             target: provider.label))
           error(e.message)
@@ -53,7 +53,7 @@ module Yuzakan
       private def valid?(params)
         result = Validator.new(params).validate
         if result.failure?
-          Hanami.logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
+          logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
           error(result.messages)
           return false
         end
@@ -67,13 +67,13 @@ module Yuzakan
           provider_names.map do |provider_name|
             provider = @provider_repository.find_with_adapter_by_name(provider_name)
             unless provider
-              Hanami.logger.warn "[#{self.class.name}] Not found: #{provider_name}"
+              logger.warn "[#{self.class.name}] Not found: #{provider_name}"
               error!(I18n.t("errors.not_found",
                 name: I18n.t("entities.provider")))
             end
 
             unless provider.can_do?(operation)
-              Hanami.logger.warn "[#{self.class.name}] No ability: #{provider.name}, #{operation}"
+              logger.warn "[#{self.class.name}] No ability: #{provider.name}, #{operation}"
               error!(I18n.t("errors.no_ability", name: provider.label,
                 action: I18n.t(operation, scope: "operations")))
             end

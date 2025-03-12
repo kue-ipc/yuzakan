@@ -77,7 +77,7 @@ module Admin
           flash[:success] = "インポートに成功しました。"
           redirect_to routes.path(:edit_config)
         rescue => e
-          Hanami.logger.error e
+          logger.error e
           flash[:failure] = "インポートに失敗しました。"
           flash[:errors] << e.message
           self.body = Admin::Views::Config::Edit.render(exposures)
