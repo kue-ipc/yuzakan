@@ -5,6 +5,15 @@ module API
   class Action < Yuzakan::Action
     include API::Actions::MessageJSON
 
+    # FIXME: JSONで渡されるとrawでもキーがシンボルになっているが、
+    #   CSRFProtectionではキーが文字列であることを前提としているため、
+    #   CSRFトークンが探せなくて不正扱いになる。
+    #   そのため、最初のチェックで文字列キーを生成しておく。
+    def missing_csrf_token?(req, *)
+      req.params.raw[CSRF_TOKEN.to_s] ||= req.params.raw[CSRF_TOKEN]
+      Hanami::Utils::Blank.blank?(req.params.raw[CSRF_TOKEN.to_s])
+    end
+
     # override reply
 
     private def reply_uninitialized(_request, _response)
@@ -30,11 +39,10 @@ module API
       halt_json 500
     end
 
-    # override handle
     def handle_invalid_csrf_token(request, response)
-      logger.warn "CSRF attack", expected:  request.session[:_csrf_token],
-        was: request.params[:_csrf_token]
-      halt_json 422, errors: [I18n.t("errors.invalid_csrf_token")]
+      logger.warn "CSRF attack", expected: request.session[CSRF_TOKEN],
+        was: request.params.raw[CSRF_TOKEN.to_s]
+      halt_json 400, errors: [I18n.t("errors.invalid_csrf_token")]
     end
   end
 end
