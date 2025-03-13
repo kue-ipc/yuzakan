@@ -6,7 +6,7 @@ module Admin
   module Actions
     module Users
       class Index < Admin::Action
-        def handle(request, response)
+        def handle(req, res)
         end
       end
     end

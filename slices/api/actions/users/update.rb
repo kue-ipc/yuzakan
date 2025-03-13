@@ -37,7 +37,7 @@ module API
 
         params Params
 
-        def handle(_request, _response)
+        def handle(_req, _res)
           if params[:name] && @user.name != params[:name]
             halt_json 422, errors: {
               name: I18n.t("errors.unchangeable", name: I18n.t("attributes.user.name")),

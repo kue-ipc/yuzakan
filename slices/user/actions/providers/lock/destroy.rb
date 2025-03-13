@@ -14,7 +14,7 @@ module User
           expose :user
           expose :password
 
-          def handle(_request, _response)
+          def handle(_req, _res)
             provider = ProviderRepository.new.first_google_with_adapter
 
             result = UnlockUser.new(

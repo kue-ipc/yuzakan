@@ -18,25 +18,25 @@ module API
           required(:password).filled(:string, max_size?: 255)
         end
 
-        def handle(request, response)
-          unless request.params.valid?
+        def handle(req, res)
+          unless req.params.valid?
             halt_json 422, errors: [only_first_errors(params.errors)]
           end
-          username = request.params[:username]
-          password = request.params[:password]
+          username = req.params[:username]
+          password = req.params[:password]
 
-          if response[:current_user]
+          if res[:current_user]
             # do nothing
             redirect_to_json routes.path(:session), status: 303
           end
 
           auth_log_params = {
-            uuid: response[:current_uuid],
-            client: request.ip,
+            uuid: res[:current_uuid],
+            client: req.ip,
             username: username,
           }
 
-          unless response[:current_network].trusted
+          unless res[:current_network].trusted
             auth_log_repo.create(**auth_log_params, result: "reject")
             halt_json 403, errors: [I18n.t("session.errors.deny_network")]
           end
@@ -95,8 +95,8 @@ module API
 
           auth_log_repo.create(**auth_log_params, result: "success",
             provider: provider.name)
-          response.status = :created
-          response.body = generate_json({
+          res.status = :created
+          res.body = generate_json({
             uuid: session[:uuid],
             current_user: user,
             created_at: current_time,

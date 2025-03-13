@@ -35,7 +35,7 @@ module API
           @group_repository ||= group_repository
         end
 
-        def handle(_request, _response)
+        def handle(_req, _res)
           if params[:name] && @group.name != params[:name]
             halt_json 422, errors: {
               name: I18n.t("errors.unchangeable", name: I18n.t("attributes.group.name")),

@@ -6,7 +6,7 @@ module API
       class Show < API::Action
         security_level 0
 
-        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
           self.body = generate_json({
             url: Web.routes.url(:root),
             title: current_config&.title,

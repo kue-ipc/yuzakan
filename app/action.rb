@@ -47,66 +47,66 @@ module Yuzakan
 
     # callback methods
 
-    private def connect!(request, response)
-      response[:current_time] = Time.now
-      response[:current_uuid] = request.session[:uuid] || SecureRandom.uuid
-      response[:current_config] = config_repo.current
-      response[:current_user] = user_repo.get(request.session[:user])
-      response[:current_network] = network_repo.find_include_address(request.ip)
-      response[:current_level] = [
-        response[:current_user]&.clearance_level || 0,
-        response[:current_network]&.clearance_level || 0,
+    private def connect!(req, res)
+      res[:current_time] = Time.now
+      res[:current_uuid] = req.session[:uuid] || SecureRandom.uuid
+      res[:current_config] = config_repo.current
+      res[:current_user] = user_repo.get(req.session[:user])
+      res[:current_network] = network_repo.find_include_address(req.ip)
+      res[:current_level] = [
+        res[:current_user]&.clearance_level || 0,
+        res[:current_network]&.clearance_level || 0,
       ].min
     end
 
-    private def check_session!(request, response)
-      return if request.session[:user].nil?
+    private def check_session!(req, res)
+      return if req.session[:user].nil?
 
-      if request.session[:updated_at]
-        timeout = response[:current_config]&.session_timeout
+      if req.session[:updated_at]
+        timeout = res[:current_config]&.session_timeout
         if timeout && (timeout.zero? ||
-            response[:current_time] - session[:updated_at] > timeout)
-          request.session[:updated_at] = response[:current_time]
+            res[:current_time] - session[:updated_at] > timeout)
+          req.session[:updated_at] = res[:current_time]
           return
         end
       end
 
-      Hanam.logger.debug("session timout", user: request.session[:user])
-      response.session[:user] = nil
-      response.session[:created_at] = nil
-      response.session[:updated_at] = nil
+      Hanam.logger.debug("session timout", user: req.session[:user])
+      res.session[:user] = nil
+      res.session[:created_at] = nil
+      res.session[:updated_at] = nil
 
-      reply_session_timeout(request, response)
+      reply_session_timeout(req, res)
     end
 
-    private def configurate!(request, response)
-      return if response[:current_config]
+    private def configurate!(req, res)
+      return if res[:current_config]
 
-      reply_uninitialized(request, response)
+      reply_uninitialized(req, res)
     end
 
-    private def authenticate!(request, response)
+    private def authenticate!(req, res)
       return if self.class.security_level&.zero?
-      return if response[:current_user]
+      return if res[:current_user]
 
-      reply_unauthenticated(request, response)
+      reply_unauthenticated(req, res)
     end
 
-    private def authorize!(request, response)
-      return if response[:current_level] >= self.class.security_level
+    private def authorize!(req, res)
+      return if res[:current_level] >= self.class.security_level
 
-      reply_unauthorized(request, response)
+      reply_unauthorized(req, res)
     end
 
-    private def done!(request, response)
+    private def done!(req, res)
       log_info = {
-        uuid: response[:current_uuid],
-        client: request.ip,
-        user: response[:current_user]&.name,
+        uuid: res[:current_uuid],
+        client: req.ip,
+        user: res[:current_user]&.name,
         action: self.class.name,
-        method: request.request_method,
-        path: request.path,
-        status: response.status,
+        method: req.request_method,
+        path: req.path,
+        status: res.status,
       }
       logger.info(log_info)
       activity_log_repo.create(**log_info)
@@ -114,29 +114,29 @@ module Yuzakan
 
     # reply
 
-    private def reply_uninitialized(_request, response)
-      response.redirect_to(Hanami.app["routes"].path(:root))
+    private def reply_uninitialized(_req, res)
+      res.redirect_to(Hanami.app["routes"].path(:root))
     end
 
-    private def reply_unauthenticated(_request, response)
-      halt 401, response.render(login_view)
-      # response.render(login_view)
-      # response.flash[:warn] ||= I18n.t("messages.unauthenticated")
-      # response.redirect_to(Hanami.app["routes"].path(:root))
+    private def reply_unauthenticated(_req, res)
+      halt 401, res.render(login_view)
+      # res.render(login_view)
+      # res.flash[:warn] ||= I18n.t("messages.unauthenticated")
+      # res.redirect_to(Hanami.app["routes"].path(:root))
     end
 
-    private def reply_unauthorized(_request, _response)
+    private def reply_unauthorized(_req, _res)
       halt 403
     end
 
-    private def reply_session_timeout(_request, response)
+    private def reply_session_timeout(_req, res)
       flash[:warn] = I18n.t("messages.session_timeout")
-      response.redirect_to(Hanami.app["routes"].path(:root))
+      res.redirect_to(Hanami.app["routes"].path(:root))
     end
 
     # handle
 
-    private def handle_standard_error(request, response, exception)
+    private def handle_standard_error(req, res, exception)
       logger.error exception
       halt 500
     end

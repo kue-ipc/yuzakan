@@ -26,7 +26,7 @@ module API
             @user_notify = user_notify
           end
 
-          def handle(_request, _response)
+          def handle(_req, _res)
             param_errors = only_first_errors(params.errors)
 
             unless param_errors.key?(:password)

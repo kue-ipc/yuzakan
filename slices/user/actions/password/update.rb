@@ -6,7 +6,7 @@ module User
       class Update < User::Action
         expose :data
 
-        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
           result = ProviderChangePassword.new(config: current_config,
             user: current_user,
             client: client)

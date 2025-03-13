@@ -4,7 +4,7 @@ module Admin
   module Actions
     module Groups
       class Index < Admin::Action
-        def handle(request, response)
+        def handle(req, res)
         end
       end
     end

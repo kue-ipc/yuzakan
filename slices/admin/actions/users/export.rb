@@ -6,7 +6,7 @@ module Admin
       class Export < Admin::Action
         security_level 5
 
-        def handle(request, response)
+        def handle(req, res)
         end
       end
     end

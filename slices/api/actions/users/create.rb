@@ -43,7 +43,7 @@ module API
           @user_repository ||= user_repository
         end
 
-        def handle(_request, _response)
+        def handle(_req, _res)
           halt_json 400, errors: [params.errors] unless params.valid?
 
           @name = params[:name]

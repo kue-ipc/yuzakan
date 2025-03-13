@@ -49,7 +49,7 @@ module API
           @provider_repository ||= provider_repository
         end
 
-        def handle(_request, _response)
+        def handle(_req, _res)
           change_name = params[:name] && params[:name] != @attr.name
           if change_name && @attr_repository.exist_by_name?(params[:name])
             halt_json 422, errors: [{name: [I18n.t("errors.uniq?")]}]

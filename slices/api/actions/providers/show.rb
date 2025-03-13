@@ -8,7 +8,7 @@ module API
       class Show < API::Action
         include SetProvider
 
-        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
           self.status = 200
           self.body = provider_json
         end

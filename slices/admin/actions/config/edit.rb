@@ -10,7 +10,7 @@ module Admin
 
         expose :config
 
-        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
           @config = current_config
         end
       end
