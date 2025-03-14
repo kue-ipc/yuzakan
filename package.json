@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "mocha -r @danielx/civet/register 'test/**/*.civet'"
+    "test": "mocha"
   },
   "dependencies": {
     "@danielx/civet": "^0.9.7",
