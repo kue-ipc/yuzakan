@@ -33,7 +33,7 @@ module API
           auth_log_params = {
             uuid: res[:current_uuid],
             client: req.ip,
-            username: username,
+            user: username,
           }
 
           unless res[:current_network].trusted
@@ -43,7 +43,7 @@ module API
 
           # TODO: パラメーターとして設定できるようにする
           # 600秒の間に5回以上失敗した場合、拒否する。
-          if count_failure(username, 600) >= 5
+          if failures_over?(username, count: 5, period: 600)
             auth_log_repo.create(**auth_log_params, result: "reject")
             halt_json 403, errors: [I18n.t("session.errors.too_many_failure")]
           end
@@ -105,18 +105,21 @@ module API
           })
         end
 
-        private def count_failure(usarname, time)
-          failure_count = 0
-          auth_log_repo.recent_by_username(username, time)
-            .each do |auth_log|
+        private def failures_over?(username, count:, period:)
+          count = count.to_i
+          auth_log_repo.recent(username, period:, limit: count,
+            includes: ["success", "failure", "recover"]).each do |auth_log|
             case auth_log.result
-            when "success", "recover"
-              break
-            when "failure"
-              failure_count += 1
+            in "success" | "recover"
+              return false
+            in "failure"
+              count -= 1
+            else
+              # do nothing
             end
           end
-          failure_count
+
+          !count.positive?
         end
       end
     end
