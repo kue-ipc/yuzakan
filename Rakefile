@@ -3,19 +3,15 @@
 require "rake"
 require "hanami/rake_tasks"
 require "rake/clean"
-require "tempfile"
 
-CLEAN << "vendor/assets"
-CLEAN << "public/assets"
-CLEAN << "public/errors"
-CLEAN << "rollup.config.mjs"
+CLEAN << "public"
 
 CLOBBER << "node_modules"
 
 begin
   require "rspec/core/rake_task"
   RSpec::Core::RakeTask.new(:spec)
-  task default: :spec
+  task default: [:spec, "js:test"]
 rescue LoadError
   # do nothing
 end
