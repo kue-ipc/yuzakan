@@ -4,11 +4,15 @@ module Yuzakan
   module Actions
     module Locale
       class Index < Yuzakan::Action
+        include Deps[
+          "i18n",
+        ]
+
         security_level 0
 
         def handle(_req, res)
           res.format = :json
-          res.body = I18n.backend.translations[I18n.locale].to_json
+          res.body = i18n.backend.translations[i18n.locale].to_json
         end
       end
     end

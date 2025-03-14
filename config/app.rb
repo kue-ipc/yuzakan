@@ -7,11 +7,6 @@ require "rack/session/redis"
 # Sequel timezone
 Sequel.default_timezone = :local
 
-# i18n
-require "i18n"
-I18n.load_path << Dir["#{File.expand_path('locales', __dir__)}/*.yml"]
-I18n.default_locale = :ja
-
 module Yuzakan
   class App < Hanami::App
     config.actions.sessions =

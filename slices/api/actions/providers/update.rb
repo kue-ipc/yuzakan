@@ -45,7 +45,7 @@ module API
         def handle(_req, _res)
           change_name = params[:name] && params[:name] != @provider.name
           if change_name && @provider_repository.exist_by_name?(params[:name])
-            halt_json 422, errors: [{name: [I18n.t("errors.uniq?")]}]
+            halt_json 422, errors: [{name: [t.call("errors.uniq?")]}]
           end
 
           adapter_params = params.to_h.except(:id)

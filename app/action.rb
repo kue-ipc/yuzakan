@@ -17,6 +17,8 @@ module Yuzakan
       "repos.network_repo",
       "repos.user_repo",
       "repos.activity_log_repo",
+      "i18n.t",
+      "i18n.l",
       login_view: "views.home.login",
       unready_view: "views.home.unready",
     ]
@@ -129,7 +131,7 @@ module Yuzakan
     end
 
     private def reply_session_timeout(_req, res)
-      res.flash[:warn] = I18n.t("messages.session_timeout")
+      res.flash[:warn] = t.call("messages.session_timeout")
       res.redirect_to(Hanami.app["routes"].path(:root))
     end
 

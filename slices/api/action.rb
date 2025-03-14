@@ -17,7 +17,7 @@ module API
     # override reply
 
     private def reply_uninitialized(_req, _res)
-      halt_json 503, errors: [t("messages.uninitialized")]
+      halt_json 503, errors: [t.call("messages.uninitialized")]
     end
 
     private def reply_unauthenticated(_req, _res)
@@ -29,7 +29,7 @@ module API
     end
 
     private def reply_session_timeout(_req, _res)
-      halt_json 401, errors: [t("messages.session_timeout")]
+      halt_json 401, errors: [t.call("messages.session_timeout")]
     end
 
     # override handle
@@ -42,7 +42,7 @@ module API
     def handle_invalid_csrf_token(req, res)
       logger.warn "CSRF attack", expected: req.session[CSRF_TOKEN],
         was: req.params.raw[CSRF_TOKEN.to_s]
-      halt_json 400, errors: [I18n.t("errors.invalid_csrf_token")]
+      halt_json 400, errors: [t.call("errors.invalid_csrf_token")]
     end
   end
 end

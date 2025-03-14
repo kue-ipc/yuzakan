@@ -48,11 +48,11 @@ module API
 
           @name = params[:name]
           load_user
-          halt_json 422, errors: {name: [I18n.t("errors.uniq?")]} if @user
+          halt_json 422, errors: {name: [t.call("errors.uniq?")]} if @user
 
           if params[:providers] && params[:attrs].nil?
             halt_json 422,
-              errors: {attrs: I18n.t("errors.filled?")}
+              errors: {attrs: t.call("errors.filled?")}
           end
 
           password = params[:password] || generate_password.password
@@ -72,7 +72,7 @@ module API
             })
           else
             halt_json 422,
-              errors: {providers: [I18n.t("errors.min_size?", num: 1)]}
+              errors: {providers: [t.call("errors.min_size?", num: 1)]}
           end
 
           load_user

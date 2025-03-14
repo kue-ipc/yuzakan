@@ -40,13 +40,13 @@ module API
         def handle(_req, _res)
           if params[:name] && @user.name != params[:name]
             halt_json 422, errors: {
-              name: I18n.t("errors.unchangeable", name: I18n.t("attributes.user.name")),
+              name: t.call("errors.unchangeable", name: t.call("attributes.user.name")),
             }
           end
 
           if params[:providers] && params[:attrs].nil?
             halt_json 422,
-              errors: {attrs: I18n.t("errors.filled?")}
+              errors: {attrs: t.call("errors.filled?")}
           end
 
           params = params.to_h

@@ -48,7 +48,7 @@ module Admin
           flash[:errors] ||= []
 
           if configurated?
-            flash[:errors] << I18n.t("errors.already_initialized")
+            flash[:errors] << t.call("errors.already_initialized")
             redirect_to Web.routes.path(:root)
           end
 

@@ -52,14 +52,14 @@ module API
         def handle(_req, _res)
           change_name = params[:name] && params[:name] != @attr.name
           if change_name && @attr_repository.exist_by_name?(params[:name])
-            halt_json 422, errors: [{name: [I18n.t("errors.uniq?")]}]
+            halt_json 422, errors: [{name: [t.call("errors.uniq?")]}]
           end
 
           mapping_errors = {}
           mappings_params = (params[:mappings] || []).each_with_index.map do |mapping, idx|
             provider = provider_by_name(mapping[:provider])
             if provider.nil?
-              mapping_errors[idx] = {provider: [I18n.t("errors.found?")]}
+              mapping_errors[idx] = {provider: [t.call("errors.found?")]}
               next
             end
 
