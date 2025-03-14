@@ -15,7 +15,6 @@ module API
             current_level: current_level,
             created_at: session[:created_at],
             updated_at: session[:updated_at],
-            deleted_at: session[:updated_at] + current_config.session_timeout,
           })
         end
       end

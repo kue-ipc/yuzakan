@@ -15,7 +15,6 @@ module API
             current_user: current_user,
             created_at: session[:created_at],
             updated_at: current_time,
-            deleted_at: current_time,
           })
 
           # セッション情報を保存

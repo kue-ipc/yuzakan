@@ -89,7 +89,7 @@ module API
           end
 
           # セッション情報を保存
-          res.session[:user_id] = user.id
+          res.session[:user] = user.name
           res.session[:created_at] = res[:current_time]
           res.session[:updated_at] = res[:current_time]
 
@@ -101,7 +101,6 @@ module API
             current_user: user,
             created_at: res[:current_time],
             updated_at: res[:current_time],
-            deleted_at: res[:current_time] + res[:current_config].session_timeout,
           })
         end
 
