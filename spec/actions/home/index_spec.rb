@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Yuzakan::Actions::Home::Index do
-  let(:params) { {} }
+  let(:params) { Hash[] }
 
   it "works" do
     response = subject.call(params)

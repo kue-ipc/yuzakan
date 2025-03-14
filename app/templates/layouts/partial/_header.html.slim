@@ -12,15 +12,15 @@ header#header
           ul.navbar-nav.me-auto
             li.nav-item
               = link_to routes.path(:root), class: "nav-link d-flex align-items-center" do
-                - text bs_icon("house", class: "flex-shrink-0 me-1")
-                - span class: "d-none d-lg-inline" do
-                  - text "利用者用メニュー"
+                = bs_icon("house", class: "flex-shrink-0 me-1")
+                span.d-none.d-lg-inline
+                  | 利用者用メニュー
             - if current_level >= 2
               li.nav-item
-                = link_to Admin.routes.path(:root), class: "nav-link d-flex align-items-center" do
-                  - text bs_icon("house-heart", class: "flex-shrink-0 me-1")
-                  - span class: "d-none d-lg-inline" do
-                    - text "管理者用メニュー"
+                / = link_to Admin.routes.path(:root), class: "nav-link d-flex align-items-center" do
+                /   = bs_icon("house-heart", class: "flex-shrink-0 me-1")
+                /   span.d-none.d-lg-inline
+                /     | "管理者用メニュー"
             / li.nav-item
             /   = link_to routes.path(:edit_user_password), class: "nav-link d-flex align-items-center" do
             /     - text bs_icon("input-cursor-text", class: "flex-shrink-0 me-1")
@@ -32,18 +32,18 @@ header#header
             /     - span class: "d-none d-lg-inline" do
             /      - text "Google Workspace"
 
-          = link_to routes.path(:user), class: "me-2 link-user d-flex align-items-center" do
-            - text bs_icon("person", class: "flex-shrink-0 me-1")
-            - span class: "d-none d-lg-inline" do
-              - text current_user.label_name
+          / = link_to routes.path(:user), class: "me-2 link-user d-flex align-items-center" do
+          /   = bs_icon("person", class: "flex-shrink-0 me-1")
+          /   span.d-none.d-lg-inline
+          /     = current_user.label_name
           .logout-button
-          = javascript "logout", type: "module"
+          / = javascript "logout", type: "module"
         - else
           ul.navbar-nav.me-auto
             li.nav-item
               = link_to routes.path(:root), class: "nav-link" do
                 / - text bs_icon("box-arrow-in-left")
-                - tag.span class: "d-none d-lg-inline" do
-                  - tag.text "ログイン"
+                span class: "d-none d-lg-inline" do
+                  | ログイン
           span.navbar-text
-            = "未ログイン"
+            | 未ログイン

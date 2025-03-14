@@ -102,12 +102,18 @@ Style/BlockDelimiters:
   BracesRequiredMethods: ['let']
 Style/Documentation:
   Enabled: false
+Style/EmptyLiteral:
+  Exclude:
+    - spec/**/*.rb
 Style/EmptyMethod:
   EnforcedStyle: expanded
 Style/FormatString:
   EnforcedStyle: percent
 Style/FrozenStringLiteralComment:
   EnforcedStyle: always
+Style/HashConversion:
+  Exclude:
+    - spec/**/*.rb
 Style/Lambda:
   EnforcedStyle: literal
 Style/MultilineBlockChain:

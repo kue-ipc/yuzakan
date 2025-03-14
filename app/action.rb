@@ -17,7 +17,8 @@ module Yuzakan
       "repos.network_repo",
       "repos.user_repo",
       "repos.activity_log_repo",
-      login_view: "views.home.login"
+      login_view: "views.home.login",
+      unready_view: "views.home.unready",
     ]
 
     # Cache
@@ -63,15 +64,16 @@ module Yuzakan
       return if req.session[:user].nil?
 
       if req.session[:updated_at]
-        timeout = res[:current_config]&.session_timeout
-        if timeout && (timeout.zero? ||
-            res[:current_time] - session[:updated_at] > timeout)
-          req.session[:updated_at] = res[:current_time]
+        timeout = res[:current_config].session_timeout
+        if timeout.zero? ||
+            res[:current_time] - req.session[:updated_at] <= timeout
+          res.session[:updated_at] = res[:current_time]
           return
         end
       end
 
-      Hanam.logger.debug("session timout", user: req.session[:user])
+      logger.debug "session timeout", user: req.session[:user],
+        update_at: req.session[:updated_at]
       res.session[:user] = nil
       res.session[:created_at] = nil
       res.session[:updated_at] = nil
@@ -115,14 +117,11 @@ module Yuzakan
     # reply
 
     private def reply_uninitialized(_req, res)
-      res.redirect_to(Hanami.app["routes"].path(:root))
+      halt 503, res.render(unready_view)
     end
 
     private def reply_unauthenticated(_req, res)
       halt 401, res.render(login_view)
-      # res.render(login_view)
-      # res.flash[:warn] ||= I18n.t("messages.unauthenticated")
-      # res.redirect_to(Hanami.app["routes"].path(:root))
     end
 
     private def reply_unauthorized(_req, _res)
@@ -130,13 +129,13 @@ module Yuzakan
     end
 
     private def reply_session_timeout(_req, res)
-      flash[:warn] = I18n.t("messages.session_timeout")
+      res.flash[:warn] = I18n.t("messages.session_timeout")
       res.redirect_to(Hanami.app["routes"].path(:root))
     end
 
     # handle
 
-    private def handle_standard_error(req, res, exception)
+    private def handle_standard_error(_req, _res, exception)
       logger.error exception
       halt 500
     end
