@@ -14,7 +14,8 @@ module Yuzakan
 
       private def authenticate(username, password, providers)
         providers.each do |provider|
-          return Success(provider) if provider.user_auth(username, password)
+          adapter = step get_adapter(provider)
+          return Success(provider) if adapter.user_auth(username, password)
         rescue => e
           return Failure([:error, e])
         end

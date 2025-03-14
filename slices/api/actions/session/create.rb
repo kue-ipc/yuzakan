@@ -89,19 +89,19 @@ module API
           end
 
           # セッション情報を保存
-          session[:user_id] = user.id
-          session[:created_at] = current_time
-          session[:updated_at] = current_time
+          res.session[:user_id] = user.id
+          res.session[:created_at] = res[:current_time]
+          res.session[:updated_at] = res[:current_time]
 
           auth_log_repo.create(**auth_log_params, result: "success",
             provider: provider.name)
           res.status = :created
           res.body = generate_json({
-            uuid: session[:uuid],
+            uuid: res.session[:uuid],
             current_user: user,
-            created_at: current_time,
-            updated_at: current_time,
-            deleted_at: current_time + current_config.session_timeout,
+            created_at: res[:current_time],
+            updated_at: res[:current_time],
+            deleted_at: res[:current_time] + res[:current_config].session_timeout,
           })
         end
 

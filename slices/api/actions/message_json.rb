@@ -44,7 +44,7 @@ module API
         data = struct.to_h
           .except(:id, :created_at, :updated_at)
           .reject do |k, v|
-            k.end_with?("_id") || v.is_a?(Hanami::struct) || v.is_a?(Array)
+            k.end_with?("_id") || v.is_a?(Yuzakan::DB::Struct) || v.is_a?(Array)
           end
         case struct
         when Yuzakan::Structs::Attr

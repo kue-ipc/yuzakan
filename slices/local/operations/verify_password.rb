@@ -18,8 +18,8 @@ module Local
           Failure([:invalid, "password contains non-ASCII characters"])
         elsif password.size > 72
           Failure([:invalid, "password is more than 72 characters"])
-        elsif BCrypt::Password.vaild_hash?(hashed_password)
-          Failuer([:invalid, "invalid hashed password"])
+        elsif !BCrypt::Password.valid_hash?(hashed_password)
+          Failure([:invalid, "invalid hashed password"])
         else
           Success([password, hashed_password])
         end
@@ -28,7 +28,7 @@ module Local
       private def create_bcrypt(hashed_password)
         Success(BCrypt::Password.new(hashed_password))
       rescue BCrypt::Errors::InvalidHash
-        Failuer([:invalid, "invalid hashed password"])
+        Failure([:invalid, "invalid hashed password"])
       end
 
       private def verify(password, bcrypt_password)
