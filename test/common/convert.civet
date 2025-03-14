@@ -1,8 +1,0 @@
-{assert} from chai
-
-{parseParamName, generateParamName} from ../../app/assets/js/common/convert.civet
-
-describe "param name", ->
-  str := "abc[def][ghi]"
-  it "paramNametoList", ->
-    assert.deepEqual parseParamName(str), ["abc", "def", "ghi"]

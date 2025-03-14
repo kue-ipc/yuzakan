@@ -4,8 +4,7 @@
   capitalize, camelize, pascalize, snakize, kebabize, pluralize, singularize,
   strToList,
   listToCamelCase, listToPascalCase, listToSnakeCase, listToKebabCase, listToAllCaps, listToTrainCase
-
-} from ../../app/assets/js/common/string_helper.civet
+} from ../../app/assets/js/helpers/string_helper.civet
 
 describe "simple word", ->
   str := "abcdefghi"
