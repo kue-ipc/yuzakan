@@ -14,7 +14,7 @@ module Admin
               name: group.name,
               display_name: group.display_name,
               note: group.note,
-              primary: group.primary,
+              basic: group.basic,
               prohibited: group.prohibited,
               deleted: group.deleted,
               deleted_at: group.deleted_at,

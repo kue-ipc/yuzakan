@@ -5,10 +5,9 @@ ROM::SQL.migration do
     create_table :local_members do
       primary_key :id
 
-      foreign_key :local_user_id, :local_users,
-        on_delete: :cascade, null: false
-      foreign_key :local_group_id, :local_groups,
-        on_delete: :cascade, null: false
+      foreign_key :local_user_id, :local_users, on_delete: :cascade, null: false
+      foreign_key :local_group_id, :local_groups, on_delete: :cascade,
+        null: false
 
       index :local_user_id
       index :local_group_id

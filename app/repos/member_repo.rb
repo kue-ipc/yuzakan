@@ -14,44 +14,20 @@ module Yuzakan
         by_user_id_and_by_group_id(user.id, group.id)
       end
 
-      def delete_by_user(group) = by_group(group).changeset(:delete).commit
+      def delete_by_user(user) = by_user(user).changeset(:delete).commit
       def delete_by_group(group) = by_group(group).changeset(:delete).commit
-
-      def set_primary_group_for_user(user, primary_group)
-        if primary_group.nil?
-          by_user(user).where(primary: true)
-            .changeset(:update, primary: false).commit
-          return
-        end
-
-        members.transaction do
-          by_user(user).where(primary: true).exclude(group_id: primary_group.id)
-            .changeset(:update, primary: false).commit
-
-          by_user_and_by_group(user, primary_group)
-            .changeset(:update, primary: true).commit ||
-            members.changeset(:create,
-              user_id: user.id, group_id: primary_group.id, primary: true)
-              .commit
-        end
-      end
 
       def set_groups_for_user(user, groups)
         group_ids = groups.map(&:id)
         members.transaction do
-          by_user(user).where(primary: false)
-            .exclude(group_id: group_ids)
-            .changeset(:delete).commit
+          by_user(user).exclude(group_id: group_ids).changeset(:delete).commit
           current_group_ids = by_user(user).pluck(:group_id)
-
-          # TODO: 作成が一つ一つになる
           (group_ids - current_group_ids).each do |group_id|
-            members.changeset(:create,
-              user_id: user.id, group_id: group_id, primary: false)
+            members.changeset(:create, user_id: user.id, group_id: group_id)
               .commit
           end
         end
-        by_user(user).where(primary: false).to_a
+        by_user(user).to_a
       end
     end
   end

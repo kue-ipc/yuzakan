@@ -19,7 +19,7 @@ module API
             optional(:display_name).maybe(:str?, max_size?: 255)
             optional(:note).maybe(:str?, max_size?: 4096)
 
-            optional(:primary).filled(:bool?)
+            optional(:basic).filled(:bool?)
             optional(:prohibited).filled(:bool?)
 
             optional(:deleted).filled(:bool?)

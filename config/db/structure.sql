@@ -224,7 +224,7 @@ CREATE TABLE public.groups (
     name text NOT NULL,
     display_name text,
     note text,
-    "primary" boolean DEFAULT false NOT NULL,
+    basic boolean DEFAULT false NOT NULL,
     prohibited boolean DEFAULT false NOT NULL,
     deleted boolean DEFAULT false NOT NULL,
     deleted_at timestamp without time zone,
@@ -336,7 +336,6 @@ CREATE TABLE public.members (
     id integer NOT NULL,
     user_id integer NOT NULL,
     group_id integer NOT NULL,
-    "primary" boolean DEFAULT false NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -446,7 +445,8 @@ CREATE TABLE public.users (
     deleted boolean DEFAULT false NOT NULL,
     deleted_at timestamp without time zone,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    group_id integer
 );
 
 
@@ -781,6 +781,13 @@ CREATE INDEX users_email_index ON public.users USING btree (email);
 
 
 --
+-- Name: users_group_id_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX users_group_id_index ON public.users USING btree (group_id);
+
+
+--
 -- Name: users_name_index; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -852,6 +859,14 @@ ALTER TABLE ONLY public.members
 
 
 --
+-- Name: users users_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.groups(id) ON DELETE SET NULL;
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -863,6 +878,7 @@ INSERT INTO schema_migrations (filename) VALUES
 ('10000002000001_create_users.rb'),
 ('10000002000002_create_groups.rb'),
 ('10000002000003_create_members.rb'),
+('10000002000004_add_group_id_to_users.rb'),
 ('10000003000001_create_providers.rb'),
 ('10000003000002_create_adapter_params.rb'),
 ('10000004000001_create_attrs.rb'),

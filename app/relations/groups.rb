@@ -5,8 +5,9 @@ module Yuzakan
     class Groups < Yuzakan::DB::Relation
       schema :groups, infer: true do
         associations do
+          has_many :users
           has_many :members
-          has_many :users, through: :members
+          has_many :users, as: :member_users, through: :members
         end
       end
 

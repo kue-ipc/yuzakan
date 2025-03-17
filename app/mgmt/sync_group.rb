@@ -21,9 +21,9 @@ module Yuzakan
           .value_or { |failure| return Failure(failure) }
         return Success(nil) if providers.empty?
 
-        params = {primary: false}
+        params = {basic: false}
         providers.each_value do |data|
-          [:display_name, :primary].each do |name|
+          [:display_name, :basic].each do |name|
             params[name] ||= data[name] if data.key?(name)
           end
         end

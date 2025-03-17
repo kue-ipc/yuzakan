@@ -9,7 +9,7 @@ ROM::SQL.migration do
       column :display_name, String
       column :note, "text"
 
-      column :primary, TrueClass, null: false, default: false
+      column :basic, TrueClass, null: false, default: false
       column :prohibited, TrueClass, null: false, default: false
 
       column :deleted, TrueClass, null: false, default: false
