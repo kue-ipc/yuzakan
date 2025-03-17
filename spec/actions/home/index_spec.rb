@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Yuzakan::Actions::Home::Index do
+RSpec.describe Yuzakan::Actions::Home::Index, :db do
   subject(:action) do
     described_class.new(
       config_repo: config_repo,

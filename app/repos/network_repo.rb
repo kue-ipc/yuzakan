@@ -30,6 +30,8 @@ module Yuzakan
       end
 
       def find_include_address(address)
+        return if address.nil?
+
         ip = IPAddr.new(address)
         networks.to_a
           .select { |network| network.include?(ip) }
