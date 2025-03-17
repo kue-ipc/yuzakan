@@ -55,7 +55,7 @@ module Yuzakan
       res[:current_uuid] = req.session[:uuid] || SecureRandom.uuid
       res[:current_config] = config_repo.current
       res[:current_user] = user_repo.get(req.session[:user])
-      res[:current_network] = network_repo.find_include_address(req.ip)
+      res[:current_network] = network_repo.find_include(req.ip)
       res[:current_level] = [
         res[:current_user]&.clearance_level || 0,
         res[:current_network]&.clearance_level || 0,

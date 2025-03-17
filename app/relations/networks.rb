@@ -7,7 +7,7 @@ module Yuzakan
 
       # always ordered by address
       dataset do
-        order(:address)
+        order(:ip)
       end
     end
   end

@@ -19,7 +19,7 @@ RSpec.describe Yuzakan::Actions::Locale::Index, :db do
 
   let(:network_repo) do
     instance_double(Yuzakan::Repos::NetworkRepo,
-      find_include_address: Factory[:network])
+      find_include: Factory[:network])
   end
 
   let(:user_repo) do
