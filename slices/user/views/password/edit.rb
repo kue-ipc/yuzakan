@@ -50,13 +50,13 @@ module User
             max_size: current_config.password_max_size,
             min_score: current_config.password_min_score,
             min_types: current_config.password_min_types,
-            unusable_chars: current_config.password_unusable_chars,
+            unusable_chars: current_config.password_prohibited_chars,
             dict: change_password_dict,
           }
         end
 
         private def change_password_dict
-          dict = current_config.password_extra_dict&.split || []
+          dict = current_config.password_extra_dict
           dict.concat([
             current_user.name,
             current_user.display_name&.split,

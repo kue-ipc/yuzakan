@@ -42,7 +42,7 @@ module API
               end
 
               if params[:password] !~ /\A[\u0020-\u007e]*\z/ ||
-                  !!(current_config.password_unusable_chars&.chars || []).intersect?(params[:password].chars)
+                  !!(current_config.password_prohibited_chars&.chars || []).intersect?(params[:password].chars)
                 param_errors[:name] ||= []
                 param_errors[:name] << t.call("errors.valid_chars?")
               end
@@ -57,7 +57,7 @@ module API
                   num: current_config.password_min_types)
               end
 
-              dict = (current_config.password_extra_dict&.split || []) +
+              dict = (current_config.password_extra_dict) +
                 [
                   current_user.name,
                   current_user.display_name&.split,

@@ -68,8 +68,8 @@ h4 設定
              class: 'form-control', size: password_scores.size
 
   - div class: 'mb-3' do
-    - label 'パスワードの使用不可文字', class: 'form-label', for: :password_unusable_chars
-    - text_field :password_unusable_chars, class: 'form-control', max: 128
+    - label 'パスワードの使用不可文字', class: 'form-label', for: :password_prohibited_chars
+    - text_field :password_prohibited_chars, class: 'form-control', max: 128
 
   - div class: 'mb-3' do
     - label 'パスワードの外部辞書', class: 'form-label', for: :password_extra_dict
