@@ -877,17 +877,17 @@ ALTER TABLE ONLY public.users
 SET search_path TO "$user", public;
 
 INSERT INTO schema_migrations (filename) VALUES
-('10000001000001_create_configs.rb'),
-('10000001000002_create_networks.rb'),
-('10000002000001_create_affiliations.rb'),
-('10000002000002_create_groups.rb'),
-('10000002000003_create_users.rb'),
-('10000002000004_create_members.rb'),
-('10000003000001_create_providers.rb'),
-('10000004000001_create_attrs.rb'),
-('10000004000002_create_attr_mappings.rb'),
-('10000005000001_create_activity_logs.rb'),
-('10000005000002_create_auth_logs.rb'),
-('10000011000001_create_local_groups.rb'),
-('10000011000002_create_local_users.rb'),
-('10000011000003_create_local_members.rb');
+('10000001001001_create_configs.rb'),
+('10000001001002_create_networks.rb'),
+('10000001002001_create_affiliations.rb'),
+('10000001002002_create_groups.rb'),
+('10000001002003_create_users.rb'),
+('10000001002004_create_members.rb'),
+('10000001003001_create_providers.rb'),
+('10000001004001_create_attrs.rb'),
+('10000001004002_create_attr_mappings.rb'),
+('10000002001001_create_activity_logs.rb'),
+('10000002001002_create_auth_logs.rb'),
+('10000003001001_create_local_groups.rb'),
+('10000003001002_create_local_users.rb'),
+('10000003001003_create_local_members.rb');
