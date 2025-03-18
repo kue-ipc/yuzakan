@@ -9,8 +9,10 @@ ROM::SQL.migration do
       column :display_name, String
       column :description, "text"
 
-      column :adapter, String, null: false
       column :order, Integer, null: false
+
+      column :adapter, String, null: false
+      column :params, "jsonb", null: false
 
       column :readable, TrueClass, null: false, default: false
       column :writable, TrueClass, null: false, default: false
