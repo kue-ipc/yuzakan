@@ -7,7 +7,7 @@ module Local
       def all = local_members.to_a
       def first = local_members.first
       def last = local_members.last
-      def clear = local_members.clear
+      def clear = local_members.delete
 
       # id (pk)
       commands update: :by_pk, delete: :by_pk

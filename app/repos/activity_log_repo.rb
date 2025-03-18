@@ -12,7 +12,7 @@ module Yuzakan
       def find(id) = activity_logs.by_pk(id).one
       def first = activity_logs.first
       def last = activity_logs.last
-      def clear = activity_logs.clear
+      def clear = activity_logs.delete
     end
   end
 end

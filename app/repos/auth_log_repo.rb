@@ -12,7 +12,7 @@ module Yuzakan
       def find(id) = auth_logs.by_pk(id).one
       def first = auth_logs.first
       def last = auth_logs.last
-      def clear = auth_logs.clear
+      def clear = auth_logs.delete
 
       def recent(user, period: nil, limit: 0, includes: nil, excludes: nil)
         logs = auth_logs.by_user(user)
