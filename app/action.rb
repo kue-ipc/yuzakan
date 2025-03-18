@@ -52,7 +52,7 @@ module Yuzakan
 
     private def connect!(req, res)
       res[:current_time] = Time.now
-      res[:current_uuid] = req.session[:uuid] || SecureRandom.uuid
+      res[:current_uuid] = (req.session[:uuid] ||= SecureRandom.uuid)
       res[:current_config] = config_repo.current
       res[:current_user] = user_repo.get(req.session[:user])
       res[:current_network] = network_repo.find_include(req.ip)
