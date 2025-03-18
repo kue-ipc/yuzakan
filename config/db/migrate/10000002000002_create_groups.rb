@@ -5,6 +5,8 @@ ROM::SQL.migration do
     create_table :groups do
       primary_key :id
 
+      foreign_key :affiliation_id, :affiliations, on_delete: :restrict
+
       column :name, String, null: false
       column :display_name, String
       column :note, "text"
@@ -18,6 +20,7 @@ ROM::SQL.migration do
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
 
+      index :affiliation_id
       index :name, unique: true
     end
   end
