@@ -4,8 +4,7 @@ require "rom-factory"
 require "faker"
 
 Factory = ROM::Factory.configure do |config|
-  config.rom =
-    Yuzakan::App.container["db.rom"]
+  config.rom = Hanami.app["db.rom"]
 end
 
 Dir["#{__dir__}/factories/*.rb"].each { |file| require file }

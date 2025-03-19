@@ -133,43 +133,79 @@ def let_repo_mock
   let(:auth_log_repo_stubs) { {} }
 end
 
+# FIXME: もっとうまいやり方があるのではないか？
+def create_sturct(superclass, relation, attributes)
+  Class.new(superclass) do
+    attributes.each_key { |key| attribute key, relation[key].type }
+  end.new(**attributes)
+end
+
 # TODO: あまり整理していないので、整理すること
 def let_structs
   # single
-  let(:config) { Yuzakan::Structs::Config.new(**config_attributes) }
-  let(:network) { Yuzakan::Structs::Network.new(**network_attributes) }
+  let(:config) do
+    create_sturct(Yuzakan::Structs::Config, Hanami.app["relations.configs"],
+      config_attributes)
+  end
+  let(:network) do
+    create_sturct(Yuzakan::Structs::Network, Hanami.app["relations.networks"],
+      network_attributes)
+  end
 
   let(:affiliation) do
-    Yuzakan::Structs::Affiliation.new(**affiliation_attributes)
+    create_sturct(Yuzakan::Structs::Affiliation,
+      Hanami.app["relations.affiliations"], affiliation_attributes)
   end
-  let(:group) { Yuzakan::Structs::Group.new(**group_attributes) }
-  let(:user) { Yuzakan::Structs::User.new(**user_attributes) }
+  let(:group) do
+    create_sturct(Yuzakan::Structs::Group, Hanami.app["relations.groups"],
+      group_attributes)
+  end
 
-  let(:provider) { Yuzakan::Structs::Provider.new(**provider_attributes) }
+  let(:user) do
+    create_sturct(Yuzakan::Structs::User, Hanami.app["relations.users"],
+      user_attributes)
+  end
 
-  let(:attr) { Yuzakan::Structs::Attr.new(**attr_attributes) }
+  let(:provider) do
+    create_sturct(Yuzakan::Structs::Provider, Hanami.app["relations.providers"],
+      provider_attributes)
+  end
 
+  let(:attr) do
+    create_sturct(Yuzakan::Structs::Attr, Hanami.app["relations.attrs"],
+      attr_attributes)
+  end
   let(:activity_log) do
-    Yuzakan::Structs::ActivityLog.new(**activity_log_attributes)
+    create_sturct(Yuzakan::Structs::ActivityLog,
+      Hanami.app["relations.activity_logs"],
+      activity_log_attributes)
   end
-  let(:auth_log) { Yuzakan::Structs::AuthLog.new(**auth_log_attributes) }
+  let(:auth_log) do
+    create_sturct(Yuzakan::Structs::AuthLog, Hanami.app["relations.auth_logs"],
+      auth_log_attributes)
+    Yuzakan::Structs::AuthLog.new(**auth_log_attributes)
+  end
 
   # multiple
   let(:users) do
     users_attributes.map do |attributes|
-      Yuzakan::Structs::User.new(attributes)
+      create_sturct(Yuzakan::Structs::User, Hanami.app["relations.users"],
+        attributes)
     end
   end
 
   let(:providers) do
     providers_attributes.map do |attributes|
-      Yuzakan::Structs::Provider.new(attributes)
+      create_sturct(Yuzakan::Structs::Provider,
+        Hanami.app["relations.providers"],
+        attributes)
     end
   end
 
   let(:attrs) do
     attrs_attributes.map do |attributes|
-      Yuzakan::Structs::Attr.new(attributes)
+      create_sturct(Yuzakan::Structs::Attr, Hanami.app["relations.attrs"],
+        attributes)
     end
   end
 
@@ -178,7 +214,7 @@ def let_structs
     {title: "title", session_timeout: 3600, domain: "example.jp"}
   end
   let(:network_attributes) do
-    {address: "127.0.0.8/8", clearance_level: 5, trusted: true}
+    {ip: IPAddr.new("127.0.0.0/8"), clearance_level: 5, trusted: true}
   end
 
   let(:user_attributes) do
@@ -197,14 +233,17 @@ def let_structs
     }
   end
   let(:activity_log_attributes) do
-    {uuid: uuid, client: client, username: user.name}
+    {uuid: uuid, client: client, user: user.name}
   end
 
   let(:provider_attriubtes) do
     {
-      id: 42, name: "provider42", display_name: "プロバイダー42", adapter: "dummy", order: 8,
-      readable: false, writable: false, authenticatable: false, password_changeable: false,
-      lockable: false, group: false, individual_password: false, self_management: false,
+      id: 42, name: "provider42", display_name: "プロバイダー42",
+      adapter: "dummy", order: 8,
+      readable: false, writable: false, authenticatable: false,
+      password_changeable: false,
+      lockable: false, group: false, individual_password: false,
+      self_management: false,
       description: nil,
     }
   end
