@@ -16,7 +16,7 @@ Hanami 2 へアップデート中です。
 
 ## 既知の不具合
 
-- PostgreSQLでは、`psql -c '\list'`でデータベースの存在確認ができる環境でないと、`bundle exec hanami db drop` でデータベースが消えない。開発時にデータベースを再作成したい場合は、`dropdb yuzakan_development` と `dropdb yuzakan_test` で消すこと。
+* PostgreSQLでは、`psql -c '\list'`でデータベースの存在確認ができる環境でないと、`bundle exec hanami db drop` でデータベースが消えない。開発時にデータベースを再作成したい場合は、`dropdb yuzakan_development` と `dropdb yuzakan_test` で消すこと。
 
 ## TODO
 
@@ -87,45 +87,45 @@ reidsが無い場合は、クッキーセッション、オンメモリキャッ
 
 ### 本番環境
 
-```
-$ bundle insntall --deployment
-$ npm install
-$ bundle exec rake build
-$ bundle exec hanami assets precompile
+```sh
+bundle insntall --deployment
+npm install
+bundle exec rake build
+bundle exec hanami assets precompile
 ```
 
 ### 開発・テスト環境
 
-```
-$ bundle insntall
-$ npm install
-$ bundle exec rake build
+```sh
+bundle insntall
+npm install
+bundle exec rake build
 ```
 
 テスト実施:
 
-```
-$ bundle exec rake
-$ npm run test
+```sh
+bundle exec rake
+npm run test
 ```
 
 開発コンソール起動:
 
-```
-$ bundle exec hanami console
+```sh
+bundle exec hanami console
 ```
 
 開発サーバー起動:
 
-```
-$ bundle exec hanami server
+```sh
+bundle exec hanami server
 ```
 
 `development`と`test`環境におけるDBの準備:
 
-```
-$ bundle exec hanami db prepare
-$ HANAMI_ENV=test bundle exec hanami db prepare
+```sh
+bundle exec hanami db prepare
+HANAMI_ENV=test bundle exec hanami db prepare
 ```
 
 ## 制限事項
@@ -134,8 +134,8 @@ $ HANAMI_ENV=test bundle exec hanami db prepare
 
 最低限GoogleとMicrosoftの制限を満たすようにしてください。
 
-* https://support.google.com/a/answer/9193374
-* https://support.microsoft.com/kb/2439357
+* <https://support.google.com/a/answer/9193374>
+* <https://support.microsoft.com/kb/2439357>
 
 上記を踏まえて、次のように制限しています。
 
@@ -147,7 +147,7 @@ $ HANAMI_ENV=test bundle exec hanami db prepare
 
 ### パスワード
 
-* ASCII印字可能文字(スペース` `を含むU+0020からU+007Eまで)が使用可能。
+* ASCII印字可能文字(スペースを含むU+0020からU+007Eまで)が使用可能。
 * bcryptは72文字までしか認識しない。
 * CRYPT-DESは8文字までしか認識しない。
 * LMハッシュは14文字までしか認識しない。
