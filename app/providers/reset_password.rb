@@ -4,7 +4,7 @@ require "hanami/interactor"
 require "hanami/validations"
 
 module Yuzakan
-  module Mgmt
+  module Providers
     class ResetPassword < Yuzakan::Operation
       include Hanami::Interactor
 
