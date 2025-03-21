@@ -2,7 +2,7 @@
 
 module Yuzakan
   module Structs
-    class ActivityLog < Yuzakan::DB::Struct
+    class ActionLog < Yuzakan::DB::Struct
     end
   end
 end

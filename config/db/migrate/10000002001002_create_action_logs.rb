@@ -2,7 +2,7 @@
 
 ROM::SQL.migration do
   change do
-    create_table :activity_logs do
+    create_table :action_logs do
       primary_key :id
 
       column :uuid, String, null: false

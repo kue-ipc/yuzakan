@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Factory.define(:activity_log) do |f|
+Factory.define(:action_log) do |f|
   f.uuid Faker::Internet.uuid
   f.client Faker::Internet.ip_v4_address
   f.user Faker::Internet.username

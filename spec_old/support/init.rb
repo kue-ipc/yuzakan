@@ -3,8 +3,8 @@
 # default let script
 
 def let_mock_repositories
-  let(:activity_log_repository) {
-    instance_double(ActivityLogRepository, **activity_log_repository_stubs)
+  let(:action_log_repository) {
+    instance_double(ActionLogRepository, **action_log_repository_stubs)
   }
   let(:attr_mapping_repository) {
     instance_double(AttrMappingRepository, **attr_mapping_repository_stubs)
@@ -49,7 +49,7 @@ def let_mock_repositories
   #     clear: models.size,
   #   }
   # }
-  let(:activity_log_repository_stubs) { {create: activity_log} }
+  let(:action_log_repository_stubs) { {create: action_log} }
   let(:attr_mapping_repository_stubs) { {} }
   let(:attr_repository_stubs) {
     {
@@ -90,7 +90,7 @@ def let_mock_repositories
     }
   }
 
-  let(:activity_log) { ActivityLog.new(**activity_log_attributes) }
+  let(:action_log) { ActionLog.new(**action_log_attributes) }
   let(:attr) { Attr.new(**attr_attributes) }
   let(:config) { Config.new(**config_attributes) }
   # let(:network) { Network.new(**network_attributes) }
@@ -143,7 +143,7 @@ def let_mock_repositories
       hidden: false, readonly: false, code: nil, description: nil,
     }
   }
-  let(:activity_log_attributes) {
+  let(:action_log_attributes) {
     {uuid: uuid, client: client, username: user.name}
   }
   let(:config_attributes) {
@@ -260,7 +260,7 @@ def init_controller_spec
   let(:action) { described_class.new(**connection_opts, **action_opts) }
   let(:connection_opts) {
     {
-      activity_log_repository: activity_log_repository,
+      action_log_repository: action_log_repository,
       config_repository: config_repository,
       network_repository: network_repository,
       user_repository: user_repository,

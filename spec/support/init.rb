@@ -17,7 +17,7 @@ def init_action_spec
       config_repo: config_repo,
       network_repo: network_repo,
       user_repo: user_repo,
-      activity_log_repo: activity_log_repo,
+      action_log_repo: action_log_repo,
     }
   end
 
@@ -25,7 +25,7 @@ def init_action_spec
   let(:config_repo_stubs) { {current: config} }
   let(:network_repo_stubs) { {find_include: network} }
   let(:user_repo_stubs) { {get: user} }
-  let(:activity_log_repo_stubs) { {create: activity_log} }
+  let(:action_log_repo_stubs) { {create: action_log} }
 
   let(:params) { {**action_params, **env} }
   let(:env) do
@@ -89,8 +89,8 @@ def let_repo_mock
     instance_double(Yuzakan::Repos::AttrMappingRepo, **attr_mapping_repo_stubs)
   end
 
-  let(:activity_log_repo) do
-    instance_double(Yuzakan::Repos::ActivityLogRepo, **activity_log_repo_stubs)
+  let(:action_log_repo) do
+    instance_double(Yuzakan::Repos::ActionLogRepo, **action_log_repo_stubs)
   end
   let(:auth_log_repo) do
     instance_double(Yuzakan::Repos::AuthLogRepo, **auth_log_repo_stubs)
@@ -129,7 +129,7 @@ def let_repo_mock
   let(:attr_repo_stubs) { {} }
   let(:attr_mapping_repo_stubs) { {} }
 
-  let(:activity_log_repo_stubs) { {create: activity_log} }
+  let(:action_log_repo_stubs) { {create: action_log} }
   let(:auth_log_repo_stubs) { {} }
 end
 
@@ -175,10 +175,10 @@ def let_structs
     create_sturct(Yuzakan::Structs::Attr, Hanami.app["relations.attrs"],
       attr_attributes)
   end
-  let(:activity_log) do
-    create_sturct(Yuzakan::Structs::ActivityLog,
-      Hanami.app["relations.activity_logs"],
-      activity_log_attributes)
+  let(:action_log) do
+    create_sturct(Yuzakan::Structs::ActionLog,
+      Hanami.app["relations.action_logs"],
+      action_log_attributes)
   end
   let(:auth_log) do
     create_sturct(Yuzakan::Structs::AuthLog, Hanami.app["relations.auth_logs"],
@@ -232,7 +232,7 @@ def let_structs
       hidden: false, readonly: false, code: nil, description: nil,
     }
   end
-  let(:activity_log_attributes) do
+  let(:action_log_attributes) do
     {uuid: uuid, client: client, user: user.name}
   end
 

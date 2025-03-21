@@ -16,7 +16,7 @@ module Yuzakan
       "repos.config_repo",
       "repos.network_repo",
       "repos.user_repo",
-      "repos.activity_log_repo",
+      "repos.action_log_repo",
       "i18n.t",
       "i18n.l",
       login_view: "views.home.login",
@@ -113,7 +113,7 @@ module Yuzakan
         status: res.status,
       }
       logger.info(log_info)
-      activity_log_repo.create(**log_info)
+      action_log_repo.create(**log_info)
     end
 
     # reply

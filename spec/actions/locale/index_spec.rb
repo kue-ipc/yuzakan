@@ -6,7 +6,7 @@ RSpec.describe Yuzakan::Actions::Locale::Index, :db do
       config_repo: config_repo,
       network_repo: network_repo,
       user_repo: user_repo,
-      activity_log_repo: activity_log_repo)
+      action_log_repo: action_log_repo)
   end
 
   let(:params) do
@@ -26,9 +26,9 @@ RSpec.describe Yuzakan::Actions::Locale::Index, :db do
     instance_double(Yuzakan::Repos::UserRepo, get: user)
   end
 
-  let(:activity_log_repo) do
-    instance_double(Yuzakan::Repos::ActivityLogRepo,
-      create: Factory[:activity_log])
+  let(:action_log_repo) do
+    instance_double(Yuzakan::Repos::ActionLogRepo,
+      create: Factory[:action_log])
   end
 
   let(:user) do
