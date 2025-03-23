@@ -31,24 +31,24 @@ ul
       = h(current_config.password_max_size)
     | 文字以下である。
   li
-    - if current_config.password_unusable_chars&.include?(' ')
-      - if current_config.password_unusable_chars&.delete(' ')&.size&.positive?
+    - if current_config.password_prohibited_chars&.include?(' ')
+      - if current_config.password_prohibited_chars&.delete(' ')&.size&.positive?
         | 下記を除くASCII印字可能文字(半角の英数字と記号)のみを使用している。
         strong 空白(スペース)は使用できない。
         br
         | 使用できないASCII印字可能文字:
-        - current_config.password_unusable_chars.delete(' ').each_char do |char|
+        - current_config.password_prohibited_chars.delete(' ').each_char do |char|
           strong<>
             code
               = h(char)
       - else
         | すべてのASCII印字可能文字(半角の英数字と記号)のみを使用している。
         strong 空白(スペース)は使用できない。
-    - elsif current_config.password_unusable_chars&.size&.positive?
+    - elsif current_config.password_prohibited_chars&.size&.positive?
       | 下記を除くASCII印字可能文字(半角の英数字と記号)、および、空白(スペース)のみが使用している。
       br
       | 使用できないASCII印字可能文字:
-      - current_config.password_unusable_chars.each_char do |char|
+      - current_config.password_prohibited_chars.each_char do |char|
         strong<>
           code
             = h(char)

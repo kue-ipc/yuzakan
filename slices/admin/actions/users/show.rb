@@ -20,7 +20,7 @@ module Admin
           @user_repository ||= user_repository
         end
 
-        def handle(_request, _response)
+        def handle(_req, _res)
           halt 400 unless params.valid?
         end
       end

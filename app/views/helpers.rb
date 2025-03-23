@@ -9,7 +9,7 @@ module Yuzakan
       # include ErrorHelper
       # include EscapeHelper
       # include GridHelper
-      # include IconHelper
+      include IconHelper
       # include ImportmapHelper
       # include MenuHelper
       # include PatternHelper

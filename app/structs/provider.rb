@@ -42,7 +42,7 @@ module Yuzakan
       end
 
       def to_h
-        super.except(:adapter_params, :attr_mappings)
+        super.except(:attr_mappings)
       end
 
       # TODO: ここから下はたぶんほとんど移動すべき

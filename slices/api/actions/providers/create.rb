@@ -39,14 +39,14 @@ module API
           @provider_repository ||= provider_repository
         end
 
-        def handle(_request, _response)
+        def handle(_req, _res)
           unless params.valid?
             halt_json 400,
               errors: [only_first_errors(params.errors)]
           end
 
           if @provider_repository.exist_by_name?(params[:name])
-            halt_json 422, errors: [{name: [I18n.t("errors.uniq?")]}]
+            halt_json 422, errors: [{name: [t.call("errors.uniq?")]}]
           end
 
           adapter_params = params.to_h.dup

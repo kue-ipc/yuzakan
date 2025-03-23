@@ -31,16 +31,16 @@ module Yuzakan
       rescue => e
         logger.error "[#{self.class.name}] Failed on #{provider.name}"
         logger.error e
-        error(I18n.t("errors.action.error",
-          action: I18n.t(
+        error(t.call("errors.action.error",
+          action: t.call(
             Hanami::Utils::String.underscore(self.class.name), scope: "interactors"),
           target: provider.label))
         error(e.message)
         if @changed
-          error(I18n.t("errors.action.stopped_after_some",
-            action: I18n.t(
+          error(t.call("errors.action.stopped_after_some",
+            action: t.call(
               Hanami::Utils::String.underscore(self.class.name), scope: "interactors"),
-            target: I18n.t("entities.provider")))
+            target: t.call("entities.provider")))
         end
         fail!
       end
@@ -65,14 +65,14 @@ module Yuzakan
           provider = @provider_repository.find_with_adapter_by_name(provider_name)
           unless provider
             logger.warn "[#{self.class.name}] Not found: #{provider_name}"
-            error!(I18n.t("errors.not_found",
-              name: I18n.t("entities.provider")))
+            error!(t.call("errors.not_found",
+              name: t.call("entities.provider")))
           end
 
           unless provider.can_do?(operation)
             logger.warn "[#{self.class.name}] No ability: #{provider.name}, #{operation}"
-            error!(I18n.t("errors.no_ability", name: provider.label,
-              action: I18n.t(operation, scope: "operations")))
+            error!(t.call("errors.no_ability", name: provider.label,
+              action: t.call(operation, scope: "operations")))
           end
 
           provider

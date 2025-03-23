@@ -15,7 +15,7 @@ module API
           @attr_repository ||= attr_repository
         end
 
-        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
           @attr_repository.delete(@attr.id)
 
           self.status = 200

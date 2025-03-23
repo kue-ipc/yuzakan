@@ -10,7 +10,7 @@ module API
 
         params IdParams
 
-        def handle(_request, _response)
+        def handle(_req, _res)
           unless params.valid?
             halt_json 400,
               errors: [only_first_errors(params.errors)]

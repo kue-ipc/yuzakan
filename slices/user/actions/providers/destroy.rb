@@ -4,7 +4,7 @@ module User
   module Actions
     module Providers
       class Destroy < User::Action
-        def handle(request, response)
+        def handle(req, res)
         end
       end
     end

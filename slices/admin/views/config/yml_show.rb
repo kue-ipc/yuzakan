@@ -18,7 +18,7 @@ module Admin
             password_max_size
             password_min_types
             password_min_score
-            password_unusable_chars
+            password_prohibited_chars
             password_extra_dict
             generate_password_size
             generate_password_type

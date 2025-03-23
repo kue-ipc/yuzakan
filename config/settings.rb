@@ -10,5 +10,6 @@ module Yuzakan
       constructor: Types::Params::Integer
     setting :redis_url, constructor: Types::String.optional
     setting :cache_path, constructor: Types::String.optional
+    setting :locale, default: "ja", constructor: Types::String
   end
 end

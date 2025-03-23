@@ -5,20 +5,25 @@ require "ipaddr"
 module Yuzakan
   module Repos
     class NetworkRepo < Yuzakan::DB::Repo
-      private def by_address(address) = networks.by_address(address)
+      private def by_ip(ip) = networks.by_ip(ip)
 
-      def get(address)
-        by_address(address).one
+      def get(ip)
+        return get(IPAddr.new(ip)) if ip.is_a?(String)
+
+        by_ip(ip).one
       end
 
-      def set(address, **)
-        by_address(address).changeset(:update, **).map(:touch).commit ||
-          networks.changeset(:create, **,
-            address: normalize_address(address)).map(:add_timestamps).commit
+      def set(ip, **)
+        return set(IPAddr.new(ip), **) if ip.is_a?(String)
+
+        by_ip(ip).changeset(:update, **).map(:touch).commit ||
+          networks.changeset(:create, **, ip: ip).map(:add_timestamps).commit
       end
 
-      def unset(address)
-        by_address(address).changeset(:delete).commit
+      def unset(ip)
+        return unset(IPAddr.new(ip)) if ip.is_a?(String)
+
+        by_ip(ip).changeset(:delete).commit
       end
 
       def all
@@ -29,22 +34,12 @@ module Yuzakan
         networks.count
       end
 
-      def find_include_address(address)
-        ip = IPAddr.new(address)
-        networks.to_a
-          .select { |network| network.include?(ip) }
-          .max_by(&:prefix)
-      end
+      def find_include(addr)
+        return if addr.nil?
+        return find_include(IPAddr.new(addr)) if addr.is_a?(String)
 
-      private def normalize_address(address)
-        ipaddr = IPAddr.new(address)
-        prefix = ipaddr.prefix
-        if (prefix == 32 && ipaddr.ipv4?) ||
-            (prefix == 128 && ipaddr.ipv6?)
-          ipaddr.to_s
-        else
-          "#{ipaddr}/#{ipaddr.prefix}"
-        end
+        networks.where { Sequel.lit("ip >>= ?", addr.to_s) }
+          .order { masklen(ip) }.last
       end
     end
   end

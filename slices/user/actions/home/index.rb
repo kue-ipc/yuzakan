@@ -12,7 +12,7 @@ module User
         expose :user_attrs
         expose :attrs
 
-        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
           @user = current_user
 
           providers = ProviderRepository.new.ordered_all_with_adapter_by_operation(:user_read)

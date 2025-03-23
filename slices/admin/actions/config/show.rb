@@ -17,7 +17,7 @@ module Admin
           @provider_repository ||= provider_repository
         end
 
-        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
           self.format = :yml
 
           @attrs = @attr_repository.ordered_all_with_mappings

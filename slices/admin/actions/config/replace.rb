@@ -54,7 +54,7 @@ module Admin
           @attr_repository ||= attr_repository
         end
 
-        def handle(_request, _response)
+        def handle(_req, _res)
           flash[:errors] ||= []
 
           @config = current_config

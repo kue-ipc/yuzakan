@@ -21,8 +21,8 @@ module Yuzakan
 
           svg_opts.merge!(role: "img", "aria-label": alt) if alt
 
-          html.svg(**svg_opts) do
-            html.empty_tag :use,
+          tag.svg(**svg_opts) do
+            tag.empty_tag :use,
               "xlink:href": "/assets/vendor/bootstrap-icons.svg##{name}"
           end
         end

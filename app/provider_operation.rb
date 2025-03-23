@@ -14,7 +14,6 @@ module Yuzakan
     include Deps[
       "adapters",
       "cache_store",
-      "repos.adapter_param_repo",
       "repos.attr_mapping_repo",
       "repos.provider_repo",
   ]
@@ -57,15 +56,8 @@ module Yuzakan
       adapter_class = adapters[provider.adapter]
       return Failure([:not_found, "adapter"]) if adapter_class.nil?
 
-      adapter_params =
-        if provider.respond_to?(:adapter_params)
-          provider.adapter_params
-        else
-          adapter_param_repo.all_by_provider(provider)
-        end
-
       begin
-        adapter = adapter_class.new(adapter_params, group: provider.group,
+        adapter = adapter_class.new(provider.params, group: provider.group,
           logger: logger)
         Success(adapter)
       rescue => e

@@ -36,15 +36,15 @@ module Yuzakan
       end
 
       def primary_group
-        members&.find(&:primary)&.group
+        group
       end
 
       def supplementary_groups
-        members&.reject(&:primary)&.map(&:group)
+        member_groups
       end
 
       def groups
-        members&.map(&:group)
+        [group, *member_groups].compact.uniq
       end
     end
   end

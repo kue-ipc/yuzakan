@@ -19,7 +19,7 @@ module API
             optional(:display_name).maybe(:str?, max_size?: 255)
             optional(:note).maybe(:str?, max_size?: 4096)
 
-            optional(:primary).filled(:bool?)
+            optional(:basic).filled(:bool?)
             optional(:prohibited).filled(:bool?)
 
             optional(:deleted).filled(:bool?)
@@ -35,10 +35,10 @@ module API
           @group_repository ||= group_repository
         end
 
-        def handle(_request, _response)
+        def handle(_req, _res)
           if params[:name] && @group.name != params[:name]
             halt_json 422, errors: {
-              name: I18n.t("errors.unchangeable", name: I18n.t("attributes.group.name")),
+              name: t.call("errors.unchangeable", name: t.call("attributes.group.name")),
             }
           end
 

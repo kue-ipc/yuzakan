@@ -6,7 +6,7 @@ module Yuzakan
       class Browser < Yuzakan::Action
         security_level 0
 
-        def handle(request, response)
+        def handle(req, res)
         end
       end
     end

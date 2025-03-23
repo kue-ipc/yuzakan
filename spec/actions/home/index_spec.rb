@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe Yuzakan::Actions::Home::Index do
-  let(:params) { {} }
+  init_action_spec
 
-  it "works" do
+  it "is successful" do
     response = subject.call(params)
     expect(response).to be_successful
   end

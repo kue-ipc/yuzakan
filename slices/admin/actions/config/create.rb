@@ -44,11 +44,11 @@ module Admin
           @member_repository ||= member_repository
         end
 
-        def handle(_request, _response)
+        def handle(_req, _res)
           flash[:errors] ||= []
 
           if configurated?
-            flash[:errors] << I18n.t("errors.already_initialized")
+            flash[:errors] << t.call("errors.already_initialized")
             redirect_to Web.routes.path(:root)
           end
 

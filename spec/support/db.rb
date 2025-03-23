@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "db/cleaning"
+
 # Tag feature spec examples as `:db`
 #
 # See support/db/cleaning.rb for how the database is cleaned around these `:db` examples.

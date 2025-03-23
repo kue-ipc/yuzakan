@@ -12,19 +12,16 @@ module Yuzakan
       def find(id) = auth_logs.by_pk(id).one
       def first = auth_logs.first
       def last = auth_logs.last
-      def clear = auth_logs.clear
+      def clear = auth_logs.delete
 
-      # TODO: 未整理
-
-      def by_username(username)
-        auth_logs.where(username: username)
-      end
-
-      def recent_by_username(username, ago)
-        by_username(username)
-          .where(result: ["success", "failure", "recover"])
-          .where { created_at >= Time.now - ago }
-          .order { created_at.desc }
+      def recent(user, period: nil, limit: 0, includes: nil, excludes: nil)
+        logs = auth_logs.by_user(user)
+        period = Time.now - period if period.is_a?(Numeric)
+        logs = logs.where { created_at >= period } if period
+        logs = logs.where(result: includes) if includes
+        logs = logs.exclude(result: excludes) if excludes
+        logs = logs.limit(limit) if limit.positive?
+        logs.order { created_at.desc }
       end
     end
   end

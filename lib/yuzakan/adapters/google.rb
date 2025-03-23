@@ -61,21 +61,21 @@ module Yuzakan
 
       def check
         query = "email=#{@params[:account]}"
-        response = service.list_users(domain: @params[:domain], query: query)
-        response.users.size == 1
+        res = service.list_users(domain: @params[:domain], query: query)
+        res.users.size == 1
       end
 
       def user_create(username, password = nil, **userdata)
         user = specialize_user(userdata.merge(username: username))
         # set a password
         set_password(user, password)
-        response = service.insert_user(user)
+        res = service.insert_user(user)
         if ["/教員", "/職員"].include?(user.org_unit_path)
           member = Google::Apis::AdminDirectoryV1::Member.new(email: user.primary_email)
           service.insert_member("classroom_teachers@#{@params[:domain]}",
             member)
         end
-        normalize_user(response)
+        normalize_user(res)
       end
 
       def user_read(username)
@@ -152,15 +152,15 @@ module Yuzakan
         next_page_token = nil
         # 最大でも20回で10,000ユーザーしか取得できない
         20.times do
-          response = service.list_users(domain: @params[:domain],
+          res = service.list_users(domain: @params[:domain],
             max_results: 500,
             page_token: next_page_token)
-          users.concat(response.users
+          users.concat(res.users
             .map(&:primary_email)
             .map { |email| email.split("@", 2) }
             .select { |_name, domain| domain == @params[:domain] }
             .map(&:first))
-          next_page_token = response.next_page_token
+          next_page_token = res.next_page_token
           break unless next_page_token
         end
         users
@@ -176,16 +176,16 @@ module Yuzakan
         next_page_token = nil
         # 最大でも20回で10,000ユーザーしか取得できない
         20.times do
-          response = service.list_users(domain: @params[:domain],
+          res = service.list_users(domain: @params[:domain],
             max_results: 500,
             query: query_str,
             page_token: next_page_token)
-          users.concat(response.users
+          users.concat(res.users
             .map(&:primary_email)
             .map { |email| email.split("@", 2) }
             .select { |_name, domain| domain == @params[:domain] }
             .map(&:first))
-          next_page_token = response.next_page_token
+          next_page_token = res.next_page_token
           break unless next_page_token
         end
         users

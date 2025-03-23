@@ -18,34 +18,34 @@ module API
           required(:password).filled(:string, max_size?: 255)
         end
 
-        def handle(request, response)
-          unless request.params.valid?
+        def handle(req, res)
+          unless req.params.valid?
             halt_json 422, errors: [only_first_errors(params.errors)]
           end
-          username = request.params[:username]
-          password = request.params[:password]
+          username = req.params[:username]
+          password = req.params[:password]
 
-          if response[:current_user]
+          if res[:current_user]
             # do nothing
             redirect_to_json routes.path(:session), status: 303
           end
 
           auth_log_params = {
-            uuid: response[:current_uuid],
-            client: request.ip,
-            username: username,
+            uuid: res[:current_uuid],
+            client: req.ip,
+            user: username,
           }
 
-          unless response[:current_network].trusted
+          unless res[:current_network].trusted
             auth_log_repo.create(**auth_log_params, result: "reject")
-            halt_json 403, errors: [I18n.t("session.errors.deny_network")]
+            halt_json 403, errors: [t.call("session.errors.deny_network")]
           end
 
-          # TODO: パラメーターとして設定できるようにする
-          # 600秒の間に5回以上失敗した場合、拒否する。
-          if count_failure(username, 600) >= 5
+          if failures_over?(username,
+            count: req["current_config"].session_failure_limit,
+            period: req["current_config"].session_failure_duration)
             auth_log_repo.create(**auth_log_params, result: "reject")
-            halt_json 403, errors: [I18n.t("session.errors.too_many_failure")]
+            halt_json 403, errors: [t.call("session.errors.too_many_failure")]
           end
 
           case authenticate.call(username, password)
@@ -79,44 +79,46 @@ module API
           # 使用禁止を確認
           if user.prohibited
             auth_log_repo.create(**auth_log_params, result: "prohibited")
-            halt_json 403, errors: [I18n.t("session.errors.prohibited")]
+            halt_json 403, errors: [t.call("session.errors.prohibited")]
           end
 
           # クリアランスレベルを確認
           if user.clearance_level.zero?
             auth_log_repo.create(**auth_log_params, result: "no_clearance")
-            halt_json 403, errors: [I18n.t("session.errors.no_clearance")]
+            halt_json 403, errors: [t.call("session.errors.no_clearance")]
           end
 
           # セッション情報を保存
-          session[:user_id] = user.id
-          session[:created_at] = current_time
-          session[:updated_at] = current_time
+          res.session[:user] = user.name
+          res.session[:created_at] = res[:current_time]
+          res.session[:updated_at] = res[:current_time]
 
           auth_log_repo.create(**auth_log_params, result: "success",
             provider: provider.name)
-          response.status = :created
-          response.body = generate_json({
-            uuid: session[:uuid],
+          res.status = :created
+          res.body = generate_json({
+            uuid: res.session[:uuid],
             current_user: user,
-            created_at: current_time,
-            updated_at: current_time,
-            deleted_at: current_time + current_config.session_timeout,
+            created_at: res[:current_time],
+            updated_at: res[:current_time],
           })
         end
 
-        private def count_failure(usarname, time)
-          failure_count = 0
-          auth_log_repo.recent_by_username(username, time)
-            .each do |auth_log|
+        private def failures_over?(username, count:, period:)
+          count = count.to_i
+          auth_log_repo.recent(username, period:, limit: count,
+            includes: ["success", "failure", "recover"]).each do |auth_log|
             case auth_log.result
-            when "success", "recover"
-              break
-            when "failure"
-              failure_count += 1
+            in "success" | "recover"
+              return false
+            in "failure"
+              count -= 1
+            else
+              # do nothing
             end
           end
-          failure_count
+
+          !count.positive?
         end
       end
     end

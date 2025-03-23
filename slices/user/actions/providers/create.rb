@@ -17,7 +17,7 @@ module User
         expose :user
         expose :password
 
-        def handle(_request, _response)
+        def handle(_req, _res)
           unless params.get(:agreement)
             flash[:failure] = "同意がありません。"
             redirect_to routes.path(:google)

@@ -9,11 +9,11 @@ module Admin
         expose :config
         expose :admin_user
 
-        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
           flash[:errors] ||= []
 
           if configurated?
-            flash[:errors] << I18n.t("errors.already_initialized")
+            flash[:errors] << t.call("errors.already_initialized")
             redirect_to Web.routes.path(:root)
           end
 

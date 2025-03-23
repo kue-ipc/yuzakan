@@ -6,7 +6,7 @@ module User
       class Edit < User::Action
         expose :excluded_providers
 
-        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
           @excluded_providers = ProviderRepository.new.all_individual_password
         end
       end

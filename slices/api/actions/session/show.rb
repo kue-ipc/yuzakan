@@ -6,7 +6,7 @@ module API
       class Show < API::Action
         security_level 0
 
-        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
           halt_json 404 unless current_user
 
           self.body = generate_json({
@@ -15,7 +15,6 @@ module API
             current_level: current_level,
             created_at: session[:created_at],
             updated_at: session[:updated_at],
-            deleted_at: session[:updated_at] + current_config.session_timeout,
           })
         end
       end
