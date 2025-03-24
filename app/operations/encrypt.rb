@@ -1,52 +1,37 @@
 # frozen_string_literal: true
 
-require "hanami/interactor"
-require "hanami/validations"
-
-require_relative "../utils/pb_crypt"
-
 module Yuzakan
   module Operations
-    class Encrypt < Yuzakan::Operation
-      include Hanami::Interactor
-
-      class Validator
-        include Hanami::Validations
-        messages_path "config/messages.yml"
-
-        validations do
-          required(:data) { str? }
+    class Encrypt < Yuzakan::CryptOperation
+      def call(decrypted_data, bin: false)
+        encrypted_data = step encrypt(decrypted_data)
+        unless bin
+          encrypted_data =
+            step encode64(encrypted_data, encoding: decrypted_data.encoding)
         end
+        encrypted_data
       end
 
-      expose :encrypted
+      def encrypt(decrypted_data)
+        salt = generate_salt
 
-      def initialize(password: ENV.fetch("DB_SECRET"), max: 0, text: false)
-        @pb_crypt = Yuzakan::Utils::PbCrypt.new(password)
-        @max = max
-        @text = text
+        enc = OpenSSL::Cipher.new(crypt_algorithm)
+        enc.encrypt
+
+        key, iv = generate_key_iv(enc, salt)
+        enc.key = key
+        enc.iv = iv
+
+        encrypted_data = String.new(encoding: Encoding::ASCII_8BIT)
+        encrypted_data << enc.update(decrypted_data)
+        encrypted_data << enc.final
+        Success(salt + encrypted_data)
       end
 
-      def call(params)
-        @encrypted =
-          if @text
-            @pb_crypt.encrypt_text(params[:data])
-          else
-            @pb_crypt.encrypt(params[:data])
-          end
-
-        error!("暗号化できるサイズを超えました。") if @max.positive? && @encrypted.size > @max
-      end
-
-      private def valid?(params)
-        result = Validator.new(params).validate
-        if result.failure?
-          logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
-          error(result.messages)
-          return false
-        end
-
-        true
+      def encode64(data, encoding: Encoding::UTF_8)
+        Success(Base64.strict_encode64(data).encode(encoding))
+      rescue => e
+        Failuer([:error, e])
       end
     end
   end

@@ -1,54 +1,34 @@
 # frozen_string_literal: true
 
-require "hanami/interactor"
-require "hanami/validations"
-
-require_relative "../utils/pb_crypt"
-
 module Yuzakan
   module Operations
-    class Decrypt < Yuzakan::Operation
-      include Hanami::Interactor
-
-      class Validator
-        include Hanami::Validations
-        messages_path "config/messages.yml"
-
-        validations do
-          required(:encrypted) { str? }
-        end
+    class Decrypt < Yuzakan::CryptOperation
+      def call(encrypted_data, bin: false)
+        encrypted_data = step decode64(encrypted_data) unless bin
+        step decrypt(encrypted_data)
       end
 
-      expose :data
-
-      def initialize(password: ENV.fetch("DB_SECRET"), text: false,
-        encoding: Encoding::UTF_8)
-        @pb_crypt = Yuzakan::Utils::PbCrypt.new(password)
-        @text = text
-        @encoding = encoding
+      def decode64(str)
+        Success(Base64.strict_decode64(str))
+      rescue => e
+        Failuer([:error, e])
       end
 
-      def call(params)
-        @data =
-          if @text
-            @pb_crypt.decrypt_text(params[:encrypted], encoding: @encoding)
-          else
-            @pb_crypt.decrypt(params[:encrypted])
-          end
-      rescue OpenSSL::Cipher::CipherError
-        @data = nil
-        error!("復号化に失敗しました。")
-      end
+      def decrypt(salt_encrypted_data)
+        dec = OpenSSL::Cipher.new(crypt_algorithm)
+        dec.decrypt
+        salt, encrypted_data = split_by_index(salt_encrypted_data, crypt_salt_size)
 
-      private def valid?(params)
-        result = Validator.new(params).validate
-        if result.failure?
-          logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
-          error(result.messages)
-          return false
-        end
+        key, iv = generate_key_iv(dec, salt)
+        dec.key = key
+        dec.iv = iv
 
-        true
+        data = String.new(encoding: Encoding::ASCII_8BIT)
+        data << dec.update(encrypted_data)
+        data << dec.final
+        Success(data)
+      rescue => e
+        Failuer([:error, e])
       end
     end
   end

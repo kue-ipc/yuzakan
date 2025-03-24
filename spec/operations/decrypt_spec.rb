@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Decrypt do
+RSpec.describe Yuzakan::Operations::Decrypt do
   let(:interactor) { described_class.new(**params) }
   let(:params) { {text: true} }
   let(:encrypted) {
