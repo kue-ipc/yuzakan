@@ -2,7 +2,7 @@
 
 # Userレポジトリからの解除
 module Yuzakan
-  module Mgmt
+  module Management
     class UnregisterUser < Yuzakan::Operation
       include Deps[
         "repos.user_repo",

@@ -68,8 +68,8 @@ if user_providers["local"].nil?
       groups: []) in Success(_)
 end
 
-Hanami.app["mgmt.sync_group"].call(admin_groupname) => Success(admin_group)
-Hanami.app["mgmt.sync_user"].call(admin_username) => Success(admin_user)
+Hanami.app["management.sync_group"].call(admin_groupname) => Success(admin_group)
+Hanami.app["management.sync_user"].call(admin_username) => Success(admin_user)
 
 if admin_user.clearance_level < 5
   Hanami.app["repos.user_repo"].set(admin_username, clearance_level: 5)

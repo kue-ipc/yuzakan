@@ -2,7 +2,7 @@
 
 # Groupレポジトリからの解除
 module Yuzakan
-  module Mgmt
+  module Management
     class UnregisterGroup < Yuzakan::Operation
       include Deps[
         "repos.group_repo",

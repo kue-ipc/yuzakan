@@ -2,13 +2,13 @@
 
 # Userレポジトリへの登録または更新
 module Yuzakan
-  module Mgmt
+  module Management
     class RegisterUser < Yuzakan::Operation
       include Deps[
         "repos.user_repo",
         "repos.group_repo",
         "repos.member_repo",
-        "mgmt.sync_group",
+        "management.sync_group",
       ]
 
       def call(username, params)

@@ -2,12 +2,12 @@
 
 # Groupレポジトリと各プロバイダーのグループ情報を同期し、グループを返す。
 module Yuzakan
-  module Mgmt
+  module Management
     class SyncGroup < Yuzakan::Operation
       include Deps[
         "providers.read_group",
-        "mgmt.register_group",
-        "mgmt.unregister_group",
+        "management.register_group",
+        "management.unregister_group",
       ]
 
       def call(groupname)

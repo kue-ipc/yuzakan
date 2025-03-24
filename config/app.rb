@@ -36,7 +36,7 @@ module Yuzakan
     config.shared_app_component_keys += [
       "repos.auth_log_repo",
       "repos.user_repo",
-      "mgmt.sync_user",
+      "management.sync_user",
       "providers.authenticate",
     ]
   end

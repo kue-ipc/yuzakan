@@ -2,7 +2,7 @@
 
 # Groupレポジトリへの登録または更新
 module Yuzakan
-  module Mgmt
+  module Management
     class RegisterGroup < Yuzakan::Operation
       include Deps[
         "repos.group_repo",

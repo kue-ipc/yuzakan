@@ -2,12 +2,12 @@
 
 # Userレポジトリと各プロバイダーのユーザー情報を同期し、ユーザーを返す。
 module Yuzakan
-  module Mgmt
+  module Management
     class SyncUser < Yuzakan::Operation
       include Deps[
         "providers.read_user",
-        "mgmt.register_user",
-        "mgmt.unregister_user",
+        "management.register_user",
+        "management.unregister_user",
       ]
 
       def call(username)

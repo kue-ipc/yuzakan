@@ -7,7 +7,7 @@ module API
         include Deps[
           "repos.auth_log_repo",
           "repos.user_repo",
-          "mgmt.sync_user",
+          "management.sync_user",
           "providers.authenticate",
         ]
 
