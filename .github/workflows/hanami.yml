@@ -38,7 +38,7 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
-      - name: Set up  Node.js ${{ matrix.node-version }}
+      - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
@@ -47,7 +47,14 @@ jobs:
         env:
           HANAMI_ENV: test
           DATABASE_URL: "postgres://yuzakan:password@localhost/yuzakan_test"
-      - name: Run tests
+      - name: Compile assets
+        run: bundle exec hanami assets compile
+        env:
+          HANAMI_ENV: test
+          DATABASE_URL: "postgres://yuzakan:password@localhost/yuzakan_test"
+      - name: Run spec tests
         run: bundle exec rake spec
         env:
           DATABASE_URL: "postgres://yuzakan:password@localhost/yuzakan_test"
+      - name: Run js tests
+        run: bundle exec rake js:test
