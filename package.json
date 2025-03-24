@@ -6,7 +6,7 @@
     "test": "mocha"
   },
   "dependencies": {
-    "@danielx/civet": "^0.9.7",
+    "@danielx/civet": "^0.10.1",
     "@hyperapp/dom": "^1.0.0",
     "@hyperapp/events": "^2.0.0",
     "@hyperapp/html": "^2.0.0",
@@ -19,7 +19,7 @@
     "esbuild-sass-plugin": "^3.3.1",
     "file-saver": "^2.0.5",
     "firacode": "^6.2.0",
-    "hanami-assets": "^2.2.1",
+    "hanami-assets": "^2.2.2",
     "highlight.js": "^11.11.1",
     "http-link-header": "^1.1.3",
     "hyperapp": "^2.0.22",
@@ -32,7 +32,7 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "@eslint/js": "^9.22.0",
+    "@eslint/js": "^9.23.0",
     "@types/bootstrap": "^5.2.10",
     "@types/chai": "^5.2.0",
     "@types/http-link-header": "^1.0.7",
@@ -41,11 +41,11 @@
     "@types/pluralize": "^0.0.33",
     "@types/ramda": "^0.30.2",
     "chai": "^5.2.0",
-    "eslint": "^9.22.0",
+    "eslint": "^9.23.0",
     "eslint-plugin-civet": "^0.0.6",
     "mocha": "^11.1.0",
-    "stylelint": "^16.15.0",
+    "stylelint": "^16.16.0",
     "stylelint-config-recommended-scss": "^14.1.0",
-    "typescript-eslint": "^8.26.1"
+    "typescript-eslint": "^8.27.0"
   }
 }
