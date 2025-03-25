@@ -3,35 +3,18 @@
 module Yuzakan
   module Operations
     class Encrypt < Yuzakan::CryptOperation
-      def call(decrypted_data, bin: false)
-        encrypted_data = step encrypt(decrypted_data)
+      def call(data, bin: false)
+        cipher = step create_cipher(:encrypt)
+        iv = step generate_iv(cipher)
+        salt = step generate_salt
+        key = step create_key(cipher, salt)
+        encrypted_data = step crypt(data, cipher, iv:, key:)
+        joined_data = step join_data(encrypted_data, salt, iv)
         unless bin
-          encrypted_data =
-            step encode64(encrypted_data, encoding: decrypted_data.encoding)
+          joined_data = step bit2txt(joined_data)
+          joined_data = step encode(joined_data, data.encoding)
         end
-        encrypted_data
-      end
-
-      def encrypt(decrypted_data)
-        salt = generate_salt
-
-        enc = OpenSSL::Cipher.new(crypt_algorithm)
-        enc.encrypt
-
-        key, iv = generate_key_iv(enc, salt)
-        enc.key = key
-        enc.iv = iv
-
-        encrypted_data = String.new(encoding: Encoding::ASCII_8BIT)
-        encrypted_data << enc.update(decrypted_data)
-        encrypted_data << enc.final
-        Success(salt + encrypted_data)
-      end
-
-      def encode64(data, encoding: Encoding::UTF_8)
-        Success(Base64.strict_encode64(data).encode(encoding))
-      rescue => e
-        Failuer([:error, e])
+        joined_data
       end
     end
   end
