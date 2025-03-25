@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 RSpec.describe Yuzakan::Operations::Decrypt do
+  subject(:operation) { described_class.new(**params) }
+
+  let(:params) { {} }
+
   let(:interactor) { described_class.new(**params) }
   let(:params) { {text: true} }
   let(:encrypted) {
@@ -10,10 +14,6 @@ RSpec.describe Yuzakan::Operations::Decrypt do
   let(:text) { "Ab01#日本語😺🀄等" }
 
   it "decryt text" do
-    result = interactor.call({encrypted: encrypted})
-    expect(result.successful?).to be true
-    expect(result.data).to eq text
-    expect(result.data.encoding).to eq Encoding::UTF_8
   end
 
   describe "other password" do

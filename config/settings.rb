@@ -15,7 +15,8 @@ module Yuzakan
 
     # Deafult parameters are OWASP compliant.
     setting :crypt_secret, constructor: Types::String
-    setting :crypt_algorithm, constructor: Types::String, default: "aes-256-gcm"
+    # setting :crypt_algorithm, constructor: Types::String, default: "aes-256-gcm"
+    setting :crypt_algorithm, constructor: Types::String, default: "aes-256-cbc"
     setting :crypt_salt_size, constructor: Types::Params::Integer, default: 16
     setting :crypt_kdf, constructor: Types::String, default: "scrypt"
     setting :crypt_cost, constructor: Types::Params::Integer, default: 2**17

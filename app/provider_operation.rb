@@ -126,7 +126,7 @@ module Yuzakan
         keys = [:display_name]
         Success(Yuzakan::Adapter::GroupData.new(**params.slice(*keys), attrs:))
       else
-        Failuer([:unknown, "category"])
+        Failure([:unknown, "category"])
       end
     end
 

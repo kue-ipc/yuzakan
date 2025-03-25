@@ -30,15 +30,17 @@ module Yuzakan
     ]
 
     private def crypt(input, cipher, iv: nil, key: nil)
+      Hanami.app["logger"].warn("crypt check in", input:, cipher:, iv:, key:)
       cipher.iv = iv if iv
       cipher.key = key if key
 
       output = String.new(encoding: Encoding::ASCII_8BIT)
       output << cipher.update(input)
       output << cipher.final
+      Hanami.app["logger"].warn("crypt check out", output:)
       Success(output)
     rescue => e
-      Failuer([:error, e])
+      Failure([:error, e])
     end
 
     private def create_cipher(mode)
@@ -47,7 +49,7 @@ module Yuzakan
       in :encrypt
         cipher.encrypt
       in :decrypt
-        cipher.decrytp
+        cipher.decrypt
       else
         raise ArgumentError, "mode must be :encrypt or :decrpt, but #{mode}"
       end
@@ -57,10 +59,11 @@ module Yuzakan
     end
 
     private def create_key(cipher, salt)
+      pass = settings.crypt_secret
       length = cipher.key_len
       case settings.crypt_kdf.downcase.split(/-|_/)
       in ["pbkdf2", "hmac", hash]
-        Succss(OpenSSL::KDF.pbkdf2_hmac(pass, salt:, length:,
+        Success(OpenSSL::KDF.pbkdf2_hmac(pass, salt:, length:,
           hash:, iterations: settings.crypt_cost))
       in ["scrypt"]
         Success(OpenSSL::KDF.scrypt(pass, salt:, length:,
@@ -80,7 +83,7 @@ module Yuzakan
     end
 
     private def generate_salt
-      generate_random(settings.salt_size)
+      generate_random(settings.crypt_salt_size)
     end
 
     private def generate_random(size)
@@ -103,7 +106,7 @@ module Yuzakan
       ])
     end
 
-    def encode(data, encoding)
+    private def encode(data, encoding)
       str = data.force_encoding(encoding)
       if str.valid_encoding?
         Success(str)
@@ -112,16 +115,16 @@ module Yuzakan
       end
     end
 
-    def bin2txt(data)
+    private def bin2txt(data)
       Success(Base64.strict_encode64(data))
     rescue => e
-      Failuer([:error, e])
+      Failure([:error, e])
     end
 
-    def txt2bin(str)
+    private def txt2bin(str)
       Success(Base64.strict_decode64(str))
     rescue => e
-      Failuer([:error, e])
+      Failure([:error, e])
     end
   end
 end
