@@ -1,8 +1,6 @@
 # auto_register: false
 # frozen_string_literal: true
 
-require "dry/operation"
-
 module Yuzakan
   class ProviderOperation < Yuzakan::Operation
     def self.category(name)
