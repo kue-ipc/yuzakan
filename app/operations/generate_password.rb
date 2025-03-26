@@ -1,63 +1,73 @@
 # frozen_string_literal: true
 
-require "hanami/interactor"
-require "hanami/validations"
+require "securerandom"
 
 module Yuzakan
   module Operations
     class GeneratePassword < Yuzakan::Operation
-      include Hanami::Interactor
+      include Deps[
+        "repo.config_repo"
+      ]
+      def call
+        config = step current_config
+        rule = step rule_from_config(config)
+        step generate_password(rule)
+      end
 
-      class Validator
-        include Hanami::Validations
-        predicates NamePredicates
-        messages :i18n
-
-        validations do
-          optional(:size).maybe(:int?, gteq?: 1, lteq?: 255)
-          optional(:type).maybe(:str?, max_size?: 255)
-          optional(:chars).maybe(:str?, max_size?: 255)
+      private def current_config
+        config = config_repo.current
+        if config
+          Success(config)
+        else
+          Failure([:failure, "uninitialized"])
         end
       end
 
-      expose :password
-
-      def initialize(config_repository: ConfigRepository.new)
-        @config_repository = config_repository
+      private def rule_from_config(config)
+        Success({
+          size: config.generate_password_size,
+          type: config.generate_password_type,
+          chars: config.generate_password_chars,
+        })
       end
 
-      def call(params)
-        current_config = @config_repository.current
-        size = params[:size] || current_config.generate_password_size
-        type = params[:type] || current_config.generate_password_type
-        chars = params[:chars] || current_config.generate_password_chars
+      private def generate_password(rule)
+        char_list = charlist_from_rule(rule).value_or { return Failure(_1) }
+        return Failure([:invald, "char list is empty"]) if char_list.empty?
 
-        char_list =
-          case type.intern
-          when :alphanumeric
-            ["0".."9", "A".."Z", "a".."z"].flat_map(&:to_a) - chars.chars
-          when :ascii
-            ("\x20".."\x7e").to_a - chars.chars
-          when :custom
-            chars.chars
-          else
-            []
-          end.uniq
-
-        @password = size.times.map do
+        password = rule[:size].times.map do
           char_list[SecureRandom.random_number(char_list.size)]
         end.join
+        Success(password)
+      rescue NotImplementedError => e
+        Failure([:error, e])
       end
 
-      private def valid?(params)
-        result = Validator.new(params).validate
-        if result.failure?
-          logger.error "[#{self.class.name}] Validation failed: #{result.messages}"
-          error(result.messages)
-          return false
-        end
-
-        true
+      private def charlist_from_rule(rule)
+        chars =
+          case rule[:type]
+          in "ascii"
+            ("\x20".."\x7e").to_a
+          in "alphanumeric"
+            ["0".."9", "A".."Z", "a".."z"].flat_map(&:to_a)
+          in "letter"
+            ["A".."Z", "a".."z"].flat_map(&:to_a)
+          in "upper_letter"
+            ("A".."Z").to_a
+          in "lower_letter"
+            ("a".."z").to_a
+          in "digit"
+            ("0".."9").to_a
+          in "hex"
+            ["0".."9", "a".."f"].flat_map(&:to_a)
+          in "custom"
+            nil
+          else
+            return Failure(
+              [:error, RandomError.new("unknown type (#{rule[:type]})")])
+          end
+        chars = chars&.difference(rule[:chars].chars) || rule[:chars].chars
+        Success(chars.uniq)
       end
     end
   end

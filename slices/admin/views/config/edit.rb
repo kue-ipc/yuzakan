@@ -25,11 +25,19 @@ module Admin
         end
 
         def generate_password_types
-          {
-            "英数字" => "alphanumeric",
-            "ASCII" => "ascii",
-            "カスタム" => "custom",
-          }
+          [
+            "alphanumeric",
+            "ascii",
+            "custom",
+            "letter",
+            "upper_letter",
+            "lower_letter",
+            "digit",
+            "upper_hex",
+            "lower_hex",
+          ].to_h do |name|
+            [t("enums.generate_password_types.#{name}"), name]
+          end
         end
       end
     end

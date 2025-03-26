@@ -160,6 +160,16 @@ ja:
       display_name: 表示名
     attr:
       name: 属性名
+  enums:
+    generate_password_types:
+      ascii: ASCII
+      alphanumeric: 英数字
+      letter: 英字
+      upper_letter: 英大文字
+      lower_letter: 英小文字
+      digit: 数字
+      hex: 16進文字列
+      custom: カスタム
   statuses:
     # 成功失敗
     success: 成功
