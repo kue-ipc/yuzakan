@@ -24,26 +24,28 @@ module Yuzakan
     private def call_providers(provider_names = nil, operation: :check)
       @changed = false
       @providers = get_providers(provider_names,
-        operation: operation).to_h do |provider|
-        data = yield provider
-        @changed = true if data
-        [provider.name, data]
-      rescue => e
-        logger.error "[#{self.class.name}] Failed on #{provider.name}"
-        logger.error e
-        error(t.call("errors.action.error",
-          action: t.call(
-            Hanami::Utils::String.underscore(self.class.name), scope: "interactors"),
-          target: provider.label))
-        error(e.message)
-        if @changed
-          error(t.call("errors.action.stopped_after_some",
+        operation: operation).to_h { |provider|
+        begin
+          data = yield provider
+          @changed = true if data
+          [provider.name, data]
+        rescue => e
+          logger.error "[#{self.class.name}] Failed on #{provider.name}"
+          logger.error e
+          error(t.call("errors.action.error",
             action: t.call(
               Hanami::Utils::String.underscore(self.class.name), scope: "interactors"),
-            target: t.call("entities.provider")))
+            target: provider.label))
+          error(e.message)
+          if @changed
+            error(t.call("errors.action.stopped_after_some",
+              action: t.call(
+                Hanami::Utils::String.underscore(self.class.name), scope: "interactors"),
+              target: t.call("entities.provider")))
+          end
+          fail!
         end
-        fail!
-      end
+      }
     end
 
     private def valid?(params)

@@ -10,15 +10,15 @@ module Yuzakan
         providers = step get_providers(providers, operation: :user_read)
 
         # TODO: 途中で失敗した場合の処理
-        providers.to_h do |provider|
+        providers.to_h { |provider|
           result =
-            cache_fetch(provider, username) do
+            cache_fetch(provider, username) {
               adapter = step get_adapter(provider)
               userdata = adapter.user_read(username)
               step convert_data(provider, userdata)
-            end
+            }
           [provider.name, result]
-        end.compact
+        }.compact
       end
     end
   end

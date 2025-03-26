@@ -173,7 +173,7 @@ module API
             routes.path(:groups, **params.to_h, **link_params)
           end
 
-          groups = get_groups(pager.page_items).map do |group|
+          groups = get_groups(pager.page_items).map { |group|
             # プロバイダーから削除しされているが、レポジトリ―では残っている場合は同期する。
             if !group.deleted && !groups_providers.key?(group.name)
               group = get_sync_group(group.name)
@@ -182,7 +182,7 @@ module API
               **convert_for_json(group),
               providers: groups_providers[group.name] || [],
             }
-          end
+          }
 
           {
             groups: groups,
@@ -191,9 +191,9 @@ module API
         end
 
         private def get_groups(groupnames)
-          group_entities = @group_repository.all_by_name(groupnames).to_h do |group|
+          group_entities = @group_repository.all_by_name(groupnames).to_h { |group|
             [group.name, group]
-          end
+          }
           groupnames.map do |groupname|
             group_entities[groupname] || get_sync_group(groupname)
           end

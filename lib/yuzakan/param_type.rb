@@ -56,13 +56,13 @@ module Yuzakan
       @encrypted = encrypted
 
       @input = input || TYPE_INPUTS.fetch(type)
-      @list = list&.map do |item|
+      @list = list&.map { |item|
         if item.is_a?(ParamType::ListItem)
           item
         else
           ParamType::ListItem.new(**item)
         end
-      end
+      }
       @required =
         if required.nil?
           default.nil?

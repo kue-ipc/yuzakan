@@ -34,12 +34,12 @@ module API
 
     # override handle
 
-    def handle_standard_error(req, res, exception)
+    def handle_standard_error(_req, _res, exception)
       logger.error exception
       halt_json 500
     end
 
-    def handle_invalid_csrf_token(req, res)
+    def handle_invalid_csrf_token(req, _res)
       logger.warn "CSRF attack", expected: req.session[CSRF_TOKEN],
         was: req.params.raw[CSRF_TOKEN.to_s]
       halt_json 400, errors: [t.call("errors.invalid_csrf_token")]

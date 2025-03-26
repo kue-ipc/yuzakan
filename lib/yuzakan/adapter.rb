@@ -65,20 +65,20 @@ module Yuzakan
     end
 
     UserData = Data.define(:name, :primary_group, :groups,
-      :display_name, :email, :locked, :unmanageable, :mfa, :attrs) do
+      :display_name, :email, :locked, :unmanageable, :mfa, :attrs) {
       def initialize(name: nil, primary_group: nil, groups: [],
         display_name: nil, email: nil,
         locked: false, unmanageable: false, mfa: false, attrs: {})
         super
       end
-    end
+    }
 
-    GroupData = Data.define(:name, :display_name, :unmanageable, :attrs) do
+    GroupData = Data.define(:name, :display_name, :unmanageable, :attrs) {
       def initialize(name: nil, display_name: nil, unmanageable: false,
         attrs: {})
         super
       end
-    end
+    }
 
     class << self
       attr_accessor :name, :display_name, :version, :params
@@ -128,9 +128,9 @@ module Yuzakan
       end
 
       def param_types
-        @param_types ||= params&.map do |data|
+        @param_types ||= params&.map { |data|
           ParamType.new(**data)
-        end
+        }
       end
 
       def param_type_by_name(name)
@@ -138,9 +138,9 @@ module Yuzakan
       end
 
       def param_types_map
-        @param_types_map ||= param_types&.to_h do |type|
+        @param_types_map ||= param_types&.to_h { |type|
           [type.name, type]
-        end
+        }
       end
 
       def normalize_params(params)

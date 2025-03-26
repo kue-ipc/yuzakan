@@ -69,7 +69,7 @@ module Admin
             },
           ].freeze
         def menu_items
-          MENU_ITEMS.map do |menu|
+          MENU_ITEMS.map { |menu|
             next {} if menu.empty?
             next if menu[:level] > current_level
 
@@ -81,7 +81,7 @@ module Admin
             }.merge(if menu[:filename] then {type: :download,
                                              filename: menu[:filename],} else
                                                                            {} end)
-          end.compact
+          }.compact
         end
       end
     end

@@ -172,7 +172,7 @@ module API
             routes.path(:users, **params.to_h, **link_params)
           end
 
-          users = get_users(pager.page_items).map do |user|
+          users = get_users(pager.page_items).map { |user|
             # プロバイダーから削除しされているが、レポジトリ―では残っている場合は同期する。
             if !user.deleted && !users_providers.key?(user.name)
               user = get_sync_user(user.name)
@@ -181,7 +181,7 @@ module API
               **convert_for_json(user, assoc: true),
               providers: users_providers[user.name],
             }
-          end
+          }
 
           {
             users: users,
@@ -190,9 +190,9 @@ module API
         end
 
         private def get_users(usernames)
-          user_entities = @user_repository.all_with_groups_by_name(usernames).to_h do |user|
+          user_entities = @user_repository.all_with_groups_by_name(usernames).to_h { |user|
             [user.name, user]
-          end
+          }
           usernames.map do |username|
             user_entities[username] || get_sync_user(username)
           end

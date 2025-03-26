@@ -32,22 +32,24 @@ module Yuzakan
         password = params[:password]
 
         @changed = false
-        @providers = get_providers(params[:providers]).to_h do |provider|
-          data = provider.user_change_password(username, password)
-          @changed = true if data
-          [provider.name, data]
-        rescue => e
-          logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
-          logger.error e
-          error(t.call("errors.action.error", action: t.call("interactors.provider_change_password"),
-            target: provider.label))
-          error(e.message)
-          if @changed
-            error(t.call("errors.action.stopped_after_some", action: t.call("interactors.provider_change_password"),
-              target: t.call("entities.provider")))
+        @providers = get_providers(params[:providers]).to_h { |provider|
+          begin
+            data = provider.user_change_password(username, password)
+            @changed = true if data
+            [provider.name, data]
+          rescue => e
+            logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
+            logger.error e
+            error(t.call("errors.action.error", action: t.call("interactors.provider_change_password"),
+              target: provider.label))
+            error(e.message)
+            if @changed
+              error(t.call("errors.action.stopped_after_some", action: t.call("interactors.provider_change_password"),
+                target: t.call("entities.provider")))
+            end
+            fail!
           end
-          fail!
-        end
+        }
       end
 
       private def valid?(params)

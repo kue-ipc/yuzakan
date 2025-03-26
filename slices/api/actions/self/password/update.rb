@@ -48,16 +48,16 @@ module API
               end
 
               password_types = [/[0-9]/, /[a-z]/, /[A-Z]/,
-                /[^0-9a-zA-Z]/,].select do |reg|
+                /[^0-9a-zA-Z]/,].select { |reg|
                 reg.match(params[:password])
-              end.size
+              }.size
               if current_config.password_min_types&.> password_types
                 param_errors[:name] ||= []
                 param_errors[:name] << t.call("errors.min_types?",
                   num: current_config.password_min_types)
               end
 
-              dict = (current_config.password_extra_dict) +
+              dict = current_config.password_extra_dict +
                 [
                   current_user.name,
                   current_user.display_name&.split,

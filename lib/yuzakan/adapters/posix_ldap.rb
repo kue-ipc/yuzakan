@@ -284,11 +284,11 @@ module Yuzakan
       end
 
       private def get_memberuid_users(group)
-        group["memberUid"].map do |uid|
+        group["memberUid"].map { |uid|
           filter = Net::LDAP::Filter.eq("uid", uid)
           opts = search_user_opts("*", filter: filter)
           ldap_search(opts).first
-        end.compact
+        }.compact
       end
 
       # NIS互換属性からのetc情報
@@ -302,13 +302,13 @@ module Yuzakan
       end
 
       private def posix_passwds
-        @posix_passwds ||= ldap_search(search_user_opts("*")).map do |user|
+        @posix_passwds ||= ldap_search(search_user_opts("*")).map { |user|
           get_posix_passwd(user)
-        end
+        }
       end
 
       private def get_posix_passwd(user)
-        passwd_args = Etc::Passwd.members.map do |name|
+        passwd_args = Etc::Passwd.members.map { |name|
           case name
           when :name then user.first("uid")
           when :passwd then "x"
@@ -318,18 +318,18 @@ module Yuzakan
           when :dir then user.first("homeDirectory") || ""
           when :shell then user.first("loginShell") || ""
           end
-        end
+        }
         Etc::Passwd.new(*passwd_args)
       end
 
       private def posix_groups
-        @posix_groups ||= ldap_search(search_group_opts("*")).map do |group|
+        @posix_groups ||= ldap_search(search_group_opts("*")).map { |group|
           get_posix_group(group)
-        end
+        }
       end
 
       private def get_posix_group(group)
-        group_args = Etc::Group.members.map do |name|
+        group_args = Etc::Group.members.map { |name|
           case name
           when :name
             group.first("cn")
@@ -340,7 +340,7 @@ module Yuzakan
           when :mem
             group["memberUid"].to_a || []
           end
-        end
+        }
         Etc::Group.new(*group_args)
       end
 

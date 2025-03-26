@@ -43,15 +43,15 @@ module API
       private def convert_struct(struct, assoc: false)
         data = struct.to_h
           .except(:id, :created_at, :updated_at)
-          .reject do |k, v|
+          .reject { |k, v|
             k.end_with?("_id") || v.is_a?(Yuzakan::DB::Struct) || v.is_a?(Array)
-          end
+          }
         case struct
         when Yuzakan::Structs::Attr
           if assoc && struct.mappings
-            mappings = struct.mappings.map do |mapping|
+            mappings = struct.mappings.map { |mapping|
               {**convert_struct(mapping), provider: mapping.provider&.name}
-            end
+            }
             data.merge!({mappings: mappings})
           end
         when Yuzakan::Structs::Provider
@@ -101,9 +101,9 @@ module API
         errors.each do |error|
           if error.is_a?(Hash)
             error = only_first_errors(error)
-            hash = hash_deep_merge(hash, only_first_errors(error)) do |_k, s, o|
+            hash = hash_deep_merge(hash, only_first_errors(error)) { |_k, s, o|
               s + o
-            end
+            }
           else
             list << error
           end

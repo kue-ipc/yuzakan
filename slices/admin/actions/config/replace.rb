@@ -125,9 +125,9 @@ module Admin
         end
 
         def update_providers(provider_datas)
-          existing_providers = @provider_repository.all.to_h do |provider|
+          existing_providers = @provider_repository.all.to_h { |provider|
             [provider.name, provider]
-          end
+          }
 
           provider_datas.each_with_index do |provider_data, idx|
             provider_name = provider_data[:name]
@@ -156,9 +156,9 @@ module Admin
         end
 
         def update_adapter_params(provider, params)
-          existing_params = @adapter_param_repository.all_by_provider(provider).to_h do |param|
+          existing_params = @adapter_param_repository.all_by_provider(provider).to_h { |param|
             [param.name, param]
-          end
+          }
 
           provider.adapter_param_types.each do |param_type|
             param_name = param_type.name
@@ -184,9 +184,9 @@ module Admin
         end
 
         def update_attrs(attr_datas)
-          named_providers = @provider_repository.all.to_h do |provider|
+          named_providers = @provider_repository.all.to_h { |provider|
             [provider.name, provider]
-          end
+          }
           @attr_repository.clear
 
           attr_datas.each_with_index do |attr_data, idx|
@@ -195,12 +195,12 @@ module Admin
 
             data[:attr_mappings] = data[:attr_mappings]
               &.reject { |am_params| am_params[:key].nil? || am_params[:key].empty? }
-              &.map do |am_params|
+              &.map { |am_params|
                 {
                   **am_params.slice(:key, :conversion),
                   provider_id: named_providers[am_params[:provider]].id,
                 }
-              end
+              }
             @attr_repository.create_with_mappings(data)
           end
         rescue

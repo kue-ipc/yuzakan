@@ -122,10 +122,10 @@ module Yuzakan
 
         attr_mappings
           .reject { |mapping| mapping.attr.readonly } # 読み取り専用の属性は除外する
-          .to_h do |mapping|
+          .to_h { |mapping|
           [mapping.key,
             mapping.map_value(attrs[mapping.attr.name.intern]),]
-        end
+        }
           .compact # 値がnilの場合は除外する
       end
 

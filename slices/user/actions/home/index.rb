@@ -16,12 +16,12 @@ module User
           @user = current_user
 
           providers = ProviderRepository.new.ordered_all_with_adapter_by_operation(:user_read)
-          provider_datas = providers.each.map do |provider|
+          provider_datas = providers.each.map { |provider|
             provider.read(@user.name)&.[](:attrs)
-          end
-          @user_attrs = provider_datas.compact.inject({}) do |result, data|
+          }
+          @user_attrs = provider_datas.compact.inject({}) { |result, data|
             data.merge(result)
-          end
+          }
 
           @attrs = AttrRepository.new.all_no_hidden
         end

@@ -29,7 +29,7 @@ class Hash
   end
 
   def slice(*keys)
-    select { |key, _value| keys.include?(key) }
+    slice(*keys)
   end
 end
 

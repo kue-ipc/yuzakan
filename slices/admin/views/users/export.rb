@@ -9,7 +9,7 @@ module Admin
         format :jsonl
 
         def render
-          text = UserRepository.new.all.map do |user|
+          text = UserRepository.new.all.map { |user|
             {
               name: user.name,
               display_name: user.display_name,
@@ -20,7 +20,7 @@ module Admin
               deleted: user.deleted,
               deleted_at: user.deleted_at,
             }
-          end.map { |data| JSON.generate(data) }.join("\n")
+          }.map { |data| JSON.generate(data) }.join("\n")
           raw text
         end
       end

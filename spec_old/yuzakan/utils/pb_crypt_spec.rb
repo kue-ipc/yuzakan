@@ -106,8 +106,8 @@ RSpec.describe Yuzakan::Utils::PbCrypt do
     encrypted_text_other = pb_crypt_other.encrypt_text(text)
     expect(encrypted_text_other).not_to eq encrypted_text
 
-    expect do
+    expect {
       pb_crypt_other.decrypt_text(encrypted_text)
-    end.to raise_error(OpenSSL::Cipher::CipherError)
+    }.to raise_error(OpenSSL::Cipher::CipherError)
   end
 end

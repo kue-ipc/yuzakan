@@ -29,22 +29,24 @@ module Yuzakan
         username = params[:username]
 
         @changed = false
-        @providers = get_providers(params[:providers]).to_h do |provider|
-          data = provider.user_delete(username)
-          @changed = true if data
-          [provider.name, data]
-        rescue => e
-          logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
-          logger.error e
-          error(t.call("errors.action.error", action: t.call("interactors.provider_delete_user"),
-            target: provider.label))
-          error(e.message)
-          if @changed
-            error(t.call("errors.action.stopped_after_some", action: t.call("interactors.provider_delete_user"),
-              target: t.call("entities.provider")))
+        @providers = get_providers(params[:providers]).to_h { |provider|
+          begin
+            data = provider.user_delete(username)
+            @changed = true if data
+            [provider.name, data]
+          rescue => e
+            logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
+            logger.error e
+            error(t.call("errors.action.error", action: t.call("interactors.provider_delete_user"),
+              target: provider.label))
+            error(e.message)
+            if @changed
+              error(t.call("errors.action.stopped_after_some", action: t.call("interactors.provider_delete_user"),
+                target: t.call("entities.provider")))
+            end
+            fail!
           end
-          fail!
-        end
+        }
       end
 
       private def valid?(params)

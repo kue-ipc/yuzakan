@@ -135,9 +135,9 @@ module Yuzakan
 
       converted_attrs = mappings
         .select { |mapping| attrs.key?(mapping.key) }
-        .to_h do |mapping|
+        .to_h { |mapping|
           [mapping.attr.name, mapping.convert_value(attrs[mapping.key])]
-        end
+        }
       Success(converted_attrs)
     end
 
@@ -147,9 +147,9 @@ module Yuzakan
       mapped_attrs = mappings
         .reject(&:readonly) # exclude read-only
         .select { |mapping| attrs.key?(mapping.attr.name) }
-        .to_h do |mapping|
+        .to_h { |mapping|
         [mapping.key, mapping.map_value(attrs[mapping.attr.name])]
-      end
+      }
       Success(mapped_attrs)
     end
 
