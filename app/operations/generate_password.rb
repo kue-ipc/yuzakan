@@ -33,7 +33,7 @@ module Yuzakan
 
       private def generate_password(rule)
         char_list = charlist_from_rule(rule).value_or { return Failure(_1) }
-        return Failure([:invald, "char list is empty"]) if char_list.empty?
+        return Failure([:invald, {char_list: [:filled?]}]) if char_list.empty?
 
         password = rule[:size].times.map do
           char_list[SecureRandom.random_number(char_list.size)]
@@ -64,7 +64,7 @@ module Yuzakan
             nil
           else
             return Failure(
-              [:error, RandomError.new("unknown type (#{rule[:type]})")])
+              [:invalid, {type: [:included_in?]}])
           end
         chars = chars&.difference(rule[:chars].chars) || rule[:chars].chars
         Success(chars.uniq)

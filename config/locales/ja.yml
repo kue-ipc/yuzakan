@@ -8,7 +8,7 @@ ja:
       arg:
         default: '%{list}を一つも含んではいけません。'
         range: '%{list_left}〜%{list_right}の範囲内にあってはいけません。'
-    exclusion?: '%{list}を一つむ含んではいけません。'
+    exclusion?: '%{list}を一つも含んではいけません。'
     eql?: '%{left}と値が一致しません。'
     not_eql?: '%{left}とは異なる値にしてください。'
     filled?: '入力が必須です。'
