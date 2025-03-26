@@ -9,7 +9,6 @@
 # 認証付き暗号では、`auth_data`と`auth_tag_len`は固定値。
 
 require "openssl"
-require "base64"
 
 module Yuzakan
   class CryptOperation < Yuzakan::Operation
@@ -109,7 +108,7 @@ module Yuzakan
 
     private def generate_salt(size = settings.crypt_salt_size)
       Success(OpenSSL::Random.random_bytes(size))
-    rescue NotImplementedError => e
+    rescue OpenSSL::Random::RandomError => e
       Failure([:error, e])
     end
 
@@ -145,13 +144,13 @@ module Yuzakan
     end
 
     private def bin2txt(data)
-      Success(Base64.strict_encode64(data))
+      Success([data].pack("m0"))
     rescue => e
       Failure([:error, e])
     end
 
     private def txt2bin(str)
-      Success(Base64.strict_decode64(str))
+      Success(str.unpack1("m0"))
     rescue => e
       Failure([:error, e])
     end
