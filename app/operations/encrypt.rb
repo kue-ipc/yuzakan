@@ -6,11 +6,15 @@ module Yuzakan
       def call(data, bin: false)
         encoding = data.encoding
         cipher = step create_cipher(:encrypt)
-        iv = step generate_iv(cipher)
-        salt = step generate_salt
-        key = step create_key(cipher, salt)
-        encrypted_data = step crypt(data, cipher, iv:, key:)
-        joined_data = step join_data(encrypted_data, salt, iv)
+
+        info = {}
+        info = step setup_key(cipher, **info)
+        info = step setup_iv(cipher, **info)
+        info = step setup_auth_data(cipher, **info)
+
+        encrypted_data = step crypt_data(cipher, data)
+        info = step setup_auth_tag(cipher, **info)
+        joined_data = step join_data(encrypted_data, **info)
         unless bin
           joined_data = step bin2txt(joined_data)
           joined_data = step encode(joined_data, encoding)

@@ -29,14 +29,14 @@ module Yuzakan
         if params.key?(:primary_group)
           validated_params[:group] =
             get_group(params[:primary_group])
-              .value_or { |failure| return Failure(failure) }
+              .value_or { return Failure(_1) }
         end
 
         if params.key?(:groups)
           validated_params[:groups] =
             (params[:groups] - [params[:primary_group]]).map do |groupname|
               get_group(groupname)
-                .value_or { |failure| return Failure(failure) }
+                .value_or { return Failure(_1) }
             end
         end
 

@@ -18,7 +18,7 @@ module Yuzakan
 
       private def read(groupname)
         providers = read_group.call(groupname)
-          .value_or { |failure| return Failure(failure) }
+          .value_or { return Failure(_1) }
         return Success(nil) if providers.empty?
 
         params = {basic: false}

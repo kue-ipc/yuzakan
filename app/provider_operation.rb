@@ -85,9 +85,9 @@ module Yuzakan
         attrs = data.attrs
       else
         mappings = get_mappings(provider, category:)
-          .value_or { |failure| return Failure(failure) }
+          .value_or { return Failure(_1) }
         attrs = convert_attrs(mappings, data.attrs)
-          .value_or { |failure| return Failure(failure) }
+          .value_or { return Failure(_1) }
       end
 
       group_params =
@@ -112,9 +112,9 @@ module Yuzakan
         attrs = params[:attrs]
       else
         mappings = get_mappings(provider, category:)
-          .value_or { |failure| return Failure(failure) }
+          .value_or { return Failure(_1) }
         attrs = map_attrs(mappings, data.attrs)
-          .value_or { |failure| return Failure(failure) }
+          .value_or { return Failure(_1) }
       end
 
       case category

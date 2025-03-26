@@ -2,25 +2,13 @@
 # frozen_string_literal: true
 
 # パスワードベースの暗号化
-# 現在のところ、暗号方式は PKCS#5 v2.0 で固定とする。
 # 暗号化鍵は環境変数 CRYPT_SECRET を使用する。
-# データはソルトと暗号化済み値を結合する。
+# データはソルト、IV、認証タグ、暗号化済み値を結合する。
 # 文字列の場合は、BASE64でエンコードする。
-
-# 暗号方式: PKCS#5 v2.0 (RFC2898) 互換
-# 初期ベクトル作成: HMAC SHA1
-# 繰り返し回数: 10,000
-# 暗号: AES-256-CBC
-# ソルトサイズ: 8バイト
-
-# 鍵導出関数
-#   pbkdf2-hmac-* (sha1, sha256, sha384, sha512, ...)
-#   scrypt ({r: 8, p: 1}は固定)
-#   bcrypt (未実装)
-#   argon2 (未実装)
+# デフォルト: aes-256-gcm scrypt 2*17
+# 認証付き暗号では、`auth_data`と`auth_tag_len`は固定値。
 
 require "openssl"
-require "securerandom"
 require "base64"
 
 module Yuzakan
@@ -29,17 +17,12 @@ module Yuzakan
       "settings",
     ]
 
-    private def crypt(input, cipher, iv: nil, key: nil)
-      Hanami.app["logger"].warn("crypt check in", input:, cipher:, iv:, key:)
-      cipher.iv = iv if iv
-      cipher.key = key if key
+    AUTH_DATA = "yuzakan"
+    AUTH_TAG_LEN = 16
 
-      output = String.new(encoding: Encoding::ASCII_8BIT)
-      output << cipher.update(input)
-      output << cipher.final
-      Hanami.app["logger"].warn("crypt check out", output:)
-      Success(output)
-    rescue => e
+    private def crypt_data(cipher, data)
+      Success(cipher.update(data) + cipher.final)
+    rescue OpenSSL::Cipher::CipherError => e
       Failure([:error, e])
     end
 
@@ -58,52 +41,98 @@ module Yuzakan
       Failure([:error, e])
     end
 
-    private def create_key(cipher, salt)
-      pass = settings.crypt_secret
-      length = cipher.key_len
-      case settings.crypt_kdf.downcase.split(/-|_/)
-      in ["pbkdf2", "hmac", hash]
-        Success(OpenSSL::KDF.pbkdf2_hmac(pass, salt:, length:,
-          hash:, iterations: settings.crypt_cost))
-      in ["scrypt"]
-        Success(OpenSSL::KDF.scrypt(pass, salt:, length:,
-          N: settings.crypt_cost, r: 8, p: 1))
-      # TODO: bcrypt, argo2
-      # in ["bcrypt"]
-      # in ["argo2"]
-      else
-        raise "unsupported kdf algorithm (#{settings.crypt_kdf})"
+    # 鍵導出関数 CRYPT_SECRET
+    #   pbkdf2-hmac-* (sha1, sha256, sha384, sha512)
+    #   scrypt ({r: 8, p: 1}は固定)
+    #   bcrypt (未実装)
+    #   argon2 (未実装)
+    private def setup_key(cipher, key: nil, salt: nil, secret: nil, **info)
+      if key.nil?
+        secret ||= settings.crypt_secret
+        salt ||= generate_salt.value_or { return Failure(_1) }
+        length = cipher.key_len
+        key =
+          case settings.crypt_kdf.downcase.split(/-|_/)
+          in ["pbkdf2", "hmac", hash]
+            OpenSSL::KDF.pbkdf2_hmac(secret, salt:, length:,
+              hash:, iterations: settings.crypt_cost)
+          in ["scrypt"]
+            OpenSSL::KDF.scrypt(secret, salt:, length:,
+              N: settings.crypt_cost, r: 8, p: 1)
+          # TODO: bcrypt, argo2
+          # in ["bcrypt"]
+          # in ["argo2"]
+          else
+            raise "unsupported kdf algorithm (#{settings.crypt_kdf})"
+          end
       end
+      cipher.key = key
+      Success({**info, key:, salt:, secret:})
     rescue => e
+      # RuntimeError, OpenSSL::Cipher::CipherError, etc...
       Failure([:error, e])
     end
 
-    private def generate_iv(cipher)
-      generate_random(cipher.iv_len)
+    private def setup_iv(cipher, iv: nil, **info)
+      if iv
+        cipher.iv = iv
+      else
+        iv = cipher.random_iv
+      end
+      Success({**info, iv:})
+    rescue OpenSSL::Cipher::CipherError => e
+      Failure([:error, e])
     end
 
-    private def generate_salt
-      generate_random(settings.crypt_salt_size)
+    private def setup_auth_data(cipher, auth_data: nil, **info)
+      if cipher.authenticated?
+        auth_data ||= AUTH_DATA
+        cipher.auth_data = auth_data
+      end
+      Success({**info, auth_data:})
+    rescue OpenSSL::Cipher::CipherError => e
+      Failure([:error, e])
     end
 
-    private def generate_random(size)
-      Success(SecureRandom.random_bytes(size))
+    private def setup_auth_tag(cipher, auth_tag: nil, **info)
+      if cipher.authenticated?
+        if auth_tag
+          cipher.auth_tag = auth_tag
+        else
+          auth_tag = cipher.auth_tag
+        end
+      end
+      Success({**info, auth_tag:})
+    rescue OpenSSL::Cipher::CipherError => e
+      Failure([:error, e])
+    end
+
+    private def generate_salt(size = settings.crypt_salt_size)
+      Success(OpenSSL::Random.random_bytes(size))
     rescue NotImplementedError => e
       Failure([:error, e])
     end
 
-    private def join_data(data, salt, iv)
-      Success(iv + salt + data)
+    private def join_data(data, salt: nil, iv: nil, auth_tag: nil, **_info)
+      joined_data = String.new
+      joined_data << salt if salt
+      joined_data << iv if iv
+      joined_data << auth_tag if auth_tag
+      joined_data << data
+      Success(joined_data)
     end
 
     private def split_data(data, cipher)
-      first = cipher.iv_len
-      second = first + settings.crypt_salt_size
-      Success([
-        data[second...],
-        data[first...second],
-        data[0...first],
-      ])
+      salt_len = settings.crypt_salt_size
+      iv_len = cipher.iv_len
+      auth_tag_len = cipher.authenticated? ? AUTH_TAG_LEN : 0
+
+      info = {
+        salt: data[0, salt_len],
+        iv: data[salt_len, iv_len],
+        auth_tag: data[salt_len + iv_len, auth_tag_len],
+      }
+      Success([data[(salt_len + iv_len + auth_tag_len)..], info])
     end
 
     private def encode(data, encoding)
