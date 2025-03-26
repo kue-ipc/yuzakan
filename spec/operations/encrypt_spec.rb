@@ -14,7 +14,7 @@ RSpec.describe Yuzakan::Operations::Encrypt do
     expect(result.value!.encoding).to eq Encoding::UTF_8
   end
 
-  context "when empty data" do
+  describe "empty data" do
     let(:data) { "" }
 
     it "is successful" do
@@ -26,8 +26,36 @@ RSpec.describe Yuzakan::Operations::Encrypt do
     end
   end
 
-  context "when long data" do
+  describe "long data" do
     let(:data) { "A" * 1024 * 1024 }
+
+    it "is successful" do
+      result = subject.call(data)
+      expect(result).to be_success
+      expect(result.value!).to match(/\A[\x20-\x7E]*\z/)
+      expect(result.value!).not_to eq data
+      expect(result.value!.encoding).to eq Encoding::UTF_8
+    end
+  end
+
+  describe "binary data" do
+    let(:data) { [*(0..255).to_a, 0, *(255..0).to_a].pack("C*") }
+
+    it "is successful" do
+      result = subject.call(data, bin: true)
+      expect(result).to be_success
+      expect(result.value!).not_to eq data
+      expect(result.value!.encoding).to eq Encoding::ASCII_8BIT
+    end
+  end
+
+  context "when use aes-128-cbc" do
+    let(:params) do
+      {
+        settings: Yuzakan::Settings.new(**Hanami.app["settings"].to_h,
+          crypt_algorithm: "aes-128-cbc"),
+      }
+    end
 
     it "is successful" do
       result = subject.call(data)
