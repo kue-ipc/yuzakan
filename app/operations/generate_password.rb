@@ -32,8 +32,12 @@ module Yuzakan
       end
 
       private def generate_password(rule)
+        unless rule[:size].positive?
+          return Failure([:invalid, {size: [gt?: 0]},])
+        end
+
         char_list = charlist_from_rule(rule).value_or { return Failure(_1) }
-        return Failure([:invald, {char_list: [:filled?]}]) if char_list.empty?
+        return Failure([:invalid, {char_list: [:filled?]}]) if char_list.empty?
 
         password = rule[:size].times.map do
           char_list[SecureRandom.random_number(char_list.size)]
