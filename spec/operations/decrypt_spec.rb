@@ -4,36 +4,32 @@ RSpec.describe Yuzakan::Operations::Decrypt do
   subject(:operation) { described_class.new(**params) }
 
   let(:params) { {} }
+  let(:data) { encrypt.call(plain).value! }
+  let(:encrypt) { Yuzakan::Operations::Encrypt.new }
+  let(:plain) { "Ab01#日本語😺🀄等" }
 
-  let(:interactor) { described_class.new(**params) }
-  let(:params) { {text: true} }
-  let(:encrypted) {
-    pb_crypt = Yuzakan::Utils::PbCrypt.new(ENV.fetch("DB_SECRET"))
-    pb_crypt.encrypt_text(text)
-  }
-  let(:text) { "Ab01#日本語😺🀄等" }
-
-  it "decryt text" do
+  it "is successful" do
+    result = subject.call(data)
+    expect(result).to be_success
+    expect(result.value!).to eq plain
+    expect(result.value!.encoding).to eq Encoding::UTF_8
   end
 
-  describe "other password" do
-    let(:params) { {password: "abc012", text: true} }
-
-    it "failed decryt text other password" do
-      result = interactor.call({encrypted: encrypted})
-      expect(result.failure?).to be true
-      expect(result.errors.first).to eq "復号化に失敗しました。"
-      expect(result.data).to be_nil
+  context "when wrong crypt secret" do
+    let(:params) do
+      {
+        settings: Yuzakan::Settings.new(**Hanami.app["settings"].to_h,
+          crypt_secret: "hoge"),
+      }
     end
-  end
 
-  describe "other encoding" do
-    let(:params) { {text: true, encoding: Encoding::WINDOWS_31J} }
-
-    it "decryt bad text" do
-      result = interactor.call({encrypted: encrypted})
-      expect(result.successful?).to be true
-      expect(result.data).not_to eq text
+    it "is failed" do
+      result = subject.call(data)
+      expect(result).to be_failure
+      expect(result.failure).to be_a Array
+      expect(result.failure.length).to eq 2
+      expect(result.failure.first).to eq :error
+      expect(result.failure.last).to be_a OpenSSL::Cipher::CipherError
     end
   end
 end
