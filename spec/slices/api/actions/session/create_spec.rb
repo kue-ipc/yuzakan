@@ -1,23 +1,27 @@
 # frozen_string_literal: true
 
 RSpec.describe API::Actions::Session::Create do
-  init_controller_spec
+  init_action_spec
+
   let(:action_opts) {
     {
-      user_repository: user_repository,
-      provider_repository: provider_repository,
-      auth_log_repository: auth_log_repository,
+      auth_log_repo: auth_log_repo,
+      user_repo: user_repo,
+      sync_user: sync_user,
+      authenticate: authenticate,
     }
   }
-  let(:format) { "application/json" }
   let(:action_params) { {username: "user", password: "pass"} }
-  let(:user_repository) { instance_double(UserRepository, find: user, find_by_name: user, update: user) }
-  let(:providers) { [create_mock_provider(params: {username: "user", password: "pass"})] }
-  let(:provider_repository) { instance_double(ProviderRepository, ordered_all_with_adapter_by_operation: providers) }
-  let(:auth_log_repository) { instance_double(AuthLogRepository, create: AuthLog.new, recent_by_username: []) }
+
+  let(:format) { "application/json" }
+
+  let(:auth_log_repo_stubs) { {create: auth_log, recent: []} }
+
+  let(:sync_user) { instance_double(Yuzakan::Management::SyncUser) }
+  let(:authenticate) { instance_double(Yuzakan::Providers::Authenticate) }
 
   it "is see other" do
-    Rack::Utils::HTTP_STATUS_CODES[303] = "Hoge"
+    # Rack::Utils::HTTP_STATUS_CODES[303] = "Hoge"
     response = action.call(params)
     expect(response[0]).to eq 303
     expect(response[1]["Location"]).to eq "/api/session"

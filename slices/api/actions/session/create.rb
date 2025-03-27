@@ -27,7 +27,7 @@ module API
 
           if res[:current_user]
             # do nothing
-            redirect_to_json routes.path(:session), status: 303
+            redirect_to_json routes.path(:api_session), status: 303
           end
 
           auth_log_params = {
@@ -62,7 +62,7 @@ module API
             halt_json 500, errors: [error]
           end
 
-          user = user_repo.find_by_name(username)
+          user = user_repo.get(username)
           if user.nil?
             case sync_user.call(username)
             in Success(user)
