@@ -7,25 +7,25 @@ RSpec.describe API::Actions::Adapters::Show do
 
   it "is successful" do
     response = action.call(params)
-    expect(response[0]).to eq 200
-    expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-    json = JSON.parse(response[2].first, symbolize_names: true)
+    expect(response.status).to eq 200
+    expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+    json = JSON.parse(response.body.first, symbolize_names: true)
     expect(json).to eq({name: "dummy", label: "ダミー", group: false})
   end
 
   it "is successful with test adapter" do
     response = action.call({**params, id: "test"})
-    expect(response[0]).to eq 200
-    expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-    json = JSON.parse(response[2].first, symbolize_names: true)
+    expect(response.status).to eq 200
+    expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+    json = JSON.parse(response.body.first, symbolize_names: true)
     expect(json).to eq({name: "test", label: "テスト", group: true})
   end
 
   it "is failure with unknown id" do
     response = action.call({**params, id: "hoge"})
-    expect(response[0]).to eq 404
-    expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-    json = JSON.parse(response[2].first, symbolize_names: true)
+    expect(response.status).to eq 404
+    expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+    json = JSON.parse(response.body.first, symbolize_names: true)
     expect(json).to eq({code: 404, message: "Not Found"})
   end
 
@@ -35,17 +35,17 @@ RSpec.describe API::Actions::Adapters::Show do
 
     it "is successful" do
       response = action.call(params)
-      expect(response[0]).to eq 200
-      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
+      expect(response.status).to eq 200
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({name: "dummy", label: "ダミー", group: false, param_types: []})
     end
 
     it "is successful with test adapter" do
       response = action.call({**params, id: "test"})
-      expect(response[0]).to eq 200
-      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
+      expect(response.status).to eq 200
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         name: "test",
         label: "テスト",
@@ -78,9 +78,9 @@ RSpec.describe API::Actions::Adapters::Show do
 
     it "is failure with unknown id" do
       response = action.call({**params, id: "hoge"})
-      expect(response[0]).to eq 404
-      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
+      expect(response.status).to eq 404
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({code: 404, message: "Not Found"})
     end
   end
@@ -90,9 +90,9 @@ RSpec.describe API::Actions::Adapters::Show do
 
     it "is error" do
       response = action.call(params)
-      expect(response[0]).to eq 401
-      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
+      expect(response.status).to eq 401
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({code: 401, message: "Unauthorized"})
     end
   end

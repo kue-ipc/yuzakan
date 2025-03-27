@@ -5,8 +5,8 @@ RSpec.describe Admin::Actions::Config::New do
 
   it "rediret to root" do
     response = action.call(params)
-    expect(response[0]).to eq 302
-    expect(response[1]["Location"]).to eq "/"
+    expect(response.status).to eq 302
+    expect(response.headers["Location"]).to eq "/"
   end
 
   describe "before initialized" do
@@ -14,7 +14,7 @@ RSpec.describe Admin::Actions::Config::New do
 
     it "is successful" do
       response = action.call(params)
-      expect(response[0]).to eq 200
+      expect(response.status).to eq 200
     end
   end
 end

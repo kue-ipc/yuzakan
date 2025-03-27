@@ -6,6 +6,6 @@
 
 #   it 'is successful' do
 #     response = action.call(params)
-#     expect(response[0]).to eq 200
+#     expect(response.status).to eq 200
 #   end
 # end

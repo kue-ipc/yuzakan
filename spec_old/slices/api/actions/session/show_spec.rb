@@ -8,9 +8,9 @@ RSpec.describe API::Actions::Session::Show do
     begin_time = Time.now.floor
     response = action.call(params)
     end_time = Time.now.floor
-    expect(response[0]).to eq 200
-    expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-    json = JSON.parse(response[2].first, symbolize_names: true)
+    expect(response.status).to eq 200
+    expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+    json = JSON.parse(response.body.first, symbolize_names: true)
     expect(json[:uuid]).to eq uuid
     expect(json[:current_user]).to eq(user.to_h.except(:id))
     created_at = Time.iso8601(json[:created_at])
@@ -28,9 +28,9 @@ RSpec.describe API::Actions::Session::Show do
 
     it "is error" do
       response = action.call(params)
-      expect(response[0]).to eq 404
-      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
+      expect(response.status).to eq 404
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         code: 404,
         message: "Not Found",
@@ -43,9 +43,9 @@ RSpec.describe API::Actions::Session::Show do
 
     it "is error" do
       response = action.call(params)
-      expect(response[0]).to eq 404
-      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
+      expect(response.status).to eq 404
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         code: 404,
         message: "Not Found",
@@ -58,9 +58,9 @@ RSpec.describe API::Actions::Session::Show do
 
     it "is error" do
       response = action.call(params)
-      expect(response[0]).to eq 401
-      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
+      expect(response.status).to eq 401
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         code: 401,
         message: "Unauthorized",

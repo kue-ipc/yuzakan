@@ -33,16 +33,16 @@ RSpec.describe API::Actions::Session::Create do
     })
   end
 
-  describe "no login session" do
+  context "when no login" do
     let(:session) { {uuid: uuid} }
 
     it "is successful" do
       begin_time = Time.now.floor
       response = action.call(params)
       end_time = Time.now.floor
-      expect(response[0]).to eq 201
-      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
+      expect(response.status).to eq 201
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:uuid]).to eq uuid
       expect(json[:current_user]).to eq(user.to_h.except(:id))
       created_at = Time.iso8601(json[:created_at])
@@ -58,9 +58,9 @@ RSpec.describe API::Actions::Session::Create do
 
     it "is failed with bad username" do
       response = action.call(**params, username: "baduser")
-      expect(response[0]).to eq 422
-      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         code: 422,
         message: "Unprocessable Entity",
@@ -70,9 +70,9 @@ RSpec.describe API::Actions::Session::Create do
 
     it "is failed with bad password" do
       response = action.call(**params, password: "badpass")
-      expect(response[0]).to eq 422
-      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         code: 422,
         message: "Unprocessable Entity",
@@ -82,9 +82,9 @@ RSpec.describe API::Actions::Session::Create do
 
     it "is error with no username" do
       response = action.call(**params.except(:username))
-      expect(response[0]).to eq 400
-      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
+      expect(response.status).to eq 400
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         code: 400,
         message: "Bad Request",
@@ -94,9 +94,9 @@ RSpec.describe API::Actions::Session::Create do
 
     it "is error with no password" do
       response = action.call(**params.except(:password))
-      expect(response[0]).to eq 400
-      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
+      expect(response.status).to eq 400
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         code: 400,
         message: "Bad Request",
@@ -106,9 +106,9 @@ RSpec.describe API::Actions::Session::Create do
 
     it "is error with too large username" do
       response = action.call(**params, username: "user" * 64)
-      expect(response[0]).to eq 400
-      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
+      expect(response.status).to eq 400
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         code: 400,
         message: "Bad Request",
@@ -118,9 +118,9 @@ RSpec.describe API::Actions::Session::Create do
 
     it "is error with empty password" do
       response = action.call(**params, password: "")
-      expect(response[0]).to eq 400
-      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
+      expect(response.status).to eq 400
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         code: 400,
         message: "Bad Request",
@@ -143,9 +143,9 @@ RSpec.describe API::Actions::Session::Create do
 
       it "is failure" do
         response = action.call(params)
-        expect(response[0]).to eq 403
-        expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-        json = JSON.parse(response[2].first, symbolize_names: true)
+        expect(response.status).to eq 403
+        expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+        json = JSON.parse(response.body.first, symbolize_names: true)
         expect(json).to eq({
           code: 403,
           message: "Forbidden",
@@ -160,9 +160,9 @@ RSpec.describe API::Actions::Session::Create do
 
     #   it 'is failure' do
     #     response = action.call(params)
-    #     expect(response[0]).to eq 403
-    #     expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
-    #     json = JSON.parse(response[2].first, symbolize_names: true)
+    #     expect(response.status).to eq 403
+    #     expect(response.headers['Content-Type']).to eq "#{format}; charset=utf-8"
+    #     json = JSON.parse(response.body.first, symbolize_names: true)
     #     expect(json).to eq({
     #       code: 403,
     #       message: 'Forbidden',
@@ -179,9 +179,9 @@ RSpec.describe API::Actions::Session::Create do
       begin_time = Time.now.floor
       response = action.call(params)
       end_time = Time.now.floor
-      expect(response[0]).to eq 201
-      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
+      expect(response.status).to eq 201
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:uuid]).to match(/\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/)
       expect(json[:current_user]).to eq(user.to_h.except(:id))
       created_at = Time.iso8601(json[:created_at])
@@ -201,9 +201,9 @@ RSpec.describe API::Actions::Session::Create do
 
     it "is error" do
       response = action.call(params)
-      expect(response[0]).to eq 401
-      expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response[2].first, symbolize_names: true)
+      expect(response.status).to eq 401
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         code: 401,
         message: "Unauthorized",

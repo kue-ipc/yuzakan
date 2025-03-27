@@ -25,9 +25,9 @@ RSpec.describe API::Actions::Users::Update do
 
   it "is failure" do
     response = action.call(params)
-    expect(response[0]).to eq 403
-    expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-    json = JSON.parse(response[2].first, symbolize_names: true)
+    expect(response.status).to eq 403
+    expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+    json = JSON.parse(response.body.first, symbolize_names: true)
     expect(json).to eq({code: 403, message: "Forbidden"})
   end
 
@@ -39,9 +39,9 @@ RSpec.describe API::Actions::Users::Update do
   #     allow(provider_repository).to receive(:ordered_all_with_adapter_by_operation).and_return([])
 
   #     response = action.call(params)
-  #     expect(response[0]).to eq 200
-  #     expect(response[1]['Content-Type']).to eq "#{format}; charset=utf-8"
-  #     json = JSON.parse(response[2].first, symbolize_names: true)
+  #     expect(response.status).to eq 200
+  #     expect(response.headers['Content-Type']).to eq "#{format}; charset=utf-8"
+  #     json = JSON.parse(response.body.first, symbolize_names: true)
   #     expect(json).to eq({
   #       **user_attributes.except(:id)
   #     })
