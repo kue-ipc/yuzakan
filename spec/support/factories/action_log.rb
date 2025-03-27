@@ -3,10 +3,10 @@
 Factory.define(:action_log) do |f|
   f.uuid Faker::Internet.uuid
   f.client Faker::Internet.ip_v4_address
-  f.user Faker::Internet.username
+  f.user nil
   f.action "Yuzakan::Actions::Dummy"
   f.method "GET"
   f.path "/dummy"
-  f.status 200
+  f.status nil
   f.timestamps
 end

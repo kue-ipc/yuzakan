@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-RSpec.describe Yuzakan::Operations::GeneratePassword, :db do
+RSpec.describe Yuzakan::Operations::GeneratePassword do
   subject(:operation) { described_class.new(**params) }
 
   let(:params) { {config_repo: config_repo} }
-  let(:config_repo) do
-    instance_double(Yuzakan::Repos::ConfigRepo, {current: config})
-  end
-  let(:config) { Factory[:config] }
+  let(:config_repo) {
+    instance_double(Yuzakan::Repos::ConfigRepo, current: config)
+  }
+  let(:config) { Factory.structs[:config] }
 
   it "is successful" do
     result = subject.call
@@ -18,7 +18,9 @@ RSpec.describe Yuzakan::Operations::GeneratePassword, :db do
   end
 
   context "when alphanumeric type" do
-    let(:config) { Factory[:config, generate_password_type: "alphanumeric"] }
+    let(:config) {
+      Factory.structs[:config, generate_password_type: "alphanumeric"]
+    }
 
     it "is successful" do
       result = subject.call
@@ -30,7 +32,7 @@ RSpec.describe Yuzakan::Operations::GeneratePassword, :db do
   end
 
   context "when 8 size" do
-    let(:config) { Factory[:config, generate_password_size: 8] }
+    let(:config) { Factory.structs[:config, generate_password_size: 8] }
 
     it "is successful" do
       result = subject.call
@@ -42,10 +44,10 @@ RSpec.describe Yuzakan::Operations::GeneratePassword, :db do
   end
 
   context "when more exclude chars" do
-    let(:config) do
-      Factory[:config, generate_password_chars:
+    let(:config) {
+      Factory.structs[:config, generate_password_chars:
         ((0x20..0x7e).map(&:chr) - ["!", "1", "A", "a"]).join]
-    end
+    }
 
     it "is successful" do
       result = subject.call
@@ -57,10 +59,10 @@ RSpec.describe Yuzakan::Operations::GeneratePassword, :db do
   end
 
   context "when custom" do
-    let(:config) do
-      Factory[:config, generate_password_type: "custom",
+    let(:config) {
+      Factory.structs[:config, generate_password_type: "custom",
         generate_password_chars: "!1Aa"]
-    end
+    }
 
     it "is successful" do
       result = subject.call
@@ -72,9 +74,9 @@ RSpec.describe Yuzakan::Operations::GeneratePassword, :db do
   end
 
   context "when exclude all chars" do
-    let(:config) do
-      Factory[:config, generate_password_chars: (0x20..0x7e).map(&:chr).join]
-    end
+    let(:config) {
+      Factory.structs[:config, generate_password_chars: (0x20..0x7e).map(&:chr).join]
+    }
 
     it "is failed" do
       result = subject.call
@@ -84,9 +86,7 @@ RSpec.describe Yuzakan::Operations::GeneratePassword, :db do
   end
 
   context "when 0 size" do
-    let(:config) do
-      Factory[:config, generate_password_size: 0]
-    end
+    let(:config) { Factory.structs[:config, generate_password_size: 0] }
 
     it "is failed" do
       result = subject.call
@@ -96,9 +96,7 @@ RSpec.describe Yuzakan::Operations::GeneratePassword, :db do
   end
 
   context "when unknown type" do
-    let(:config) do
-      Factory[:config, generate_password_type: "unknown"]
-    end
+    let(:config) { Factory.structs[:config, generate_password_type: "unknown"] }
 
     it "is failed" do
       result = subject.call

@@ -3,7 +3,8 @@
 RSpec.describe "Root", :db, type: :request do
   let(:user) { Factory[:user] }
   let(:config) { Factory[:config] }
-  let(:network) { Factory[:network] }
+  # trusted level 5 network 127.0.0.0/8
+  let(:network) { Factory[:network_ipv4_loopback] }
   let(:session) do
     {user: user.name, created_at: Time.now, updated_at: Time.now}
   end
@@ -16,16 +17,14 @@ RSpec.describe "Root", :db, type: :request do
     network
   end
 
-  context "when authenticated and authorized" do
-    it "is successful" do
-      get "/", {}, env
+  it "is successful" do
+    get "/", {}, env
 
-      expect(last_response).to be_successful
-    end
+    expect(last_response).to be_successful
   end
 
-  context "when unauthorized" do
-    let(:network) { Factory[:network_level0] }
+  context "when level 0 network" do
+    let(:network) { Factory[:network_ipv4_loopback, clearance_level: 0] }
 
     it "is 403 forbidden" do
       get "/", {}, env
@@ -34,7 +33,7 @@ RSpec.describe "Root", :db, type: :request do
     end
   end
 
-  context "when unauthorized without network" do
+  context "when no network" do
     let(:network) { nil }
 
     it "is 403 forbidden" do
@@ -44,7 +43,7 @@ RSpec.describe "Root", :db, type: :request do
     end
   end
 
-  context "when unauthenticated" do
+  context "when no login" do
     let(:session) { {} }
 
     it "is 401 unauthorized" do
@@ -54,7 +53,7 @@ RSpec.describe "Root", :db, type: :request do
     end
   end
 
-  context "when unintialized" do
+  context "when no config" do
     let(:config) { nil }
 
     it "is 503 service unavalable" do
