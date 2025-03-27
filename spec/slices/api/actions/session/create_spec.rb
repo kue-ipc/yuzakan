@@ -20,15 +20,14 @@ RSpec.describe API::Actions::Session::Create do
   let(:sync_user) { instance_double(Yuzakan::Management::SyncUser) }
   let(:authenticate) { instance_double(Yuzakan::Providers::Authenticate) }
 
-  it "is see other" do
-    # Rack::Utils::HTTP_STATUS_CODES[303] = "Hoge"
+  it "is redirection (see other)" do
     response = action.call(params)
-    expect(response[0]).to eq 303
-    expect(response[1]["Location"]).to eq "/api/session"
-    expect(response[1]["Content-Type"]).to eq "#{format}; charset=utf-8"
-    json = JSON.parse(response[2].first, symbolize_names: true)
-    expect(json).to eq({
-      code: 303,
+    expect(response).to be_redirection
+    expect(response.status).to eq 303
+    expect(response.headers["Location"]).to eq "/api/session"
+    expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+    expect(JSON.parse(response.body.first, symbolize_names: true)).to eq({
+      status: 303,
       message: "See Other",
       location: "/api/session",
     })

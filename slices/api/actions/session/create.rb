@@ -26,8 +26,8 @@ module API
           password = req.params[:password]
 
           if res[:current_user]
-            # do nothing
-            redirect_to_json routes.path(:api_session), status: 303
+            # redirect
+            redirect_to_json(res, routes.path(:api_session), status: 303)
           end
 
           auth_log_params = {
