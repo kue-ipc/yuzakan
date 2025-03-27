@@ -1,48 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Yuzakan::Actions::Locale::Index, :db do
-  subject(:action) do
-    described_class.new(
-      config_repo: config_repo,
-      network_repo: network_repo,
-      user_repo: user_repo,
-      action_log_repo: action_log_repo)
-  end
-
-  let(:params) do
-    {"REMOTE_ADDR" => "192.168.0.1", "rack.session" => session}
-  end
-
-  let(:config_repo) do
-    instance_double(Yuzakan::Repos::ConfigRepo, current: Factory[:config])
-  end
-
-  let(:network_repo) do
-    instance_double(Yuzakan::Repos::NetworkRepo,
-      find_include: Factory[:network])
-  end
-
-  let(:user_repo) do
-    instance_double(Yuzakan::Repos::UserRepo, get: user)
-  end
-
-  let(:action_log_repo) do
-    instance_double(Yuzakan::Repos::ActionLogRepo,
-      create: Factory[:action_log])
-  end
-
-  let(:user) do
-    Factory[:user]
-  end
-
-  let(:session) do
-    {
-      uuid: "ffffffff-ffff-4fff-bfff-ffffffffffff",
-      user: user.name,
-      created_at: Time.now - 600,
-      updated_at: Time.now - 60,
-    }
-  end
+  init_action_spec
 
   it "is successful" do
     response = subject.call(params)
