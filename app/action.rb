@@ -6,15 +6,34 @@ require "dry/monads"
 
 module Yuzakan
   class Action < Hanami::Action
+    # HACK: HanamiのコードではDry::Vlaidation::Contractにハードコードされている
+    #        ため、configを設定した任意のサブクラスでContractが作られない。
     class Params < Hanami::Action::Params
       def self.params(&block)
-        super do
-          config.messages.top_namespace = ""
-          config.messages.backend = :i18n
-          config.messages.default_locale = :ja
-          instance_eval(&block)
-        end
+        @_contract = Class.new(Yuzakan::ValidationContract) {
+          params(&block || -> {})
+        }.new
       end
+    end
+
+    def self.params(klass = nil, &block)
+      contract_class =
+        if klass.nil?
+          Class.new(Yuzakan::ValidationContract) { params(&block) }
+        elsif klass < Hanami::Action::Params
+          # Handle subclasses of Hanami::Action::Params.
+          klass._contract.class
+        else
+          klass
+        end
+
+      config.contract_class = contract_class
+    end
+
+    def self.contract(klass = nil, &)
+      contract_class = klass || Class.new(Yuzakan::ValidationContract, &)
+
+      config.contract_class = contract_class
     end
 
     extend Dry::Core::ClassAttributes

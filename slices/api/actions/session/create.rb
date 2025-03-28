@@ -13,18 +13,12 @@ module API
 
         security_level 0
 
-        # class Params < Yuzakan::Action::Params
-        #   params do
-        #     required(:username).filled(Yuzakan::Types::NameString, max_size?: 255)
-        #     required(:password).filled(:string, max_size?: 255)
-        #   end
-        # end
-
-        params Params::Create
+        params do
+          required(:username).filled(Yuzakan::Types::NameString, max_size?: 255)
+          required(:password).filled(:string, max_size?: 255)
+        end
 
         def handle(req, res)
-          @contract.config.messages.default_locale = :en
-          warn "check contract: #{@contract.config.messages.default_locale}"
           unless req.params.valid?
             halt_json 422, errors: req.params.errors
             # halt_json 422, errors: [only_first_errors(req.params.errors)]
