@@ -29,12 +29,10 @@ RSpec.describe API::Actions::Session::Create do
 
   it "is redirection (see other)" do
     response = action.call(params)
-
     expect(response).to be_redirection
     expect(response.status).to eq 303
     expect(response.headers["Location"]).to eq "/api/session"
     expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
-
     json = JSON.parse(response.body.first, symbolize_names: true)
     expect(json).to eq({
       status: 303,
@@ -50,11 +48,9 @@ RSpec.describe API::Actions::Session::Create do
       begin_time = Time.now
       response = action.call(params)
       end_time = Time.now
-
       expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
-
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json.keys).to contain_exactly(:uuid, :user, :created_at, :updated_at)
       expect(json[:uuid]).to eq uuid
@@ -65,119 +61,148 @@ RSpec.describe API::Actions::Session::Create do
 
     it "is failed without username" do
       response = action.call(params.except(:username))
-
       expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
-
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         status: 422,
         message: "Unprocessable Entity",
-        errors: {username: ["存在しません。"]},
+        errors: [{username: ["存在しません。"]}],
+      })
+    end
+
+    it "is failed with empty username" do
+      response = action.call({**params, username: ""})
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json).to eq({
+        status: 422,
+        message: "Unprocessable Entity",
+        errors: [{username: ["入力が必須です。"]}],
+      })
+    end
+
+    it "is failed with invalid username" do
+      response = action.call({**params, username: "#{user.name}!"})
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json).to eq({
+        status: 422,
+        message: "Unprocessable Entity",
+        errors: [{username: ["形式が間違っています。"]}],
+      })
+    end
+
+    it "is failed with too long username" do
+      response = action.call({**params, username: "a" * 256})
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json).to eq({
+        status: 422,
+        message: "Unprocessable Entity",
+        errors: [{username: ["サイズが255を超えてはいけません。"]}],
+      })
+    end
+
+    it "is failed without password" do
+      response = action.call(params.except(:password))
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json).to eq({
+        status: 422,
+        message: "Unprocessable Entity",
+        errors: [{passworcd: ["存在しません。"]}],
+      })
+    end
+
+    it "is failed with empty password" do
+      response = action.call({**params, password: ""})
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json).to eq({
+        status: 422,
+        message: "Unprocessable Entity",
+        errors: [{password: ["入力が必須です。"]}],
+      })
+    end
+
+    it "is failed with too long password" do
+      response = action.call({**params, password: "a" * 256})
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json).to eq({
+        status: 422,
+        message: "Unprocessable Entity",
+        errors: [{password: ["サイズが255を超えてはいけません。"]}],
+      })
+    end
+
+    it "is failed without both username and password" do
+      response = action.call(params.except(:password))
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json).to eq({
+        status: 422,
+        message: "Unprocessable Entity",
+        errors: [{username: ["存在しません。"], passworcd: ["存在しません。"]}],
       })
     end
 
     describe "authentication failure" do
       let(:authenticate) {
-        instance_double(Yuzakan::Providers::Authenticate, call: Failure([:failure, "message"]))
+        instance_double(Yuzakan::Providers::Authenticate,
+          call: Failure([:failure, error_message]))
       }
+      let(:error_message) { Faker::Lorem.paragraph }
 
       it "is failed" do
         response = action.call(params)
-
         expect(response).to be_client_error
         expect(response.status).to eq 422
         expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
         expect(json).to eq({
-          code: 422,
+          status: 422,
           message: "Unprocessable Entity",
-          errors: ["ユーザー名またはパスワードが違います。"],
+          errors: [error_message],
         })
       end
     end
 
-    it "is failed with bad password" do
-      response = action.call(**params, password: "badpass")
-      expect(response.status).to eq 422
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({
-        code: 422,
-        message: "Unprocessable Entity",
-        errors: ["ユーザー名またはパスワードが違います。"],
-      })
-    end
-
-    it "is error with no username" do
-      response = action.call(**params.except(:username))
-      expect(response.status).to eq 400
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({
-        code: 400,
-        message: "Bad Request",
-        errors: [{username: ["存在しません。"]}],
-      })
-    end
-
-    it "is error with no password" do
-      response = action.call(**params.except(:password))
-      expect(response.status).to eq 400
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({
-        code: 400,
-        message: "Bad Request",
-        errors: [{password: ["存在しません。"]}],
-      })
-    end
-
-    it "is error with too large username" do
-      response = action.call(**params, username: "user" * 64)
-      expect(response.status).to eq 400
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({
-        code: 400,
-        message: "Bad Request",
-        errors: [{username: ["サイズが255を超えてはいけません。"]}],
-      })
-    end
-
-    it "is error with empty password" do
-      response = action.call(**params, password: "")
-      expect(response.status).to eq 400
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({
-        code: 400,
-        message: "Bad Request",
-        errors: [{password: ["入力が必須です。"]}],
-      })
-    end
-
     describe "too many access" do
-      let(:auth_log_repository) {
-        instance_double(AuthLogRepository,
-          create: AuthLog.new,
-          recent_by_username: [
-            AuthLog.new(result: "failure"),
-            AuthLog.new(result: "failure"),
-            AuthLog.new(result: "failure"),
-            AuthLog.new(result: "failure"),
-            AuthLog.new(result: "failure"),
-          ])
+      let(:auth_log_repo) {
+        instance_double(Yuzakan::Repos::AuthLogRepo, create: auth_log, recent: [
+          Factory.structs[:auth_log_failure],
+          Factory.structs[:auth_log_failure],
+          Factory.structs[:auth_log_failure],
+          Factory.structs[:auth_log_failure],
+          Factory.structs[:auth_log_failure],
+        ])
       }
 
       it "is failure" do
         response = action.call(params)
+        expect(response).to be_client_error
         expect(response.status).to eq 403
         expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
         expect(json).to eq({
-          code: 403,
+          status: 403,
           message: "Forbidden",
           errors: ["時間あたりのログイン試行が規定の回数を超えたため、現在ログインが禁止されています。 " \
                    "しばらく待ってから再度ログインを試してください。"],
@@ -185,21 +210,22 @@ RSpec.describe API::Actions::Session::Create do
       end
     end
 
-    # RSpec.describe 'not allowed network' do
-    #   let(:config) { Config.new(title: 'title', session_timeout: 3600, user_networks: '10.10.10.0/24') }
+    describe "untrusted network" do
+      let(:network) { Factory.structs[:network, trusted: false, clearance_level: 5] }
 
-    #   it 'is failure' do
-    #     response = action.call(params)
-    #     expect(response.status).to eq 403
-    #     expect(response.headers['Content-Type']).to eq "#{format}; charset=utf-8"
-    #     json = JSON.parse(response.body.first, symbolize_names: true)
-    #     expect(json).to eq({
-    #       code: 403,
-    #       message: 'Forbidden',
-    #       errors: ['現在のネットワークからのログインは許可されていません。'],
-    #     })
-    #   end
-    # end
+      it "is failure" do
+        response = action.call(params)
+        expect(response).to be_client_error
+        expect(response.status).to eq 403
+        expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+        json = JSON.parse(response.body.first, symbolize_names: true)
+        expect(json).to eq({
+          status: 403,
+          message: "Forbidden",
+          errors: ["現在のネットワークからのログインは許可されていません。"],
+        })
+      end
+    end
   end
 
   context "when no session" do
@@ -209,14 +235,12 @@ RSpec.describe API::Actions::Session::Create do
       begin_time = Time.now
       response = action.call(params)
       end_time = Time.now
-
       expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
-
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:uuid]).to match(/\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/)
-      expect(json[:user]).to eq(user.to_h.except(:id))
+      expect(json[:user]).to eq(user.name)
       expect(Time.iso8601(json[:created_at])).to be_between(begin_time, end_time)
       expect(Time.iso8601(json[:updated_at])).to eq Time.iso8601(json[:created_at])
     end
@@ -234,11 +258,12 @@ RSpec.describe API::Actions::Session::Create do
 
     it "is error" do
       response = action.call(params)
+      expect(response).to be_client_error
       expect(response.status).to eq 401
       expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
-        code: 401,
+        status: 401,
         message: "Unauthorized",
         errors: ["セッションがタイムアウトしました。"],
       })

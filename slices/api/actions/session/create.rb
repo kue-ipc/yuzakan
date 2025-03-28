@@ -20,7 +20,7 @@ module API
 
         def handle(req, res)
           unless req.params.valid?
-            halt_json 422, errors: req.params.errors
+            halt_json 422, errors: [req.params.errors]
             # halt_json 422, errors: [only_first_errors(req.params.errors)]
           end
           username = req.params[:username]

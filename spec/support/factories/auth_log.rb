@@ -9,3 +9,7 @@ Factory.define(:auth_log) do |f|
   f.code nil
   f.timestamps
 end
+
+Factory.define(auth_log_failure: :auth_log) do |f|
+  f.result "failure"
+end
