@@ -6,6 +6,17 @@ require "dry/monads"
 
 module Yuzakan
   class Action < Hanami::Action
+    class Params < Hanami::Action::Params
+      def self.params(&block)
+        super do
+          config.messages.top_namespace = ""
+          config.messages.backend = :i18n
+          config.messages.default_locale = :ja
+          instance_eval(&block)
+        end
+      end
+    end
+
     extend Dry::Core::ClassAttributes
 
     include Dry::Monads[:result]

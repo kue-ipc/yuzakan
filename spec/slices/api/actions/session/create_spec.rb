@@ -74,7 +74,7 @@ RSpec.describe API::Actions::Session::Create do
       expect(json).to eq({
         status: 422,
         message: "Unprocessable Entity",
-        errors: {username: ["is missing"]},
+        errors: {username: ["存在しません。"]},
       })
     end
 
