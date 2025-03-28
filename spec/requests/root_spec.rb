@@ -5,9 +5,9 @@ RSpec.describe "Root", :db, type: :request do
   let(:config) { Factory[:config] }
   # trusted level 5 network 127.0.0.0/8
   let(:network) { Factory[:network_ipv4_loopback] }
-  let(:session) do
+  let(:session) {
     {user: user.name, created_at: Time.now, updated_at: Time.now}
-  end
+  }
   # REMOTE_ADDR: 127.0.0.1
   let(:env) { {"rack.session" => session} }
 

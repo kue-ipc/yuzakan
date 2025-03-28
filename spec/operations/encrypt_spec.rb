@@ -50,12 +50,12 @@ RSpec.describe Yuzakan::Operations::Encrypt do
   end
 
   context "when use aes-128-cbc" do
-    let(:params) do
+    let(:params) {
       {
         settings: Yuzakan::Settings.new(**Hanami.app["settings"].to_h,
           crypt_algorithm: "aes-128-cbc"),
       }
-    end
+    }
 
     it "is successful" do
       result = subject.call(data)
@@ -67,12 +67,12 @@ RSpec.describe Yuzakan::Operations::Encrypt do
   end
 
   context "when use pbkdf2" do
-    let(:params) do
+    let(:params) {
       {
         settings: Yuzakan::Settings.new(**Hanami.app["settings"].to_h,
           crypt_kdf: "pbkdf2-hmac-sha256", crypt_cost: 600000),
       }
-    end
+    }
 
     it "is successful" do
       result = subject.call(data)

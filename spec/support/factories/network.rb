@@ -13,45 +13,33 @@ Factory.define(network_trusted: :network) do |f|
 end
 
 Factory.define(network_ipv4_all: :network) do |f|
-  # same
+  # same default
 end
 
 Factory.define(network_ipv6_all: :network) do |f|
   f.ip IPAddr.new("::/0")
 end
 
-Factory.define(network_ipv4_loopback: :network) do |f|
+Factory.define(network_ipv4_loopback: :network_trusted) do |f|
   f.ip IPAddr.new("127.0.0.0/8")
-  f.clearance_level 5
-  f.trusted true
 end
 
-Factory.define(network_ipv6_loopback: :network) do |f|
+Factory.define(network_ipv6_loopback: :network_trusted) do |f|
   f.ip IPAddr.new("::1")
-  f.clearance_level 5
-  f.trusted true
 end
 
-Factory.define(network_ipv4_pn_a: :network) do |f|
-  f.ip IPAddr.new("0.0.0.0/8")
-  f.clearance_level 1
-  f.trusted true
+Factory.define(network_ipv4_pn_a: :network_trusted) do |f|
+  f.ip IPAddr.new("10.0.0.0/8")
 end
 
-Factory.define(network_ipv4_pn_b: :network) do |f|
+Factory.define(network_ipv4_pn_b: :network_trusted) do |f|
   f.ip IPAddr.new("172.16.0.0/12")
-  f.clearance_level 1
-  f.trusted true
 end
 
-Factory.define(network_ipv4_pn_c: :network) do |f|
+Factory.define(network_ipv4_pn_c: :network_trusted) do |f|
   f.ip IPAddr.new("192.168.0.0/16")
-  f.clearance_level 1
-  f.trusted true
 end
 
-Factory.define(network_ipv6_ula: :network) do |f|
-  f.ip IPAddr.new("fc::/7")
-  f.clearance_level 1
-  f.trusted true
+Factory.define(network_ipv6_ula: :network_trusted) do |f|
+  f.ip IPAddr.new("fc00::/7")
 end
