@@ -42,8 +42,8 @@ module API
           end
 
           if failures_over?(username,
-            count: req["current_config"].session_failure_limit,
-            period: req["current_config"].session_failure_duration)
+            count: res[:current_config].session_failure_limit,
+            period: res[:current_config].session_failure_duration)
             auth_log_repo.create(**auth_log_params, result: "reject")
             halt_json 403, errors: [t.call("session.errors.too_many_failure")]
           end

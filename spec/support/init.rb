@@ -26,6 +26,8 @@ def init_action_spec
   let(:network_repo_stubs) { {find_include: network} }
   let(:user_repo_stubs) { {get: user} }
   let(:action_log_repo_stubs) { {create: action_log} }
+  let(:action_log_repo_stubs) { {create: action_log} }
+  let(:network) { Factory.structs[:network_trusted] }
 
   let(:params) { {**action_params, **env} }
   let(:env) do
@@ -129,7 +131,7 @@ def let_repo_mock
   let(:attr_repo_stubs) { {} }
   let(:attr_mapping_repo_stubs) { {} }
 
-  let(:action_log_repo_stubs) { {create: action_log} }
+  let(:action_log_repo_stubs) { {} }
   let(:auth_log_repo_stubs) { {} }
 end
 

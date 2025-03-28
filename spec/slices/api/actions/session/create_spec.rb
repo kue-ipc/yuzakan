@@ -11,22 +11,29 @@ RSpec.describe API::Actions::Session::Create do
       authenticate: authenticate,
     }
   }
-  let(:action_params) { {username: "user", password: "pass"} }
+  let(:action_params) { {username: user.name, password: "pass"} }
 
   let(:format) { "application/json" }
 
   let(:auth_log_repo_stubs) { {create: auth_log, recent: []} }
 
-  let(:sync_user) { instance_double(Yuzakan::Management::SyncUser) }
-  let(:authenticate) { instance_double(Yuzakan::Providers::Authenticate) }
+  let(:sync_user) {
+    instance_double(Yuzakan::Management::SyncUser, call: Success(user))
+  }
+  let(:authenticate) {
+    instance_double(Yuzakan::Providers::Authenticate, call: Success(provider))
+  }
 
   it "is redirection (see other)" do
     response = action.call(params)
+
     expect(response).to be_redirection
     expect(response.status).to eq 303
     expect(response.headers["Location"]).to eq "/api/session"
     expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
-    expect(JSON.parse(response.body.first, symbolize_names: true)).to eq({
+
+    json = JSON.parse(response.body.first, symbolize_names: true)
+    expect(json).to eq({
       status: 303,
       message: "See Other",
       location: "/api/session",
@@ -34,26 +41,25 @@ RSpec.describe API::Actions::Session::Create do
   end
 
   context "when no login" do
-    let(:session) { {uuid: uuid} }
+    let(:session) { {uuid: uuid, user: nil} }
 
     it "is successful" do
-      begin_time = Time.now.floor
+      begin_time = Time.now
       response = action.call(params)
-      end_time = Time.now.floor
+      end_time = Time.now
+
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json).to eq "hoge"
+
+      expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:uuid]).to eq uuid
-      expect(json[:current_user]).to eq(user.to_h.except(:id))
-      created_at = Time.iso8601(json[:created_at])
-      expect(created_at).to be >= begin_time
-      expect(created_at).to be <= end_time
-      updated_at = Time.iso8601(json[:updated_at])
-      expect(updated_at).to be >= begin_time
-      expect(updated_at).to be <= end_time
-      deleted_at = Time.iso8601(json[:deleted_at])
-      expect(deleted_at).to be >= begin_time + 3600
-      expect(deleted_at).to be <= end_time + 3600
+      expect(json[:user]).to eq(user.to_h.except(:id))
+      expect(Time.iso8601(json[:created_at])).to be_between(begin_time, end_time)
+      expect(Time.iso8601(json[:updated_at])).to eq Time.iso8601(json[:created_at])
     end
 
     it "is failed with bad username" do
@@ -172,32 +178,35 @@ RSpec.describe API::Actions::Session::Create do
     # end
   end
 
-  describe "no session" do
+  context "when no session" do
     let(:session) { {} }
 
     it "is successful" do
-      begin_time = Time.now.floor
+      begin_time = Time.now
       response = action.call(params)
-      end_time = Time.now.floor
+      end_time = Time.now
+
+      expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:uuid]).to match(/\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/)
-      expect(json[:current_user]).to eq(user.to_h.except(:id))
-      created_at = Time.iso8601(json[:created_at])
-      expect(created_at).to be >= begin_time
-      expect(created_at).to be <= end_time
-      updated_at = Time.iso8601(json[:updated_at])
-      expect(updated_at).to be >= begin_time
-      expect(updated_at).to be <= end_time
-      deleted_at = Time.iso8601(json[:deleted_at])
-      expect(deleted_at).to be >= begin_time + 3600
-      expect(deleted_at).to be <= end_time + 3600
+      expect(json[:user]).to eq(user.to_h.except(:id))
+      expect(Time.iso8601(json[:created_at])).to be_between(begin_time, end_time)
+      expect(Time.iso8601(json[:updated_at])).to eq Time.iso8601(json[:created_at])
     end
   end
 
-  describe "session timeout" do
-    let(:session) { {uuid: uuid, user_id: user.id, created_at: Time.now - 7200, updated_at: Time.now - 7200} }
+  context "when session timeout" do
+    let(:session) {
+      {
+        uuid: uuid,
+        user: user.name,
+        created_at: Time.now - 7200,
+        updated_at: Time.now - 7200,
+      }
+    }
 
     it "is error" do
       response = action.call(params)

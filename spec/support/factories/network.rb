@@ -7,6 +7,11 @@ Factory.define(:network) do |f|
   f.timestamps
 end
 
+Factory.define(network_trusted: :network) do |f|
+  f.clearance_level 5
+  f.trusted true
+end
+
 Factory.define(network_ipv4_all: :network) do |f|
   # same
 end
