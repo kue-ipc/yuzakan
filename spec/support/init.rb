@@ -24,6 +24,7 @@ def init_action_spec
       action_log_repo: action_log_repo,
     }
   }
+  let(:network) { Factory.structs[:network_trusted] }
 
   let(:params) { {**action_params, **env} }
   let(:env) {

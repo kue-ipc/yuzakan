@@ -20,7 +20,8 @@ module API
 
         def handle(req, res)
           unless req.params.valid?
-            halt_json 422, errors: [only_first_errors(params.errors)]
+            halt_json 422, errors: req.params.errors
+            # halt_json 422, errors: [only_first_errors(req.params.errors)]
           end
           username = req.params[:username]
           password = req.params[:password]
@@ -96,12 +97,7 @@ module API
           auth_log_repo.create(**auth_log_params, result: "success",
             provider: provider.name)
           res.status = :created
-          res.body = generate_json({
-            uuid: res.session[:uuid],
-            current_user: user,
-            created_at: res[:current_time],
-            updated_at: res[:current_time],
-          })
+          res.body = generate_json(res.session.to_h)
         end
 
         private def failures_over?(username, count:, period:)

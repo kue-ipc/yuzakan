@@ -11,11 +11,14 @@ RSpec.describe API::Actions::Session::Create do
       authenticate: authenticate,
     }
   }
-  let(:action_params) { {username: user.name, password: "pass"} }
+  let(:action_params) { {username: user.name, password: password} }
+  let(:password) { Faker::Internet.password }
 
   let(:format) { "application/json" }
 
-  let(:auth_log_repo_stubs) { {create: auth_log, recent: []} }
+  let(:auth_log_repo) {
+    instance_double(Yuzakan::Repos::AuthLogRepo, create: auth_log, recent: [])
+  }
 
   let(:sync_user) {
     instance_double(Yuzakan::Management::SyncUser, call: Success(user))
@@ -48,30 +51,51 @@ RSpec.describe API::Actions::Session::Create do
       response = action.call(params)
       end_time = Time.now
 
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq "hoge"
-
       expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
 
       json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json.keys).to contain_exactly(:uuid, :user, :created_at, :updated_at)
       expect(json[:uuid]).to eq uuid
-      expect(json[:user]).to eq(user.to_h.except(:id))
+      expect(json[:user]).to eq user.name
       expect(Time.iso8601(json[:created_at])).to be_between(begin_time, end_time)
       expect(Time.iso8601(json[:updated_at])).to eq Time.iso8601(json[:created_at])
     end
 
-    it "is failed with bad username" do
-      response = action.call(**params, username: "baduser")
+    it "is failed without username" do
+      response = action.call(params.except(:username))
+
+      expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
-        code: 422,
+        status: 422,
         message: "Unprocessable Entity",
-        errors: ["ユーザー名またはパスワードが違います。"],
+        errors: {username: ["is missing"]},
       })
+    end
+
+    describe "authentication failure" do
+      let(:authenticate) {
+        instance_double(Yuzakan::Providers::Authenticate, call: Failure([:failure, "message"]))
+      }
+
+      it "is failed" do
+        response = action.call(params)
+
+        expect(response).to be_client_error
+        expect(response.status).to eq 422
+        expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+        json = JSON.parse(response.body.first, symbolize_names: true)
+        expect(json).to eq({
+          code: 422,
+          message: "Unprocessable Entity",
+          errors: ["ユーザー名またはパスワードが違います。"],
+        })
+      end
     end
 
     it "is failed with bad password" do
