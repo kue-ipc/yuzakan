@@ -5,7 +5,7 @@
 module Yuzakan
   module Utils
     module HashArray
-      module_function # rubocop:disable Stlye/AccessModifierDeclarations
+      module_function # rubocop:disable Style/AccessModifierDeclarations
 
       # HashのArrayに対して、同じキーの場合に一つにまとめる
       def ha_merge(harr, key:, delete_key: :delete)
