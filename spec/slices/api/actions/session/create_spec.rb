@@ -55,7 +55,7 @@ RSpec.describe API::Actions::Session::Create do
       expect(json.keys).to contain_exactly(:uuid, :user, :created_at, :updated_at)
       expect(json[:uuid]).to eq uuid
       expect(json[:user]).to eq user.name
-      expect(Time.iso8601(json[:created_at])).to be_between(begin_time, end_time)
+      expect(Time.iso8601(json[:created_at])).to be_between(begin_time.floor, end_time)
       expect(Time.iso8601(json[:updated_at])).to eq Time.iso8601(json[:created_at])
     end
 
@@ -120,7 +120,7 @@ RSpec.describe API::Actions::Session::Create do
       expect(json).to eq({
         status: 422,
         message: "Unprocessable Entity",
-        errors: [{passworcd: ["存在しません。"]}],
+        errors: [{password: ["存在しません。"]}],
       })
     end
 
@@ -151,7 +151,7 @@ RSpec.describe API::Actions::Session::Create do
     end
 
     it "is failed without both username and password" do
-      response = action.call(params.except(:password))
+      response = action.call(params.except(:username, :password))
       expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
@@ -159,7 +159,7 @@ RSpec.describe API::Actions::Session::Create do
       expect(json).to eq({
         status: 422,
         message: "Unprocessable Entity",
-        errors: [{username: ["存在しません。"], passworcd: ["存在しません。"]}],
+        errors: [{username: ["存在しません。"], password: ["存在しません。"]}],
       })
     end
 
@@ -241,7 +241,7 @@ RSpec.describe API::Actions::Session::Create do
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:uuid]).to match(/\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/)
       expect(json[:user]).to eq(user.name)
-      expect(Time.iso8601(json[:created_at])).to be_between(begin_time, end_time)
+      expect(Time.iso8601(json[:created_at])).to be_between(begin_time.floor, end_time)
       expect(Time.iso8601(json[:updated_at])).to eq Time.iso8601(json[:created_at])
     end
   end
