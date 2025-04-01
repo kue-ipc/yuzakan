@@ -68,8 +68,8 @@ module Yuzakan
     security_level 1
 
     before :connect! # first
-    before :check_session!
     before :configurate!
+    before :check_session!
     before :authenticate!
     before :authorize!
     after :done!
@@ -92,6 +92,12 @@ module Yuzakan
       ].min
     end
 
+    private def configurate!(req, res)
+      return if res[:current_config]
+
+      reply_uninitialized(req, res)
+    end
+
     private def check_session!(req, res)
       return if req.session[:user].nil?
 
@@ -111,12 +117,6 @@ module Yuzakan
       res.session[:updated_at] = nil
 
       reply_session_timeout(req, res)
-    end
-
-    private def configurate!(req, res)
-      return if res[:current_config]
-
-      reply_uninitialized(req, res)
     end
 
     private def authenticate!(req, res)

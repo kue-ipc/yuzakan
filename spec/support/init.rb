@@ -2,6 +2,32 @@
 
 # default let script
 
+# request spec
+def init_request_spec
+  # default REMOTE_ADDR: 127.0.0.1
+
+  let(:user) { Factory[:user] }
+  let(:config) { Factory[:config] }
+  # trusted level 5 network 127.0.0.0/8
+  let(:network) { Factory[:network_ipv4_loopback] }
+  let(:session) {
+    {
+      uuid: uuid,
+      user: user.name,
+      created_at: Time.now - 600,
+      updated_at: Time.now - 60,
+    }
+  }
+  let(:uuid) { "ffffffff-ffff-4fff-bfff-ffffffffffff" }
+
+  before do
+    user
+    config
+    network
+    current_session.env "rack.session", session
+  end
+end
+
 # action spec
 def init_action_spec
   # response = action.call(params)
