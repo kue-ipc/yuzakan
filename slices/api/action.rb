@@ -28,8 +28,9 @@ module API
       halt_json 403
     end
 
-    private def reply_session_timeout(_req, _res)
-      halt_json 401, errors: [t.call("messages.session_timeout")]
+    private def reply_session_timeout(_req, res)
+      redirect_to_json(res, routes.path(:api_session),
+        errors: [t.call("messages.session_timeout")])
     end
 
     # override handle

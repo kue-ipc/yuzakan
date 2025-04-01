@@ -10,7 +10,7 @@
 # - type: 保存型
 #     - :boolean, :string, :text, :intger, :float, :date, :time, :datetime, :file
 # - default: 新規作成時のデフォルト値
-# - fixed: 固定値か？ (tureの場合は常にdefaltの値になる、デフォルト: false)
+# - fixed: 固定値か？ (tureの場合は常にdefalutの値になる、デフォルト: false)
 # - encrypted: 暗号化して保存するか？ (:string, :text, :fileのみ指定可能、デフォルト: fales)
 #
 # - input: form inputのタイプ
@@ -132,7 +132,7 @@ module Yuzakan
     end
 
     def dump_value(value)
-      data = Marshal.dump(value)
+      data = value
       if encrypted?
         result = Encrypt.new.call(data: data)
         raise ConvertError, result.errors if result.failure?
@@ -152,8 +152,7 @@ module Yuzakan
 
         data = result.data
       end
-      # データベース由来のデータしかloadしないようにすること
-      value = Marshal.load(data) # rubocop:disable Security/MarshalLoad
+      value = convert_value(data)
 
       if default && (value.nil? || (value.respond_to?(:empty?) && value.empty?))
         return default

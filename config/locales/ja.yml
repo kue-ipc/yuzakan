@@ -76,8 +76,7 @@ ja:
       stopped_after_some: >-
         一部の%{target}については%{action}が実行されましたが、
         別の%{target}では%{action}時にエラーが発生し、処理が中断されました。
-        実行されていない%{target}が存在する可能性があるため、
-        再度%{action}を実行してください。
+        実行されていない%{target}が存在する可能性があるため、 再度%{action}を実行してください。
     invalid_csrf_token: CSRFトークンが不正です。
     wrong_username_or_password: 'ユーザー名またはパスワードが違います。'
   messages:
@@ -220,8 +219,7 @@ ja:
     unprocessable_content: 失敗しました。
     # 5xx
     internal_server_error: >-
-      サーバーで致命的なエラーが発生しました。
-      管理者に連絡してください。
+      サーバーで致命的なエラーが発生しました。 管理者に連絡してください。
     # others
     error: エラーが発生しました。
     unknown: 不明な状況が発生しました。
@@ -239,11 +237,9 @@ ja:
       move_immediately: すぐに移動
     messages:
       running: >-
-        %{name}を実施しています。
-        しばらくお待ち下さい。
+        %{name}を実施しています。 しばらくお待ち下さい。
       fetch_error: >-
-        サーバー接続時にエラーが発生しました
-        しばらく待ってから、再度試してください。
+        サーバー接続時にエラーが発生しました しばらく待ってから、再度試してください。
       reload_after: '約%{sec}秒後に画面を切り替えます。'
       reload_immediately: 画面を切り替えます。しばらくお待ち下さい。
     labels:

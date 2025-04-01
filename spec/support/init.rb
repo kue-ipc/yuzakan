@@ -7,6 +7,7 @@ def init_request_spec
   # default REMOTE_ADDR: 127.0.0.1
 
   let(:user) { Factory[:user] }
+  let(:password) { Faker::Internet.password }
   let(:config) { Factory[:config] }
   # trusted level 5 network 127.0.0.0/8
   let(:network) { Factory[:network_ipv4_loopback] }
@@ -19,12 +20,32 @@ def init_request_spec
     }
   }
   let(:uuid) { "ffffffff-ffff-4fff-bfff-ffffffffffff" }
+  let(:group) { Factory[:group] }
+  let(:provider) {
+    Factory[:provdire_mock, params: {
+      username: user.name,
+      password: password,
+      display_name: user.display_name,
+      email: user.email,
+      locked: false,
+      unmanageable: false,
+      mfa: false,
+      primary_group: group.name,
+      groups: "",
+      attrs: "{}",
+    }]
+  }
 
   before do
     user
     config
     network
-    current_session.env "rack.session", session
+    provider
+    rack_test_session.env "rack.session", session
+    rack_test_session(:first).env "rack.session", {}
+    rack_test_session(:logout).env "rack.session", {**session, user: nil}
+    rack_test_session(:timeover).env "rack.session",
+      {**session, created_at: Time.now - 7200, updated_at: Time.now - 7200}
   end
 end
 

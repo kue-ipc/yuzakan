@@ -245,28 +245,4 @@ RSpec.describe API::Actions::Session::Create do
       expect(Time.iso8601(json[:updated_at])).to eq Time.iso8601(json[:created_at])
     end
   end
-
-  context "when session timeout" do
-    let(:session) {
-      {
-        uuid: uuid,
-        user: user.name,
-        created_at: Time.now - 7200,
-        updated_at: Time.now - 7200,
-      }
-    }
-
-    it "is error" do
-      response = action.call(params)
-      expect(response).to be_client_error
-      expect(response.status).to eq 401
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({
-        status: 401,
-        message: "Unauthorized",
-        errors: ["セッションがタイムアウトしました。"],
-      })
-    end
-  end
 end

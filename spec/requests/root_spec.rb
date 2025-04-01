@@ -9,10 +9,33 @@ RSpec.describe "Root", :db, type: :request do
     expect(last_response).to be_successful
   end
 
+  it "is unauthorized on first" do
+    with_session(:first) do
+      get "/"
+      expect(last_response).to be_unauthorized
+    end
+  end
+
+  it "is unauthorized on logout" do
+    with_session(:logout) do
+      get "/"
+      expect(last_response).to be_unauthorized
+    end
+  end
+
+  it "is redirect (302 found) on time over" do
+    with_session(:timeover) do
+      get "/"
+      expect(last_response).to be_redirect
+      expect(last_response.status).to be 302
+      expect(last_response.headers["Location"]).to eq "/"
+    end
+  end
+
   context "when level 0 network" do
     let(:network) { Factory[:network_ipv4_loopback, clearance_level: 0] }
 
-    it "is 403 forbidden" do
+    it "is forbidden" do
       get "/"
 
       expect(last_response).to be_forbidden
@@ -22,31 +45,21 @@ RSpec.describe "Root", :db, type: :request do
   context "when no network" do
     let(:network) { nil }
 
-    it "is 403 forbidden" do
+    it "is forbidden" do
       get "/"
 
       expect(last_response).to be_forbidden
     end
   end
 
-  context "when no login" do
-    let(:session) { {} }
-
-    it "is 401 unauthorized" do
-      get "/"
-
-      expect(last_response).to be_unauthorized
-    end
-  end
-
   context "when no config" do
     let(:config) { nil }
 
-    it "is 503 service unavalable" do
+    it "is server error (503 service unavalable)" do
       get "/"
 
       expect(last_response).to be_server_error
-      expect(last_response.status).to be(503)
+      expect(last_response.status).to be 503
     end
   end
 end

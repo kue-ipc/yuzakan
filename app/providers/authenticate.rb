@@ -20,7 +20,7 @@ module Yuzakan
           return Failure([:error, e])
         end
 
-        Failure([:failure, :wrong_username_or_password])
+        Failure([:failure, t.call("errors.wrong_username_or_password")])
       end
 
       private def validate_password(password)
