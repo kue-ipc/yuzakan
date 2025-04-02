@@ -11,12 +11,13 @@ module API
           "providers.authenticate",
         ]
 
-        security_level 0
-
         params do
           required(:username).filled(Yuzakan::Types::NameString, max_size?: 255)
           required(:password).filled(:string, max_size?: 255)
         end
+
+        security_level 0
+        private def authenticate!(_req, _res) = nil
 
         def handle(req, res)
           unless req.params.valid?
@@ -33,7 +34,7 @@ module API
 
           auth_log_params = {
             uuid: res[:current_uuid],
-            client: req.ip,
+            client: res[:current_client],
             user: username,
           }
 

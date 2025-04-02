@@ -20,17 +20,18 @@ module API
       halt_json 503, errors: [t.call("messages.uninitialized")]
     end
 
+    # TODO: メッセージを付けるべき？
     private def reply_unauthenticated(_req, _res)
+      halt_json 401
+    end
+
+    # TODO: メッセージを付けるべき？
+    private def reply_untrusted(_req, _res)
       halt_json 401
     end
 
     private def reply_unauthorized(_req, _res)
       halt_json 403
-    end
-
-    private def reply_session_timeout(_req, res)
-      redirect_to_json(res, routes.path(:api_session),
-        errors: [t.call("messages.session_timeout")])
     end
 
     # override handle

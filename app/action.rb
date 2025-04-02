@@ -50,6 +50,7 @@ module Yuzakan
       "i18n.t",
       "i18n.l",
       login_view: "views.home.login",
+      mfa_view: "views.home.mfa",
       unready_view: "views.home.unready",
     ]
 
@@ -69,7 +70,6 @@ module Yuzakan
 
     before :connect! # first
     before :configurate!
-    before :check_session!
     before :authenticate!
     before :authorize!
     after :done!
@@ -82,60 +82,70 @@ module Yuzakan
 
     private def connect!(req, res)
       res[:current_time] = Time.now
-      res[:current_uuid] = (req.session[:uuid] ||= SecureRandom.uuid)
       res[:current_config] = config_repo.current
+
+      # check session timeout
+      if req.session[:updated_at]
+        timeout = res[:current_config]&.session_timeout
+        if timeout.positive? &&
+            res[:current_time] - req.session[:updated_at] > timeout
+          logger.debug "session timeout", user: req.session[:user],
+            update_at: req.session[:updated_at]
+          res.flash[:warn] = t.call("messages.session_timeout")
+          res.session[:user] = nil
+          res.session[:trusted] = false
+        end
+      end
+
+      # initial session
+      req.session[:uuid] ||= SecureRandom.uuid
+      req.session[:user] ||= nil
+      req.session[:trusted] ||= false
+      req.session[:created_at] ||= res[:current_time]
+      req.session[:updated_at] = res[:current_time]
+
+      res[:current_uuid] = req.session[:uuid]
+      res[:current_client] = req.ip
       res[:current_user] = req.session[:user]&.then { user_repo.get(_1) }
-      res[:current_network] = network_repo.find_include(req.ip)
+
+      res[:current_network] = network_repo.find_include(res[:current_client])
       res[:current_level] = [
         res[:current_user]&.clearance_level || 0,
         res[:current_network]&.clearance_level || 0,
       ].min
+      res[:current_trusted] = req.session[:trusted] ||
+        res[:current_network]&.trusted || false
     end
 
     private def configurate!(req, res)
+      connect! unless res[:current_uuid]
       return if res[:current_config]
 
       reply_uninitialized(req, res)
     end
 
-    private def check_session!(req, res)
-      return if req.session[:user].nil?
-
-      if req.session[:updated_at]
-        timeout = res[:current_config].session_timeout
-        if timeout.zero? ||
-            res[:current_time] - req.session[:updated_at] <= timeout
-          res.session[:updated_at] = res[:current_time]
-          return
-        end
-      end
-
-      logger.debug "session timeout", user: req.session[:user],
-        update_at: req.session[:updated_at]
-      res.session[:user] = nil
-      res.session[:created_at] = nil
-      res.session[:updated_at] = nil
-
-      reply_session_timeout(req, res)
-    end
-
     private def authenticate!(req, res)
-      return if self.class.security_level&.zero?
-      return if res[:current_user]
-
-      reply_unauthenticated(req, res)
+      connect! unless res[:current_uuid]
+      if !res[:current_user]
+        reply_unauthenticated(req, res)
+      elsif !res[:current_trusted]
+        reply_untrusted(req, res)
+      end
     end
 
     private def authorize!(req, res)
+      connect! unless res[:current_uuid]
       return if res[:current_level] >= self.class.security_level
 
       reply_unauthorized(req, res)
     end
 
+
+
     private def done!(req, res)
       log_info = {
         uuid: res[:current_uuid],
-        client: req.ip,
+        client: res[:current_client],
         user: res[:current_user]&.name,
         action: self.class.name,
         method: req.request_method,
@@ -152,17 +162,18 @@ module Yuzakan
       halt 503, res.render(unready_view)
     end
 
+    # TODO: メッセージを付けるべき？
     private def reply_unauthenticated(_req, res)
       halt 401, res.render(login_view)
     end
 
-    private def reply_unauthorized(_req, _res)
-      halt 403
+    # TODO: メッセージを付けるべき？
+    private def reply_untrusted(_req, res)
+      halt 401, res.render(mfa_view)
     end
 
-    private def reply_session_timeout(_req, res)
-      res.flash[:warn] = t.call("messages.session_timeout")
-      res.redirect_to(Hanami.app["routes"].path(:root))
+    private def reply_unauthorized(_req, _res)
+      halt 403
     end
 
     # handle
