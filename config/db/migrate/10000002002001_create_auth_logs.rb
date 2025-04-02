@@ -12,8 +12,6 @@ ROM::SQL.migration do
       column :result, String, null: false
       column :provider, String
 
-      column :code, String
-
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
 

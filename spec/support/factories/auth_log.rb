@@ -6,7 +6,6 @@ Factory.define(:auth_log) do |f|
   f.user Faker::Internet.username
   f.result "success"
   f.provider "local"
-  f.code nil
   f.timestamps
 end
 

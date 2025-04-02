@@ -2,7 +2,7 @@
 
 module Yuzakan
   module Repos
-    class AuthLogRepo < Yuzakan::DB::Repo
+    class MfaLogRepo < Yuzakan::DB::Repo
       commands :create, use: :timestamps,
         plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
       commands update: :by_pk, use: :timestamps,
