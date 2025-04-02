@@ -32,6 +32,10 @@ module API
     post "/session", to: "session.create", as: :session
     delete "/session", to: "session.destroy", as: :session
 
+    post "/mfa/email", to: "mfa.email.create", as: :mfa_email
+    delete "/mfa/email/:id", to: "mfa.email.destroy", as: :mfa_email
+    patch "/mfa/email/:id", to: "mfa.email.update", as: :mfa_email
+
     # get "/users", to: "users.index", as: :users
     # post "/users", to: "users.create", as: :users
     # get "/users/:id", to: "users.show", as: :user
