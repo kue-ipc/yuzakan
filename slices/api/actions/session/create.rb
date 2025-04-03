@@ -96,8 +96,12 @@ module API
           auth_log_repo.create(**auth_log_params, result: "success",
             provider: provider.name)
           res.status = :created
-          res.body = generate_json(res.session.to_h.slice(:uuid, :user,
-            :created_at, :updated_at))
+          res.body = generate_json({
+            uuid: res.session[:uuid],
+            user: res.session[:user],
+            created_at: res.session[:created_at],
+            updated_at: res.session[:updated_at],
+          })
         end
 
         private def failures_over?(username, count:, period:)

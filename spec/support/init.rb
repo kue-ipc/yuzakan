@@ -15,6 +15,7 @@ def init_request_spec
     {
       uuid: uuid,
       user: user.name,
+      trusted: true,
       created_at: Time.now - 600,
       updated_at: Time.now - 60,
     }
