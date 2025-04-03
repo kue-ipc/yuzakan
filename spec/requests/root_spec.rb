@@ -23,12 +23,10 @@ RSpec.describe "Root", :db, type: :request do
     end
   end
 
-  it "is redirect (302 found) on time over" do
+  it "is unauthorized on time over" do
     with_session(:timeover) do
       get "/"
-      expect(last_response).to be_redirect
-      expect(last_response.status).to be 302
-      expect(last_response.headers["Location"]).to eq "/"
+      expect(last_response).to be_unauthorized
     end
   end
 

@@ -78,7 +78,6 @@ def init_action_spec
     {
       "rack.session" => session,
       "REMOTE_ADDR" => client,
-      "HTTP_ACCEPT" => format,
     }
   }
   let(:session) {
@@ -91,7 +90,6 @@ def init_action_spec
   }
   let(:uuid) { "ffffffff-ffff-4fff-bfff-ffffffffffff" }
   let(:client) { "127.0.0.1" }
-  let(:format) { "text/html" }
 
   # override if necessary for each action
   let(:action_opts) { {} }

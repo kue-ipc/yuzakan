@@ -74,7 +74,7 @@ module Yuzakan
     before :authorize!
     after :done!
 
-    Hanami.env["produciton"] do
+    if Hanami.env?(:produciton)
       handle_exception StandardError => :handle_standard_error
     end
 
@@ -82,12 +82,15 @@ module Yuzakan
 
     private def connect!(req, res)
       res[:current_time] = Time.now
+      res[:current_client] = req.ip
+      raise "client ip is missing" unless res[:current_client]
+
       res[:current_config] = config_repo.current
 
       # check session timeout
       if req.session[:updated_at]
         timeout = res[:current_config]&.session_timeout
-        if timeout.positive? &&
+        if timeout&.positive? &&
             res[:current_time] - req.session[:updated_at] > timeout
           logger.debug "session timeout", user: req.session[:user],
             update_at: req.session[:updated_at]
@@ -105,16 +108,16 @@ module Yuzakan
       req.session[:updated_at] = res[:current_time]
 
       res[:current_uuid] = req.session[:uuid]
-      res[:current_client] = req.ip
       res[:current_user] = req.session[:user]&.then { user_repo.get(_1) }
 
       res[:current_network] = network_repo.find_include(res[:current_client])
+
       res[:current_level] = [
         res[:current_user]&.clearance_level || 0,
         res[:current_network]&.clearance_level || 0,
       ].min
-      res[:current_trusted] = req.session[:trusted] ||
-        res[:current_network]&.trusted || false
+      res[:current_trusted] = res[:current_network]&.trusted ||
+        req.session[:trusted] || false
     end
 
     private def configurate!(req, res)
@@ -139,8 +142,6 @@ module Yuzakan
 
       reply_unauthorized(req, res)
     end
-
-
 
     private def done!(req, res)
       log_info = {

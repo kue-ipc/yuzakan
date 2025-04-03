@@ -87,19 +87,13 @@ RSpec.describe "POST /api/session", :db, type: :request do
     end
   end
 
-  it "is redircet (302 found) on time over" do
+  it "is ceated on time over" do
     with_session(:timeover) do
       post "/api/session", params.to_json, request_headers
-      expect(last_response).to be_redirect
-      expect(last_response.status).to be 302
+      expect(last_response).to be_created
       expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(last_response.body, symbolize_names: true)
-      expect(json).to eq({
-        status: 302,
-        message: "Found",
-        location: "/api/session",
-        errors: ["セッションがタイムアウトしました。"],
-      })
+      expect(json[:user]).to eq user.name
     end
   end
 end

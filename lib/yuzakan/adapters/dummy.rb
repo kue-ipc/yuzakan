@@ -8,7 +8,7 @@ module Yuzakan
       self.version = "0.0.1"
       self.params = []
 
-      hidden true if Hanami.env == "production"
+      hidden Hanami.env?(:production)
     end
   end
 end

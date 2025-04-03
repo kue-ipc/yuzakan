@@ -36,7 +36,7 @@ module Yuzakan
 
         def imports_assets
           assets_json_path = Hanami.root / "public/assets.json"
-          if Hanami.env == "production" && assets_json_path.readable?
+          if Hanami.env?(:production) && assets_json_path.readable?
             assets_json = JSON.parse(assets_json_path.read)
             assets_map = assets_json
               .select { |path, _| path.end_with?(".js") }

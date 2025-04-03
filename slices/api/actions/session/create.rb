@@ -92,13 +92,12 @@ module API
 
           # セッション情報を保存
           res.session[:user] = user.name
-          res.session[:created_at] = res[:current_time]
-          res.session[:updated_at] = res[:current_time]
 
           auth_log_repo.create(**auth_log_params, result: "success",
             provider: provider.name)
           res.status = :created
-          res.body = generate_json(res.session.to_h)
+          res.body = generate_json(res.session.to_h.slice(:uuid, :user,
+            :created_at, :updated_at))
         end
 
         private def failures_over?(username, count:, period:)

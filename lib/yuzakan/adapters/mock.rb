@@ -7,7 +7,7 @@ require "securerandom"
 module Yuzakan
   module Adapters
     class Mock < Yuzakan::Adapter
-      hidden true if Hanami.env == "production"
+      hidden Hanami.env?(:production)
 
       self.name = "mock"
       self.display_name = "モック"

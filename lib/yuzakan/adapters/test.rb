@@ -5,7 +5,7 @@ require "yaml"
 module Yuzakan
   module Adapters
     class Test < Yuzakan::Adapter
-      hidden true if Hanami.env == "production"
+      hidden Hanami.env?(:production)
 
       self.name = "test"
       self.display_name = "テスト"
