@@ -9,8 +9,5 @@ Factory = ROM::Factory.configure { |config|
 }
 
 Faker::Config.locale = :ja
-# NOTE: Fackerが内部でI18n.with_locale(:en)を使用しているため、localeを設定して
-#       おかないと:enになってしまう。
-I18n.locale = :ja
 
 Dir["#{__dir__}/factories/*.rb"].each { |file| require file }
