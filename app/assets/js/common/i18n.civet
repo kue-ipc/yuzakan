@@ -1,26 +1,28 @@
 // I18n
+// global varibale: i18nTranslations
+// event: "i18n.translations"
 
-export I18N_TRANSLATIONS_KEY := "i18n.translations"
+export interface Translations
+  [key: string]: string | Translations
 
-translationsStore: any .= null
+declare global
+  var i18nTranslations: Record<string, Translations>
+  interface WindowEventMap
+    "i18n.translations.load": CustomEvent<string>
 
-getTranslationsStore := (): any ->
-  return translationsStore if translationsStore?
+globalThis.i18nTranslations ?= {}
 
-  translations := localStorage.getItem(I18N_TRANSLATIONS_KEY)
-  return null unless translations?
+DEFAULT_LOCALE := "ja"
+I18N_TRANSLATIONS_LOAD := "i18n.translations.load"
 
-  translationsStore = JSON.parse(translations)
-
-export t := (key: string, opts: {[key: string]: string} = {}): string ->
-  current: any .= getTranslationsStore()
-  unless current?
-    console.warn "not yet get a translation"
-    return key
-
+// TODO: 現在はデフォルトロケール固定
+export t := (key: string, opts: Record<string, string> = {}): string ->
+  current: string? | Translations .= getTranslations()
   for each str of key.split(".")
-    current = current[str]
     break unless current?
+    break if current <? "string"
+    
+    current = current[str]
 
   unless current <? "string"
     console.warn "no translaiton fond: %s", key
@@ -30,3 +32,49 @@ export t := (key: string, opts: {[key: string]: string} = {}): string ->
     current = current.replaceAll(`%{${name}}`, replace)
   
   current
+
+export getTranslations := (locale: string = DEFAULT_LOCALE): Translations? ->
+  globalThis.i18nTranslations[locale]
+
+export loadTranslations := (translations: Translations, locale?: string):
+  Translations ->
+  if locale
+    updateTranslations(globalThis.i18nTranslations, {[locale]: translations})
+  else
+    updateTranslations(globalThis.i18nTranslations, translations)
+  window.dispatchEvent(new CustomEvent(I18N_TRANSLATIONS_LOAD))
+  globalThis.i18nTranslations
+
+export waitLoadTranslations := (locale: string = DEFAULT_LOCALE):
+    Promise<Translations> ->
+  new Promise<Translations> (resolve, _reject) ->
+    currentTranslations := getTranslations(locale)
+    return resolve(currentTranslations) if currentTranslations?
+
+    checkTranslation := (_e: CustomEvent) ->
+      newTranslations := getTranslations(locale)
+      return unless newTranslations?
+
+      window.removeEventListener I18N_TRANSLATIONS_LOAD, checkTranslation
+      resolve(newTranslations)
+    
+    window.addEventListener I18N_TRANSLATIONS_LOAD, checkTranslation
+    console.debug "wait load translations"
+
+updateTranslations := (translaitons: Translations, ...others: Translations[]):
+    Translations ->
+  for each other of others
+    for own key, value in other
+      if value <? "string"
+        translaitons[key] = value
+      else if !Object.hasOwn(translaitons, key) or translaitons[key] <? "string"
+        translaitons[key] = cloneTranslations(value)
+      else
+        updateTranslations(translaitons[key], value)
+  translaitons
+
+cloneTranslations := (translations: Translations): Translations ->
+  clone: Translations := Object.assign({}, translations)
+  for own key, value in clone when value !<? "string"
+    clone[key] = cloneTranslations(value)
+  clone

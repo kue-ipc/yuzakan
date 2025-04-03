@@ -8,7 +8,7 @@ APIDialog from ~/api_dialog.civet
 bsIcon from ~/app/bs_icon.civet
 csrf from ~/csrf.civet
 {t} from ~/common/i18n.civet
-{waitLoadLocale} from ~/load_locale.civet
+{waitLoadTranslations} from ~/common/i18n.civet
 {normalizeURL} from ~/helpers/url_helper.civet
 
 type LoginState
@@ -16,7 +16,7 @@ type LoginState
   password: string??
   disabled: boolean
 
-await waitLoadLocale()
+await waitLoadTranslations()
 
 apiDialog := new APIDialog {
   id: "login"

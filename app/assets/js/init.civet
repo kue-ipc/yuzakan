@@ -1,3 +1,5 @@
-{loadLocale} from ~/load_locale.civet
+{loadTranslations, type Translations} from ~/common/i18n.civet
 
-loadLocale()
+// TODO: 現在のところ日本語のみ対応
+localeJa from ../../../config/locales/ja.yml
+loadTranslations(localeJa as Translations)

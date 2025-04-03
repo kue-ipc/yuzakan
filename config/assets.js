@@ -2,6 +2,7 @@ import * as assets from "hanami-assets";
 
 import civetPlugin from '@danielx/civet/esbuild-plugin';
 import {sassPlugin} from 'esbuild-sass-plugin';
+import {YAMLPlugin} from 'esbuild-yaml';
 
 await assets.run({
   esbuildOptionsFn: (args, esbuildOptions) => {
@@ -23,6 +24,7 @@ await assets.run({
     esbuildOptions.plugins.push(sassPlugin({
       silenceDeprecations: ['mixed-decls', 'color-functions', 'global-builtin', 'import'],
     }));
+    esbuildOptions.plugins.push(YAMLPlugin());
 
     return esbuildOptions;
   }

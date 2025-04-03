@@ -16,7 +16,7 @@ ResponseMessage from ~/common/response_message.civet
 
 declare global
   interface HTMLElementEventMap
-    "apidialog.message": CustomEvent<string>;
+    "apidialog.message": CustomEvent<string>
 
 interface ModalState
   status: string | Status
@@ -24,10 +24,6 @@ interface ModalState
   link?: URL??
   closable?: boolean
   reload?: boolean
-
-declare global
-  interface HTMLElementEventMap
-    "apidialog.message": CustomEvent<string>;
 
 export default class APIDialog
   @MESSAGE_EVENT := "apidialog.message"
