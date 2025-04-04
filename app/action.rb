@@ -90,8 +90,6 @@ module Yuzakan
     # callback methods
 
     private def connect!(req, res)
-      return if res.has_header?(:current_connected) && res[:current_connected]
-
       res[:current_time] = Time.now
       res[:current_client] = req.ip
       raise "client ip is missing" unless res[:current_client]
@@ -129,13 +127,10 @@ module Yuzakan
       ].min
       res[:current_trusted] = res[:current_network]&.trusted ||
         req.session[:trusted] || false
-
-      res[:current_connected] = true
     end
 
     # check current config, authentication, authorization
     private def configure!(req, res)
-      connect!(req, res)
       return unless self.class.required_configuration
       return if res[:current_config]
 
@@ -143,7 +138,6 @@ module Yuzakan
     end
 
     private def authenticate!(req, res)
-      connect!(req, res)
       return unless self.class.required_authentication
 
       if res[:current_user]
@@ -157,7 +151,6 @@ module Yuzakan
     end
 
     private def authorize!(req, res)
-      connect!(req, res)
       return if res[:current_level] >= self.class.security_level
 
       reply_unauthorized(req, res)

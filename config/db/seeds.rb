@@ -50,25 +50,23 @@ unless provider_repo.get("local")
 end
 
 # setup admin user and group
-Hanami.app["providers.read_group"]
-  .call(admin_groupname, ["local"]) => Success(group_providers)
+Hanami.app["providers.read_group"].call(admin_groupname, ["local"]) =>
+  Success(group_providers)
 if group_providers["local"].nil?
-  Hanami.app["providers.create_group"]
-    .call(admin_groupname, ["local"], display_name: "管理者") in Success(_)
+  Hanami.app["providers.create_group"].call(admin_groupname, ["local"],
+    display_name: "管理者") in Success(_)
 end
 
-Hanami.app["providers.read_user"]
-  .call(admin_username, ["local"]) => Success(user_providers)
+Hanami.app["providers.read_user"].call(admin_username, ["local"]) =>
+  Success(user_providers)
 if user_providers["local"].nil?
-  Hanami.app["providers.create_user"]
-    .call(admin_username, ["local"],
-      password: admin_password,
-      display_name: "ローカル管理者",
-      primary_group: admin_groupname,
-      groups: []) in Success(_)
+  Hanami.app["providers.create_user"].call(admin_username, ["local"],
+    password: admin_password, display_name: "ローカル管理者",
+    primary_group: admin_groupname, groups: []) in Success(_)
 end
 
-Hanami.app["management.sync_group"].call(admin_groupname) => Success(admin_group)
+Hanami.app["management.sync_group"].call(admin_groupname) =>
+  Success(admin_group)
 Hanami.app["management.sync_user"].call(admin_username) => Success(admin_user)
 
 if admin_user.clearance_level < 5
