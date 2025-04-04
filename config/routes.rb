@@ -7,8 +7,6 @@ module Yuzakan
     get "/about", to: "about.index", as: :about
     get "/about/browser", to: "about.browser", as: :about_browser
 
-    get "/locale", to: "locale.index", as: :locale
-
     slice :api, at: "/api"
 
     # TODO: 実装がまだのため、コメントアウトしておく
