@@ -3,6 +3,19 @@
 # default let script
 
 # request spec
+def init_feature_spec
+  # default REMOTE_ADDR: 127.0.0.1
+
+  let(:config) { Factory[:config] }
+  # trusted level 5 network 127.0.0.0/8
+  let(:network) { Factory[:network_ipv4_loopback] }
+  before do
+    config
+    network
+  end
+end
+
+# request spec
 def init_request_spec
   # default REMOTE_ADDR: 127.0.0.1
 
