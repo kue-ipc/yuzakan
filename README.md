@@ -124,9 +124,12 @@ bundle exec hanami server
 `development`と`test`環境におけるDBの準備:
 
 ```sh
+bundle exec rake cache:clean
 bundle exec hanami db prepare
 HANAMI_ENV=test bundle exec hanami db prepare
 ```
+
+developmentではキャッシュを削除しておかないとseedが作られない時がある。
 
 ## 制限事項
 

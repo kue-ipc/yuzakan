@@ -16,6 +16,13 @@ rescue LoadError
   # do nothing
 end
 
+namespace :cache do
+  desc "Remove any caches"
+  task clean: :environment do
+    Hanami.app["cache_store"].clear
+  end
+end
+
 namespace :js do
   desc "Run JavaScript tests"
   task test: ["node_modules/.bin/mocha"] do
