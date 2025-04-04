@@ -5,8 +5,8 @@ module Yuzakan
     module About
       class Index < Yuzakan::Action
         security_level 0
-        private def configurate!(_req, _res) = nil
-        private def authenticate!(_req, _res) = nil
+        required_configuration fales
+        required_authentication false
 
         def handle(req, res)
         end

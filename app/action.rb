@@ -68,8 +68,17 @@ module Yuzakan
     defines :security_level
     security_level 1
 
+    # required
+    defines :required_configuration
+    defines :required_authentication
+    defines :required_trusted_authentication
+    required_configuration true
+    required_authentication true
+    # effect only if required_authentication is true
+    required_trusted_authentication true
+
     before :connect! # first
-    before :configurate!
+    before :configure!
     before :authenticate!
     before :authorize!
     after :done!
@@ -81,6 +90,8 @@ module Yuzakan
     # callback methods
 
     private def connect!(req, res)
+      return if res.has_header?(:current_connected) && res[:current_connected]
+
       res[:current_time] = Time.now
       res[:current_client] = req.ip
       raise "client ip is missing" unless res[:current_client]
@@ -118,26 +129,35 @@ module Yuzakan
       ].min
       res[:current_trusted] = res[:current_network]&.trusted ||
         req.session[:trusted] || false
+
+      res[:current_connected] = true
     end
 
-    private def configurate!(req, res)
-      connect! unless res[:current_uuid]
+    # check current config, authentication, authorization
+    private def configure!(req, res)
+      connect!(req, res)
+      return unless self.class.required_configuration
       return if res[:current_config]
 
       reply_uninitialized(req, res)
     end
 
     private def authenticate!(req, res)
-      connect! unless res[:current_uuid]
-      if !res[:current_user]
-        reply_unauthenticated(req, res)
-      elsif !res[:current_trusted]
+      connect!(req, res)
+      return unless self.class.required_authentication
+
+      if res[:current_user]
+        return unless self.class.required_trusted_authentication
+        return if res[:current_trusted]
+
         reply_untrusted(req, res)
       end
+
+      reply_unauthenticated(req, res)
     end
 
     private def authorize!(req, res)
-      connect! unless res[:current_uuid]
+      connect!(req, res)
       return if res[:current_level] >= self.class.security_level
 
       reply_unauthorized(req, res)

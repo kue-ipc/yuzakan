@@ -17,7 +17,7 @@ module API
         end
 
         security_level 0
-        private def authenticate!(_req, _res) = nil
+        required_authentication false
 
         def handle(req, res)
           unless req.params.valid?

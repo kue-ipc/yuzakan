@@ -5,6 +5,7 @@ module API
     module Session
       class Destroy < API::Action
         security_level 0
+        required_trusted_authentication false
 
         def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
           halt_json 410 unless current_user

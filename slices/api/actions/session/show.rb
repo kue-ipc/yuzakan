@@ -5,7 +5,7 @@ module API
     module Session
       class Show < API::Action
         security_level 0
-        private def authenticate!(_req, _res) = nil
+        required_authentication false
 
         def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
           halt_json 404 unless current_user

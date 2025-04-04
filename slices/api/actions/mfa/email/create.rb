@@ -5,6 +5,9 @@ module API
     module Mfa
       module Email
         class Create < API::Action
+          security_level 0
+          required_trusted_authentication false
+
           def handle(request, response)
           end
         end
