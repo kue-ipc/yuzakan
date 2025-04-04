@@ -21,9 +21,10 @@ module Yuzakan
 
           svg_opts.merge!(role: "img", "aria-label": alt) if alt
 
+          icons_svg = _context.assets["bootstrap-icons.svg"]
+
           tag.svg(**svg_opts) do
-            tag.empty_tag :use,
-              "xlink:href": "/assets/vendor/bootstrap-icons.svg##{name}"
+            tag.use(:use, "xlink:href": "#{icons_svg}##{name}")
           end
         end
       end

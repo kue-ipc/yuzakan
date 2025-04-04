@@ -3,9 +3,9 @@
     - if flash[level]
       = alert(level, flash[level])
 
-  - flash[:errors]&.each do |msg|
-    = alert(:error, msg)
+  / - flash[:errors]&.each do |msg|
+  /   = alert(:error, msg)
 
-  - if flash[:param_errors]&.size&.positive?
-    script#param-errors type="application/json"
-      = hj(flash[:param_errors].to_json)
+  / - if flash[:param_errors]&.size&.positive?
+  /   script#param-errors type="application/json"
+  /     = hj(flash[:param_errors].to_json)

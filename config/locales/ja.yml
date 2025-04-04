@@ -64,10 +64,13 @@ ja:
     valid_chars?: '使用できない文字が含まれています。'
     min_types?: '文字種は%{num}種類以上でなければなりません。'
     strong_password?: 'パスワードが弱すぎます。'
+    authenticated?: ログインが必要です。
+    trusted?: 信頼されていません。
+    authorized?: 権限がありません。
+    initialized?: 初期化されていません。
     # messages
     not_found: '%{name}が見つかりません。'
     no_ability: '%{name}は%{action}を実行できません。'
-    already_initialized: '既に初期化済みです。'
     unchangeable: '%{name}は変更できません。'
     action:
       fail: '%{action}に失敗しました。'
@@ -80,9 +83,8 @@ ja:
     invalid_csrf_token: CSRFトークンが不正です。
     wrong_username_or_password: 'ユーザー名またはパスワードが違います。'
   messages:
-    uninitialized: 初期化されてません。
-    unauthenticated: ログインしていません。
     session_timeout: セッションがタイムアウトしました。
+    initialize_config: 管理者は設定を初期化してください。
   interactors:
     decrypt: 復号化
     encrypt: 暗号化

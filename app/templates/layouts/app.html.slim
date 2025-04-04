@@ -5,7 +5,7 @@ html lang="ja"
     meta name="viewport" content="width=device-width, initial-scale=1.0"
     = csrf_param_meta_tag 
     = csrf_token_meta_tag
-    = current_config.config_tag
+    = current_config&.title_tag
     / TODO: esbuildでbundleしない時に必要になるかもしれない。
     / = importmap_tag
     = favicon_tag
@@ -14,6 +14,6 @@ html lang="ja"
   body
     = render "partial/header"
     .container-fluid.mt-2
-      / = render "partial/alert"
+      = render "partial/alert"
       = yield
     = render "partial/footer"

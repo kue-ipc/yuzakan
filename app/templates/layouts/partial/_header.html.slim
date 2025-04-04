@@ -1,7 +1,7 @@
 header#header
   nav.navbar.navbar-expand-sm.bg-body-tertiary
     .container-fluid
-      = link_to current_config.title, routes.path(:root), class: "navbar-brand"
+      = current_config&.title_link_tag(class: "navbar-brand")
       = tag.button(class: "navbar-toggler", type: "button",
         data: {bs_toggle: "collapse", bs_target: "#navbar-content"},
         aria: {controls: "navbar-content", expanded: "false",
