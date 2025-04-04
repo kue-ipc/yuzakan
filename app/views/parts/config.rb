@@ -11,8 +11,6 @@ module Yuzakan
         def title_link_tag(url = routes.path(:root), **)
           link_to current_config.title, url, **
         end
-
-        def config_
       end
     end
   end
