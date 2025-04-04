@@ -8,8 +8,8 @@ module Yuzakan
           helpers.tag.title(value.title)
         end
 
-        def title_link_tag(url = routes.path(:root), **)
-          link_to current_config.title, url, **
+        def title_link_tag(url = _context.routes.path(:root), **)
+          helpers.link_to(value.title, url, **)
         end
       end
     end
