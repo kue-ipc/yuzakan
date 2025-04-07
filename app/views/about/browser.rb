@@ -4,7 +4,7 @@ module Yuzakan
   module Views
     module About
       class Browser < Yuzakan::View
-        def supported_browsers
+        expose :supported_browsers, decorate: false do
           [
             {
               name: "Google Chrome",
@@ -32,20 +32,24 @@ module Yuzakan
               name: "Opera",
               url: "https://www.opera.com/ja",
             },
+            # {
+            #   name: "Pale Moon",
+            #   url: "https://www.palemoon.org/",
+            # },
           ]
         end
 
-        def unsupported_browsers
+        expose :unsupported_browsers, decorate: false do
           [
             "Microsoft Internet Explorer",
             "Opera以外のOpera製ブラウザー(Opera Mini等)",
             "エンジン選択型ブラウザー(Sleipnir、Lunascape等)",
             "Linuxデスクトップ環境ブラウザー(Konqueror、GNOME Web等)",
             "アプリ内ブラウザー",
-            "ガラケー搭載のブラウザー",
-            "ガラホ搭載のブラウザー",
+            "フィーチャーホン搭載のブラウザー",
             "テキストベースのブラウザー (Lynx、w3m等)",
-            "サポートが終了したブラウザー",
+            "メンテナンス期間が終了したブラウザー(サポートしているブラウザーの古いバージョン含む)",
+            "メンテナンス期間が終了したOS上のブラウザー",
           ]
         end
       end

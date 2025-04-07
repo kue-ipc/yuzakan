@@ -4,12 +4,13 @@
 module Yuzakan
   module Views
     module Helpers
-      include CSRFHelper
       include AlertHelper
+      include BsHelper
+      include CSRFHelper
+      include GridHelper
+      include IconHelper
       # include ErrorHelper
       # include EscapeHelper
-      # include GridHelper
-      include IconHelper
       # include ImportmapHelper
       # include MenuHelper
       # include PatternHelper

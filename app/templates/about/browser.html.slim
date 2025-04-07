@@ -1,15 +1,8 @@
-h2 サポートしているブラウザーについて
+h2 = t("views.about.browser.title")
+p = t("views.about.browser.description")
 
-p
-  |
-    このシステムは最新のWeb技術を使用しているため、
-    最新のモダンブラウザー以外はサポートしていません。
-
-h3 サポートしているブラウザー (モダンブラウザー)
-p
-  |
-    下記ブラウザーの最新版を使用してください。
-    メンテナンス期間切れのバージョンはサポート対象外です。
+h3 = t("views.about.browser.supported_browser.title")
+p = t("views.about.browser.supported_browser.description")
 ul
   - supported_browsers.each do |browser|
     li
@@ -20,17 +13,10 @@ ul
       - if browser[:admin] && current_level > 1
         | *
 = if current_level > 1
-  p
-    | 管理者用ページは * がついているブラウザーのみサポート対象です。
+  p = t("views.about.browser.supported_browser.for_admin")
 
-h3 サポートしていないブラウザー (レガシーブラウザー)
-p
-  |
-    下記ブラウザーは、機能が不足している、または、
-    対応状況が不確かなため、サポートしていません。
-    今後も対応する予定はありません。
-    Blink(Chromium)、WebKit、Geckoを使用するブラウザーの場合、
-    正常に表示できる場合がありますが、サポート対象外です。
+h3 = t("views.about.browser.unsupported_browser.title")
+p = t("views.about.browser.unsupported_browser.description")
 ul
   - unsupported_browsers.each do |browser|
     li

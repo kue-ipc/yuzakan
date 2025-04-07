@@ -1,5 +1,6 @@
 hr
 p.text-center
   | -
-  =<> current_config&.title_link_tag(routes.path(:about))
+  =<> current_config&.title_link_tag(routes.path(:about)) || \
+    link_to("Yuzakan", routes.path(:about))
   | -

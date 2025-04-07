@@ -1,8 +1,8 @@
 ja:
   errors:
-    or: 'または'
-    array?: '配列を入力してください。'
-    empty?: '空を入力してください。'
+    or: または
+    array?: 配列を入力してください。
+    empty?: 空を入力してください。
     excludes?: '%{value}を含んではいけません。'
     excluded_from?:
       arg:
@@ -11,37 +11,37 @@ ja:
     exclusion?: '%{list}を一つも含んではいけません。'
     eql?: '%{left}と値が一致しません。'
     not_eql?: '%{left}とは異なる値にしてください。'
-    filled?: '入力が必須です。'
-    format?: '形式が間違っています。'
-    number?: '数を入力してください。'
-    odd?: '奇数を入力してください。'
-    even?: '偶数を入力してください。'
+    filled?: 入力が必須です。
+    format?: 形式が間違っています。
+    number?: 数を入力してください。
+    odd?: 奇数を入力してください。
+    even?: 偶数を入力してください。
     gt?: '%{num}より大きくしてください。'
     gteq?: '%{num}以上にしてください。'
-    hash?: '連想配列を入力してください。'
+    hash?: 連想配列を入力してください。
     included_in?:
       arg:
         default: '%{list}のうち一つを含んでください。'
         range: '%{list_left} - %{list_right}の範囲内にしてください。'
     inclusion?: '%{list}のうち一つを含んでください。'
     includes?: '%{value}を含んでください。'
-    bool?: '真偽値を入力してください。'
-    true?: '真を入力してください。'
-    false?: '偽を入力してください。'
-    int?: '整数を入力してください。'
-    float?: '小数点数を入力してください。'
-    decimal?: '十進数を入力してください。'
-    date?: '日付を入力してください。'
-    date_time?: '日時を入力してください。'
-    time?: '時刻を入力してください。'
-    key?: '存在しません。'
-    attr?: '存在しません。'
+    bool?: 真偽値を入力してください。
+    true?: 真を入力してください。
+    false?: 偽を入力してください。
+    int?: 整数を入力してください。
+    float?: 小数点数を入力してください。
+    decimal?: 十進数を入力してください。
+    date?: 日付を入力してください。
+    date_time?: 日時を入力してください。
+    time?: 時刻を入力してください。
+    key?: 存在しません。
+    attr?: 存在しません。
     lt?: '%{num}より小さくしてください。'
     lteq?: '%{num}以下にししてください。'
     max_size?: 'サイズが%{num}を超えてはいけません。'
     min_size?: 'サイズが%{num}より小さくてはいけません。'
-    none?: '定義しないでください。'
-    str?: '文字列を入力してください。'
+    none?: 定義しないでください。
+    str?: 文字列を入力してください。
     type?: '%{type}を入力してください。'
     size?:
       arg:
@@ -53,17 +53,17 @@ ja:
             default: '長さは%{size}にしてください。'
             range: '長さは%{size_left}〜%{size_right}の範囲内にしてください。'
     # orginal messages
-    uniq?: '重複しています。'
-    exist?: '存在しません。'
-    found?: '見つかりません。'
-    name?: '名前付けの規則に違反しています。'
-    name_or_star?: '名前付けの規則に違反しています。'
-    email?: '不正なメールアドレスです。'
-    domain?: '不正なドメイン名です。'
+    uniq?: 重複しています。
+    exist?: 存在しません。
+    found?: 見つかりません。
+    name?: 名前付けの規則に違反しています。
+    name_or_star?: 名前付けの規則に違反しています。
+    email?: 不正なメールアドレスです。
+    domain?: 不正なドメイン名です。
     password?: パスワードに使用できない文字が含まれています。
-    valid_chars?: '使用できない文字が含まれています。'
+    valid_chars?: 使用できない文字が含まれています。
     min_types?: '文字種は%{num}種類以上でなければなりません。'
-    strong_password?: 'パスワードが弱すぎます。'
+    strong_password?: パスワードが弱すぎます。
     authenticated?: ログインが必要です。
     trusted?: 信頼されていません。
     authorized?: 権限がありません。
@@ -77,14 +77,15 @@ ja:
       error: '%{target}に対して%{action}時にエラーが発生しました。'
       not_run: 'どの%{target}に対しても%{action}は実行されませんでした。'
       stopped_after_some: >-
-        一部の%{target}については%{action}が実行されましたが、
-        別の%{target}では%{action}時にエラーが発生し、処理が中断されました。
+        一部の%{target}については%{action}が実行されましたが、別の%{target}では%{action}時にエラーが発生し、処理が中断されました。
         実行されていない%{target}が存在する可能性があるため、 再度%{action}を実行してください。
     invalid_csrf_token: CSRFトークンが不正です。
-    wrong_username_or_password: 'ユーザー名またはパスワードが違います。'
+    wrong_username_or_password: ユーザー名またはパスワードが違います。
   messages:
     session_timeout: セッションがタイムアウトしました。
-    initialize_config: 管理者は設定を初期化してください。
+    initialize_config: >-
+      初期設定が必要です。
+      管理者は設定の初期化を実施してください。
   interactors:
     decrypt: 復号化
     encrypt: 暗号化
@@ -143,9 +144,9 @@ ja:
       too_many_failure: >-
         時間あたりのログイン試行が規定の回数を超えたため、現在ログインが禁止されています。
         しばらく待ってから再度ログインを試してください。
-      deny_network: '現在のネットワークからのログインは許可されていません。'
-      prohibited: '管理者より使用が禁止されています。ログインが必要な場合は、管理者にお問い合わせください。'
-      no_clearance: 'ゲストユーザーであるため、システムを使用することができません。'
+      deny_network: 現在のネットワークからのログインは許可されていません。
+      prohibited: 管理者より使用が禁止されています。ログインが必要な場合は、管理者にお問い合わせください。
+      no_clearance: ゲストユーザーであるため、システムを使用することができません。
   attributes:
     user:
       name: ユーザー名
@@ -221,7 +222,8 @@ ja:
     unprocessable_content: 失敗しました。
     # 5xx
     internal_server_error: >-
-      サーバーで致命的なエラーが発生しました。 管理者に連絡してください。
+      サーバーで致命的なエラーが発生しました。
+      管理者に連絡してください。
     # others
     error: エラーが発生しました。
     unknown: 不明な状況が発生しました。
@@ -247,3 +249,30 @@ ja:
     labels:
       username: ユーザー名
       password: パスワード
+  views:
+    about:
+      browser:
+        title: サポートしているブラウザーについて
+        description: >-
+          このシステムは最新のWeb技術を使用しているため、最新のモダンブラウザー以外では正しく表示されません。
+        supported_browser:
+          title: サポートしているブラウザー (モダンブラウザー)
+          description: >-
+            下記ブラウザーの最新版を使用してください。
+            メンテナンス期間が終了したバージョンのブラウザーはサポート対象外です。
+          for_admin: >-
+            管理者用ページは * がついているブラウザーのみサポート対象です。
+        unsupported_browser:
+          title: サポートしていないブラウザー (レガシーブラウザー)
+          description: >-
+            下記ブラウザーは、機能が不足している、または、対応状況が不確かなため、サポートしていません。
+            Blink(Chromium)、WebKit、Geckoを使用するブラウザーでは正常に表示できる場合がありますが、サポート対象外になります。
+      index:
+        title: システム情報
+        application:
+          title: アプリケーション情報
+          description: >-
+            このシステムは日本国内の大学向けに作成されたアカウント管理システムです。
+            サポートしているブラウザーは下記を確認してください。
+          license:
+            title: ライセンス

@@ -1,18 +1,15 @@
 header#header
   nav.navbar.navbar-expand-sm.bg-body-tertiary
     .container-fluid
-      = current_config&.title_link_tag(class: "navbar-brand")
-      = tag.button(class: "navbar-toggler", type: "button",
-        data: {bs_toggle: "collapse", bs_target: "#navbar-content"},
-        aria: {controls: "navbar-content", expanded: "false",
-          label: I18n.t("view.buttons.toggle_navigation")}) do
-        = tag.span(class: "navbar-toggler-icon")
+      = current_config&.title_link_tag(class: "navbar-brand") || \
+        bs_navbar_brand("Yuzakan")
+      = bs_navbar_toggler("navbar-content")
       #navbar-content.collapse.navbar-collapse
         - if current_user
           ul.navbar-nav.me-auto
             li.nav-item
               = link_to routes.path(:root), class: "nav-link d-flex align-items-center" do
-                = bs_icon_tag("house", class: "flex-shrink-0 me-1")
+                = bs_icon("house", class: "flex-shrink-0 me-1")
                 span.d-none.d-lg-inline
                   | 利用者用メニュー
             - if current_level >= 2
@@ -38,12 +35,12 @@ header#header
           /     = current_user.label_name
           .logout-button
           / = javascript "logout", type: "module"
-        - else
+        - elsif current_config
           ul.navbar-nav.me-auto
             li.nav-item
               = link_to routes.path(:root), class: "nav-link" do
                 / - text bs_icon("box-arrow-in-left")
-                span class: "d-none d-lg-inline" do
+                span.d-none.d-lg-inline
                   | ログイン
           span.navbar-text
             | 未ログイン
