@@ -43,16 +43,19 @@ module Yuzakan
 
     include Deps[
       "logger",
+      "i18n",
       "repos.config_repo",
       "repos.network_repo",
       "repos.user_repo",
       "repos.action_log_repo",
-      "i18n.t",
-      "i18n.l",
       login_view: "views.home.login",
       mfa_view: "views.home.mfa",
       unready_view: "views.home.unready",
     ]
+
+    # I18n
+    private def t(...) = i18n.t(...)
+    private def l(...) = i18n.l(...)
 
     # Cache
     include Hanami::Action::Cache
@@ -103,7 +106,7 @@ module Yuzakan
             res[:current_time] - req.session[:updated_at] > timeout
           logger.debug "session timeout", user: req.session[:user],
             update_at: req.session[:updated_at]
-          res.flash[:warn] = t.call("messages.session_timeout")
+          res.flash[:warn] = t("messages.session_timeout")
           res.session[:user] = nil
           res.session[:trusted] = false
         end
@@ -173,7 +176,7 @@ module Yuzakan
     # reply
 
     private def reply_uninitialized(_req, res)
-      res.flash[:error] = t.call("errors.initialized?")
+      res.flash[:error] = t("errors.initialized?")
       halt 503, res.render(unready_view)
     end
 

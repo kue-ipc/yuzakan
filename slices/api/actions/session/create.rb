@@ -40,14 +40,14 @@ module API
 
           unless res[:current_network].trusted
             auth_log_repo.create(**auth_log_params, result: "reject")
-            halt_json 403, errors: [t.call("session.errors.deny_network")]
+            halt_json 403, errors: [t("session.errors.deny_network")]
           end
 
           if failures_over?(username,
             count: res[:current_config].session_failure_limit,
             period: res[:current_config].session_failure_duration)
             auth_log_repo.create(**auth_log_params, result: "reject")
-            halt_json 403, errors: [t.call("session.errors.too_many_failure")]
+            halt_json 403, errors: [t("session.errors.too_many_failure")]
           end
 
           case authenticate.call(username, password)
@@ -81,13 +81,13 @@ module API
           # 使用禁止を確認
           if user.prohibited
             auth_log_repo.create(**auth_log_params, result: "prohibited")
-            halt_json 403, errors: [t.call("session.errors.prohibited")]
+            halt_json 403, errors: [t("session.errors.prohibited")]
           end
 
           # クリアランスレベルを確認
           if user.clearance_level.zero?
             auth_log_repo.create(**auth_log_params, result: "no_clearance")
-            halt_json 403, errors: [t.call("session.errors.no_clearance")]
+            halt_json 403, errors: [t("session.errors.no_clearance")]
           end
 
           # セッション情報を保存

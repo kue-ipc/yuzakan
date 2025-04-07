@@ -7,9 +7,12 @@ module Yuzakan
   class Operation < Dry::Operation
     include Deps[
       "logger",
-      "i18n.t",
-      "i18n.l",
+      "i18n",
     ]
+
+    # I18n
+    private def t(...) = i18n.t(...)
+    private def l(...) = i18n.l(...)
 
     # logging
     private def on_failure(failure)

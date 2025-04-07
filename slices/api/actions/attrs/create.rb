@@ -48,7 +48,7 @@ module API
 
           if @attr_repository.exist_by_name?(params[:name])
             halt_json 422,
-              errors: [{name: [t.call("errors.uniq?")]}]
+              errors: [{name: [t("errors.uniq?")]}]
           end
 
           mapping_errors = {}
@@ -57,7 +57,7 @@ module API
 
             provider = provider_by_name(mapping[:provider])
             if provider.nil?
-              mapping_errors[idx] = {provider: [t.call("errors.found?")]}
+              mapping_errors[idx] = {provider: [t("errors.found?")]}
               next
             end
 

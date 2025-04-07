@@ -6,7 +6,6 @@ module Yuzakan
   module Operations
     class GeneratePassword < Yuzakan::Operation
       include Deps[
-        "i18n.t",
         "repo.config_repo",
       ]
       def call
@@ -20,7 +19,7 @@ module Yuzakan
         if config
           Success(config)
         else
-          Failure([:failure, t.call("errors.uninitialized")])
+          Failure([:failure, t("errors.uninitialized")])
         end
       end
 

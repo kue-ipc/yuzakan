@@ -37,12 +37,12 @@ module Yuzakan
           rescue => e
             logger.error "[#{self.class.name}] Failed on #{provider.name} for #{username}"
             logger.error e
-            error(t.call("errors.action.error", action: t.call("interactors.provider_delete_user"),
+            error(t("errors.action.error", action: t("interactors.provider_delete_user"),
               target: provider.label))
             error(e.message)
             if @changed
-              error(t.call("errors.action.stopped_after_some", action: t.call("interactors.provider_delete_user"),
-                target: t.call("entities.provider")))
+              error(t("errors.action.stopped_after_some", action: t("interactors.provider_delete_user"),
+                target: t("entities.provider")))
             end
             fail!
           end
@@ -67,14 +67,14 @@ module Yuzakan
             provider = @provider_repository.find_with_adapter_by_name(provider_name)
             unless provider
               logger.warn "[#{self.class.name}] Not found: #{provider_name}"
-              error!(t.call("errors.not_found",
-                name: t.call("entities.provider")))
+              error!(t("errors.not_found",
+                name: t("entities.provider")))
             end
 
             unless provider.can_do?(operation)
               logger.warn "[#{self.class.name}] No ability: #{provider.name}, #{operation}"
-              error!(t.call("errors.no_ability", name: provider.label,
-                action: t.call(operation, scope: "operations")))
+              error!(t("errors.no_ability", name: provider.label,
+                action: t(operation, scope: "operations")))
             end
 
             provider

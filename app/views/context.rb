@@ -5,17 +5,12 @@ module Yuzakan
   module Views
     class Context < Hanami::View::Context
       include Deps[
-        i18n_t: "i18n.t",
-        i18n_l: "i18n.l"
+        "i18n",
       ]
 
-      def t(...)
-        i18n_t.call(...)
-      end
-
-      def l(...)
-        i18n_l.call(...)
-      end
+      # I18n
+      def t(...) = i18n.t(...)
+      def l(...) = i18n.l(...)
     end
   end
 end

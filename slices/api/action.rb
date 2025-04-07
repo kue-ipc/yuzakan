@@ -17,7 +17,7 @@ module API
     # override reply
 
     private def reply_uninitialized(_req, _res)
-      halt_json 503, errors: [t.call("messages.uninitialized")]
+      halt_json 503, errors: [t("messages.uninitialized")]
     end
 
     # TODO: メッセージを付けるべき？
@@ -44,7 +44,7 @@ module API
     def handle_invalid_csrf_token(req, _res)
       logger.warn "CSRF attack", expected: req.session[CSRF_TOKEN],
         was: req.params.raw[CSRF_TOKEN.to_s]
-      halt_json 400, errors: [t.call("errors.invalid_csrf_token")]
+      halt_json 400, errors: [t("errors.invalid_csrf_token")]
     end
   end
 end
