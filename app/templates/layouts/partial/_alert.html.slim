@@ -1,7 +1,7 @@
 .alerts.d-print-none
   - levels.each_key do |level|
     - if flash[level]
-      = alert(level, flash[level])
+      = alert_tag(level, flash[level])
 
   / - flash[:errors]&.each do |msg|
   /   = alert(:error, msg)

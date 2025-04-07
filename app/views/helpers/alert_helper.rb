@@ -44,7 +44,7 @@ module Yuzakan
           LEVELS
         end
 
-        def alert(level, msg)
+        def alert_tag(level, msg)
           alert_class = %w[
             alert
             alert-dismissible fade show
@@ -52,7 +52,7 @@ module Yuzakan
           ] + ["alert-#{levels[level][:color]}"]
           tag.div class: alert_class, role: "alert" do
             [
-              bs_icon(levels[level][:icon], size: 24,
+              bs_icon_tag(levels[level][:icon], size: 24,
                 class: "flex-shrink-0 me-2"),
               tag.div(tag.span(h(msg))),
               tag.button(class: "btn-close", type: "button",

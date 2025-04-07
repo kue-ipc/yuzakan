@@ -4,7 +4,7 @@ module Yuzakan
   module Views
     module Helpers
       module IconHelper
-        def bs_icon(name, size: 24, alt: nil, **opts)
+        def bs_icon_tag(name, size: 24, alt: nil, **opts)
           svg_opts = {
             class: ["bi"],
             width: size,

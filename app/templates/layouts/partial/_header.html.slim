@@ -12,7 +12,7 @@ header#header
           ul.navbar-nav.me-auto
             li.nav-item
               = link_to routes.path(:root), class: "nav-link d-flex align-items-center" do
-                = bs_icon("house", class: "flex-shrink-0 me-1")
+                = bs_icon_tag("house", class: "flex-shrink-0 me-1")
                 span.d-none.d-lg-inline
                   | 利用者用メニュー
             - if current_level >= 2
