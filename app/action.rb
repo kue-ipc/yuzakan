@@ -57,6 +57,17 @@ module Yuzakan
     private def t(...) = i18n.t(...)
     private def l(...) = i18n.l(...)
 
+    # Flash
+    private def add_flash(res, level, msg, now: true)
+      if now
+        res.flash.now[level] ||= []
+        res.flash.now[level] << msg
+      else
+        # keep only one message
+        res.flash[level] = [msg]
+      end
+    end
+
     # Cache
     include Hanami::Action::Cache
     cache_control :private, :no_cache
@@ -99,25 +110,7 @@ module Yuzakan
 
       res[:current_config] = config_repo.current
 
-      # check session timeout
-      if req.session[:updated_at]
-        timeout = res[:current_config]&.session_timeout
-        if timeout&.positive? &&
-            res[:current_time] - req.session[:updated_at] > timeout
-          logger.debug "session timeout", user: req.session[:user],
-            update_at: req.session[:updated_at]
-          res.flash[:warn] = t("messages.session_timeout")
-          res.session[:user] = nil
-          res.session[:trusted] = false
-        end
-      end
-
-      # initial session
-      req.session[:uuid] ||= SecureRandom.uuid
-      req.session[:user] ||= nil
-      req.session[:trusted] ||= false
-      req.session[:created_at] ||= res[:current_time]
-      req.session[:updated_at] = res[:current_time]
+      check_session(req, res)
 
       res[:current_uuid] = req.session[:uuid]
       res[:current_user] = req.session[:user]&.then { user_repo.get(_1) }
@@ -130,6 +123,36 @@ module Yuzakan
       ].min
       res[:current_trusted] = res[:current_network]&.trusted ||
         req.session[:trusted] || false
+    end
+
+    private def check_session(req, res)
+      # check session timeout
+      if session_timeout?(req, res)
+        logger.debug "session timeout", user: req.session[:user],
+          update_at: req.session[:updated_at]
+        add_flash(res, :warn, t("messages.session_timeout"))
+        res.session[:user] = nil
+        res.session[:trusted] = false
+      end
+
+      # initial session
+      req.session[:uuid] ||= SecureRandom.uuid
+      req.session[:user] ||= nil
+      req.session[:trusted] ||= false
+      req.session[:created_at] ||= res[:current_time]
+      req.session[:updated_at] = res[:current_time]
+    end
+
+    private def session_timeout?(req, res)
+      return false if req.session[:updated_at]
+
+      timeout = res[:current_config]&.session_timeout
+      return false unless timeout&.positive?
+
+      elapsed_time = res[:current_time] - req.session[:updated_at]
+      return false if elapsed_time <= timeout
+
+      true
     end
 
     # check current config, authentication, authorization
@@ -176,7 +199,7 @@ module Yuzakan
     # reply
 
     private def reply_uninitialized(_req, res)
-      res.flash[:error] = t("errors.initialized?")
+      add_flash(res, :error, t("errors.initialized?"))
       halt 503, res.render(unready_view)
     end
 

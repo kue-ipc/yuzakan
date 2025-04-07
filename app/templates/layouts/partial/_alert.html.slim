@@ -1,11 +1,4 @@
 .alerts.d-print-none
-  - levels.each_key do |level|
-    - if flash[level]
-      = alert_tag(level, flash[level])
-
-  / - flash[:errors]&.each do |msg|
-  /   = alert(:error, msg)
-
-  / - if flash[:param_errors]&.size&.positive?
-  /   script#param-errors type="application/json"
-  /     = hj(flash[:param_errors].to_json)
+  - alert_levels.each_key do |level|
+    - Array(flash[level]).each do |msg|
+      = alert_tag(level, msg)

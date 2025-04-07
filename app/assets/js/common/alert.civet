@@ -1,5 +1,7 @@
 // 動的な警告の表示と削除
 
+// app/views/heplers/alert_helper.rb
+
 ALERTS_CLASS := "alerts"
 
 LEVELS_COLOR := {}

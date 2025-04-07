@@ -23,13 +23,13 @@ export default class Status
     new Status({name: "success", color: "success", icon: "check-circle-fill"})
     new Status({name: "failure", color: "danger", icon: "x-circle-fill"})
     // log level
-    new Status({name: "debug", color: "secondary", icon: "bug-fill"})
-    new Status({name: "info", color: "info", icon: "info-square-fill"})
-    new Status({name: "warn", color: "warning",
-      icon: "exclamation-triangle-fill"})
+    new Status({name: "fatal", color: "danger", icon: "slash-circle-fill"})
     new Status({name: "error", color: "danger",
       icon: "exclamation-octagon-fill"})
-    new Status({name: "fatal", color: "danger", icon: "slash-circle-fill"})
+    new Status({name: "warn", color: "warning",
+     icon: "exclamation-triangle-fill"})
+    new Status({name: "info", color: "info", icon: "info-square-fill"})
+    new Status({name: "debug", color: "secondary", icon: "bug-fill"})
     new Status({name: "unknown", color: "primary", icon: "patch-question-fill"})
     // alert
     new Status({name: "alert", color: "warning", icon: "bell-fill"})

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# app/assets/js/common/alert.civet
+
 module Yuzakan
   module Views
     module Helpers
@@ -40,20 +42,25 @@ module Yuzakan
           },
         }.freeze
 
-        def levels
+        def alert_levels
           LEVELS
         end
 
         def alert_tag(level, msg)
-          alert_class = %w[
+          alert_level = alert_levels[level]
+          alert_class = %W[
             alert
-            alert-dismissible fade show
-            d-flex align-items-center
-          ] + ["alert-#{levels[level][:color]}"]
+            alert-dismissible
+            fade
+            show
+            d-flex
+            align-items-center
+            alert-#{alert_level[:color]}
+          ]
           tag.div class: alert_class, role: "alert" do
             [
-              bs_icon_tag(levels[level][:icon], size: 24,
-                class: "flex-shrink-0 me-2"),
+              bs_icon_tag(alert_level[:icon], size: 24,
+                class: ["flex-shrink-0", "me-2"]),
               tag.div(tag.span(h(msg))),
               tag.button(class: "btn-close", type: "button",
                 data: {"bs-dismiss": "alert"},
