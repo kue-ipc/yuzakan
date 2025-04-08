@@ -3,10 +3,12 @@
 module Yuzakan
   module Repos
     class ConfigRepo < Yuzakan::DB::Repo
-      def current = configs.last
+      def get = configs.last
+      alias current get
 
       def set(**)
-        configs.changeset(:create, **).map(:add_timestamps).commit
+        configs.changeset(:update, **).map(:touch).commit ||
+          configs.changeset(:create, **).map(:add_timestamps).commit
       end
     end
   end

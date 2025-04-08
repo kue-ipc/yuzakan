@@ -148,6 +148,24 @@ ja:
       prohibited: 管理者より使用が禁止されています。ログインが必要な場合は、管理者にお問い合わせください。
       no_clearance: ゲストユーザーであるため、システムを使用することができません。
   attributes:
+    config:
+      title: サイト名
+      domain: ドメイン名
+      session_timeout: セッションタイムアウト
+      session_failure_limit: ログイン失敗の限界回数
+      session_failure_duration: ログイン失敗の保持期間
+      password_min_size: パスワードの最短サイズ
+      password_max_size: パスワードの最長サイズ
+      password_min_types: パスワードの文字種の最小数
+      password_min_score: パスワードの複雑度スコアの最小値
+      password_prohibited_chars: パスワードの使用不可文字
+      password_extra_dict: パスワードの複雑性スコア計算時の外部辞書
+      generate_password_size: パスワード生成時のサイズ
+      generate_password_type: パスワード生成時の文字種
+      generate_password_chars: パスワード生成時の指定文字
+      contact_name: 管理者(連絡先)
+      contact_email: 連絡先メールアドレス
+      contact_phone: 連絡先電話番号
     user:
       name: ユーザー名
       display_name: 表示名
@@ -269,8 +287,11 @@ ja:
             Blink(Chromium)、WebKit、Geckoを使用するブラウザーでは正常に表示できる場合がありますが、サポート対象外になります。
       index:
         title: システム情報
+        contact_description: システムに関するお問い合わせは上記管理者までにお願いします。
         application:
           title: アプリケーション情報
+          name: アプリケーション名
+          version: バージョン
           description: >-
             このシステムは日本国内の大学向けに作成されたアカウント管理システムです。
             サポートしているブラウザーは下記を確認してください。

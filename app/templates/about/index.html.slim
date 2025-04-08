@@ -1,38 +1,33 @@
 h2 = t("views.about.index.title")
 
-dl.row.mb-2
-  - if current_config&.title
-    dt class=col_name サイト名
-    dd class=col_value
-      = current_config&.title
-  - if current_config&.contact_name&.size&.positive?
-    dt class=col_name 管理者
-    dd class=col_value
-      = current_config&.contact_name
-  - if current_config&.contact_email&.size&.positive?
-    dt class=col_name メールアドレス
-    dd class=col_value
-      = link_to current_config&.contact_email, "mailto:#{current_config&.contact_email}"
-  - if current_config&.contact_phone&.size&.positive?
-    dt class=col_name 電話番号
-    dd class=col_value
-      = current_config&.contact_phone
+- if current_config
+  h3 = current_config.title
 
 - if current_config&.contact_name&.size&.positive?
-  p
-    | システムに関するお問い合わせは上記管理者までにお願いします。
+  dl.row.mb-2
+    dt class=col_name = t("attributse.config.contact_name")
+    dd class=col_value
+      = current_config.contact_name
+    - if current_config.contact_email.size.positive?
+      dt class=col_name = t("attributse.config.contact_email")
+      dd class=col_value
+        = link_to current_config.contact_email,
+          "mailto:#{current_config.contact_email}"
+    - if current_config.contact_phone.size.positive?
+      dt class=col_name = t("attributse.config.contact_phone")
+      dd class=col_value
+        = current_config.contact_phone
+  p = t("views.about.index.concat_description")
 
 hr
 
 h3 = t("views.about.index.application.title")
 
 dl.row
-  dt class=col_name アプリケーション名
-  dd class=col_value
-    = Yuzakan.name
-  dt class=col_name バージョン
-  dd class=col_value
-    / = Yuzakan.version
+  dt class=col_name = t("views.about.index.application.name")
+  dd class=col_value = Yuzakan::Version.name
+  dt class=col_name = t("views.about.index.application.version")
+  dd class=col_value = Yuzakan::Version.version
 
 p = t("views.about.index.application.description")
 
@@ -40,8 +35,7 @@ p = link_to t("views.about.browser.title"), routes.path(:about_browser)
 
 h4 = t("views.about.index.application.license.title")
 pre.border.rounded.bg-light.p-2
-  code
-    = File.read(Hanami.app_path.dirname.parent / "LICENSE")
+  code = Yuzakan::Version.license
 
 / アラートメッセージのテスト用
 / - levels.each do |level, _|

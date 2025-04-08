@@ -6,14 +6,13 @@ require "dry/monads"
 include Dry::Monads[:result]
 
 title = ENV.fetch("TITLE", "Yuzakan")
-domain = ENV.fetch("DOMAIN", Socket.gethostname.split(".", 2)[1])
 admin_username = ENV.fetch("ADMIN_USERNAME", "admin")
 admin_password = ENV.fetch("ADMIN_PASSWORD", admin_username)
 admin_groupname = ENV.fetch("ADMIN_GROUPNAME", admin_username)
 
 # setup config
 config_repo = Hanami.app["repos.config_repo"]
-config_repo.set(title: title, domain: domain) unless config_repo.current
+config_repo.set(title: title) unless config_repo.current
 
 # setup networks
 network_repo = Hanami.app["repos.network_repo"]
