@@ -4,6 +4,30 @@ module Yuzakan
   module Views
     module Helpers
       module MenuHelper
+        USER_STATIC_MENU_ITEMS = [
+          {name: :user_password, color: "primary", level: 0},
+        ].freeze
+
+        ADMIN_STATIC_MENUE_ITEMS = [
+          {name: :admin_user, params: {id: "*"}, color: "primary", level: 4},
+          {name: :admin_users, color: "secondary", level: 2},
+          {name: :admin_groups, color: "secondary", level: 2},
+          {name: :admin_config, color: "danger", level: 5},
+          {name: :admin_providers, color: "danger", level: 2},
+          {name: :admin_attrs, color: "danger", level: 5},
+          {name: :admin_export_users, color: "warning", level: 5},
+          {name: :admin_export_groups, color: "warning", level: 5},
+        ].freeze
+
+        # TODO: プロバイダー
+        def user_menu_list(level)
+          USER_STATIC_MENU_ITEMS.select { |item| item[:level] <= level }
+        end
+
+        def admin_menu_list(level)
+          ADMIN_STATIC_MENU_ITEMS.select { |item| item[:level] <= level }
+        end
+
         def menu_link(name: nil, url: nil, description: nil, color: "dark", filled: false, type: :link,
           filename: nil)
           card_class = if filled then ["card", "text-white",

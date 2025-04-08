@@ -267,33 +267,76 @@ ja:
     labels:
       username: ユーザー名
       password: パスワード
+    menus:
+      user: 利用者メニュー
+      admin: 管理者メニュー
   views:
-    about:
-      browser:
-        title: サポートしているブラウザーについて
+    about_browser:
+      title: サポートしているブラウザーについて
+      description: >-
+        このシステムは最新のWeb技術を使用しているため、最新のモダンブラウザー以外では正しく表示されません。
+      supported_browser:
+        title: サポートしているブラウザー (モダンブラウザー)
         description: >-
-          このシステムは最新のWeb技術を使用しているため、最新のモダンブラウザー以外では正しく表示されません。
-        supported_browser:
-          title: サポートしているブラウザー (モダンブラウザー)
-          description: >-
-            下記ブラウザーの最新版を使用してください。
-            メンテナンス期間が終了したバージョンのブラウザーはサポート対象外です。
-          for_admin: >-
-            管理者用ページは * がついているブラウザーのみサポート対象です。
-        unsupported_browser:
-          title: サポートしていないブラウザー (レガシーブラウザー)
-          description: >-
-            下記ブラウザーは、機能が不足している、または、対応状況が不確かなため、サポートしていません。
-            Blink(Chromium)、WebKit、Geckoを使用するブラウザーでは正常に表示できる場合がありますが、サポート対象外になります。
-      index:
-        title: システム情報
-        contact_description: システムに関するお問い合わせは上記管理者までにお願いします。
-        application:
-          title: アプリケーション情報
-          name: アプリケーション名
-          version: バージョン
-          description: >-
-            このシステムは日本国内の大学向けに作成されたアカウント管理システムです。
-            サポートしているブラウザーは下記を確認してください。
-          license:
-            title: ライセンス
+          下記ブラウザーの最新版を使用してください。
+          メンテナンス期間が終了したバージョンのブラウザーはサポート対象外です。
+        for_admin: >-
+          管理者用ページは * がついているブラウザーのみサポート対象です。
+      unsupported_browser:
+        title: サポートしていないブラウザー (レガシーブラウザー)
+        description: >-
+          下記ブラウザーは、機能が不足している、または、対応状況が不確かなため、サポートしていません。
+          Blink(Chromium)、WebKit、Geckoを使用するブラウザーでは正常に表示できる場合がありますが、サポート対象外になります。
+    about:
+      title: システム情報
+      contact_description: システムに関するお問い合わせは上記管理者までにお願いします。
+      application:
+        title: アプリケーション情報
+        name: アプリケーション名
+        version: バージョン
+        description: >-
+          このシステムは日本国内の大学向けに作成されたアカウント管理システムです。
+          サポートしているブラウザーは下記を確認してください。
+        license:
+          title: ライセンス
+    user:
+      title: ユーザー情報
+      description: ユーザーの情報です。
+    user_password:
+      title: パスワード変更
+      description: パスワードを変更します。
+    user_provider:
+      title: '%{name}'
+      descriptino: '%{name}のアカウントを管理します。'
+    admin:
+      title: 管理者情報
+      description: 管理レベルの情報です。
+    admin_user:
+      title: ユーザー作成
+      description: ユーザーを新規作成します。
+    admin_users:
+      title: ユーザー一覧
+      description: ユーザーの一覧です。
+    admin_group:
+      title: グループ作成
+      description: グループを新規作成します。
+    admin_groups:
+      title: グループ一覧
+      description: グループの一覧です。
+    admin_config:
+      title: 全体設定
+      description: サイト名やパスワードの条件等の設定を変更します。。
+    admin_providers:
+      title: プロバイダー一覧
+      description: >-
+        連携するシステムはプロバイダーとして登録します。
+        連携システムの追加や変更ができます。
+    admin_attrs:
+      title: 属性設定
+      description: 各プロバイダーからの属性の紐付けを行います。
+    admin_export_users:
+      title: ユーザー情報エクスポート
+      description: 各プロバイダーにはないユーザー情報をエクスポートします。
+    admin_export_groups:
+      title: グループ情報インポート
+      description: 各プロバイダーにはないグループ情報をエクスポートします。

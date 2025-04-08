@@ -7,13 +7,16 @@ header#header
       #navbar-content.collapse.navbar-collapse
         - if current_user
           ul.navbar-nav.me-auto
-            li.nav-item
-              = link_to routes.path(:root), class: "nav-link d-flex align-items-center" do
-                = bs_icon("house", class: "flex-shrink-0 me-1")
-                span.d-none.d-lg-inline
-                  | 利用者用メニュー
-            - if current_level >= 2
-              li.nav-item
+            li.nav-item.dropdown
+              = link_to "#", class: "nav-link dropdown-toggle" role: "button" data: {"bs-toggle": "dropdown"}, aria: {expanded: "false"} do
+                = t("view.menus.user")
+              ul
+                - user_menu_list(current_level).each do |item|
+                  li
+                    = link_to routse.path(item[:name]), class: "dropdown-item"
+                      = t("views.#{item[:name]}.title")
+            / - if current_level >= 2
+            /   li.nav-item
                 / = link_to Admin.routes.path(:root), class: "nav-link d-flex align-items-center" do
                 /   = bs_icon("house-heart", class: "flex-shrink-0 me-1")
                 /   span.d-none.d-lg-inline

@@ -3,10 +3,9 @@
 module User
   class Routes < Hanami::Routes
     root to: "home.index"
-    # get "/user", to: "user.show"
 
-    get "/password", to: "user/password.show", as: :password
-    patch "/password", to: "user/password.update", as: :password
+    get "/password", to: "password.show", as: :password
+    patch "/password", to: "password.update", as: :password
     get "/providers/:id", to: "providers.show", as: :provider
     post "/providers/:id", to: "providers.create", as: :provider
     delete "/providers/:id", to: "providers.destroy", as: :provider
