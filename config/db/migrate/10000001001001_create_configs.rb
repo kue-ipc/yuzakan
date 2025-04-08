@@ -12,7 +12,7 @@ ROM::SQL.migration do
       column :session_failure_limit, Integer, null: false, default: 5
       column :session_failure_duration, Integer, null: false, default: 600
 
-      column :password_min_size, Integer, unll: false, default: 8
+      column :password_min_size, Integer, null: false, default: 8
       # BCrypt's limit size is 72, over chars are ignored.
       column :password_max_size, Integer, null: false, default: 64
       column :password_min_types, Integer, null: false, default: 1

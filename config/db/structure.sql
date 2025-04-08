@@ -184,7 +184,7 @@ CREATE TABLE public.configs (
     session_timeout integer DEFAULT 3600 NOT NULL,
     session_failure_limit integer DEFAULT 5 NOT NULL,
     session_failure_duration integer DEFAULT 600 NOT NULL,
-    password_min_size integer DEFAULT 8,
+    password_min_size integer DEFAULT 8 NOT NULL,
     password_max_size integer DEFAULT 64 NOT NULL,
     password_min_types integer DEFAULT 1 NOT NULL,
     password_min_score integer DEFAULT 0 NOT NULL,
