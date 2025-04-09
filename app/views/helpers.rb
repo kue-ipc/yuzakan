@@ -9,7 +9,7 @@ module Yuzakan
       include CSRFHelper
       include GridHelper
       include IconHelper
-      include MenuHelper
+      include HtmlHelper
       # include ErrorHelper
       # include EscapeHelper
       # include ImportmapHelper

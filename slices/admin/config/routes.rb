@@ -16,7 +16,7 @@ module Admin
     get "/users/\\*", to: "users.new", as: :new_user
     get "/users/:id", to: "users.index", as: :user
 
-    get "/groups", to: "groups.index", as: :group
-    get "/groups/:id", to: "groups.index", as: :groups
+    get "/groups", to: "groups.index", as: :groups
+    get "/groups/:id", to: "groups.index", as: :group
   end
 end

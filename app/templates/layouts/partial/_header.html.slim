@@ -16,6 +16,17 @@ header#header
                   - user_menu.each do |menu_item|
                     li
                       = menu_item.link_tag(class: "dropdown-item")
+            - if !admin_menu.empty?
+              li.nav-item.dropdown
+                = link_to "#", class: "nav-link dropdown-toggle", role: "button",
+                  data: {"bs-toggle": "dropdown"}, aria: {expanded: "false"} do
+                  = t("view.menus.admin")
+                ul.dropdown-menu
+                  - admin_menu.each do |menu_item|
+                    li
+                      = menu_item.link_tag(class: "dropdown-item")
+
+
             / - if current_level >= 2
             /   li.nav-item
                 / = link_to Admin.routes.path(:root), class: "nav-link d-flex align-items-center" do

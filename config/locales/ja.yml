@@ -311,7 +311,7 @@ ja:
     admin:
       title: 管理者情報
       description: 管理レベルの情報です。
-    admin_user:
+    admin_new_user:
       title: ユーザー作成
       description: ユーザーを新規作成します。
     admin_users:

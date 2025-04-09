@@ -1,4 +1,7 @@
+# auto_register: false
 # frozen_string_literal: true
+
+# TODO: Typeと統合すべき
 
 module Yuzakan
   module Views

@@ -15,7 +15,5 @@ Hanami.app.register_provider(:i18n) do
     I18n.locale = I18n.default_locale
 
     register "i18n", I18n
-    register "i18n.t", I18n.method(:t)
-    register "i18n.l", I18n.method(:l)
   end
 end

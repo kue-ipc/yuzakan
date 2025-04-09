@@ -1,4 +1,7 @@
+# auto_register: false
 # frozen_string_literal: true
+
+# TODO: これはどこで使うのだ？
 
 module Yuzakan
   module Params

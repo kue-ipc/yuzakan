@@ -1,3 +1,4 @@
+# auto_register: false
 # frozen_string_literal: true
 
 # app/assets/js/common/alert.civet
@@ -58,14 +59,13 @@ module Yuzakan
             alert-#{alert_level[:color]}
           ]
           tag.div class: alert_class, role: "alert" do
-            [
+            html_join(
               bs_icon_tag(alert_level[:icon], size: 24,
                 class: ["flex-shrink-0", "me-2"]),
               tag.div(tag.span(h(msg))),
               tag.button(class: "btn-close", type: "button",
                 data: {"bs-dismiss": "alert"},
-                aria: {label: _context.t("view.buttons.close")}),
-            ].join.html_safe
+                aria: {label: _context.t("view.buttons.close")}))
           end
         end
       end
