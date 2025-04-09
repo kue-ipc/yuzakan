@@ -1,5 +1,8 @@
 {loadTranslations, type Translations} from ~/common/i18n.civet
 
+
+import "bootstrap";
+
 // TODO: 現在のところ日本語のみ対応
 localeJa from ../../../config/locales/ja.yml
 loadTranslations(localeJa as Translations)

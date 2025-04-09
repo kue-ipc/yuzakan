@@ -302,12 +302,12 @@ ja:
     user:
       title: ユーザー情報
       description: ユーザーの情報です。
-    user_edit_password:
+    edit_password:
       title: パスワード変更
       description: パスワードを変更します。
-    user_provider:
+    provider:
       title: '%{name}'
-      descriptino: '%{name}のアカウントを管理します。'
+      descriptino: '%{name}にある自分のアカウント情報を管理します。'
     admin:
       title: 管理者情報
       description: 管理レベルの情報です。
