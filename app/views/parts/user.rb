@@ -6,7 +6,7 @@ module Yuzakan
     module Parts
       class User < Yuzakan::Views::Part
         def path
-          context.routes.path(:user_root)
+          context.routes.path(:user)
         end
 
         def title

@@ -7,9 +7,13 @@ module Yuzakan
     get "/about", to: "about.index", as: :about
     get "/about/browser", to: "about.browser", as: :about_browser
 
-    slice :user, at: "/user"
+    get "/user", to: "user.show", as: :user
+    get "/password/!", to: "password.edit", as: :edit_password
+    get "/providers/:id", to: "providers.show", as: :provider
+
     slice :admin, at: "/admin"
 
     slice :api, at: "/api"
+    get "/user/:id", to: "user.show"
   end
 end
