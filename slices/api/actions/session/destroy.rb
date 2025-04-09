@@ -8,20 +8,17 @@ module API
         required_trusted_authentication false
 
         def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
-          halt_json 410 unless current_user
+          halt_json 410 unless res[:current_user]
 
-          self.status = 200
-          self.body = generate_json({
-            uuid: session[:uuid],
-            current_user: current_user,
-            created_at: session[:created_at],
-            updated_at: current_time,
+          res.body = generate_json({
+            uuid: res.session[:uuid],
+            user: res.session[:user],
+            created_at: res.session[:created_at],
+            updated_at: res.session[:updated_at],
           })
 
-          # セッション情報を保存
-          session[:user_id] = nil
-          session[:created_at] = nil
-          session[:updated_at] = nil
+          # セッション情報を削除
+          res.session[:user] = nil
         end
       end
     end
