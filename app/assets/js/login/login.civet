@@ -7,8 +7,7 @@
 APIDialog from ~/api_dialog.civet
 bsIcon from ~/app/bs_icon.civet
 csrf from ~/csrf.civet
-{t} from ~/common/i18n.civet
-{waitLoadTranslations} from ~/common/i18n.civet
+{t, waitLoadTranslations} from ~/common/i18n.civet
 {normalizeURL} from ~/helpers/url_helper.civet
 
 type LoginState

@@ -1,0 +1,62 @@
+// Logout
+
+{app, text, type Dispatch} from hyperapp
+* as html from @hyperapp/html
+APIDialog from ~/api_dialog.civet
+bsIcon from ~/app/bs_icon.civet
+csrf from ~/csrf.civet
+{t, waitLoadTranslations} from ~/common/i18n.civet
+{normalizeURL} from ~/helpers/url_helper.civet
+
+type LogoutState
+  disabled: boolean
+
+await waitLoadTranslations()
+
+apiDialog := new APIDialog {
+  id: "logout"
+  name: t("actions.logout")
+  method: "DELETE"
+  path: "session"
+  responseMessageCodeMap: new Map [
+    [200, {status: "success", message: "logout_succeeded",
+      redirectTo: normalizeURL("/")}]
+    [410, {status: "error", message: "logout_failed", reload: true}]
+  ]
+}
+
+// Effecters
+
+runLogout := (dispatch: Dispatch<LogoutState>) ->
+  await apiDialog.submitPromise {data: csrf()}
+
+// Effect Generoters
+
+logout := (state: LogoutState) ->
+  runLogout
+
+// Actions
+
+Logout := (state: LogoutState, event: PointerEvent) ->
+  [{...state, disabled: true}, logout(state)]
+
+// Parameters
+
+node := document.getElementById("logout")
+
+if node
+  buttonClassList := Array.from(node.classList)
+
+  init := {disabled: false}
+
+  view := ({disabled}: LogoutState) ->
+    html.button {
+      class: buttonClassList
+      disabled
+      onclick: Logout
+    }, [
+      bsIcon {name: "box-arrow-right", class: "flex-shrink-0 me-1"}
+      html.span {class: "d-none d-md-inline"}, text t("actions.logout")
+    ]
+
+  app<LogoutState> {init, view, node}

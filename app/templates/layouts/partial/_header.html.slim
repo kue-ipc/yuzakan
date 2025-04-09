@@ -6,7 +6,7 @@ header#header
       = bs_navbar_toggler("navbar-content")
       #navbar-content.collapse.navbar-collapse
         - if current_user
-          ul.navbar-nav
+          ul.navbar-nav.me-auto
             - if !user_menu.empty?
               li.nav-item.dropdown
                 = link_to "#", class: "nav-link dropdown-toggle", role: "button",
@@ -25,31 +25,15 @@ header#header
                   - admin_menu.each do |menu_item|
                     li
                       = menu_item.link_tag(class: "dropdown-item")
-
-
-            / - if current_level >= 2
-            /   li.nav-item
-                / = link_to Admin.routes.path(:root), class: "nav-link d-flex align-items-center" do
-                /   = bs_icon("house-heart", class: "flex-shrink-0 me-1")
-                /   span.d-none.d-lg-inline
-                /     | "管理者用メニュー"
-            / li.nav-item
-            /   = link_to routes.path(:edit_user_password), class: "nav-link d-flex align-items-center" do
-            /     - text bs_icon("input-cursor-text", class: "flex-shrink-0 me-1")
-            /     - span class: "d-none d-lg-inline" do
-            /       - text "パスワード"
-            / li.nav-item
-            /   = link_to routes.path(:google), class: "nav-link d-flex align-items-center" do
-            /     - text bs_icon("google", class: "flex-shrink-0 me-1")
-            /     - span class: "d-none d-lg-inline" do
-            /      - text "Google Workspace"
-
-          / = link_to routes.path(:user), class: "me-2 link-user d-flex align-items-center" do
-          /   = bs_icon("person", class: "flex-shrink-0 me-1")
-          /   span.d-none.d-lg-inline
-          /     = current_user.label_name
-          .logout-button
-          / = javascript "logout", type: "module"
+          = current_user.link_tag class: "me-2 link-user d-flex align-items-center" do
+            = bs_icon_tag("person", class: "flex-shrink-0 me-1")
+            span.d-none.d-lg-inline
+              = current_user.title
+          = javascript_tag "logout/app", type: "module"
+          #logout.btn.btn-sm.btn-outline-light.d-flex.align-items-center
+            = bs_icon_tag("box-arrow-right", class: "flex-shrink-0 me-1")
+            span.d-none.d-md-inline
+              = t("actions.logout")
         - elsif current_config
           ul.navbar-nav.me-auto
             li.nav-item
