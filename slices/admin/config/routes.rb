@@ -13,6 +13,7 @@ module Admin
     get "/attrs", to: "attrs.index", as: :attrs
 
     get "/users", to: "users.index", as: :users
+    get "/users/\\*", to: "users.new", as: :new_user
     get "/users/:id", to: "users.index", as: :user
 
     get "/groups", to: "groups.index", as: :group

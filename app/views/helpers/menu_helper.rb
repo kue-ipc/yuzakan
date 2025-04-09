@@ -21,7 +21,11 @@ module Yuzakan
 
         # TODO: プロバイダー
         def user_menu_list(level)
-          USER_STATIC_MENU_ITEMS.select { |item| item[:level] <= level }
+          USER_STATIC_MENU_ITEMS
+            .select { |item| item[:level] <= level }
+            .map do |item|
+              {**item, path: _context.routes.path(item[:name])}
+            end
         end
 
         def admin_menu_list(level)

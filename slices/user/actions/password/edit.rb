@@ -3,7 +3,7 @@
 module User
   module Actions
     module Password
-      class Show < User::Action
+      class Edit < User::Action
         expose :excluded_providers
 
         def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument

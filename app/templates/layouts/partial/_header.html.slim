@@ -6,15 +6,16 @@ header#header
       = bs_navbar_toggler("navbar-content")
       #navbar-content.collapse.navbar-collapse
         - if current_user
-          ul.navbar-nav.me-auto
-            li.nav-item.dropdown
-              = link_to "#", class: "nav-link dropdown-toggle" role: "button" data: {"bs-toggle": "dropdown"}, aria: {expanded: "false"} do
-                = t("view.menus.user")
-              ul
-                - user_menu_list(current_level).each do |item|
-                  li
-                    = link_to routse.path(item[:name]), class: "dropdown-item"
-                      = t("views.#{item[:name]}.title")
+          ul.navbar-nav
+            - if !user_menu.empty?
+              li.nav-item.dropdown
+                = link_to "#", class: "nav-link dropdown-toggle", role: "button",
+                  data: {"bs-toggle": "dropdown"}, aria: {expanded: "false"} do
+                  = t("view.menus.user")
+                ul.dropdown-menu
+                  - user_menu.each do |menu_item|
+                    li
+                      = menu_item.link_tag(class: "dropdown-item")
             / - if current_level >= 2
             /   li.nav-item
                 / = link_to Admin.routes.path(:root), class: "nav-link d-flex align-items-center" do

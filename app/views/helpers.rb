@@ -9,10 +9,10 @@ module Yuzakan
       include CSRFHelper
       include GridHelper
       include IconHelper
+      include MenuHelper
       # include ErrorHelper
       # include EscapeHelper
       # include ImportmapHelper
-      # include MenuHelper
       # include PatternHelper
     end
   end

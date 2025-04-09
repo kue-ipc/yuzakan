@@ -302,7 +302,7 @@ ja:
     user:
       title: ユーザー情報
       description: ユーザーの情報です。
-    user_password:
+    user_edit_password:
       title: パスワード変更
       description: パスワードを変更します。
     user_provider:
