@@ -9,10 +9,23 @@ bsIcon from ~/app/bs_icon.civet
 csrf from ~/csrf.civet
 {t} from ~/common/i18n.civet
 
-type LoginState
-  username: string??
-  password: string??
+interface LoginInputState
+  value: string
+  error: string
   disabled: boolean
+
+interface LoginState
+  username: LoginInputState
+  password: LoginInputState
+  submittable: boolean
+
+interface LoginPayload
+  username: string
+  password: string
+
+LOGIN_ID := "login"
+LOGIN_USERNAME_ID := "login-username"
+LOGIN_PASSWORD_ID := "login-password"
 
 apiDialog := new APIDialog {
   id: "login"
@@ -26,120 +39,166 @@ apiDialog := new APIDialog {
   ]
 }
 
-submittable := ({username, password, disabled}: LoginState) ->
-  not disabled and username and password
-
 // Actions
 
-Login := (state: LoginState, event: PointerEvent) ->
-  [{...state, disabled: true}, login(state)]
+Login := ({username, password, submittable}: LoginState, _event: Event) ->
+  [{
+    username: {...username, disabled: true}
+    password: {...password, disabled: true}
+    submittable: false
+  }, login({username: username.value, password: password.value})]
 
 EnterToSubmitOrNextInput := (state: LoginState, event: KeyboardEvent) ->
-  if event.keyCode is 13
-    if submittable(state)
-      [{...state, disabled: true}, login(state)]
-    else if event.target? and event.target <? Element and
-        event.target.id is "session-username"
-      [state, focus("session-password")]
+  unless event.target <? HTMLInputElement
+    console.warn "event target is not html input element"
+    return state
+
+  if event.code is "Enter"
+    if state.submittable
+      Login
+    else if event.target.id is LOGIN_USERNAME_ID
+      [state, focus(LOGIN_PASSWORD_ID)]
     else
-      [state, focus("session-username")]
+      [state, focus(LOGIN_USERNAME_ID)]
   else
     state
 
 UpdateUsername := (state: LoginState, event: InputEvent): LoginState ->
-  if event.target <? HTMLInputElement
-    {...state, username: event.target.value}
-  else
-    console.warn "username event target is not html input element"
-    state
+  unless event.target <? HTMLInputElement
+    console.warn "event target is not html input element"
+    return state
+
+  value := event.target.value
+  submittable := !!(value and state.password.value)
+  {
+    ...state
+    username: {value, error: "", disabled: false}
+    submittable
+  }
 
 UpdatePassword := (state: LoginState, event: InputEvent): LoginState ->
-  if event.target <? HTMLInputElement
-    {...state, password: event.target.value}
-  else
-    console.warn "password event target is not html input element"
-    state
+  unless event.target <? HTMLInputElement
+    console.warn "event target is not html input element"
+    return state
+
+  value := event.target.value
+  submittable := !!(value and state.username.value)
+  {
+    ...state
+    password: {value, error: "", disabled: false}
+    submittable
+  }
+
+PreventSubmit := (state: LoginState, event: SubmitEvent): LoginState ->
+  event.preventDefault()
+  state
 
 // Effecters
 
-runLogin := (dispatch: Dispatch<LoginState>,
-  payload: {username: string??, password: string??}) ->
-  await apiDialog.submitPromise {data: {...csrf(), ...payload}}
-  dispatch (state) -> [
-    {...state, disabled: false, password: null}
-    focus("session-username")
-  ]
+runLogin := (dispatch: Dispatch<LoginState>, payload: LoginPayload) ->
+  response := await apiDialog.submitPromise {data: {...csrf(), ...payload}}
+  param_errors: {username: string, password: string} :=
+    {username: "", password: ""}
+  for each error of response?.data?.errors
+    if error <? Object
+      param_errors.username += error.username if error.username?
+      param_errors.password += error.password if error.password?
+
+  dispatch ({username, password, submittable}) ->
+    focusTarget :=
+      if param_errors.username
+        LOGIN_USERNAME_ID
+      else
+        LOGIN_PASSWORD_ID
+    [
+      {
+        username: {username.value, error: param_errors.username, disabled: false}
+        password: {value: "", error: param_errors.password, disabled: false}
+        submittable
+      }
+      focus(focusTarget)
+    ]
 
 // Effect Generators
 
-login := ({username, password, disabled}: LoginState) ->
-  [runLogin, {username, password}]
+login := (payload: LoginPayload) ->
+  [runLogin, payload]
 
 // Views
 
 loginTitle := () ->
   html.h3 {class: "login-title text-center mb-2"}, text t("actions.login")
 
-loginUsernameInput := ({username:: string??, disabled:: boolean}) ->
-  html.input {
-    id: "session-username"
-    class: "form-control"
-    type: "text"
-    autocomplete: "username"
-    required: true
-    placeholder: t("view.labels.username")
-    disabled
-    value: username
-    oninput: UpdateUsername
-    onkeypress: EnterToSubmitOrNextInput
-  }
-
-loginPasswordInput := ({password:: string??, disabled:: boolean}) ->
-  html.input {
-    id: "session-password"
-    class: "form-control"
-    type: "password"
-    autocomplete: "current-password"
-    required: true
-    placeholder: t("view.labels.password")
-    disabled
-    value: password
-    oninput: UpdatePassword
-    onkeypress: EnterToSubmitOrNextInput
-  }
-
-loginSubmitButton := (state: LoginState) ->
-  html.button {
-    class: "btn btn-primary d-flex align-items-center justify-content-center"
-    disabled: not submittable(state)
-    onclick: Login
-  }, [
-    bsIcon {name: "box-arrow-in-right", class: "flex-shrink-0 me-1"}
-    text t("actions.login")
+loginUsernameInput := ({value, error, disabled}: LoginInputState) ->
+  html.div {class: "mb-3"}, [
+    html.input {
+      id: LOGIN_USERNAME_ID
+      class: ["form-control", {is-invalid: !!error}]
+      type: "text"
+      autocomplete: "username"
+      required: true
+      placeholder: t("view.labels.username")
+      disabled
+      value
+      oninput: UpdateUsername
+      onkeypress: EnterToSubmitOrNextInput
+    }
+    html.div {class: "invalid-feedback"},
+      text error
   ]
+
+loginPasswordInput := ({value, error, disabled}: LoginInputState) ->
+  html.div {class: "mb-3"}, [
+    html.input {
+      id: LOGIN_PASSWORD_ID
+      class: ["form-control", {is-invalid: !!error}]
+      type: "password"
+      autocomplete: "current-password"
+      required: true
+      placeholder: t("view.labels.password")
+      disabled
+      value
+      oninput: UpdatePassword
+      onkeypress: EnterToSubmitOrNextInput
+    }
+    html.div {class: "invalid-feedback"},
+      text error
+  ]
+
+loginSubmitButton := ({submittable:: boolean}) ->
+  html.div {class: "d-grid gap-auto"},
+    html.button {
+      class: "btn btn-primary d-flex align-items-center justify-content-center"
+      disabled: !submittable
+      onclick: Login
+    }, [
+      bsIcon {name: "box-arrow-in-right", class: "flex-shrink-0 me-1"}
+      text t("actions.login")
+    ]
 
 // App
 
 export default loginApp := ->
-  node := document.getElementById("login")
+  node := document.getElementById(LOGIN_ID)
 
   if node?
     classList := Array.from(node.classList)
 
     init: Dispatchable<LoginState, any>  := [
-      {username: null, password: null, disabled: false}
-      delay 10, (state: LoginState) -> [state, focus("session-username")]
+      {
+        username: {value: "", error: "", disabled: false}
+        password: {value: "", error: "", disabled: false}
+        submittable: false
+      }
+      delay 10, (state: LoginState) -> [state, focus(LOGIN_USERNAME_ID)]
     ]
 
-    view := (state: LoginState) ->
-      html.form {id: "login", class: classList}, [
+    view := ({username, password, submittable}: LoginState) ->
+      html.form {id: "login", class: classList, onsubmit: PreventSubmit}, [
         loginTitle()
-        html.div {class: "mb-3"},
-          loginUsernameInput(state.{username, disabled})
-        html.div {class: "mb-3"},
-          loginPasswordInput(state.{password, disabled})
-        html.div {class: "d-grid gap-auto"},
-          loginSubmitButton(state)
+        loginUsernameInput(username)
+        loginPasswordInput(password)
+        loginSubmitButton({submittable})
       ]
 
     app<LoginState> {init, view, node}

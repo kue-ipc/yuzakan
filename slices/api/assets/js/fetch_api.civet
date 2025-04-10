@@ -102,28 +102,29 @@ parseResponse := (response: Response): Promise<ResponseData> ->
   location :=
     normalizeURL(response.headers.get("Content-Location") ?? response.url)
 
-  data: ResponseData := {}
+  responseData: ResponseData := {}
     ok: response.ok
     code: BigInt(response.status)
     location
 
   contentType := response.headers.get("Content-Type")
-  if contentType?
-    mimeType := contentType.split(";")[0].trim().toLowerCase()
-    switch mimeType
-      "application/json"
-        await response.json()
-      "text/plain"
-        await response.text()
-      else
-        throw new Error(`Unsupported content type: ${contentType}`)
+  responseData.data =
+    if contentType?
+      mimeType := contentType.split(";")[0].trim().toLowerCase()
+      switch mimeType
+        "application/json"
+          await response.json()
+        "text/plain"
+          await response.text()
+        else
+          throw new Error(`Unsupported content type: ${contentType}`)
 
   contentRange := response.headers.get("Content-Range")
   if contentRange?
-    data.pagination = new Pagination(location, contentRange)
+    responseData.pagination = new Pagination(location, contentRange)
 
   linkHeader := response.headers.get("Link")
   if linkHeader?
-    data.links = HttpLinkHeader.parse(linkHeader)
+    responseData.links = HttpLinkHeader.parse(linkHeader)
   
-  data
+  responseData

@@ -216,29 +216,33 @@ export default class APIDialog
         data: {message: t("view.messages.fetch_error")}
       }
 
-    responseMessage := #responseMessageCodeMap.get(response.code) ??
-      APIDialog.UNKNOWN_RESPONSE_MESSAGE
+    responseMessage := #responseMessageCodeMap.get(response.code)
+    //  ??
+    //   APIDialog.UNKNOWN_RESPONSE_MESSAGE
 
     messages := [
-      (response.data?.message ?? responseMessage.message)
+      (responseMessage?.message ?? response.data?.message)
       ...(response.data?.errors ?? [])
     ].filter & <? "string"
 
     {closable, link, reload} :=
-      if responseMessage.redirectTo?
+      if responseMessage?.redirectTo?
         if responseMessage.reloadTime > 0
           messages.push(t("view.messages.reload_after",
             {sec: responseMessage.reloadTime.toString()}))
         else
           messages.push(t("view.messages.reload_immediately"))
         {closable: false, link: responseMessage.redirectTo, reload: false}
-      else if responseMessage.reload
+      else if responseMessage?.reload
         {closable: false,link: null, reload: true}
       else
         {closable: true, link: null, reload: false}
 
+    status := responseMessage?.status ??
+      if response.ok then Status.get("success") else Status.get("error")
+
     resultMessageState: ModalState := {}
-      status: responseMessage.status
+      status
       messages
       closable
       link
@@ -246,14 +250,15 @@ export default class APIDialog
 
     #modalMessage(resultMessageState)
 
-    if link?
-      setTimeout ->
-        location.href = link.href
-      , responseMessage.reloadTime * 1000
-    else if responseMessage.autoCloseTime > 0
-      setTimeout =>
-        #modal.hide()
-      , responseMessage.autoCloseTime * 1000
+    if responseMessage?
+      if link?
+        setTimeout ->
+          location.href = link.href
+        , responseMessage.reloadTime * 1000
+      else if responseMessage.autoCloseTime > 0
+        setTimeout =>
+          #modal.hide()
+        , responseMessage.autoCloseTime * 1000
 
     await #waitModalClose()
 

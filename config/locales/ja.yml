@@ -246,6 +246,8 @@ ja:
     error: エラーが発生しました。
     unknown: 不明な状況が発生しました。
     login_succeeded: ログインに成功しました。
+    login_failed: ログインに失敗しました。
+    logout_succeeded: ログアウトに成功しました。
     logout_failed: ログインに失敗しました。
   actions:
     login: ログイン
