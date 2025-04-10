@@ -5,21 +5,19 @@
 APIDialog from ~/api_dialog.civet
 bsIcon from ~/app/bs_icon.civet
 csrf from ~/csrf.civet
-{t, waitLoadTranslations} from ~/common/i18n.civet
+{t} from ~/common/i18n.civet
 {normalizeURL} from ~/helpers/url_helper.civet
 
 type LogoutState
   disabled: boolean
 
-
 apiDialog := new APIDialog {
   id: "logout"
-  name: t("actions.logout")
+  name: "actions.logout"
   method: "DELETE"
   path: "session"
   responseMessageCodeMap: new Map [
-    [200, {status: "success", message: "logout_succeeded",
-      redirectTo: normalizeURL("/")}]
+    [200, {status: "success", message: "logout_succeeded", redirectTo: "/"}]
     [410, {status: "error", message: "logout_failed", reload: true}]
   ]
 }

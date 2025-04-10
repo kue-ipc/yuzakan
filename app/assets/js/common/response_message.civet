@@ -1,5 +1,6 @@
 Status from ./status.civet
 {t} from ./i18n.civet
+{normalizeURL} from ~/helpers/url_helper.civet
 
 export default class ResponseMessage
   readonly #status: Status
@@ -13,12 +14,14 @@ export default class ResponseMessage
     status:: string | Status
     #message:: string
     #reload?:: boolean = false
-    #redirectTo?:: URL?? = null
+    redirectTo?:: string | URL?? = null
     #reloadTime?:: number = 0
     #autoCloseTime?:: number = 0
   })
     status = Status.get(status) if status <? "string"
     #status = status
+    redirectTo = normalizeURL(redirectTo) if redirectTo <? "string"
+    #redirectTo = redirectTo
 
   get #status
   get #reload

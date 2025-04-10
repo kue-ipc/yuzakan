@@ -5,6 +5,9 @@
 type {Alert, Button, Carousel, Collapse, Dropdown, Modal, Offcanvas, Popover,
   ScrollSpy, Tab, Toast, Tooltip} from bootstrap
 
+export type {Alert, Button, Carousel, Collapse, Dropdown, Modal, Offcanvas, Popover,
+  ScrollSpy, Tab, Toast, Tooltip}
+
 export interface BsBootstrap
   Alert: typeof Alert
   Button: typeof Button
@@ -52,7 +55,7 @@ declare global
 
 BS_BOOTSTRAP_INITIALIZE := "bs.bootstrap.initialize"
 
-export default getBootstrap := (): BsBootstrap ->
+export getBootstrap := (): BsBootstrap ->
   throw new Error("bootstrap is not initialized") unless globalThis.bsBootstrap?
   globalThis.bsBootstrap
 

@@ -1,1 +1,1 @@
-import "./init.civet";
+import "./app.civet";
