@@ -12,7 +12,7 @@ ResponseMessage from ~/common/response_message.civet
 {modalDialog} from ~/app/modal.civet
 {fetchAPI, type Method, type ResponseData} from ~api/fetch_api.civet
 
-{getBootstrap, type BsBootstrap, Modal} from ~/common/bs.civet
+{getBootstrap, type BsBootstrap, type Modal} from ~/common/bs.civet
 {t} from ~/common/i18n.civet
 
 declare global
@@ -26,26 +26,46 @@ interface ModalState
   closable?: boolean
   reload?: boolean
 
+ResponseMessageCodeMap ::= Map<bigint, ResponseMessage>
+
+ResponseMessageCodeListKey ::= bigint | number
+ResponseMessageCodeListValue ::=
+  ResponseMessage | ConstructorParameters<typeof ResponseMessage>.0
+
+ResponseMessageCodeList ::=
+  Map<ResponseMessageCodeListKey, ResponseMessageCodeListValue> |
+  [ResponseMessageCodeListKey, ResponseMessageCodeListValue][]
+
 export default class APIDialog
+  @mergeMessageCodeMap := (base: ResponseMessageCodeMap,
+    other: ResponseMessageCodeList): ResponseMessageCodeMap->
+    for [key, value] of other
+      responseMessage :=
+        if value <? ResponseMessage
+          value
+        else
+          new ResponseMessage(value) 
+      base.set(BigInt(key), responseMessage)
+    base
+
   @MESSAGE_EVENT := "apidialog.message"
-  @DEFAULT_RESPONSE_MESSAGE_CODE_MAP: Map<bigint, ResponseMessage> := new Map [
-    [0n, new ResponseMessage({status: "error", message: "error", reload: true})]
-    [200n, new ResponseMessage({status: "success", message: "ok"})]
-    [201n, new ResponseMessage({status: "success", message: "created"})]
-    [202n, new ResponseMessage({status: "success", message: "accepted"})]
-    [204n, new ResponseMessage({status: "success", message: "no_content"})]
-    [400n, new ResponseMessage({status: "error", message: "bad_request"})]
-    [401n, new ResponseMessage({status: "error", message: "unauthorized",
-      reload: true})]
-    [403n, new ResponseMessage({status: "error", message: "forbidden",
-      reload: true})]
-    [404n, new ResponseMessage({status: "error", message: "not_found",
-      reload: true})]
-    [422n, new ResponseMessage({status: "failure",
-      message: "unprocessable_content"})]
-    [500n, new ResponseMessage({status: "fatal",
-      message: "internal_server_error", reload: true})]
-  ]
+  @DEFAULT_RESPONSE_MESSAGE_CODE_MAP: ResponseMessageCodeMap := do
+    list: ResponseMessageCodeList := [
+      [0, {status: "error", message: "error", reload: true}]
+      [200, {status: "success", message: "ok"}]
+      [201, {status: "success", message: "created"}]
+      [202, {status: "success", message: "accepted"}]
+      [204, {status: "success", message: "no_content"}]
+      [400, {status: "error", message: "bad_request"}]
+      [401, {status: "error", message: "unauthorized", reload: true}]
+      [403, {status: "error", message: "forbidden", reload: true}]
+      [404, {status: "error", message: "not_found", reload: true}]
+      [422, {status: "failure", message: "unprocessable_content"}]
+      [500, {status: "fatal", message: "internal_server_error", reload: true}]
+    ]
+    map: ResponseMessageCodeMap := new Map
+    @mergeMessageCodeMap(map, list)
+
   @UNKNOWN_RESPONSE_MESSAGE: ResponseMessage :=
     new ResponseMessage({status: "unknown", message: "unknown", reload: true})
 
@@ -64,18 +84,11 @@ export default class APIDialog
     #name:: string
     #method:: Method = "GET"
     #path:: string
-    responseMessageCodeMap?::
-      Map<bigint | number,
-        ResponseMessage | ConstructorParameters<typeof ResponseMessage>.0>
+    responseMessageCodeList?:: ResponseMessageCodeList
   })
-    if responseMessageCodeMap?
-      for [key, value] of responseMessageCodeMap
-        responseMessage :=
-          if value <? ResponseMessage
-            value
-          else
-            new ResponseMessage(value) 
-        #responseMessageCodeMap.set(BigInt(key), responseMessage) 
+    if responseMessageCodeList?
+      APIDialog.mergeMessageCodeMap(#responseMessageCodeMap,
+        responseMessageCodeList)
   
     modalDialogNode := document.createElement("div")
     modalDialogNode.id = `${#id}-modal-dialog`

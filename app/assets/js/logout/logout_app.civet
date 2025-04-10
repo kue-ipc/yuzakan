@@ -16,7 +16,7 @@ apiDialog := new APIDialog {
   name: "actions.logout"
   method: "DELETE"
   path: "session"
-  responseMessageCodeMap: new Map [
+  responseMessageCodeList: [
     [200, {status: "success", message: "logout_succeeded", redirectTo: "/"}]
     [410, {status: "error", message: "logout_failed", reload: true}]
   ]
