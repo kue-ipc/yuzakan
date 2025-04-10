@@ -7,6 +7,7 @@
 {focus} from @hyperapp/dom
 
 {Modal} from bootstrap
+{getBootstrap, type BsBootstrap, type Modal} from ~/common/bs.civet
 
 {modalDialog} from ~/app/modal.civet
 

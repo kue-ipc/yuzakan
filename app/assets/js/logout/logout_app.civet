@@ -1,4 +1,4 @@
-// Logout
+// Logout App
 
 {app, text, type Dispatch} from hyperapp
 * as html from @hyperapp/html
@@ -6,7 +6,6 @@ APIDialog from ~/api_dialog.civet
 bsIcon from ~/app/bs_icon.civet
 csrf from ~/csrf.civet
 {t} from ~/common/i18n.civet
-{normalizeURL} from ~/helpers/url_helper.civet
 
 type LogoutState
   disabled: boolean
@@ -26,10 +25,11 @@ apiDialog := new APIDialog {
 
 runLogout := (dispatch: Dispatch<LogoutState>) ->
   await apiDialog.submitPromise {data: csrf()}
+  dispatch (state) -> ({...state, disabled: false})
 
 // Effect Generoters
 
-logout := (state: LogoutState) ->
+logout := (_state: LogoutState) ->
   runLogout
 
 // Actions
@@ -37,20 +37,20 @@ logout := (state: LogoutState) ->
 Logout := (state: LogoutState, event: PointerEvent) ->
   [{...state, disabled: true}, logout(state)]
 
-// Parameters
-
-node := document.getElementById("logout")
+// App
 
 export default logoutApp := ->
+  node := document.getElementById("logout")
+
   if node
-    buttonClassList := Array.from(node.classList)
+    classList := Array.from(node.classList)
 
     init := {disabled: false}
 
-    view := ({disabled}: LogoutState) ->
+    view := (state: LogoutState) ->
       html.button {
-        class: buttonClassList
-        disabled
+        class: classList
+        state.disabled
         onclick: Logout
       }, [
         bsIcon {name: "box-arrow-right", class: "flex-shrink-0 me-1"}

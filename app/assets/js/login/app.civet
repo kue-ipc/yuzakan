@@ -1,0 +1,7 @@
+{waitInitializeBootstrap} from ~/common/bs.civet
+{waitLoadTranslations} from ~/common/i18n.civet
+await waitInitializeBootstrap()
+await waitLoadTranslations()
+
+loginApp from ~/login/login_app.civet
+loginApp()

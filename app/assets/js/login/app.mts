@@ -1,1 +1,1 @@
-import "~/login/login.civet";
+import "./app.civet";

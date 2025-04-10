@@ -7,13 +7,15 @@
 {app, text, type Subscription, type Action} from hyperapp
 * as html from @hyperapp/html
 {focus} from @hyperapp/dom
+
+{modalDialog} from ~/app/modal.civet
+
 Status from ~/common/status.civet
 ResponseMessage from ~/common/response_message.civet
-{modalDialog} from ~/app/modal.civet
-{fetchAPI, type Method, type ResponseData} from ~api/fetch_api.civet
-
 {getBootstrap, type BsBootstrap, type Modal} from ~/common/bs.civet
 {t} from ~/common/i18n.civet
+
+{fetchAPI, type Method, type ResponseData} from ~api/fetch_api.civet
 
 declare global
   interface HTMLElementEventMap
