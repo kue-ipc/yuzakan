@@ -1,7 +1,8 @@
-getMetaContent := (name) ->
+getMetaContent := (name: string): string ->
   for each metaEl of document.getElementsByTagName("meta")
     if metaEl.name is name
       return metaEl.content
+  throw new Error(`meta content for ${name} is not found`)
 
 export csrfParam := -> getMetaContent("csrf-param")
 export csrfToken := -> getMetaContent("csrf-token")

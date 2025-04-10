@@ -5,7 +5,8 @@
 // abc[def][ghi] -> abc def ghi
 export parseParamName = (str: string): string[] ->
   list: string[] := []
-  list.push str.match(/^([^\[]*)/)[0]
+  firstName := str.match(/^([^\[]*)/)?[0]
+  list.push firstName if firstName?
   list.push ...(r[1] for r of str.matchAll(/\[([^\]]*)\]/g))
   list
 
@@ -13,18 +14,17 @@ export parseParamName = (str: string): string[] ->
 export generateParamName := (...list: string[]): string ->
   (list[0] ?? "") + (`[${str}]` for each str of list[1..]).join("")
 
-
 export formName := (name: string, parents: string[] = []): string ->
   generateParamName(...parents, name)
 
-export formId := (name, parents = []) ->
+export formId := (name: string, parents: string[] = []): string ->
   listToKebabCase(...parents, name)
 
-export formDataToObj := (formData) ->
-  root := {}
+export formDataToObj := (formData: FormData): {} ->
+  root: {[key: string]: {}} := {}
   for [key, value] of formData
     keyList := parseParamName(key)
-    obj .= root
+    obj: {[key: string]: {}} .= root
     while subKey .= keyList.shift()
       if keyList.length is 0
         obj[subKey] = value
@@ -32,18 +32,19 @@ export formDataToObj := (formData) ->
         if keyList[0] is ""
           throw new Error("Empty key must be last") unless keyList.length is 1
           obj[subKey] ?= []
+          throw new Error("sub object is not array") unless obj[subKey] <? Array
           obj[subKey].push value
         else if keyList[0].match(/^\d+$/)
           obj[subKey] ?= []
         else
           obj[subKey] ?= {}
         obj = obj[subKey]
-
+        throw new Error("sub object is not object") unless obj[subKey] <? Object
   root
 
-export formDataToJson := (formData) ->
+export formDataToJson := (formData: FormData): string ->
   JSON.stringify(formDataToObj(formData))
 
-export formDataToUrlencoded := (formData) ->
+export formDataToUrlencoded := (formData: FormData): void ->
   throw new Error("Not implument")
 
