@@ -1,1 +1,1 @@
-import "~/logout/logout.civet";
+import "./init.civet";

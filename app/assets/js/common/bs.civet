@@ -1,4 +1,23 @@
 // bs for Boootstrap
+// gobal variabl: bsBootstrp
+// event: "bs.bootstrap.initialize"
+
+type {Alert, Button, Carousel, Collapse, Dropdown, Modal, Offcanvas, Popover,
+  ScrollSpy, Tab, Toast, Tooltip} from bootstrap
+
+export interface BsBootstrap
+  Alert: typeof Alert
+  Button: typeof Button
+  Carousel: typeof Carousel
+  Collapse: typeof Collapse
+  Dropdown: typeof Dropdown
+  Modal: typeof Modal
+  Offcanvas: typeof Offcanvas
+  Popover: typeof Popover
+  ScrollSpy: typeof ScrollSpy
+  Tab: typeof Tab
+  Toast: typeof Toast
+  Tooltip: typeof Tooltip
 
 export type BsColor
   | "primary"
@@ -25,6 +44,35 @@ export type BsModalSize
   | "sm"
   | "lg"
   | "xl"
+
+declare global
+  var bsBootstrap: BsBootstrap?
+  interface WindowEventMap
+    "bs.bootstrap.initialize": CustomEvent<string>
+
+BS_BOOTSTRAP_INITIALIZE := "bs.bootstrap.initialize"
+
+export default getBootstrap := (): BsBootstrap ->
+  throw new Error("bootstrap is not initialized") unless globalThis.bsBootstrap?
+  globalThis.bsBootstrap
+
+export initializeBootstrap := (bootstrap: BsBootstrap): BsBootstrap ->
+  globalThis.bsBootstrap = bootstrap
+  window.dispatchEvent(new CustomEvent(BS_BOOTSTRAP_INITIALIZE))
+  globalThis.bsBootstrap
+
+export waitInitializeBootstrap := (): Promise<BsBootstrap> ->
+  new Promise<BsBootstrap> (resolve, _reject) ->
+    return resolve(globalThis.bsBootstrap) if globalThis.bsBootstrap?
+
+    checkBootstrap := (_e: CustomEvent) ->
+      return unless globalThis.bsBootstrap?
+
+      window.removeEventListener BS_BOOTSTRAP_INITIALIZE, checkBootstrap
+      resolve(globalThis.bsBootstrap)
+    
+    window.addEventListener BS_BOOTSTRAP_INITIALIZE, checkBootstrap
+    console.debug "wait initialize bootstrap"
 
 // TODO: バックグラウンドの色もできるようにする
 export bsTextColorClass := (color: BsColor, {

@@ -1,8 +1,10 @@
-{loadTranslations, type Translations} from ~/common/i18n.civet
+// Bootstrap
+{initializeBootstrap, type BsBootstrap} from ~/common/bs.civet
+* as Bootstrap from "bootstrap"
+initializeBootstrap(Bootstrap)
 
-
-import "bootstrap";
-
+// I18n
 // TODO: 現在のところ日本語のみ対応
+{loadTranslations, type Translations} from ~/common/i18n.civet
 localeJa from ../../../config/locales/ja.yml
 loadTranslations(localeJa as Translations)
