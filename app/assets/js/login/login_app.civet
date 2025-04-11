@@ -137,7 +137,7 @@ loginUsernameInput := ({value, error, disabled}: LoginInputState) ->
       type: "text"
       autocomplete: "username"
       required: true
-      placeholder: t("view.labels.username")
+      placeholder: t("ui.labels.username")
       disabled
       value
       oninput: UpdateUsername
@@ -155,7 +155,7 @@ loginPasswordInput := ({value, error, disabled}: LoginInputState) ->
       type: "password"
       autocomplete: "current-password"
       required: true
-      placeholder: t("view.labels.password")
+      placeholder: t("ui.labels.password")
       disabled
       value
       oninput: UpdatePassword

@@ -13,7 +13,7 @@ module Yuzakan
           tag.button(class: "navbar-toggler", type: "button",
             data: {bs_toggle: "collapse", bs_target: "##{target}"},
             aria: {controls: target, expanded: "false",
-                   label: _context.t("view.buttons.toggle_navigation"),}) do
+                   label: _context.t("ui.buttons.toggle_navigation"),}) do
             tag.span(class: "navbar-toggler-icon")
           end
         end

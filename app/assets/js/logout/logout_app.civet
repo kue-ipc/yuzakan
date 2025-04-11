@@ -43,18 +43,15 @@ export default logoutApp := ->
   node := document.getElementById("logout")
 
   if node
-    classList := Array.from(node.classList)
-
     init := {disabled: false}
 
     view := (state: LogoutState) ->
       html.button {
-        class: classList
         state.disabled
         onclick: Logout
       }, [
         bsIcon {name: "box-arrow-right", class: "flex-shrink-0 me-1"}
-        html.span {class: "d-none d-md-inline"}, text t("actions.logout")
+        html.span {class: "d-sm-none d-md-inline"}, text t("actions.logout")
       ]
 
     app<LogoutState> {init, view, node}

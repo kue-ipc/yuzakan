@@ -1,4 +1,4 @@
-h2 = t("views.about.index.title")
+h2 = t("views.about.title")
 
 - if current_config
   h3 = current_config.title
@@ -17,23 +17,23 @@ h2 = t("views.about.index.title")
       dt class=col_name = t("attributse.config.contact_phone")
       dd class=col_value
         = current_config.contact_phone
-  p = t("views.about.index.concat_description")
+  p = t("views.about.concat_description")
 
 hr
 
-h3 = t("views.about.index.application.title")
+h3 = t("views.about.application.title")
 
 dl.row
-  dt class=col_name = t("views.about.index.application.name")
+  dt class=col_name = t("views.about.application.name")
   dd class=col_value = Yuzakan::Version.name
-  dt class=col_name = t("views.about.index.application.version")
+  dt class=col_name = t("views.about.application.version")
   dd class=col_value = Yuzakan::Version.version
 
-p = t("views.about.index.application.description")
+p = t("views.about.application.description")
 
-p = link_to t("views.about.browser.title"), routes.path(:about_browser)
+p = link_to t("views.about_browser.title"), routes.path(:about_browser)
 
-h4 = t("views.about.index.application.license.title")
+h4 = t("views.about.application.license.title")
 pre.border.rounded.bg-light.p-2
   code = Yuzakan::Version.license
 

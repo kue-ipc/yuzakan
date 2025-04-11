@@ -252,26 +252,6 @@ ja:
   actions:
     login: ログイン
     logout: ログアウト
-
-  view:
-    buttons:
-      toggle_navigation: ナビゲーション切替
-      close: 閉じる
-      reload_page: ページの再読み込み
-      move_immediately: すぐに移動
-    messages:
-      running: >-
-        %{name}を実施しています。 しばらくお待ち下さい。
-      fetch_error: >-
-        サーバー接続時にエラーが発生しました しばらく待ってから、再度試してください。
-      reload_after: '約%{sec}秒後に画面を切り替えます。'
-      reload_immediately: 画面を切り替えます。しばらくお待ち下さい。
-    labels:
-      username: ユーザー名
-      password: パスワード
-    menus:
-      user: 利用者メニュー
-      admin: 管理者メニュー
   views:
     about_browser:
       title: サポートしているブラウザーについて
@@ -342,3 +322,27 @@ ja:
     admin_export_groups:
       title: グループ情報インポート
       description: 各プロバイダーにはないグループ情報をエクスポートします。
+  ui:
+    buttons:
+      toggle_navigation: ナビゲーション切替
+      close: 閉じる
+      reload_page: ページの再読み込み
+      move_immediately: すぐに移動
+      toggle_theme: テーマ切替
+    themes:
+      light: ライト
+      dark: ダーク
+      auto: システム
+    messages:
+      running: >-
+        %{name}を実施しています。 しばらくお待ち下さい。
+      fetch_error: >-
+        サーバー接続時にエラーが発生しました しばらく待ってから、再度試してください。
+      reload_after: '約%{sec}秒後に画面を切り替えます。'
+      reload_immediately: 画面を切り替えます。しばらくお待ち下さい。
+    labels:
+      username: ユーザー名
+      password: パスワード
+    menus:
+      user: 利用者メニュー
+      admin: 管理者メニュー

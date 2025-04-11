@@ -15,9 +15,9 @@ module Yuzakan
 
         def link_tag(**, &)
           if block_given?
-            helpers.link_to(path, **, &)
+            helpers.link_to(path, title:, **, &)
           else
-            helpers.link_to(title, path, **)
+            helpers.link_to(title, path, title:, **)
           end
         end
       end

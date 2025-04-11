@@ -22,7 +22,7 @@ modalHeaderCloseButton := ({id:: string}) ->
     class: "btn-close",
     type: "button",
     data-bs-dismiss: "modal",
-    aria-label: t("view.buttons.close")
+    aria-label: t("ui.buttons.close")
   }
 
 modalCloseButton := <S>({id:: string, action?:: ModalAction S}) ->
@@ -31,7 +31,7 @@ modalCloseButton := <S>({id:: string, action?:: ModalAction S}) ->
     class: `btn btn-${action?.color ?? "secondary"}`
     type: "button"
     data-bs-dismiss: "modal"
-  }, text action?.label ?? t("view.buttons.close")
+  }, text action?.label ?? t("ui.buttons.close")
 
 modalActionButton := <S>({id:: string, action:: ModalAction S}) ->
   html.button {

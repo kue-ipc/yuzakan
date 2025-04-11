@@ -13,7 +13,7 @@ module Yuzakan
     }
 
     USER_STATIC_MENU_ITEMS = [
-      MenuItem.new(name: :edit_password, color: "primary", level: 0),
+      MenuItem.new(name: :edit_password, color: "primary", level: 1),
     ].freeze
 
     ADMIN_STATIC_MENU_ITEMS = [

@@ -65,7 +65,7 @@ module Yuzakan
               tag.div(tag.span(h(msg))),
               tag.button(class: "btn-close", type: "button",
                 data: {"bs-dismiss": "alert"},
-                aria: {label: _context.t("view.buttons.close")}))
+                aria: {label: _context.t("ui.buttons.close")}))
           end
         end
       end

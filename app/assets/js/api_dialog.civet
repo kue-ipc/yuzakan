@@ -133,13 +133,13 @@ export default class APIDialog
       closable
       action: if link?
         {
-          label: t("view.buttons.move_immediately")
+          label: t("ui.buttons.move_immediately")
           color: "primary"
           onclick: (state) -> [state, [-> location.href = link.href]]
         }
       else if reload
         {
-          label: t("view.buttons.reload_page")
+          label: t("ui.buttons.reload_page")
           color: "danger"
           onclick: (state) -> [state, [-> location.reload()]]
         }
@@ -195,7 +195,7 @@ export default class APIDialog
   submitPromise({params?:: {[key: string]: string}, data?:: any}): ResponseData
     runningMessageState: ModalState := {}
       status: "running"
-      messages: t("view.messages.running", {name: t(#name)})
+      messages: t("ui.messages.running", {name: t(#name)})
       closable: false
       link: null
       reload: false
@@ -213,7 +213,7 @@ export default class APIDialog
       {
         ok: false
         code: 0n
-        data: {message: t("view.messages.fetch_error")}
+        data: {message: t("ui.messages.fetch_error")}
       }
 
     responseMessage := #responseMessageCodeMap.get(response.code)
@@ -226,10 +226,10 @@ export default class APIDialog
     {closable, link, reload} :=
       if responseMessage?.redirectTo?
         if responseMessage.reloadTime > 0
-          messages.push(t("view.messages.reload_after",
+          messages.push(t("ui.messages.reload_after",
             {sec: responseMessage.reloadTime.toString()}))
         else
-          messages.push(t("view.messages.reload_immediately"))
+          messages.push(t("ui.messages.reload_immediately"))
         {closable: false, link: responseMessage.redirectTo, reload: false}
       else if responseMessage?.reload
         {closable: false,link: null, reload: true}

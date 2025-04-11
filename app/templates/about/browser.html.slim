@@ -1,8 +1,8 @@
-h2 = t("views.about.browser.title")
-p = t("views.about.browser.description")
+h2 = t("views.about_browser.title")
+p = t("views.about_browser.description")
 
-h3 = t("views.about.browser.supported_browser.title")
-p = t("views.about.browser.supported_browser.description")
+h3 = t("views.about_browser.supported_browser.title")
+p = t("views.about_browser.supported_browser.description")
 ul
   - supported_browsers.each do |browser|
     li
@@ -13,10 +13,10 @@ ul
       - if browser[:admin] && current_level > 1
         | *
 = if current_level > 1
-  p = t("views.about.browser.supported_browser.for_admin")
+  p = t("views.about_browser.supported_browser.for_admin")
 
-h3 = t("views.about.browser.unsupported_browser.title")
-p = t("views.about.browser.unsupported_browser.description")
+h3 = t("views.about_browser.unsupported_browser.title")
+p = t("views.about_browser.unsupported_browser.description")
 ul
   - unsupported_browsers.each do |browser|
     li
