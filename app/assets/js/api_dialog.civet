@@ -217,8 +217,6 @@ export default class APIDialog
       }
 
     responseMessage := #responseMessageCodeMap.get(response.code)
-    //  ??
-    //   APIDialog.UNKNOWN_RESPONSE_MESSAGE
 
     messages := [
       (responseMessage?.message ?? response.data?.message)

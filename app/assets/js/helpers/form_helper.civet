@@ -20,6 +20,8 @@ export formName := (name: string, parents: string[] = []): string ->
 export formId := (name: string, parents: string[] = []): string ->
   listToKebabCase(...parents, name)
 
+// FormData
+
 export formDataToObj := (formData: FormData): {} ->
   root: {[key: string]: {}} := {}
   for [key, value] of formData
@@ -45,6 +47,48 @@ export formDataToObj := (formData: FormData): {} ->
 export formDataToJson := (formData: FormData): string ->
   JSON.stringify(formDataToObj(formData))
 
-export formDataToUrlencoded := (formData: FormData): void ->
-  throw new Error("Not implument")
+export formDataToUrlencoded := (formData: FormData): string ->
+  formDataToUrlencodedParams(formData).join("&")
 
+// ignore file form data
+formDataToUrlencodedParams := (formData: FormData): string[] ->
+  for [key, value] of formData when value <? "string" and value
+    `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+
+export objToFormData := (obj: any, parents: string[] = []): FormData ->
+  obj = Object.fromEntries(obj) if obj <? Map
+  obj = Array.from(obj) if obj <? Set
+
+  formData := new FormData
+  for own key, value in obj
+    if value <? "object" and value !<? Date
+      for [k, v] of objToFormData(value, [...parents, key])
+        formData.append(k, v)
+    else
+      formData.append(generateParamName(...parents, key),
+        valueToFormValue(value))
+  formData
+
+// form value
+
+// JavaScriptの値をUrlencodedの文字列に落とし込む前に変換する
+// undefined, null -> ""
+// true, fales -> "1", "0"
+// Date -> ISO
+valueToFormValue := (value: any): string ->
+  switch value
+    undefined,  null
+      ""
+    true
+      "1"
+    false
+      "0"
+    <? Date
+      value.toISOString()
+    else
+      String(value)
+
+// Urlencoded
+
+export objToUrlencoded := (obj: any): string ->
+  formDataToUrlencoded(objToFormData(obj))

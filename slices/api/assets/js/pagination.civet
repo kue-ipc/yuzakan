@@ -2,7 +2,7 @@
 
 // see lib/yuzakan/utils/pager.rb
 
-{normalizeInteger} from ~/common/convert.civet
+{normalizeInteger} from ~/helpers/number_helper.civet
 {getQueryParamsFromURL} from ~/helpers/url_helper.civet
 
 export default class Pagination

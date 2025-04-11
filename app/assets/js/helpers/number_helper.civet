@@ -1,0 +1,29 @@
+// number helper
+
+NumberValue ::= bigint | number | string | undefined
+
+interface NumberRange
+  min?: bigint | number
+  max?: bigint | number
+
+export normalizeInteger := (value: NumberValue, {min, max}: NumberRange = {}):
+    bigint? ->
+  return unless value?
+
+  value = BigInt(value) unless value <? "bigint"
+  if value < min? or value > max?
+    console.warn "out of range: %i", value
+    return 
+
+  value
+
+export normalizeFloat := (value: NumberValue, {min, max}: NumberRange = {}):
+    number? ->
+  return unless value?
+
+  value = Number(value) unless value <? "number"
+  if value < min? or value > max?
+    console.warn "out of range: %f", value
+    return 
+
+  value

@@ -1,0 +1,157 @@
+// convert from/to primitive vaule and Object, Array, Map, Set, DateTime, ...etc
+
+{generateParamName} from ~/helpers/form_helper.civet
+
+{DateTime} from luxon
+
+type Type
+  | "string"
+  | "text"
+  | "boolean"
+  | "integer"
+  | "float"
+  | "datetime"
+  | "date"
+  | "time"
+  | "list"
+  | "map"
+  | "set"
+  | "object"
+  | "any"
+
+TRUE_STRINGS: Set<string> := new Set([
+  "1"
+  "t"
+  "true"
+  "y"
+  "yes"
+  "on"
+])
+
+FALSE_STRINGS: Set<string> := new Set([
+  "0"
+  "f"
+  "false"
+  "n"
+  "no"
+  "off"
+])
+
+export TRUE_STR := "1"
+export FALSE_STR := "0"
+
+// convert to the specified type
+export convertToType := (val: any, type: Type = "string") ->
+  return val unless val?
+
+  switch type
+    when "string", "text"
+      toString(val)
+    when "boolean"
+      toBoolean(val)
+    when "integer"
+      toInteger(val)
+    when "float"
+      toFloat(val)
+    when "datetime"
+      toDateTime(val)
+    when "date"
+      toDate(val)
+    when "time"
+      toTime(val)
+    when "list"
+      toList(val)
+    when "map"
+      toMap(val)
+    when "set"
+      toSet(val)
+    when "object"
+      toObject(val)
+    when "any"
+      val
+    else
+      console.warn `cannot convert to the unknown type: ${type}`
+      undefined
+
+export toString := (val: any): string -> String(val)
+
+export toBoolean := (val: any): boolean ->
+  if val <? "string"
+    lowerStr := val.toLowerCase()
+    if TRUE_STRINGS.has(lowerStr)
+      return true
+    else if FALSE_STRINGS.has(lowerStr)
+      return false
+
+  Boolean(val)
+
+export toInteger := (val: any): number -> Math.floor(Number(val))
+
+export toFloat := (val: any): number -> Number(val)
+
+export toDateTime := (val: any): DateTime ->
+  dateTime := switch val
+    <? "number"
+      DateTime.fromSeconds(val)
+    <? "bigint"
+      DateTime.fromSeconds(Number(val))
+    <? "string"
+      DateTime.fromISO(val)
+    <? Date
+      DateTime.fromJSDate(val)
+    <? DateTime
+      val
+    else
+      console.warn "no datetime object: %s", val
+      DateTime.fromJSDate(new Date(val))
+  dateTime.toLocal()
+
+// TODO: これはあっているのか？
+export toDate := (val: any): string?? -> toDateTime(val).toISODate()
+
+export toTime := (val: any): string?? -> toDateTime(val).toISOTime({includeOffset: false})
+
+export toList := (val: any): any[] ->
+  val = JSON.parse(val) if val <? "string"
+  return val if val <? Array
+
+  if val[Symbol.iterator]? or val#?
+    Array.from(val)
+  else if typeof val is "object"
+    Object.entries(val)
+  else
+    console.warn "no list object: %s", val
+    []
+
+// TODO: よくわからない
+export toMap := (val: any): Map<any, any> ->
+  return val if val <? Map
+
+  new Map do(toList(val).map((v) ->
+    if v <? "string"
+      [v, true]
+    else
+      list := toList(v)
+      [list[1], list[2]]
+    )
+  )
+
+export toSet := (val: any): Set<any> ->
+  return val if val <? Set
+
+  new Set(toList(val))
+
+export toObject := (val: string): {} ->
+  if val <? "string"
+    JSON.parse(val)
+  else if val[Symbol.iterator]?
+    Object.fromEntries(val)
+  else
+    Object(val)
+
+// other -> object
+
+
+// pick with types
+export pickType := (obj, types) ->
+  Object.fromEntries(([key, convertToType(obj[key], type)] for own key, type in types when key in obj))

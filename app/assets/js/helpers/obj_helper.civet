@@ -1,0 +1,22 @@
+// obj helper
+
+// object -> other
+
+export objToJson := (obj: {}, space?: string | number): string ->
+  JSON.stringify(obj, jsonReplacer, space)
+
+// bigint, Map, Set
+jsonReplacer := (key: string, value: any): any ->
+  switch value
+    <? "bigint"
+      if value > Number.MAX_SAFE_INTEGER
+        console.warn "accuracy failure: bigint value more than max safe integer"
+      else if value < Number.MIN_SAFE_INTEGER
+        console.warn "accuracy failure: bigint value less than min safe integer"
+      Number(value)
+    <? Map
+      Object.fromEntries([...value])
+    <? Set
+      [...value]
+    else
+      value
