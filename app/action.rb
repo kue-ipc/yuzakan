@@ -192,7 +192,7 @@ module Yuzakan
         path: req.path,
         status: res.status,
       }
-      logger.info(log_info)
+      logger.info("action done!", **log_info)
       action_log_repo.create(**log_info)
     end
 
