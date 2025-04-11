@@ -1,0 +1,58 @@
+// Theme - Bootstrap color modes (themes)
+
+{t} from ./i18n.civet
+
+ThemeName ::= typeof Theme.NAMES[number]
+
+export default class Theme
+  @NAMES := ["light", "dark", "auto"] as const
+
+  readonly #name: ThemeName
+  readonly #icon: string
+
+  @({#name:: ThemeName, #icon:: string})
+
+  get #name
+  get #icon
+  get label
+    t(`ui.themes.${#name}`)
+
+  apply()
+    name :=
+      if #name is "auto"
+        Theme.getSystemThemeName()
+      else
+        #name
+    document.documentElement.setAttribute("data-bs-theme", name)
+
+  @MAP: Map<string, Theme> := do
+    list: ConstructorParameters<typeof Theme>.0[] := []
+      {name: "light", icon: "sun-fill"}
+      {name: "dark", icon: "moon-stars-fill"}
+      {name: "auto", icon: "circle-half"}
+    new Map(list.map((theme) -> [theme.name, new Theme(theme)]))
+
+  @THEME_STORED_KEY := "theme"
+  @DEFAULT_THEME_NAME := "light"
+
+  @AUTO = @MAP.get("auto")!
+
+  @get(name: string): Theme
+    @MAP.get(name) || @AUTO
+
+  @getStoredTheme(): Theme
+    themeName := localStorage.getItem(@THEME_STORED_KEY)
+    @get(themeName ?? "auto")
+
+  @setStoredTheme(theme: Theme): void
+    localStorage.setItem(@THEME_STORED_KEY, theme.name)
+
+  @getSystemThemeName(): ThemeName
+    if window.matchMedia("(prefers-color-scheme: dark)").matches
+      "dark"
+    else if window.matchMedia("(prefers-color-scheme: light)").matches
+      "light"
+    else
+      @DEFAULT_THEME_NAME
+
+

@@ -19,7 +19,7 @@ ul.navbar-nav
     hr.d-sm-none.my-1
   / = javascript_tag "theme/app", type: "module"
   li#theme.nav-item
-    .nav-link.d-flex.align-items-center
+    button.nav-link.d-flex.align-items-center disabled="disabled"
       = bs_icon_tag("palette-fill", class: "flex-shrink-0 me-1")
       span.d-sm-none.d-lg-inline
         = t("ui.buttons.toggle_theme")

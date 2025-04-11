@@ -1,0 +1,77 @@
+// Theme App
+
+{app, text} from hyperapp
+* as html from @hyperapp/html
+bsIcon from ~/app/bs_icon.civet
+{t} from ~/common/i18n.civet
+{getStoredTheme, setStoredTheme, setTheme, type Theme} from ~/common/theme.civet
+
+interface ThemeState
+  theme: Theme
+
+// Actions
+
+ChangeTheme := (state: ThemeState, theme: Theme) ->
+  [{theme}, applyTheme(theme)]
+
+// Effecters
+
+runApplyTheme := (_dispatch: Dispach<ThemeState>, theme: Theme) ->
+  setTheme(theme)
+
+// Effect Generators
+
+applyTheme := (theme: Theme) ->
+  [runApplyTheme, theme]
+
+// Views
+
+themeButton := () ->
+  html.button {
+    class: "btn btn-link nav-link dropdown-toggle"
+    type: "button"
+    aria: {expanded="false", label: t("messages.toggle_theme")}
+    data: {bs-toggle: "dropdown", bs-display: "static"}
+  }, [
+    bsIcon()
+    html.i.bi.my-1.theme-icon-active.bi-circle-half[
+      data-theme-target="icon"]
+    span.d-md-none.ms-2 = t("messages.toggle_theme")
+  ]
+
+
+// App
+
+init := {thame: getStoredTheme()}
+
+view := (state: ThemeState) ->
+    name := localStorage.getItem("theme") || "auto"
+    @change(name)
+
+
+  li.nav-item.dropdown data-controller="theme"
+    button.btn.btn-link.nav-link.dropdown-toggle[
+      type="button"
+      aria-expanded="false" aria-label=t("messages.toggle_theme")
+      data-bs-toggle="dropdown" data-bs-display="static"]
+      i.bi.my-1.theme-icon-active.bi-circle-half[
+        data-theme-target="icon"]
+      span.d-md-none.ms-2 = t("messages.toggle_theme")
+    ul.dropdown-menu.dropdown-menu-end aria-labelledby="bd-theme-text"
+      - themes.each do |name|
+        - icon = theme_icon(name)
+        li
+          button.dropdown-item.d-flex.align-items-center[
+            type="button" aria-pressed="false"
+            data-action="theme#select" data-theme-target="button"
+            data-theme-name=name
+            data-theme-icon=icon
+          ]
+            i class="bi me-2 theme-icon bi-#{icon}"
+            = t(name, scope: "themes")
+            i.bi.ms-auto.d-none.bi-check2
+
+export default themeApp := ->
+  node := document.getElementById("theme")
+  if node
+    app<ThemeState> {init, view, node}

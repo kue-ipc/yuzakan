@@ -1,3 +1,7 @@
+// Theme
+{getStoredTheme, setTheme} from ~/common/theme.civet
+setTheme(getStoredTheme())
+
 // Bootstrap
 {initializeBootstrap, type BsBootstrap} from ~/common/bs.civet
 * as Bootstrap from "bootstrap"

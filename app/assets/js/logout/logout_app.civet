@@ -7,7 +7,7 @@ bsIcon from ~/app/bs_icon.civet
 csrf from ~/csrf.civet
 {t} from ~/common/i18n.civet
 
-type LogoutState
+interface LogoutState
   disabled: boolean
 
 apiDialog := new APIDialog {
@@ -21,37 +21,36 @@ apiDialog := new APIDialog {
   ]
 }
 
+// Actions
+
+Logout := (state: LogoutState, event: PointerEvent) ->
+  [{...state, disabled: true}, logout()]
+
 // Effecters
 
 runLogout := (dispatch: Dispatch<LogoutState>) ->
   await apiDialog.submitPromise {data: csrf()}
   dispatch (state) -> ({...state, disabled: false})
 
-// Effect Generoters
+// Effect Generotors
 
-logout := (_state: LogoutState) ->
+logout := ->
   runLogout
-
-// Actions
-
-Logout := (state: LogoutState, event: PointerEvent) ->
-  [{...state, disabled: true}, logout(state)]
 
 // App
 
+init := {disabled: false}
+
+view := (state: LogoutState) ->
+  html.button {
+    state.disabled
+    onclick: Logout
+  }, [
+    bsIcon {name: "box-arrow-right", class: "flex-shrink-0 me-1"}
+    html.span {class: "d-sm-none d-md-inline"}, text t("actions.logout")
+  ]
+
 export default logoutApp := ->
   node := document.getElementById("logout")
-
   if node
-    init := {disabled: false}
-
-    view := (state: LogoutState) ->
-      html.button {
-        state.disabled
-        onclick: Logout
-      }, [
-        bsIcon {name: "box-arrow-right", class: "flex-shrink-0 me-1"}
-        html.span {class: "d-sm-none d-md-inline"}, text t("actions.logout")
-      ]
-
     app<LogoutState> {init, view, node}
