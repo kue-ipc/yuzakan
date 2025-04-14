@@ -7,16 +7,8 @@ module API
         security_level 0
         required_authentication false
 
-        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
-          halt_json 404 unless current_user
-
-          self.body = generate_json({
-            uuid: session[:uuid],
-            current_user: current_user,
-            current_level: current_level,
-            created_at: session[:created_at],
-            updated_at: session[:updated_at],
-          })
+        def handle(req, res)
+          res[:session] = req.session
         end
       end
     end
