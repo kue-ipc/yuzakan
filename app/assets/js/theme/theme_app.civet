@@ -1,10 +1,10 @@
-// Theme App
+// Theme app
 
-{app, text} from hyperapp
+{app, text, type Dispatch} from hyperapp
 * as html from @hyperapp/html
 bsIcon from ~/app/bs_icon.civet
 {t} from ~/common/i18n.civet
-{getStoredTheme, setStoredTheme, setTheme, type Theme} from ~/common/theme.civet
+Theme from ~/common/theme.civet
 
 interface ThemeState
   theme: Theme
@@ -16,8 +16,9 @@ ChangeTheme := (state: ThemeState, theme: Theme) ->
 
 // Effecters
 
-runApplyTheme := (_dispatch: Dispach<ThemeState>, theme: Theme) ->
-  setTheme(theme)
+runApplyTheme := (_dispatch: Dispatch<ThemeState>, theme: Theme) ->
+  theme.apply()
+  Theme.storedTheme = theme
 
 // Effect Generators
 
@@ -26,52 +27,51 @@ applyTheme := (theme: Theme) ->
 
 // Views
 
-themeButton := () ->
+themeToggleButton := ({theme:: Theme}) ->
   html.button {
-    class: "btn btn-link nav-link dropdown-toggle"
+    id: "theme-toggle"
+    class: "btn btn-link nav-link dropdown-toggle d-flex align-items-center"
     type: "button"
-    aria: {expanded="false", label: t("messages.toggle_theme")}
-    data: {bs-toggle: "dropdown", bs-display: "static"}
+    disabled: false
+    aria-expanded: "false"
+    aria-label: t("messages.toggle_theme")
+    data-bs-toggle: "dropdown"
+    data-bs-display: "static"
   }, [
-    bsIcon()
-    html.i.bi.my-1.theme-icon-active.bi-circle-half[
-      data-theme-target="icon"]
-    span.d-md-none.ms-2 = t("messages.toggle_theme")
+    bsIcon({name: theme.icon, class: "flex-shrink-0"})
+    html.span {id: "theme-text", class: "ms-1 d-sm-none d-lg-inline"},
+      text t("ui.buttons.toggle_theme")
   ]
 
+themeList := ({theme: currentTheme:: Theme}) ->
+  html.ul {class: "dropdown-menu", aria-labelledby: "theme-text"},
+    Theme.LIST.map (theme) ->
+      themeListItem({theme, active: theme.name is currentTheme.name})
+
+themeListItem := ({theme:: Theme, active:: boolean}) ->
+  html.li {},
+    html.button {
+      class: ["dropdown-item d-flex align-items-center", {active}]
+      type: "button"
+      aria-pressed: "false"
+      onclick: -> [ChangeTheme, theme]
+    }, [
+      bsIcon({name: theme.icon, class: "flex-shrink-0"})
+      html.span {class: "ms-1 d-sm-none d-lg-inline"},
+        text theme.label
+    ]
 
 // App
 
-init := {thame: getStoredTheme()}
+init := {theme: Theme.storedTheme}
 
-view := (state: ThemeState) ->
-    name := localStorage.getItem("theme") || "auto"
-    @change(name)
-
-
-  li.nav-item.dropdown data-controller="theme"
-    button.btn.btn-link.nav-link.dropdown-toggle[
-      type="button"
-      aria-expanded="false" aria-label=t("messages.toggle_theme")
-      data-bs-toggle="dropdown" data-bs-display="static"]
-      i.bi.my-1.theme-icon-active.bi-circle-half[
-        data-theme-target="icon"]
-      span.d-md-none.ms-2 = t("messages.toggle_theme")
-    ul.dropdown-menu.dropdown-menu-end aria-labelledby="bd-theme-text"
-      - themes.each do |name|
-        - icon = theme_icon(name)
-        li
-          button.dropdown-item.d-flex.align-items-center[
-            type="button" aria-pressed="false"
-            data-action="theme#select" data-theme-target="button"
-            data-theme-name=name
-            data-theme-icon=icon
-          ]
-            i class="bi me-2 theme-icon bi-#{icon}"
-            = t(name, scope: "themes")
-            i.bi.ms-auto.d-none.bi-check2
+view := ({theme}: ThemeState) ->
+  html.li {class: "nav-item dropdown"}, [
+    themeToggleButton({theme})
+    themeList({theme})
+  ]
 
 export default themeApp := ->
-  node := document.getElementById("theme")
-  if node
+  if node? := document.getElementById("theme")
+    console.debug "start theme app"
     app<ThemeState> {init, view, node}

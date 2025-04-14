@@ -5,21 +5,21 @@ ul.navbar-nav
       hr.d-sm-none.my-1
     li.nav-item
       = current_user.link_tag class: "nav-link d-flex align-items-center" do
-        = bs_icon_tag("person", class: "flex-shrink-0 me-1")
-        span.d-sm-none.d-lg-inline
+        = bs_icon_tag("person", class: "flex-shrink-0")
+        span.ms-1.d-sm-none.d-lg-inline
           = current_user.title
     li.nav-item
       = javascript_tag "logout/app", type: "module"
       button#logout.nav-link.d-flex.align-items-center disabled="disabled"
-        = bs_icon_tag("box-arrow-right", class: "flex-shrink-0 me-1")
-        span.d-sm-none.d-lg-inline
+        = bs_icon_tag("box-arrow-right", class: "flex-shrink-0")
+        span.ms-1.d-sm-none.d-lg-inline
           = t("actions.logout")
   li.nav-item
     .vr.d-none.d-sm-flex.h-100.mx-sm-2
     hr.d-sm-none.my-1
-  / = javascript_tag "theme/app", type: "module"
+  = javascript_tag "theme/app", type: "module"
   li#theme.nav-item
     button.nav-link.d-flex.align-items-center disabled="disabled"
-      = bs_icon_tag("palette-fill", class: "flex-shrink-0 me-1")
-      span.d-sm-none.d-lg-inline
+      = bs_icon_tag("palette-fill", class: "flex-shrink-0")
+      span.ms-1.d-sm-none.d-lg-inline
         = t("ui.buttons.toggle_theme")

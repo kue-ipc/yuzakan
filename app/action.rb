@@ -144,7 +144,7 @@ module Yuzakan
     end
 
     private def session_timeout?(req, res)
-      return false if req.session[:updated_at]
+      return false if req.session[:updated_at].nil?
 
       timeout = res[:current_config]&.session_timeout
       return false unless timeout&.positive?

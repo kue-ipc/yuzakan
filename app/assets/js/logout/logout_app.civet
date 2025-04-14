@@ -1,4 +1,4 @@
-// Logout App
+// Logout app
 
 {app, text, type Dispatch} from hyperapp
 * as html from @hyperapp/html
@@ -51,6 +51,6 @@ view := (state: LogoutState) ->
   ]
 
 export default logoutApp := ->
-  node := document.getElementById("logout")
-  if node
+  if node? := document.getElementById("logout")
+    console.debug "start logout app"
     app<LogoutState> {init, view, node}

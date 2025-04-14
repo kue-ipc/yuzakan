@@ -3,5 +3,5 @@
 await waitInitializeBootstrap()
 await waitLoadTranslations()
 
-// themeApp from ~/theme/theme_app.civet
-// themeApp()
+themeApp from ~/theme/theme_app.civet
+themeApp()

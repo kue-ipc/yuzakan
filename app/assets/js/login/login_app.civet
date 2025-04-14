@@ -1,4 +1,4 @@
-// Login App
+// Login app
 
 {app, text, type Dispatch, type Dispatchable} from hyperapp
 * as html from @hyperapp/html
@@ -196,6 +196,6 @@ view := ({username, password, submittable}: LoginState) ->
   ]
 
 export default loginApp := ->
-  node := document.getElementById(LOGIN_ID)
-  if node?
+  if node? := document.getElementById(LOGIN_ID)
+    console.debug "start login app"
     app<LoginState> {init, view, node}
