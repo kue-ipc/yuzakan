@@ -14,8 +14,6 @@ RSpec.describe API::Actions::Session::Create do
   let(:action_params) { {username: user.name, password: password} }
   let(:password) { Faker::Internet.password }
 
-  let(:format) { "application/json" }
-
   let(:auth_log_repo) {
     instance_double(Yuzakan::Repos::AuthLogRepo, create: auth_log, recent: [])
   }
@@ -32,7 +30,7 @@ RSpec.describe API::Actions::Session::Create do
     expect(response).to be_redirection
     expect(response.status).to eq 303
     expect(response.headers["Location"]).to eq "/api/session"
-    expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
     expect(json).to eq({
       status: 303,
@@ -50,7 +48,7 @@ RSpec.describe API::Actions::Session::Create do
       end_time = Time.now
       expect(response).to be_successful
       expect(response.status).to eq 201
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json.keys).to contain_exactly(:uuid, :user, :created_at, :updated_at)
       expect(json[:uuid]).to eq uuid
@@ -63,7 +61,7 @@ RSpec.describe API::Actions::Session::Create do
       response = action.call(params.except(:username))
       expect(response).to be_client_error
       expect(response.status).to eq 422
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         status: 422,
@@ -76,7 +74,7 @@ RSpec.describe API::Actions::Session::Create do
       response = action.call({**params, username: ""})
       expect(response).to be_client_error
       expect(response.status).to eq 422
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         status: 422,
@@ -89,7 +87,7 @@ RSpec.describe API::Actions::Session::Create do
       response = action.call({**params, username: "#{user.name}!"})
       expect(response).to be_client_error
       expect(response.status).to eq 422
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         status: 422,
@@ -102,7 +100,7 @@ RSpec.describe API::Actions::Session::Create do
       response = action.call({**params, username: "a" * 256})
       expect(response).to be_client_error
       expect(response.status).to eq 422
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         status: 422,
@@ -115,7 +113,7 @@ RSpec.describe API::Actions::Session::Create do
       response = action.call(params.except(:password))
       expect(response).to be_client_error
       expect(response.status).to eq 422
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         status: 422,
@@ -128,7 +126,7 @@ RSpec.describe API::Actions::Session::Create do
       response = action.call({**params, password: ""})
       expect(response).to be_client_error
       expect(response.status).to eq 422
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         status: 422,
@@ -141,7 +139,7 @@ RSpec.describe API::Actions::Session::Create do
       response = action.call({**params, password: "a" * 256})
       expect(response).to be_client_error
       expect(response.status).to eq 422
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         status: 422,
@@ -154,7 +152,7 @@ RSpec.describe API::Actions::Session::Create do
       response = action.call(params.except(:username, :password))
       expect(response).to be_client_error
       expect(response.status).to eq 422
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         status: 422,
@@ -174,7 +172,7 @@ RSpec.describe API::Actions::Session::Create do
         response = action.call(params)
         expect(response).to be_client_error
         expect(response.status).to eq 422
-        expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
         expect(json).to eq({
           status: 422,
@@ -199,7 +197,7 @@ RSpec.describe API::Actions::Session::Create do
         response = action.call(params)
         expect(response).to be_client_error
         expect(response.status).to eq 403
-        expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
         expect(json).to eq({
           status: 403,
@@ -217,7 +215,7 @@ RSpec.describe API::Actions::Session::Create do
         response = action.call(params)
         expect(response).to be_client_error
         expect(response.status).to eq 403
-        expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
         expect(json).to eq({
           status: 403,
@@ -237,7 +235,7 @@ RSpec.describe API::Actions::Session::Create do
       end_time = Time.now
       expect(response).to be_successful
       expect(response.status).to eq 201
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:uuid]).to match(/\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/)
       expect(json[:user]).to eq(user.name)

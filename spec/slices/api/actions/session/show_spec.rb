@@ -1,55 +1,58 @@
 # frozen_string_literal: true
 
 RSpec.describe API::Actions::Session::Show do
-  init_controller_spec
-  let(:format) { "application/json" }
+  init_action_spec
 
   it "is successful" do
-    begin_time = Time.now.floor
+    begin_time = Time.now
     response = action.call(params)
-    end_time = Time.now.floor
+    end_time = Time.now
+    expect(response).to be_successful
     expect(response.status).to eq 200
-    expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
+    expect(json.keys).to contain_exactly(:uuid, :user, :created_at, :updated_at)
     expect(json[:uuid]).to eq uuid
-    expect(json[:current_user]).to eq(user.to_h.except(:id))
-    created_at = Time.iso8601(json[:created_at])
-    expect(created_at).to eq session[:created_at].floor
-    updated_at = Time.iso8601(json[:updated_at])
-    expect(updated_at).to be >= begin_time
-    expect(updated_at).to be <= end_time
-    deleted_at = Time.iso8601(json[:deleted_at])
-    expect(deleted_at).to be >= begin_time + 3600
-    expect(deleted_at).to be <= end_time + 3600
+    expect(json[:user]).to eq user.name
+    expect(Time.iso8601(json[:created_at])).to be_between(begin_time.floor, end_time)
+    expect(Time.iso8601(json[:updated_at])).to eq Time.iso8601(json[:created_at])
   end
 
-  describe "no login session" do
-    let(:session) { {uuid: uuid} }
+  context "when no login" do
+    let(:session) { {uuid: uuid, user: nil} }
 
-    it "is error" do
+    it "is successful" do
+      begin_time = Time.now
       response = action.call(params)
-      expect(response.status).to eq 404
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      end_time = Time.now
+      expect(response).to be_successful
+      expect(response.status).to eq 200
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({
-        code: 404,
-        message: "Not Found",
-      })
+      expect(json.keys).to contain_exactly(:uuid, :user, :created_at, :updated_at)
+      expect(json[:uuid]).to eq uuid
+      expect(json[:user]).to eq user.name
+      expect(Time.iso8601(json[:created_at])).to be_between(begin_time.floor, end_time)
+      expect(Time.iso8601(json[:updated_at])).to eq Time.iso8601(json[:created_at])
     end
   end
 
-  describe "no session" do
+  context "when no session" do
     let(:session) { {} }
 
-    it "is error" do
+    it "is successful" do
+      begin_time = Time.now
       response = action.call(params)
-      expect(response.status).to eq 404
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      end_time = Time.now
+      expect(response).to be_successful
+      expect(response.status).to eq 200
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({
-        code: 404,
-        message: "Not Found",
-      })
+      expect(json.keys).to contain_exactly(:uuid, :user, :created_at, :updated_at)
+      expect(json[:uuid]).to eq uuid
+      expect(json[:user]).to eq user.name
+      expect(Time.iso8601(json[:created_at])).to be_between(begin_time.floor, end_time)
+      expect(Time.iso8601(json[:updated_at])).to eq Time.iso8601(json[:created_at])
     end
   end
 

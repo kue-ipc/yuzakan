@@ -91,11 +91,8 @@ module Yuzakan
     # effect only if required_authentication is true
     required_trusted_authentication true
 
-    before :connect! # first
-    before :configure!
-    before :authenticate!
-    before :authorize!
-    after :done!
+    before :check_connection
+    after :record_log
 
     if Hanami.env?(:produciton)
       handle_exception StandardError => :handle_standard_error
@@ -103,27 +100,54 @@ module Yuzakan
 
     # callback methods
 
-    private def connect!(req, res)
-      res[:current_time] = Time.now
-      res[:current_client] = req.ip
-      raise "client ip is missing" unless res[:current_client]
-
-      res[:current_config] = config_repo.current
+    private def check_connection(req, res)
+      res[:current_time] = current_time(req, res)
+      res[:current_client] = current_client(req, res)
+      res[:current_config] = current_config(req, res)
 
       check_session(req, res)
 
-      res[:current_uuid] = req.session[:uuid]
-      res[:current_user] = req.session[:user]&.then { user_repo.get(_1) }
+      res[:current_uuid] = current_uuid(req, res)
+      res[:current_user] = current_user(req, res)
+      res[:current_network] = current_network(req, res)
+      res[:current_level] = current_level(req, res)
+      res[:current_trusted] = current_trusted(req, res)
 
-      res[:current_network] = network_repo.find_include(res[:current_client])
-
-      res[:current_level] = [
-        res[:current_user]&.clearance_level || 0,
-        res[:current_network]&.clearance_level || 0,
-      ].min
-      res[:current_trusted] = res[:current_network]&.trusted ||
-        req.session[:trusted] || false
+      check_configuration(req, res)
+      check_authentication(req, res)
+      check_authorization(req, res)
     end
+
+    private def current_time(_req, _res) = Time.now
+    private def current_client(req, _res)
+      req.ip || raise("client ip is missing")
+    end
+    private def current_config(_req, _res) = config_repo.current
+    private def current_uuid(req, res)
+      raise "session unchecked" unless session_checked?(req, res)
+
+      req.session[:uuid]
+    end
+    private def current_user(req, res)
+      raise "session unchecked" unless session_checked?(req, res)
+
+      req.session[:user]&.then { user_repo.get(_1) }
+    end
+    private def current_network(_req, res)
+      network_repo.find_include(res[:current_client])
+    end
+    private def current_level(_req, res)
+      [:current_user, :current_network]
+        .map { res[_1]&.clearance_level || 0 }.min
+    end
+
+    private def current_trusted(req, res)
+      raise "session unchecked" unless session_checked?(req, res)
+
+      res[:current_network]&.trusted || req.session[:trusted] || false
+    end
+
+    # check
 
     private def check_session(req, res)
       # check session timeout
@@ -155,15 +179,18 @@ module Yuzakan
       true
     end
 
-    # check current config, authentication, authorization
-    private def configure!(req, res)
+    private def session_checked?(req, res)
+      req.session[:updated_at] == res[:current_time]
+    end
+
+    private def check_configuration(req, res)
       return unless self.class.required_configuration
       return if res[:current_config]
 
       reply_uninitialized(req, res)
     end
 
-    private def authenticate!(req, res)
+    private def check_authentication(req, res)
       return unless self.class.required_authentication
 
       if res[:current_user]
@@ -176,13 +203,15 @@ module Yuzakan
       reply_unauthenticated(req, res)
     end
 
-    private def authorize!(req, res)
+    private def check_authorization(req, res)
       return if res[:current_level] >= self.class.security_level
 
       reply_unauthorized(req, res)
     end
 
-    private def done!(req, res)
+    # after
+
+    private def record_log(req, res)
       log_info = {
         uuid: res[:current_uuid],
         client: res[:current_client],
@@ -192,7 +221,7 @@ module Yuzakan
         path: req.path,
         status: res.status,
       }
-      logger.info("action done!", **log_info)
+      logger.info("action", **log_info)
       action_log_repo.create(**log_info)
     end
 
@@ -203,12 +232,10 @@ module Yuzakan
       halt 503, res.render(unready_view)
     end
 
-    # TODO: メッセージを付けるべき？
     private def reply_unauthenticated(_req, res)
       halt 401, res.render(login_view)
     end
 
-    # TODO: メッセージを付けるべき？
     private def reply_untrusted(_req, res)
       halt 401, res.render(mfa_view)
     end
