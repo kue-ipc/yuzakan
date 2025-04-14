@@ -2,6 +2,9 @@
 
 module API
   class Routes < Hanami::Routes
+    get "/config", to: "config.show", as: :config
+    patch "/config", to: "config.update", as: :config
+
     # get "/adapters", to: "adapters.index", as: :adapters
     # get "/adapters/:id", to: "adapters.show", as: :adapter
 

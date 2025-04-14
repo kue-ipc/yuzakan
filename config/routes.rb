@@ -14,6 +14,5 @@ module Yuzakan
     slice :admin, at: "/admin"
 
     slice :api, at: "/api"
-    get "/user/:id", to: "user.show"
   end
 end
