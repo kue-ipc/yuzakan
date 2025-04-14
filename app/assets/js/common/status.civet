@@ -18,41 +18,37 @@ export default class Status
   get label
     t(`statuses.${#name}`)
 
-  @LIST: Status[] := [
-    // success or failure
-    new Status({name: "success", color: "success", icon: "check-circle-fill"})
-    new Status({name: "failure", color: "danger", icon: "x-circle-fill"})
-    // log level
-    new Status({name: "fatal", color: "danger", icon: "slash-circle-fill"})
-    new Status({name: "error", color: "danger",
-      icon: "exclamation-octagon-fill"})
-    new Status({name: "warn", color: "warning",
-     icon: "exclamation-triangle-fill"})
-    new Status({name: "info", color: "info", icon: "info-square-fill"})
-    new Status({name: "debug", color: "secondary", icon: "bug-fill"})
-    new Status({name: "unknown", color: "primary", icon: "patch-question-fill"})
-    // alert
-    new Status({name: "alert", color: "warning", icon: "bell-fill"})
-    new Status({name: "caution", color: "warning", icon: "exclamation"})
-    new Status({name: "warning", color: "warning",
-      icon: "exclamation-triangle-fill"})
-    new Status({name: "danger", color: "danger",
-      icon: "exclamation-diamond-fill"})
-    // status
-    new Status({name: "waiting", color: "secondary", icon: "hourglass"})
-    new Status({name: "starting", color: "body", icon: "hourglass-top"})
-    new Status({name: "running", color: "primary", icon: "hourglass-slpit"})
-    new Status({name: "stopping", color: "body", icon: "hourglass-bottom"})
-    new Status({name: "stopped", color: "secondary", icon: "stop-fill"})
-    new Status({name: "succeeded", color: "success", icon: "check-circle-fill"})
-    new Status({name: "failed", color: "danger", icon: "x-circle-fill"})
-    new Status({name: "cancel", color: "warning", icon: "x"})
-    new Status({name: "errored", color: "danger",
-      icon: "exclamation-octagon-fill"})
-    new Status({name: "timeout", color: "danger", icon: "clock-fill"})
-    new Status({name: "loading", color: "primary", spinner: "border"})
-    new Status({name: "loaded", color: "secondary", icon: "stop-fill"})
-  ]
+  @LIST: Status[] := do
+    list: ConstructorParameters<typeof Status>.0[] := []
+      // success or failure
+      {name: "success", color: "success", icon: "check-circle-fill"}
+      {name: "failure", color: "danger", icon: "x-circle-fill"}
+      // log level
+      {name: "fatal", color: "danger", icon: "slash-circle-fill"}
+      {name: "error", color: "danger", icon: "exclamation-octagon-fill"}
+      {name: "warn", color: "warning", icon: "exclamation-triangle-fill"}
+      {name: "info", color: "info", icon: "info-square-fill"}
+      {name: "debug", color: "secondary", icon: "bug-fill"}
+      {name: "unknown", color: "primary", icon: "patch-question-fill"}
+      // alert
+      {name: "alert", color: "warning", icon: "bell-fill"}
+      {name: "caution", color: "warning", icon: "exclamation"}
+      {name: "warning", color: "warning", icon: "exclamation-triangle-fill"}
+      {name: "danger", color: "danger", icon: "exclamation-diamond-fill"}
+      // status
+      {name: "waiting", color: "secondary", icon: "hourglass"}
+      {name: "starting", color: "body", icon: "hourglass-top"}
+      {name: "running", color: "primary", icon: "hourglass-slpit"}
+      {name: "stopping", color: "body", icon: "hourglass-bottom"}
+      {name: "stopped", color: "secondary", icon: "stop-fill"}
+      {name: "succeeded", color: "success", icon: "check-circle-fill"}
+      {name: "failed", color: "danger", icon: "x-circle-fill"}
+      {name: "cancel", color: "warning", icon: "x"}
+      {name: "errored", color: "danger", icon: "exclamation-octagon-fill"}
+      {name: "timeout", color: "danger", icon: "clock-fill"}
+      {name: "loading", color: "primary", spinner: "border"}
+      {name: "loaded", color: "secondary", icon: "stop-fill"}
+    list.map((params) -> new Status(params))
 
   @MAP: Map<string, Status> :=
     new Map(Status.LIST.map((status) -> [status.name, status]))
