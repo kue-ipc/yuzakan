@@ -1,7 +1,13 @@
-h3 利用者用メニュー
+- if !user_menu.empty?
+  .row: .col.mt-1
+    h3 = t("ui.menus.user")
+  .menu.row.mb-1
+    - user_menu.each do |menu_item|
+      = menu_item.menu_link_tag
 
-p 利用者用メニューは工事中です。
-
-/ .menu.row
-/   - menu_items.each do |item|
-/     = menu_link(**item)
+- if !admin_menu.empty?
+  .row: .col.mt-1
+    h3 = t("ui.menus.admin")
+  .menu.row.mb-1
+    - admin_menu.each do |menu_item|
+      = menu_item.menu_link_tag

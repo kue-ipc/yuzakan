@@ -13,6 +13,10 @@ module Yuzakan
           context.t("title", scope: ["views", value.name])
         end
 
+        def description
+          context.t("description", scope: ["views", value.name])
+        end
+
         def filename
           "#{value.name}.jsonl"
         end
@@ -40,11 +44,11 @@ module Yuzakan
           card_header_class = ["card-header", "text-center"]
           card_body_class = ["card-body"]
 
-          tag.div class: helpers.col_card + ["my-1"] do
+          helpers.tag.div class: helpers.col_card + ["my-1"] do
             link_tag(class: card_class) do
-              html_join(
-                tag.div(title, class: card_header_class),
-                tag.div(description, class: card_body_class))
+              helpers.html_join(
+                helpers.tag.div(title, class: card_header_class),
+                helpers.tag.div(description, class: card_body_class))
             end
           end
         end
