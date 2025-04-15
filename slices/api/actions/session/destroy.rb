@@ -7,18 +7,22 @@ module API
         security_level 0
         required_trusted_authentication false
 
-        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
-          halt_json 410 unless res[:current_user]
+        def handle(req, res)
+          pre_session = req.session.dup
 
-          res.body = generate_json({
-            uuid: res.session[:uuid],
-            user: res.session[:user],
-            created_at: res.session[:created_at],
-            updated_at: res.session[:updated_at],
-          })
+          if res[:current_user]
+            # reset user and trusted flag in session
+            req.session[:user] = nil
+            req.session[:tursted] = false
+            auth_log_repo.create(
+              uuid: res[:current_uuid],
+              client: res[:current_client],
+              user: res[:current_user].name,
+              result: "delete")
+          end
 
-          # セッション情報を削除
-          res.session[:user] = nil
+          res[:status] = res.status
+          res[:session] = pre_session
         end
       end
     end
