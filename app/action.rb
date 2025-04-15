@@ -40,22 +40,17 @@ module Yuzakan
       config.contract_class = contract_class
     end
 
-    include Dry::Monads[:result]
-    include Dry::Monads[:maybe]
-
-    include Deps[
-      "logger",
-    ]
+    include Deps["logger"]
 
     # Cache
     include Hanami::Action::Cache
     cache_control :private, :no_cache
 
+    # handle
+
     if Hanami.env?(:produciton)
       handle_exception StandardError => :handle_standard_error
     end
-
-    # handle
 
     private def handle_standard_error(_req, _res, exception)
       logger.error exception
