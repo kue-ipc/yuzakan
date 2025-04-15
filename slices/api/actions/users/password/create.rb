@@ -28,7 +28,7 @@ module API
             @config_repository ||= config_repository
           end
 
-          def handle(_req, _res)
+          def handle(_request, _response)
             halt_json 400, errors: [params.errors] unless params.valid?
 
             reset_password = ResetPassword.new(provider_repository: @provider_repository,

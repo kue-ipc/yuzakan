@@ -22,7 +22,7 @@ module API
             @provider_repository ||= provider_repository
           end
 
-          def handle(_req, _res)
+          def handle(_request, _response)
             halt_json 400, errors: [params.errors] unless params.valid?
 
             result = call_interacttor(ProviderLockUser.new(provider_repository: @provider_repository),

@@ -8,7 +8,7 @@ module API
       class Check < API::Action
         include SetProvider
 
-        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           self.status = 200
           self.body = generate_json({check: @provider.check})
         end

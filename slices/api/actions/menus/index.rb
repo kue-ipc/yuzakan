@@ -12,7 +12,7 @@ module API
           @provider_repository ||= provider_repository
         end
 
-        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           menus = []
 
           if current_level >= 1

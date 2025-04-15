@@ -4,13 +4,13 @@
 module Yuzakan
   module Actions
     module Flash
-      private def add_flash(res, level, msg, now: true)
+      private def add_flash(response, level, msg, now: true)
         if now
-          res.flash.now[level] ||= []
-          res.flash.now[level] << msg
+          response.flash.now[level] ||= []
+          response.flash.now[level] << msg
         else
           # keep only one message
-          res.flash[level] = [msg]
+          response.flash[level] = [msg]
         end
       end
     end

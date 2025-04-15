@@ -52,7 +52,7 @@ module Yuzakan
       handle_exception StandardError => :handle_standard_error
     end
 
-    private def handle_standard_error(_req, _res, exception)
+    private def handle_standard_error(_request, _response, exception)
       logger.error exception
       halt 500
     end

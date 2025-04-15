@@ -44,126 +44,126 @@ module Yuzakan
 
       # callback methods
 
-      private def check_connection(req, res)
-        res[:current_time] = current_time(req, res)
-        res[:current_client] = current_client(req, res)
-        res[:current_config] = current_config(req, res)
+      private def check_connection(request, response)
+        response[:current_time] = current_time(request, response)
+        response[:current_client] = current_client(request, response)
+        response[:current_config] = current_config(request, response)
 
-        check_session(req, res)
+        check_session(request, response)
 
-        res[:current_uuid] = current_uuid(req, res)
-        res[:current_user] = current_user(req, res)
-        res[:current_network] = current_network(req, res)
-        res[:current_level] = current_level(req, res)
-        res[:current_trusted] = current_trusted(req, res)
+        response[:current_uuid] = current_uuid(request, response)
+        response[:current_user] = current_user(request, response)
+        response[:current_network] = current_network(request, response)
+        response[:current_level] = current_level(request, response)
+        response[:current_trusted] = current_trusted(request, response)
 
-        check_configuration(req, res)
-        check_authentication(req, res)
-        check_authorization(req, res)
+        check_configuration(request, response)
+        check_authentication(request, response)
+        check_authorization(request, response)
       end
 
-      private def current_time(_req, _res) = Time.now
-      private def current_client(req, _res)
-        req.ip || raise("client ip is missing")
+      private def current_time(_request, _response) = Time.now
+      private def current_client(request, _response)
+        request.ip || raise("client ip is missing")
       end
-      private def current_config(_req, _res) = config_repo.current
-      private def current_uuid(req, res)
-        raise "session unchecked" unless session_checked?(req, res)
+      private def current_config(_request, _response) = config_repo.current
+      private def current_uuid(request, response)
+        raise "session unchecked" unless session_checked?(request, response)
 
-        req.session[:uuid]
+        request.session[:uuid]
       end
-      private def current_user(req, res)
-        raise "session unchecked" unless session_checked?(req, res)
+      private def current_user(request, response)
+        raise "session unchecked" unless session_checked?(request, response)
 
-        req.session[:user]&.then { user_repo.get(_1) }
+        request.session[:user]&.then { user_repo.get(_1) }
       end
-      private def current_network(_req, res)
-        network_repo.find_include(res[:current_client])
+      private def current_network(_request, response)
+        network_repo.find_include(response[:current_client])
       end
-      private def current_level(_req, res)
+      private def current_level(_request, response)
         [:current_user, :current_network]
-          .map { res[_1]&.clearance_level || 0 }.min
+          .map { response[_1]&.clearance_level || 0 }.min
       end
 
-      private def current_trusted(req, res)
-        raise "session unchecked" unless session_checked?(req, res)
+      private def current_trusted(request, response)
+        raise "session unchecked" unless session_checked?(request, response)
 
-        res[:current_network]&.trusted || req.session[:trusted] || false
+        response[:current_network]&.trusted || request.session[:trusted] || false
       end
 
       # check
 
-      private def check_session(req, res)
+      private def check_session(request, response)
         # check session timeout
-        if session_timeout?(req, res)
-          logger.debug "session timeout", user: req.session[:user],
-            update_at: req.session[:updated_at]
-          add_flash(res, :warn, t("messages.session_timeout"))
-          res.session[:user] = nil
-          res.session[:trusted] = false
+        if session_timeout?(request, response)
+          logger.debug "session timeout", user: request.session[:user],
+            update_at: request.session[:updated_at]
+          add_flash(response, :warn, t("messages.session_timeout"))
+          response.session[:user] = nil
+          response.session[:trusted] = false
         end
 
         # initial session
-        req.session[:uuid] ||= SecureRandom.uuid
-        req.session[:user] ||= nil
-        req.session[:trusted] ||= false
-        req.session[:created_at] ||= res[:current_time]
-        req.session[:updated_at] = res[:current_time]
+        request.session[:uuid] ||= SecureRandom.uuid
+        request.session[:user] ||= nil
+        request.session[:trusted] ||= false
+        request.session[:created_at] ||= response[:current_time]
+        request.session[:updated_at] = response[:current_time]
       end
 
-      private def session_timeout?(req, res)
-        return false if req.session[:updated_at].nil?
+      private def session_timeout?(request, response)
+        return false if request.session[:updated_at].nil?
 
-        timeout = res[:current_config]&.session_timeout
+        timeout = response[:current_config]&.session_timeout
         return false unless timeout&.positive?
 
-        elapsed_time = res[:current_time] - req.session[:updated_at]
+        elapsed_time = response[:current_time] - request.session[:updated_at]
         return false if elapsed_time <= timeout
 
         true
       end
 
-      private def session_checked?(req, res)
-        req.session[:updated_at] == res[:current_time]
+      private def session_checked?(request, response)
+        request.session[:updated_at] == response[:current_time]
       end
 
-      private def check_configuration(req, res)
+      private def check_configuration(request, response)
         return unless self.class.required_configuration
-        return if res[:current_config]
+        return if response[:current_config]
 
-        reply_uninitialized(req, res)
+        reply_uninitialized(request, response)
       end
 
-      private def check_authentication(req, res)
+      private def check_authentication(request, response)
         return unless self.class.required_authentication
 
-        if res[:current_user]
+        if response[:current_user]
           return unless self.class.required_trusted_authentication
-          return if res[:current_trusted]
+          return if response[:current_trusted]
 
-          reply_untrusted(req, res)
+          reply_untrusted(request, response)
         end
 
-        reply_unauthenticated(req, res)
+        reply_unauthenticated(request, response)
       end
 
-      private def check_authorization(req, res)
-        return if res[:current_level] >= self.class.security_level
+      private def check_authorization(request, response)
+        return if response[:current_level] >= self.class.security_level
 
-        reply_unauthorized(req, res)
+        reply_unauthorized(request, response)
       end
 
       # after
 
-      private def record_log(req, res)
+      private def record_log(request, response)
         log_info = {
-          uuid: res[:current_uuid],
-          client: res[:current_client],
-          user: res[:current_user]&.name,
+          uuid: response[:current_uuid],
+          client: response[:current_client],
+          user: response[:current_user]&.name,
           action: self.class.name,
-          method: req.request_method,
-          path: req.path,
-          status: res.status,
+          method: request.request_method,
+          path: request.path,
+          status: response.status,
         }
         logger.info("action", **log_info)
         action_log_repo.create(**log_info)
@@ -171,20 +171,20 @@ module Yuzakan
 
       # reply
 
-      private def reply_uninitialized(_req, res)
-        add_flash(res, :error, t("errors.initialized?"))
-        halt 503, res.render(unready_view)
+      private def reply_uninitialized(_request, response)
+        add_flash(response, :error, t("errors.initialized?"))
+        halt 503, response.render(unready_view)
       end
 
-      private def reply_unauthenticated(_req, res)
-        halt 401, res.render(login_view)
+      private def reply_unauthenticated(_request, response)
+        halt 401, response.render(login_view)
       end
 
-      private def reply_untrusted(_req, res)
-        halt 401, res.render(mfa_view)
+      private def reply_untrusted(_request, response)
+        halt 401, response.render(mfa_view)
       end
 
-      private def reply_unauthorized(_req, _res)
+      private def reply_unauthorized(_request, _response)
         halt 403
       end
     end

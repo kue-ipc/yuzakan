@@ -9,7 +9,7 @@ module Admin
         expose :config
         expose :admin_user
 
-        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           flash[:errors] ||= []
 
           if configurated?

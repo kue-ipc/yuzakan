@@ -10,7 +10,7 @@ module API
 
         security_level 2
 
-        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           self.body = user_json
         end
       end

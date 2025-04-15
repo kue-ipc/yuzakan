@@ -7,9 +7,9 @@ module API
         security_level 0
         required_authentication false
 
-        def handle(req, res)
-          res[:status] = res.status
-          res[:session] = req.session
+        def handle(request, response)
+          response[:status] = response.status
+          response[:session] = request.session
         end
       end
     end

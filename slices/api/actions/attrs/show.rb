@@ -8,7 +8,7 @@ module API
       class Show < API::Action
         include SetAttr
 
-        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           self.status = 200
           self.body = generate_json(@attr, assoc: current_level >= 2)
         end

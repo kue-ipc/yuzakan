@@ -19,33 +19,33 @@ module API
         security_level 0
         required_authentication false
 
-        def handle(req, res)
-          unless req.params.valid?
-            halt_json 422, errors: [req.params.errors]
-            # halt_json 422, errors: [only_first_errors(req.params.errors)]
+        def handle(request, response)
+          unless request.params.valid?
+            halt_json 422, errors: [request.params.errors]
+            # halt_json 422, errors: [only_first_errors(request.params.errors)]
           end
-          username = req.params[:username]
-          password = req.params[:password]
+          username = request.params[:username]
+          password = request.params[:password]
 
-          if res[:current_user]
+          if response[:current_user]
             # redirect
-            redirect_to_json(res, routes.path(:api_session), status: 303)
+            redirect_to_json(response, routes.path(:api_session), status: 303)
           end
 
           auth_log_params = {
-            uuid: res[:current_uuid],
-            client: res[:current_client],
+            uuid: response[:current_uuid],
+            client: response[:current_client],
             user: username,
           }
 
-          unless res[:current_network].trusted
+          unless response[:current_network].trusted
             auth_log_repo.create(**auth_log_params, result: "reject")
             halt_json 403, errors: [t("session.errors.deny_network")]
           end
 
           if failures_over?(username,
-            count: res[:current_config].session_failure_limit,
-            period: res[:current_config].session_failure_duration)
+            count: response[:current_config].session_failure_limit,
+            period: response[:current_config].session_failure_duration)
             auth_log_repo.create(**auth_log_params, result: "reject")
             halt_json 403, errors: [t("session.errors.too_many_failure")]
           end
@@ -91,13 +91,13 @@ module API
           end
 
           # セッション情報を保存
-          res.session[:user] = user.name
+          response.session[:user] = user.name
 
           auth_log_repo.create(**auth_log_params, result: "success",
             provider: provider.name)
-          res.status = :created
-          res[:status] = res.status
-          res[:session] = pre_session
+          response.status = :created
+          response[:status] = response.status
+          response[:session] = pre_session
         end
 
         private def failures_over?(username, count:, period:)

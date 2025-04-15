@@ -5,7 +5,7 @@ module API
   module Views
     module Parts
       class Session < API::Views::Part
-        def to_json
+        def to_json(*_args)
           JSON.generate({
             uuid: value[:uuid],
             user: value[:user],

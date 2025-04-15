@@ -5,7 +5,7 @@ module API
     module Groups
       module Members
         class Update < API::Action
-          def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
+          def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
             self.body = "OK"
           end
         end

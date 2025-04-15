@@ -9,7 +9,7 @@ module API
           @attr_repository ||= attr_repository
         end
 
-        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           @attrs = @attr_repository.ordered_all
 
           self.status = 200

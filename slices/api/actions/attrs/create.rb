@@ -40,7 +40,7 @@ module API
           @provider_repository ||= provider_repository
         end
 
-        def handle(_req, _res)
+        def handle(_request, _response)
           unless params.valid?
             halt_json 400,
               errors: [only_first_errors(params.errors)]

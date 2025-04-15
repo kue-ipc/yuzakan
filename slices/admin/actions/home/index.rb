@@ -10,7 +10,7 @@ module Admin
 
         cache_control :no_store
 
-        def handle(req, res)
+        def handle(request, response)
         end
       end
     end

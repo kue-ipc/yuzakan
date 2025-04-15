@@ -8,7 +8,7 @@ module Yuzakan
         required_configuration false
         required_authentication false
 
-        def handle(req, res)
+        def handle(request, response)
         end
       end
     end

@@ -6,7 +6,7 @@ module Yuzakan
       class Edit < Yuzakan::Action
         expose :excluded_providers
 
-        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           @excluded_providers = ProviderRepository.new.all_individual_password
         end
       end

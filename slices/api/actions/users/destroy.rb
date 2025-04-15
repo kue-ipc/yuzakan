@@ -28,7 +28,7 @@ module API
           @user_repository ||= user_repository
         end
 
-        def handle(_req, _res)
+        def handle(_request, _response)
           unless @user.deleted?
             provider_delete_user({username: @name}) unless @user.deleted?
             sync_user({username: @name})

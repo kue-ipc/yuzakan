@@ -15,7 +15,7 @@ module Admin
 
         params Params
 
-        def handle(_req, _res)
+        def handle(_request, _response)
           halt 400 unless params.valid?
         end
       end

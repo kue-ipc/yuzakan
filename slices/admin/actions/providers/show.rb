@@ -22,7 +22,7 @@ module Admin
           @provider_repository = provider_repository
         end
 
-        def handle(_req, _res)
+        def handle(_request, _response)
           halt 400 unless params.valid?
           name = params[:id].to_s
           return if name == "*" || @provider_repository.exist_by_name?(name)

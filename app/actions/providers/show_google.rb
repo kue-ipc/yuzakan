@@ -14,7 +14,7 @@ module Yuzakan
         expose :google_user
         expose :creatable
 
-        def handle(req, res) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           @google_provider = ProviderRepository.new.first_google_with_adapter
           @google_user = @google_provider.read(current_user.name)
 

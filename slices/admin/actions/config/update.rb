@@ -26,7 +26,7 @@ module Admin
           @config_repository ||= config_repository
         end
 
-        def handle(_req, _res)
+        def handle(_request, _response)
           flash[:errors] ||= []
 
           @config = params[:config] || current_config

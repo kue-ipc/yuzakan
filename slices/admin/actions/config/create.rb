@@ -44,7 +44,7 @@ module Admin
           @member_repository ||= member_repository
         end
 
-        def handle(_req, _res)
+        def handle(_request, _response)
           flash[:errors] ||= []
 
           if configurated?

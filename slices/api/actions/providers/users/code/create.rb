@@ -13,7 +13,7 @@ module User
 
           expose :codes
 
-          def handle(_req, _res)
+          def handle(_request, _response)
             provider = ProviderRepository.new.first_google_with_adapter
 
             result = GenerateVerificationCode.new(
