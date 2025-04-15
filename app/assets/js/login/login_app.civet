@@ -41,12 +41,15 @@ apiDialog := new APIDialog {
 
 // Actions
 
-Login := ({username, password, submittable}: LoginState, _event: Event) ->
-  [{
-    username: {...username, disabled: true}
-    password: {...password, disabled: true}
-    submittable: false
-  }, login({username: username.value, password: password.value})]
+Login := (state: LoginState, _event: Event) ->
+  if state.submittable
+    [{
+      username: {...state.username, disabled: true}
+      password: {...state.password, disabled: true}
+      submittable: false
+    }, login({username: state.username.value, password: state.password.value})]
+  else
+    state
 
 EnterToSubmitOrNextInput := (state: LoginState, event: KeyboardEvent) ->
   unless event.target <? HTMLInputElement

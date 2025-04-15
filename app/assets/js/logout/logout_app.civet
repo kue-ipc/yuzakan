@@ -24,7 +24,10 @@ apiDialog := new APIDialog {
 // Actions
 
 Logout := (state: LogoutState, event: PointerEvent) ->
-  [{...state, disabled: true}, logout()]
+  if state.disabled
+    state
+  else
+    [{...state, disabled: true}, logout()]
 
 // Effecters
 

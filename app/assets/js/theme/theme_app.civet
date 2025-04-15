@@ -34,7 +34,7 @@ themeToggleButton := ({theme:: Theme}) ->
     type: "button"
     disabled: false
     aria-expanded: "false"
-    aria-label: t("messages.toggle_theme")
+    aria-label: t("ui.buttons.toggle_theme")
     data-bs-toggle: "dropdown"
     data-bs-display: "static"
   }, [
