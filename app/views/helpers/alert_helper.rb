@@ -7,6 +7,8 @@ module Yuzakan
   module Views
     module Helpers
       module AlertHelper
+        include BsIconHelper
+
         AlertLevel = Data.define(:name, :color, :icon)
 
         # Bootstrapでの色とアイコン
@@ -44,13 +46,14 @@ module Yuzakan
             alert-#{alert_level.color}
           ]
           tag.div class: alert_class, role: "alert" do
-            html_join(
+            escape_join([
               bs_icon_tag(alert_level.icon, size: 24,
                 class: ["flex-shrink-0", "me-2"]),
               tag.div(tag.span(h(msg))),
               tag.button(class: "btn-close", type: "button",
                 data: {"bs-dismiss": "alert"},
-                aria: {label: _context.t("ui.buttons.close")}))
+                aria: {label: _context.t("ui.buttons.close")}),
+            ])
           end
         end
 

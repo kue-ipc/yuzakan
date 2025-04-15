@@ -46,9 +46,10 @@ module Yuzakan
 
           helpers.tag.div class: helpers.col_card + ["my-1"] do
             link_tag(class: card_class) do
-              helpers.html_join(
+              helpers.escape_join([
                 helpers.tag.div(title, class: card_header_class),
-                helpers.tag.div(description, class: card_body_class))
+                helpers.tag.div(description, class: card_body_class),
+              ])
             end
           end
         end

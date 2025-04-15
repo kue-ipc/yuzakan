@@ -6,10 +6,9 @@ module Yuzakan
     module Helpers
       include AlertHelper
       include BsHelper
+      include BsIconHelper
       include CSRFHelper
       include GridHelper
-      include IconHelper
-      include HtmlHelper
       # include ErrorHelper
       # include EscapeHelper
       # include ImportmapHelper

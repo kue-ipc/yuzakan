@@ -6,7 +6,7 @@ module Yuzakan
     module Helpers
       module CSRFHelper
         def csrf_meta_tag
-          html_join([
+          escape_join([
             csrf_param_meta_tag,
             csrf_token_meta_tag,
           ])
