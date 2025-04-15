@@ -1,1 +1,7 @@
-<%== yield %>
+<%== JSON.generate({
+  status: status.code,
+  message: status.message,
+  csrf: csrf,
+  alert: alert_flash,
+  data: JSON.parse(yield, symbolize_names: true),
+}.reject { |k, v| v.nil? || (v.respond_to?(:empty?) && v.empty?) }) %>

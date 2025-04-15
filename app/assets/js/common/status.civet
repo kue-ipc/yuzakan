@@ -23,18 +23,13 @@ export default class Status
       // success or failure
       {name: "success", color: "success", icon: "check-circle-fill"}
       {name: "failure", color: "danger", icon: "x-circle-fill"}
-      // log level
+      // alert level
       {name: "fatal", color: "danger", icon: "slash-circle-fill"}
-      {name: "error", color: "danger", icon: "exclamation-octagon-fill"}
+      {name: "error", color: "danger", icon: "exclamation-diamond-fill"}
       {name: "warn", color: "warning", icon: "exclamation-triangle-fill"}
       {name: "info", color: "info", icon: "info-square-fill"}
       {name: "debug", color: "secondary", icon: "bug-fill"}
       {name: "unknown", color: "primary", icon: "patch-question-fill"}
-      // alert
-      {name: "alert", color: "warning", icon: "bell-fill"}
-      {name: "caution", color: "warning", icon: "exclamation"}
-      {name: "warning", color: "warning", icon: "exclamation-triangle-fill"}
-      {name: "danger", color: "danger", icon: "exclamation-diamond-fill"}
       // status
       {name: "waiting", color: "secondary", icon: "hourglass"}
       {name: "starting", color: "body", icon: "hourglass-top"}

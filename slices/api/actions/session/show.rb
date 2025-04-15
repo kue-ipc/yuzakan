@@ -8,6 +8,7 @@ module API
         required_authentication false
 
         def handle(req, res)
+          res[:status] = res.status
           res[:session] = req.session
         end
       end
