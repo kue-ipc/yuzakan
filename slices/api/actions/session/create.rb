@@ -9,7 +9,10 @@ module API
           "repos.user_repo",
           "management.sync_user",
           "providers.authenticate",
+          show_view: "views.session.show",
         ]
+
+        include Dry::Monads[:result]
 
         params do
           required(:username).filled(Yuzakan::Types::NameString, max_size?: 255)
@@ -97,7 +100,8 @@ module API
             provider: provider.name)
           response.status = :created
           response[:status] = response.status
-          response[:session] = pre_session
+          response[:session] = request.session
+          response.render(show_view)
         end
 
         private def failures_over?(username, count:, period:)

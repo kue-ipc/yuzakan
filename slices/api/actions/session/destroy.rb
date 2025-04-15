@@ -4,6 +4,11 @@ module API
   module Actions
     module Session
       class Destroy < API::Action
+        include Deps[
+          "repos.auth_log_repo",
+          show_view: "views.session.show",
+        ]
+
         security_level 0
         required_trusted_authentication false
 
@@ -23,6 +28,7 @@ module API
 
           response[:status] = response.status
           response[:session] = pre_session
+          response.render(show_view)
         end
       end
     end
