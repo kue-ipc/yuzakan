@@ -26,22 +26,20 @@ module Yuzakan
         ]
         action.extend Dry::Core::ClassAttributes
 
-        action.class_eval do
-          defines :security_level
-          security_level 1
+        action.defines :security_level
+        action.security_level 1
 
-          # required
-          defines :required_configuration
-          defines :required_authentication
-          defines :required_trusted_authentication
-          required_configuration true
-          required_authentication true
-          # effect only if required_authentication is true
-          required_trusted_authentication true
+        # required
+        action.defines :required_configuration
+        action.defines :required_authentication
+        action.defines :required_trusted_authentication
+        action.required_configuration true
+        action.required_authentication true
+        # effect only if required_authentication is true
+        action.required_trusted_authentication true
 
-          before :check_connection
-          after :record_log
-        end
+        action.before :check_connection
+        action.after :record_log
       end
 
       # callback methods
