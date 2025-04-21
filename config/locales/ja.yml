@@ -73,7 +73,7 @@ ja:
     no_ability: '%{name}は%{action}を実行できません。'
     unchangeable: '%{name}は変更できません。'
     action:
-      fail: '%{action}に失敗しました。'
+      failure: '%{action}に失敗しました。'
       error: '%{target}に対して%{action}時にエラーが発生しました。'
       not_run: 'どの%{target}に対しても%{action}は実行されませんでした。'
       stopped_after_some: >-
@@ -81,11 +81,20 @@ ja:
         実行されていない%{target}が存在する可能性があるため、 再度%{action}を実行してください。
     invalid_csrf_token: CSRFトークンが不正です。
     wrong_username_or_password: ユーザー名またはパスワードが違います。
+    deny_network: 現在のネットワークからのログインは許可されていません。
+    too_many_authentictaion_failure: >-
+      時間あたりのログイン試行が規定の回数を超えたため、現在ログインが禁止されています。
+      しばらく待ってから再度ログインを試してください。
+    prohibited_user: 管理者より使用が禁止されています。ログインが必要な場合は、管理者にお問い合わせください。
+    geust_user: ゲストユーザーであるため、システムを使用することができません。
   messages:
+    action:
+      success: '%{action}に成功しました。'
     session_timeout: セッションがタイムアウトしました。
     initialize_config: >-
       初期設定が必要です。
       管理者は設定の初期化を実施してください。
+    already_authenticated: すでに認証済みです。
   interactors:
     decrypt: 復号化
     encrypt: 暗号化
@@ -139,14 +148,6 @@ ja:
     adapter: アダプター
     attr: 属性
     member: メンバー
-  session:
-    errors:
-      too_many_failure: >-
-        時間あたりのログイン試行が規定の回数を超えたため、現在ログインが禁止されています。
-        しばらく待ってから再度ログインを試してください。
-      deny_network: 現在のネットワークからのログインは許可されていません。
-      prohibited: 管理者より使用が禁止されています。ログインが必要な場合は、管理者にお問い合わせください。
-      no_clearance: ゲストユーザーであるため、システムを使用することができません。
   attributes:
     config:
       title: サイト名

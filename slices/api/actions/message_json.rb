@@ -14,7 +14,7 @@ module API
         }))
       end
 
-      private def redirect_to_json(response, url, message = nil, status: 302,
+      private def redirect_to_json(response, url, message = nil, status: 303,
         **others)
         response.location = url
         halt_json(status, message, location: url, **others)

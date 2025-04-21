@@ -36,7 +36,7 @@ module Yuzakan
         result = ProviderChangePassword.new(provider_repository: @provider_repository)
           .call({password: @password, **params})
         if result.failure?
-          error(t("errors.action.fail",
+          error(t("errors.action.failure",
             action: t("interactors.change_password")))
           result.errors.each { |e| error(e) }
           fail!
@@ -59,7 +59,7 @@ module Yuzakan
       private def generate_password
         result = GeneratePassword.new(config_repository: @config_repository).call({})
         if result.failure?
-          error(t("errors.action.fail",
+          error(t("errors.action.failure",
             action: t("interactors.change_password")))
           result.errors.each { |e| error(e) }
           fail!

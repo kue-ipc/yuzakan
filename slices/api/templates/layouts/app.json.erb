@@ -1,6 +1,5 @@
 <%== JSON.generate({
-  status: status.code,
-  message: status.message,
+  status: status,
   csrf: csrf,
   alert: alert_flash,
   data: JSON.parse(yield, symbolize_names: true),

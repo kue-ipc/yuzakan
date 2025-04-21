@@ -6,7 +6,16 @@ module API
     module Parts
       class Status < API::Views::Part
         def code = value.to_i
-        def message = Hanami::Http::Status.message_for(value)
+        def message = Hanami::Http::Status.message_for(value.to_i)
+
+        def to_h
+          {
+            code: code,
+            message: message,
+          }
+        end
+
+        def to_json(...) = to_h.to_json(...)
       end
     end
   end

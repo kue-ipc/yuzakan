@@ -19,5 +19,9 @@ module Yuzakan
     setting :crypt_salt_size, constructor: Types::Params::Integer, default: 16
     setting :crypt_kdf, constructor: Types::String, default: "scrypt"
     setting :crypt_cost, constructor: Types::Params::Integer, default: 2**17
+
+    # auth
+    setting :auth_untrusted, constructor: Types::Params::Bool, default: false
+    setting :auth_guest, constructor: Types::Params::Bool, default: false
   end
 end

@@ -23,6 +23,9 @@ module Yuzakan
           {name: "info", color: "info", icon: "info-square-fill"},
           {name: "debug", color: "secondary", icon: "bug-fill"},
           {name: "unknown", color: "primary", icon: "patch-question-fill"},
+          # vaild, invalid
+          {name: "valid", color: "success", icon: "check"},
+          {name: "invalid", color: "danger", icon: "exclamation-circle"},
         ].map { |params| AlertLevel.new(**params) }
         LEVEL_MAP = LEVEL_LIST.to_h { |level| [level.name, level] }.freeze
 
