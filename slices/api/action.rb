@@ -46,5 +46,10 @@ module API
         was: request.params.raw[CSRF_TOKEN.to_s]
       halt_json 400, errors: [t("errors.invalid_csrf_token")]
     end
+
+    # override private api
+    private def view_options(request, response)
+      super.merge({status: response.status})
+    end
   end
 end
