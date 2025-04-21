@@ -98,7 +98,7 @@ module Yuzakan
         if session_timeout?(request, response)
           logger.debug "session timeout", user: request.session[:user],
             update_at: request.session[:updated_at]
-          add_flash(response, :warn, t("messages.session_timeout"))
+          add_flash(request, response, :warn, t("messages.session_timeout"))
           response.session[:user] = nil
           response.session[:trusted] = false
         end
@@ -171,8 +171,8 @@ module Yuzakan
 
       # reply
 
-      private def reply_uninitialized(_request, response)
-        add_flash(response, :error, t("errors.initialized?"))
+      private def reply_uninitialized(request, response)
+        add_flash(request, response, :error, t("errors.initialized?"))
         halt 503, response.render(unready_view)
       end
 

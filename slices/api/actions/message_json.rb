@@ -6,15 +6,19 @@ require "hanami/http/status"
 module API
   module Actions
     module MessageJSON
-      private def halt_json(status, message = nil, **others)
-        halt(status, generate_json({
-          status:,
-          message: message || Hanami::Http::Status.message_for(status),
+      private def halt_json(request, response, status, location: nil, **others)
+        location ||= request.url
+        halt(status, {
+          status: {
+            code: status,
+            message: Hanami::Http::Status.message_for(status),
+          },
+          location:,
           **others,
-        }))
+        }.to_json)
       end
 
-      private def redirect_to_json(response, url, message = nil, status: 303,
+      private def redirect_to_json(request, response, url, status: 302,
         **others)
         response.location = url
         halt_json(status, message, location: url, **others)

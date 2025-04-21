@@ -25,7 +25,7 @@ module API
 
         def handle(request, response)
           unless request.params.valid?
-            add_flash :error, request.params.errors
+            add_flash(request, response, :error, request.params.errors)
             halt_json 422
           end
 
@@ -41,14 +41,15 @@ module API
           # ログイン済みか確認
           if response[:current_user]
             auth_log_repo.create(**auth_log_params, result: "authenticated")
-            add_flash :info, t("messages.already_authenticated")
+            add_flash(request, response, :info,
+              t("messages.already_authenticated"))
             redirect_to_json(response, routes.path(:api_auth))
           end
 
           # 信頼さていないネットワークからのログイン
           unless setting.auth_untrust || response[:current_network].trusted
             auth_log_repo.create(**auth_log_params, result: "reject")
-            add_flash :error, t("errors.deny_network")
+            add_flash(request, response, :error, t("errors.deny_network"))
             halt_json 403
           end
 
@@ -57,7 +58,8 @@ module API
             count: response[:current_config].session_failure_limit,
             period: response[:current_config].session_failure_duration)
             auth_log_repo.create(**auth_log_params, result: "reject")
-            add_flash :error, t("errors.too_many_authentictaion_failure")
+            add_flash(request, response, :error,
+              t("errors.too_many_authentictaion_failure"))
             halt_json 403
           end
 
@@ -67,11 +69,11 @@ module API
             # do next
           in Failure[:error, error]
             auth_log_repo.create(**auth_log_params, result: "error")
-            add_flash :error, error
+            add_flash(request, response, :error, error)
             halt_json 500
           in Failure[level, message]
             auth_log_repo.create(**auth_log_params, result: "failure")
-            add_flash level, message
+            add_flash(request, response, level, message)
             halt_json 422
           end
 
@@ -83,11 +85,11 @@ module API
               # do next
             in Failure[:error, error]
               auth_log_repo.create(**auth_log_params, result: "sync_error")
-              add_flash :error, error
+              add_flash(request, response, :error, error)
               halt_json 500
             in Failure[level, message]
               auth_log_repo.create(**auth_log_params, result: "failure")
-              add_flash level, message
+              add_flash(request, response, level, message)
               halt_json 422
             end
           end
@@ -95,14 +97,14 @@ module API
           # 使用禁止を確認
           if user.prohibited
             auth_log_repo.create(**auth_log_params, result: "prohibited")
-            add_flash :warn, t("errors.prohibited_user")
+            add_flash(request, response, :warn, t("errors.prohibited_user"))
             halt_json 403
           end
 
           # クリアランスレベルを確認
           unless setting.auth_guest || user.clearance_level.positive?
             auth_log_repo.create(**auth_log_params, result: "no_clearance")
-            add_flash :warn, t("errors.geust_user")
+            add_flash(request, response, :warn, t("errors.geust_user"))
             halt_json 403, errors: []
           end
 
@@ -111,8 +113,8 @@ module API
 
           auth_log_repo.create(**auth_log_params, result: "success",
             provider: provider.name)
-          add_flash :sucess,
-            t("messages.action.success", action: t("actions.login"))
+          add_flash(request, response, :sucess,
+            t("messages.action.success", action: t("actions.login")))
           response.status = :created
           response[:status] = response.status
           response[:auth] = {username:}
