@@ -3,7 +3,6 @@
  * APIと連携してデータをJSONで受け取る処理をする。
  */
 
-HttpLinkHeader from http-link-header
 {formDataToJson, formDataToUrlencoded, objToUrlencoded} from
   ~/helpers/form_helper.civet
 {objToJson} from ~/helpers/obj_helper.civet
@@ -19,12 +18,12 @@ interface RequestParams < RequestInit
 
 export interface ResponseData
   ok: boolean
-  code: bigint
-  location?: URL
-  flash?: {}
+  status: {code: number, message: string}
+  location: URL
+  csrf?: Record<string, string>
+  flash?: Record<string, string | Record<string, string[]>>
   data?: any
   pagination?: Pagination
-  links?: HttpLinkHeader
 
 API_URL := normalizeURL("/api/")
 
@@ -107,46 +106,15 @@ parseResponse := (response: Response): Promise<ResponseData> ->
     throw new Error("response is not json")
 
   data := await response.json()
-  {
-    ok: response.ok
-    status: data.status
-    location: data.location
-    csrf: data.csrf
-    flash: data.flash
-    data: data.data
-    paginitaion: new Pagination(paginitaion)
-
-
-    code: BigInt(response.status)
-    location
-
-  }
-  location :=
-    normalizeURL(response.headers.get("Content-Location") ?? response.url)
-
   responseData: ResponseData := {}
     ok: response.ok
-    code: BigInt(response.status)
-    location
+    status: data.status as ResponseData["status"]
+    location: normalizeURL(data.location)
 
-  contentType := response.headers.get("Content-Type")
-  responseData.data =
-    if contentType?
-      mimeType := contentType.split(";")[0].trim().toLowerCase()
-      switch mimeType
-        "application/json"
-          await response.json()
-        "text/plain"
-          await response.text()
-        else
-          throw new Error(`Unsupported content type: ${contentType}`)
-
-  contentRange := response.headers.get("Content-Range")
-  if contentRange?
-    responseData.pagination = new Pagination(location, contentRange)
-
-  linkHeader := response.headers.get("Link")
-  if linkHeader?
-    responseData.links = HttpLinkHeader.parse(linkHeader)
+  responseData.csrf = data.csrf if data.csrf?
+  responseData.flash = data.flash if data.flash
+  responseData.data = data.data if data.data
+  responseData.pagination =
+    new Pagination(data.paginitaion) if data.paginitaion?
   
   responseData
