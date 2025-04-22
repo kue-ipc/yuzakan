@@ -13,7 +13,7 @@ RSpec.describe API::Actions::Auth::Show do
   end
 
   context "when no login" do
-    let(:session) { {uuid: uuid, user: nil} }
+    let(:session) { no_login_session }
 
     it "is failure" do
       response = action.call(params)
@@ -39,7 +39,7 @@ RSpec.describe API::Actions::Auth::Show do
   end
 
   describe "session timeout" do
-    let(:session) { {uuid: uuid, user_id: user.id, created_at: Time.now - 7200, updated_at: Time.now - 7200} }
+    let(:session) { timeout_session }
 
     it "is failure" do
       response = action.call(params)

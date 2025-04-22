@@ -94,14 +94,23 @@ def init_action_spec
       "REMOTE_ADDR" => client,
     }
   }
-  let(:session) {
+  let(:login_session) {
     {
       uuid: uuid,
       user: user.name,
+      trusted: true,
       created_at: Time.now - 600,
       updated_at: Time.now - 60,
     }
   }
+  let(:no_login_session) {
+    login_session.merge({user: nil, trusted: false})
+  }
+  let(:timeout_session) {
+    login_session.merge({created_at: Time.now - 7200, updated_at: Time.now - 7200})
+  }
+  let(:session) { login_session }
+
   let(:uuid) { "ffffffff-ffff-4fff-bfff-ffffffffffff" }
   let(:client) { "127.0.0.1" }
 
