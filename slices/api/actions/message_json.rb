@@ -7,15 +7,14 @@ module API
   module Actions
     module MessageJSON
       private def halt_json(request, response, status, location: nil, **others)
-        location ||= request.url
-        response.flash.sweep
+        location ||= request.path
         halt(status, {
           status: {
             code: status,
             message: Hanami::Http::Status.message_for(status),
           },
           location:,
-          flash: response.flash.map { |k, v| [k, v] }.to_h, # rubocop: disable Style/MapToHash
+          flash: response.flash.sweep.map { |k, v| [k, v] }.to_h, # rubocop: disable Style/MapToHash
           **others,
         }.to_json)
       end

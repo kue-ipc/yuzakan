@@ -1,6 +1,7 @@
 <%== JSON.generate({
   status: status,
-  csrf: csrf,
-  alert: alert_flash,
+  location: request.path,
+  csrf: csrf.compact,
+  flash: flash.sweep.map { |k, v| [k, v] }.to_h, # rubocop: disable Style/MapToHash
   data: JSON.parse(yield, symbolize_names: true),
 }.reject { |k, v| v.nil? || (v.respond_to?(:empty?) && v.empty?) }) %>

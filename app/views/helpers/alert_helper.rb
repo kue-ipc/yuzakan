@@ -59,11 +59,6 @@ module Yuzakan
             ])
           end
         end
-
-        def alert_flash
-          alert_levels.to_h { |level| [level, flash[level.name]] }.compact
-            .reject { |_k, v| v.empty? }
-        end
       end
     end
   end
