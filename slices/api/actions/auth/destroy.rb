@@ -12,8 +12,9 @@ module API
         security_level 0
         required_trusted_authentication false
 
-        private def reply_unauthorized(_request, _response)
-          halt_json 404
+        private def reply_unauthenticated(request, response)
+          response.flash[:error] = t("errors.not_login")
+          halt_json request, response, 404
         end
 
         def handle(request, response)
@@ -26,7 +27,6 @@ module API
             user: response[:current_user].name,
             result: "delete")
 
-          response[:status] = response.status
           response[:auth] = {username: response[:current_user].name}
           response.render(show_view)
         end

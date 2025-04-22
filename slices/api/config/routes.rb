@@ -36,8 +36,6 @@ module API
     # get "/providers/:id/check", to: "providers.check"
 
     get "/session", to: "session.show", as: :session
-    post "/session", to: "session.create", as: :session
-    delete "/session", to: "session.destroy", as: :session
 
     post "/mfa/email", to: "mfa.email.create", as: :mfa_email
     delete "/mfa/email", to: "mfa.email.destroy", as: :mfa_email
