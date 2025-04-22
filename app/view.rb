@@ -6,8 +6,6 @@ require "slim"
 
 module Yuzakan
   class View < Hanami::View
-    config.renderer_options = {pretty: true}
-
     MenuItem = Data.define(:name, :params, :color, :level, :type) {
       def initialize(name:, color:, level:, params: {}, type: :link)
         super
