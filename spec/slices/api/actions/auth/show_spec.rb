@@ -13,7 +13,7 @@ RSpec.describe API::Actions::Auth::Show do
   end
 
   context "when no login" do
-    let(:session) { no_login_session }
+    let(:session) { logout_session }
 
     it "is failure" do
       response = action.call(params)
@@ -39,7 +39,7 @@ RSpec.describe API::Actions::Auth::Show do
   end
 
   describe "session timeout" do
-    let(:session) { timeout_session }
+    let(:session) { timeover_session }
 
     it "is failure" do
       response = action.call(params)
@@ -47,7 +47,7 @@ RSpec.describe API::Actions::Auth::Show do
       expect(response.status).to eq 404
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:flash]).to eq({error: "ログインしていません。"})
+      expect(json[:flash]).to eq({error: "ログインしていません。", warn: "セッションがタイムアウトしました。"})
     end
   end
 end

@@ -19,7 +19,7 @@ RSpec.describe API::Actions::Session::Show do
   end
 
   context "when no login" do
-    let(:session) { no_login_session }
+    let(:session) { logout_session }
 
     it "is successful" do
       begin_time = Time.now
@@ -57,7 +57,7 @@ RSpec.describe API::Actions::Session::Show do
   end
 
   describe "session timeout" do
-    let(:session) { timeout_session }
+    let(:session) { timeover_session }
 
     it "is error" do
       begin_time = Time.now

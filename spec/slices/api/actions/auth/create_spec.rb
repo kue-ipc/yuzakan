@@ -36,7 +36,7 @@ RSpec.describe API::Actions::Auth::Create do
   end
 
   context "when no login" do
-    let(:session) { no_login_session }
+    let(:session) { logout_session }
 
     it "is successful" do
       response = action.call(params)

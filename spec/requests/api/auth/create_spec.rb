@@ -106,7 +106,7 @@ RSpec.describe "POST /api/auth", :db, type: :request do
       expect(json).to eq({
         status: {code: 201, message: "Created"},
         location: "/api/auth",
-        flash: {success: "ログインに成功しました。"},
+        flash: {success: "ログインに成功しました。", warn: "セッションがタイムアウトしました。"},
         data: {username: user.name},
       })
     end

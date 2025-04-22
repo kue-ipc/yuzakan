@@ -24,7 +24,7 @@ def init_request_spec
   let(:config) { Factory[:config] }
   # trusted level 5 network 127.0.0.0/8
   let(:network) { Factory[:network_ipv4_loopback] }
-  let(:session) {
+  let(:login_session) {
     {
       uuid: uuid,
       user: user.name,
@@ -33,6 +33,12 @@ def init_request_spec
       updated_at: Time.now - 60,
     }
   }
+  let(:logout_session) { {**login_session, user: nil, trusted: false} }
+  let(:timeover_session) {
+    {**login_session, created_at: Time.now - 7200, updated_at: Time.now - 7200}
+  }
+  let(:first_session) { {} }
+  let(:session) { login_session }
   let(:uuid) { "ffffffff-ffff-4fff-bfff-ffffffffffff" }
   let(:group) { Factory[:group] }
   let(:provider) {
@@ -56,10 +62,9 @@ def init_request_spec
     network
     provider
     rack_test_session.env "rack.session", session
-    rack_test_session(:first).env "rack.session", {}
-    rack_test_session(:logout).env "rack.session", {**session, user: nil}
-    rack_test_session(:timeover).env "rack.session",
-      {**session, created_at: Time.now - 7200, updated_at: Time.now - 7200}
+    rack_test_session(:first).env "rack.session", first_session
+    rack_test_session(:logout).env "rack.session", logout_session
+    rack_test_session(:timeover).env "rack.session", timeover_session
   end
 end
 
@@ -103,12 +108,11 @@ def init_action_spec
       updated_at: Time.now - 60,
     }
   }
-  let(:no_login_session) {
-    login_session.merge({user: nil, trusted: false})
+  let(:logout_session) { {**login_session, user: nil, trusted: false} }
+  let(:timeover_session) {
+    {**login_session, created_at: Time.now - 7200, updated_at: Time.now - 7200}
   }
-  let(:timeout_session) {
-    login_session.merge({created_at: Time.now - 7200, updated_at: Time.now - 7200})
-  }
+  let(:first_session) { {} }
   let(:session) { login_session }
 
   let(:uuid) { "ffffffff-ffff-4fff-bfff-ffffffffffff" }
@@ -153,12 +157,23 @@ def let_mock_repos
   let(:action_log_repo) { instance_double(Yuzakan::Repos::ActionLogRepo) }
 end
 
+# FIXME: もっとうまいやり方があるのではないか？
+def create_sturct(superclass, relation, attributes)
+  Class.new(superclass) do
+    attributes.each_key { |key| attribute key, relation[key].type }
+  end.new(**attributes)
+end
+
+# FIXME: そのままの場合はROM::Structになるため、カスタマイズした属性は使用できない。
 def let_structs
   let(:config) { Factory.structs[:config] }
   let(:network) { Factory.structs[:network] }
   let(:affiliation) { Factory.structs[:affiliation] }
   let(:group) { Factory.structs[:group] }
-  let(:user) { Factory.structs[:user] }
+  let(:user) {
+    create_sturct(Yuzakan::Structs::User, Hanami.app["relations.users"],
+      Factory.structs[:user].attributes)
+  }
   let(:provider) { Factory.structs[:provider] }
   let(:attr) { Factory.structs[:attr] }
   let(:auth_log) { Factory.structs[:auth_log] }

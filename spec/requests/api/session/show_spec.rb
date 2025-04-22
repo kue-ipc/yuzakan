@@ -6,94 +6,98 @@ RSpec.describe "GET /api/session", :db, type: :request do
   let(:request_headers) {
     {
       "HTTP_ACCEPT" => "application/json",
-      "CONTENT_TYPE" => "application/json",
     }
   }
-  let(:params) { {username: user.name, password: password} }
 
-  it "is redirect (303 see other)" do
-    get "/api/session", params.to_json, request_headers
-    expect(last_response).to be_redirect
-    expect(last_response.status).to eq 303
-    expect(last_response.headers["Location"]).to eq "/api/session"
+  it "is ok" do
+    begin_time = Time.now
+    get "/api/session", request_headers
+    end_time = Time.now
+    expect(last_response).to be_ok
     expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(last_response.body, symbolize_names: true)
-    expect(json).to eq({
-      status: 303,
-      message: "See Other",
+    expect({**json, data: {**json[:data], created_at: nil, updated_at: nil}}).to eq({
+      status: {code: 200, message: "OK"},
       location: "/api/session",
+      data: {
+        uuid: uuid,
+        user: user.name,
+        created_at: nil,
+        updated_at: nil,
+      },
     })
+    expect(Time.parse(json.dig(:data, :created_at))).to be_within(1).of(session[:created_at])
+    expect(Time.parse(json.dig(:data, :updated_at))).to be_between(begin_time.floor, end_time)
   end
 
-  it "is created on first" do
+  it "is ok on first" do
     with_session(:first) do
-      get "/api/session", params.to_json, request_headers
-      expect(last_response).to be_created
+      begin_time = Time.now
+      get "/api/session", request_headers
+      end_time = Time.now
+      expect(last_response).to be_ok
       expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(last_response.body, symbolize_names: true)
-      expect(json[:user]).to eq user.name
-    end
-  end
-
-  it "is created on logout" do
-    with_session(:logout) do
-      get "/api/session", params.to_json, request_headers
-      expect(last_response).to be_created
-      expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(last_response.body, symbolize_names: true)
-      expect(json[:user]).to eq user.name
-    end
-  end
-
-  it "is unprocessable on logout with wrong username params" do
-    with_session(:logout) do
-      get "/api/session", {**params, username: "a"}.to_json, request_headers
-      expect(last_response).to be_unprocessable
-      expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(last_response.body, symbolize_names: true)
-      expect(json).to eq({
-        status: 422,
-        message: "Unprocessable Entity",
-        errors: ["ユーザー名またはパスワードが違います。"],
+      expect({**json, data: {**json[:data], uuid: nil, created_at: nil, updated_at: nil}}).to eq({
+        status: {code: 200, message: "OK"},
+        location: "/api/session",
+        data: {
+          uuid: nil,
+          user: nil,
+          created_at: nil,
+          updated_at: nil,
+        },
       })
+      expect(json.dig(:data, :uuid)).not_to eq uuid
+      expect(Time.parse(json.dig(:data, :created_at))).to be_between(begin_time.floor, end_time)
+      expect(Time.parse(json.dig(:data, :updated_at))).to be_between(begin_time.floor, end_time)
     end
   end
 
-  it "is unprocessable on logout with wrong password" do
+  it "is ok on logout" do
     with_session(:logout) do
-      get "/api/session", {**params, password: "a"}.to_json, request_headers
-      expect(last_response).to be_unprocessable
+      begin_time = Time.now
+      get "/api/session", request_headers
+      end_time = Time.now
+      expect(last_response).to be_ok
       expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(last_response.body, symbolize_names: true)
-      expect(json).to eq({
-        status: 422,
-        message: "Unprocessable Entity",
-        errors: ["ユーザー名またはパスワードが違います。"],
+      expect({**json, data: {**json[:data], created_at: nil, updated_at: nil}}).to eq({
+        status: {code: 200, message: "OK"},
+        location: "/api/session",
+        data: {
+          uuid: uuid,
+          user: nil,
+          created_at: nil,
+          updated_at: nil,
+        },
       })
+      expect(Time.parse(json.dig(:data, :created_at))).to be_within(1).of(logout_session[:created_at])
+      expect(Time.parse(json.dig(:data, :updated_at))).to be_between(begin_time.floor, end_time)
     end
   end
 
-  it "is unprocessable on logout with wrong username and password" do
-    with_session(:logout) do
-      get "/api/session", {**params, username: "a", password: "a"}.to_json, request_headers
-      expect(last_response).to be_unprocessable
-      expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(last_response.body, symbolize_names: true)
-      expect(json).to eq({
-        status: 422,
-        message: "Unprocessable Entity",
-        errors: ["ユーザー名またはパスワードが違います。"],
-      })
-    end
-  end
-
-  it "is ceated on time over" do
+  it "is ok on time over" do
     with_session(:timeover) do
-      get "/api/session", params.to_json, request_headers
-      expect(last_response).to be_created
+      begin_time = Time.now
+      get "/api/session", request_headers
+      end_time = Time.now
+      expect(last_response).to be_ok
       expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(last_response.body, symbolize_names: true)
-      expect(json[:user]).to eq user.name
+      expect({**json, data: {**json[:data], created_at: nil, updated_at: nil}}).to eq({
+        status: {code: 200, message: "OK"},
+        location: "/api/session",
+        flash: {warn: "セッションがタイムアウトしました。"},
+        data: {
+          uuid: uuid,
+          user: nil,
+          created_at: nil,
+          updated_at: nil,
+        },
+      })
+      expect(Time.parse(json.dig(:data, :created_at))).to be_within(1).of(timeover_session[:created_at])
+      expect(Time.parse(json.dig(:data, :updated_at))).to be_between(begin_time.floor, end_time)
     end
   end
 end

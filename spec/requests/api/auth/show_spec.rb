@@ -59,7 +59,7 @@ RSpec.describe "GET /api/auth", :db, type: :request do
       expect(json).to eq({
         status: {code: 404, message: "Not Found"},
         location: "/api/auth",
-        flash: {error: "ログインしていません。"},
+        flash: {error: "ログインしていません。", warn: "セッションがタイムアウトしました。"},
       })
     end
   end

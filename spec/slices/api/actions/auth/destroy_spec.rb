@@ -15,7 +15,7 @@ RSpec.describe API::Actions::Auth::Destroy do
   end
 
   context "when no login" do
-    let(:session) { no_login_session }
+    let(:session) { logout_session }
 
     it "is failure" do
       response = action.call(params)
