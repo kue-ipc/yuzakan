@@ -44,12 +44,13 @@ module API
     def handle_invalid_csrf_token(request, response)
       logger.warn "CSRF attack", expected: request.session[CSRF_TOKEN],
         was: request.params.raw[CSRF_TOKEN.to_s]
-      halt_json request, response, 400, errors: [t("errors.invalid_csrf_token")]
+      flash[:error] = t("errors.invalid_csrf_token")
+      halt_json request, response, 400
     end
 
     # override private api
     private def view_options(request, response)
-      super.merge({status: response.status})
+      super.merge({status: response.status, location: request.path})
     end
   end
 end

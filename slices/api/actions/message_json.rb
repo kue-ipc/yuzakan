@@ -6,24 +6,24 @@ require "hanami/http/status"
 module API
   module Actions
     module MessageJSON
-      private def halt_json(request, response, status, location: nil, **others)
-        location ||= request.path
-        halt(status, {
-          status: {
-            code: status,
-            message: Hanami::Http::Status.message_for(status),
-          },
-          location:,
-          flash: response.flash.sweep.map { |k, v| [k, v] }.to_h, # rubocop: disable Style/MapToHash
-          **others,
-        }.to_json)
+      def self.included(action)
+        action.include Deps[
+          halt_view: "views.error.halt",
+        ]
       end
 
-      private def redirect_to_json(request, response, url, status: 302,
-        **others)
-        response.location = url
-        halt_json(request, response, status, location: url, **others)
+      private def halt_json(request, response, status, location: nil)
+        location ||= request.path
+        body = response.render(halt_view, status:, location:)
+        halt status, body
       end
+
+      private def redirect_to_json(request, response, url, status: 302)
+        response.location = url
+        halt_json(request, response, status, location: url)
+      end
+
+      # TODO: ここから下は多分いらない
 
       private def generate_json(obj, assoc: false)
         JSON.generate(convert_for_json(obj, assoc: assoc))
