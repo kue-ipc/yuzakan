@@ -5,50 +5,34 @@
 {normalizeInteger} from ~/helpers/number_helper.civet
 {getQueryParamsFromURL} from ~/helpers/url_helper.civet
 
+export interface PaginationParam
+  page: number
+  per_page: number
+
 export default class Pagination
-  @DEFAULT_PAGE := 1n
-  @DEFAULT_PER_PAGE := 20n
-  @MIN_PAGE := 1n
-  @MAX_PAGE := 10000n
-  @MIN_PER_PAGE := 10n
-  @MAX_PER_PAGE := 100n
+  @DEFAULT_PAGE := 1
+  @DEFAULT_PER_PAGE := 20
+  @MIN_PAGE := 1
+  @MAX_PAGE := 10000
+  @MIN_PER_PAGE := 10
+  @MAX_PER_PAGE := 100
 
-  @CONTENT_RANGE_REGEXP := /^items\s+(?<start>\d+)-(?<end>\d+)\/(?<total>\d+)$/
+  #page: number = Pagination.DEFAULT_PAGE
+  #perPage: number = Pagination.DEFAULT_PER_PAGE
+  #total: number := 0
+  #start: number := 0
+  #end: number := 0
 
-  #page: bigint = Pagination.DEFAULT_PAGE
-  #perPage: bigint = Pagination.DEFAULT_PER_PAGE
-  #total: bigint := 0n
-  #start: bigint := 0n
-  #end: bigint := 0n
+  @({#page:: number, #perPage:: number, #total:: number, #start:: number, #end:: number})
 
-  @(location?: URL, contentRange?: string)
-    return unless location?
-
-    queryParams := getQueryParamsFromURL(location)
-    if queryParams.has("page")
-      @page = queryParams.get("page")
-    if queryParams.has("per_page")
-      @perPage = queryParams.get("per_page")
-
-    return unless contentRange?
-
-    match := Pagination.CONTENT_RANGE_REGEXP.exec(contentRange)
-    unless match?.groups?
-      console.warn "invalid content range: %s", contentRange
-      return
-
-    #total = BigInt(match.groups.total)
-    #start = BigInt(match.groups.start)
-    #end = BigInt(match.groups.end)
-
-  set page(page: bigint | number | string | undefined)
+  set page(page: number | number | string | undefined)
     page = normalizeInteger(page, min: Pagination.MIN_PAGE,
       max: Pagination.MAX_PAGE)
     return unless page?
 
     #page = page
 
-  set perPage(perPage: bigint | number | string | undefined)
+  set perPage(perPage: number | number | string | undefined)
     perPage = normalizeInteger(perPage, min: Pagination.MIN_PER_PAGE,
       max: Pagination.MAX_PER_PAGE)
     return unless perPage?

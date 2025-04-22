@@ -21,7 +21,6 @@ export interface ResponseData
   ok: boolean
   code: bigint
   location?: URL
-  flash?: {}
   data?: any
   pagination?: Pagination
   links?: HttpLinkHeader
@@ -101,26 +100,6 @@ createRequest := ({path, method = "GET", data, ...params}: RequestParams):
   new Request(url, init)
 
 parseResponse := (response: Response): Promise<ResponseData> ->
-  mimeType := response.headers.get("Content-Type")?.split(";")[0]?.trim()
-    ?.toLowerCase()
-  if mimeType is not "application/json"
-    throw new Error("response is not json")
-
-  data := await response.json()
-  {
-    ok: response.ok
-    status: data.status
-    location: data.location
-    csrf: data.csrf
-    flash: data.flash
-    data: data.data
-    paginitaion: new Pagination(paginitaion)
-
-
-    code: BigInt(response.status)
-    location
-
-  }
   location :=
     normalizeURL(response.headers.get("Content-Location") ?? response.url)
 
