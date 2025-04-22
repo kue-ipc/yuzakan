@@ -16,35 +16,35 @@ module API
 
     # override reply
 
-    private def reply_uninitialized(_request, _response)
-      halt_json 503, errors: [t("messages.uninitialized")]
+    private def reply_uninitialized(request, response)
+      halt_json request, response, 503, errors: [t("messages.uninitialized")]
     end
 
     # TODO: メッセージを付けるべき？
-    private def reply_unauthenticated(_request, _response)
-      halt_json 401
+    private def reply_unauthenticated(request, response)
+      halt_json request, response, 401
     end
 
     # TODO: メッセージを付けるべき？
-    private def reply_untrusted(_request, _response)
-      halt_json 401
+    private def reply_untrusted(request, response)
+      halt_json request, response, 401
     end
 
-    private def reply_unauthorized(_request, _response)
-      halt_json 403
+    private def reply_unauthorized(request, response)
+      halt_json request, response, 403
     end
 
     # override handle
 
-    def handle_standard_error(_request, _response, exception)
+    def handle_standard_error(request, response, exception)
       logger.error exception
-      halt_json 500
+      halt_json request, response, 500
     end
 
-    def handle_invalid_csrf_token(request, _response)
+    def handle_invalid_csrf_token(request, response)
       logger.warn "CSRF attack", expected: request.session[CSRF_TOKEN],
         was: request.params.raw[CSRF_TOKEN.to_s]
-      halt_json 400, errors: [t("errors.invalid_csrf_token")]
+      halt_json request, response, 400, errors: [t("errors.invalid_csrf_token")]
     end
 
     # override private api

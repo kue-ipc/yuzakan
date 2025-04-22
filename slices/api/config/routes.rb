@@ -3,8 +3,8 @@
 module API
   class Routes < Hanami::Routes
     post "/auth", to: "auth.create", as: :auth
-    delete "/auth/:id", to: "auth.destroy", as: :auth
-    get "/auth/:id", to: "auth.show", as: :auth
+    delete "/auth", to: "auth.destroy", as: :auth
+    get "/auth", to: "auth.show", as: :auth
 
     get "/config", to: "config.show", as: :config
     patch "/config", to: "config.update", as: :config

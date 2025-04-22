@@ -8,12 +8,14 @@ module API
     module MessageJSON
       private def halt_json(request, response, status, location: nil, **others)
         location ||= request.url
+        response.flash.sweep
         halt(status, {
           status: {
             code: status,
             message: Hanami::Http::Status.message_for(status),
           },
           location:,
+          flash: response.flash.map { |k, v| [k, v] }.to_h, # rubocop: disable Style/MapToHash
           **others,
         }.to_json)
       end
@@ -21,7 +23,7 @@ module API
       private def redirect_to_json(request, response, url, status: 302,
         **others)
         response.location = url
-        halt_json(status, message, location: url, **others)
+        halt_json(request, response, status, location: url, **others)
       end
 
       private def generate_json(obj, assoc: false)

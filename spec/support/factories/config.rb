@@ -4,8 +4,8 @@ Factory.define(:config) do |f|
   f.title Faker::Team.name
   f.domain Faker::Internet.domain_name
   f.session_timeout 3600 # default
-  f.session_failure_limit 5 # default
-  f.session_failure_duration 600 # default
+  f.auth_failure_limit 5 # default
+  f.auth_failure_duration 600 # default
   f.password_min_size 8 # default
   f.password_max_size 64 # default
   f.password_min_types 1 # default

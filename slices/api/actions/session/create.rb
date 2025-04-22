@@ -32,7 +32,8 @@ module API
 
           if response[:current_user]
             # redirect
-            redirect_to_json(response, routes.path(:api_session), status: 303)
+            redirect_to_json(request, response, routes.path(:api_session),
+              status: 303)
           end
 
           auth_log_params = {
@@ -47,8 +48,8 @@ module API
           end
 
           if failures_over?(username,
-            count: response[:current_config].session_failure_limit,
-            period: response[:current_config].session_failure_duration)
+            count: response[:current_config].auth_failure_limit,
+            period: response[:current_config].auth_failure_duration)
             auth_log_repo.create(**auth_log_params, result: "reject")
             halt_json 403, errors: [t("session.errors.too_many_failure")]
           end
