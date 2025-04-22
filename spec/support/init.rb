@@ -19,27 +19,13 @@ end
 def init_request_spec
   # default REMOTE_ADDR: 127.0.0.1
 
+  let_session
+
   let(:user) { Factory[:user] }
   let(:password) { Faker::Internet.password }
   let(:config) { Factory[:config] }
   # trusted level 5 network 127.0.0.0/8
   let(:network) { Factory[:network_ipv4_loopback] }
-  let(:login_session) {
-    {
-      uuid: uuid,
-      user: user.name,
-      trusted: true,
-      created_at: Time.now - 600,
-      updated_at: Time.now - 60,
-    }
-  }
-  let(:logout_session) { {**login_session, user: nil, trusted: false} }
-  let(:timeover_session) {
-    {**login_session, created_at: Time.now - 7200, updated_at: Time.now - 7200}
-  }
-  let(:first_session) { {} }
-  let(:session) { login_session }
-  let(:uuid) { "ffffffff-ffff-4fff-bfff-ffffffffffff" }
   let(:group) { Factory[:group] }
   let(:provider) {
     Factory[:provdire_mock, params: {
@@ -77,6 +63,7 @@ def init_action_spec
 
   let_structs
   let_mock_repos
+  let_session
 
   let(:base_action_opts) {
     allow(config_repo).to receive(:current).and_return(config)
@@ -99,6 +86,21 @@ def init_action_spec
       "REMOTE_ADDR" => client,
     }
   }
+
+  let(:client) { "127.0.0.1" }
+
+  # override if necessary for each action
+  let(:action_opts) { {} }
+  let(:action_params) { {} }
+end
+
+def init_operation_spec
+  let_repo_mock
+  let_structs
+end
+
+# require user
+def let_session
   let(:login_session) {
     {
       uuid: uuid,
@@ -114,18 +116,7 @@ def init_action_spec
   }
   let(:first_session) { {} }
   let(:session) { login_session }
-
   let(:uuid) { "ffffffff-ffff-4fff-bfff-ffffffffffff" }
-  let(:client) { "127.0.0.1" }
-
-  # override if necessary for each action
-  let(:action_opts) { {} }
-  let(:action_params) { {} }
-end
-
-def init_operation_spec
-  let_repo_mock
-  let_structs
 end
 
 # mock repostitories
