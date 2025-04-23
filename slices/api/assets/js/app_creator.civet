@@ -4,8 +4,7 @@ csrf from ~/csrf.civet
 
 {type Action, type Effecter} from hyperapp
 
-{fetchAPI, type ResponseData, type Method, type RequestParams}
-  from ~api/fetch_api.civet
+{fetchAPI, type ResponseData, type RequestParams} from ~api/fetch_api.civet
 
 interface ActionFallback<S>
   action: Action<S>
