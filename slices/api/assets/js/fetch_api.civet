@@ -11,7 +11,7 @@ Pagination from ~api/pagination.civet
 
 export Method ::= "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE"
 
-interface RequestParams < RequestInit
+export interface RequestParams < RequestInit
   path: string | string[]
   methed?: Method
   data?: any
@@ -65,8 +65,8 @@ createRequest := ({path, method = "GET", data, ...params}: RequestParams):
   url := apiURL(path)
   headers := new Headers {}
     "Accept": "application/json"
+
   let body
- 
   if data?
     switch method
       when "GET", "HEAD"
@@ -90,12 +90,12 @@ createRequest := ({path, method = "GET", data, ...params}: RequestParams):
         headers.append("Content-Length", body.length.toString())
 
   init: RequestInit := {}
-    method: method
     mode: "same-origin"
     credentials: "same-origin"
+    ...params
+    method: method
     headers
     body
-    ...params
 
   new Request(url, init)
 
