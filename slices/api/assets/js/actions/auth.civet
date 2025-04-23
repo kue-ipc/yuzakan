@@ -3,31 +3,39 @@
 {createRunShow, createRunCreate, createRunDestroy} from ~api/app_creator.civet
 {type RequestParams} from ~api/fetch_api.civet
 
-interface AuthProps
+{type Effect, type Action} from hyperapp
+
+export interface AuthProps
   username: string
   password: string
 
 // Contants
 
-export AUTH_PATH = "auth"
+AUTH_PATH := "auth"
 
-// Actions
+// create Actions
 
-export SetAuth = <S>(state: S, auth: AuthProps) ->
-  {...state, auth}
+createSetAuth := <S>(effects?: Effect<S>[]): Action<S, AuthProps> ->
+  if effects? and effects# > 0
+    (state: S, auth: AuthProps) -> [{...state, auth}, ...effects]
+  else
+    (state: S, auth: AuthProps) -> ({...state, auth})
 
 // create Effecters
-export createRunShowAuth = <S>(params: Omit<RequestParams, "path"> = {}) ->
-  createRunShow<S, {}>({action: SetAuth, path: AUTH_PATH, ...params})
+export createRunShowAuth := <S>(effects?: Effect<S>[]) ->
+  action := createSetAuth(effects)
+  createRunShow<S, {}>({action, path: AUTH_PATH})
 
-export createRunCreateAuth = <S>(params: Omit<RequestParams, "path"> = {}) ->
-  createRunCreate<S, AuthProps>({action: SetAuth, path: AUTH_PATH, ...params})
+export createRunCreateAuth := <S>(effects?: Effect<S>[]) ->
+  action := createSetAuth(effects)
+  createRunCreate<S, AuthProps>({action, path: AUTH_PATH})
 
-export createRunDestroyAuth = <S>(params: Omit<RequestParams, "path"> = {}) ->
-  createRunDestroy<S, {}>({action: SetAuth, path: AUTH_PATH, ...params})
+export createRunDestroyAuth := <S>(effects?: Effect<S>[]) ->
+  action := createSetAuth(effects)
+  createRunDestroy<S, {}>({action, path: AUTH_PATH})
 
 // Effecters
 
-export runShowAuth = createRunShowAuth()
-export runCreateAuth = createRunCreateAuth()
-export runDestroyAuth = createRunDestroyAuth()
+export runShowAuth := createRunShowAuth()
+export runCreateAuth := createRunCreateAuth()
+export runDestroyAuth := createRunDestroyAuth()

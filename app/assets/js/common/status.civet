@@ -30,6 +30,9 @@ export default class Status
       {name: "info", color: "info", icon: "info-square-fill"}
       {name: "debug", color: "secondary", icon: "bug-fill"}
       {name: "unknown", color: "primary", icon: "patch-question-fill"}
+      // vaild, invalid
+      {name: "valid", color: "success", icon: "check"}
+      {name: "invalid", color: "danger", icon: "exclamation-circle"}
       // status
       {name: "waiting", color: "secondary", icon: "hourglass"}
       {name: "starting", color: "body", icon: "hourglass-top"}

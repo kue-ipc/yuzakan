@@ -1,0 +1,61 @@
+// Alert
+
+Status from ~/common/status.civet
+{t} from ~/common/i18n.civet
+{type Flash} from ~/common/flash.civet
+{type Dispatch} from hyperapp
+
+// app/views/heplers/alert_helper.rb
+
+ALERTS_ID := "alerts"
+
+ALERT_LEVELS := [
+  "success", "failure",
+  "fatal", "error", "warn", "info", "debug", "unknown",
+] as const
+
+alertsNode := document.getElementById(ALERTS_ID)
+
+addAlert := (level:string, message: string): void ->
+  unless alertsNode?
+    console.warn "no alters node"
+    return
+  status := Status.get(level)
+
+  alert_class := `alert alert-${status.color} alert-dismissible fade show`
+
+  div := document.createElement("div")
+  div.className = alert_class
+  div.setAttribute("role", "alert")
+
+  text := document.createTextNode(message)
+
+  button := document.createElement("button")
+  button.className = "btn-close"
+  button.setAttribute("type", "button")
+  button.setAttribute("data-bs-dismiss", "alert")
+  button.setAttribute("aria-label", t("ui.buttons.close"))
+
+  div.appendChild(button)
+  div.appendChild(text)
+  alertsNode.appendChild(div)
+
+clearAlerts := ->
+  unless alertsNode?
+    console.warn "no alters node"
+    return
+  alertsNode.removeChild(alertsNode.firstChild) while alertsNode.firstChild
+
+alertFlash := (flash: Flash): void ->
+  clearAlerts()
+  for each level of ALERT_LEVELS
+    if flash[level]?
+      addAlert(level, flash[level])
+
+// Effecter
+
+export runAlertFlash := <S>(dispach: Dispatch<S>, flash?: Flash): void ->
+  if flash?
+    alertFlash(flash)
+    dispach (state: S) ->
+      {...state, flash: flash.{valid, invalid}}

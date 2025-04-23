@@ -1,0 +1,27 @@
+export interface AlertFlash
+  success?: string
+  failure?: string
+  fatal?: string
+  error?: string
+  warn?: string
+  info?: string
+  debug?: string
+  unknown?: string
+
+export interface ValidationFlash
+  valid?: Record<string, string[]>
+  invalid?: Record<string, string[]>
+
+export Flash ::= AlertFlash & ValidationFlash
+
+export interface Validation
+  valid?: string[]
+  invalid?: string[]
+
+export flashValidation := (flash: Flash?, name: string): Validation ->
+  return {} unless flash?
+
+  {}
+    valid: flash.valid?[name]
+    invalid: flash.invalid?[name]
+
