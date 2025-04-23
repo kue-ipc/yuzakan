@@ -9,11 +9,10 @@
 {normalizeURL} from ~/helpers/url_helper.civet
 Pagination from ~api/pagination.civet
 
-export Method ::= "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE"
+// export Method ::= "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE"
 
 export interface RequestParams < RequestInit
   path: string | string[]
-  methed?: Method
   data?: any
 
 export interface ResponseData
