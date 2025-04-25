@@ -1,9 +1,7 @@
 // /api/auth
 
-{createRunShow, createRunCreate, createRunDestroy} from ~api/app_creator.civet
+{createShow, createCreate, createDestroy, type ActionFallback, type ResponseState} from ~api/app_creator.civet
 {type RequestParams} from ~api/fetch_api.civet
-
-{type Effect, type Action} from hyperapp
 
 export interface AuthProps
   username: string
@@ -13,29 +11,25 @@ export interface AuthProps
 
 AUTH_PATH := "auth"
 
+// Actions
+
+SetAuth := <S>(state: S, auth: AuthProps) ->
+  {...state, auth}
+
 // create Actions
+export createShowAuth := <S extends ResponseState>(
+  {actionparams: Omit<ActionFallback<S, AuthProps> & RequestParams, "path"> = {}) ->
+  
+    createShow<S, AuthProps>({action: SetAuth, path: AUTH_PATH, ...params})
 
-createSetAuth := <S>(effects?: Effect<S>[]): Action<S, AuthProps> ->
-  if effects? and effects# > 0
-    (state: S, auth: AuthProps) -> [{...state, auth}, ...effects]
-  else
-    (state: S, auth: AuthProps) -> ({...state, auth})
+export createCreateAuth := <S>(params: Omit<RequestParams, "path"> = {}) ->
+  createCreate<S, AuthProps>({action: SetAuth, path: AUTH_PATH, ...params})
 
-// create Effecters
-export createRunShowAuth := <S>(effects?: Effect<S>[]) ->
-  action := createSetAuth(effects)
-  createRunShow<S, {}>({action, path: AUTH_PATH})
+export createDestroyAuth := <S>(params: Omit<RequestParams, "path"> = {}) ->
+  createDestroy<S, AuthProps>({action: SetAuth, path: AUTH_PATH, ...params})
 
-export createRunCreateAuth := <S>(effects?: Effect<S>[]) ->
-  action := createSetAuth(effects)
-  createRunCreate<S, AuthProps>({action, path: AUTH_PATH})
+// Action
 
-export createRunDestroyAuth := <S>(effects?: Effect<S>[]) ->
-  action := createSetAuth(effects)
-  createRunDestroy<S, {}>({action, path: AUTH_PATH})
-
-// Effecters
-
-export runShowAuth := createRunShowAuth()
-export runCreateAuth := createRunCreateAuth()
-export runDestroyAuth := createRunDestroyAuth()
+export ShowAuth := createShowAuth()
+export CreateAuth := createCreateAuth()
+export DestroyAuth := createDestroyAuth()

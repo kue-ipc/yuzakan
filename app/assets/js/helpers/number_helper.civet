@@ -6,7 +6,7 @@ interface NumberRange
   min?: bigint | number
   max?: bigint | number
 
-export normalizeInteger := (value: NumberValue, {min, max}: NumberRange = {}):
+export normalizeBigint := (value: NumberValue, {min, max}: NumberRange = {}):
     bigint? ->
   return unless value?
 
@@ -17,7 +17,7 @@ export normalizeInteger := (value: NumberValue, {min, max}: NumberRange = {}):
 
   value
 
-export normalizeFloat := (value: NumberValue, {min, max}: NumberRange = {}):
+export normalizeNumber := (value: NumberValue, {min, max}: NumberRange = {}):
     number? ->
   return unless value?
 

@@ -2,7 +2,7 @@
 
 // see lib/yuzakan/utils/pager.rb
 
-{normalizeInteger} from ~/helpers/number_helper.civet
+{normalizeNumber} from ~/helpers/number_helper.civet
 {getQueryParamsFromURL} from ~/helpers/url_helper.civet
 
 export interface PaginationParam
@@ -23,17 +23,17 @@ export default class Pagination
   #start: number := 0
   #end: number := 0
 
-  @({#page:: number, #perPage:: number, #total:: number, #start:: number, #end:: number})
+  @({#page:: number, per_page: #perPage:: number, #total:: number, #start:: number, #end:: number})
 
-  set page(page: number | number | string | undefined)
-    page = normalizeInteger(page, min: Pagination.MIN_PAGE,
+  set page(page: number | bigint | string | undefined)
+    page = normalizeNumber(page, min: Pagination.MIN_PAGE,
       max: Pagination.MAX_PAGE)
     return unless page?
 
     #page = page
 
-  set perPage(perPage: number | number | string | undefined)
-    perPage = normalizeInteger(perPage, min: Pagination.MIN_PER_PAGE,
+  set perPage(perPage: number | bigint | string | undefined)
+    perPage = normalizeNumber(perPage, min: Pagination.MIN_PER_PAGE,
       max: Pagination.MAX_PER_PAGE)
     return unless perPage?
 

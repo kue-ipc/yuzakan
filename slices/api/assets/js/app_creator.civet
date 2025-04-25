@@ -4,177 +4,197 @@ csrf from ~/csrf.civet
 
 {type Action, type Effecter} from hyperapp
 
-{fetchAPI, type ResponseData, type RequestParams} from ~api/fetch_api.civet
+{type Flash} from ~/common/flash.civet
 
-interface ActionFallback<S>
-  action: Action<S>
-  fallback?: Action<S>
+{fetchAPI, type ResponseData, type RequestParams} from ~api/fetch_api.civet
+Pagination from ~api/pagination.civet
+
+export interface ResponseState
+  id?: string
+  location?: string | URL
+  csrf?: Record<string, string>
+  flash?: Flash
+  pagination?: Pagination
+
+export interface ActionFallback<S extends ResponseState, P>
+  action: Action<S, P>
+  fallback?: Action<S, ResponseData>
 
 // create Actions
 
 // データを受け取るアクションからレスポンスに対応した新しいアクションを作成する。
-// 404の場合はnull、それ以外はエラーでfallbackを実行する。
-export createResponseAction :=
-  <S>({action, fallback}: ActionFallback<S>): Action<S, ResponseData> ->
-    (state: S, response: ResponseData) ->
-      if response.ok
-        [action, response.data]
-      else if response.status.code is 404
-        [action, null]
-      else if fallback?
-        [fallback, response.data]
-      else
-        // do nothing
-        state
-
-// データを受け取るアクションからページ情報付きのレスポンスに対応した新しいアク
-// ションを作成する。エラーの場合はページ情報を更新しない。
-export createResponseActionSetPage :=
-  <S>(params: ActionFallback<S>): Action<S, ResponseData> ->
-    responseAction := createResponseAction<S>(params)
-    runResponseAction: Effecter<S, any> := (dispatch, props) ->
-      dispatch(responseAction, props)
-    (state: S, response: ResponseData) ->
-      if response.ok
-        [
-          {...state, pagination: response.pagination}
-          [runResponseAction, response]
-        ]
-      else
-        [responseAction, response]
-
-// データを受け取るアクションでIDを更新するレスポンスに対応した新しいアクション
-// を作成する。エラーの場合はIDを更新しない
-export createResponseActionSetId :=
-  <S>({idKey:: string = "id", ...params:: ActionFallback<S>}):
+// エラーでfallbackを実行する。fallbackがなければ、情報のみ反映。
+createResponseAction := <S extends ResponseState, P>(
+  {action, fallback, setId = false}: ActionFallback<S, P> & {setId?: boolean}):
   Action<S, ResponseData> ->
-    responseAction := createResponseAction(params)
-    runResponseAction: Effecter<S, any> := (dispatch, props) ->
-      dispatch(responseAction, props)
+    runAction: Effecter<S, P> := (dispatch, props) -> dispatch(action, props)
+    runFallback: Effecter<S, ResponseData>? := fallback and
+      (dispatch, props) -> dispatch(fallback, props)
     (state: S, response: ResponseData) ->
-      if response.ok
+      newState: any := 
+        {}
+          ...state
+          location: response.location
+          csrf: response.csrf
+          flash: response.flash
+          pagination: response.pagination
+      if setId
         last := response.location.pathname.split("/").reverse().find((_) -> _)
-        [
-          {...state, [idKey]: last}
-          [runResponseAction, response]
-        ]
+        newState["id"] = last
+
+      if response.ok
+        [newState, [runAction, response.data]]
+      else if runFallback?
+        [newState, [runFallback, response]]
       else
-        [responseAction, response]
+        newState
 
-// create Effecter
-
-// レスポンスを直接渡すエフェクターを作成する。
-// pathKeys内の文字列はそれぞれ部分文字列になっていはいけない。
-export createRunResponse := <S, P extends Record<string, any>>(
-  {action, pathKeys, path, data, method, ...params}:
-  {action: Action<S>, pathKeys?: string[]} & RequestParams): Effecter<S, P> ->
-    (dispatch, props: P) ->
-      path = path.join("/") if path <? Array
-
-      for each key of pathKeys ?? []
-        unless key in props
-          // do nothing
-          console.error "given props does not have the property for path: %s", key
-          return
-        path = path.replace(`:${key}`, props[key])
-
-      data = {...data, ...props}
-      if method? and ["POST", "PUT", "PATCH", "DELETE"].includes(method)
-        data = {...data, ...csrf()}
-
-      response := await fetchAPI({method, path, data, ...params})
-      dispatch(action, response)
-
-// RESTful Resources
-// GET /resources
-export createRunIndex := <S, P extends Record<string, any>>(
-  {action, fallback, ...params}: ActionFallback<S> & RequestParams):
-  Effecter<S, P> ->
-    responseAction := createResponseAction({action, fallback})
-    createRunResponse({action: responseAction, method: "GET", ...params})
-
-// GET /resources?page=x&per_page=y
-export createRunIndexWithPage := <S, P extends Record<string, any>>(
-  {action, fallback, ...params}: ActionFallback<S> & RequestParams):
-  Effecter<S, P> ->
-    responseAction := createResponseActionSetPage({action, fallback})
-    createRunResponse({action: responseAction, method: "GET", ...params})
-
-// GET /resources/:id
-export createRunShowWithId := <S, P extends Record<string, any>>(
-  {action, fallback, idKey = "id", path, ...params}:
-  ActionFallback<S> & {idKey?: string} & RequestParams):
-  Effecter<S, P> ->
-    responseAction := createResponseAction({action, fallback})
+createRequestAction := <S extends ResponseState, P>(
+  {action, pathKeys, path, method, ...params}:
+    {action: Action<S, ResponseData>, pathKeys?: string[]} & RequestParams
+): Action<S, P> ->
+  effecter: Effecter<S, any> := (dispatch, props) ->
+    data: any .= {...props}
     path = path.join("/") if path <? Array
-    path = `${path}/:${idKey}` unless path.includes(`:${idKey}`)
-    pathKeys := [idKey]
-    createRunResponse({action: responseAction, path, pathKeys, method: "GET",
-      ...params})
+    for each key of pathKeys ?? []
+      unless key in props
+        // do nothing
+        console.error "given props does not have the property for path: %s", key
+        return
+      path = path.replace(`:${key}`, props[key])
+      delete data[key]
 
-// POST /resources
-export createRunCreateWithId := <S, P extends Record<string, any>>(
-  {action, fallback, idKey = "id", setId = false, ...params}:
-  ActionFallback<S> & {idKey?: string, setId?: boolean} & RequestParams):
-  Effecter<S, P> ->
-    responseAction := if setId
-      createResponseActionSetId({action, fallback, idKey})
-    else
-      createResponseAction({action, fallback})
-    createRunResponse({action: responseAction, method: "POST", ...params})
+    response := await fetchAPI({method, path, data, ...params})
+    dispatch(action, response)
 
-// PATCH /resources/:id
-export createRunUpdateWithId := <S, P extends Record<string, any>>(
-  {action, fallback, idKey = "id", setId = false, path, ...params}:
-  ActionFallback<S> & {idKey?: string, setId?: boolean} & RequestParams):
-  Effecter<S, P> ->
-    responseAction := if setId
-      createResponseActionSetId({action, fallback, idKey})
-    else
-      createResponseAction({action, fallback})
-    path = path.join("/") if path <? Array
-    path = `${path}/:${idKey}` unless path.includes(`:${idKey}`)
-    pathKeys := [idKey]
-    createRunResponse({action: responseAction, path, pathKeys, method: "PATCH",
-      ...params})
+  (state: S, props: P) ->
+    data: any .= {...props}
+    if method? and ["POST", "PUT", "PATCH", "DELETE"].includes(method)
+      data = {...data, ...(state.csrf ?? csrf())}
+    else if state.pagination? and (!method? or ["POST", "HEAD"].includes(method))
+      data = {...data, ...state.pagination.params()}
+    
+    if state.id?
+      data = {...data, id: state.id}
 
-// DELETE /resources/:id
-export createRunDestroyWithId := <S, P extends Record<string, any>>(
-  {action, fallback, path, idKey = "id", ...params}:
-  ActionFallback<S> & {idKey?: string} & RequestParams):
-  Effecter<S, P> ->
-    responseAction := createResponseAction({action, fallback})
-    path = path.join("/") if path <? Array
-    path = `${path}/:${idKey}` unless path.includes(`:${idKey}`)
-    pathKeys := [idKey]
-    createRunResponse({action: responseAction, path, pathKeys, method: "DELETE",
-      ...params})
+    [state, [effecter, data]]
+  
+
+// // create Effecter
+
+// // レスポンスを直接渡すエフェクターを作成する。
+// // pathKeys内の文字列はそれぞれ部分文字列になっていはいけない。
+// export createRunResponse := <S, P extends Record<string, any>>(
+//   {action, pathKeys, path, data, method, ...params}:
+//   {action: Action<S, ResponseData>, pathKeys?: string[]} & RequestParams):
+//   Effecter<S, P> ->
+//     (dispatch, props: P) ->
+//       path = path.join("/") if path <? Array
+//       for each key of pathKeys ?? []
+//         unless key in props
+//           // do nothing
+//           console.error "given props does not have the property for path: %s", key
+//           return
+//         path = path.replace(`:${key}`, props[key])
+
+//       data = {...data, ...props}
+//       if method? and ["POST", "PUT", "PATCH", "DELETE"].includes(method)
+//         data = {...data, ...csrf()}
+
+//       response := await fetchAPI({method, path, data, ...params})
+//       dispatch(action, response)
+
+// TODO: 後です
+// // RESTful Resources
+// // GET /resources
+// export createRunIndex := <S, P extends Record<string, any>>(
+//   {action, fallback, ...params}: ActionFallback<S, P> & RequestParams):
+//   Effecter<S, P> ->
+//     responseAction := createResponseAction<S, any>({action, fallback})
+//     createRunResponse<S, P>({action: responseAction, method: "GET", ...params})
+
+// // GET /resources?page=x&per_page=y
+// export createRunIndexWithPage := <S, P extends Record<string, any>>(
+//   {action, fallback, ...params}: ActionFallback<S, P> & RequestParams):
+//   Effecter<S, P> ->
+//     responseAction := createResponseActionSetPage({action, fallback})
+//     createRunResponse({action: responseAction, method: "GET", ...params})
+
+// // GET /resources/:id
+// export createRunShowWithId := <S, P extends Record<string, any>>(
+//   {action, fallback, idKey = "id", path, ...params}:
+//   ActionFallback<S, P> & {idKey?: string} & RequestParams):
+//   Effecter<S, P> ->
+//     responseAction := createResponseAction({action, fallback})
+//     path = path.join("/") if path <? Array
+//     path = `${path}/:${idKey}` unless path.includes(`:${idKey}`)
+//     pathKeys := [idKey]
+//     createRunResponse({action: responseAction, path, pathKeys, method: "GET",
+//       ...params})
+
+// // POST /resources
+// export createRunCreateWithId := <S, P extends Record<string, any>>(
+//   {action, fallback, idKey = "id", setId = false, ...params}:
+//   ActionFallback<S, P> & {idKey?: string, setId?: boolean} & RequestParams):
+//   Effecter<S, P> ->
+//     responseAction := if setId
+//       createResponseActionSetId({action, fallback, idKey})
+//     else
+//       createResponseAction({action, fallback})
+//     createRunResponse({action: responseAction, method: "POST", ...params})
+
+// // PATCH /resources/:id
+// export createRunUpdateWithId := <S, P extends Record<string, any>>(
+//   {action, fallback, idKey = "id", setId = false, path, ...params}:
+//   ActionFallback<S, P> & {idKey?: string, setId?: boolean} & RequestParams):
+//   Effecter<S, P> ->
+//     responseAction := if setId
+//       createResponseActionSetId({action, fallback, idKey})
+//     else
+//       createResponseAction({action, fallback})
+//     path = path.join("/") if path <? Array
+//     path = `${path}/:${idKey}` unless path.includes(`:${idKey}`)
+//     pathKeys := [idKey]
+//     createRunResponse({action: responseAction, path, pathKeys, method: "PATCH",
+//       ...params})
+
+// // DELETE /resources/:id
+// export createRunDestroyWithId := <S, P extends Record<string, any>>(
+//   {action, fallback, path, idKey = "id", ...params}:
+//   ActionFallback<S, P> & {idKey?: string} & RequestParams):
+//   Effecter<S, P> ->
+//     responseAction := createResponseAction({action, fallback})
+//     path = path.join("/") if path <? Array
+//     path = `${path}/:${idKey}` unless path.includes(`:${idKey}`)
+//     pathKeys := [idKey]
+//     createRunResponse({action: responseAction, path, pathKeys, method: "DELETE",
+//       ...params})
 
 // RESTful Resource
 // GET /resource
-export createRunShow := <S, P extends Record<string, any>>(
-  {action, fallback, ...params}: ActionFallback<S> & RequestParams):
-  Effecter<S, P> ->
-    responseAction := createResponseAction({action, fallback})
-    createRunResponse({action: responseAction, method: "GET", ...params})
+export createShow := <S extends ResponseState, P>(
+  {action, fallback, ...params}: ActionFallback<S, P> & RequestParams):
+  Action<S, undefined> ->
+    responseAction := createResponseAction<S, P>({action, fallback})
+    createRequestAction<S, undefined>({action: responseAction, method: "GET", ...params})
 
 // POST /resource
-export createRunCreate := <S, P extends Record<string, any>>(
-  {action, fallback, ...params}: ActionFallback<S> & RequestParams):
-  Effecter<S, P> ->
+export createCreate := <S extends ResponseState, P>(
+  {action, fallback, ...params}: ActionFallback<S, P> & RequestParams):
+  Action<S, P> ->
     responseAction := createResponseAction({action, fallback})
-    createRunResponse({action: responseAction, method: "POST", ...params})
+    createRequestAction<S, P>({action: responseAction, method: "POST", ...params})
 
 // PATCH /resource
-export createRunUpdate := <S, P extends Record<string, any>>(
-  {action, fallback, ...params}: ActionFallback<S> & RequestParams):
-  Effecter<S, P> ->
+export createUpdate := <S extends ResponseState, P>(
+  {action, fallback, ...params}: ActionFallback<S, P> & RequestParams):
+  Action<S, P> ->
     responseAction := createResponseAction({action, fallback})
-    createRunResponse({action: responseAction, method: "PATCH", ...params})
+    createRequestAction<S, P>({action: responseAction, method: "PATCH", ...params})
 
 // DELETE /resource
-export createRunDestroy := <S, P extends Record<string, any>>(
-  {action, fallback, ...params}: ActionFallback<S> & RequestParams):
-  Effecter<S, P> ->
+export createDestroy := <S extends ResponseState, P>(
+  {action, fallback, ...params}: ActionFallback<S, P> & RequestParams):
+  Action<S, undefined> ->
     responseAction := createResponseAction({action, fallback})
-    createRunResponse({action: responseAction, method: "DELETE", ...params})
+    createRequestAction<S, undefined>({action: responseAction, method: "DELETE", ...params})

@@ -11,8 +11,7 @@ Pagination from ~api/pagination.civet
 
 // export Method ::= "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE"
 
-export interface RequestParams < RequestInit
-  path: string | string[]
+export interface RequestParams < Omit<RequestInit, "body">
   data?: any
 
 export interface ResponseData
@@ -26,8 +25,8 @@ export interface ResponseData
 
 API_URL := normalizeURL("/api/")
 
-export fetchAPI := (params: RequestParams): Promise<ResponseData> ->
-  request := createRequest(params)
+export fetchAPI := (path: string, params: RequestParams): Promise<ResponseData> ->
+  request := createRequest(path, params)
   console.debug "fetch request: %s %s", request.method, request.url
   response := await fetch request
   console.debug "fetch response: %d %s", response.status, response.url
@@ -51,47 +50,46 @@ export fetchAPIPatch := (params: RequestParams) ->
 export fetchAPIDelete := (params: RequestParams) ->
   fetchAPI({...params, method: "DELETE"})
 
-normalizePath := (path: string | string[]) ->
-  path = path.split("/") if path <? "string"
-  path.map(encodeURIComponent).join("/")
-
-apiURL := (path: RequestParams["path"]): URL ->
-  new URL(normalizePath(path), API_URL)
+apiURL := (path: string): URL ->
+  new URL(path, API_URL)
 
 // create request
-createRequest := ({path, method = "GET", data, ...params}: RequestParams):
-    Request ->
+createRequest := (path: string, {data, method = "GET", headers, ...params}: RequestParams): Request ->
   url := apiURL(path)
-  headers := new Headers {}
-    "Accept": "application/json"
+  headers = new Headers(headers)
+  headers.set("Accept", "application/json")
 
-  let body
-  if data?
-    switch method
-      when "GET", "HEAD"
-        query :=
-          if data <? "string"
-            encodeURIComponent(data)
-          else if data <? FormData
-            formDataToUrlencoded(data)
-          else
-            objToUrlencoded(data)
-        url.search = query
-      when "POST", "PUT", "PATCH", "DELETE"
-        body =
+  body :=
+    if data?
+      switch method
+        when "GET", "HEAD"
+          query :=
+            if data <? "string"
+              encodeURIComponent(data)
+            else if data <? FormData
+              formDataToUrlencoded(data)
+            else
+              objToUrlencoded(data)
+          url.search = query
+          undefined
+        when "POST", "PUT", "PATCH", "DELETE"
           if data <? "string"
             data
           else if data <? FormData
             formDataToJson(data)
           else
             objToJson(data)
-        headers.append("Content-Type", "application/json")
-        headers.append("Content-Length", body.length.toString())
+    else
+      undefined
+
+  if body?
+    headers.append("Content-Type", "application/json")
+    headers.append("Content-Length", body.length.toString())
 
   init: RequestInit := {}
+    ...params
     mode: "same-origin"
     credentials: "same-origin"
-    ...params
     method: method
     headers
     body
