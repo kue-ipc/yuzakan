@@ -20,89 +20,93 @@ export interface ActionFallback<S extends ResponseState, P>
   action: Action<S, P>
   fallback?: Action<S, ResponseData>
 
+export interface RequestProps
+  location?: string | URL
+  csrf?: Record<string, string>
+  pagination?: Pagination
+
 // create Actions
+
+createAction := <S extends ResponseState, P, Q>(
+  path: string, actionFallback: ActionFallback<S, P>, params: RequestParam
+): Action<S, Q> ->
+  responseAction := createResponseAction(path, actionFallback)
+  createRequestAction(path, responseAction, params)
 
 // データを受け取るアクションからレスポンスに対応した新しいアクションを作成する。
 // エラーでfallbackを実行する。fallbackがなければ、情報のみ反映。
 createResponseAction := <S extends ResponseState, P>(
-  {action, fallback, setId = false}: ActionFallback<S, P> & {setId?: boolean}):
-  Action<S, ResponseData> ->
-    runAction: Effecter<S, P> := (dispatch, props) -> dispatch(action, props)
-    runFallback: Effecter<S, ResponseData>? := fallback and
-      (dispatch, props) -> dispatch(fallback, props)
-    (state: S, response: ResponseData) ->
-      newState: any := 
-        {}
-          ...state
-          location: response.location
-          csrf: response.csrf
-          flash: response.flash
-          pagination: response.pagination
-      if setId
-        last := response.location.pathname.split("/").reverse().find((_) -> _)
-        newState["id"] = last
+  path: string, {action, fallback}: ActionFallback<S, P>
+): Action<S, ResponseData> ->
+  runAction: Effecter<S, P> := (dispatch, props) -> dispatch(action, props)
+  runFallback: Effecter<S, ResponseData>? := fallback and
+    (dispatch, props) -> dispatch(fallback, props)
+  
+  (state: S, response: ResponseData) ->
+    newState: any := 
+      {}
+        ...state
+        location: response.location
+        csrf: response.csrf
+        flash: response.flash
+        pagination: response.pagination
 
-      if response.ok
-        [newState, [runAction, response.data]]
-      else if runFallback?
-        [newState, [runFallback, response]]
-      else
-        newState
+    pathList := response.location.pathname.split("/")
+    for each str of path.split("/")
+      value := pathList.shift()
+      if result := str.match(/^:(\w+)$/)
+        newState[result[1]] = value
+
+    if response.ok
+      [newState, [runAction, response.data]]
+    else if runFallback?
+      [newState, [runFallback, response]]
+    else
+      newState
 
 createRequestAction := <S extends ResponseState, P>(
-  {action, pathKeys, path, method, ...params}:
-    {action: Action<S, ResponseData>, pathKeys?: string[]} & RequestParams
+  path: string, action: Action<S, ResponseData>, params: RequestParams
 ): Action<S, P> ->
-  effecter: Effecter<S, any> := (dispatch, props) ->
-    data: any .= {...props}
-    path = path.join("/") if path <? Array
-    for each key of pathKeys ?? []
-      unless key in props
-        // do nothing
-        console.error "given props does not have the property for path: %s", key
-        return
-      path = path.replace(`:${key}`, props[key])
-      delete data[key]
 
-    response := await fetchAPI({method, path, data, ...params})
-    dispatch(action, response)
-
+  // effecter := createRunResponse(path, {action, pathKeys, method, ...params})
+  
   (state: S, props: P) ->
     data: any .= {...props}
-    if method? and ["POST", "PUT", "PATCH", "DELETE"].includes(method)
-      data = {...data, ...(state.csrf ?? csrf())}
-    else if state.pagination? and (!method? or ["POST", "HEAD"].includes(method))
-      data = {...data, ...state.pagination.params()}
+
+    switch params.method
+      when "POST", "PUT", "PATCH", "DELETE"
+        data = {...data, ...(state.csrf ?? csrf())}
+      when undefined, "GET", "HEAD"
+        if state.pagination?
+          data = {...data, ...state.pagination.params()}
     
-    if state.id?
-      data = {...data, id: state.id}
+    // if state.id?
+    //   data = {...data, id: state.id}
+
+    // data: any .= {...props}
+    // realPath .= path
+    // for each key of pathKeys ?? []
+    //   unless key in props
+    //     // do nothing
+    //     console.error "given props does not have the property for path: %s", key
+    //     return
+    //   realPath = realPath.replace(`:${key}`, props[key])
+    //   delete data[key]
+    
+    effecter := createRunResponse(path, {action})
 
     [state, [effecter, data]]
   
 
-// // create Effecter
+// create Effecter
 
-// // レスポンスを直接渡すエフェクターを作成する。
-// // pathKeys内の文字列はそれぞれ部分文字列になっていはいけない。
-// export createRunResponse := <S, P extends Record<string, any>>(
-//   {action, pathKeys, path, data, method, ...params}:
-//   {action: Action<S, ResponseData>, pathKeys?: string[]} & RequestParams):
-//   Effecter<S, P> ->
-//     (dispatch, props: P) ->
-//       path = path.join("/") if path <? Array
-//       for each key of pathKeys ?? []
-//         unless key in props
-//           // do nothing
-//           console.error "given props does not have the property for path: %s", key
-//           return
-//         path = path.replace(`:${key}`, props[key])
-
-//       data = {...data, ...props}
-//       if method? and ["POST", "PUT", "PATCH", "DELETE"].includes(method)
-//         data = {...data, ...csrf()}
-
-//       response := await fetchAPI({method, path, data, ...params})
-//       dispatch(action, response)
+// レスポンスを直接渡すエフェクターを作成する。
+export createRunResponse :=  <S extends ResponseState, P>(path: string,
+  {action, ...params}: {action: Action<S, ResponseData>} & RequestParams
+): Effecter<S, P & RequestProps> ->
+  (dispatch, data: P & RequestProps) ->
+    response := await fetchAPI(path, {data, ...params})
+    dispatch(action, response)
 
 // TODO: 後です
 // // RESTful Resources
@@ -177,6 +181,8 @@ export createShow := <S extends ResponseState, P>(
   Action<S, undefined> ->
     responseAction := createResponseAction<S, P>({action, fallback})
     createRequestAction<S, undefined>({action: responseAction, method: "GET", ...params})
+
+    createAction<S, undefined>({action: responseAction, method: "GET", ...params})
 
 // POST /resource
 export createCreate := <S extends ResponseState, P>(
