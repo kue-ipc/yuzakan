@@ -1,7 +1,8 @@
 // /api/auth
 
-{createShow, createCreate, createDestroy, type ActionFallback, type ResponseState} from ~api/app_creator.civet
-{type RequestParams} from ~api/fetch_api.civet
+{type Action, type Effecter} from hyperapp
+
+{createShow, createCreate, createDestroy, type ActionOtherParams, type ResponseData, type ResponseState} from ~api/app_creator.civet
 
 export interface AuthProps
   username: string
@@ -9,24 +10,36 @@ export interface AuthProps
 
 // Contants
 
-AUTH_PATH := "auth"
-
-// Actions
-
-SetAuth := <S>(state: S, auth: AuthProps) ->
-  {...state, auth}
-
 // create Actions
+createSetAuth := <S>(effects?: Effect<S>[]) ->
+  if effects? and effects# > 0
+    (state: S, auth: AuthProps) ->
+      [{...state, auth}, ...effects]
+  else
+    (state: S, auth: AuthProps) ->
+      {...state, auth}
+
 export createShowAuth := <S extends ResponseState>(
-  {actionparams: Omit<ActionFallback<S, AuthProps> & RequestParams, "path"> = {}) ->
-  
-    createShow<S, AuthProps>({action: SetAuth, path: AUTH_PATH, ...params})
+  {action?:: Action<S, AuthProps>,
+  fallback?:: Action<S, ResponseData>,
+  effects?:: Effecter<S>[]} = {},
+  params: ActionOtherParams = {}
+) ->
+  createShow<S, AuthProps>("auth", {action, fallback}, params)
 
-export createCreateAuth := <S>(params: Omit<RequestParams, "path"> = {}) ->
-  createCreate<S, AuthProps>({action: SetAuth, path: AUTH_PATH, ...params})
+export createCreateAuth := <S extends ResponseState>(
+  {action:: Action<S, AuthProps> = SetAuth,
+  fallback?:: Action<S, ResponseData>} = {},
+  params: ActionOtherParams = {}
+) ->
+  createCreate<S, AuthProps>("auth", {action, fallback}, params)
 
-export createDestroyAuth := <S>(params: Omit<RequestParams, "path"> = {}) ->
-  createDestroy<S, AuthProps>({action: SetAuth, path: AUTH_PATH, ...params})
+export createDestroyAuth := <S extends ResponseState>(
+  {action:: Action<S, AuthProps> = SetAuth,
+  fallback?:: Action<S, ResponseData>} = {},
+  params: ActionOtherParams = {}
+) ->
+  createDestroy<S, AuthProps>("auth", {action, fallback}, params)
 
 // Action
 

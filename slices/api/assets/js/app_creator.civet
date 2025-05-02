@@ -4,6 +4,8 @@
 
 {fetchAPI, type ResponseData, type RequestParams} from ~api/fetch_api.civet
 
+export type ResponseData
+
 export interface ResponseState extends Pick<ResponseData,
   "location" | "csrf" | "flash" | "pagination"> 
     id?: string
@@ -12,10 +14,14 @@ export interface ActionFallback<S extends ResponseState, P>
   action: Action<S, P>
   fallback?: Action<S, ResponseData>
 
+export ActionRequestParams ::= Omit<RequestParams, "data">
+
+export ActionOtherParams ::= Omit<ActionRequestParams, "method">
+
 // create Actions
 
 createAction := <S extends ResponseState, P, Q>(path: string,
-  actionFallback: ActionFallback<S, P>, params: Omit<RequestParams, "data"> = {}
+  actionFallback: ActionFallback<S, P>, params: ActionRequestParams = {}
 ): Action<S, Q> ->
   responseAction := createResponseAction(path, actionFallback)
   createRequestAction(path, responseAction, params)
@@ -59,7 +65,7 @@ createResponseAction := <S extends ResponseState, P>(path: string,
 
 // レスポンスを受け取るアクションからリクエストを行う新しいアクションを作成する。
 createRequestAction := <S extends ResponseState, P>(path: string,
-  action: Action<S, ResponseData>, params: Omit<RequestParams, "data"> = {}
+  action: Action<S, ResponseData>, params: ActionRequestParams = {}
 ):Action<S, P> ->
   (state: S, props: P) ->
     data: any .= {...props}
@@ -90,7 +96,7 @@ createRequestAction := <S extends ResponseState, P>(path: string,
 
 // レスポンスを直接渡すエフェクターを作成する。
 export createRunResponse :=  <S extends ResponseState, P>(url: URL | string,
-  action: Action<S, ResponseData>, params: Omit<RequestParams, "data">
+  action: Action<S, ResponseData>, params: ActionRequestParams
 ): Effecter<S, P> ->
   (dispatch, data: P) ->
     response := await fetchAPI(url, {...params, data})
@@ -99,24 +105,21 @@ export createRunResponse :=  <S extends ResponseState, P>(url: URL | string,
 // RESTful Resources
 // GET /resources
 export createIndex := <S extends ResponseState, P, Q>(name: string,
-  actionFallback: ActionFallback<S, P>,
-  params: Omit<RequestParams, "method" | "data"> = {}
+  actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, Q> ->
   path := `/api/${name}`
   createAction<S, P, Q>(path, actionFallback, {...params, method: "GET"})
 
 // GET /resources/:id
 export createShowWithId := <S extends ResponseState, P>(name: string,
-  actionFallback: ActionFallback<S, P>,
-  params: Omit<RequestParams, "method" | "data"> = {}
+  actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, {}> ->
   path := `/api/${name}/:id`
   createAction<S, P, {}>(path, actionFallback, {...params, method: "GET"})
 
 // POST /resources
 export createCreateWithId := <S extends ResponseState, P>(name: string,
-  actionFallback: ActionFallback<S, P>,
-  params: Omit<RequestParams, "method" | "data"> = {}
+  actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, P> ->
   path := `/api/${name}/:id`
   requestPath := `/api/${name}`
@@ -125,16 +128,14 @@ export createCreateWithId := <S extends ResponseState, P>(name: string,
 
 // PATCH /resources/:id
 export createRunUpdateWithId := <S extends ResponseState, P>(name: string,
-  actionFallback: ActionFallback<S, P>,
-  params: Omit<RequestParams, "method" | "data"> = {}
+  actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, P> ->
   path := `/api/${name}/:id`
   createAction<S, P, P>(path, actionFallback, {...params, method: "PATCH"})
 
 // DELETE /resources/:id
 export createRunDestroyWithId := <S extends ResponseState, P>(name: string,
-  actionFallback: ActionFallback<S, P>,
-  params: Omit<RequestParams, "method" | "data"> = {}
+  actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, P> ->
   path := `/api/${name}/:id`
   createAction<S, P, P>(path, actionFallback, {...params, method: "DELETE"})
@@ -142,32 +143,28 @@ export createRunDestroyWithId := <S extends ResponseState, P>(name: string,
 // RESTful Resource
 // GET /resource
 export createShow := <S extends ResponseState, P>(name: string,
-  actionFallback: ActionFallback<S, P>,
-  params: Omit<RequestParams, "method" | "data"> = {}
+  actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, {}> ->
   path := `/api/${name}`
   createAction<S, P, {}>(path, actionFallback, {...params, method: "GET"})
 
 // POST /resource
 export createCreate := <S extends ResponseState, P>(name: string,
-  actionFallback: ActionFallback<S, P>,
-  params: Omit<RequestParams, "method" | "data"> = {}
+  actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, P> ->
   path := `/api/${name}`
   createAction<S, P, P>(path, actionFallback, {...params, method: "POST"})
 
 // PATCH /resource
 export createUpdate := <S extends ResponseState, P>(name: string,
-  actionFallback: ActionFallback<S, P>,
-  params: Omit<RequestParams, "method" | "data"> = {}
+  actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, P> ->
   path := `/api/${name}`
   createAction<S, P, P>(path, actionFallback, {...params, method: "PATCH"})
 
 // DELETE /resource
 export createDestroy := <S extends ResponseState, P>(name: string,
-  actionFallback: ActionFallback<S, P>,
-  params: Omit<RequestParams, "method" | "data"> = {}
+  actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, {}> ->
   path := `/api/${name}`
   createAction<S, P, {}>(path, actionFallback, {...params, method: "DELETE"})
