@@ -6,7 +6,9 @@
 {formDataToJson, formDataToUrlencoded, objToUrlencoded} from
   ~/helpers/form_helper.civet
 {objToJson} from ~/helpers/obj_helper.civet
+{normalizeURL} from ~/helpers/url_helper.civet
 Pagination from ~api/pagination.civet
+{type Flash} from ~/common/flash.civet
 
 // export Method ::= "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE"
 
@@ -18,37 +20,38 @@ export interface ResponseData
   status: {code: number, message: string}
   location: URL
   csrf?: Record<string, string>
-  flash?: Record<string, string | Record<string, string[]>>
-  data?: any
+  flash?: Flash
   pagination?: Pagination
+  data?: any
 
-export fetchAPI := (path: string, params: RequestParams): Promise<ResponseData> ->
-  request := createRequest(path, params)
+export fetchAPI := (url: URL | string, params: RequestParams): Promise<ResponseData> ->
+  request := createRequest(url, params)
   console.debug "fetch request: %s %s", request.method, request.url
   response := await fetch request
   console.debug "fetch response: %d %s", response.status, response.url
   parseResponse(response)
 
-export fetchAPIGet := (path: string, params: RequestParams) ->
-  fetchAPI(path, {...params, method: "GET"})
+export fetchAPIGet := (url: URL | string, params: RequestParams) ->
+  fetchAPI(url, {...params, method: "GET"})
 
-export fetchAPIHead := (path: string, params: RequestParams) ->
-  fetchAPI(path, {...params, method: "HEAD"})
+export fetchAPIHead := (url: URL | string, params: RequestParams) ->
+  fetchAPI(url, {...params, method: "HEAD"})
 
-export fetchAPIPost := (path: string, params: RequestParams) ->
-  fetchAPI(path, {...params, method: "POST"})
+export fetchAPIPost := (url: URL | string, params: RequestParams) ->
+  fetchAPI(url, {...params, method: "POST"})
 
-export fetchAPIPut := (path: string, params: RequestParams) ->
-  fetchAPI(path, {...params, method: "PUT"})
+export fetchAPIPut := (url: URL | string, params: RequestParams) ->
+  fetchAPI(url, {...params, method: "PUT"})
 
-export fetchAPIPatch := (path: string, params: RequestParams) ->
-  fetchAPI(path, {...params, method: "PATCH"})
+export fetchAPIPatch := (url: URL | string, params: RequestParams) ->
+  fetchAPI(url, {...params, method: "PATCH"})
 
-export fetchAPIDelete := (path: string, params: RequestParams) ->
-  fetchAPI(path, {...params, method: "DELETE"})
+export fetchAPIDelete := (url: URL | string, params: RequestParams) ->
+  fetchAPI(url, {...params, method: "DELETE"})
 
 // create request
-createRequest := (path: string, {data, method = "GET", headers, ...params}: RequestParams): Request ->
+createRequest := (url: URL | string, {data, method = "GET", headers, ...params}: RequestParams): Request ->
+  url = normalizeURL(url) if url <? "string"
   headers = new Headers(headers)
   headers.set("Accept", "application/json")
 
@@ -87,7 +90,7 @@ createRequest := (path: string, {data, method = "GET", headers, ...params}: Requ
     headers
     body
 
-  new Request(path, init)
+  new Request(url, init)
 
 parseResponse := (response: Response): Promise<ResponseData> ->
   mimeType := response.headers.get("Content-Type")?.split(";")[0]?.trim()
@@ -99,7 +102,7 @@ parseResponse := (response: Response): Promise<ResponseData> ->
   responseData: ResponseData := {}
     ok: response.ok
     status: data.status as ResponseData["status"]
-    location: new URL(data.location)
+    location: new URL(data.location ?? response.url)
 
   responseData.csrf = data.csrf if data.csrf?
   responseData.flash = data.flash if data.flash
