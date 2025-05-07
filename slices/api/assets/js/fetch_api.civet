@@ -10,8 +10,6 @@
 Pagination from ~api/pagination.civet
 {type Flash} from ~/common/flash.civet
 
-// export Method ::= "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE"
-
 export interface RequestParams < Omit<RequestInit, "body">
   data?: any
 

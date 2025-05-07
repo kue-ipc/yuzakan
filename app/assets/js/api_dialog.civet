@@ -9,13 +9,13 @@
 {focus} from @hyperapp/dom
 
 {modalDialog} from ~/app/modal.civet
-
+{normalizeURL} from ~/helpers/url_helper.civet
 Status from ~/common/status.civet
 ResponseMessage from ~/common/response_message.civet
 {getBootstrap, type BsBootstrap, type Modal} from ~/common/bs.civet
 {t} from ~/common/i18n.civet
 
-{fetchAPI, type Method, type ResponseData} from ~api/fetch_api.civet
+{fetchAPI, type ResponseData} from ~api/fetch_api.civet
 
 declare global
   interface HTMLElementEventMap
@@ -28,9 +28,9 @@ interface ModalState
   closable?: boolean
   reload?: boolean
 
-ResponseMessageCodeMap ::= Map<bigint, ResponseMessage>
+ResponseMessageCodeMap ::= Map<number, ResponseMessage>
 
-ResponseMessageCodeListKey ::= bigint | number
+ResponseMessageCodeListKey ::= number
 ResponseMessageCodeListValue ::=
   ResponseMessage | ConstructorParameters<typeof ResponseMessage>.0
 
@@ -47,7 +47,7 @@ export default class APIDialog
           value
         else
           new ResponseMessage(value) 
-      base.set(BigInt(key), responseMessage)
+      base.set(key, responseMessage)
     base
 
   @MESSAGE_EVENT := "apidialog.message"
@@ -73,9 +73,9 @@ export default class APIDialog
 
   readonly #id: string
   readonly #name: string
-  readonly #method: Method
+  readonly #method: string
   readonly #path: string
-  #responseMessageCodeMap: Map<bigint, ResponseMessage> :=
+  #responseMessageCodeMap: Map<number, ResponseMessage> :=
     new Map(APIDialog.DEFAULT_RESPONSE_MESSAGE_CODE_MAP)
 
   readonly #modalNode: HTMLDivElement
@@ -84,7 +84,7 @@ export default class APIDialog
   @({
     #id:: string
     #name:: string
-    #method:: Method = "GET"
+    #method:: string = "GET"
     #path:: string
     responseMessageCodeList?:: ResponseMessageCodeList
   })
@@ -207,16 +207,17 @@ export default class APIDialog
       path = path.replaceAll(`%{name}`, replace)
 
     response: ResponseData := try
-      await fetchAPI {path, #method, data}
+      await fetchAPI(path, {data, #method})
     catch error
       console.error error
       {
         ok: false
-        code: 0n
-        data: {message: t("ui.messages.fetch_error")}
+        status: {code: 0, message: "fetch error"}
+        location: normalizeURL(path)
+        flash: {error: t("ui.messages.fetch_error")}
       }
 
-    responseMessage := #responseMessageCodeMap.get(response.code)
+    responseMessage := #responseMessageCodeMap.get(response.status.code)
 
     messages := [
       (responseMessage?.message ?? response.data?.message)
