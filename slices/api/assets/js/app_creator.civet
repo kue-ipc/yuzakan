@@ -1,6 +1,6 @@
 // Creator functions for Hyperapp object and fetch api
 
-{type Action, type Effecter} from hyperapp
+{type Action, type Effecter, type Effect} from hyperapp
 
 {fetchAPI, type ResponseData, type RequestParams} from ~api/fetch_api.civet
 
@@ -11,14 +11,33 @@ export interface ResponseState extends Pick<ResponseData,
     id?: string
 
 export interface ActionFallback<S extends ResponseState, P>
-  action: Action<S, P>
+  action?: Action<S, P>
   fallback?: Action<S, ResponseData>
+
+export interface ActionFallbackEffects<S extends ResponseState, P> extends ActionFallback<S, P>
+  effects?: Effect<S>[]
 
 export ActionRequestParams ::= Omit<RequestParams, "data">
 
 export ActionOtherParams ::= Omit<ActionRequestParams, "method">
 
 // create Actions
+
+export createActionFallback := <S extends ResponseState, P>(
+  {action, fallback, effects}: ActionFallbackEffects<S, P>
+): ActionFallback<S, P> ->
+  if effects? and effects# > 0
+    actionWithEffects: Action<S, P> := (state: S, props: P) ->
+      if action?
+        runAction: Effecter<S, P> :=
+          (dispatch, props: P) -> dispatch(action, props)
+        [state, [runAction, props], ...effects]
+      else
+        [state, ...effects]
+    {action: actionWithEffects, fallback}
+  else
+    {action, fallback}
+
 
 createAction := <S extends ResponseState, P, Q>(path: string,
   actionFallback: ActionFallback<S, P>, params: ActionRequestParams = {}
@@ -31,8 +50,11 @@ createAction := <S extends ResponseState, P, Q>(path: string,
 createResponseAction := <S extends ResponseState, P>(path: string,
   {action, fallback}: ActionFallback<S, P>
 ): Action<S, ResponseData> ->
-  runAction: Effecter<S, P> := (dispatch, props) -> dispatch(action, props)
-  runFallback: Effecter<S, ResponseData>? := fallback and
+  action ?= (state, _props) -> state
+  fallback ?= (state, _props) -> state
+  runAction: Effecter<S, P>? :=
+    (dispatch, props) -> dispatch(action, props)
+  runFallback: Effecter<S, ResponseData> :=
     (dispatch, props) -> dispatch(fallback, props)
   
   (state: S, response: ResponseData) ->
@@ -58,10 +80,8 @@ createResponseAction := <S extends ResponseState, P>(path: string,
 
     if response.ok
       [newState, [runAction, response.data]]
-    else if runFallback?
-      [newState, [runFallback, response]]
     else
-      newState
+      [newState, [runFallback, response]]
 
 // レスポンスを受け取るアクションからリクエストを行う新しいアクションを作成する。
 createRequestAction := <S extends ResponseState, P>(path: string,
@@ -113,9 +133,9 @@ export createIndex := <S extends ResponseState, P, Q>(name: string,
 // GET /resources/:id
 export createShowWithId := <S extends ResponseState, P>(name: string,
   actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
-): Action<S, {}> ->
+): Action<S, undefined> ->
   path := `/api/${name}/:id`
-  createAction<S, P, {}>(path, actionFallback, {...params, method: "GET"})
+  createAction<S, P, undefined>(path, actionFallback, {...params, method: "GET"})
 
 // POST /resources
 export createCreateWithId := <S extends ResponseState, P>(name: string,
@@ -144,9 +164,9 @@ export createRunDestroyWithId := <S extends ResponseState, P>(name: string,
 // GET /resource
 export createShow := <S extends ResponseState, P>(name: string,
   actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
-): Action<S, {}> ->
+): Action<S, undefined> ->
   path := `/api/${name}`
-  createAction<S, P, {}>(path, actionFallback, {...params, method: "GET"})
+  createAction<S, P, undefined>(path, actionFallback, {...params, method: "GET"})
 
 // POST /resource
 export createCreate := <S extends ResponseState, P>(name: string,
@@ -165,6 +185,6 @@ export createUpdate := <S extends ResponseState, P>(name: string,
 // DELETE /resource
 export createDestroy := <S extends ResponseState, P>(name: string,
   actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
-): Action<S, {}> ->
+): Action<S, undefined> ->
   path := `/api/${name}`
-  createAction<S, P, {}>(path, actionFallback, {...params, method: "DELETE"})
+  createAction<S, P, undefined>(path, actionFallback, {...params, method: "DELETE"})
