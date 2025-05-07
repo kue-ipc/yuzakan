@@ -1,7 +1,7 @@
 {text, app} from hyperapp
 * as html from @hyperapp/html
 
-csrf from ~/csrf.civet
+csrf from ~/common/csrf.civet
 ConfirmDialog from ~/app/confirm_dialog.civet
 InputTextDialog from ~/app/input_text_dialog.civet
 {ATTR_TYPES, MAPPING_CONVERSIONS} from ~/definition.civet

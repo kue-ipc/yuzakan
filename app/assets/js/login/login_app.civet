@@ -1,19 +1,21 @@
 // Login app
 
-{app, text, type Dispatch, type Dispatchable, type Effect, type Effecter, type Action} from hyperapp
+{app, text, type Action, type Dispatchable, type Effect, type Effecter,
+  type VNode} from hyperapp
 * as html from @hyperapp/html
 {focus} from @hyperapp/dom
 {delay} from @hyperapp/time
-APIDialog from ~/api_dialog.civet
-bsIcon from ~/app/bs_icon.civet
-csrf from ~/csrf.civet
+
+csrf from ~/common/csrf.civet
 {t} from ~/common/i18n.civet
+
+bsIcon from ~/app/bs_icon.civet
 {runAlertFlash} from ~/app/alert.civet
-{normalizeURL} from ~/helpers/url_helper.civet
+
 
 {type ResponseData} from ~api/fetch_api.civet
 
-{type Flash, flashValidation, type Validation} from ~/common/flash.civet
+{flashValidation, type Validation} from ~/common/flash.civet
 {createCreateAuth, type AuthProps, type AuthState} from ~api/actions/auth.civet
 
 interface LoginState extends AuthState
@@ -114,10 +116,12 @@ reloadWindow := (sec: number): Effect<LoginState> ->
 
 // Views
 
-loginTitle := () ->
+loginTitle := (): VNode<LoginState> ->
   html.h3 {class: "login-title text-center mb-2"}, text t("actions.login")
 
-loginUsernameInput := ({value, disabled, valid, invalid}: LoginInputState) ->
+loginUsernameInput := (
+  {value, disabled, valid, invalid}: LoginInputState
+): VNode<LoginState> ->
   html.div {class: "mb-3"}, [
     html.input {
       id: LOGIN_USERNAME_ID
@@ -137,7 +141,9 @@ loginUsernameInput := ({value, disabled, valid, invalid}: LoginInputState) ->
       text invalid?.join("")
   ]
 
-loginPasswordInput := ({value, disabled, valid, invalid}: LoginInputState) ->
+loginPasswordInput := (
+  {value, disabled, valid, invalid}: LoginInputState
+): VNode<LoginState> ->
   html.div {class: "mb-3"}, [
     html.input {
       id: LOGIN_PASSWORD_ID
@@ -157,7 +163,9 @@ loginPasswordInput := ({value, disabled, valid, invalid}: LoginInputState) ->
       text invalid?.join("")
   ]
 
-loginSubmitButton := ({auth:: AuthProps, disabled:: boolean}) ->
+loginSubmitButton := (
+  {auth:: AuthProps, disabled:: boolean}
+): VNode<LoginState> ->
   html.div {class: "d-grid gap-auto"},
     html.button {
       class: "btn btn-primary d-flex align-items-center justify-content-center"
@@ -178,7 +186,7 @@ init: Dispatchable<LoginState> := [
   delay 10, (state: LoginState) -> [state, focus(LOGIN_USERNAME_ID)]
 ]
 
-view := (state: LoginState) ->
+view := (state: LoginState): VNode<LoginState> ->
   html.form {onsubmit: PreventSubmit}, [
     loginTitle()
     loginUsernameInput({value: state.auth.username, state.disabled,

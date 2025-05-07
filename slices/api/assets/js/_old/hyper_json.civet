@@ -1,7 +1,7 @@
 // Createer functions for Hyperapp object and fetch api
 
 {pick, pickType, identity} from ~/common/helper.civet
-csrf from ~/csrf.civet
+csrf from ~/common/csrf.civet
 
 {fetchAPI} from ~api/fetch_api.civet
 {DEFAULT_PAGE, DEFAULT_PER_PAGE} from ~api/pagination.civet

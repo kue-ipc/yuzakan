@@ -1,9 +1,12 @@
+// csrf ... read csrf param from meta tags
+
 getMetaContent := (name: string): string ->
   for each metaEl of document.getElementsByTagName("meta")
     if metaEl.name is name
       return metaEl.content
   throw new Error(`meta content for ${name} is not found`)
 
-export csrfParam := -> getMetaContent("csrf-param")
-export csrfToken := -> getMetaContent("csrf-token")
+csrfParam := -> getMetaContent("csrf-param")
+csrfToken := -> getMetaContent("csrf-token")
+
 export default csrf := -> {[csrfParam()]: csrfToken()}

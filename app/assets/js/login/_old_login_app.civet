@@ -4,9 +4,9 @@
 * as html from @hyperapp/html
 {focus} from @hyperapp/dom
 {delay} from @hyperapp/time
-APIDialog from ~/api_dialog.civet
+APIDialog from ~/common/api_dialog.civet
 bsIcon from ~/app/bs_icon.civet
-csrf from ~/csrf.civet
+csrf from ~/common/csrf.civet
 {t} from ~/common/i18n.civet
 
 interface LoginInputState
