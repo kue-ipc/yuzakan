@@ -3,7 +3,7 @@
 module Admin
   module Views
     module Config
-      class Replace < Admin::View
+      class Import < Admin::View
       end
     end
   end

@@ -7,7 +7,7 @@ require_relative "../../../../lib/yuzakan/validators/create_attr_validator"
 module Admin
   module Actions
     module Config
-      class Replace < Admin::Action
+      class Import < Admin::Action
         security_level 5
 
         class Params < Hanami::Action::Params

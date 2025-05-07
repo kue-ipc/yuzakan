@@ -6,7 +6,7 @@ require_relative "show"
 module Admin
   module Views
     module Config
-      class YmlShow < Show
+      class Export < Admin::View
         format :yml
 
         KEYS = {
