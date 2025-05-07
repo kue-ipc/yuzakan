@@ -11,11 +11,9 @@ csrf from ~/common/csrf.civet
 
 bsIcon from ~/app/bs_icon.civet
 {runAlertFlash} from ~/app/alert.civet
-
+{flashValidation, type Validation} from ~/common/flash.civet
 
 {type ResponseData} from ~api/fetch_api.civet
-
-{flashValidation, type Validation} from ~/common/flash.civet
 {createCreateAuth, type AuthProps, type AuthState} from ~api/actions/auth.civet
 
 interface LoginState extends AuthState
