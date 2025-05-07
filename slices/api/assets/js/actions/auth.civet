@@ -2,48 +2,55 @@
 
 {type Action, type Effect} from hyperapp
 
-{createActionFallback, createShow, createCreate, createDestroy, type ActionFallback, type ActionFallbackEffects, type ActionOtherParams, type ResponseData, type ResponseState} from ~api/app_creator.civet
+{createActionFallback, createShow, createCreate, createDestroy,
+  type ActionFallback, type ActionFallbackEffects, type ActionOtherParams,
+  type ResponseState} from ~api/app_creator.civet
 
 export interface AuthProps
   username: string
   password: string
 
-// Contants
+export interface AuthState extends ResponseState
+  auth: AuthProps
 
 // Actions
 
-SetAuth := <S>(state: S, auth: AuthProps) ->
+SetAuth := <S extends AuthState>(state: S, auth: AuthProps) ->
   {...state, auth}
 
 // create Actions
 
-createActionFallbackSetAuth := <S extends ResponseState>(
+createActionFallbackSetAuth := <S extends AuthState>(
   actionFallbackEffects: ActionFallbackEffects<S, AuthProps> = {}
 ): ActionFallback<S, AuthProps> ->
   createActionFallback({action: SetAuth, ...actionFallbackEffects})
 
-export createShowAuth := <S extends ResponseState>(
+// exports
+
+// create Actions
+
+export createShowAuth := <S extends AuthState>(
   actionFallbackEffects: ActionFallbackEffects<S, AuthProps> = {}
   params: ActionOtherParams = {}
 ): Action<S, undefined> ->
   actionFallback := createActionFallbackSetAuth(actionFallbackEffects)
   createShow("auth", actionFallback, params)
 
-export createCreateAuth := <S extends ResponseState>(
+export createCreateAuth := <S extends AuthState>(
   actionFallbackEffects: ActionFallbackEffects<S, AuthProps> = {}
   params: ActionOtherParams = {}
 ): Action<S, AuthProps> ->
   actionFallback := createActionFallbackSetAuth(actionFallbackEffects)
   createCreate("auth", actionFallback, params)
 
-export createDestroyAuth := <S extends ResponseState>(
+export createDestroyAuth := <S extends AuthState>(
   actionFallbackEffects: ActionFallbackEffects<S, AuthProps> = {}
   params: ActionOtherParams = {}
 ): Action<S, undefined> ->
   actionFallback := createActionFallbackSetAuth(actionFallbackEffects)
   createDestroy("auth", actionFallback, params)
 
-// Action
+// Actions
 
 export ShowAuth := createShowAuth()
 export CreateAuth := createCreateAuth()

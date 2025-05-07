@@ -14,7 +14,8 @@ export interface ActionFallback<S extends ResponseState, P>
   action?: Action<S, P>
   fallback?: Action<S, ResponseData>
 
-export interface ActionFallbackEffects<S extends ResponseState, P> extends ActionFallback<S, P>
+export interface ActionFallbackEffects<S extends ResponseState, P>
+    extends ActionFallback<S, P>
   effects?: Effect<S>[]
 
 export ActionRequestParams ::= Omit<RequestParams, "data">
@@ -135,7 +136,8 @@ export createShowWithId := <S extends ResponseState, P>(name: string,
   actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, undefined> ->
   path := `/api/${name}/:id`
-  createAction<S, P, undefined>(path, actionFallback, {...params, method: "GET"})
+  createAction<S, P, undefined>(path, actionFallback,
+    {...params, method: "GET"})
 
 // POST /resources
 export createCreateWithId := <S extends ResponseState, P>(name: string,
@@ -166,7 +168,8 @@ export createShow := <S extends ResponseState, P>(name: string,
   actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, undefined> ->
   path := `/api/${name}`
-  createAction<S, P, undefined>(path, actionFallback, {...params, method: "GET"})
+  createAction<S, P, undefined>(path, actionFallback,
+    {...params, method: "GET"})
 
 // POST /resource
 export createCreate := <S extends ResponseState, P>(name: string,
@@ -187,4 +190,5 @@ export createDestroy := <S extends ResponseState, P>(name: string,
   actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, undefined> ->
   path := `/api/${name}`
-  createAction<S, P, undefined>(path, actionFallback, {...params, method: "DELETE"})
+  createAction<S, P, undefined>(path, actionFallback,
+    {...params, method: "DELETE"})

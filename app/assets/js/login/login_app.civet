@@ -1,6 +1,6 @@
 // Login app
 
-{app, text, type Dispatch, type Dispatchable} from hyperapp
+{app, text, type Dispatch, type Dispatchable, type Effect, type Effecter, type Action} from hyperapp
 * as html from @hyperapp/html
 {focus} from @hyperapp/dom
 {delay} from @hyperapp/time
@@ -9,14 +9,13 @@ bsIcon from ~/app/bs_icon.civet
 csrf from ~/csrf.civet
 {t} from ~/common/i18n.civet
 {runAlertFlash} from ~/app/alert.civet
+{normalizeURL} from ~/helpers/url_helper.civet
 
 {type Flash, flashValidation, type Validation} from ~/common/flash.civet
-{createRunCreateAuth, type AuthProps} from ~api/actions/auth.civet
+{createCreateAuth, type AuthProps, type AuthState} from ~api/actions/auth.civet
 
-interface LoginState
-  auth: AuthProps
+interface LoginState extends AuthState
   disabled: boolean
-  flash: Flash
 
 interface LoginInputState < Validation
   value: string
@@ -84,25 +83,23 @@ PreventSubmit := (state: LoginState, event: SubmitEvent): LoginState ->
   event.preventDefault()
   state
 
-// create Effecters
-createRunLogin = 
-
-  createRunCreateAuth({action, fallback})
-
-  })
 // Effecters
 
-runAfterCreateAuth := (dispatch: Dispatch<LoginState>) ->
-  console.debug "run after create auth"
-  dispatch (status: LoginState) ->
-    [{...status, disbaled: false}, [runAlertFlash, status.flash]]
+runLogin := (dispatch: Dispatch<LoginState>, auth: AuthProps) ->
+  createAuth := createCreateAuth<LoginState>({effects: [reloadWindow(10)]})
+  dispatch(createAuth, auth)
 
-runLogin := do
+runReloadWindow := (_dispach: Dispatch<LoginState>, sec: number): void ->
+  console.debug `reload windows after ${sec} seconds`
+  setTimeout(-> location.reload(), sec)
 
 // Effect Generators
 
 login := (auth: AuthProps) ->
   [runLogin, auth]
+
+reloadWindow := (sec: number): Effect<LoginState> ->
+  [runReloadWindow, sec]
 
 // Views
 
@@ -164,20 +161,21 @@ loginSubmitButton := ({auth:: AuthProps, disabled:: boolean}) ->
 
 init: Dispatchable<LoginState> := [
   {}
+    location: normalizeURL("/api/auth")
+    csrf: csrf()
     auth: {username: "", password: ""}
-    flash: {}
     disabled: false
   delay 10, (state: LoginState) -> [state, focus(LOGIN_USERNAME_ID)]
 ]
 
-view := ({auth, flash, disabled}: LoginState) ->
+view := (state: LoginState) ->
   html.form {onsubmit: PreventSubmit}, [
     loginTitle()
-    loginUsernameInput({value: auth.username, disabled,
-      ...flashValidation(flash, "username")})
-    loginPasswordInput({value: auth.password, disabled,
-      ...flashValidation(flash, "password")})
-    loginSubmitButton({auth, disabled: submittable({auth, flash, disabled})})
+    loginUsernameInput({value: state.auth.username, state.disabled,
+      ...flashValidation(state.flash, "username")})
+    loginPasswordInput({value: state.auth.password, state.disabled,
+      ...flashValidation(state.flash, "password")})
+    loginSubmitButton({state.auth, disabled: submittable(state)})
   ]
 
 export default loginApp := ->
