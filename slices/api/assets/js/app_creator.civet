@@ -6,9 +6,9 @@
 
 export type ResponseData
 
-export interface ResponseState extends Pick<ResponseData,
-  "location" | "csrf" | "flash" | "pagination"> 
-    id?: string
+export interface ResponseState extends Partial<Pick<ResponseData,
+    "location" | "csrf" | "flash" | "pagination">> 
+  id?: string
 
 export interface ActionFallback<S extends ResponseState, P>
   action?: Action<S, P>
@@ -108,6 +108,8 @@ createRequestAction := <S extends ResponseState, P>(path: string,
           console.error "given props does not have the property for path: %s",
             key
           return state
+      else
+        reqPathList.push(pathItem)
     reqPath := reqPathList.join("/")
     effecter := createRunResponse(reqPath, action, params)
 

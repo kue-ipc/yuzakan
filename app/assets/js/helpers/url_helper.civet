@@ -6,9 +6,9 @@ getBaseURLPath := (): string ->
 getBaseURL := (): URL ->
   new URL(globalThis.location.href)
 
-export normalizeURL := (url: URL | string): Readonly<URL> ->
+export normalizeURL := (url: URL | string, base?: URL | string): Readonly<URL> ->
   if url <? "string"
-    Object.freeze(new URL(url, getBaseURLPath()))
+    Object.freeze(new URL(url, base ?? getBaseURLPath()))
   else if Object.isFrozen(url)
     url
   else

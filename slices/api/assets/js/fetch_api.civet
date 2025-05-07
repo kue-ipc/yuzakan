@@ -99,10 +99,12 @@ parseResponse := (response: Response): Promise<ResponseData> ->
     throw new Error("response is not json")
 
   data := await response.json()
+  console.debug data.location
+  console.debug response.url
   responseData: ResponseData := {}
     ok: response.ok
     status: data.status as ResponseData["status"]
-    location: new URL(data.location ?? response.url)
+    location: normalizeURL(data.location, response.url)
 
   responseData.csrf = data.csrf if data.csrf?
   responseData.flash = data.flash if data.flash

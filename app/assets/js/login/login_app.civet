@@ -11,6 +11,8 @@ csrf from ~/csrf.civet
 {runAlertFlash} from ~/app/alert.civet
 {normalizeURL} from ~/helpers/url_helper.civet
 
+{type ResponseData} from ~api/fetch_api.civet
+
 {type Flash, flashValidation, type Validation} from ~/common/flash.civet
 {createCreateAuth, type AuthProps, type AuthState} from ~api/actions/auth.civet
 
@@ -32,13 +34,13 @@ submittable := (state: LoginState): boolean ->
 
 // Actions
 
-Login := (state: LoginState, _event: Event) ->
+Login: Action<LoginState, Event> := (state: LoginState, _event: Event) ->
   if submittable(state)
     [{...state, disabled: true}, login(state.auth)]
   else
     state
 
-EnterToSubmitOrNextInput := (state: LoginState, event: KeyboardEvent) ->
+EnterToSubmitOrNextInput: Action<LoginState, KeyboardEvent> := (state, event) ->
   unless event.target <? HTMLInputElement
     console.warn "event target is not html input element"
     return state
@@ -53,7 +55,7 @@ EnterToSubmitOrNextInput := (state: LoginState, event: KeyboardEvent) ->
   else
     state
 
-UpdateUsername := (state: LoginState, event: InputEvent): LoginState ->
+UpdateUsername: Action<LoginState, InputEvent> := (state, event) ->
   unless event.target <? HTMLInputElement
     console.warn "event target is not html input element"
     return state
@@ -66,7 +68,7 @@ UpdateUsername := (state: LoginState, event: InputEvent): LoginState ->
       valid: {...state.flash?.valid, username: []}
       invalid: {...state.flash?.invalid, username: []}
 
-UpdatePassword := (state: LoginState, event: InputEvent): LoginState ->
+UpdatePassword: Action<LoginState, InputEvent> := (state, event) ->
   unless event.target <? HTMLInputElement
     console.warn "event target is not html input element"
     return state
@@ -79,23 +81,32 @@ UpdatePassword := (state: LoginState, event: InputEvent): LoginState ->
       valid: {...state.flash?.valid, password: []}
       invalid: {...state.flash?.invalid, password: []}
 
-PreventSubmit := (state: LoginState, event: SubmitEvent): LoginState ->
+PreventSubmit: Action<LoginState, SubmitEvent> := (state, event) ->
   event.preventDefault()
   state
 
+LoginFailure: Action<LoginState, ResponseData> := (state, _response) ->
+  []
+    {...state, auth: {...state.auth, password: ""}, disabled: false}
+    [runAlertFlash, state.flash]
+
 // Effecters
 
-runLogin := (dispatch: Dispatch<LoginState>, auth: AuthProps) ->
-  createAuth := createCreateAuth<LoginState>({effects: [reloadWindow(10)]})
+runLogin: Effecter<LoginState, AuthProps> := (dispatch, auth) ->
+  createAuth := createCreateAuth<LoginState>({
+    fallback: LoginFailure
+    effects: [reloadWindow(10)]
+  })
   dispatch(createAuth, auth)
 
-runReloadWindow := (_dispach: Dispatch<LoginState>, sec: number): void ->
+runReloadWindow: Effecter<LoginState, number> := (_dispach, sec) ->
   console.debug `reload windows after ${sec} seconds`
   setTimeout(-> location.reload(), sec)
+  ;
 
 // Effect Generators
 
-login := (auth: AuthProps) ->
+login := (auth: AuthProps): Effect<LoginState> ->
   [runLogin, auth]
 
 reloadWindow := (sec: number): Effect<LoginState> ->
@@ -161,7 +172,6 @@ loginSubmitButton := ({auth:: AuthProps, disabled:: boolean}) ->
 
 init: Dispatchable<LoginState> := [
   {}
-    location: normalizeURL("/api/auth")
     csrf: csrf()
     auth: {username: "", password: ""}
     disabled: false
