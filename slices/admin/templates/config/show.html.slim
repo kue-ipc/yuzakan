@@ -1,0 +1,110 @@
+h2 全体設定
+
+hr
+
+h4 設定のインポート・エクスポート
+p
+  | エクスポートされる設定にはサーバーのパスワード等が含まれていますが、暗号化されていません。
+  | 一時的な利用以外は推奨しません。
+  strong 長期保存する場合は、別途暗号化を行ってください。
+
+.mb-3
+  = link_to '設定のエクスポート', routes.path(:config_all),
+    class: 'btn btn-primary',
+    type: 'text/yaml',
+    download: "yuzakan_#{Time.now.strftime('%Y%m%d-%H%M%S')}.yml"
+
+= form_for :import, routes.path(:config_all), enctype: 'multipart/form-data', method: :put do
+  - div class: 'input-group' do
+    - file_field :yaml, class: 'form-control', accept: '.yml,.yaml,text/yaml'
+    - submit '設定のインポート', class: 'btn btn-danger'
+
+hr
+
+h4 設定
+
+= form_for form do
+  - div class: 'mb-3' do
+    - label 'サイト名', class: 'form-label', for: :title
+    - text_field :title, class: 'form-control'
+
+  - div class: 'mb-3' do
+    - label 'ドメイン', class: 'form-label', for: :domain
+    - text_field :domain, class: 'form-control'
+
+  - div class: 'mb-3' do
+    - label 'セッションタイムアウト', class: 'form-label', for: :session_timeout
+    - div class: 'input-group' do
+      - number_field :session_timeout, class: 'form-control', min: 0
+      - span '秒', class: 'input-group-text'
+
+  - div class: 'mb-3' do
+    - label 'パスワード最小サイズ', class: 'form-label', for: :password_min_size
+    - div class: 'input-group' do
+      - number_field :password_min_size, class: 'form-control', min: 1, max: 255
+      - span '文字', class: 'input-group-text'
+
+  - div class: 'mb-3' do
+    - label 'パスワード最大サイズ', class: 'form-label', for: :password_max_size
+    - div class: 'input-group' do
+      - number_field :password_max_size, class: 'form-control', min: 1, max: 255
+      - span '文字', class: 'input-group-text'
+    - small class: 'form-text' do
+      - div 'パスワードハッシュによっては文字数に制限があります。' \
+            '制限を超えた文字数は単純に無視されます。'
+      - ul
+        - {'CRYPT-DES' => 8, 'LM' => 14, 'BCRYPT' => 72}.each do |name, size|
+          - li "#{name}: #{size} 文字"
+
+  - div class: 'mb-3' do
+    - label 'パスワードの文字種の最小数', class: 'form-label', for: :password_min_types
+    - div class: 'input-group' do
+      - number_field :password_min_types, class: 'form-control', min: 1, max: 4
+      - span '種類', class: 'input-group-text'
+
+  - div class: 'mb-3' do
+    - label 'パスワードの複雑度スコア最小値', class: 'form-label', for: :password_min_score
+    - select :password_min_score, password_scores, \
+             class: 'form-control', size: password_scores.size
+
+  - div class: 'mb-3' do
+    - label 'パスワードの使用不可文字', class: 'form-label', for: :password_prohibited_chars
+    - text_field :password_prohibited_chars, class: 'form-control', max: 128
+
+  - div class: 'mb-3' do
+    - label 'パスワードの外部辞書', class: 'form-label', for: :password_extra_dict
+    - text_area :password_extra_dict, class: 'form-control', rows: 3
+    - small class: 'form-text' do
+      - '複雑度を計算する際に、外部辞書として使用されます。'
+
+
+  - div class: 'mb-3' do
+    - label 'パスワード生成時のサイズ', class: 'form-label', for: :generate_password_size
+    - div class: 'input-group' do
+      - number_field :generate_password_size, class: 'form-control', min: 1, max: 255
+      - span '文字', class: 'input-group-text'
+
+  - div class: 'mb-3' do
+    - label 'パスワード生成時の文字種', class: 'form-label', for: :generate_password_type
+    - select :generate_password_type, generate_password_types, class: 'form-control', size: generate_password_types.size
+
+  - div class: 'mb-3' do
+    - label 'パスワード生成時に指定する文字', class: 'form-label', for: :generate_password_chars
+    - text_field :generate_password_chars, class: 'form-control', max: 128
+    - small class: 'form-text' do
+      - 'パスワード生成時の文字種が「英数字」または「ASCII」の場合、ここに指定された文字が除外されます。'
+      - 'パスワード生成時の文字種が「カスタム」の場合、ここに指定された文字が使用されます。'
+
+  - div class: 'mb-3' do
+    - label '連絡先名前', class: 'form-label', for: :contact_name
+    - text_field :contact_name, class: 'form-control'
+
+  - div class: 'mb-3' do
+    - label '連絡先メールアドレス', class: 'form-label', for: :contact_email
+    - text_field :contact_email, class: 'form-control'
+
+  - div class: 'mb-3' do
+    - label '連絡先電話番号', class: 'form-label', for: :contact_phone
+    - text_field :contact_phone, class: 'form-control'
+
+  - submit '変更', class: 'btn btn-primary'

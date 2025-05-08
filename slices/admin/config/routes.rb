@@ -5,7 +5,8 @@ module Admin
     root to: "home.index"
 
     get "/config", to: "config.show", as: :config
-    patch "/config", to: "config.update", as: :config
+    put "/config/all", to: "config.export", as: :config_all
+    get "/config/all", to: "config.import", as: :config_all
 
     get "/providers", to: "providers.index", as: :providers
     get "/providers/:id", to: "providers.show", as: :provider
