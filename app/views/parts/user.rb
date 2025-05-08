@@ -5,8 +5,10 @@ module Yuzakan
   module Views
     module Parts
       class User < Yuzakan::Views::Part
+        include Deps["routes"]
+
         def path
-          context.routes.path(:user)
+          routes.path(:user)
         end
 
         def title

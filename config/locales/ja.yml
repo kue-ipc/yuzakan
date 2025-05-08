@@ -254,6 +254,8 @@ ja:
   actions:
     login: ログイン
     logout: ログアウト
+    improt_config: 全設定のインポート
+    export_config: 全設定のエクスポート
   views:
     about_browser:
       title: サポートしているブラウザーについて

@@ -1,4 +1,0 @@
-.alerts.d-print-none
-  - alert_levels.each_key do |level|
-    - Array(flash[level]).each do |msg|
-      = alert_tag(level, msg)
