@@ -19,7 +19,7 @@ module Yuzakan
         end
 
         def bs_icon_svg
-          _context.assets["bootstrap-icons.svg"]
+          _context.app_assets["bootstrap-icons.svg"]
         end
 
         def bs_icon_svg_link(name)

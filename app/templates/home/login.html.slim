@@ -1,5 +1,5 @@
 / = render "partial/check_browser"
-= javascript_tag "login/app", type: "module"
+= javascript_tag app_assets["login/app.js"], type: "module"
 form#login.mx-auto.p-3.border.rounded
   .spinner-border.text-aline role="status"
     span.visually-hidden = t("statuses.loading")...

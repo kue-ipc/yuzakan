@@ -9,7 +9,7 @@ ul.navbar-nav
         span.ms-1.d-sm-none.d-lg-inline
           = current_user.title
     li.nav-item
-      = javascript_tag "logout/app", type: "module"
+      = javascript_tag app_assets["logout/app.js"], type: "module"
       button#logout.nav-link.d-flex.align-items-center disabled="disabled"
         = bs_icon_tag("box-arrow-right", class: "flex-shrink-0")
         span.ms-1.d-sm-none.d-lg-inline
@@ -17,7 +17,7 @@ ul.navbar-nav
   li.nav-item
     .vr.d-none.d-sm-flex.h-100.mx-sm-2
     hr.d-sm-none.my-1
-  = javascript_tag "theme/app", type: "module"
+  = javascript_tag app_assets["theme/app.js"], type: "module"
   li#theme.nav-item
     button.nav-link.d-flex.align-items-center disabled="disabled"
       = bs_icon_tag("palette-fill", class: "flex-shrink-0")

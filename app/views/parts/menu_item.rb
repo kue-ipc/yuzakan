@@ -5,10 +5,8 @@ module Yuzakan
   module Views
     module Parts
       class MenuItem < Yuzakan::Views::Part
-        include Deps["routes"]
-
         def path
-          routes.path(value.name, **value.params)
+          context.app_routes.path(value.name, **value.params)
         end
 
         def title

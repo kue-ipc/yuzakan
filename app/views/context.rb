@@ -6,6 +6,8 @@ module Yuzakan
     class Context < Hanami::View::Context
       include Deps[
         "i18n",
+        app_assets: "assets",
+        app_routes: "routes",
       ]
 
       # I18n

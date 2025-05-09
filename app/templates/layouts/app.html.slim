@@ -7,8 +7,8 @@ html lang="ja" data-bs-theme="auto"
     = csrf_token_meta_tag
     = current_config&.title_tag
     = favicon_tag
-    = stylesheet_tag "app"
-    = javascript_tag "app", type: "module"
+    = stylesheet_tag app_assets["app.css"]
+    = javascript_tag app_assets["app.js"], type: "module"
   body
     = render "partial/header"
     .container-fluid.mt-2
