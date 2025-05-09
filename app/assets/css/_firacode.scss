@@ -1,8 +1,9 @@
 // Fire Code web fonts
-// ../../../node_modules/firacode/distr/fira_code.css
-$fira-code-path: "../../../node_modules/firacode/distr";
+// node_modules/firacode/distr/fira_code.css
 
-$fira-code-fonts: (
+$firacode-path: "firacode" !default;
+
+$firacode-fonts: (
   "Light": (
     "weight": 300,
     "style": normal,
@@ -25,31 +26,31 @@ $fira-code-fonts: (
   ),
 );
 
-@each $name, $attr in $fira-code-fonts {
+@each $name, $attr in $firacode-fonts {
   @font-face {
     font-family: "Fira Code";
     @each $key, $value in $attr {
       font-#{$key}: $value;
     }
-    src: url("#{$fira-code-path}/woff2/FiraCode-#{$name}.woff2") format("woff2"),
-      url("#{$fira-code-path}/woff/FiraCode-#{$name}.woff") format("woff");
+    src: url("#{$firacode-path}/distr/woff2/FiraCode-#{$name}.woff2") format("woff2"),
+      url("#{$firacode-path}/distr/woff/FiraCode-#{$name}.woff") format("woff");
   }
 }
 
-$fira-code-variable-fonts: (
+$firacode-variable-fonts: (
   "VF": (
     "weight": 300 700,
     "style": normal,
   ),
 );
 
-@each $name, $attr in $fira-code-variable-fonts {
+@each $name, $attr in $firacode-variable-fonts {
   @font-face {
     font-family: "Fira Code VF";
     @each $key, $value in $attr {
       font-#{$key}: $value;
     }
-    src: url("#{$fira-code-path}/woff2/FiraCode-#{$name}.woff2") format("woff2"),
-      url("#{$fira-code-path}/woff/FiraCode-#{$name}.woff") format("woff");
+    src: url("#{$firacode-path}/distr/woff2/FiraCode-#{$name}.woff2") format("woff2"),
+      url("#{$firacode-path}/distr/woff/FiraCode-#{$name}.woff") format("woff");
   }
 }

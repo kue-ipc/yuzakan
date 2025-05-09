@@ -1,7 +1,8 @@
 // Source Code Pro web fonts
-// ../../../node_modules/source-code-pro/source-code-pro.css
-// ../../../node_modules/source-code-pro/source-code-variable.css
-$source-code-pro-path: "../../../node_modules/source-code-pro";
+// node_modules/source-code-pro/source-code-pro.css
+// node_modules/source-code-pro/source-code-variable.css
+
+$source-code-pro-path: "source-code-pro" !default;
 
 $source-code-pro-fonts: (
   "ExtraLight": (
