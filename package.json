@@ -6,18 +6,18 @@
     "test": "mocha"
   },
   "dependencies": {
-    "@danielx/civet": "^0.10.2",
+    "@danielx/civet": "^0.10.3",
     "@hyperapp/dom": "^1.0.0",
     "@hyperapp/events": "^2.0.0",
     "@hyperapp/html": "^2.0.0",
     "@hyperapp/svg": "^2.0.0",
     "@hyperapp/time": "^1.0.0",
     "@popperjs/core": "^2.11.8",
-    "bootstrap": "^5.3.5",
-    "bootstrap-icons": "^1.11.3",
+    "bootstrap": "^5.3.6",
+    "bootstrap-icons": "^1.12.1",
     "csv": "^6.3.11",
     "esbuild-sass-plugin": "^3.3.1",
-    "esbuild-yaml": "^2.0.0",
+    "esbuild-yaml": "^2.1.0",
     "file-saver": "^2.0.5",
     "firacode": "^6.2.0",
     "hanami-assets": "^2.2.2",
@@ -32,19 +32,19 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "@eslint/js": "^9.25.1",
+    "@eslint/js": "^9.26.0",
     "@types/bootstrap": "^5.2.10",
-    "@types/chai": "^5.2.1",
+    "@types/chai": "^5.2.2",
     "@types/luxon": "^3.6.2",
     "@types/mocha": "^10.0.10",
     "@types/pluralize": "^0.0.33",
     "@types/ramda": "^0.30.2",
     "chai": "^5.2.0",
-    "eslint": "^9.25.1",
+    "eslint": "^9.26.0",
     "eslint-plugin-civet": "^0.0.6",
-    "mocha": "^11.1.0",
-    "stylelint": "^16.18.0",
-    "stylelint-config-recommended-scss": "^14.1.0",
-    "typescript-eslint": "^8.31.0"
+    "mocha": "^11.2.2",
+    "stylelint": "^16.19.1",
+    "stylelint-config-recommended-scss": "^15.0.0",
+    "typescript-eslint": "^8.32.0"
   }
 }
