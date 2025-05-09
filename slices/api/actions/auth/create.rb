@@ -16,7 +16,7 @@ module API
         include Dry::Monads[:result]
 
         params do
-          required(:username).filled(Yuzakan::Types::NameString, max_size?: 255)
+          required(:username).filled(:name, max_size?: 255)
           required(:password).filled(:string, max_size?: 255)
         end
 

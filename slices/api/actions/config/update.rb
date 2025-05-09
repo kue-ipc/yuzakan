@@ -4,28 +4,32 @@ module API
   module Actions
     module Config
       class Update < API::Action
-        def handle(request, response)
+        include Deps[
+          "repos.config_repo",
+        ]
+
+        params do
+          required(:title).filled(:string, max_size?: 255)
+          optional(:domain).maybe(Yuzakan::Types::DomainString, max_size?: 255)
+          optional(:session_timeout)
+            .filled(:integer, gteq?: 0, lteq?: 24 * 60 * 60)
+          optional(:password_min_size).filled(:integer, gteq?: 1, lteq?: 255)
+          optional(:password_max_size).filled(:integer, gteq?: 1, lteq?: 255)
+          optional(:password_min_score).filled(:integer, gteq?: 0, lteq?: 4)
+          optional(:password_prohibited_chars)
+            .maybe(Yuzakan::Types::PasswordString, max_size?: 128)
+          optional(:password_extra_dict).maybe(:string, max_size?: 4096)
+          optional(:generate_password_size).filled(:integer, gteq?: 1, lteq?: 255)
+          optional(:generate_password_type).filled(:string)
+          optional(:generate_password_chars)
+            .maybe(Yuzakan::Types::PasswordString, max_size?: 128)
+          optional(:contact_name).maybe(:string, max_size?: 255)
+          optional(:contact_email)
+            .maybe(Yuzakan::Types::EmailString, max_size?: 255)
+          optional(:contact_phone).maybe(:string, max_size?: 255)
         end
 
         security_level 5
-
-        class Params < Hanami::Action::Params
-          messages :i18n
-
-          params do
-            optional(:config).schema(UpdateConfigValidator)
-          end
-        end
-
-        params Params
-
-        expose :config
-
-        def initialize(config_repository: ConfigRepository.new,
-          **opts)
-          super
-          @config_repository ||= config_repository
-        end
 
         def handle(_request, _response)
           flash[:errors] ||= []
