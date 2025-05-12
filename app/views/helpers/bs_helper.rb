@@ -19,36 +19,55 @@ module Yuzakan
         end
 
         def bs_divide_opts(opts)
-          option_names = [:horizontal, :scope, :wrap_class, :help]
+          option_names = [:layout, :label, :scope, :wrap_class, :help]
           [opts.slice(*option_names), opts.except(*option_names)]
         end
 
-        def bs_form_control(form, name, horizontal: false, **, &)
-          if horizontal
-            bs_horizontal_form_control(form, name, **, &)
-          else
-            bs_vertical_form_control(form, name, **, &)
+        def bs_form_control(form, name, layout: nil, label: nil,
+          scope: nil, wrap_class: "mb-3", help: nil, &)
+          label ||= if scope then t(name, scope:) else name end
+          case layout
+          in nil | :normal
+            _bs_form_control_normal(form, name,
+              label:, wrap_class:, help:, &)
+          in :horizontal
+            _bs_form_control_horizontal(form, name,
+              label:, wrap_class:, help:, &)
+          in :placeholder
+            _bs_form_control_placeholder(form, name,
+              label:, wrap_class:, help:, &)
           end
         end
 
-        def bs_vertical_form_control(form, name, scope: nil, help: nil,
-          wrap_class: "mb-3")
+        private def _bs_form_control_normal(form, name, label:, wrap_class:,
+          help:)
           tag.div(class: wrap_class) do
             escape_join([
-              form.label(t(name, scope:), for: name, class: "form-label"),
-              yield(name),
+              form.label(label, for: name, class: "form-label"),
+              yield,
               help && tag.div(help, class: "form-text"),
             ])
           end
         end
 
-        def bs_horizontal_form_control(form, name, scope: nil, help: nil,
-          wrap_class: "mb-3")
+        private def _bs_form_control_horizontal(form, name, label:, wrap_class:,
+          help:)
+          tag.div(class: wrap_class) do
+            escape_join([
+              form.label(label, for: name, class: "form-label"),
+              yield(placeholder: label, aria_label: label),
+              help && tag.div(help, class: "form-text"),
+            ])
+          end
+        end
+
+        private def _bs_form_control_horizontal(form, name, label:, wrap_class:,
+          help:, &)
           tag.div(class: ["row", wrap_class]) do
             escape_join([
-              form.label(t(name, scope:), for: name,
+              form.label(label, for: name,
                 class: ["col-form-label", col_name]),
-              tag.div(class: col_value) { yield name },
+              tag.div(class: col_value, &),
               help && tag.div(class: col_help) do
                 tag.span(help, class: "form-text")
               end,
@@ -58,39 +77,43 @@ module Yuzakan
 
         def bs_text_field(form, name, **opts)
           label_opts, control_opts = bs_divide_opts(opts)
-          bs_form_control(form, name, **label_opts) do
-            form.text_field(name, class: "form-control", **control_opts)
+          bs_form_control(form, name, **label_opts) do |**add_opts|
+            form.text_field(name, class: "form-control", **add_opts,
+              **control_opts)
           end
         end
 
         def bs_text_area(form, name, **opts)
           label_opts, control_opts = bs_divide_opts(opts)
-          bs_form_control(form, name, **label_opts) do
-            form.text_area(name, class: "form-control", **control_opts)
+          bs_form_control(form, name, **label_opts) do |**add_opts|
+            form.text_area(name, class: "form-control", **add_opts,
+              **control_opts)
           end
         end
 
         def bs_number_field(form, name, **opts)
           label_opts, control_opts = bs_divide_opts(opts)
-          bs_form_control(form, name, **label_opts) do
+          bs_form_control(form, name, **label_opts) do |**add_opts|
             if control_opts[:unit]
               tag.div(class: "input-group") do
                 escape_join([
                   form.number_field(name, class: "form-control",
-                    **control_opts.except(:unit)),
+                    **add_opts, **control_opts.except(:unit)),
                   tag.span(control_opts[:unit], class: "input-group-text"),
                 ])
               end
             else
-              form.number_field(name, class: "form-control", **control_opts)
+              form.number_field(name, class: "form-control", **add_opts,
+                **control_opts)
             end
           end
         end
 
         def bs_select(form, name, list, **opts)
           label_opts, control_opts = bs_divide_opts(opts)
-          bs_form_control(form, name, **label_opts) do
-            form.select(name, list, class: "form-select", **control_opts)
+          bs_form_control(form, name, **label_opts) do |**add_opts|
+            form.select(name, list, class: "form-select", **add_opts,
+              **control_opts)
           end
         end
       end
