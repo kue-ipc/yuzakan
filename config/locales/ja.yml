@@ -311,7 +311,16 @@ ja:
       description: グループの一覧です。
     admin_config:
       title: 全体設定
-      description: サイト名やパスワードの条件等の設定を変更します。。
+      description: サイト名やパスワードの条件等の設定を変更します。
+      sections:
+        import_export:
+          title: 設定のインポート・エクスポート
+          note: |
+            エクスポートされる設定にはサーバーのパスワード等が含まれていますが、暗号化されていません。
+            一時的な利用以外は推奨しません。
+            **長期保存する場合は、別途暗号化を行ってください。**
+        config:
+          title: 設定
     admin_providers:
       title: プロバイダー一覧
       description: >-

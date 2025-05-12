@@ -1,12 +1,9 @@
-h2 全体設定
+h2 = t("views.admin_config.title")
 
 hr
 
-h4 設定のインポート・エクスポート
-p
-  | エクスポートされる設定にはサーバーのパスワード等が含まれていますが、暗号化されていません。
-  | 一時的な利用以外は推奨しません。
-  strong 長期保存する場合は、別途暗号化を行ってください。
+h3 = t("views.admin_config.sections.import_export.title")
+p = markdown(t("views.admin_config.sections.import_export.note"))
 
 / .mb-3
 /   = form_for(:import, routes.path(:config_all),
@@ -20,8 +17,6 @@ p
 /     class: "btn btn-primary",
 /     type: "text/yaml",
 /     download: "yuzakan_#{Time.now.strftime('%Y%m%d-%H%M%S')}.yml"
-
-
 
 / hr
 

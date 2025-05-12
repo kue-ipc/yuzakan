@@ -9,6 +9,7 @@ module Yuzakan
       include BsIconHelper
       include CSRFHelper
       include GridHelper
+      include MarkdownHelper
       # include ErrorHelper
       # include EscapeHelper
       # include ImportmapHelper

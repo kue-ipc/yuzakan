@@ -22,6 +22,8 @@ gem "pg"
 
 # Template
 gem "slim"
+gem "kramdown"
+gem "kramdown-parser-gfm"
 
 # Redis
 gem "hiredis"
