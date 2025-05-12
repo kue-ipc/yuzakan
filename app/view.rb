@@ -12,6 +12,8 @@ module Yuzakan
       end
     }
 
+    List = Data.define(:list, :scope)
+
     USER_STATIC_MENU_ITEMS = [
       {name: :edit_password, color: "primary", level: 1},
     ].map { |params| MenuItem.new(**params) }.freeze

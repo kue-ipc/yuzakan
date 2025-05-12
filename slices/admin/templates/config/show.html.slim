@@ -30,8 +30,9 @@ h3 = t("views.admin_config.sections.config.title")
 = form_for(app_routes.path(:api_config), values: current_config,
   method: :patch) do |f|
   - scope = "attributes.config"
-  = bs_text_field(f, :title, horizontal: true, scope:)
-  = bs_text_field(f, :domain, horizontal: true, scope:,
+
+  = bs_text_field(f, :title, horizontal: true, scope:, maxlength: 255)
+  = bs_text_field(f, :domain, horizontal: true, scope:, maxlength: 255,
     pattern: Yuzakan::Patterns[:domain].pattern)
 
   = bs_number_field(f, :session_timeout, horizontal: true, scope:,
@@ -48,10 +49,14 @@ h3 = t("views.admin_config.sections.config.title")
     help: markdown(t("views.admin_config.helps.password_max_size")))
   = bs_number_field(f, :password_min_types, horizontal: true, scope:,
     min: 1, max: 4, unit: t("ui.units.types"))
-  = bs_select(f, :password_min_score,
-    password_scores.to_h { |name| [t(name, scope: "enums.password_scores"), name] }, horizontal: true, scope:,
-    min: 0, size: password_scores.size)
+  = bs_select(f, :password_min_score, password_scores.values,
+    horizontal: true, scope:, min: 0, size: password_scores.size)
 
+  = bs_text_field(f, :password_prohibited_chars, horizontal: true, scope:,
+    maxlength: 95, pattern: Yuzakan::Patterns[:password].pattern)
+
+  = bs_text_area(f, :password_extra_dict, horizontal: true, scope:,
+    rows: 3, help: markdown(t("views.admin_config.helps.password_extra_dict")))
 
     / password_min_size integer DEFAULT 8 NOT NULL,
     / password_max_size integer DEFAULT 64 NOT NULL,
@@ -68,10 +73,6 @@ h3 = t("views.admin_config.sections.config.title")
     / created_at timestamp without time zone NOT NULL,
     / updated_at timestamp without time zone NOT NULL
 
-  / - div class: "mb-3" do
-  /   - label "パスワードの複雑度スコア最小値", class: "form-label", for: :password_min_score
-  /   - select :password_min_score, password_scores, \
-  /            class: "form-control", size: password_scores.size
 
   / - div class: "mb-3" do
   /   - label "パスワードの使用不可文字", class: "form-label", for: :password_prohibited_chars

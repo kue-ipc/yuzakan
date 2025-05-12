@@ -63,6 +63,13 @@ module Yuzakan
           end
         end
 
+        def bs_text_area(form, name, **opts)
+          label_opts, control_opts = bs_divide_opts(opts)
+          bs_form_control(form, name, **label_opts) do
+            form.text_area(name, class: "form-control", **control_opts)
+          end
+        end
+
         def bs_number_field(form, name, **opts)
           label_opts, control_opts = bs_divide_opts(opts)
           bs_form_control(form, name, **label_opts) do
