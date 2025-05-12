@@ -26,8 +26,17 @@ module Yuzakan
           %w[
             col-sm-6
             col-md-8
-            col-lg-9
-            col-xl-10
+            col-lg-6
+            col-xl-4
+          ]
+        end
+
+        def col_help
+          %w[
+            col-sm-12
+            offset-md-4 col-md-8
+            offset-lg-0 col-lg-3
+            col-xl-6
           ]
         end
       end

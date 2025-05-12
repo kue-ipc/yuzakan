@@ -3,107 +3,138 @@ h2 = t("views.admin_config.title")
 hr
 
 h3 = t("views.admin_config.sections.import_export.title")
-p = markdown(t("views.admin_config.sections.import_export.note"))
+.row
+  .col
+    p = markdown(t("views.admin_config.sections.import_export.note"))
 
-/ .mb-3
-/   = form_for(:import, routes.path(:config_all),
-/     enctype: "multipart/form-data", method: :put) do |f|
-/     .input-group
-/       = f.file_field(:yaml, class: "form-control",
-/           accept: ".yml,.yaml,text/yaml")
-/       = f.submit(t("actions.export_config"), class: "btn btn-danger")
+.row.mb-2
+  .col
+    = form_for(routes.path(:config_all),
+      enctype: "multipart/form-data", method: :put) do |f|
+      .input-group
+        = f.file_field(:yaml, class: "form-control",
+            accept: ".yml,.yaml,text/yaml")
+        = f.submit(t("actions.export_config"), class: "btn btn-danger")
 
-/   = link_to t("actions.export_config"), routes.path(:config_all),
-/     class: "btn btn-primary",
-/     type: "text/yaml",
-/     download: "yuzakan_#{Time.now.strftime('%Y%m%d-%H%M%S')}.yml"
+.row.mb-2
+  .col
+    = link_to t("actions.export_config"), routes.path(:config_all),
+      class: "btn btn-primary",
+      type: "text/yaml",
+      download: "yuzakan_#{Time.now.strftime('%Y%m%d-%H%M%S')}.yml"
 
-/ hr
+hr
 
-/ h4 設定
+h3 = t("views.admin_config.sections.config.title")
 
-/ = form_for form do
-/   - div class: 'mb-3' do
-/     - label 'サイト名', class: 'form-label', for: :title
-/     - text_field :title, class: 'form-control'
+= form_for(app_routes.path(:api_config), values: current_config,
+  method: :patch) do |f|
+  - scope = "attributes.config"
+  = bs_text_field(f, :title, horizontal: true, scope:)
+  = bs_text_field(f, :domain, horizontal: true, scope:,
+    pattern: Yuzakan::Patterns[:domain].pattern)
 
-/   - div class: 'mb-3' do
-/     - label 'ドメイン', class: 'form-label', for: :domain
-/     - text_field :domain, class: 'form-control'
+  = bs_number_field(f, :session_timeout, horizontal: true, scope:,
+    min: 0, unit: t("ui.units.seconds"))
+  = bs_number_field(f, :auth_failure_limit, horizontal: true, scope:,
+    min: 0)
+  = bs_number_field(f, :auth_failure_duration, horizontal: true, scope:,
+    min: 0, unit: t("ui.units.seconds"))
 
-/   - div class: 'mb-3' do
-/     - label 'セッションタイムアウト', class: 'form-label', for: :session_timeout
-/     - div class: 'input-group' do
-/       - number_field :session_timeout, class: 'form-control', min: 0
-/       - span '秒', class: 'input-group-text'
-
-/   - div class: 'mb-3' do
-/     - label 'パスワード最小サイズ', class: 'form-label', for: :password_min_size
-/     - div class: 'input-group' do
-/       - number_field :password_min_size, class: 'form-control', min: 1, max: 255
-/       - span '文字', class: 'input-group-text'
-
-/   - div class: 'mb-3' do
-/     - label 'パスワード最大サイズ', class: 'form-label', for: :password_max_size
-/     - div class: 'input-group' do
-/       - number_field :password_max_size, class: 'form-control', min: 1, max: 255
-/       - span '文字', class: 'input-group-text'
-/     - small class: 'form-text' do
-/       - div 'パスワードハッシュによっては文字数に制限があります。' \
-/             '制限を超えた文字数は単純に無視されます。'
-/       - ul
-/         - {'CRYPT-DES' => 8, 'LM' => 14, 'BCRYPT' => 72}.each do |name, size|
-/           - li "#{name}: #{size} 文字"
-
-/   - div class: 'mb-3' do
-/     - label 'パスワードの文字種の最小数', class: 'form-label', for: :password_min_types
-/     - div class: 'input-group' do
-/       - number_field :password_min_types, class: 'form-control', min: 1, max: 4
-/       - span '種類', class: 'input-group-text'
-
-/   - div class: 'mb-3' do
-/     - label 'パスワードの複雑度スコア最小値', class: 'form-label', for: :password_min_score
-/     - select :password_min_score, password_scores, \
-/              class: 'form-control', size: password_scores.size
-
-/   - div class: 'mb-3' do
-/     - label 'パスワードの使用不可文字', class: 'form-label', for: :password_prohibited_chars
-/     - text_field :password_prohibited_chars, class: 'form-control', max: 128
-
-/   - div class: 'mb-3' do
-/     - label 'パスワードの外部辞書', class: 'form-label', for: :password_extra_dict
-/     - text_area :password_extra_dict, class: 'form-control', rows: 3
-/     - small class: 'form-text' do
-/       - '複雑度を計算する際に、外部辞書として使用されます。'
+  = bs_number_field(f, :password_min_size, horizontal: true, scope:,
+    min: 0, unit: t("ui.units.chars"))
+  = bs_number_field(f, :password_max_size, horizontal: true, scope:,
+    min: 0, unit: t("ui.units.chars"),
+    help: markdown(t("views.admin_config.helps.password_max_size")))
+  = bs_number_field(f, :password_min_types, horizontal: true, scope:,
+    min: 0, unit: t("ui.units.types"))
+  / = bs_number_field(f, :password_min_score, horizontal: true, scope:,
+  /   min: 0)
 
 
-/   - div class: 'mb-3' do
-/     - label 'パスワード生成時のサイズ', class: 'form-label', for: :generate_password_size
-/     - div class: 'input-group' do
-/       - number_field :generate_password_size, class: 'form-control', min: 1, max: 255
-/       - span '文字', class: 'input-group-text'
+    / password_min_size integer DEFAULT 8 NOT NULL,
+    / password_max_size integer DEFAULT 64 NOT NULL,
+    / password_min_types integer DEFAULT 1 NOT NULL,
+    / password_min_score integer DEFAULT 0 NOT NULL,
+    / password_prohibited_chars text DEFAULT ''::text NOT NULL,
+    / password_extra_dict text[] DEFAULT ARRAY[]::text[] NOT NULL,
+    / generate_password_size integer DEFAULT 24 NOT NULL,
+    / generate_password_type text DEFAULT 'ascii'::text NOT NULL,
+    / generate_password_chars text DEFAULT ' '::text NOT NULL,
+    / contact_name text,
+    / contact_email text,
+    / contact_phone text,
+    / created_at timestamp without time zone NOT NULL,
+    / updated_at timestamp without time zone NOT NULL
 
-/   - div class: 'mb-3' do
-/     - label 'パスワード生成時の文字種', class: 'form-label', for: :generate_password_type
-/     - select :generate_password_type, generate_password_types, class: 'form-control', size: generate_password_types.size
 
-/   - div class: 'mb-3' do
-/     - label 'パスワード生成時に指定する文字', class: 'form-label', for: :generate_password_chars
-/     - text_field :generate_password_chars, class: 'form-control', max: 128
-/     - small class: 'form-text' do
-/       - 'パスワード生成時の文字種が「英数字」または「ASCII」の場合、ここに指定された文字が除外されます。'
-/       - 'パスワード生成時の文字種が「カスタム」の場合、ここに指定された文字が使用されます。'
+  / - div class: "mb-3" do
+  /   - label "パスワード最小サイズ", class: "form-label", for: :password_min_size
+  /   - div class: "input-group" do
+  /     - number_field :password_min_size, class: "form-control", min: 1, max: 255
+  /     - span "文字", class: "input-group-text"
 
-/   - div class: 'mb-3' do
-/     - label '連絡先名前', class: 'form-label', for: :contact_name
-/     - text_field :contact_name, class: 'form-control'
+  / - div class: "mb-3" do
+  /   - label "パスワード最大サイズ", class: "form-label", for: :password_max_size
+  /   - div class: "input-group" do
+  /     - number_field :password_max_size, class: "form-control", min: 1, max: 255
+  /     - span "文字", class: "input-group-text"
+  /   - small class: "form-text" do
+  /     - div "パスワードハッシュによっては文字数に制限があります。" \
+  /           "制限を超えた文字数は単純に無視されます。"
+  /     - ul
+  /       - {"CRYPT-DES" => 8, "LM" => 14, "BCRYPT" => 72}.each do |name, size|
+  /         - li "#{name}: #{size} 文字"
 
-/   - div class: 'mb-3' do
-/     - label '連絡先メールアドレス', class: 'form-label', for: :contact_email
-/     - text_field :contact_email, class: 'form-control'
+  / - div class: "mb-3" do
+  /   - label "パスワードの文字種の最小数", class: "form-label", for: :password_min_types
+  /   - div class: "input-group" do
+  /     - number_field :password_min_types, class: "form-control", min: 1, max: 4
+  /     - span "種類", class: "input-group-text"
 
-/   - div class: 'mb-3' do
-/     - label '連絡先電話番号', class: 'form-label', for: :contact_phone
-/     - text_field :contact_phone, class: 'form-control'
+  / - div class: "mb-3" do
+  /   - label "パスワードの複雑度スコア最小値", class: "form-label", for: :password_min_score
+  /   - select :password_min_score, password_scores, \
+  /            class: "form-control", size: password_scores.size
 
-/   - submit '変更', class: 'btn btn-primary'
+  / - div class: "mb-3" do
+  /   - label "パスワードの使用不可文字", class: "form-label", for: :password_prohibited_chars
+  /   - text_field :password_prohibited_chars, class: "form-control", max: 128
+
+  / - div class: "mb-3" do
+  /   - label "パスワードの外部辞書", class: "form-label", for: :password_extra_dict
+  /   - text_area :password_extra_dict, class: "form-control", rows: 3
+  /   - small class: "form-text" do
+  /     - "複雑度を計算する際に、外部辞書として使用されます。"
+
+
+  / - div class: "mb-3" do
+  /   - label "パスワード生成時のサイズ", class: "form-label", for: :generate_password_size
+  /   - div class: "input-group" do
+  /     - number_field :generate_password_size, class: "form-control", min: 1, max: 255
+  /     - span "文字", class: "input-group-text"
+
+  / - div class: "mb-3" do
+  /   - label "パスワード生成時の文字種", class: "form-label", for: :generate_password_type
+  /   - select :generate_password_type, generate_password_types, class: "form-control", size: generate_password_types.size
+
+  / - div class: "mb-3" do
+  /   - label "パスワード生成時に指定する文字", class: "form-label", for: :generate_password_chars
+  /   - text_field :generate_password_chars, class: "form-control", max: 128
+  /   - small class: "form-text" do
+  /     - "パスワード生成時の文字種が「英数字」または「ASCII」の場合、ここに指定された文字が除外されます。"
+  /     - "パスワード生成時の文字種が「カスタム」の場合、ここに指定された文字が使用されます。"
+
+  / - div class: "mb-3" do
+  /   - label "連絡先名前", class: "form-label", for: :contact_name
+  /   - text_field :contact_name, class: "form-control"
+
+  / - div class: "mb-3" do
+  /   - label "連絡先メールアドレス", class: "form-label", for: :contact_email
+  /   - text_field :contact_email, class: "form-control"
+
+  / - div class: "mb-3" do
+  /   - label "連絡先電話番号", class: "form-label", for: :contact_phone
+  /   - text_field :contact_phone, class: "form-control"
+
+  = f.submit "変更", class: "btn btn-primary"

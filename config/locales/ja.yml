@@ -154,10 +154,10 @@ ja:
       title: サイト名
       domain: ドメイン名
       session_timeout: セッションタイムアウト
-      session_failure_limit: ログイン失敗の限界回数
-      session_failure_duration: ログイン失敗の保持期間
-      password_min_size: パスワードの最短サイズ
-      password_max_size: パスワードの最長サイズ
+      auth_failure_limit: ログイン失敗の限界回数
+      auth_failure_duration: ログイン失敗の保持期間
+      password_min_size: パスワードの最小サイズ
+      password_max_size: パスワードの最大サイズ
       password_min_types: パスワードの文字種の最小数
       password_min_score: パスワードの複雑度スコアの最小値
       password_prohibited_chars: パスワードの使用不可文字
@@ -314,13 +314,25 @@ ja:
       description: サイト名やパスワードの条件等の設定を変更します。
       sections:
         import_export:
-          title: 設定のインポート・エクスポート
+          title: 全設定のインポート・エクスポート
           note: |
-            エクスポートされる設定にはサーバーのパスワード等が含まれていますが、暗号化されていません。
-            一時的な利用以外は推奨しません。
-            **長期保存する場合は、別途暗号化を行ってください。**
+            プロバイダー情報、属性情報、辞書を含む全ての設定をインポート・エクスポートします。
+            エクスポートされる設定にはプロバイダーのパスワード等が含まれていますが、暗号化されていません。
+            **保存する場合は、別途暗号化を行ってください。**
         config:
-          title: 設定
+          title: 設定の編集
+      helps:
+        password_max_size: |
+          パスワードハッシュによっては文字数に制限があります。
+          制限を超えた文字数は単純に無視されます。
+          (CRYPT-DES 8文字、LM 14文字、BCRYPT 72文字)
+        password_extra_dict: |
+          複雑度を計算する際に、外部辞書として使用されます。
+        generate_password_chars: |
+            パスワード生成時の文字種が「英数字」または「ASCII」の場合、ここに指定された文字が除外されます。
+            パスワード生成時の文字種が「カスタム」の場合、ここに指定された文字が使用されます。
+
+
     admin_providers:
       title: プロバイダー一覧
       description: >-
@@ -359,3 +371,16 @@ ja:
     menus:
       user: 利用者メニュー
       admin: 管理者メニュー
+    units:
+      seconds: 秒
+      minutes: 分
+      hours: 時
+      days: 分
+      weeks: 週
+      months: 月
+      quarters: 四半期
+      years: 年
+      chars: 文字
+      times: 回
+      types: 種類
+
