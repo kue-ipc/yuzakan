@@ -62,7 +62,9 @@ module Yuzakan
             ("a".."z").to_a
           in "digit"
             ("0".."9").to_a
-          in "hex"
+          in "upper_hex"
+            ["0".."9", "A".."F"].flat_map(&:to_a)
+          in "lower_hex"
             ["0".."9", "a".."f"].flat_map(&:to_a)
           in "custom"
             nil

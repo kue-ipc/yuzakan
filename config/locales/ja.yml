@@ -156,8 +156,8 @@ ja:
       session_timeout: セッションタイムアウト
       auth_failure_limit: ログイン失敗の限界回数
       auth_failure_duration: ログイン失敗の保持期間
-      password_min_size: パスワードの最小サイズ
-      password_max_size: パスワードの最大サイズ
+      password_min_size: パスワードの最短サイズ
+      password_max_size: パスワードの最長サイズ
       password_min_types: パスワードの文字種の最小数
       password_min_score: パスワードの複雑度スコアの最小値
       password_prohibited_chars: パスワードの使用不可文字
@@ -190,8 +190,15 @@ ja:
       upper_letter: 英大文字
       lower_letter: 英小文字
       digit: 数字
-      hex: 16進文字列
+      upper_hex: 16進数大文字
+      lower_hex: 16進数小文字
       custom: カスタム
+    password_scores:
+      0: 0 (解読推定数 < 10^3) 非常に危険
+      1: 1 (解読推定数 < 10^6) とても危険
+      2: 2 (解読推定数 < 10^8) すこし危険
+      3: 3 (解読推定数 < 10^10) まぁまぁ安全
+      4: 4 (解読推定数 ≧ 10^10) とても安全
   statuses:
     # 成功失敗
     success: 成功

@@ -42,14 +42,15 @@ h3 = t("views.admin_config.sections.config.title")
     min: 0, unit: t("ui.units.seconds"))
 
   = bs_number_field(f, :password_min_size, horizontal: true, scope:,
-    min: 0, unit: t("ui.units.chars"))
+    min: 1, max: 255, unit: t("ui.units.chars"))
   = bs_number_field(f, :password_max_size, horizontal: true, scope:,
-    min: 0, unit: t("ui.units.chars"),
+    min: 1, max: 255, unit: t("ui.units.chars"),
     help: markdown(t("views.admin_config.helps.password_max_size")))
   = bs_number_field(f, :password_min_types, horizontal: true, scope:,
-    min: 0, unit: t("ui.units.types"))
-  / = bs_number_field(f, :password_min_score, horizontal: true, scope:,
-  /   min: 0)
+    min: 1, max: 4, unit: t("ui.units.types"))
+  = bs_select(f, :password_min_score,
+    password_scores.to_h { |name| [t(name, scope: "enums.password_scores"), name] }, horizontal: true, scope:,
+    min: 0, size: password_scores.size)
 
 
     / password_min_size integer DEFAULT 8 NOT NULL,
@@ -66,31 +67,6 @@ h3 = t("views.admin_config.sections.config.title")
     / contact_phone text,
     / created_at timestamp without time zone NOT NULL,
     / updated_at timestamp without time zone NOT NULL
-
-
-  / - div class: "mb-3" do
-  /   - label "パスワード最小サイズ", class: "form-label", for: :password_min_size
-  /   - div class: "input-group" do
-  /     - number_field :password_min_size, class: "form-control", min: 1, max: 255
-  /     - span "文字", class: "input-group-text"
-
-  / - div class: "mb-3" do
-  /   - label "パスワード最大サイズ", class: "form-label", for: :password_max_size
-  /   - div class: "input-group" do
-  /     - number_field :password_max_size, class: "form-control", min: 1, max: 255
-  /     - span "文字", class: "input-group-text"
-  /   - small class: "form-text" do
-  /     - div "パスワードハッシュによっては文字数に制限があります。" \
-  /           "制限を超えた文字数は単純に無視されます。"
-  /     - ul
-  /       - {"CRYPT-DES" => 8, "LM" => 14, "BCRYPT" => 72}.each do |name, size|
-  /         - li "#{name}: #{size} 文字"
-
-  / - div class: "mb-3" do
-  /   - label "パスワードの文字種の最小数", class: "form-label", for: :password_min_types
-  /   - div class: "input-group" do
-  /     - number_field :password_min_types, class: "form-control", min: 1, max: 4
-  /     - span "種類", class: "input-group-text"
 
   / - div class: "mb-3" do
   /   - label "パスワードの複雑度スコア最小値", class: "form-label", for: :password_min_score

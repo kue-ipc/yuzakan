@@ -79,6 +79,13 @@ module Yuzakan
             end
           end
         end
+
+        def bs_select(form, name, list, **opts)
+          label_opts, control_opts = bs_divide_opts(opts)
+          bs_form_control(form, name, **label_opts) do
+            form.select(name, list, class: "form-select", **control_opts)
+          end
+        end
       end
     end
   end
