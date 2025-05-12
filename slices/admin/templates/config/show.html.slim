@@ -50,68 +50,25 @@ h3 = t("views.admin_config.sections.config.title")
   = bs_number_field(f, :password_min_types, horizontal: true, scope:,
     min: 1, max: 4, unit: t("ui.units.types"))
   = bs_select(f, :password_min_score, password_scores.values,
-    horizontal: true, scope:, min: 0, size: password_scores.size)
+    horizontal: true, scope:, size: password_scores.size)
 
   = bs_text_field(f, :password_prohibited_chars, horizontal: true, scope:,
     maxlength: 95, pattern: Yuzakan::Patterns[:password].pattern)
-
   = bs_text_area(f, :password_extra_dict, horizontal: true, scope:,
     rows: 3, help: markdown(t("views.admin_config.helps.password_extra_dict")))
 
-    / password_min_size integer DEFAULT 8 NOT NULL,
-    / password_max_size integer DEFAULT 64 NOT NULL,
-    / password_min_types integer DEFAULT 1 NOT NULL,
-    / password_min_score integer DEFAULT 0 NOT NULL,
-    / password_prohibited_chars text DEFAULT ''::text NOT NULL,
-    / password_extra_dict text[] DEFAULT ARRAY[]::text[] NOT NULL,
-    / generate_password_size integer DEFAULT 24 NOT NULL,
-    / generate_password_type text DEFAULT 'ascii'::text NOT NULL,
-    / generate_password_chars text DEFAULT ' '::text NOT NULL,
-    / contact_name text,
-    / contact_email text,
-    / contact_phone text,
-    / created_at timestamp without time zone NOT NULL,
-    / updated_at timestamp without time zone NOT NULL
 
+  = bs_number_field(f, :generate_password_size, horizontal: true, scope:,
+    min: 1, max: 255, unit: t("ui.units.chars"))
+  = bs_select(f, :generate_password_type, generate_password_types.values,
+    horizontal: true, scope:, size: generate_password_types.size)
+  = bs_text_field(f, :generate_password_chars, horizontal: true, scope:,
+    maxlength: 95, pattern: Yuzakan::Patterns[:password].pattern,
+    help: markdown(t("views.admin_config.helps.generate_password_chars")))
 
-  / - div class: "mb-3" do
-  /   - label "パスワードの使用不可文字", class: "form-label", for: :password_prohibited_chars
-  /   - text_field :password_prohibited_chars, class: "form-control", max: 128
-
-  / - div class: "mb-3" do
-  /   - label "パスワードの外部辞書", class: "form-label", for: :password_extra_dict
-  /   - text_area :password_extra_dict, class: "form-control", rows: 3
-  /   - small class: "form-text" do
-  /     - "複雑度を計算する際に、外部辞書として使用されます。"
-
-
-  / - div class: "mb-3" do
-  /   - label "パスワード生成時のサイズ", class: "form-label", for: :generate_password_size
-  /   - div class: "input-group" do
-  /     - number_field :generate_password_size, class: "form-control", min: 1, max: 255
-  /     - span "文字", class: "input-group-text"
-
-  / - div class: "mb-3" do
-  /   - label "パスワード生成時の文字種", class: "form-label", for: :generate_password_type
-  /   - select :generate_password_type, generate_password_types, class: "form-control", size: generate_password_types.size
-
-  / - div class: "mb-3" do
-  /   - label "パスワード生成時に指定する文字", class: "form-label", for: :generate_password_chars
-  /   - text_field :generate_password_chars, class: "form-control", max: 128
-  /   - small class: "form-text" do
-  /     - "パスワード生成時の文字種が「英数字」または「ASCII」の場合、ここに指定された文字が除外されます。"
-  /     - "パスワード生成時の文字種が「カスタム」の場合、ここに指定された文字が使用されます。"
-
-  / - div class: "mb-3" do
-  /   - label "連絡先名前", class: "form-label", for: :contact_name
-  /   - text_field :contact_name, class: "form-control"
-
-  / - div class: "mb-3" do
-  /   - label "連絡先メールアドレス", class: "form-label", for: :contact_email
-  /   - text_field :contact_email, class: "form-control"
-
-  / - div class: "mb-3" do
-  /   - label "連絡先電話番号", class: "form-label", for: :contact_phone
-  /   - text_field :contact_phone, class: "form-control"
+  = bs_text_field(f, :contact_name, horizontal: true, scope:, maxlength: 255)
+  = bs_text_field(f, :contact_email, horizontal: true, scope:, maxlength: 255,
+    pattern: Yuzakan::Patterns[:email].pattern)
+  = bs_text_field(f, :contact_phone, horizontal: true, scope:, maxlength: 255)
 
   = f.submit "変更", class: "btn btn-primary"

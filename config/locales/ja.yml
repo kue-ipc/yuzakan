@@ -338,8 +338,6 @@ ja:
         generate_password_chars: |
             パスワード生成時の文字種が「英数字」または「ASCII」の場合、ここに指定された文字が除外されます。
             パスワード生成時の文字種が「カスタム」の場合、ここに指定された文字が使用されます。
-
-
     admin_providers:
       title: プロバイダー一覧
       description: >-

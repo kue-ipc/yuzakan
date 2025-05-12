@@ -27,7 +27,7 @@ module Yuzakan
             col-sm-6
             col-md-8
             col-lg-6
-            col-xl-4
+            col-xl-5
           ]
         end
 
@@ -36,7 +36,7 @@ module Yuzakan
             col-sm-12
             offset-md-4 col-md-8
             offset-lg-0 col-lg-3
-            col-xl-6
+            col-xl-5
           ]
         end
       end
