@@ -11,10 +11,6 @@ RSpec.describe Admin::Actions::Config::Show do
 
   context "when admin" do
     let(:user) { create_struct(:user, :superuser) }
-    # let(:user) {
-    #   create_sturct(Yuzakan::Structs::User, Hanami.app["relations.users"],
-    #     Factory.structs[:superuser].attributes)
-    # }
 
     it "is successful" do
       response = action.call(params)
