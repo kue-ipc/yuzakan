@@ -263,6 +263,7 @@ ja:
     logout: ログアウト
     improt_config: 全設定のインポート
     export_config: 全設定のエクスポート
+    update_config: 設定の更新
   views:
     about_browser:
       title: サポートしているブラウザーについて

@@ -27,8 +27,9 @@ hr
 
 h3 = t("views.admin_config.sections.config.title")
 
+= javascript_tag "config/app", type: "module"
 = form_for(app_routes.path(:api_config), values: current_config,
-  method: :patch) do |f|
+  method: :patch, id: "config-form") do |f|
   - scope = "attributes.config"
 
   = bs_text_field(f, :title, layout: :horizontal, scope:, maxlength: 255)

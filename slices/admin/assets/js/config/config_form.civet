@@ -1,0 +1,31 @@
+// Config Form
+
+APIDialog from ~/common/api_dialog.civet
+{formDataToObj} from  ~/helpers/form_helper.civet
+
+apiDialog := new APIDialog {
+  id: "config"
+  name: "actions.update_config"
+  method: "PATCH"
+  path: "/api/config"
+}
+
+submitConfigForm := (event: SubmitEvent) ->
+  event.preventDefault()
+
+  form := event.target
+  return unless form <? HTMLFormElement
+
+  data: any := formDataToObj(new FormData(form))
+  delete data["_method"]
+  data["password_extra_dict"] = data["password_extra_dict_listing"].split(/\s+/)
+    .filter((str: string)-> str !== "")
+  delete data["password_extra_dict_listing"]
+
+  apiDialog.submitPromise({data})
+
+export default configForm := ->
+  configForm := document.getElementById("config-form")
+  return unless configForm?
+
+  configForm.addEventListener("submit", submitConfigForm)
