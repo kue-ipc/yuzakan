@@ -148,30 +148,34 @@ def let_mock_repos
   let(:action_log_repo) { instance_double(Yuzakan::Repos::ActionLogRepo) }
 end
 
-
-# カスタマイズされたStructを使用してstructを作成する。
 def create_struct(struct_name, factory_name = nil)
   inflector = Yuzakan::App["inflector"]
   factory_name ||= struct_name.intern
-
-  relation = Hanami.app["relations.#{inflector.pluralize(struct_name)}"]
-  attributes = Factory.structs[factory_name].attributes
-  superclass = Yuzakan::Structs.const_get(inflector.classify(struct_name))
-  Class.new(superclass) do
-    attributes.each_key { |key| attribute key, relation[key].type }
-  end.new(**attributes)
+  class_name = inflector.classify(struct_name)
+  if Yuzakan::Structs.const_defined?(class_name)
+    # カスタマイズされたStructを使用してstructを作成する。
+    relation = Hanami.app["relations.#{inflector.pluralize(struct_name)}"]
+    attributes = Factory.structs[factory_name].attributes
+    superclass = Yuzakan::Structs.const_get(inflector.classify(struct_name))
+    Class.new(superclass) do
+      attributes.each_key { |key| attribute key, relation[key].type }
+    end.new(**attributes)
+  else
+    # Factoryで定義されているstructをそのまま使用する。
+    Factory.structs[factory_name]
+  end
 end
 
 # そのままの場合はROM::Structになるため、カスタマイズした属性を使用するために、
 # create_struct経由にする。
 def let_structs
-  let(:config) { Factory.structs[:config] }
-  let(:network) { Factory.structs[:network] }
-  let(:affiliation) { Factory.structs[:affiliation] }
-  let(:group) { Factory.structs[:group] }
+  let(:config) { create_struct(:config) }
+  let(:network) { create_struct(:network) }
+  let(:affiliation) { create_struct(:affiliation) }
+  let(:group) { create_struct(:group) }
   let(:user) { create_struct(:user) }
-  let(:provider) { Factory.structs[:provider] }
-  let(:attr) { Factory.structs[:attr] }
-  let(:auth_log) { Factory.structs[:auth_log] }
-  let(:action_log) { Factory.structs[:action_log] }
+  let(:provider) { create_struct(:provider) }
+  let(:attr) { create_struct(:attr) }
+  let(:auth_log) { create_struct(:auth_log) }
+  let(:action_log) { create_struct(:action_log) }
 end
