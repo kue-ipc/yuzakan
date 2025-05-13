@@ -148,23 +148,28 @@ def let_mock_repos
   let(:action_log_repo) { instance_double(Yuzakan::Repos::ActionLogRepo) }
 end
 
-# FIXME: もっとうまいやり方があるのではないか？
-def create_sturct(superclass, relation, attributes)
+
+# カスタマイズされたStructを使用してstructを作成する。
+def create_struct(struct_name, factory_name = nil)
+  inflector = Yuzakan::App["inflector"]
+  factory_name ||= struct_name.intern
+
+  relation = Hanami.app["relations.#{inflector.pluralize(struct_name)}"]
+  attributes = Factory.structs[factory_name].attributes
+  superclass = Yuzakan::Structs.const_get(inflector.classify(struct_name))
   Class.new(superclass) do
     attributes.each_key { |key| attribute key, relation[key].type }
   end.new(**attributes)
 end
 
-# FIXME: そのままの場合はROM::Structになるため、カスタマイズした属性は使用できない。
+# そのままの場合はROM::Structになるため、カスタマイズした属性を使用するために、
+# create_struct経由にする。
 def let_structs
   let(:config) { Factory.structs[:config] }
   let(:network) { Factory.structs[:network] }
   let(:affiliation) { Factory.structs[:affiliation] }
   let(:group) { Factory.structs[:group] }
-  let(:user) {
-    create_sturct(Yuzakan::Structs::User, Hanami.app["relations.users"],
-      Factory.structs[:user].attributes)
-  }
+  let(:user) { create_struct(:user) }
   let(:provider) { Factory.structs[:provider] }
   let(:attr) { Factory.structs[:attr] }
   let(:auth_log) { Factory.structs[:auth_log] }
