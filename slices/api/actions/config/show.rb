@@ -4,7 +4,8 @@ module API
   module Actions
     module Config
       class Show < API::Action
-        def handle(request, response)
+        def handle(_request, response)
+          response[:config] = response[:current_config]
         end
       end
     end
