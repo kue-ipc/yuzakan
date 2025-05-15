@@ -192,6 +192,8 @@ export default class APIDialog
     new Promise<void> (resolve, reject) =>
       #modalNode.addEventListener "hidden.bs.modal", -> resolve(), once: true
 
+  // sumbit
+
   submitPromise({params?:: {[key: string]: string}, data?:: any}): ResponseData
     runningMessageState: ModalState := {}
       status: "running"
@@ -217,11 +219,12 @@ export default class APIDialog
         flash: {error: t("ui.messages.fetch_error")}
       }
 
-    responseMessage := #responseMessageCodeMap.get(response.status.code)
+    responseMessage := #responseMessageCodeMap.get(response.status.code) ??
+      APIDialog.UNKNOWN_RESPONSE_MESSAGE
 
     messages := [
-      (responseMessage?.message ?? response.data?.message)
-      ...(response.data?.errors ?? [])
+      responseMessage.message
+      ...Object.values(response.flash ?? {})
     ].filter & <? "string"
 
     {closable, link, reload} :=
