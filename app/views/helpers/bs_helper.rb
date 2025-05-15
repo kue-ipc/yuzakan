@@ -30,11 +30,14 @@ module Yuzakan
           in nil | :normal
             _bs_form_control_normal(form, name,
               label:, wrap_class:, help:, &)
-          in :horizontal
-            _bs_form_control_horizontal(form, name,
+          in :floating
+            _bs_form_control_floating(form, name,
               label:, wrap_class:, help:, &)
           in :placeholder
             _bs_form_control_placeholder(form, name,
+              label:, wrap_class:, help:, &)
+          in :horizontal
+            _bs_form_control_horizontal(form, name,
               label:, wrap_class:, help:, &)
           end
         end
@@ -50,11 +53,22 @@ module Yuzakan
           end
         end
 
-        private def _bs_form_control_horizontal(form, name, label:, wrap_class:,
+        # TODO: selectやinput-groupではうまくいかない。
+        private def _bs_form_control_floating(form, name, label:, wrap_class:,
+          help:)
+          tag.div(class: ["form-floating", wrap_class]) do
+            escape_join([
+              yield(placeholder: label),
+              form.label(label, for: name),
+              help && tag.div(help, class: "form-text"),
+            ])
+          end
+        end
+
+        private def _bs_form_control_placeholder(_form, _name, label:, wrap_class:,
           help:)
           tag.div(class: wrap_class) do
             escape_join([
-              form.label(label, for: name, class: "form-label"),
               yield(placeholder: label, aria_label: label),
               help && tag.div(help, class: "form-text"),
             ])

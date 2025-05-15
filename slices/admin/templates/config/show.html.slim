@@ -31,47 +31,48 @@ h3 = t("views.admin_config.sections.config.title")
 = form_for(app_routes.path(:api_config), values: current_config,
   method: :patch, id: "config-form") do |f|
   - scope = "attributes.config"
+  - layout = :horizontal
 
-  = bs_text_field(f, :title, layout: :horizontal, scope:, maxlength: 255)
-  = bs_text_field(f, :domain, layout: :horizontal, scope:, maxlength: 255,
+  = bs_text_field(f, :title, layout:, scope:, maxlength: 255)
+  = bs_text_field(f, :domain, layout:, scope:, maxlength: 255,
     pattern: Yuzakan::Patterns[:domain].pattern)
 
-  = bs_number_field(f, :session_timeout, layout: :horizontal, scope:,
+  = bs_number_field(f, :session_timeout, layout:, scope:,
     min: 0, max: 24 * 60 * 60, unit: t("ui.units.seconds"))
 
-  = bs_number_field(f, :auth_failure_limit, layout: :horizontal, scope:,
+  = bs_number_field(f, :auth_failure_limit, layout:, scope:,
     min: 0, max: 100_000)
-  = bs_number_field(f, :auth_failure_duration, layout: :horizontal, scope:,
+  = bs_number_field(f, :auth_failure_duration, layout:, scope:,
     min: 0, max: 24 * 60 * 60, unit: t("ui.units.seconds"))
 
-  = bs_number_field(f, :password_min_size, layout: :horizontal, scope:,
+  = bs_number_field(f, :password_min_size, layout:, scope:,
     min: 1, max: 255, unit: t("ui.units.chars"))
-  = bs_number_field(f, :password_max_size, layout: :horizontal, scope:,
+  = bs_number_field(f, :password_max_size, layout:, scope:,
     min: 1, max: 255, unit: t("ui.units.chars"),
     help: markdown(t("views.admin_config.helps.password_max_size")))
-  = bs_number_field(f, :password_min_types, layout: :horizontal, scope:,
+  = bs_number_field(f, :password_min_types, layout:, scope:,
     min: 1, max: 4, unit: t("ui.units.types"))
-  = bs_text_field(f, :password_prohibited_chars, layout: :horizontal, scope:,
+  = bs_text_field(f, :password_prohibited_chars, layout:, scope:,
     maxlength: 255, pattern: Yuzakan::Patterns[:password].pattern)
 
   = bs_select(f, :password_min_score, password_scores.values,
     layout: :horizontal, scope:, size: password_scores.size)
-  = bs_text_area(f, :password_extra_dict_listing, layout: :horizontal,
+  = bs_text_area(f, :password_extra_dict_listing, layout:,
     label: t(:password_extra_dict, scope:), rows: 3,
     help: markdown(t("views.admin_config.helps.password_extra_dict")))
 
-  = bs_number_field(f, :generate_password_size, layout: :horizontal, scope:,
+  = bs_number_field(f, :generate_password_size, layout:, scope:,
     min: 1, max: 255, unit: t("ui.units.chars"))
   = bs_select(f, :generate_password_type, generate_password_types.values,
     layout: :horizontal, scope:, size: generate_password_types.size)
-  = bs_text_field(f, :generate_password_chars, layout: :horizontal, scope:,
+  = bs_text_field(f, :generate_password_chars, layout:, scope:,
     maxlength: 255, pattern: Yuzakan::Patterns[:password].pattern,
     help: markdown(t("views.admin_config.helps.generate_password_chars")))
 
-  = bs_text_field(f, :contact_name, layout: :horizontal, scope:, maxlength: 255)
-  = bs_text_field(f, :contact_email, layout: :horizontal, scope:,
+  = bs_text_field(f, :contact_name, layout:, scope:, maxlength: 255)
+  = bs_text_field(f, :contact_email, layout:, scope:,
     maxlength: 255, pattern: Yuzakan::Patterns[:email].pattern)
-  = bs_text_field(f, :contact_phone, layout: :horizontal, scope:,
+  = bs_text_field(f, :contact_phone, layout:, scope:,
     maxlength: 255)
 
   = f.submit "変更", class: "btn btn-primary"
