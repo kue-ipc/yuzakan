@@ -121,7 +121,6 @@ GEM
       dry-schema (~> 1.14)
       zeitwerk (~> 2.6)
     erubi (1.13.1)
-    execjs (2.10.0)
     faker (3.5.1)
       i18n (>= 1.8.11, < 2)
     faraday (2.13.1)
@@ -437,8 +436,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     zeitwerk (2.7.2)
-    zxcvbn-js (4.4.3)
-      execjs
+    zxcvbn (1.0.0)
 
 PLATFORMS
   x86_64-linux
@@ -484,7 +482,7 @@ DEPENDENCIES
   ruby-lsp
   slim
   smbhash
-  zxcvbn-js
+  zxcvbn
 
 BUNDLED WITH
    2.5.23

@@ -34,7 +34,7 @@ gem "redis-rack"
 gem "activesupport", "~> 8.0"
 gem "i18n"
 gem "bcrypt"
-gem "zxcvbn-js", require: "zxcvbn"
+gem "zxcvbn"
 gem "digest-xxhash"
 
 ## for adapter ##
