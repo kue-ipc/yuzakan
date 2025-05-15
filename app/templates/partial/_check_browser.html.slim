@@ -1,0 +1,35 @@
+/ check browser
+/ noscript
+/   Require JavaScript
+/ nomodule
+/   https://developer.mozilla.org/ja/docs/Web/HTML/Element/script#attr-nomodule
+/ modern browser
+/   If yore browser has `globalThis`, it is a modern browser.
+/   https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/globalThis
+
+.check-browser
+  noscript
+    .alert.alert-danger role="alert"
+      = t("ui.messages.javascript_disabled")
+  #legacy-browser.d-none
+    .alert.alert-danger role="alert"
+      = t("ui.messages.legacy_browser")
+      | (
+      = link_to t("views.about_browser.title"), routes.path(:about_browser)
+      | )
+  #obsolete-browser.d-none
+    .alert.alert-danger role="alert"
+      = t("ui.messages.obsolete_browser")
+      | (
+      = link_to t("views.about_browser.title"), routes.path(:about_browser)
+      | )
+  #deprecated-browser.d-none
+    .alert.alert-warning role="alert"
+      = t("ui.messages.deprecated_browser")
+      | (
+      = link_to t("views.about_browser.title"), routes.path(:about_browser)
+      | )
+  script nomodule="nomodule"
+    |
+      document.getElementById("legacy-browser").className = "";
+  = javascript_tag app_assets["check_browser/app.js"], type: "module"

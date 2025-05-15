@@ -196,12 +196,13 @@ init: Dispatchable<LoginState, any> := [
 ]
 
 view := ({username, password, submittable}: LoginState): VNode<LoginState> ->
-  html.form {onsubmit: PreventSubmit}, [
-    loginTitle()
-    loginUsernameInput(username)
-    loginPasswordInput(password)
-    loginSubmitButton({submittable})
-  ]
+  html.div {},
+    html.form {onsubmit: PreventSubmit}, [
+      loginTitle()
+      loginUsernameInput(username)
+      loginPasswordInput(password)
+      loginSubmitButton({submittable})
+    ]
 
 export default loginApp := ->
   if node? := document.getElementById(LOGIN_ID)

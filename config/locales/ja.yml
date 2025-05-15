@@ -371,6 +371,18 @@ ja:
         サーバー接続時にエラーが発生しました しばらく待ってから、再度試してください。
       reload_after: '約%{sec}秒後に画面を切り替えます。'
       reload_immediately: 画面を切り替えます。しばらくお待ち下さい。
+      javascript_disabled: >-
+        JavaScriptが無効のため、正常に動作しません。
+        JavaScriptを有効にしてください。
+      legacy_browser: >-
+        レガシーブラウザーであるため、正常に動作しません。
+        最新のモダンブラウザーを使用してください。
+      obsolete_browser: >-
+        お使いのブラウザーは機能が不足しているため、正常に動作しません。
+        最新のモダンブラウザーを使用してください。
+      deprecated_browser: >-
+        お使いのブラウザーは少し古いため、正常に動作しない可能性があります。
+        可能な限り、最新のモダンブラウザーを使用してください。
     labels:
       username: ユーザー名
       password: パスワード
@@ -389,4 +401,3 @@ ja:
       chars: 文字
       times: 回
       types: 種類
-
