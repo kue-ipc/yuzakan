@@ -1,0 +1,48 @@
+// Bootstrap form App
+
+{text, type ClassProp} from hyperapp
+* as html from @hyperapp/html
+
+InputTypeAttribute ::=
+  | "button"
+  | "checkbox"
+  | "color"
+  | "date"
+  | "datetime-local"
+  | "email"
+  | "file"
+  | "hidden"
+  | "image"
+  | "month"
+  | "number"
+  | "password"
+  | "radio"
+  | "range"
+  | "reset"
+  | "search"
+  | "submit"
+  | "tel"
+  | "text"
+  | "time"
+  | "url"
+  | "week";
+
+// Views
+
+export input := ({
+  id?:: string
+  label?:: string
+  type:: InputTypeAttribute
+
+  // name:: string
+  // size?:: number = 24
+  // alt?:: string
+  class: klass?:: ClassProp
+  wrap_class?:: ClassProp
+}) ->
+  html.div {class: wrap_class}, [
+    html.label {class: "form-lable", for: id}, text label
+    html.input {id, class: "form-control", type}
+  ]
+
+
