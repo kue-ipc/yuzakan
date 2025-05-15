@@ -13,27 +13,28 @@ module API
           required(:title).filled(:string, max_size?: 255)
           optional(:domain).maybe(:domain, max_size?: 255)
 
-          optional(:session_timeout).filled(:integer, gteq?: 0,
-            lteq?: 24 * 60 * 60)
+          optional(:session_timeout)
+            .filled(:integer, gteq?: 0, lteq?: 24 * 60 * 60)
 
-          optional(:auth_failure_limit).filled(:integer, gteq?: 0,
-            lteq?: 100_000)
-          optional(:auth_failure_duratio).filled(:integer, gteq?: 0,
-            lteq?: 24 * 60 * 60)
+          optional(:auth_failure_limit)
+            .filled(:integer, gteq?: 0, lteq?: 100_000)
+          optional(:auth_failure_duratio)
+            .filled(:integer, gteq?: 0, lteq?: 24 * 60 * 60)
 
           optional(:password_min_size).filled(:integer, gteq?: 1, lteq?: 255)
           optional(:password_max_size).filled(:integer, gteq?: 1, lteq?: 255)
           optional(:password_min_types).filled(:integer, gteq?: 0, lteq?: 4)
-          optional(:password_prohibited_chars).maybe(:password, max_size?: 255)
+          optional(:password_prohibited_chars).value(:password, max_size?: 255)
 
           optional(:password_min_score).filled(:integer, gteq?: 0, lteq?: 4)
           optional(:password_extra_dict).maybe(array[:string], max_size?: 4096)
 
-          optional(:generate_password_size).filled(:integer, gteq?: 1,
-            lteq?: 255)
-          optional(:generate_password_type).filled(:string,
-            included_in?: Yuzakan::Operations::GeneratePassword::TYPES)
-          optional(:generate_password_chars).maybe(:password, max_size?: 255)
+          optional(:generate_password_size)
+            .filled(:integer, gteq?: 1, lteq?: 255)
+          optional(:generate_password_type)
+            .filled(:string,
+              included_in?: Yuzakan::Operations::GeneratePassword::TYPES)
+          optional(:generate_password_chars).value(:password, max_size?: 255)
 
           optional(:contact_name).maybe(:string, max_size?: 255)
           optional(:contact_email).maybe(:email, max_size?: 255)
@@ -63,17 +64,12 @@ module API
             t("messages.action.success", action: t("actions.update_config"))
           response[:config] = config
           response.render(show_view)
-          # rescue => e
-          #   logger.error e
-          #   flash[:errors] << e.message
-          #   flash[:error] = "エラーが発生しました。"
-          #   self.body = Admin::Views::Config::Edit.render(exposures)
         end
 
         private def convert_unique_chars(name, params)
           return params unless params[name]
 
-          params.merge({name => params[name].each_char.uniq.join})
+          params.merge({name => params[name].each_char.uniq.sort.join})
         end
       end
     end
