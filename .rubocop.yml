@@ -18,7 +18,7 @@ Layout/FirstHashElementIndentation:
 Layout/HashAlignment:
   EnforcedLastArgumentHashStyle: ignore_implicit
 Layout/LineLength:
-  Max: 80
+  Max: 120
   Exclude:
     - spec/**/*_spec.rb
     - spec_old/**/*_spec.rb

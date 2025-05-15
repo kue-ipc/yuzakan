@@ -16,7 +16,10 @@ Hanami 2 へアップデート中です。
 
 ## 既知の不具合
 
-* PostgreSQLでは、`psql -c '\list'`でデータベースの存在確認ができる環境でないと、`bundle exec hanami db drop` でデータベースが消えない。開発時にデータベースを再作成したい場合は、`dropdb yuzakan_development` と `dropdb yuzakan_test` で消すこと。
+* PostgreSQLでは、`psql -c '\list'`でデータベースの存在確認ができる環境でないと、
+    `bundle exec hanami db drop` でデータベースが消えない。
+    開発時にデータベースを再作成したい場合は、
+    `dropdb yuzakan_development` と `dropdb yuzakan_test` で消すこと。
 
 ## TODO
 
@@ -68,7 +71,8 @@ Hanami 2 へアップデート中です。
 * [ ] MariaDB
 * [ ] SQLite
 
-現在はPostgreSQLのみ対応しています。PostgreSQLに依存した方を使用しているため、他のDBのサポートについては未定です。
+現在はPostgreSQLのみ対応しています。
+PostgreSQLに依存した方を使用しているため、他のDBのサポートについては未定です。
 
 ### セッション管理key-valueデータベース
 
@@ -155,3 +159,8 @@ developmentではキャッシュを削除しておかないとseedが作られ�
 * CRYPT-DESは8文字までしか認識しない。
 * LMハッシュは14文字までしか認識しない。
 * PBKDF2は未実装。
+
+## 規約等
+
+* 80/120列ソフトマージンルール
+    <https://medium.com/@carlo.michaelis/the-80-120-column-soft-margin-rule-979526742197>
