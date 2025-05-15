@@ -17,9 +17,9 @@ ROM::SQL.migration do
       # BCrypt's limit size is 72, over chars are ignored.
       column :password_max_size, Integer, null: false, default: 64
       column :password_min_types, Integer, null: false, default: 1
-      column :password_min_score, Integer, null: false, default: 0
       column :password_prohibited_chars, String, null: false, default: ""
 
+      column :password_min_score, Integer, null: false, default: 0
       column :password_extra_dict, "text[]", null: false, default: []
 
       column :generate_password_size, Integer, null: false, default: 24

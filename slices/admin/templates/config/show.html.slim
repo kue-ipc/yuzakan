@@ -37,11 +37,12 @@ h3 = t("views.admin_config.sections.config.title")
     pattern: Yuzakan::Patterns[:domain].pattern)
 
   = bs_number_field(f, :session_timeout, layout: :horizontal, scope:,
-    min: 0, unit: t("ui.units.seconds"))
+    min: 0, max: 24 * 60 * 60, unit: t("ui.units.seconds"))
+
   = bs_number_field(f, :auth_failure_limit, layout: :horizontal, scope:,
-    min: 0)
+    min: 0, max: 100_000)
   = bs_number_field(f, :auth_failure_duration, layout: :horizontal, scope:,
-    min: 0, unit: t("ui.units.seconds"))
+    min: 0, max: 24 * 60 * 60, unit: t("ui.units.seconds"))
 
   = bs_number_field(f, :password_min_size, layout: :horizontal, scope:,
     min: 1, max: 255, unit: t("ui.units.chars"))
@@ -50,22 +51,21 @@ h3 = t("views.admin_config.sections.config.title")
     help: markdown(t("views.admin_config.helps.password_max_size")))
   = bs_number_field(f, :password_min_types, layout: :horizontal, scope:,
     min: 1, max: 4, unit: t("ui.units.types"))
+  = bs_text_field(f, :password_prohibited_chars, layout: :horizontal, scope:,
+    maxlength: 255, pattern: Yuzakan::Patterns[:password].pattern)
+
   = bs_select(f, :password_min_score, password_scores.values,
     layout: :horizontal, scope:, size: password_scores.size)
-
-  = bs_text_field(f, :password_prohibited_chars, layout: :horizontal, scope:,
-    maxlength: 95, pattern: Yuzakan::Patterns[:password].pattern)
   = bs_text_area(f, :password_extra_dict_listing, layout: :horizontal,
     label: t(:password_extra_dict, scope:), rows: 3,
     help: markdown(t("views.admin_config.helps.password_extra_dict")))
-
 
   = bs_number_field(f, :generate_password_size, layout: :horizontal, scope:,
     min: 1, max: 255, unit: t("ui.units.chars"))
   = bs_select(f, :generate_password_type, generate_password_types.values,
     layout: :horizontal, scope:, size: generate_password_types.size)
   = bs_text_field(f, :generate_password_chars, layout: :horizontal, scope:,
-    maxlength: 95, pattern: Yuzakan::Patterns[:password].pattern,
+    maxlength: 255, pattern: Yuzakan::Patterns[:password].pattern,
     help: markdown(t("views.admin_config.helps.generate_password_chars")))
 
   = bs_text_field(f, :contact_name, layout: :horizontal, scope:, maxlength: 255)

@@ -13,17 +13,7 @@ module Admin
 
         expose :generate_password_types, as: :list do
           List.new(scope: "enums.generate_password_types",
-            list: %w[
-              ascii
-              alphanumeric
-              letter
-              upper_letter
-              lower_letter
-              digit
-              upper_hex
-              lower_hex
-              custom
-            ])
+            list: Yuzakan::Operations::GeneratePassword::TYPES)
         end
       end
     end

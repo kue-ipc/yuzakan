@@ -5,6 +5,18 @@ require "securerandom"
 module Yuzakan
   module Operations
     class GeneratePassword < Yuzakan::Operation
+      TYPES = %w[
+        ascii
+        alphanumeric
+        letter
+        upper_letter
+        lower_letter
+        digit
+        upper_hex
+        lower_hex
+        custom
+      ].freeze
+
       include Deps[
         "repo.config_repo",
       ]

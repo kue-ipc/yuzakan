@@ -114,7 +114,6 @@ module API
             provider: provider.name)
           response.flash[:success] =
             t("messages.action.success", action: t("actions.login"))
-
           response.status = :created
           response[:auth] = {username:}
           response.render(show_view)
