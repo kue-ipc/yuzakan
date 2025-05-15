@@ -9,6 +9,6 @@ Factory.define(:auth_log) do |f|
   f.timestamps
 end
 
-Factory.define(auth_log_failure: :auth_log) do |f|
+Factory.define(failure_auth_log: :auth_log) do |f|
   f.result "failure"
 end

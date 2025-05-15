@@ -8,7 +8,7 @@ def init_feature_spec
 
   let(:config) { Factory[:config] }
   # trusted level 5 network 127.0.0.0/8
-  let(:network) { Factory[:network_ipv4_loopback] }
+  let(:network) { Factory[:ipv4_loopback_network] }
   before do
     config
     network
@@ -25,10 +25,10 @@ def init_request_spec
   let(:password) { Faker::Internet.password }
   let(:config) { Factory[:config] }
   # trusted level 5 network 127.0.0.0/8
-  let(:network) { Factory[:network_ipv4_loopback] }
+  let(:network) { Factory[:ipv4_loopback_network] }
   let(:group) { Factory[:group] }
   let(:provider) {
-    Factory[:provdire_mock, params: {
+    Factory[:mock_provdire, params: {
       username: user.name,
       password: password,
       display_name: user.display_name,
@@ -77,7 +77,7 @@ def init_action_spec
       action_log_repo: action_log_repo,
     }
   }
-  let(:network) { Factory.structs[:network_trusted] }
+  let(:network) { Factory.structs[:trusted_network] }
 
   let(:params) { {**action_params, **env} }
   let(:env) {

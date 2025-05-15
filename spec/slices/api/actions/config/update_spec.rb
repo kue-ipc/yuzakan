@@ -4,6 +4,13 @@ RSpec.describe API::Actions::Config::Update do
   init_action_spec
 
   let(:action_params) { {title: "ほげ"} }
+  let(:action_opts) {
+    allow(config_repo).to receive(:put).and_return(config)
+    {
+      config_repo: config_repo,
+    }
+  }
+  let(:updated_config) { create_struct(:config, :another_config)}
 
   it "is failure" do
     response = action.call(params)

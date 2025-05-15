@@ -11,7 +11,7 @@ Factory.define(:group) do |f|
   f.timestamps
 end
 
-Factory.define(group_nil: :group) do |f|
+Factory.define(group_with_nil: :group) do |f|
   f.display_name nil
   f.note nil
 end

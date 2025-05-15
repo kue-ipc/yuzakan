@@ -139,11 +139,11 @@ RSpec.describe API::Actions::Auth::Create do
     describe "too many access" do
       let(:auth_log_repo) {
         instance_double(Yuzakan::Repos::AuthLogRepo, create: auth_log, recent: [
-          Factory.structs[:auth_log_failure],
-          Factory.structs[:auth_log_failure],
-          Factory.structs[:auth_log_failure],
-          Factory.structs[:auth_log_failure],
-          Factory.structs[:auth_log_failure],
+          Factory.structs[:failure_auth_log],
+          Factory.structs[:failure_auth_log],
+          Factory.structs[:failure_auth_log],
+          Factory.structs[:failure_auth_log],
+          Factory.structs[:failure_auth_log],
         ])
       }
 

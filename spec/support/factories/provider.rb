@@ -18,12 +18,12 @@ Factory.define(:provider) do |f|
   f.timestamps
 end
 
-Factory.define(provdire_nil: :provider) do |f|
+Factory.define(provdire_with_nil: :provider) do |f|
   f.display_name nil
   f.description nil
 end
 
-Factory.define(provdire_mock: :provider) do |f|
+Factory.define(mock_provdire: :provider) do |f|
   f.name "mock"
   f.adapter "mock"
   f.readable true

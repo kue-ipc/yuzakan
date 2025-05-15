@@ -6,6 +6,7 @@ module API
       class Update < API::Action
         include Deps[
           "repos.config_repo",
+          show_view: "views.auth.show",
         ]
 
         params do
@@ -29,27 +30,26 @@ module API
 
         security_level 5
 
-        def handle(_request, _response)
-          flash[:errors] ||= []
-
-          @config = params[:config] || current_config
-
-          unless params.valid?
-            flash[:errors] << params.errors
-            flash[:error] = "設定に失敗しました。"
-            self.body = Admin::Views::Config::Edit.render(exposures)
-            return
+        def handle(request, response)
+          unless request.params.valid?
+            response.flash[:invalid] = request.params.errors
+            halt_json request, response, 422
           end
 
-          @config_repository.current_update(@config)
-
-          flash[:success] = "設定を更新しました。"
-          redirect_to routes.path(:edit_config)
-        rescue => e
-          logger.error e
-          flash[:errors] << e.message
-          flash[:error] = "エラーが発生しました。"
-          self.body = Admin::Views::Config::Edit.render(exposures)
+          config = config_repo.set(**request.params.to_h)
+          if config
+            flash[:success] = "設定を更新しました。"
+            response[:config] = config
+            response.render(show_view)
+          else
+            flash[:failure] = "設定を更新できませんでした。"
+            halt_json request, response, 422
+          end
+        # rescue => e
+        #   logger.error e
+        #   flash[:errors] << e.message
+        #   flash[:error] = "エラーが発生しました。"
+        #   self.body = Admin::Views::Config::Edit.render(exposures)
         end
       end
     end

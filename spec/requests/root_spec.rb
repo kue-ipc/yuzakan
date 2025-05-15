@@ -31,7 +31,7 @@ RSpec.describe "Root", :db, type: :request do
   end
 
   context "when level 0 network" do
-    let(:network) { Factory[:network_ipv4_loopback, clearance_level: 0] }
+    let(:network) { Factory[:ipv4_loopback_network, clearance_level: 0] }
 
     it "is forbidden" do
       get "/"
