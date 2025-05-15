@@ -14,10 +14,10 @@
     "@hyperapp/time": "^1.0.0",
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.6",
-    "bootstrap-icons": "^1.12.1",
+    "bootstrap-icons": "^1.13.1",
     "csv": "^6.3.11",
     "esbuild-sass-plugin": "^3.3.1",
-    "esbuild-yaml": "^2.1.0",
+    "esbuild-yaml": "^3.0.1",
     "file-saver": "^2.0.5",
     "firacode": "^6.2.0",
     "hanami-assets": "^2.2.2",
@@ -45,6 +45,6 @@
     "mocha": "^11.2.2",
     "stylelint": "^16.19.1",
     "stylelint-config-recommended-scss": "^15.0.0",
-    "typescript-eslint": "^8.32.0"
+    "typescript-eslint": "^8.32.1"
   }
 }
