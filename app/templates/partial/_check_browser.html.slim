@@ -15,19 +15,19 @@
     .alert.alert-danger role="alert"
       = t("ui.messages.legacy_browser")
       | (
-      = link_to t("views.about_browser.title"), routes.path(:about_browser)
+      = link_to t("views.about_browser.title"), app_routes.path(:about_browser)
       | )
   #obsolete-browser.d-none
     .alert.alert-danger role="alert"
       = t("ui.messages.obsolete_browser")
       | (
-      = link_to t("views.about_browser.title"), routes.path(:about_browser)
+      = link_to t("views.about_browser.title"), app_routes.path(:about_browser)
       | )
   #deprecated-browser.d-none
     .alert.alert-warning role="alert"
       = t("ui.messages.deprecated_browser")
       | (
-      = link_to t("views.about_browser.title"), routes.path(:about_browser)
+      = link_to t("views.about_browser.title"), app_routes.path(:about_browser)
       | )
   script nomodule="nomodule"
     |

@@ -36,7 +36,7 @@ apiDialog := new APIDialog {
   method: "POST"
   path: "/api/auth"
   responseMessageCodeList: [
-    [201, {status: "success", message: "login_succeeded", redirectTo: "/"}]
+    [201, {status: "success", message: "login_succeeded", redirectTo: "/", reloadTime: 10}]
     [400, {status: "failure", message: "login_failed"}]
     [422, {status: "failure", message: "login_failed"}]
   ]
