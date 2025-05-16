@@ -5,13 +5,7 @@ module Yuzakan
   module Views
     module Parts
       class Config < Yuzakan::Views::Part
-        def title
-          value.title
-        end
-
-        def title_tag
-          helpers.tag.title(title)
-        end
+        def title_tag = helpers.tag.title(title)
 
         def title_link_tag(url = context.routes.path(:root), **, &)
           if block_given?
