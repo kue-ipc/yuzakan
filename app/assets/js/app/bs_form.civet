@@ -25,24 +25,38 @@ InputTypeAttribute ::=
   | "text"
   | "time"
   | "url"
-  | "week";
+  | "week"
 
 // Views
 
 export input := ({
-  id?:: string
+  id:: string
   label?:: string
   type:: InputTypeAttribute
-
-  // name:: string
-  // size?:: number = 24
-  // alt?:: string
+  valid?:: string
+  invalid?:: string
+  help?:: string
   class: klass?:: ClassProp
   wrap_class?:: ClassProp
+  ...props:: any
 }) ->
-  html.div {class: wrap_class}, [
-    html.label {class: "form-lable", for: id}, text label
-    html.input {id, class: "form-control", type}
+  input_class := [
+    klass
+    "form-control"
+    {is-valid: valid, is-invalid: invalid}
+  ]
+  helpId := `${id}-help` if help
+
+  html.div {class: [wrap_class, "mb-3"]}, [
+    html.label {class: "form-label", for: id}, text label
+    html.input {
+      id, type, class: input_class
+      aria-describedby: helpId
+      ...props
+    }
+    html.div {class: "invalid-feedback"}, text valid if valid
+    html.div {class: "invalid-feedback"}, text invalid if invalid
+    html.div {id: helpId, class: "form-text"}, text help if help
   ]
 
 

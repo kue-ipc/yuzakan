@@ -10,6 +10,7 @@ APIDialog from ~/common/api_dialog.civet
 csrf from ~/common/csrf.civet
 {t} from ~/common/i18n.civet
 
+* as bsForm from ~/app/bs_form.civet
 bsIcon from ~/app/bs_icon.civet
 
 interface LoginInputState
@@ -136,42 +137,34 @@ loginTitle := (): VNode<LoginState> ->
 loginUsernameInput := (
   {value, error, disabled}: LoginInputState
 ): VNode<LoginState> ->
-  html.div {class: "mb-3"}, [
-    html.input {
-      id: LOGIN_USERNAME_ID
-      class: ["form-control", {is-invalid: !!error}]
-      type: "text"
-      autocomplete: "username"
-      required: true
-      placeholder: t("ui.labels.username")
-      disabled
-      value
-      oninput: UpdateUsername
-      onkeypress: EnterToSubmitOrNextInput
-    }
-    html.div {class: "invalid-feedback"},
-      text error
-  ]
+  bsForm.input {
+    id: LOGIN_USERNAME_ID
+    label: t("ui.labels.username")
+    type: "text"
+    autocomplete: "username"
+    required: true
+    disabled
+    value
+    oninput: UpdateUsername
+    onkeypress: EnterToSubmitOrNextInput
+    invalid: error
+  }
 
 loginPasswordInput := (
   {value, error, disabled}: LoginInputState
 ): VNode<LoginState> ->
-  html.div {class: "mb-3"}, [
-    html.input {
-      id: LOGIN_PASSWORD_ID
-      class: ["form-control", {is-invalid: !!error}]
-      type: "password"
-      autocomplete: "current-password"
-      required: true
-      placeholder: t("ui.labels.password")
-      disabled
-      value
-      oninput: UpdatePassword
-      onkeypress: EnterToSubmitOrNextInput
-    }
-    html.div {class: "invalid-feedback"},
-      text error
-  ]
+  bsForm.input {
+    id: LOGIN_PASSWORD_ID
+    label: t("ui.labels.password")
+    type: "password"
+    autocomplete: "current-password"
+    required: true
+    disabled
+    value
+    oninput: UpdatePassword
+    onkeypress: EnterToSubmitOrNextInput
+    invalid: error
+  }
 
 loginSubmitButton := ({submittable:: boolean}): VNode<LoginState> ->
   html.div {class: "d-grid gap-auto"},
