@@ -9,6 +9,7 @@
 csrf from ~/common/csrf.civet
 {t} from ~/common/i18n.civet
 
+* as bsForm from ~/app/bs_form.civet
 bsIcon from ~/app/bs_icon.civet
 {runAlertFlash} from ~/app/alert.civet
 {flashValidation, type Validation} from ~/common/flash.civet
@@ -120,46 +121,38 @@ loginTitle := (): VNode<LoginState> ->
 loginUsernameInput := (
   {value, disabled, valid, invalid}: LoginInputState
 ): VNode<LoginState> ->
-  html.div {class: "mb-3"}, [
-    html.input {
-      id: LOGIN_USERNAME_ID
-      class: ["form-control", {is-valid: valid?#, is-invalid: invalid?#}]
-      type: "text"
-      autocomplete: "username"
-      required: true
-      placeholder: t("ui.labels.username")
-      disabled
-      value
-      oninput: UpdateUsername
-      onkeypress: EnterToSubmitOrNextInput
-    }
-    html.div {class: "valid-feedback"},
-      text valid?.join("")
-    html.div {class: "invalid-feedback"},
-      text invalid?.join("")
-  ]
+  bsForm.input {
+    id: LOGIN_USERNAME_ID
+    label: t("ui.labels.username")
+    type: "text"
+    layout: "floating"
+    autocomplete: "username"
+    required: true
+    disabled
+    value
+    oninput: UpdateUsername
+    onkeypress: EnterToSubmitOrNextInput
+    valid
+    invalid
+  }
 
 loginPasswordInput := (
   {value, disabled, valid, invalid}: LoginInputState
 ): VNode<LoginState> ->
-  html.div {class: "mb-3"}, [
-    html.input {
-      id: LOGIN_PASSWORD_ID
-      class: ["form-control", {is-valid: valid?#, is-invalid: invalid?#}]
-      type: "password"
-      autocomplete: "current-password"
-      required: true
-      placeholder: t("ui.labels.password")
-      disabled
-      value
-      oninput: UpdatePassword
-      onkeypress: EnterToSubmitOrNextInput
-    }
-    html.div {class: "valid-feedback"},
-      text valid?.join("")
-    html.div {class: "invalid-feedback"},
-      text invalid?.join("")
-  ]
+ bsForm.input {
+    id: LOGIN_PASSWORD_ID
+    label: t("ui.labels.password")
+    type: "password"
+    layout: "floating"
+    autocomplete: "current-password"
+    required: true
+    disabled
+    value
+    oninput: UpdatePassword
+    onkeypress: EnterToSubmitOrNextInput
+    valid
+    invalid
+  }
 
 loginSubmitButton := (
   {auth:: AuthProps, disabled:: boolean}
@@ -185,14 +178,15 @@ init: Dispatchable<LoginState> := [
 ]
 
 view := (state: LoginState): VNode<LoginState> ->
-  html.form {onsubmit: PreventSubmit}, [
-    loginTitle()
-    loginUsernameInput({value: state.auth.username, state.disabled,
-      ...flashValidation(state.flash, "username")})
-    loginPasswordInput({value: state.auth.password, state.disabled,
-      ...flashValidation(state.flash, "password")})
-    loginSubmitButton({state.auth, disabled: submittable(state)})
-  ]
+  html.div {},
+    html.form {onsubmit: PreventSubmit}, [
+      loginTitle()
+      loginUsernameInput({value: state.auth.username, state.disabled,
+        ...flashValidation(state.flash, "username")})
+      loginPasswordInput({value: state.auth.password, state.disabled,
+        ...flashValidation(state.flash, "password")})
+      loginSubmitButton({state.auth, disabled: submittable(state)})
+    ]
 
 export default loginApp := ->
   if node? := document.getElementById(LOGIN_ID)

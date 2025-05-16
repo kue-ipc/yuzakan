@@ -33,12 +33,38 @@ InputTypeAttribute ::=
 
 // Views
 
-export input := <S>({layout:: InputLayout = "normal", ...props:: any}): VNode<S> ->
+export input := <S>({
+  layout:: InputLayout = "normal"
+  id:: string
+  valid?:: string | string[]
+  invalid?:: string | string[]
+  help?:: string | string[]
+  class: klass?:: ClassProp
+  ...props:: any
+}): VNode<S> ->
+  valid = valid.join("") if valid <? Array
+  invalid = invalid.join("") if invalid <? Array
+  help = help.join("") if invalid <? Array
+  inputClass := []
+    klass
+    "form-control"
+    {is-valid: valid, is-invalid: invalid}
+  helpId := `${id}-help` if help
+
+  inputProps := {}
+    id
+    inputClass
+    helpId
+    valid
+    invalid
+    help
+    ...props
+
   switch layout
     when "normal"
-      input_noraml props
+      input_noraml inputProps
     when "floating"
-      input_floating props
+      input_floating inputProps
     else
       throw new Error(`unkonwn layout: ${layout}`)
 
@@ -49,21 +75,15 @@ input_noraml := <S>({
   valid?:: string
   invalid?:: string
   help?:: string
-  class: klass?:: ClassProp
-  wrap_class?:: ClassProp
+  helpId?:: string
+  inputClass:: ClassProp
+  wrapClass?:: ClassProp
   ...props:: any
 }): VNode<S> ->
-  input_class := [
-    klass
-    "form-control"
-    {is-valid: valid, is-invalid: invalid}
-  ]
-  helpId := `${id}-help` if help
-
-  html.div {class: [wrap_class, "mb-3"]}, [
+  html.div {class: [wrapClass, "mb-3"]}, [
     html.label {class: "form-label", for: id}, text label
     html.input {
-      id, type, class: input_class
+      id, type, class: inputClass
       aria-describedby: helpId
       ...props
     }
@@ -79,21 +99,15 @@ input_floating := ({
   valid?:: string
   invalid?:: string
   help?:: string
-  class: klass?:: ClassProp
-  wrap_class?:: ClassProp
+  helpId?:: string
+  inputClass:: ClassProp
+  wrapClass?:: ClassProp
   ...props:: any
 }) ->
-  input_class := [
-    klass
-    "form-control"
-    {is-valid: valid, is-invalid: invalid}
-  ]
-  helpId := `${id}-help` if help
-
-  html.div {class: [wrap_class, "form-floating mb-3"]}, [
+  html.div {class: [wrapClass, "form-floating mb-3"]}, [
     html.input {
       ...props
-      id, type, class: input_class
+      id, type, class: inputClass
       aria-describedby: helpId
       placeholder: label
     }
