@@ -4,6 +4,7 @@ Factory.define(:config) do |f|
   f.title Faker::Team.name
   f.domain Faker::Internet.domain_name
   f.session_timeout 3600 # default
+  f.auth_failure_waiting 2 # default
   f.auth_failure_limit 5 # default
   f.auth_failure_duration 600 # default
   f.password_min_size 8 # default
@@ -32,6 +33,7 @@ Factory.define(another_config: :config) do |f|
   f.title Faker::Team.name
   f.domain Faker::Internet.domain_name
   f.session_timeout 7200
+  f.auth_failure_waiting 10
   f.auth_failure_limit 1
   f.auth_failure_duration 60
   f.password_min_size 1
@@ -47,4 +49,8 @@ Factory.define(another_config: :config) do |f|
   f.contact_email Faker::Internet.email
   f.contact_phone Faker::PhoneNumber.phone_number
   f.timestamps
+end
+
+Factory.define(no_waiting_auth_failure_config: :config) do |f|
+  f.auth_failure_waiting 0
 end

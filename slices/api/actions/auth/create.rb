@@ -71,6 +71,10 @@ module API
             response.flash[:error] = error
             halt_json request, response, 500
           in Failure[level, message]
+            # タイミング攻撃防止
+            waiting_time = response[:current_time] - Time.now +
+              response[:current_config].auth_failure_waiting
+            sleep waiting_time if waiting_time.positive?
             auth_log_repo.create(**auth_log_params, result: "failure")
             response.flash[level] = message
             halt_json request, response, 422

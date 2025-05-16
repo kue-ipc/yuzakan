@@ -40,6 +40,8 @@ h3 = t("views.admin_config.sections.config.title")
   = bs_number_field(f, :session_timeout, layout:, scope:,
     min: 0, max: 24 * 60 * 60, unit: t("ui.units.seconds"))
 
+  = bs_number_field(f, :auth_failure_waiting, layout:, scope:,
+    min: 0, max: 60 * 60)
   = bs_number_field(f, :auth_failure_limit, layout:, scope:,
     min: 0, max: 100_000)
   = bs_number_field(f, :auth_failure_duration, layout:, scope:,

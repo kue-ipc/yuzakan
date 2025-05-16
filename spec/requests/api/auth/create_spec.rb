@@ -55,9 +55,11 @@ RSpec.describe "POST /api/auth", :db, type: :request do
     end
   end
 
-  it "is unprocessable on logout with wrong username params" do
+  it "is unprocessable on logout with wrong username and wating" do
     with_session(:logout) do
+      start_time = Time.now
       post "/api/auth", {**params, username: "a"}.to_json, request_headers
+      end_time = Time.now
       expect(last_response).to be_unprocessable
       expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(last_response.body, symbolize_names: true)
@@ -66,34 +68,7 @@ RSpec.describe "POST /api/auth", :db, type: :request do
         location: "/api/auth",
         flash: {failure: "ユーザー名またはパスワードが違います。"},
       })
-    end
-  end
-
-  it "is unprocessable on logout with wrong password" do
-    with_session(:logout) do
-      post "/api/auth", {**params, password: "a"}.to_json, request_headers
-      expect(last_response).to be_unprocessable
-      expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(last_response.body, symbolize_names: true)
-      expect(json).to eq({
-        status: {code: 422, message: "Unprocessable Entity"},
-        location: "/api/auth",
-        flash: {failure: "ユーザー名またはパスワードが違います。"},
-      })
-    end
-  end
-
-  it "is unprocessable on logout with wrong username and password" do
-    with_session(:logout) do
-      post "/api/auth", {**params, username: "a", password: "a"}.to_json, request_headers
-      expect(last_response).to be_unprocessable
-      expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(last_response.body, symbolize_names: true)
-      expect(json).to eq({
-        status: {code: 422, message: "Unprocessable Entity"},
-        location: "/api/auth",
-        flash: {failure: "ユーザー名またはパスワードが違います。"},
-      })
+      expect(end_time - start_time).to be >= config.auth_failure_waiting
     end
   end
 
@@ -109,6 +84,52 @@ RSpec.describe "POST /api/auth", :db, type: :request do
         flash: {success: "ログインに成功しました。", warn: "セッションがタイムアウトしました。"},
         data: {username: user.name},
       })
+    end
+  end
+
+  context "when no waiting auth failure" do
+    let(:config) { Factory[:no_waiting_auth_failure_config] }
+
+    it "is unprocessable on logout with wrong username" do
+      with_session(:logout) do
+        post "/api/auth", {**params, username: "a"}.to_json, request_headers
+        expect(last_response).to be_unprocessable
+        expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+        json = JSON.parse(last_response.body, symbolize_names: true)
+        expect(json).to eq({
+          status: {code: 422, message: "Unprocessable Entity"},
+          location: "/api/auth",
+          flash: {failure: "ユーザー名またはパスワードが違います。"},
+        })
+      end
+    end
+
+    it "is unprocessable on logout with wrong password" do
+      with_session(:logout) do
+        post "/api/auth", {**params, password: "a"}.to_json, request_headers
+        expect(last_response).to be_unprocessable
+        expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+        json = JSON.parse(last_response.body, symbolize_names: true)
+        expect(json).to eq({
+          status: {code: 422, message: "Unprocessable Entity"},
+          location: "/api/auth",
+          flash: {failure: "ユーザー名またはパスワードが違います。"},
+        })
+      end
+    end
+
+    it "is unprocessable on logout with wrong username and password" do
+      with_session(:logout) do
+        post "/api/auth", {**params, username: "a", password: "a"}.to_json, request_headers
+        expect(last_response).to be_unprocessable
+        expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+        json = JSON.parse(last_response.body, symbolize_names: true)
+        expect(json).to eq({
+          status: {code: 422, message: "Unprocessable Entity"},
+          location: "/api/auth",
+          flash: {failure: "ユーザー名またはパスワードが違います。"},
+        })
+      end
     end
   end
 end

@@ -31,6 +31,7 @@ RSpec.describe API::Actions::Config::Update do
         title: updated_config.title,
         domain: updated_config.domain,
         session_timeout: updated_config.session_timeout,
+        auth_failure_waiting: updated_config.auth_failure_waiting,
         auth_failure_limit: updated_config.auth_failure_limit,
         auth_failure_duration: updated_config.auth_failure_duration,
         password_min_size: updated_config.password_min_size,

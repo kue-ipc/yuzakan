@@ -10,6 +10,7 @@ ROM::SQL.migration do
 
       column :session_timeout, Integer, null: false, default: 3600
 
+      column :auth_failure_waiting, Integer, null: false, default: 2
       column :auth_failure_limit, Integer, null: false, default: 5
       column :auth_failure_duration, Integer, null: false, default: 600
 

@@ -154,6 +154,7 @@ ja:
       title: サイト名
       domain: ドメイン名
       session_timeout: セッションタイムアウト
+      auth_failure_waiting: ログイン失敗時の待機時間
       auth_failure_limit: ログイン失敗の限界回数
       auth_failure_duration: ログイン失敗の保持期間
       password_min_size: パスワードの最短サイズ

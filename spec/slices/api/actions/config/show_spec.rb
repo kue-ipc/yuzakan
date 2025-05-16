@@ -13,6 +13,7 @@ RSpec.describe API::Actions::Config::Show do
       title: config.title,
       domain: config.domain,
       session_timeout: config.session_timeout,
+      auth_failure_waiting: config.auth_failure_waiting,
       auth_failure_limit: config.auth_failure_limit,
       auth_failure_duration: config.auth_failure_duration,
       password_min_size: config.password_min_size,

@@ -176,8 +176,8 @@ export default class APIDialog
   // modal control
 
   #modalMessage(state: ModalState): void
-    // hack modal config
-    // https://github.com/twbs/bootstrap/issues/35664
+    // HACK: sett private properties of modal config
+    //     <https://github.com/twbs/bootstrap/issues/35664>
     if state.closable
       (#modal as any)._config.backdrop = true
       (#modal as any)._config.keyboard = true
@@ -219,8 +219,7 @@ export default class APIDialog
         flash: {error: t("ui.messages.fetch_error")}
       }
 
-    responseMessage := #responseMessageCodeMap.get(response.status.code) ??
-      APIDialog.UNKNOWN_RESPONSE_MESSAGE
+    responseMessage := #responseMessageCodeMap.get(response.status.code) ?? APIDialog.UNKNOWN_RESPONSE_MESSAGE
 
     messages := [
       responseMessage.message
@@ -230,8 +229,7 @@ export default class APIDialog
     {closable, link, reload} :=
       if responseMessage?.redirectTo?
         if responseMessage.reloadTime > 0
-          messages.push(t("ui.messages.reload_after",
-            {sec: responseMessage.reloadTime.toString()}))
+          messages.push(t("ui.messages.reload_after", {sec: responseMessage.reloadTime.toString()}))
         else
           messages.push(t("ui.messages.reload_immediately"))
         {closable: false, link: responseMessage.redirectTo, reload: false}

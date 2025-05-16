@@ -182,6 +182,7 @@ CREATE TABLE public.configs (
     title text NOT NULL,
     domain text,
     session_timeout integer DEFAULT 3600 NOT NULL,
+    auth_failure_waiting integer DEFAULT 2 NOT NULL,
     auth_failure_limit integer DEFAULT 5 NOT NULL,
     auth_failure_duration integer DEFAULT 600 NOT NULL,
     password_min_size integer DEFAULT 8 NOT NULL,
