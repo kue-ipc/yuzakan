@@ -36,7 +36,7 @@ export default class Status
       // status
       {name: "waiting", color: "secondary", icon: "hourglass"}
       {name: "starting", color: "body", icon: "hourglass-top"}
-      {name: "running", color: "primary", icon: "hourglass-slpit"}
+      {name: "running", color: "primary", spinner: "grow"}
       {name: "stopping", color: "body", icon: "hourglass-bottom"}
       {name: "stopped", color: "secondary", icon: "stop-fill"}
       {name: "succeeded", color: "success", icon: "check-circle-fill"}
