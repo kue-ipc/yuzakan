@@ -1,7 +1,11 @@
 // Bootstrap form App
 
-{text, type ClassProp} from hyperapp
+{text, type ClassProp, type VNode} from hyperapp
 * as html from @hyperapp/html
+
+InputLayout ::=
+  | "normal"
+  | "floating"
 
 InputTypeAttribute ::=
   | "button"
@@ -29,9 +33,18 @@ InputTypeAttribute ::=
 
 // Views
 
-export input := ({
+export input := <S>({layout:: InputLayout = "normal", ...props:: any}): VNode<S> ->
+  switch layout
+    when "normal"
+      input_noraml props
+    when "floating"
+      input_floating props
+    else
+      throw new Error(`unkonwn layout: ${layout}`)
+
+input_noraml := <S>({
   id:: string
-  label?:: string
+  label:: string
   type:: InputTypeAttribute
   valid?:: string
   invalid?:: string
@@ -39,7 +52,7 @@ export input := ({
   class: klass?:: ClassProp
   wrap_class?:: ClassProp
   ...props:: any
-}) ->
+}): VNode<S> ->
   input_class := [
     klass
     "form-control"
@@ -59,4 +72,34 @@ export input := ({
     html.div {id: helpId, class: "form-text"}, text help if help
   ]
 
+input_floating := ({
+  id:: string
+  label:: string
+  type:: InputTypeAttribute
+  valid?:: string
+  invalid?:: string
+  help?:: string
+  class: klass?:: ClassProp
+  wrap_class?:: ClassProp
+  ...props:: any
+}) ->
+  input_class := [
+    klass
+    "form-control"
+    {is-valid: valid, is-invalid: invalid}
+  ]
+  helpId := `${id}-help` if help
+
+  html.div {class: [wrap_class, "form-floating mb-3"]}, [
+    html.input {
+      ...props
+      id, type, class: input_class
+      aria-describedby: helpId
+      placeholder: label
+    }
+    html.label {for: id}, text label
+    html.div {class: "invalid-feedback"}, text valid if valid
+    html.div {class: "invalid-feedback"}, text invalid if invalid
+    html.div {id: helpId, class: "form-text"}, text help if help
+  ]
 
