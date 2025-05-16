@@ -14,7 +14,7 @@ h3 = t("views.admin_config.sections.import_export.title")
       .input-group
         = f.file_field(:yaml, class: "form-control",
             accept: ".yml,.yaml,text/yaml")
-        = f.submit(t("actions.export_config"), class: "btn btn-danger")
+        = f.submit(t("actions.import_config"), class: "btn btn-danger")
 
 .row.mb-2
   .col

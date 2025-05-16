@@ -262,7 +262,7 @@ ja:
   actions:
     login: ログイン
     logout: ログアウト
-    improt_config: 全設定のインポート
+    import_config: 全設定のインポート
     export_config: 全設定のエクスポート
     update_config: 設定の更新
   views:
