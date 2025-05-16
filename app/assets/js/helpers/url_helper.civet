@@ -1,14 +1,14 @@
 {basename} from ./file_helper.civet
 
-getBaseURLPath := (): string ->
+export getCurrentURLPath := (): string ->
   globalThis.location.href
 
-getBaseURL := (): URL ->
+export getCurrentURL := (): URL ->
   new URL(globalThis.location.href)
 
 export normalizeURL := (url: URL | string, base?: URL | string): Readonly<URL> ->
   if url <? "string"
-    Object.freeze(new URL(url, base ?? getBaseURLPath()))
+    Object.freeze(new URL(url, base ?? getCurrentURLPath()))
   else if Object.isFrozen(url)
     url
   else
@@ -20,5 +20,5 @@ export getBasenameFromURL := (url: URL | string, suffix: string =""): string ->
 export getQueryParamsFromURL := (url: URL | string): Map string, string ->
   new Map(new URLSearchParams(normalizeURL(url).search))
 
-export relativePath := (url: URL, base: URL = getBaseURL()): string ->
+export relativePath := (url: URL, base: URL = getCurrentURL()): string ->
   url.href.replace(base.origin, "")

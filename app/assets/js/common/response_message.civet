@@ -1,6 +1,6 @@
 Status from ./status.civet
 {t} from ./i18n.civet
-{normalizeURL} from ~/helpers/url_helper.civet
+{getCurrentURL, normalizeURL} from ~/helpers/url_helper.civet
 
 export default class ResponseMessage
   readonly #status: Status
@@ -20,7 +20,12 @@ export default class ResponseMessage
   })
     status = Status.get(status) if status <? "string"
     #status = status
-    redirectTo = normalizeURL(redirectTo) if redirectTo <? "string"
+    if redirectTo <? "string"
+      if redirectTo is "^"
+        // current page URL
+        redirectTo = getCurrentURL()
+      else
+        redirectTo = normalizeURL(redirectTo)
     #redirectTo = redirectTo
 
   get #status
