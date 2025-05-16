@@ -4,30 +4,27 @@ h2 = t("views.about.title")
   h3 = current_config.title
 
 - if current_config&.contact_name&.size&.positive?
-  dl.row.mb-2
-    dt class=col_name = t("attributse.config.contact_name")
-    dd class=col_value
-      = current_config.contact_name
+  = bs.horizontal_dl(class: mb-2) do
+    = bs.horizontal_dt t("attributse.config.contact_name")
+    = bs.horizontal_dd current_config.contact_name
     - if current_config.contact_email&.size&.positive?
-      dt class=col_name = t("attributse.config.contact_email")
-      dd class=col_value
-        = link_to current_config.contact_email,
-          "mailto:#{current_config.contact_email}"
+      = bs.horizontal_dt t("attributse.config.contact_email")
+      = bs.horizontal_dd do
+        = link_to current_config.contact_email, "mailto:#{current_config.contact_email}"
     - if current_config.contact_phone&.size&.positive?
-      dt class=col_name = t("attributse.config.contact_phone")
-      dd class=col_value
-        = current_config.contact_phone
+      = bs.horizontal_dt t("attributse.config.contact_phone")
+      = bs.horizontal_dd  current_config.contact_phone
   p = t("views.about.concat_description")
 
 hr
 
 h3 = t("views.about.application.title")
 
-dl.row
-  dt class=col_name = t("views.about.application.name")
-  dd class=col_value = Yuzakan::Version.name
-  dt class=col_name = t("views.about.application.version")
-  dd class=col_value = Yuzakan::Version.version
+= bs.horizontal_dl
+  = bs.horizontal_dt t("views.about.application.name")
+  = bs.horizontal_dd Yuzakan::Version.name
+  = bs.horizontal_dt t("views.about.application.version")
+  = bs.horizontal_dd Yuzakan::Version.version
 
 p = t("views.about.application.description")
 

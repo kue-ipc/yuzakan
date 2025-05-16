@@ -1,9 +1,8 @@
 header#header
   nav.navbar.navbar-expand-sm.bg-body-tertiary
     .container-fluid
-      = bs_navbar_toggler("navbar-content")
-      = current_config&.title_link_tag(class: "navbar-brand") || \
-        bs_navbar_brand("Yuzakan")
+      = bs.navbar_toggler_button("navbar-content", label: t("ui.buttons.toggle_navigation"))
+      = current_config&.title_link_tag(class: "navbar-brand") || bs.navbar_brand_link("Yuzakan")
       #navbar-content.collapse.navbar-collapse
         = render "partial/header_menu"
         = render "partial/header_nav"

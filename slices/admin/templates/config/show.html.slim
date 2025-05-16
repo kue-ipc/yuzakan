@@ -33,48 +33,48 @@ h3 = t("views.admin_config.sections.config.title")
   - scope = "attributes.config"
   - layout = :horizontal
 
-  = bs_text_field(f, :title, layout:, scope:, maxlength: 255)
-  = bs_text_field(f, :domain, layout:, scope:, maxlength: 255,
+  = bs.text_field(f, :title, layout:, label: t(:title, scope:), maxlength: 255)
+  = bs.text_field(f, :domain, layout:, label: t(:domain, scope:), maxlength: 255,
     pattern: Yuzakan::Patterns[:domain].pattern)
 
-  = bs_number_field(f, :session_timeout, layout:, scope:,
+  = bs.number_field(f, :session_timeout, layout:, label: t(:session_timeout, scope:),
     min: 0, max: 24 * 60 * 60, unit: t("ui.units.seconds"))
 
-  = bs_number_field(f, :auth_failure_waiting, layout:, scope:,
+  = bs.number_field(f, :auth_failure_waiting, layout:, label: t(:auth_failure_waiting, scope:), 
     min: 0, max: 60 * 60)
-  = bs_number_field(f, :auth_failure_limit, layout:, scope:,
+  = bs.number_field(f, :auth_failure_limit, layout:, label: t(:auth_failure_limit, scope:), 
     min: 0, max: 100_000)
-  = bs_number_field(f, :auth_failure_duration, layout:, scope:,
+  = bs.number_field(f, :auth_failure_duration, layout:, label: t(:auth_failure_duration, scope:), 
     min: 0, max: 24 * 60 * 60, unit: t("ui.units.seconds"))
 
-  = bs_number_field(f, :password_min_size, layout:, scope:,
+  = bs.number_field(f, :password_min_size, layout:, label: t(:password_min_size, scope:), 
     min: 1, max: 255, unit: t("ui.units.chars"))
-  = bs_number_field(f, :password_max_size, layout:, scope:,
+  = bs.number_field(f, :password_max_size, layout:, label: t(:password_max_size, scope:), 
     min: 1, max: 255, unit: t("ui.units.chars"),
     help: markdown(t("views.admin_config.helps.password_max_size")))
-  = bs_number_field(f, :password_min_types, layout:, scope:,
+  = bs.number_field(f, :password_min_types, layout:, label: t(:password_min_types, scope:), 
     min: 1, max: 4, unit: t("ui.units.types"))
-  = bs_text_field(f, :password_prohibited_chars, layout:, scope:,
+  = bs.text_field(f, :password_prohibited_chars, layout:, label: t(:password_prohibited_chars, scope:), 
     maxlength: 255, pattern: Yuzakan::Patterns[:password].pattern)
 
-  = bs_select(f, :password_min_score, password_scores.values,
-    layout: :horizontal, scope:, size: password_scores.size)
-  = bs_text_area(f, :password_extra_dict_listing, layout:,
+  = bs.select(f, :password_min_score, password_scores.values,
+    layout: :horizontal, label: t(:password_min_score, scope:),  size: password_scores.size)
+  = bs.text_area(f, :password_extra_dict_listing, layout:,
     label: t(:password_extra_dict, scope:), rows: 3,
     help: markdown(t("views.admin_config.helps.password_extra_dict")))
 
-  = bs_number_field(f, :generate_password_size, layout:, scope:,
+  = bs.number_field(f, :generate_password_size, layout:, label: t(:generate_password_size, scope:), 
     min: 1, max: 255, unit: t("ui.units.chars"))
-  = bs_select(f, :generate_password_type, generate_password_types.values,
-    layout: :horizontal, scope:, size: generate_password_types.size)
-  = bs_text_field(f, :generate_password_chars, layout:, scope:,
+  = bs.select(f, :generate_password_type, generate_password_types.values,
+    layout: :horizontal, label: t(:generate_password_type, scope:),  size: generate_password_types.size)
+  = bs.text_field(f, :generate_password_chars, layout:, label: t(:generate_password_chars, scope:), 
     maxlength: 255, pattern: Yuzakan::Patterns[:password].pattern,
     help: markdown(t("views.admin_config.helps.generate_password_chars")))
 
-  = bs_text_field(f, :contact_name, layout:, scope:, maxlength: 255)
-  = bs_text_field(f, :contact_email, layout:, scope:,
+  = bs.text_field(f, :contact_name, layout:, label: t(:contact_name, scope:),  maxlength: 255)
+  = bs.text_field(f, :contact_email, layout:, label: t(:contact_email, scope:), 
     maxlength: 255, pattern: Yuzakan::Patterns[:email].pattern)
-  = bs_text_field(f, :contact_phone, layout:, scope:,
+  = bs.text_field(f, :contact_phone, layout:, label: t(:contact_phone, scope:), 
     maxlength: 255)
 
   = f.submit "変更", class: "btn btn-primary"
