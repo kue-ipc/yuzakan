@@ -6,16 +6,14 @@
 
 export type ResponseData
 
-export interface ResponseState extends Partial<Pick<ResponseData,
-    "location" | "csrf" | "flash" | "pagination">> 
+export interface ResponseState < Partial<Pick<ResponseData, "location" | "csrf" | "flash" | "pagination">> 
   id?: string
 
-export interface ActionFallback<S extends ResponseState, P>
+export interface ActionFallback<S < ResponseState, P>
   action?: Action<S, P>
   fallback?: Action<S, ResponseData>
 
-export interface ActionFallbackEffects<S extends ResponseState, P>
-    extends ActionFallback<S, P>
+export interface ActionFallbackEffects<S < ResponseState, P> < ActionFallback<S, P>
   effects?: Effect<S>[]
 
 export ActionRequestParams ::= Omit<RequestParams, "data">
@@ -24,7 +22,7 @@ export ActionOtherParams ::= Omit<ActionRequestParams, "method">
 
 // create Actions
 
-export createActionFallback := <S extends ResponseState, P>(
+export createActionFallback := <S < ResponseState, P>(
   {action, fallback, effects}: ActionFallbackEffects<S, P>
 ): ActionFallback<S, P> ->
   if effects? and effects# > 0
@@ -40,7 +38,7 @@ export createActionFallback := <S extends ResponseState, P>(
     {action, fallback}
 
 
-createAction := <S extends ResponseState, P, Q>(path: string,
+createAction := <S < ResponseState, P, Q>(path: string,
   actionFallback: ActionFallback<S, P>, params: ActionRequestParams = {}
 ): Action<S, Q> ->
   responseAction := createResponseAction(path, actionFallback)
@@ -48,7 +46,7 @@ createAction := <S extends ResponseState, P, Q>(path: string,
 
 // データを受け取るアクションからレスポンスに対応した新しいアクションを作成する。
 // エラーでfallbackを実行する。fallbackがなければ、情報のみ反映。
-createResponseAction := <S extends ResponseState, P>(path: string,
+createResponseAction := <S < ResponseState, P>(path: string,
   {action, fallback}: ActionFallback<S, P>
 ): Action<S, ResponseData> ->
   action ?= (state, _props) -> state
@@ -85,7 +83,7 @@ createResponseAction := <S extends ResponseState, P>(path: string,
       [newState, [runFallback, response]]
 
 // レスポンスを受け取るアクションからリクエストを行う新しいアクションを作成する。
-createRequestAction := <S extends ResponseState, P>(path: string,
+createRequestAction := <S < ResponseState, P>(path: string,
   action: Action<S, ResponseData>, params: ActionRequestParams = {}
 ):Action<S, P> ->
   (state: S, props: P) ->
@@ -118,7 +116,7 @@ createRequestAction := <S extends ResponseState, P>(path: string,
 // create Effecter
 
 // レスポンスを直接渡すエフェクターを作成する。
-export createRunResponse :=  <S extends ResponseState, P>(url: URL | string,
+export createRunResponse :=  <S < ResponseState, P>(url: URL | string,
   action: Action<S, ResponseData>, params: ActionRequestParams
 ): Effecter<S, P> ->
   (dispatch, data: P) ->
@@ -127,14 +125,14 @@ export createRunResponse :=  <S extends ResponseState, P>(url: URL | string,
 
 // RESTful Resources
 // GET /resources
-export createIndex := <S extends ResponseState, P, Q>(name: string,
+export createIndex := <S < ResponseState, P, Q>(name: string,
   actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, Q> ->
   path := `/api/${name}`
   createAction<S, P, Q>(path, actionFallback, {...params, method: "GET"})
 
 // GET /resources/:id
-export createShowWithId := <S extends ResponseState, P>(name: string,
+export createShowWithId := <S < ResponseState, P>(name: string,
   actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, undefined> ->
   path := `/api/${name}/:id`
@@ -142,7 +140,7 @@ export createShowWithId := <S extends ResponseState, P>(name: string,
     {...params, method: "GET"})
 
 // POST /resources
-export createCreateWithId := <S extends ResponseState, P>(name: string,
+export createCreateWithId := <S < ResponseState, P>(name: string,
   actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, P> ->
   path := `/api/${name}/:id`
@@ -151,14 +149,14 @@ export createCreateWithId := <S extends ResponseState, P>(name: string,
   createRequestAction(requestPath, responseAction, {...params, method: "POST"})
 
 // PATCH /resources/:id
-export createRunUpdateWithId := <S extends ResponseState, P>(name: string,
+export createRunUpdateWithId := <S < ResponseState, P>(name: string,
   actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, P> ->
   path := `/api/${name}/:id`
   createAction<S, P, P>(path, actionFallback, {...params, method: "PATCH"})
 
 // DELETE /resources/:id
-export createRunDestroyWithId := <S extends ResponseState, P>(name: string,
+export createRunDestroyWithId := <S < ResponseState, P>(name: string,
   actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, P> ->
   path := `/api/${name}/:id`
@@ -166,7 +164,7 @@ export createRunDestroyWithId := <S extends ResponseState, P>(name: string,
 
 // RESTful Resource
 // GET /resource
-export createShow := <S extends ResponseState, P>(name: string,
+export createShow := <S < ResponseState, P>(name: string,
   actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, undefined> ->
   path := `/api/${name}`
@@ -174,21 +172,21 @@ export createShow := <S extends ResponseState, P>(name: string,
     {...params, method: "GET"})
 
 // POST /resource
-export createCreate := <S extends ResponseState, P>(name: string,
+export createCreate := <S < ResponseState, P>(name: string,
   actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, P> ->
   path := `/api/${name}`
   createAction<S, P, P>(path, actionFallback, {...params, method: "POST"})
 
 // PATCH /resource
-export createUpdate := <S extends ResponseState, P>(name: string,
+export createUpdate := <S < ResponseState, P>(name: string,
   actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, P> ->
   path := `/api/${name}`
   createAction<S, P, P>(path, actionFallback, {...params, method: "PATCH"})
 
 // DELETE /resource
-export createDestroy := <S extends ResponseState, P>(name: string,
+export createDestroy := <S < ResponseState, P>(name: string,
   actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, undefined> ->
   path := `/api/${name}`

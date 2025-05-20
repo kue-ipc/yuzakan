@@ -17,7 +17,7 @@ bsIcon from ~/app/bs_icon.civet
 {type ResponseData} from ~api/fetch_api.civet
 {createCreateAuth, type AuthProps, type AuthState} from ~api/actions/auth.civet
 
-interface LoginState extends AuthState
+interface LoginState < AuthState
   disabled: boolean
 
 interface LoginInputState < Validation

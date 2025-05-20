@@ -10,17 +10,17 @@ export interface AuthProps
   username: string
   password: string
 
-export interface AuthState extends ResponseState
+export interface AuthState < ResponseState
   auth: AuthProps
 
 // Actions
 
-SetAuth := <S extends AuthState>(state: S, auth: AuthProps) ->
+SetAuth := <S < AuthState>(state: S, auth: AuthProps) ->
   {...state, auth}
 
 // create Actions
 
-createActionFallbackSetAuth := <S extends AuthState>(
+createActionFallbackSetAuth := <S < AuthState>(
   actionFallbackEffects: ActionFallbackEffects<S, AuthProps> = {}
 ): ActionFallback<S, AuthProps> ->
   createActionFallback({action: SetAuth, ...actionFallbackEffects})
@@ -29,21 +29,21 @@ createActionFallbackSetAuth := <S extends AuthState>(
 
 // create Actions
 
-export createShowAuth := <S extends AuthState>(
+export createShowAuth := <S < AuthState>(
   actionFallbackEffects: ActionFallbackEffects<S, AuthProps> = {}
   params: ActionOtherParams = {}
 ): Action<S, undefined> ->
   actionFallback := createActionFallbackSetAuth(actionFallbackEffects)
   createShow("auth", actionFallback, params)
 
-export createCreateAuth := <S extends AuthState>(
+export createCreateAuth := <S < AuthState>(
   actionFallbackEffects: ActionFallbackEffects<S, AuthProps> = {}
   params: ActionOtherParams = {}
 ): Action<S, AuthProps> ->
   actionFallback := createActionFallbackSetAuth(actionFallbackEffects)
   createCreate("auth", actionFallback, params)
 
-export createDestroyAuth := <S extends AuthState>(
+export createDestroyAuth := <S < AuthState>(
   actionFallbackEffects: ActionFallbackEffects<S, AuthProps> = {}
   params: ActionOtherParams = {}
 ): Action<S, undefined> ->
