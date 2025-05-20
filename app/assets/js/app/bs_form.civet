@@ -3,10 +3,6 @@
 {text, type ClassProp, type VNode, type CustomPayloads, type Props} from hyperapp
 * as html from @hyperapp/html
 
-InputLayout ::=
-  | "normal"
-  | "floating"
-
 InputTypeAttribute ::=
   | "button"
   | "checkbox"
@@ -35,8 +31,6 @@ interface InputCustomProps
   id: string
   label: string
   type: InputTypeAttribute
-  layout?: InputLayout
-  wrapClass?: ClassProp
 
 interface InputHelpProps
   valid?: string | string[]
@@ -44,6 +38,28 @@ interface InputHelpProps
   help?: string | string[]
 
 InputProps<S> ::= InputCustomProps & InputHelpProps & CustomPayloads<S, {}> & Props<S>
+
+// constants
+
+LABEL_COL_CLASS := """
+  col-sm-6
+  col-md-4
+  col-lg-3
+  col-xl-2
+"""
+
+CONTROL_COL_CLASS := """
+  col-sm-6
+  col-md-8
+  col-lg-6
+  col-xl-5
+"""
+
+MESSAGE_COL_CLASS := """
+  offset-md-4 col-md-8
+  offset-lg-0 col-lg-3
+  col-xl-5
+"""
 
 // fuctions
 
@@ -59,73 +75,89 @@ msgPresent := (msg?: string | string[]): boolean ->
 msgTag := <S>(msg: string? | string[], props: any = {}): VNode<S>? ->
   html.div props, html.text msgJoin(msg) if msgPresent(msg)
 
-inputHelpTags := <S>({id, valid, invalid, help}: {id: string} & InputHelpProps): VNode<S>[] ->
+inputHelpTags := <S>({id, class: klass, valid, invalid, help}: {id: string, class?: ClassProp} & InputHelpProps): VNode<S>[] ->
   [
-    msgTag<S>(valid, {id: `${id}-valid`, class: "valid-feedback"})
-    msgTag<S>(invalid, {id: `${id}-invalid`, class: "valid-feedback"})
-    msgTag<S>(help, {id: `${id}-help`, class: "form-text"})
+    msgTag<S>(valid, {id: `${id}-valid`, class: ["valid-feedback", klass]})
+    msgTag<S>(invalid, {id: `${id}-invalid`, class: ["invalid-feedback", klass]})
+    msgTag<S>(help, {id: `${id}-help`, class: ["form-text", klass]})
   ].filter((x) -> x?)
+
+inputValidationClass := ({valid, invalid}: Pick<InputHelpProps, "valid" | "invalid">): ClassProp ->
+  {is-valid: msgPresent(valid), is-invalid: msgPresent(invalid)}
 
 // Views
 
-export input := <S>({
-  layout = "normal"
-  valid
-  invalid
-  class: klass
-  ...props
-}: InputProps<S>): VNode<S> ->
-  inputClass := []
-    klass
-    "form-control"
-    {is-valid: msgPresent(valid), is-invalid: msgPresent(invalid)}
-
-  inputProps := {}
-    class: inputClass
-    valid
-    invalid
-    ...props
-
-  switch layout
-    when "normal"
-      input_noraml inputProps
-    when "floating"
-      input_floating inputProps
-    else
-      throw new Error(`unkonwn layout: ${layout}`)
-
-input_noraml := <S>({
+export inputNormal := <S>({
   id
   label
-  layout
   valid
   invalid
   help
-  wrapClass
+  class: klass
   ...props
 }: InputProps<S>): VNode<S> ->
-  html.div {class: [wrapClass, "mb-3"]}, []
+  html.div {class: [klass, "mb-3"]}, []
     html.label {class: "form-label", for: id}, text label
     html.input {}
       id
+      class: ["form-control", inputValidationClass({valid, invalid})]
       aria-describedby:  `${id}-help` if msgPresent(help)
       ...props
     ...inputHelpTags({id, valid, invalid, help})
 
-input_floating := <S>({
+export inputFloating := <S>({
   id
   label
   valid
   invalid
   help
-  wrapClass
+  class: klass
   ...props
 }: InputProps<S>) ->
-  html.div {class: [wrapClass, "form-floating mb-3"]}, []
+  html.div {class: [klass, "form-floating mb-3"]}, []
     html.input {}
       id
-      aria-describedby:  `${id}-help` if msgPresent(help)
+      class: ["form-control", inputValidationClass({valid, invalid})]
       placeholder: label
+      aria-describedby:  `${id}-help` if msgPresent(help)
       ...props
     html.label {for: id}, text label
+    ...inputHelpTags({id, valid, invalid, help})
+
+export inputHorizontal := <S>({
+  id
+  label
+  valid
+  invalid
+  help
+  class: klass
+  ...props
+}: InputProps<S>): VNode<S> ->
+  html.div {class: [klass, "row mb-3"]}, []
+    html.label {class: ["col-form-label", LABEL_COL_CLASS], for: id}, text label
+    html.div {class: CONTROL_COL_CLASS}, []
+      html.input {}
+        id
+        class: ["form-control", inputValidationClass({valid, invalid})]
+        aria-describedby:  `${id}-help` if msgPresent(help)
+        ...props
+      ...inputHelpTags({id, class: MESSAGE_COL_CLASS, valid, invalid, help})
+
+export inputInline := <S>({
+  id
+  label
+  valid
+  invalid
+  help
+  class: klass
+  ...props
+}: InputProps<S>): VNode<S> ->
+  html.div {class: klass}, []
+    html.label {class: "visually-hidden", for: id}, text label
+    html.input {}
+      id
+      class: ["form-control", inputValidationClass({valid, invalid})]
+      placeholder: label
+      aria-describedby:  `${id}-help` if msgPresent(help)
+      ...props
     ...inputHelpTags({id, valid, invalid, help})

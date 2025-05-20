@@ -7,29 +7,26 @@ module Yuzakan
       module BsHelper
         class BsBuilder
           module Form
-            LABEL_COL_CLASS =
-              %w[
-                col-sm-6
-                col-md-4
-                col-lg-3
-                col-xl-2
-              ].freeze
+            LABEL_COL_CLASS = %w[
+              col-sm-6
+              col-md-4
+              col-lg-3
+              col-xl-2
+            ].freeze
 
-            CONTROL_COL_CLASS =
-              %w[
-                col-sm-6
-                col-md-8
-                col-lg-6
-                col-xl-5
-              ].freeze
+            CONTROL_COL_CLASS = %w[
+              col-sm-6
+              col-md-8
+              col-lg-6
+              col-xl-5
+            ].freeze
 
-            HELP_COL_CLASS =
-              %w[
-                col-sm-12
-                offset-md-4 col-md-8
-                offset-lg-0 col-lg-3
-                col-xl-5
-              ].freeze
+            HELP_COL_CLASS = %w[
+              col-sm-12
+              offset-md-4 col-md-8
+              offset-lg-0 col-lg-3
+              col-xl-5
+            ].freeze
 
             def form_control(form, name, layout: nil, label: nil, wrap_class: "mb-3",
               help: nil, &)
