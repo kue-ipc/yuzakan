@@ -1,7 +1,7 @@
 type HtmlProps<S, C> = CustomPayloads<S, C> & Props<S>;
 type HtmlChildren<S> = MaybeVNode<S> | readonly MaybeVNode<S>[];
-type HtmlTag = <S, C = unknown>(props?: HtmlProps<S, C> | HtmlChildren<S>, children?: HtmlChildren<S>) =>
-  ElementVNode<S>;
+type HtmlTag = <S, C = unknown>(props?: HtmlProps<S, C> | HtmlChildren<S>,
+  children?: HtmlChildren<S>) => ElementVNode<S>;
 
 declare module '@hyperapp/html' {
   const a: HtmlTag;
