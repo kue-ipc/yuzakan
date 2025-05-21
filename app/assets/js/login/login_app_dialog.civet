@@ -70,7 +70,7 @@ EnterToSubmitOrNextInput: Action<LoginState, KeyboardEvent> := (state, event) ->
   else
     state
 
-UpdateUsername: Action<LoginState, InputEvent> := (state, event) ->
+UpdateUsername: Action<LoginState, Event> := (state, event) ->
   unless event.target <? HTMLInputElement
     console.warn "event target is not html input element"
     return state
@@ -83,7 +83,7 @@ UpdateUsername: Action<LoginState, InputEvent> := (state, event) ->
     submittable
   }
 
-UpdatePassword: Action<LoginState, InputEvent> := (state, event) ->
+UpdatePassword: Action<LoginState, Event> := (state, event) ->
   unless event.target <? HTMLInputElement
     console.warn "event target is not html input element"
     return state
@@ -137,11 +137,10 @@ loginTitle := (): VNode<LoginState> ->
 loginUsernameInput := (
   {value, error, disabled}: LoginInputState
 ): VNode<LoginState> ->
-  bsForm.input {
+  bsForm.inputFloating {
     id: LOGIN_USERNAME_ID
     label: t("ui.labels.username")
     type: "text"
-    layout: "floating"
     autocomplete: "username"
     required: true
     disabled
@@ -154,11 +153,10 @@ loginUsernameInput := (
 loginPasswordInput := (
   {value, error, disabled}: LoginInputState
 ): VNode<LoginState> ->
-  bsForm.input {
+  bsForm.inputFloating {
     id: LOGIN_PASSWORD_ID
     label: t("ui.labels.password")
     type: "password"
-    layout: "floating"
     autocomplete: "current-password"
     required: true
     disabled

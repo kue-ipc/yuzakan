@@ -125,7 +125,6 @@ loginUsernameInput := (
     id: LOGIN_USERNAME_ID
     label: t("ui.labels.username")
     type: "text"
-    layout: "floating"
     autocomplete: "username"
     required: true
     disabled
@@ -143,7 +142,6 @@ loginPasswordInput := (
     id: LOGIN_PASSWORD_ID
     label: t("ui.labels.password")
     type: "password"
-    layout: "floating"
     autocomplete: "current-password"
     required: true
     disabled

@@ -7,7 +7,7 @@ Status from ~/common/status.civet
 {t} from ~/common/i18n.civet
 {type BsColor, type BsGridSize, type BsModalSize} from ~/common/bs.civet
 
-ModalAction<S> ::=
+export ModalAction<S> ::=
   label: string
   color: BsColor
   onclick?: Action<S, Event> | readonly [action: Action<S>, payload: unknown]

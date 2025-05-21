@@ -162,8 +162,7 @@ export default class APIDialog
 
   // Hyperapp create Subscription 
 
-  #messageSub = (action: Action<ModalState>, {node:: HTMLElement}):
-      Subscription<ModalState> =>
+  #messageSub = (action: Action<ModalState>, {node:: HTMLElement}): Subscription<ModalState> =>
     [#messageRunner, {action, node}]
 
   // Hyperapp Subscriber
