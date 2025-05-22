@@ -24,7 +24,7 @@ getBootstrapIconsSvgURL := ->
 
 // Hyperapp Views
 
-export default bsIcon := <S>({
+export default icon := <S>({
   name:: string
   size?:: number = 24
   alt?:: string
