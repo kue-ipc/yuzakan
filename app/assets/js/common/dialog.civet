@@ -1,6 +1,6 @@
 /**
- * ModaleDialog
- * モーダルダイアログを表示するクラス
+ * Dialog
+ * ダイアログを表示するクラス
  */
 
 {app, text, type Subscription, type Action, type Dispatch} from hyperapp
@@ -11,7 +11,7 @@
 Status from ~/common/status.civet
 {getBootstrap, type Modal} from ~/common/bs.civet
 
-interface ModalState
+interface DialogState
   title: string
   status: string | Status
   closable: boolean
@@ -19,7 +19,7 @@ interface ModalState
   close?: ModalButton
   messages: string | string[]
 
-export default class ModalDialog
+export default class Dialog
   readonly #id: string
   readonly #fade: boolean
   readonly #scrollable: boolean
@@ -29,7 +29,7 @@ export default class ModalDialog
 
   readonly #modalNode: HTMLElement
   readonly #modal: Modal
-  readonly #dispatch: Dispatch<ModalState>
+  readonly #dispatch: Dispatch<DialogState>
 
   #result: boolean | string | undefined
 
@@ -74,12 +74,12 @@ export default class ModalDialog
     //   ]
 
     #result = undefined
-    #dispatch = app<ModalState>({init, view, node})
+    #dispatch = app<DialogState>({init, view, node})
 
 
   // Views
-  #modalView({messages, ...dialogProps}: ModalState)
-    modalDialog<ModalState> {
+  #modalView({messages, ...dialogProps}: DialogState)
+    modalDialog<DialogState> {
       #id
       #scrollable
       #centered
@@ -98,11 +98,11 @@ export default class ModalDialog
   //   #modalNode.dispatchEvent(event)
 
   // Actions
-  #showModal(state: ModalState, props: Partial<ModalState>)
+  #showModal(state: DialogState, props: Partial<DialogState>)
     {...state, ...props}
 
   // show
-  showPromise(props: Partial<ModalState> = {})
+  showPromise(props: Partial<DialogState> = {})
     #dispatch(#showModal.bind(@), props)
 
     #result = undefined
