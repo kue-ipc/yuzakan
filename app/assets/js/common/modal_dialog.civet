@@ -3,83 +3,50 @@
  * モーダルダイアログを表示するクラス
  */
 
-{app, text, type Subscription, type Action} from hyperapp
+{app, text, type Subscription, type Action, type Dispatch} from hyperapp
 * as html from @hyperapp/html
 {focus} from @hyperapp/dom
 
-{modalDialog, type ModalAction} from ~/app/modal.civet
+{modalDialog, type ModalButton, type ModalSize, type MoadlFullscreen} from ~/app/modal.civet
 Status from ~/common/status.civet
-{getBootstrap, type BsBootstrap, type Modal} from ~/common/bs.civet
-
-declare global
-  interface HTMLElementEventMap
-    "modaldialog.message": CustomEvent<string>
-
-ModalSize ::= "sm" | "lg" | "xl" | undefined
-
-ModalFullscreen ::= boolean | "sm-down" | "md-down" | "lg-down" | "xl-down" | "xxl-down" | undefined
+{getBootstrap, type Modal} from ~/common/bs.civet
 
 interface ModalState
-    title: #title
-    status: #status
-    closable: #closable
-    action: if #action then {...#action, onclick: #modalAction} else null
-    close: #close
-    messages: #messages
-    value: #value
-    shwon: false
-    focus: `${#id}-modal-close-button`
-    ...state
+  title: string
+  status: string | Status
+  closable: boolean
+  action?: ModalButton
+  close?: ModalButton
+  messages: string | string[]
 
-export default class ModalDialog<S>
-  @MESSAGE_EVENT := "modaldialog.message"
-
-  @DEFAULT_ACTION: ModalAction<S> := Object.freeze {
-    label: "OK"
-    color: "primary"
-    side: "right"
-  }
-
+export default class ModalDialog
   readonly #id: string
   readonly #fade: boolean
   readonly #scrollable: boolean
   readonly #centered: boolean
   readonly #size: ModalSize
-  readonly #fullscreen: ModalFullscreen
-  readonly #title: string
-  readonly #status: Status
-  readonly #closable: boolean
-  readonly #action: Omit<ModalAction<S>, "onclick">
-  readonly #messages: string[]
+  readonly #fullscreen: MoadlFullscreen
+
+  readonly #modalNode: HTMLElement
+  readonly #modal: Modal
+  readonly #dispatch: Dispatch<ModalState>
+
+  #result: boolean | string | undefined
 
   @({
     #id:: string
-    #fade:: boolean = true
-    #scrollable:: boolean = true
+    #fade:: boolean = false
+    #scrollable:: boolean = false
     #centered:: boolean = false
     #size?:: ModalSize
-    #fullscreen?:: ModalFullscreen
-    #title
-    #status // see status.js
-    #closable = true
-    action = {}
-    close = {}
-    #messages = []
-    #value
+    #fullscreen?:: MoadlFullscreen
   })
-    #action = if action then {...ModalDialog.DEFAULT_ACTION, ...action} else null
-    #close = if close then {...ModalDialog.DEFAULT_CLOSE, ...close} else null
-    #result = undefined
 
-    #initNode()
-
-  // モーダルウィンドウのノードを作成し、初期化する。
-  #initNode()
     #modalNode = document.createElement("div")
     #modalNode.id = `${#id}-modal`
     #modalNode.classList.add("modal")
     #modalNode.classList.add("fade") if #fade
-    #modalNode.setAttribute("tabindex", -1)
+    #modalNode.setAttribute("tabindex", "-1")
     #modalNode.setAttribute("aria-hidden", "true")
 
     modalDialogNode := document.createElement("div")
@@ -89,54 +56,61 @@ export default class ModalDialog<S>
     #modalNode.appendChild(modalDialogNode)
     document.body.appendChild(#modalNode)
 
-    #modal = new Modal(#modalNode)
+    #modal = new (getBootstrap().Modal)(#modalNode)
 
-    app {
-      init: #appInit()
-      view: #modalView
-      node: modalDialogNode
-      subscriptions: (state) => [
-        ModalDialog.onMessage #modalNode, #receiveModalMessage
-        ModalDialog.onShown #modalNode, (state) -> [{...state, shown: true}, focus(state.focus)]
-        ModalDialog.onHidden #modalNode, (state) -> {...state, shown: false}
-      ]
-    }
+    init := {}
+      title: ""
+      status: "unknown"
+      closable: true
+      messages: []
+      shwon: false
+    view := @@#modalView
+    node := modalDialogNode
+    // subscriptions := (state) =>
+    //   [
+    //     ModalDialog.onMessage(#modalNode, #receiveModalMessage)
+    //     ModalDialog.onShown(#modalNode, (state) -> [{...state, shown: true}, focus(state.focus)])
+    //     ModalDialog.onHidden(#modalNode, (state) -> {...state, shown: false})
+    //   ]
+
+    #result = undefined
+    #dispatch = app<ModalState>({init, view, node})
+
 
   // Views
-
-  #modalView = ({title, status, closable, action, ...props}) =>
-    modalDialog {
+  #modalView({messages, ...dialogProps}: ModalState)
+    modalDialog<ModalState> {
       #id
       #scrollable
       #centered
       #size
       #fullscreen
-      title
-      status
-      closable
-      action
-    }, #modalBody {...props}
+      ...dialogProps
+    }, #modalBody {messages}
 
-  #modalBody({messages})
-    html.p {}, text message for each message of messages ?? []
+  #modalBody({messages:: string | string[]})
+    messages = [messages] if messages <? "string"
+    html.p {}, text message for each message of messages
 
-  // fire event
-  fireModalMessage(props)
-    event = new CustomEvent(ModalDialog.MESSAGE_EVENT, {detail: props})
-    #modalNode.dispatchEvent(event)
+  // // fire event
+  // fireModalMessage(props)
+  //   event = new CustomEvent(ModalDialog.MESSAGE_EVENT, {detail: props})
+  //   #modalNode.dispatchEvent(event)
 
   // Actions
-  receiveModalMessage(state, props)
+  #showModal(state: ModalState, props: Partial<ModalState>)
     {...state, ...props}
 
   // show
-  showPromise(state = {})
-    state := #initState(state)
-    #fireModalMessage(state)
+  showPromise(props: Partial<ModalState> = {})
+    #dispatch(#showModal.bind(@), props)
+
     #result = undefined
+
     waitModalClose = #waitModalClosePromise()
-    // hack modal config
-    // https://github.com/twbs/bootstrap/issues/35664
+
+    // HACK: sett private properties of modal config
+    //     <https://github.com/twbs/bootstrap/issues/35664>
     if state.closable
       #modal._config.backdrop = true
       #modal._config.keyboard = true
@@ -152,53 +126,39 @@ export default class ModalDialog<S>
   hide()
     #modal.hide()
 
-  waitModalClosePromise()
-    new Promise (resolve, reject) =>
+  #waitModalClosePromise(): void
+    new Promise<void> (resolve, _reject) =>
       #modalNode.addEventListener "hidden.bs.modal", ->
         resolve()
       , {once: true}
 
-  appInit = => #initState
+  // modalAction = (state) =>
+  //   #result = state.value
+  //   [state, #hideModal]
 
-  modalAction = (state) =>
-    #result = state.value
-    [state, #hideModal]
+  // hideModal = (_dispatch) => #modal.hide()
 
-  hideModal = (_dispatch) => #modal.hide()
 
-  initState = (state) => {
-    title: #title
-    status: #status
-    closable: #closable
-    action: if #action then {...#action, onclick: #modalAction} else null
-    close: #close
-    messages: #messages
-    value: #value
-    shwon: false
-    focus: `${#id}-modal-close-button`
-    ...state
-  }
+  // // Static Methods
 
-  // Static Methods
+  // // Create Subscription
+  // @onMessage(node: HtmlElement, action): Subscription
+  //   [ModalDialog.listenMessage, {node, action}]
+  // @onShown(node, action)
+  //   [ModalDialog.listenShown, {node, action}]
+  // @onHidden(node, action)
+  //   [ModalDialog.listenHidden, {node, action}]
 
-  // Create Subscription
-  @onMessage(node: HtmlElement, action): Subscription
-    [ModalDialog.listenMessage, {node, action}]
-  @onShown(node, action)
-    [ModalDialog.listenShown, {node, action}]
-  @onHidden(node, action)
-    [ModalDialog.listenHidden, {node, action}]
-
-  // SubscriberFn
-  @listenMessage<S>(dispatch: Dispatch<S>, {node:: HtmlElement, action:: Action<S>}): Unsubscribe
-    func := (e) -> dispatch(action, e.detail)
-    node.addEventListener(ModalDialog.MESSAGE_EVENT, func)
-    -> node.removeEventListener(ModalDialog.MESSAGE_EVENT, func)
-  @listenShown(dispatch, {node, action})
-    func := -> dispatch(action)
-    node.addEventListener("shown.bs.modal", func)
-    -> node.removeEventListener("shown.bs.modal", func)
-  @listenHidden(dispatch, {node, action})
-    func := -> dispatch(action)
-    node.addEventListener("hidden.bs.modal", func)
-    -> node.removeEventListener("hidden.bs.modal", func)
+  // // SubscriberFn
+  // @listenMessage<S>(dispatch: Dispatch<S>, {node:: HtmlElement, action:: Action<S>}): Unsubscribe
+  //   func := (e) -> dispatch(action, e.detail)
+  //   node.addEventListener(ModalDialog.MESSAGE_EVENT, func)
+  //   -> node.removeEventListener(ModalDialog.MESSAGE_EVENT, func)
+  // @listenShown(dispatch, {node, action})
+  //   func := -> dispatch(action)
+  //   node.addEventListener("shown.bs.modal", func)
+  //   -> node.removeEventListener("shown.bs.modal", func)
+  // @listenHidden(dispatch, {node, action})
+  //   func := -> dispatch(action)
+  //   node.addEventListener("hidden.bs.modal", func)
+  //   -> node.removeEventListener("hidden.bs.modal", func)

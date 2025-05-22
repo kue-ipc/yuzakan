@@ -1,0 +1,38 @@
+// Bootstrap components for Hyperapp
+
+{text, type ClassProp, type CustomPayloads, type Props, type MaybeVNode} from hyperapp
+* as html from @hyperapp/html
+
+{type BsThemeColor, type BsGridSize} from ~/common/bs.civet
+
+// Hyperapp views
+
+export ButtonColor ::= BsThemeColor | "link"
+
+export ButtonSize ::= Exclude<BsGridSize, "xs" | "xl" | "xxl">?
+
+export button := <S, C = unknown>({
+  class: klass?:: ClassProp
+  label?:: string
+  color:: ButtonColor = "primary"
+  outline:: boolean = false
+  nowrap:: boolean = false
+  size:: ButtonSize = "md"
+  toggle?:: boolean = false
+  active?:: boolean = false
+  ...props:: CustomPayloads<S, C> & Props<S>
+}, children?: MaybeVNode<S> | readonly MaybeVNode<S>[]) ->
+  buttonClass := []
+    "btn"
+    if outline then `btn-outline-${color}` else `btn-${color}`
+    `btn-${size}` if size is not "md"
+    {text-nowrap: nowrap}
+    {active: toggle and active}
+    klass
+
+  html.button<S, C> {
+    ...props
+    class: buttonClass
+    type: "button"
+    data-bs-toggle: if toggle then "button" else undefined
+  }, if label then text label else children

@@ -22,7 +22,7 @@ export interface BsBootstrap
   Toast: typeof Toast
   Tooltip: typeof Tooltip
 
-export type BsColor
+export type BsThemeColor
   | "primary"
   | "secondary"
   | "success"
@@ -31,22 +31,21 @@ export type BsColor
   | "info"
   | "light"
   | "dark"
+
+export type BsColor
+  | BsThemeColor
   | "body" 
   | "tertiary"
   | "black"
   | "white"
 
 export type BsGridSize
+  | "xs"
   | "sm"
   | "md"
   | "lg"
   | "xl"
   | "xxl"
-
-export type BsModalSize
-  | "sm"
-  | "lg"
-  | "xl"
 
 declare global
   var bsBootstrap: BsBootstrap?

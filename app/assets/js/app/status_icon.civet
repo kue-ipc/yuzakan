@@ -8,7 +8,7 @@ Status from ~/common/status.civet
 
 // Hyperapp Views
 
-export statusIcon := ({
+export statusIcon := <S>({
   status:: string | Status
   class: klass:: ClassProp = []
 }) ->
@@ -17,12 +17,12 @@ export statusIcon := ({
 
   divClass := [bsTextColorClass(status.color), klass]
   if status.spinner?
-    html.div {class: [`spinner-${status.spinner}`, divClass], role: "status"},
-      html.span {class: "visually-hidden"},
+    html.div<S> {class: [`spinner-${status.spinner}`, divClass], role: "status"},
+      html.span<S> {class: "visually-hidden"},
         text status.label
   else if status.icon?
-    html.div {class: divClass},
-      bsIcon {name: status.icon, alt: status.label ?? status.name, size: 32}
+    html.div<S> {class: divClass},
+      bsIcon<S> {name: status.icon, alt: status.label ?? status.name, size: 32}
   else
-    html.div {class: divClass},
+    html.div<S> {class: divClass},
       text status.label

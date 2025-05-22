@@ -1,4 +1,4 @@
-// Bootstrap form App
+// Bootstrap Form App
 
 {text, type ClassProp, type VNode, type CustomPayloads, type Props} from hyperapp
 * as html from @hyperapp/html

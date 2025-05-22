@@ -24,7 +24,7 @@ getBootstrapIconsSvgURL := ->
 
 // Hyperapp Views
 
-export default bsIcon := ({
+export default bsIcon := <S>({
   name:: string
   size?:: number = 24
   alt?:: string
@@ -39,5 +39,5 @@ export default bsIcon := ({
     height: size
     fill: "currentColor"
     ...(if alt? then {role: "img", aria-label: alt} else {})
-  svg.svg svg_props,
-    svg.use {href}
+  svg.svg<S, {}> svg_props,
+    svg.use<S, {}> {href}
