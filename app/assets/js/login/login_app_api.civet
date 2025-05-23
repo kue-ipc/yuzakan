@@ -172,7 +172,7 @@ init: Dispatchable<LoginState> := [
     csrf: csrf()
     auth: {username: "", password: ""}
     disabled: false
-  delay 10, (state: LoginState) -> [state, focus(LOGIN_USERNAME_ID)]
+  delay 10, (state: LoginState, payload: Date) -> [state, focus<LoginState>(LOGIN_USERNAME_ID)]
 ]
 
 view := (state: LoginState): VNode<LoginState> ->

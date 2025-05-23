@@ -72,8 +72,8 @@ msgJoin := (msg?: string | string[]): string? ->
 msgPresent := (msg?: string | string[]): boolean ->
   (msgJoin(msg)?.length ?? 0) > 0
 
-msgTag := <S>(msg: string? | string[], props: any = {}): ElementVNode<S>? ->
-  html.div<S> props, html.text msgJoin(msg) if msgPresent(msg)
+msgTag := <S, C = unknown>(msg: string? | string[], props: CustomPayloads<S, C> & Props<S>): ElementVNode<S>? ->
+  html.div<S, C> props, html.text msgJoin(msg) if msgPresent(msg)
 
 inputHelpTags := <S>({id, class: klass, valid, invalid, help}: {id: string, class?: ClassProp} & InputHelpProps):
   ElementVNode<S>[] ->
@@ -97,14 +97,14 @@ export inputNormal := <S>({
   class: klass
   ...props
 }: InputProps<S>): ElementVNode<S> ->
-  html.div {class: [klass, "mb-3"]}, []
-    html.label {class: "form-label", for: id}, text label
-    html.input {}
+  html.div<S> {class: [klass, "mb-3"]}, []
+    html.label<S> {class: "form-label", for: id}, text label
+    html.input<S> {}
       id
       class: ["form-control", inputValidationClass({valid, invalid})]
       aria-describedby:  `${id}-help` if msgPresent(help)
       ...props
-    ...inputHelpTags({id, valid, invalid, help})
+    ...inputHelpTags<S>({id, valid, invalid, help})
 
 export inputFloating := <S>({
   id
@@ -115,15 +115,15 @@ export inputFloating := <S>({
   class: klass
   ...props
 }: InputProps<S>): ElementVNode<S> ->
-  html.div {class: [klass, "form-floating mb-3"]}, []
-    html.input {}
+  html.div<S> {class: [klass, "form-floating mb-3"]}, []
+    html.input<S> {}
       id
       class: ["form-control", inputValidationClass({valid, invalid})]
       placeholder: label
       aria-describedby:  `${id}-help` if msgPresent(help)
       ...props
-    html.label {for: id}, text label
-    ...inputHelpTags({id, valid, invalid, help})
+    html.label<S> {for: id}, text label
+    ...inputHelpTags<S>({id, valid, invalid, help})
 
 export inputHorizontal := <S>({
   id
@@ -134,15 +134,15 @@ export inputHorizontal := <S>({
   class: klass
   ...props
 }: InputProps<S>): ElementVNode<S> ->
-  html.div {class: [klass, "row mb-3"]}, []
-    html.label {class: ["col-form-label", LABEL_COL_CLASS], for: id}, text label
-    html.div {class: CONTROL_COL_CLASS}, []
-      html.input {}
+  html.div<S> {class: [klass, "row mb-3"]}, []
+    html.label<S> {class: ["col-form-label", LABEL_COL_CLASS], for: id}, text label
+    html.div<S> {class: CONTROL_COL_CLASS}, []
+      html.input<S> {}
         id
         class: ["form-control", inputValidationClass({valid, invalid})]
         aria-describedby:  `${id}-help` if msgPresent(help)
         ...props
-      ...inputHelpTags({id, class: MESSAGE_COL_CLASS, valid, invalid, help})
+      ...inputHelpTags<S>({id, class: MESSAGE_COL_CLASS, valid, invalid, help})
 
 export inputInline := <S>({
   id
@@ -153,12 +153,12 @@ export inputInline := <S>({
   class: klass
   ...props
 }: InputProps<S>): ElementVNode<S> ->
-  html.div {class: klass}, []
-    html.label {class: "visually-hidden", for: id}, text label
-    html.input {}
+  html.div<S> {class: klass}, []
+    html.label<S> {class: "visually-hidden", for: id}, text label
+    html.input<S> {}
       id
       class: ["form-control", inputValidationClass({valid, invalid})]
       placeholder: label
       aria-describedby:  `${id}-help` if msgPresent(help)
       ...props
-    ...inputHelpTags({id, valid, invalid, help})
+    ...inputHelpTags<S>({id, valid, invalid, help})
