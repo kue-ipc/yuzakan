@@ -1,15 +1,15 @@
-// Bootstrap components for Hyperapp
+// Bootstrap button for Hyperapp
 
-{text, type ClassProp, type CustomPayloads, type Props, type MaybeVNode} from hyperapp
+{text, type ClassProp, type CustomPayloads, type Props, type MaybeVNode, type ElementVNode} from hyperapp
 * as html from @hyperapp/html
 
 {type BsThemeColor, type BsGridSize} from ~/common/bs.civet
 
-// Hyperapp views
-
 export ButtonColor ::= BsThemeColor | "link"
 
 export ButtonSize ::= Exclude<BsGridSize, "xs" | "xl" | "xxl">?
+
+// Views
 
 export default button := <S, C = unknown>({
   class: klass?:: ClassProp
@@ -21,7 +21,7 @@ export default button := <S, C = unknown>({
   toggle?:: boolean = false
   active?:: boolean = false
   ...props:: CustomPayloads<S, C> & Props<S>
-}, children?: MaybeVNode<S> | readonly MaybeVNode<S>[]) ->
+}, children?: MaybeVNode<S> | readonly MaybeVNode<S>[]): ElementVNode<S> ->
   buttonClass := []
     "btn"
     if outline then `btn-outline-${color}` else `btn-${color}`

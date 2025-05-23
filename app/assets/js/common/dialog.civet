@@ -3,20 +3,21 @@
  * ダイアログを表示するクラス
  */
 
-{app, text, type Subscription, type Action, type Dispatch} from hyperapp
+{app, text, type Subscription, type Action, type Dispatch, type ElementVNode, type Dispatchable, type Effecter, type EventActions, type Effect} from hyperapp
 * as html from @hyperapp/html
 {focus} from @hyperapp/dom
 
-{modalDialog, type ModalButton, type ModalSize, type MoadlFullscreen} from ~/app/modal.civet
+modal, {type ModalButton, type ModalSize, type ModalFullscreen} from ~/app/component/modal.civet
 Status from ~/common/status.civet
 {getBootstrap, type Modal} from ~/common/bs.civet
 
 interface DialogState
   title: string
-  status: string | Status
-  closable: boolean
+  status?: string | Status
+  closable?: boolean
   action?: ModalButton
   close?: ModalButton
+  effecter?: Effecter<DialogState>
   messages: string | string[]
 
 export default class Dialog
@@ -25,7 +26,7 @@ export default class Dialog
   readonly #scrollable: boolean
   readonly #centered: boolean
   readonly #size: ModalSize
-  readonly #fullscreen: MoadlFullscreen
+  readonly #fullscreen: ModalFullscreen
 
   readonly #modalNode: HTMLElement
   readonly #modal: Modal
@@ -38,34 +39,43 @@ export default class Dialog
     #fade:: boolean = false
     #scrollable:: boolean = false
     #centered:: boolean = false
-    #size?:: ModalSize
-    #fullscreen?:: MoadlFullscreen
+    #size?:: ModalSize = "md"
+    #fullscreen?:: ModalFullscreen = false
+    title:: string = ""
+    status?:: string | Status
+    closable?:: boolean
+    action?:: ModalButton
+    close?:: ModalButton
+    effecter?:: Effecter<DialogState>
+    messages:: string | string[] = ""
   })
 
     #modalNode = document.createElement("div")
     #modalNode.id = `${#id}-modal`
-    #modalNode.classList.add("modal")
-    #modalNode.classList.add("fade") if #fade
-    #modalNode.setAttribute("tabindex", "-1")
-    #modalNode.setAttribute("aria-hidden", "true")
+    // #modalNode.classList.add("modal")
+    // #modalNode.classList.add("fade") if #fade
+    // #modalNode.setAttribute("tabindex", "-1")
+    // #modalNode.setAttribute("aria-hidden", "true")
 
-    modalDialogNode := document.createElement("div")
-    modalDialogNode.id = `${#id}-modal-dialog`
-    modalDialogNode.classList.add("modal-dialog")
+    // modalDialogNode := document.createElement("div")
+    // modalDialogNode.id = `${#id}-modal-dialog`
+    // modalDialogNode.classList.add("modal-dialog")
 
-    #modalNode.appendChild(modalDialogNode)
+    // #modalNode.appendChild(modalDialogNode)
     document.body.appendChild(#modalNode)
 
     #modal = new (getBootstrap().Modal)(#modalNode)
 
     init := {}
-      title: ""
-      status: "unknown"
-      closable: true
-      messages: []
-      shwon: false
+      title
+      status
+      closable
+      action
+      close
+      effecter
+      messages
     view := @@#modalView
-    node := modalDialogNode
+    node := #modalNode
     // subscriptions := (state) =>
     //   [
     //     ModalDialog.onMessage(#modalNode, #receiveModalMessage)
@@ -76,62 +86,59 @@ export default class Dialog
     #result = undefined
     #dispatch = app<DialogState>({init, view, node})
 
-
   // Views
-  #modalView({messages, ...dialogProps}: DialogState)
-    modalDialog<DialogState> {
+  #modalView({effecter, messages, ...props}: DialogState): ElementVNode<DialogState>
+    modal<DialogState> {
       #id
+      #fade
       #scrollable
       #centered
       #size
       #fullscreen
-      ...dialogProps
+      onclick: ((state) -> [state, effecter]) if effecter?
+      ...props
     }, #modalBody {messages}
 
-  #modalBody({messages:: string | string[]})
+  #modalBody({messages:: string | string[]}): ElementVNode<DialogState>[]
     messages = [messages] if messages <? "string"
-    html.p {}, text message for each message of messages
-
-  // // fire event
-  // fireModalMessage(props)
-  //   event = new CustomEvent(ModalDialog.MESSAGE_EVENT, {detail: props})
-  //   #modalNode.dispatchEvent(event)
+    html.p<DialogState> {}, text message for each message of messages
 
   // Actions
-  #showModal(state: DialogState, props: Partial<DialogState>)
-    {...state, ...props}
-
-  // show
-  showPromise(props: Partial<DialogState> = {})
-    #dispatch(#showModal.bind(@), props)
-
-    #result = undefined
-
-    waitModalClose = #waitModalClosePromise()
-
+  #updateState(state: DialogState, props: Partial<DialogState>): Dispatchable<DialogState>
+    newState := {...state, ...props}
     // HACK: sett private properties of modal config
     //     <https://github.com/twbs/bootstrap/issues/35664>
-    if state.closable
-      #modal._config.backdrop = true
-      #modal._config.keyboard = true
+    if newState.closable
+      (#modal as any)._config.backdrop = true
+      (#modal as any)._config.keyboard = true
     else
-      #modal._config.backdrop = "static"
-      #modal._config.keyboard = false
+      (#modal as any)._config.backdrop = "static"
+      (#modal as any)._config.keyboard = false
+
+    newState
+
+  // pulbic methods
+  update(props: Partial<DialogState>): void
+    #dispatch(#updateState.bind(@), props)
+
+  show(props?: Partial<DialogState>): void
     #modal.show()
 
-    await waitModalClose
-
-    return #result
-  
-  hide()
+  hide(): void
     #modal.hide()
 
-  #waitModalClosePromise(): void
+  waitHidden(): Promise<void>
     new Promise<void> (resolve, _reject) =>
       #modalNode.addEventListener "hidden.bs.modal", ->
         resolve()
       , {once: true}
 
+  showPromise(props?: Partial<DialogState>): Promise<void>
+    @update(props) if props
+
+    @show()
+    @waitHidden()
+  
   // modalAction = (state) =>
   //   #result = state.value
   //   [state, #hideModal]

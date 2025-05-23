@@ -9,8 +9,8 @@
 csrf from ~/common/csrf.civet
 {t} from ~/common/i18n.civet
 
-* as bsForm from ~/app/bs_form.civet
-bsIcon from ~/app/bs_icon.civet
+* as form from ~/app/form.civet
+icon from ~/app/icon.civet
 {runAlertFlash} from ~/app/alert.civet
 {flashValidation, type Validation} from ~/common/flash.civet
 
@@ -121,7 +121,7 @@ loginTitle := (): VNode<LoginState> ->
 loginUsernameInput := (
   {value, disabled, valid, invalid}: LoginInputState
 ): VNode<LoginState> ->
-  bsForm.inputFloating {
+  form.inputFloating {
     id: LOGIN_USERNAME_ID
     label: t("ui.labels.username")
     type: "text"
@@ -138,7 +138,7 @@ loginUsernameInput := (
 loginPasswordInput := (
   {value, disabled, valid, invalid}: LoginInputState
 ): VNode<LoginState> ->
- bsForm.inputFloating {
+  form.inputFloating {
     id: LOGIN_PASSWORD_ID
     label: t("ui.labels.password")
     type: "password"
@@ -161,7 +161,7 @@ loginSubmitButton := (
       disabled: !disabled or !auth.username or !auth.password
       onclick: Login
     }, [
-      bsIcon {name: "box-arrow-in-right", class: "flex-shrink-0 me-1"}
+      icon {name: "box-arrow-in-right", class: "flex-shrink-0 me-1"}
       text t("actions.login")
     ]
 

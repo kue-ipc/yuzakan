@@ -1,6 +1,6 @@
 // Bootstrap Form App
 
-{text, type ClassProp, type VNode, type CustomPayloads, type Props} from hyperapp
+{text, type ClassProp, type ElementVNode, type CustomPayloads, type Props} from hyperapp
 * as html from @hyperapp/html
 
 InputTypeAttribute ::=
@@ -72,10 +72,11 @@ msgJoin := (msg?: string | string[]): string? ->
 msgPresent := (msg?: string | string[]): boolean ->
   (msgJoin(msg)?.length ?? 0) > 0
 
-msgTag := <S>(msg: string? | string[], props: any = {}): VNode<S>? ->
-  html.div props, html.text msgJoin(msg) if msgPresent(msg)
+msgTag := <S>(msg: string? | string[], props: any = {}): ElementVNode<S>? ->
+  html.div<S> props, html.text msgJoin(msg) if msgPresent(msg)
 
-inputHelpTags := <S>({id, class: klass, valid, invalid, help}: {id: string, class?: ClassProp} & InputHelpProps): VNode<S>[] ->
+inputHelpTags := <S>({id, class: klass, valid, invalid, help}: {id: string, class?: ClassProp} & InputHelpProps):
+  ElementVNode<S>[] ->
   [
     msgTag<S>(valid, {id: `${id}-valid`, class: ["valid-feedback", klass]})
     msgTag<S>(invalid, {id: `${id}-invalid`, class: ["invalid-feedback", klass]})
@@ -95,7 +96,7 @@ export inputNormal := <S>({
   help
   class: klass
   ...props
-}: InputProps<S>): VNode<S> ->
+}: InputProps<S>): ElementVNode<S> ->
   html.div {class: [klass, "mb-3"]}, []
     html.label {class: "form-label", for: id}, text label
     html.input {}
@@ -113,7 +114,7 @@ export inputFloating := <S>({
   help
   class: klass
   ...props
-}: InputProps<S>) ->
+}: InputProps<S>): ElementVNode<S> ->
   html.div {class: [klass, "form-floating mb-3"]}, []
     html.input {}
       id
@@ -132,7 +133,7 @@ export inputHorizontal := <S>({
   help
   class: klass
   ...props
-}: InputProps<S>): VNode<S> ->
+}: InputProps<S>): ElementVNode<S> ->
   html.div {class: [klass, "row mb-3"]}, []
     html.label {class: ["col-form-label", LABEL_COL_CLASS], for: id}, text label
     html.div {class: CONTROL_COL_CLASS}, []
@@ -151,7 +152,7 @@ export inputInline := <S>({
   help
   class: klass
   ...props
-}: InputProps<S>): VNode<S> ->
+}: InputProps<S>): ElementVNode<S> ->
   html.div {class: klass}, []
     html.label {class: "visually-hidden", for: id}, text label
     html.input {}

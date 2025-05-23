@@ -1,6 +1,6 @@
 // Bootstrap Icon app
 
-{type ClassProp} from hyperapp
+{type ClassProp, type ElementVNode} from hyperapp
 * as svg from @hyperapp/svg
 {getCustomPropertyValue} from ~/common/css.civet
 {normalizeURL, relativePath} from ~/helpers/url_helper.civet
@@ -29,7 +29,7 @@ export default icon := <S>({
   size?:: number = 24
   alt?:: string
   class: klass?:: ClassProp
-}) ->
+}): ElementVNode<S> ->
   url := new URL(getBootstrapIconsSvgURL())
   url.hash = name
   href := relativePath(url)
@@ -38,6 +38,7 @@ export default icon := <S>({
     width: size
     height: size
     fill: "currentColor"
-    ...(if alt? then {role: "img", aria-label: alt} else {})
-  svg.svg<S, {}> svg_props,
-    svg.use<S, {}> {href}
+    role: "img" if alt?
+    aria-label: alt if alt?
+  svg.svg<S> svg_props,
+    svg.use<S> {href}
