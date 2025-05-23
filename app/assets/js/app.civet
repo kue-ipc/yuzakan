@@ -10,7 +10,6 @@ initializeBootstrap(Bootstrap)
 
 // I18n
 // TODO: 現在のところ日本語のみ対応
-import esbuild-yaml/types
 localeJa from ../../../config/locales/ja.yml
 
 {loadTranslations, type Translations} from ~/common/i18n.civet

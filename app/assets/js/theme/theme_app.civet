@@ -2,7 +2,7 @@
 
 {app, text, type Dispatch} from hyperapp
 * as html from @hyperapp/html
-bsIcon from ~/app/bs_icon.civet
+icon from ~/app/icon.civet
 {t} from ~/common/i18n.civet
 Theme from ~/common/theme.civet
 
@@ -38,7 +38,7 @@ themeToggleButton := ({theme:: Theme}) ->
     data-bs-toggle: "dropdown"
     data-bs-display: "static"
   }, [
-    bsIcon({name: theme.icon, class: "flex-shrink-0"})
+    icon({name: theme.icon, class: "flex-shrink-0"})
     html.span {id: "theme-text", class: "ms-1 d-sm-none d-lg-inline"},
       text t("ui.buttons.toggle_theme")
   ]
@@ -56,7 +56,7 @@ themeListItem := ({theme:: Theme, active:: boolean}) ->
       aria-pressed: "false"
       onclick: -> [ChangeTheme, theme]
     }, [
-      bsIcon({name: theme.icon, class: "flex-shrink-0"})
+      icon({name: theme.icon, class: "flex-shrink-0"})
       html.span {class: "ms-1 d-sm-none d-lg-inline"},
         text theme.label
     ]
