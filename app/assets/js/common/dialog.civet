@@ -3,15 +3,14 @@
  * ダイアログを表示するクラス
  */
 
-{app, text, type Subscription, type Action, type Dispatch, type ElementVNode, type Dispatchable, type Effecter, type EventActions, type Effect} from hyperapp
+{app, text, type Dispatch, type ElementVNode, type Dispatchable, type Effecter} from hyperapp
 * as html from @hyperapp/html
-{focus} from @hyperapp/dom
 
 {modalDialog, type ModalButton, type ModalSize, type ModalFullscreen} from ~/app/component/modal.civet
 Status from ~/common/status.civet
 {getBootstrap, type Modal} from ~/common/bs.civet
 
-interface DialogState
+export interface DialogState
   title: string
   status?: string | Status
   closable?: boolean
@@ -31,8 +30,6 @@ export default class Dialog
   readonly #modalNode: HTMLElement
   readonly #modal: Modal
   readonly #dispatch: Dispatch<DialogState>
-
-  #result: boolean | string | undefined
 
   @({
     #id:: string
@@ -74,18 +71,12 @@ export default class Dialog
       messages
     view := @@#modalView
     node := modalDialogNode
-    // subscriptions := (state) =>
-    //   [
-    //     ModalDialog.onMessage(#modalNode, #receiveModalMessage)
-    //     ModalDialog.onShown(#modalNode, (state) -> [{...state, shown: true}, focus(state.focus)])
-    //     ModalDialog.onHidden(#modalNode, (state) -> {...state, shown: false})
-    //   ]
 
-    #result = undefined
     #dispatch = app<DialogState>({init, view, node})
     #modal = new (getBootstrap().Modal)(#modalNode)
 
   // Views
+
   #modalView({effecter, messages, ...props}: DialogState): ElementVNode<DialogState>
     modalDialog<DialogState> {
       #id
@@ -102,6 +93,7 @@ export default class Dialog
     html.p<DialogState> {}, text message for each message of messages
 
   // Actions
+
   #updateState(state: DialogState, props: Partial<DialogState>): Dispatchable<DialogState>
     newState := {...state, ...props}
     // HACK: sett private properties of modal config
@@ -116,6 +108,7 @@ export default class Dialog
     newState
 
   // pulbic methods
+
   update(props: Partial<DialogState>): void
     #dispatch(#updateState.bind(@), props)
 
@@ -135,36 +128,6 @@ export default class Dialog
       , {once: true}
 
   showPromise(props?: Partial<DialogState>): Promise<void>
+    wait := @waitHidden()
     @show(props)
-    @waitHidden()
-  
-  // modalAction = (state) =>
-  //   #result = state.value
-  //   [state, #hideModal]
-
-  // hideModal = (_dispatch) => #modal.hide()
-
-
-  // // Static Methods
-
-  // // Create Subscription
-  // @onMessage(node: HtmlElement, action): Subscription
-  //   [ModalDialog.listenMessage, {node, action}]
-  // @onShown(node, action)
-  //   [ModalDialog.listenShown, {node, action}]
-  // @onHidden(node, action)
-  //   [ModalDialog.listenHidden, {node, action}]
-
-  // // SubscriberFn
-  // @listenMessage<S>(dispatch: Dispatch<S>, {node:: HtmlElement, action:: Action<S>}): Unsubscribe
-  //   func := (e) -> dispatch(action, e.detail)
-  //   node.addEventListener(ModalDialog.MESSAGE_EVENT, func)
-  //   -> node.removeEventListener(ModalDialog.MESSAGE_EVENT, func)
-  // @listenShown(dispatch, {node, action})
-  //   func := -> dispatch(action)
-  //   node.addEventListener("shown.bs.modal", func)
-  //   -> node.removeEventListener("shown.bs.modal", func)
-  // @listenHidden(dispatch, {node, action})
-  //   func := -> dispatch(action)
-  //   node.addEventListener("hidden.bs.modal", func)
-  //   -> node.removeEventListener("hidden.bs.modal", func)
+    wait

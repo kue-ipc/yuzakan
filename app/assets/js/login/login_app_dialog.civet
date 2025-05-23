@@ -10,17 +10,17 @@ APIDialog from ~/common/api_dialog.civet
 csrf from ~/common/csrf.civet
 {t} from ~/common/i18n.civet
 
-* as bsForm from ~/app/bs_form.civet
-bsIcon from ~/app/bs_icon.civet
+* as form from ~/app/form.civet
+icon from ~/app/icon.civet
 
-interface LoginInputState
+interface LoginInputProps
   value: string
   error: string
   disabled: boolean
 
 interface LoginState
-  username: LoginInputState
-  password: LoginInputState
+  username: LoginInputProps
+  password: LoginInputProps
   submittable: boolean
 
 interface LoginPayload
@@ -31,27 +31,26 @@ LOGIN_ID := "login"
 LOGIN_USERNAME_ID := "login-username"
 LOGIN_PASSWORD_ID := "login-password"
 
-apiDialog := new APIDialog {
+apiDialog := new APIDialog {}
   id: "login"
   name: "actions.login"
   method: "POST"
   path: "/api/auth"
-  responseMessageCodeList: [
+  responseMessageCodeList: []
     [201, {status: "success", message: "login_succeeded", redirectTo: "^", reloadTime: 10}]
     [400, {status: "failure", message: "login_failed"}]
     [422, {status: "failure", message: "login_failed"}]
-  ]
-}
 
 // Actions
 
 Login: Action<LoginState, Event> := (state, _event) ->
   if state.submittable
-    [{
-      username: {...state.username, disabled: true}
-      password: {...state.password, disabled: true}
-      submittable: false
-    }, login({username: state.username.value, password: state.password.value})]
+    []
+      {}
+        username: {...state.username, disabled: true}
+        password: {...state.password, disabled: true}
+        submittable: false
+      login({username: state.username.value, password: state.password.value})
   else
     state
 
@@ -77,11 +76,10 @@ UpdateUsername: Action<LoginState, Event> := (state, event) ->
 
   value := event.target.value
   submittable := !!(value and state.password.value)
-  {
+  {}
     ...state
     username: {value, error: "", disabled: false}
     submittable
-  }
 
 UpdatePassword: Action<LoginState, Event> := (state, event) ->
   unless event.target <? HTMLInputElement
@@ -90,11 +88,10 @@ UpdatePassword: Action<LoginState, Event> := (state, event) ->
 
   value := event.target.value
   submittable := !!(value and state.username.value)
-  {
+  {}
     ...state
     password: {value, error: "", disabled: false}
     submittable
-  }
 
 PreventSubmit: Action<LoginState, SubmitEvent> := (state, event) ->
   event.preventDefault()
@@ -112,16 +109,18 @@ runLogin: Effecter<LoginState, LoginPayload> := (dispatch, payload) ->
         LOGIN_USERNAME_ID
       else
         LOGIN_PASSWORD_ID
-    [
-      {
-        username: {username.value, error: param_errors?.username?.join("") ?? "",
-          disabled: false}
-        password: {value: "", error: param_errors?.password?.join("") ?? "",
-          disabled: false}
+    []
+      {}
+        username: {}
+          username.value
+          error: param_errors?.username?.join("") ?? ""
+          disabled: false
+        password: {}
+          value: ""
+          error: param_errors?.password?.join("") ?? ""
+          disabled: false
         submittable
-      }
       focus(focusTarget)
-    ]
   dispatch(action)
 
 // Effect Generators
@@ -134,10 +133,8 @@ login := (payload: LoginPayload): Effect<LoginState> ->
 loginTitle := (): VNode<LoginState> ->
   html.h3 {class: "login-title text-center mb-2"}, text t("actions.login")
 
-loginUsernameInput := (
-  {value, error, disabled}: LoginInputState
-): VNode<LoginState> ->
-  bsForm.inputFloating {
+loginUsernameInput := ({value, error, disabled}: LoginInputProps): VNode<LoginState> ->
+  form.inputFloating {}
     id: LOGIN_USERNAME_ID
     label: t("ui.labels.username")
     type: "text"
@@ -148,12 +145,9 @@ loginUsernameInput := (
     oninput: UpdateUsername
     onkeypress: EnterToSubmitOrNextInput
     invalid: error
-  }
 
-loginPasswordInput := (
-  {value, error, disabled}: LoginInputState
-): VNode<LoginState> ->
-  bsForm.inputFloating {
+loginPasswordInput := ({value, error, disabled}: LoginInputProps): VNode<LoginState> ->
+  form.inputFloating {}
     id: LOGIN_PASSWORD_ID
     label: t("ui.labels.password")
     type: "password"
@@ -164,7 +158,6 @@ loginPasswordInput := (
     oninput: UpdatePassword
     onkeypress: EnterToSubmitOrNextInput
     invalid: error
-  }
 
 loginSubmitButton := ({submittable:: boolean}): VNode<LoginState> ->
   html.div {class: "d-grid gap-auto"},
@@ -172,30 +165,26 @@ loginSubmitButton := ({submittable:: boolean}): VNode<LoginState> ->
       class: "btn btn-primary d-flex align-items-center justify-content-center"
       disabled: !submittable
       onclick: Login
-    }, [
-      bsIcon {name: "box-arrow-in-right", class: "flex-shrink-0 me-1"}
+    }, []
+      icon {name: "box-arrow-in-right", class: "flex-shrink-0 me-1"}
       text t("actions.login")
-    ]
 
 // App
 
-init: Dispatchable<LoginState, any> := [
-  {
+init: Dispatchable<LoginState, any> := []
+  {}
     username: {value: "", error: "", disabled: false}
     password: {value: "", error: "", disabled: false}
     submittable: false
-  }
-  delay 10, (state: LoginState) -> [state, focus(LOGIN_USERNAME_ID)]
-]
+  delay 10, (state: LoginState) -> [state, focus<LoginState>(LOGIN_USERNAME_ID)]
 
 view := ({username, password, submittable}: LoginState): VNode<LoginState> ->
   html.div {},
-    html.form {onsubmit: PreventSubmit}, [
+    html.form {onsubmit: PreventSubmit}, []
       loginTitle()
       loginUsernameInput(username)
       loginPasswordInput(password)
       loginSubmitButton({submittable})
-    ]
 
 export default loginApp := ->
   if node? := document.getElementById(LOGIN_ID)

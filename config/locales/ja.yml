@@ -370,8 +370,8 @@ ja:
         %{name}を実施しています。 しばらくお待ち下さい。
       fetch_error: >-
         サーバー接続時にエラーが発生しました しばらく待ってから、再度試してください。
-      reload_after: '約%{sec}秒後に画面を切り替えます。'
-      reload_immediately: 画面を切り替えます。しばらくお待ち下さい。
+      redirect_after: '約%{sec}秒後に画面を切り替えます。'
+      redirect_immediately: 画面を切り替えます。しばらくお待ち下さい。
       javascript_disabled: >-
         JavaScriptが無効のため、正常に動作しません。
         JavaScriptを有効にしてください。

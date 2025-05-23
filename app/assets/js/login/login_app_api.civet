@@ -168,8 +168,8 @@ init: Dispatchable<LoginState> := []
     csrf: csrf()
     auth: {username: "", password: ""}
     disabled: false
-  delay 10, (state: LoginState, payload: Date) -> [state, focus<LoginState>(LOGIN_USERNAME_ID)]
-  now (state: LoginState, payload: Date) ->
+  delay 10, (state: LoginState) -> [state, focus<LoginState>(LOGIN_USERNAME_ID)]
+  now (state: LoginState) ->
     dialog := new Dialog {}
       id: LOGIN_ID
       centered: true

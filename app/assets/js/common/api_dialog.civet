@@ -8,7 +8,7 @@
 * as html from @hyperapp/html
 {focus} from @hyperapp/dom
 
-{modalDialog} from ~/app/modal.civet
+{modalDialog} from ~/app/component/modal.civet
 {normalizeURL} from ~/helpers/url_helper.civet
 Status from ~/common/status.civet
 ResponseMessage from ~/common/response_message.civet
@@ -17,16 +17,18 @@ ResponseMessage from ~/common/response_message.civet
 
 {fetchAPI, type ResponseData} from ~api/fetch_api.civet
 
-declare global
-  interface HTMLElementEventMap
-    "apidialog.message": CustomEvent<string>
+Dialog, {type DialogState} from ~/common/dialog.civet
 
-interface ModalState
-  status: string | Status
-  messages: string | string[]
-  link?: URL??
-  closable?: boolean
-  reload?: boolean
+// declare global
+//   interface HTMLElementEventMap
+//     "apidialog.message": CustomEvent<string>
+
+// interface ModalState
+//   status: string | Status
+//   messages: string | string[]
+//   link?: URL??
+//   closable?: boolean
+//   reload?: boolean
 
 ResponseMessageCodeMap ::= Map<number, ResponseMessage>
 
@@ -78,8 +80,10 @@ export default class APIDialog
   #responseMessageCodeMap: Map<number, ResponseMessage> :=
     new Map(APIDialog.DEFAULT_RESPONSE_MESSAGE_CODE_MAP)
 
-  readonly #modalNode: HTMLDivElement
-  readonly #modal: Modal
+  // readonly #modalNode: HTMLDivElement
+  // readonly #modal: Modal
+
+  readonly #dialog: Dialog
 
   @({
     #id:: string
@@ -92,116 +96,122 @@ export default class APIDialog
       APIDialog.mergeMessageCodeMap(#responseMessageCodeMap,
         responseMessageCodeList)
   
-    modalDialogNode := document.createElement("div")
-    modalDialogNode.id = `${#id}-modal-dialog`
-    modalDialogNode.classList.add("modal-dialog")
+    #dialog = new Dialog {
+      id: #id
+      centered: true
+      title: t(#name)
+    }
 
-    #modalNode = document.createElement("div")
-    #modalNode.id = `${#id}-modal`
-    #modalNode.classList.add("modal")
-    #modalNode.setAttribute("tabindex", "-1")
-    #modalNode.setAttribute("aria-hidden", "true")
-    #modalNode.appendChild(modalDialogNode)
+    // modalDialogNode := document.createElement("div")
+    // modalDialogNode.id = `${#id}-modal-dialog`
+    // modalDialogNode.classList.add("modal-dialog")
 
-    document.body.appendChild(#modalNode)
+    // #modalNode = document.createElement("div")
+    // #modalNode.id = `${#id}-modal`
+    // #modalNode.classList.add("modal")
+    // #modalNode.setAttribute("tabindex", "-1")
+    // #modalNode.setAttribute("aria-hidden", "true")
+    // #modalNode.appendChild(modalDialogNode)
 
-    #modal = new (getBootstrap().Modal)(#modalNode)
+    // document.body.appendChild(#modalNode)
 
-    init: ModalState := {}
-      status: "unknown"
-      messages: "n/a"
-      closable: true
-      link: null
-      reload: false
-    view := #modalView
-    node := modalDialogNode
-    subscriptions := (state: ModalState) =>[
-      #messageSub(#messageAction, {node: #modalNode})
-    ]
+    // #modal = new (getBootstrap().Modal)(#modalNode)
 
-    app {init, view, node, subscriptions}
+    // init: ModalState := {}
+    //   status: "unknown"
+    //   messages: "n/a"
+    //   closable: true
+    //   link: null
+    //   reload: false
+    // view := #modalView
+    // node := modalDialogNode
+    // subscriptions := (state: ModalState) =>[
+    //   #messageSub(#messageAction, {node: #modalNode})
+    // ]
+
+    // app {init, view, node, subscriptions}
 
   // Hyperapp Views
 
-  #modalView := ({status, messages, closable, link, reload}: ModalState) =>
-    status = Status.get(status) if status <? "string"
-    modalDialog {
-      id: #id,
-      centered: true
-      title: `${t(#name)} ${status.label}`
-      status
-      closable
-      action: if link?
-        {
-          label: t("ui.buttons.move_immediately")
-          color: "primary"
-          onclick: (state) -> [state, [-> location.href = link.href]]
-        }
-      else if reload
-        {
-          label: t("ui.buttons.reload_page")
-          color: "danger"
-          onclick: (state) -> [state, [-> location.reload()]]
-        }
-    }, #messageList {messages}
+  // #modalView := ({status, messages, closable, link, reload}: ModalState) =>
+  //   status = Status.get(status) if status <? "string"
+  //   modalDialog {
+  //     id: #id,
+  //     centered: true
+  //     title: `${t(#name)} ${status.label}`
+  //     status
+  //     closable
+  //     action: if link?
+  //       {
+  //         label: t("ui.buttons.move_immediately")
+  //         color: "primary"
+  //         onclick: (state) -> [state, [-> location.href = link.href]]
+  //       }
+  //     else if reload
+  //       {
+  //         label: t("ui.buttons.reload_page")
+  //         color: "danger"
+  //         onclick: (state) -> [state, [-> location.reload()]]
+  //       }
+  //   }, #messageList {messages}
 
-  #messageList({messages:: string | string[]})
-    messages = [messages] if messages <? "string"
-    html.div {}, messages.map (msg) ->
-      html.div {},
-        text msg
+  // #messageList({messages:: string | string[]})
+  //   messages = [messages] if messages <? "string"
+  //   html.div {}, messages.map (msg) ->
+  //     html.div {},
+  //       text msg
 
   // Hyperapp Action
 
-  #messageAction: Action<ModalState> = (state: ModalState, params) =>
-    newState := {...state, ...params}
-    if newState.closable
-      [newState, focus(`${#id}-modal-close-button`)]
-    else
-      newState
+  // #messageAction: Action<ModalState> = (state: ModalState, params) =>
+  //   newState := {...state, ...params}
+  //   if newState.closable
+  //     [newState, focus(`${#id}-modal-close-button`)]
+  //   else
+  //     newState
 
   // Hyperapp create Subscription 
 
-  #messageSub = (action: Action<ModalState>, {node:: HTMLElement}): Subscription<ModalState> =>
-    [#messageRunner, {action, node}]
+  // #messageSub = (action: Action<ModalState>, {node:: HTMLElement}): Subscription<ModalState> =>
+  //   [#messageRunner, {action, node}]
 
   // Hyperapp Subscriber
 
-  #messageRunner: Subscription<ModalState>.0 = (dispatch, {action:: Action<ModalState>, node:: HTMLElement}) ->
-    func := (e: CustomEvent) -> dispatch(action, e.detail)
-    node.addEventListener(APIDialog.MESSAGE_EVENT, func)
-    -> node.removeEventListener(APIDialog.MESSAGE_EVENT, func)
+  // #messageRunner: Subscription<ModalState>.0 = (dispatch, {action:: Action<ModalState>, node:: HTMLElement}) ->
+  //   func := (e: CustomEvent) -> dispatch(action, e.detail)
+  //   node.addEventListener(APIDialog.MESSAGE_EVENT, func)
+  //   -> node.removeEventListener(APIDialog.MESSAGE_EVENT, func)
 
   // modal control
 
-  #modalMessage(state: ModalState): void
-    // HACK: sett private properties of modal config
-    //     <https://github.com/twbs/bootstrap/issues/35664>
-    if state.closable
-      (#modal as any)._config.backdrop = true
-      (#modal as any)._config.keyboard = true
-    else
-      (#modal as any)._config.backdrop = "static"
-      (#modal as any)._config.keyboard = false
+  // #modalMessage(state: ModalState): void
+  //   // HACK: sett private properties of modal config
+  //   //     <https://github.com/twbs/bootstrap/issues/35664>
+  //   if state.closable
+  //     (#modal as any)._config.backdrop = true
+  //     (#modal as any)._config.keyboard = true
+  //   else
+  //     (#modal as any)._config.backdrop = "static"
+  //     (#modal as any)._config.keyboard = false
 
-    event := new CustomEvent(APIDialog.MESSAGE_EVENT, {detail: state})
-    #modalNode.dispatchEvent(event)
+  //   event := new CustomEvent(APIDialog.MESSAGE_EVENT, {detail: state})
+  //   #modalNode.dispatchEvent(event)
 
-  #waitModalClose = =>
-    new Promise<void> (resolve, reject) =>
-      #modalNode.addEventListener "hidden.bs.modal", -> resolve(), once: true
+  // #waitModalClose = =>
+  //   new Promise<void> (resolve, reject) =>
+  //     #modalNode.addEventListener "hidden.bs.modal", -> resolve(), once: true
 
-  // sumbit
+  // public methods
 
   submitPromise({params?:: {[key: string]: string}, data?:: any}): ResponseData
-    runningMessageState: ModalState := {}
+    runningState: Partial<DialogState> := {}
       status: "running"
-      messages: t("ui.messages.running", {name: t(#name)})
       closable: false
-      link: null
-      reload: false
-    #modalMessage(runningMessageState)
-    #modal.show()
+      messages: t("ui.messages.running", {name: t(#name)})
+    wait := #dialog.showPromise(runningState)
+
+    // #modalMessage(runningMessageState)
+    // #modal.show()
 
     path .= #path
     for name, replace in params
@@ -220,45 +230,48 @@ export default class APIDialog
 
     responseMessage := #responseMessageCodeMap.get(response.status.code) ?? APIDialog.UNKNOWN_RESPONSE_MESSAGE
 
-    messages := [
-      responseMessage.message
-      ...Object.values(response.flash ?? {})
-    ].filter & <? "string"
+    resultState: {messages: string[]} & Omit<Partial<DialogState>, "messages"> := {}
+      status: responseMessage.status
+      closable: true
+      messages: [
+        responseMessage.message
+        ...Object.values(response.flash ?? {})
+      ].filter & <? "string"
 
-    {closable, link, reload} :=
-      if responseMessage?.redirectTo?
-        if responseMessage.reloadTime > 0
-          messages.push(t("ui.messages.reload_after", {sec: responseMessage.reloadTime.toString()}))
-        else
-          messages.push(t("ui.messages.reload_immediately"))
-        {closable: false, link: responseMessage.redirectTo, reload: false}
-      else if responseMessage?.reload
-        {closable: false,link: null, reload: true}
+    redirectLink := responseMessage.redirectTo
+
+    if redirectLink?
+      if responseMessage.reloadTime > 0
+        resultState.messages.push(t("ui.messages.redirect_after", {sec: responseMessage.reloadTime.toString()}))
       else
-        {closable: true, link: null, reload: false}
+        resultState.messages.push(t("ui.messages.redirect_immediately"))
+      resultState.closable = false
+      resultState.action = {label: t("ui.buttons.move_immediately"), color: "primary"}
+      resultState.effecter = -> location.href = redirectLink.href;
+    else if responseMessage?.reload
+      resultState.closable = false
+      resultState.action = {label: t("ui.buttons.reload_page"), color: "danger"}
+      resultState.effecter = -> location.reload()
 
-    status := responseMessage?.status ??
-      if response.ok then Status.get("success") else Status.get("error")
 
-    resultMessageState: ModalState := {}
-      status
-      messages
-      closable
-      link
-      reload
+    // resultState: Partial<DialogState> := {}
+    //   status
+    //   messages
+    //   closable
+    //   action
+    //   effecter
 
-    #modalMessage(resultMessageState)
+    #dialog.update(resultState)
 
-    if responseMessage?
-      if link?
-        setTimeout ->
-          location.href = link.href
-        , responseMessage.reloadTime * 1000
-      else if responseMessage.autoCloseTime > 0
-        setTimeout =>
-          #modal.hide()
-        , responseMessage.autoCloseTime * 1000
+    if redirectLink?
+      setTimeout ->
+        location.href = redirectLink.href
+      , responseMessage.reloadTime * 1000
+    if responseMessage.autoCloseTime > 0
+      setTimeout =>
+        #dialog.hide()
+      , responseMessage.autoCloseTime * 1000
 
-    await #waitModalClose()
+    await wait
 
     response
