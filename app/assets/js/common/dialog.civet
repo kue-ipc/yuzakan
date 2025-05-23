@@ -3,12 +3,13 @@
  * ダイアログを表示するクラス
  */
 
-{app, text, type Dispatch, type ElementVNode, type Dispatchable, type Effecter} from hyperapp
+{app, text, type Action, type Dispatch, type ElementVNode, type Dispatchable, type Effecter, type VNode, type Unsubscribe, type Subscription} from hyperapp
 * as html from @hyperapp/html
 
 {modalDialog, type ModalButton, type ModalSize, type ModalFullscreen} from ~/app/component/modal.civet
 Status from ~/common/status.civet
 {getBootstrap, type Modal} from ~/common/bs.civet
+{focus} from @hyperapp/dom
 
 export interface DialogState
   title: string
@@ -18,6 +19,8 @@ export interface DialogState
   close?: ModalButton
   effecter?: Effecter<DialogState>
   messages: string | string[]
+  shown: boolean
+  focus?: "action" | "close"
 
 export default class Dialog
   readonly #id: string
@@ -69,15 +72,54 @@ export default class Dialog
       close
       effecter
       messages
-    view := @@#modalView
+      shown: false
+    view := #modalView
     node := modalDialogNode
+    subscriptions := (state: DialogState) => []
+      #onHidden(#afterHidden)
+      #onShow(#afterShow)
+      #onShown(#afterShown)
 
-    #dispatch = app<DialogState>({init, view, node})
+    #dispatch = app<DialogState>({init, view, node, subscriptions})
     #modal = new (getBootstrap().Modal)(#modalNode)
 
+  // Actions
+
+  #afterHidden(state: DialogState): Dispatchable<DialogState>
+    {...state, shown: false}
+
+  #afterShow(state: DialogState): Dispatchable<DialogState>
+    {...state, shown: true}
+
+  #afterShown = (state: DialogState): Dispatchable<DialogState> =>
+    if state.focus
+      [state, focus(`${#id}-modal-${state.focus}-button`)]
+    else
+      state
+ 
+  // Subscribers
+
+  #listenModalEvent = (type: string) =>
+    (dispatch: Dispatch<DialogState>, action: Action<DialogState, void>): Unsubscribe =>
+      name := `${type}.bs.modal`
+      func := -> dispatch(action)
+      #modalNode.addEventListener(name, func)
+      => #modalNode.removeEventListener(name, func)
+
+
+  #onModalEvent = (type: string) =>
+    (action: Action<DialogState, void>): Subscription<DialogState, Action<DialogState, void>> =>
+      [#listenModalEvent(type), action]
+
+  #onHide = #onModalEvent("hide")
+  #onHidden = #onModalEvent("hidden")
+  #onHidePrevented = #onModalEvent("hidePrevented")
+  #onShow = #onModalEvent("show")
+  #onShown = #onModalEvent("shown")
+  
   // Views
 
-  #modalView({effecter, messages, ...props}: DialogState): ElementVNode<DialogState>
+  #modalView = ({effecter, messages, ...props}: DialogState): ElementVNode<DialogState> =>
     modalDialog<DialogState> {
       #id
       #scrollable
@@ -94,7 +136,7 @@ export default class Dialog
 
   // Actions
 
-  #updateState(state: DialogState, props: Partial<DialogState>): Dispatchable<DialogState>
+  #updateState = (state: DialogState, props: Partial<DialogState>): Dispatchable<DialogState> =>
     newState := {...state, ...props}
     // HACK: sett private properties of modal config
     //     <https://github.com/twbs/bootstrap/issues/35664>
@@ -110,7 +152,7 @@ export default class Dialog
   // pulbic methods
 
   update(props: Partial<DialogState>): void
-    #dispatch(#updateState.bind(@), props)
+    #dispatch(#updateState, props)
 
   show(props?: Partial<DialogState>): void
     @update(props) if props?
