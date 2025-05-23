@@ -90,7 +90,7 @@ modalContent := <S>({
     modalBody<S> {id}, children
     modalFooter<S> {id, closable, action, close, positive, onclick} if closable || onclick?
 
-modalDialog := <S>({
+export modalDialog := <S>({
   id:: string
   scrollable:: boolean = false
   centered:: boolean = false

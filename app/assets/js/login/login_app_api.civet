@@ -4,7 +4,7 @@
   type VNode} from hyperapp
 * as html from @hyperapp/html
 {focus} from @hyperapp/dom
-{delay} from @hyperapp/time
+{delay, now} from @hyperapp/time
 
 csrf from ~/common/csrf.civet
 {t} from ~/common/i18n.civet
@@ -17,8 +17,11 @@ icon from ~/app/icon.civet
 {type ResponseData} from ~api/fetch_api.civet
 {createCreateAuth, type AuthProps, type AuthState} from ~api/actions/auth.civet
 
+Dialog from ~/common/dialog.civet
+
 interface LoginState < AuthState
   disabled: boolean
+  dialog?: Dialog
 
 interface LoginInputState < Validation
   value: string
@@ -37,6 +40,7 @@ submittable := (state: LoginState): boolean ->
 
 Login: Action<LoginState, Event> := (state: LoginState, _event: Event) ->
   if submittable(state)
+    state.dialog?.show()
     [{...state, disabled: true}, login(state.auth)]
   else
     state
@@ -87,6 +91,7 @@ PreventSubmit: Action<LoginState, SubmitEvent> := (state, event) ->
   state
 
 LoginFailure: Action<LoginState, ResponseData> := (state, _response) ->
+  state.dialog?.hide()
   []
     {...state, auth: {...state.auth, password: ""}, disabled: false}
     [runAlertFlash, state.flash]
@@ -118,10 +123,8 @@ reloadWindow := (sec: number): Effect<LoginState> ->
 loginTitle := (): VNode<LoginState> ->
   html.h3 {class: "login-title text-center mb-2"}, text t("actions.login")
 
-loginUsernameInput := (
-  {value, disabled, valid, invalid}: LoginInputState
-): VNode<LoginState> ->
-  form.inputFloating {
+loginUsernameInput := ({value, disabled, valid, invalid}: LoginInputState): VNode<LoginState> ->
+  form.inputFloating {}
     id: LOGIN_USERNAME_ID
     label: t("ui.labels.username")
     type: "text"
@@ -133,12 +136,9 @@ loginUsernameInput := (
     onkeypress: EnterToSubmitOrNextInput
     valid
     invalid
-  }
 
-loginPasswordInput := (
-  {value, disabled, valid, invalid}: LoginInputState
-): VNode<LoginState> ->
-  form.inputFloating {
+loginPasswordInput := ({value, disabled, valid, invalid}: LoginInputState): VNode<LoginState> ->
+  form.inputFloating {}
     id: LOGIN_PASSWORD_ID
     label: t("ui.labels.password")
     type: "password"
@@ -150,41 +150,44 @@ loginPasswordInput := (
     onkeypress: EnterToSubmitOrNextInput
     valid
     invalid
-  }
 
-loginSubmitButton := (
-  {auth:: AuthProps, disabled:: boolean}
-): VNode<LoginState> ->
+loginSubmitButton := ({auth:: AuthProps, disabled:: boolean}): VNode<LoginState> ->
   html.div {class: "d-grid gap-auto"},
     html.button {
       class: "btn btn-primary d-flex align-items-center justify-content-center"
       disabled: !disabled or !auth.username or !auth.password
       onclick: Login
-    }, [
+    }, []
       icon {name: "box-arrow-in-right", class: "flex-shrink-0 me-1"}
       text t("actions.login")
-    ]
 
 // App
 
-init: Dispatchable<LoginState> := [
+init: Dispatchable<LoginState> := []
   {}
     csrf: csrf()
     auth: {username: "", password: ""}
     disabled: false
   delay 10, (state: LoginState, payload: Date) -> [state, focus<LoginState>(LOGIN_USERNAME_ID)]
-]
+  now (state: LoginState, payload: Date) ->
+    dialog := new Dialog {}
+      id: LOGIN_ID
+      centered: true
+      title: t("actions.login")
+      status: "running"
+      closable: false
+      messages: t("ui.messages.running", {name: t("actions.login")})
+    {...state, dialog}
 
 view := (state: LoginState): VNode<LoginState> ->
   html.div {},
-    html.form {onsubmit: PreventSubmit}, [
+    html.form {onsubmit: PreventSubmit}, []
       loginTitle()
       loginUsernameInput({value: state.auth.username, state.disabled,
         ...flashValidation(state.flash, "username")})
       loginPasswordInput({value: state.auth.password, state.disabled,
         ...flashValidation(state.flash, "password")})
       loginSubmitButton({state.auth, disabled: submittable(state)})
-    ]
 
 export default loginApp := ->
   if node? := document.getElementById(LOGIN_ID)

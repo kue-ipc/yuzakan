@@ -7,7 +7,7 @@
 * as html from @hyperapp/html
 {focus} from @hyperapp/dom
 
-modal, {type ModalButton, type ModalSize, type ModalFullscreen} from ~/app/component/modal.civet
+{modalDialog, type ModalButton, type ModalSize, type ModalFullscreen} from ~/app/component/modal.civet
 Status from ~/common/status.civet
 {getBootstrap, type Modal} from ~/common/bs.civet
 
@@ -52,19 +52,17 @@ export default class Dialog
 
     #modalNode = document.createElement("div")
     #modalNode.id = `${#id}-modal`
-    // #modalNode.classList.add("modal")
-    // #modalNode.classList.add("fade") if #fade
-    // #modalNode.setAttribute("tabindex", "-1")
-    // #modalNode.setAttribute("aria-hidden", "true")
+    #modalNode.classList.add("modal")
+    #modalNode.classList.add("fade") if #fade
+    #modalNode.setAttribute("tabindex", "-1")
+    #modalNode.setAttribute("aria-hidden", "true")
 
-    // modalDialogNode := document.createElement("div")
-    // modalDialogNode.id = `${#id}-modal-dialog`
-    // modalDialogNode.classList.add("modal-dialog")
+    modalDialogNode := document.createElement("div")
+    modalDialogNode.id = `${#id}-modal-dialog`
+    modalDialogNode.classList.add("modal-dialog")
 
-    // #modalNode.appendChild(modalDialogNode)
+    #modalNode.appendChild(modalDialogNode)
     document.body.appendChild(#modalNode)
-
-    #modal = new (getBootstrap().Modal)(#modalNode)
 
     init := {}
       title
@@ -75,7 +73,7 @@ export default class Dialog
       effecter
       messages
     view := @@#modalView
-    node := #modalNode
+    node := modalDialogNode
     // subscriptions := (state) =>
     //   [
     //     ModalDialog.onMessage(#modalNode, #receiveModalMessage)
@@ -85,12 +83,12 @@ export default class Dialog
 
     #result = undefined
     #dispatch = app<DialogState>({init, view, node})
+    #modal = new (getBootstrap().Modal)(#modalNode)
 
   // Views
   #modalView({effecter, messages, ...props}: DialogState): ElementVNode<DialogState>
-    modal<DialogState> {
+    modalDialog<DialogState> {
       #id
-      #fade
       #scrollable
       #centered
       #size
@@ -122,9 +120,12 @@ export default class Dialog
     #dispatch(#updateState.bind(@), props)
 
   show(props?: Partial<DialogState>): void
+    @update(props) if props?
+    console.debug "show modal", #id
     #modal.show()
 
   hide(): void
+    console.debug "hide modal", #id
     #modal.hide()
 
   waitHidden(): Promise<void>
@@ -134,9 +135,7 @@ export default class Dialog
       , {once: true}
 
   showPromise(props?: Partial<DialogState>): Promise<void>
-    @update(props) if props
-
-    @show()
+    @show(props)
     @waitHidden()
   
   // modalAction = (state) =>
