@@ -1,9 +1,11 @@
-type SvgProps<S, C> = CustomPayloads<S, C> & Props<S>;
-type SvgChildren<S> = MaybeVNode<S> | readonly MaybeVNode<S>[];
-type SvgTag = <S, C = unknown>(props?: SvgProps<S, C> | SvgChildren<S>,
-  children?: SvgChildren<S>) => ElementVNode<S>;
-
 declare module '@hyperapp/svg' {
+  import type {CustomPayloads, Props, MaybeVNode, ElementVNode} from "hyperapp";
+
+  type SvgTag = {
+    <S, C = unknown>(props?: CustomPayloads<S, C> & Props<S>, children?: MaybeVNode<S> | readonly MaybeVNode<S>[]): ElementVNode<S>;
+    <S>(children?: MaybeVNode<S> | readonly MaybeVNode<S>[]): ElementVNode<S>;
+  }
+
   const a: SvgTag;
   const g: SvgTag;
   const svg: SvgTag;

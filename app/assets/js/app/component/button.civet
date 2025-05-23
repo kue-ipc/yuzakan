@@ -11,7 +11,7 @@ export ButtonColor ::= BsThemeColor | "link"
 
 export ButtonSize ::= Exclude<BsGridSize, "xs" | "xl" | "xxl">?
 
-export button := <S, C = unknown>({
+export default button := <S, C = unknown>({
   class: klass?:: ClassProp
   label?:: string
   color:: ButtonColor = "primary"

@@ -2,7 +2,7 @@
 
 {text, type ClassProp} from hyperapp
 * as html from @hyperapp/html
-bsIcon from ~/app/bs_icon.civet
+icon from ~/app/icon.civet
 Status from ~/common/status.civet
 {bsTextColorClass} from ~/common/bs.civet
 
@@ -22,7 +22,7 @@ export statusIcon := <S>({
         text status.label
   else if status.icon?
     html.div<S> {class: divClass},
-      bsIcon<S> {name: status.icon, alt: status.label ?? status.name, size: 32}
+      icon<S> {name: status.icon, alt: status.label ?? status.name, size: 32}
   else
     html.div<S> {class: divClass},
       text status.label
