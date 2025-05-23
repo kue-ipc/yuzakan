@@ -1,6 +1,6 @@
 // Logout app
 
-{app, text, type Dispatch} from hyperapp
+{app, text, type Action, type Effecter, type Effect} from hyperapp
 * as html from @hyperapp/html
 APIDialog from ~/common/api_dialog.civet
 icon from ~/app/icon.civet
@@ -10,20 +10,18 @@ csrf from ~/common/csrf.civet
 interface LogoutState
   disabled: boolean
 
-apiDialog := new APIDialog {
+apiDialog := new APIDialog {}
   id: "logout"
   name: "actions.logout"
   method: "DELETE"
   path: "/api/auth"
-  responseMessageCodeList: [
+  responseMessageCodeList: []
     [200, {status: "success", message: "logout_succeeded", redirectTo: "/"}]
     [410, {status: "error", message: "logout_failed", reload: true}]
-  ]
-}
 
 // Actions
 
-Logout := (state: LogoutState, event: PointerEvent) ->
+Logout: Action<LogoutState, MouseEvent> := (state) ->
   if state.disabled
     state
   else
@@ -31,13 +29,13 @@ Logout := (state: LogoutState, event: PointerEvent) ->
 
 // Effecters
 
-runLogout := (dispatch: Dispatch<LogoutState>) ->
+runLogout: Effecter<LogoutState> := (dispatch) ->
   await apiDialog.submitPromise {data: csrf()}
   dispatch (state) -> ({...state, disabled: false})
 
 // Effect Generotors
 
-logout := ->
+logout := (): Effect<LogoutState> ->
   runLogout
 
 // App
@@ -45,7 +43,7 @@ logout := ->
 init := {disabled: false}
 
 view := (state: LogoutState) ->
-  html.button {
+  html.button<LogoutState> {
     state.disabled
     onclick: Logout
   }, [

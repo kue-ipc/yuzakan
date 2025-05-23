@@ -19,17 +19,6 @@ ResponseMessage from ~/common/response_message.civet
 
 Dialog, {type DialogState} from ~/common/dialog.civet
 
-// declare global
-//   interface HTMLElementEventMap
-//     "apidialog.message": CustomEvent<string>
-
-// interface ModalState
-//   status: string | Status
-//   messages: string | string[]
-//   link?: URL??
-//   closable?: boolean
-//   reload?: boolean
-
 ResponseMessageCodeMap ::= Map<number, ResponseMessage>
 
 ResponseMessageCodeListKey ::= number
@@ -80,9 +69,6 @@ export default class APIDialog
   #responseMessageCodeMap: Map<number, ResponseMessage> :=
     new Map(APIDialog.DEFAULT_RESPONSE_MESSAGE_CODE_MAP)
 
-  // readonly #modalNode: HTMLDivElement
-  // readonly #modal: Modal
-
   readonly #dialog: Dialog
 
   @({
@@ -96,110 +82,10 @@ export default class APIDialog
       APIDialog.mergeMessageCodeMap(#responseMessageCodeMap,
         responseMessageCodeList)
   
-    #dialog = new Dialog {
+    #dialog = new Dialog {}
       id: #id
       centered: true
       title: t(#name)
-    }
-
-    // modalDialogNode := document.createElement("div")
-    // modalDialogNode.id = `${#id}-modal-dialog`
-    // modalDialogNode.classList.add("modal-dialog")
-
-    // #modalNode = document.createElement("div")
-    // #modalNode.id = `${#id}-modal`
-    // #modalNode.classList.add("modal")
-    // #modalNode.setAttribute("tabindex", "-1")
-    // #modalNode.setAttribute("aria-hidden", "true")
-    // #modalNode.appendChild(modalDialogNode)
-
-    // document.body.appendChild(#modalNode)
-
-    // #modal = new (getBootstrap().Modal)(#modalNode)
-
-    // init: ModalState := {}
-    //   status: "unknown"
-    //   messages: "n/a"
-    //   closable: true
-    //   link: null
-    //   reload: false
-    // view := #modalView
-    // node := modalDialogNode
-    // subscriptions := (state: ModalState) =>[
-    //   #messageSub(#messageAction, {node: #modalNode})
-    // ]
-
-    // app {init, view, node, subscriptions}
-
-  // Hyperapp Views
-
-  // #modalView := ({status, messages, closable, link, reload}: ModalState) =>
-  //   status = Status.get(status) if status <? "string"
-  //   modalDialog {
-  //     id: #id,
-  //     centered: true
-  //     title: `${t(#name)} ${status.label}`
-  //     status
-  //     closable
-  //     action: if link?
-  //       {
-  //         label: t("ui.buttons.move_immediately")
-  //         color: "primary"
-  //         onclick: (state) -> [state, [-> location.href = link.href]]
-  //       }
-  //     else if reload
-  //       {
-  //         label: t("ui.buttons.reload_page")
-  //         color: "danger"
-  //         onclick: (state) -> [state, [-> location.reload()]]
-  //       }
-  //   }, #messageList {messages}
-
-  // #messageList({messages:: string | string[]})
-  //   messages = [messages] if messages <? "string"
-  //   html.div {}, messages.map (msg) ->
-  //     html.div {},
-  //       text msg
-
-  // Hyperapp Action
-
-  // #messageAction: Action<ModalState> = (state: ModalState, params) =>
-  //   newState := {...state, ...params}
-  //   if newState.closable
-  //     [newState, focus(`${#id}-modal-close-button`)]
-  //   else
-  //     newState
-
-  // Hyperapp create Subscription 
-
-  // #messageSub = (action: Action<ModalState>, {node:: HTMLElement}): Subscription<ModalState> =>
-  //   [#messageRunner, {action, node}]
-
-  // Hyperapp Subscriber
-
-  // #messageRunner: Subscription<ModalState>.0 = (dispatch, {action:: Action<ModalState>, node:: HTMLElement}) ->
-  //   func := (e: CustomEvent) -> dispatch(action, e.detail)
-  //   node.addEventListener(APIDialog.MESSAGE_EVENT, func)
-  //   -> node.removeEventListener(APIDialog.MESSAGE_EVENT, func)
-
-  // modal control
-
-  // #modalMessage(state: ModalState): void
-  //   // HACK: sett private properties of modal config
-  //   //     <https://github.com/twbs/bootstrap/issues/35664>
-  //   if state.closable
-  //     (#modal as any)._config.backdrop = true
-  //     (#modal as any)._config.keyboard = true
-  //   else
-  //     (#modal as any)._config.backdrop = "static"
-  //     (#modal as any)._config.keyboard = false
-
-  //   event := new CustomEvent(APIDialog.MESSAGE_EVENT, {detail: state})
-  //   #modalNode.dispatchEvent(event)
-
-  // #waitModalClose = =>
-  //   new Promise<void> (resolve, reject) =>
-  //     #modalNode.addEventListener "hidden.bs.modal", -> resolve(), once: true
 
   // public methods
 
@@ -209,9 +95,6 @@ export default class APIDialog
       closable: false
       messages: t("ui.messages.running", {name: t(#name)})
     wait := #dialog.showPromise(runningState)
-
-    // #modalMessage(runningMessageState)
-    // #modal.show()
 
     path .= #path
     for name, replace in params
@@ -252,14 +135,6 @@ export default class APIDialog
       resultState.closable = false
       resultState.action = {label: t("ui.buttons.reload_page"), color: "danger"}
       resultState.effecter = -> location.reload()
-
-
-    // resultState: Partial<DialogState> := {}
-    //   status
-    //   messages
-    //   closable
-    //   action
-    //   effecter
 
     #dialog.update(resultState)
 
