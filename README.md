@@ -67,25 +67,25 @@ Hanami 2 へアップデート中です。
 
 ### データベース
 
-* [x] PostgreSQL
-* [ ] MariaDB
-* [ ] SQLite
+* [x] PostgreSQL >= 16
+* [ ] MariaDB >= 10.11
+* [ ] SQLite 3
 
 現在はPostgreSQLのみ対応しています。
 PostgreSQLに依存した方を使用しているため、他のDBのサポートについては未定です。
 
 ### セッション管理key-valueデータベース
 
-* [x] redis (デフォルト)
+* [x] valkey or redis >= 7
 * [ ] memcaced
 
-reidsが無い場合は、クッキーセッション、オンメモリキャッシュを使用します。
+valkeyまたはreidsが無い場合は、クッキーセッション、オンメモリキャッシュを使用します。
 
 ### サポートするOS/ディストリビューション
 
 * [x] Ubuntu 24.04 LTS
-* [x] Rocky 9
-* [ ] Rocky 10 (予定)
+* [x] AlmaLinux 9 / Rocky 9
+* [ ] AlmaLinux 10 / Rocky 10 (予定)
 
 ## セットアップ
 
