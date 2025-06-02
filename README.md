@@ -83,9 +83,10 @@ memcachedは未テストです。
 
 ### サポートするOS/ディストリビューション
 
-* [x] Ubuntu 24.04 LTS
-* [x] AlmaLinux 9 / Rocky 9
+* [x] AlmaLinux 9 / Rocky 9 (with app streams)
 * [ ] AlmaLinux 10 / Rocky 10 (予定)
+* [x] Debian 12 / Ubuntu 24.04 LTS (with non-default Ruby and Node.js)
+* [ ] Debian 13 / Ubuntu 26.04 LTS (予定)
 
 ## セットアップ
 
