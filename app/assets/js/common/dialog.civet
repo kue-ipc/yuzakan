@@ -5,11 +5,12 @@
 
 {app, text, type Action, type Dispatch, type ElementVNode, type Dispatchable, type Effecter, type VNode, type Unsubscribe, type Subscription} from hyperapp
 * as html from @hyperapp/html
+{focus} from @hyperapp/dom
+{delay} from @hyperapp/time
 
 {modalDialog, type ModalButton, type ModalSize, type ModalFullscreen} from ~/app/component/modal.civet
 Status from ~/common/status.civet
 {getBootstrap, type Modal} from ~/common/bs.civet
-{focus} from @hyperapp/dom
 
 export interface DialogState
   title: string
@@ -18,10 +19,12 @@ export interface DialogState
   action?: ModalButton
   close?: ModalButton
   effecter?: Effecter<DialogState>
+  focus?: "action" | "close"
   messages: string | string[]
   shown: boolean
-  focus?: "action" | "close"
 
+export DialogProps ::= Partial<Omit<DialogState, "shown">>
+ 
 export default class Dialog
   readonly #id: string
   readonly #fade: boolean
@@ -47,6 +50,7 @@ export default class Dialog
     action?:: ModalButton
     close?:: ModalButton
     effecter?:: Effecter<DialogState>
+    focus?:: "action" | "close"
     messages:: string | string[] = ""
   })
 
@@ -71,6 +75,7 @@ export default class Dialog
       action
       close
       effecter
+      focus
       messages
       shown: false
     view := #modalView
@@ -119,7 +124,8 @@ export default class Dialog
   
   // Views
 
-  #modalView = ({effecter, messages, ...props}: DialogState): ElementVNode<DialogState> =>
+  #modalView = ({effecter, focus, messages, ...props}: DialogState): ElementVNode<DialogState> =>
+    // do not use focus prop in view
     modalDialog<DialogState> {
       #id
       #scrollable
@@ -136,7 +142,7 @@ export default class Dialog
 
   // Actions
 
-  #updateState = (state: DialogState, props: Partial<DialogState>): Dispatchable<DialogState> =>
+  #updateState = (state: DialogState, props: DialogProps): Dispatchable<DialogState> =>
     newState := {...state, ...props}
     // HACK: sett private properties of modal config
     //     <https://github.com/twbs/bootstrap/issues/35664>
@@ -147,14 +153,21 @@ export default class Dialog
       (#modal as any)._config.backdrop = "static"
       (#modal as any)._config.keyboard = false
 
-    newState
+    console.debug "update modal state", newState
+    if newState.shown and newState.focus?
+      console.debug "focus on modal button", newState.focus
+      []
+        newState
+        delay 1, (delayState) => [delayState, focus<DialogState>(`${#id}-modal-${state.focus}-button`)]
+    else
+      newState
 
   // pulbic methods
 
-  update(props: Partial<DialogState>): void
+  update(props: DialogProps): void
     #dispatch(#updateState, props)
 
-  show(props?: Partial<DialogState>): void
+  show(props?: DialogProps): void
     @update(props) if props?
     console.debug "show modal", #id
     #modal.show()

@@ -116,6 +116,7 @@ export default class APIDialog
     resultState: {messages: string[]} & Omit<Partial<DialogState>, "messages"> := {}
       status: responseMessage.status
       closable: true
+      focus: "close"
       messages: [
         responseMessage.message
         ...Object.values(response.flash ?? {})
@@ -129,10 +130,12 @@ export default class APIDialog
       else
         resultState.messages.push(t("ui.messages.redirect_immediately"))
       resultState.closable = false
+      resultState.focus = undefined
       resultState.action = {label: t("ui.buttons.move_immediately"), color: "primary"}
       resultState.effecter = -> location.href = redirectLink.href;
     else if responseMessage?.reload
       resultState.closable = false
+      resultState.focus = undefined
       resultState.action = {label: t("ui.buttons.reload_page"), color: "danger"}
       resultState.effecter = -> location.reload()
 
