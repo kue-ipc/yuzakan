@@ -25,7 +25,7 @@ module API
               categroy: "top",
             }, {
               name: "パスワード変更",
-              path: Web.routes.path(:edit_password),
+              path: Web.routes.path(:password_edit),
               description: "アカウントのパスワードを変更します。",
               color: "primary",
               icon: "lock",

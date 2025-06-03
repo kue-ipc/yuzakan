@@ -8,7 +8,7 @@ module Yuzakan
     get "/about/browser", to: "about.browser", as: :about_browser
 
     get "/user", to: "user.show", as: :user
-    get "/password/!", to: "password.edit", as: :edit_password
+    get "/password/!", to: "password.edit", as: :password_edit
     get "/providers/:id", to: "providers.show", as: :provider
 
     slice :admin, at: "/admin"

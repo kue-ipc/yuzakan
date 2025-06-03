@@ -4,10 +4,12 @@ module Yuzakan
   module Actions
     module Password
       class Edit < Yuzakan::Action
-        expose :excluded_providers
+        include Deps[
+          "repos.provider_repo",
+        ]
 
         def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
-          @excluded_providers = ProviderRepository.new.all_individual_password
+          response[:excluded_providers] = provider_repo.all_individual_password
         end
       end
     end

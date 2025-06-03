@@ -24,6 +24,24 @@ module Yuzakan
             tag.h6(str, **opts)
           end
         end
+
+        private def route_path
+          path_list = _context.request.path.delete_prefix("/").split("/")
+          case path_list.last
+          in nil | ""
+            ["root"]
+          in "*"
+            # TODO: ここがまだ未実装
+            path_list[0, ], "new"]
+          in "!"
+            [path_list, "edit"]
+          else
+            path_list
+          end.join("_").intern
+          route_path = _context.request.path.split("/").reject(&:empty?).join("_")
+          route_path = "root" if route_path.empty?
+
+        end
       end
     end
   end

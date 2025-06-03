@@ -300,7 +300,7 @@ ja:
     user:
       title: ユーザー情報
       description: ユーザーの情報です。
-    edit_password:
+    password_edit:
       title: パスワード変更
       description: パスワードを変更します。
     provider:
@@ -309,7 +309,7 @@ ja:
     admin:
       title: 管理者情報
       description: 管理レベルの情報です。
-    admin_new_user:
+    admin_user_new:
       title: ユーザー作成
       description: ユーザーを新規作成します。
     admin_users:

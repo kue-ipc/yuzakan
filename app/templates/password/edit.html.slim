@@ -1,12 +1,17 @@
-h2 パスワード変更
-
 p 現在のパスワードと新しいパスワードを入力してください。新しいパスワード下記の「パスワードの要件」を満たす必要があります。
 
-= javascript 'change_password', type: 'module'
-.change_password.mx-auto.p-3.border.rounded.mb-2
-  = form_for form do
-    - fields_for :password do
-      - div id: 'change-password', 'data-change-password': ha(JSON.generate(change_password_data))
+= javascript_tag "password_edit/app", type: "module"
+
+/ .change_password.mx-auto.p-3.border.rounded.mb-2
+/   = form_for form do
+/     - fields_for :password do
+/       - div id: 'change-password', 'data-change-password': ha(JSON.generate(change_password_data))
+
+pre.text-wrap
+  = context.request.path
+  / = context.request.fullpath
+  / = context.app_routes.path("aaaa")
+  / = context.request.methods - nil.methods
 
 p
   | 新しいパスワードへの変更は、

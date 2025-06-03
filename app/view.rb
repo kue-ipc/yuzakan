@@ -15,11 +15,11 @@ module Yuzakan
     List = Data.define(:list, :scope)
 
     USER_STATIC_MENU_ITEMS = [
-      {name: :edit_password, color: "primary", level: 1},
+      {name: :password_edit, color: "primary", level: 1},
     ].map { |params| MenuItem.new(**params) }.freeze
 
     ADMIN_STATIC_MENU_ITEMS = [
-      {name: :admin_new_user, color: "primary", level: 4},
+      {name: :admin_user_new, color: "primary", level: 4},
       {name: :admin_users, color: "secondary", level: 2},
       {name: :admin_groups, color: "secondary", level: 2},
       {name: :admin_config, color: "danger", level: 5},
