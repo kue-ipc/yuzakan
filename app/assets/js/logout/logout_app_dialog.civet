@@ -1,4 +1,6 @@
-// Logout app
+// Logout app with API dialog
+// FIXME: 多分必要なくなる。apiバージョンでいいなら、削除
+
 
 {app, text, type Action, type Effecter, type Effect, type Dispatchable} from hyperapp
 * as html from @hyperapp/html

@@ -3,6 +3,5 @@
 await waitInitializeBootstrap()
 await waitLoadTranslations()
 
-loginApp from ~/login/login_app_api.civet
-// loginApp from ~/login/login_app_dialog.civet
+loginApp from ~/login/login_app.civet
 loginApp()

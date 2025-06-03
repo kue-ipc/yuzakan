@@ -3,6 +3,5 @@
 await waitInitializeBootstrap()
 await waitLoadTranslations()
 
-logoutApp from ~/logout/logout_app_api.civet
-// logoutApp from ~/logout/logout_app_dialog.civet
+logoutApp from ~/logout/logout_app.civet
 logoutApp()

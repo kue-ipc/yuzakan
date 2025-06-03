@@ -1,4 +1,5 @@
-// Login app
+// Login app with API dialog
+// FIXME: 多分必要なくなる。apiバージョンでいいなら、削除
 
 {app, text, type Action, type Dispatchable, type Effect, type Effecter, type VNode} from hyperapp
 * as html from @hyperapp/html
