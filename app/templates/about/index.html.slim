@@ -1,8 +1,7 @@
-h2 = t("views.about.title")
-
-- if current_config
-  h3 = current_config.title
-
+h3
+  = current_config&.title || Yuzakan::Version.name
+p.lead.smaller
+  = current_config&.sub_title
 - if current_config&.contact_name&.size&.positive?
   = bs.horizontal_dl(class: mb-2) do
     = bs.horizontal_dt t("attributse.config.contact_name")
@@ -19,15 +18,12 @@ h2 = t("views.about.title")
 hr
 
 h3 = t("views.about.application.title")
-
 = bs.horizontal_dl
   = bs.horizontal_dt t("views.about.application.name")
   = bs.horizontal_dd Yuzakan::Version.name
   = bs.horizontal_dt t("views.about.application.version")
   = bs.horizontal_dd Yuzakan::Version.version
-
 p = t("views.about.application.description")
-
 p = link_to t("views.about_browser.title"), routes.path(:about_browser)
 
 h4 = t("views.about.application.license.title")

@@ -10,10 +10,8 @@ html lang="ja" data-bs-theme="auto"
     = stylesheet_tag app_assets["app.css"]
     = javascript_tag app_assets["app.js"], type: "module"
   body
-    = render "partial/header"
+    = render "partial/header_front"
     .container-lg.mt-2
-      = title_h_tag
-      hr
       = render "partial/alert"
       = yield
     = render "partial/footer"

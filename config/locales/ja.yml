@@ -266,6 +266,8 @@ ja:
     export_config: 全設定のエクスポート
     update_config: 設定の更新
   views:
+    root:
+      title: トップメニュー
     about_browser:
       title: サポートしているブラウザーについて
       description: >-

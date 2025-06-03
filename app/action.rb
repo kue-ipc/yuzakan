@@ -48,9 +48,7 @@ module Yuzakan
 
     # handle
 
-    if Hanami.env?(:produciton)
-      handle_exception StandardError => :handle_standard_error
-    end
+    handle_exception StandardError => :handle_standard_error if Hanami.env?(:produciton)
 
     private def handle_standard_error(_request, _response, exception)
       logger.error exception

@@ -2,7 +2,7 @@ header#header
   nav.navbar.navbar-expand-sm.bg-body-tertiary
     .container-fluid
       = bs.navbar_toggler_button("navbar-content", label: t("ui.buttons.toggle_navigation"))
-      = current_config&.title_link_tag(class: "navbar-brand") || bs.navbar_brand_link("Yuzakan")
+      = current_config&.title_link_tag(class: "navbar-brand") || bs.navbar_brand_link(Yuzakan::Version.name)
       #navbar-content.collapse.navbar-collapse
         = render "partial/header_menu"
         = render "partial/header_nav"

@@ -4,6 +4,7 @@ module Yuzakan
   module Views
     module Home
       class Unready < Yuzakan::View
+        config.layout = "front"
       end
     end
   end

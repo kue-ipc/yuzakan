@@ -38,5 +38,9 @@ module Yuzakan
     expose :admin_menu, as: :menu_item, layout: true do |current_level:|
       ADMIN_STATIC_MENU_ITEMS.select { |item| item.level <= current_level }
     end
+
+    expose :title, layout: true, decorate: false do
+      nil
+    end
   end
 end
