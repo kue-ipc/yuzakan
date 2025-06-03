@@ -29,7 +29,7 @@ RSpec.describe API::Actions::Config::Update do
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:data]).to eq(
         title: updated_config.title,
-        description: config.description,
+        description: updated_config.description,
         domain: updated_config.domain,
         session_timeout: updated_config.session_timeout,
         auth_failure_waiting: updated_config.auth_failure_waiting,

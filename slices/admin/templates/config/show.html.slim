@@ -30,6 +30,7 @@ h3 = t("views.admin_config.sections.config.title")
   - layout = :horizontal
 
   = bs.text_field(f, :title, layout:, label: t(:title, scope:), maxlength: 255)
+  = bs.text_field(f, :description, layout:, label: t(:description, scope:), maxlength: 2048)
   = bs.text_field(f, :domain, layout:, label: t(:domain, scope:), maxlength: 255,
     pattern: Yuzakan::Patterns[:domain].pattern)
 
@@ -67,10 +68,9 @@ h3 = t("views.admin_config.sections.config.title")
     maxlength: 255, pattern: Yuzakan::Patterns[:password].pattern,
     help: markdown(t("views.admin_config.helps.generate_password_chars")))
 
-  = bs.text_field(f, :contact_name, layout:, label: t(:contact_name, scope:),  maxlength: 255)
-  = bs.text_field(f, :contact_email, layout:, label: t(:contact_email, scope:), 
-    maxlength: 255, pattern: Yuzakan::Patterns[:email].pattern)
-  = bs.text_field(f, :contact_phone, layout:, label: t(:contact_phone, scope:), 
-    maxlength: 255)
+  = bs.text_field(f, :contact_name, layout:, label: t(:contact_name, scope:), maxlength: 255)
+  = bs.text_field(f, :contact_email, layout:, label: t(:contact_email, scope:), maxlength: 255,
+    pattern: Yuzakan::Patterns[:email].pattern)
+  = bs.text_field(f, :contact_phone, layout:, label: t(:contact_phone, scope:), maxlength: 255)
 
   = f.submit "変更", class: "btn btn-primary"

@@ -11,6 +11,7 @@ module API
 
         params do
           required(:title).filled(:string, max_size?: 255)
+          required(:description).filled(:string, max_size?: 2048)
           optional(:domain).maybe(:domain, max_size?: 255)
 
           optional(:session_timeout).filled(:integer, gteq?: 0, lteq?: 24 * 60 * 60)

@@ -152,6 +152,7 @@ ja:
   attributes:
     config:
       title: サイト名
+      description: サイトの説明
       domain: ドメイン名
       session_timeout: セッションタイムアウト
       auth_failure_waiting: ログイン失敗時の待機時間

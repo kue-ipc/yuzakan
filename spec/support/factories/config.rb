@@ -32,6 +32,7 @@ end
 
 Factory.define(another_config: :config) do |f|
   f.title Faker::Team.name
+  f.description Faker::Lorem.sentence
   f.domain Faker::Internet.domain_name
   f.session_timeout 7200
   f.auth_failure_waiting 10
