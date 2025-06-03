@@ -304,7 +304,7 @@ ja:
       description: パスワードを変更します。
     provider:
       title: '%{name}'
-      descriptino: '%{name}にある自分のアカウント情報を管理します。'
+      description: '%{name}にある自分のアカウント情報を管理します。'
     admin:
       title: 管理者情報
       description: 管理レベルの情報です。

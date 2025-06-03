@@ -11,6 +11,7 @@ RSpec.describe API::Actions::Config::Show do
     json = JSON.parse(response.body.first, symbolize_names: true)
     expect(json[:data]).to eq({
       title: config.title,
+      description: config.description,
       domain: config.domain,
       session_timeout: config.session_timeout,
       auth_failure_waiting: config.auth_failure_waiting,

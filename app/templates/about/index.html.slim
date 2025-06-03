@@ -1,7 +1,7 @@
 h3
   = current_config&.title || Yuzakan::Version.name
 p.lead.smaller
-  = current_config&.sub_title
+  = current_config&.description
 - if current_config&.contact_name&.size&.positive?
   = bs.horizontal_dl(class: mb-2) do
     = bs.horizontal_dt t("attributse.config.contact_name")

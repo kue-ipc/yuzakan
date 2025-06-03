@@ -6,8 +6,7 @@ ROM::SQL.migration do
       primary_key :id
 
       column :title, String, null: false
-      column :sub_title, String, null: false, default: ""
-      column :front_message, String, null: false, default: ""
+      column :description, String, null: false, default: ""
       column :domain, String
 
       column :session_timeout, Integer, null: false, default: 3600

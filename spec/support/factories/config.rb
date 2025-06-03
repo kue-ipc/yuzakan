@@ -2,6 +2,7 @@
 
 Factory.define(:config) do |f|
   f.title Faker::Team.name
+  f.description Faker::Lorem.sentence
   f.domain Faker::Internet.domain_name
   f.session_timeout 3600 # default
   f.auth_failure_waiting 2 # default
