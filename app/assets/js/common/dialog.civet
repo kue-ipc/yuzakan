@@ -6,7 +6,6 @@
 {app, text, type Action, type Dispatch, type ElementVNode, type Dispatchable, type Effecter, type VNode, type Unsubscribe, type Subscription} from hyperapp
 * as html from @hyperapp/html
 {focus} from @hyperapp/dom
-{delay} from @hyperapp/time
 
 {modalDialog, type ModalButton, type ModalSize, type ModalFullscreen} from ~/app/component/modal.civet
 Status from ~/common/status.civet
@@ -153,12 +152,10 @@ export default class Dialog
       (#modal as any)._config.backdrop = "static"
       (#modal as any)._config.keyboard = false
 
-    console.debug "update modal state", newState
     if newState.shown and newState.focus?
-      console.debug "focus on modal button", newState.focus
       []
         newState
-        delay 1, (delayState) => [delayState, focus<DialogState>(`${#id}-modal-${state.focus}-button`)]
+        focus<DialogState>(`${#id}-modal-${newState.focus}-button`)
     else
       newState
 

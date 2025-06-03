@@ -4,24 +4,20 @@
  * 完了するまではmodalを使用して、操作できないようにする。
  */ 
 
-{app, text, type Subscription, type Action} from hyperapp
-* as html from @hyperapp/html
-{focus} from @hyperapp/dom
+{uniq} from ramda
 
-{modalDialog} from ~/app/component/modal.civet
 {normalizeURL} from ~/helpers/url_helper.civet
-Status from ~/common/status.civet
-ResponseMessage from ~/common/response_message.civet
-{getBootstrap, type BsBootstrap, type Modal} from ~/common/bs.civet
+
 {t} from ~/common/i18n.civet
+ResponseMessage from ~/common/response_message.civet
+Dialog, {type DialogState} from ~/common/dialog.civet
 
 {fetchAPI, type ResponseData} from ~api/fetch_api.civet
-
-Dialog, {type DialogState} from ~/common/dialog.civet
 
 ResponseMessageCodeMap ::= Map<number, ResponseMessage>
 
 ResponseMessageCodeListKey ::= number
+
 ResponseMessageCodeListValue ::=
   ResponseMessage | ConstructorParameters<typeof ResponseMessage>.0
 
@@ -117,10 +113,10 @@ export default class APIDialog
       status: responseMessage.status
       closable: true
       focus: "close"
-      messages: [
+      messages: uniq([
         responseMessage.message
         ...Object.values(response.flash ?? {})
-      ].filter & <? "string"
+      ]).filter & <? "string"
 
     redirectLink := responseMessage.redirectTo
 

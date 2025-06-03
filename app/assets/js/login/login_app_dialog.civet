@@ -1,14 +1,12 @@
 // Login app
 
-{app, text, type Action, type Dispatchable, type Effect, type Effecter,
-  type VNode} from hyperapp
+{app, text, type Action, type Dispatchable, type Effect, type Effecter, type VNode} from hyperapp
 * as html from @hyperapp/html
 {focus} from @hyperapp/dom
-{delay} from @hyperapp/time
 
-APIDialog from ~/common/api_dialog.civet
-csrf from ~/common/csrf.civet
 {t} from ~/common/i18n.civet
+csrf from ~/common/csrf.civet
+APIDialog from ~/common/api_dialog.civet
 
 * as form from ~/app/form.civet
 icon from ~/app/icon.civet
@@ -22,8 +20,9 @@ interface LoginState
   username: LoginInputProps
   password: LoginInputProps
   submittable: boolean
+  apiDialog: APIDialog
 
-interface LoginPayload
+interface LoginData
   username: string
   password: string
 
@@ -31,26 +30,19 @@ LOGIN_ID := "login"
 LOGIN_USERNAME_ID := "login-username"
 LOGIN_PASSWORD_ID := "login-password"
 
-apiDialog := new APIDialog {}
-  id: "login"
-  name: "actions.login"
-  method: "POST"
-  path: "/api/auth"
-  responseMessageCodeList: []
-    [201, {status: "success", message: "login_succeeded", redirectTo: "^", reloadTime: 10}]
-    [400, {status: "failure", message: "login_failed"}]
-    [422, {status: "failure", message: "login_failed"}]
-
 // Actions
 
 Login: Action<LoginState, Event> := (state, _event) ->
   if state.submittable
     []
       {}
+        ...state
         username: {...state.username, disabled: true}
         password: {...state.password, disabled: true}
         submittable: false
-      login({username: state.username.value, password: state.password.value})
+      login {}
+        apiDialog: state.apiDialog
+        data: {username: state.username.value, password: state.password.value}
   else
     state
 
@@ -97,13 +89,19 @@ PreventSubmit: Action<LoginState, SubmitEvent> := (state, event) ->
   event.preventDefault()
   state
 
+// Effect Generators
+
+login := (payload: {apiDialog: APIDialog, data: LoginData}):
+  Effect<LoginState, {apiDialog: APIDialog, data: LoginData}> ->
+  [runLogin, payload]
+
 // Effecters
 
-runLogin: Effecter<LoginState, LoginPayload> := (dispatch, payload) ->
-  response := await apiDialog.submitPromise {data: {...csrf(), ...payload}}
+runLogin: Effecter<LoginState, {apiDialog: APIDialog, data: LoginData}> := (dispatch, {apiDialog, data}) ->
+  response := await apiDialog.submitPromise {data: {...csrf(), ...data}}
   param_errors := response?.flash?.invalid
 
-  action: Action<LoginState> := ({username, password, submittable}) ->
+  action: Action<LoginState> := ({username, password, ...state}) ->
     focusTarget :=
       if param_errors?.username
         LOGIN_USERNAME_ID
@@ -111,22 +109,17 @@ runLogin: Effecter<LoginState, LoginPayload> := (dispatch, payload) ->
         LOGIN_PASSWORD_ID
     []
       {}
+        ...state
         username: {}
-          username.value
+          ...username
           error: param_errors?.username?.join("") ?? ""
           disabled: false
         password: {}
-          value: ""
+          ...password
           error: param_errors?.password?.join("") ?? ""
           disabled: false
-        submittable
       focus(focusTarget)
   dispatch(action)
-
-// Effect Generators
-
-login := (payload: LoginPayload): Effect<LoginState> ->
-  [runLogin, payload]
 
 // Views
 
@@ -171,12 +164,24 @@ loginSubmitButton := ({submittable:: boolean}): VNode<LoginState> ->
 
 // App
 
-init: Dispatchable<LoginState, any> := []
-  {}
-    username: {value: "", error: "", disabled: false}
-    password: {value: "", error: "", disabled: false}
-    submittable: false
-  delay 10, (state: LoginState) -> [state, focus<LoginState>(LOGIN_USERNAME_ID)]
+init: Dispatchable<LoginState, any> := (_state) ->
+  apiDialog := new APIDialog {}
+    id: "login"
+    name: "actions.login"
+    method: "POST"
+    path: "/api/auth"
+    responseMessageCodeList: []
+      [201, {status: "success", message: "login_succeeded", redirectTo: "^", reloadTime: 10}]
+      [400, {status: "failure", message: "login_failed"}]
+      [422, {status: "failure", message: "login_failed"}]
+
+  []
+    {}
+      username: {value: "", error: "", disabled: false}
+      password: {value: "", error: "", disabled: false}
+      submittable: false
+      apiDialog
+    focus<LoginState>(LOGIN_USERNAME_ID)
 
 view := ({username, password, submittable}: LoginState): VNode<LoginState> ->
   html.div {},

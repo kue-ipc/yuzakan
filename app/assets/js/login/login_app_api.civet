@@ -1,23 +1,20 @@
 // Login app
 
-{app, text, type Action, type Dispatchable, type Effect, type Effecter,
-  type VNode} from hyperapp
+{app, text, type Action, type Dispatchable, type Effect, type Effecter, type VNode} from hyperapp
 * as html from @hyperapp/html
 {focus} from @hyperapp/dom
-{delay, now} from @hyperapp/time
 
-csrf from ~/common/csrf.civet
 {t} from ~/common/i18n.civet
+csrf from ~/common/csrf.civet
+Dialog from ~/common/dialog.civet
+{flashValidation, type Validation} from ~/common/flash.civet
 
 * as form from ~/app/form.civet
 icon from ~/app/icon.civet
 {runAlertFlash} from ~/app/alert.civet
-{flashValidation, type Validation} from ~/common/flash.civet
 
 {type ResponseData} from ~api/fetch_api.civet
 {createCreateAuth, type AuthProps, type AuthState} from ~api/actions/auth.civet
-
-Dialog from ~/common/dialog.civet
 
 interface LoginState < AuthState
   disabled: boolean
@@ -31,7 +28,7 @@ LOGIN_ID := "login"
 LOGIN_USERNAME_ID := "login-username"
 LOGIN_PASSWORD_ID := "login-password"
 
-// fuction
+// fuctions
 
 submittable := (state: LoginState): boolean ->
   !(state.disabled or !state.auth.username or !state.auth.password)
@@ -96,6 +93,14 @@ LoginFailure: Action<LoginState, ResponseData> := (state, _response) ->
     {...state, auth: {...state.auth, password: ""}, disabled: false}
     [runAlertFlash, state.flash]
 
+// Effect Generators
+
+login := (auth: AuthProps): Effect<LoginState> ->
+  [runLogin, auth]
+
+reloadWindow := (sec: number): Effect<LoginState> ->
+  [runReloadWindow, sec]
+
 // Effecters
 
 runLogin: Effecter<LoginState, AuthProps> := (dispatch, auth) ->
@@ -109,14 +114,6 @@ runReloadWindow: Effecter<LoginState, number> := (_dispach, sec) ->
   console.debug `reload windows after ${sec} seconds`
   setTimeout(-> location.reload(), sec)
   ;
-
-// Effect Generators
-
-login := (auth: AuthProps): Effect<LoginState> ->
-  [runLogin, auth]
-
-reloadWindow := (sec: number): Effect<LoginState> ->
-  [runReloadWindow, sec]
 
 // Views
 
@@ -163,21 +160,21 @@ loginSubmitButton := ({auth:: AuthProps, disabled:: boolean}): VNode<LoginState>
 
 // App
 
-init: Dispatchable<LoginState> := []
-  {}
-    csrf: csrf()
-    auth: {username: "", password: ""}
-    disabled: false
-  delay 10, (state: LoginState) -> [state, focus<LoginState>(LOGIN_USERNAME_ID)]
-  now (state: LoginState) ->
-    dialog := new Dialog {}
-      id: LOGIN_ID
-      centered: true
-      title: t("actions.login")
-      status: "running"
-      closable: false
-      messages: t("ui.messages.running", {name: t("actions.login")})
-    {...state, dialog}
+init: Dispatchable<LoginState, any> := (_state) ->
+  dialog := new Dialog {}
+    id: LOGIN_ID
+    centered: true
+    title: t("actions.login")
+    status: "running"
+    closable: false
+    messages: t("ui.messages.running", {name: t("actions.login")})
+  []
+    {}
+      csrf: csrf()
+      auth: {username: "", password: ""}
+      disabled: false
+      dialog
+    focus<LoginState>(LOGIN_USERNAME_ID)
 
 view := (state: LoginState): VNode<LoginState> ->
   html.div {},
