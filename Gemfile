@@ -59,6 +59,7 @@ group :development do
 
   # Ruby LSP and Debug
   gem "ruby-lsp", require: false
+  gem "ruby-lsp-rspec", require: false
   gem "debug", require: false, platforms: :mri
 end
 
