@@ -1,6 +1,6 @@
 // Bootstrap Form App
 
-{text, type ClassProp, type ElementVNode, type CustomPayloads, type Props} from hyperapp
+{text, type ClassProp, type ElementVNode, type CustomPayloads, type Props, type Dispatchable, type MaybeVNode} from hyperapp
 * as html from @hyperapp/html
 
 InputTypeAttribute ::=
@@ -162,3 +162,14 @@ export inputInline := <S>({
       aria-describedby:  `${id}-help` if msgPresent(help)
       ...props
     ...inputHelpTags<S>({id, valid, invalid, help})
+
+export formNonSubmit := <S>(prpos?: CustomPayloads<S, {}> & Props<S>,
+  children?: MaybeVNode<S> | readonly MaybeVNode<S>[]): ElementVNode<S> ->
+  html.form<S> {onsubmit: PreventSubmit<S>, ...prpos}, children
+
+// Actions
+
+export PreventSubmit := <S>(state: S, event: SubmitEvent): Dispatchable<S> ->
+  event.preventDefault()
+  state
+

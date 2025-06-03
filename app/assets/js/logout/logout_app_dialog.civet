@@ -1,46 +1,58 @@
 // Logout app
 
-{app, text, type Action, type Effecter, type Effect} from hyperapp
+{app, text, type Action, type Effecter, type Effect, type Dispatchable} from hyperapp
 * as html from @hyperapp/html
-APIDialog from ~/common/api_dialog.civet
+
 icon from ~/app/icon.civet
-csrf from ~/common/csrf.civet
+
 {t} from ~/common/i18n.civet
+csrf from ~/common/csrf.civet
+APIDialog from ~/common/api_dialog.civet
 
 interface LogoutState
   disabled: boolean
+  apiDialog: APIDialog
 
-apiDialog := new APIDialog {}
-  id: "logout"
-  name: "actions.logout"
-  method: "DELETE"
-  path: "/api/auth"
-  responseMessageCodeList: []
-    [200, {status: "success", message: "logout_succeeded", redirectTo: "/"}]
-    [410, {status: "error", message: "logout_failed", reload: true}]
+interface LogoutPayload
+  apiDialog: APIDialog
+
+LOGOUT_ID := "logout"
+
+// fuctions
+
+submittable := (state: LogoutState): boolean ->
+  !(state.disabled)
 
 // Actions
 
-Logout: Action<LogoutState, MouseEvent> := (state) ->
-  if state.disabled
-    state
-  else
-    [{...state, disabled: true}, logout()]
+Logout: Action<LogoutState, Event> := (state, _event) ->
+  return state unless submittable(state)
 
-// Effecters
-
-runLogout: Effecter<LogoutState> := (dispatch) ->
-  await apiDialog.submitPromise {data: csrf()}
-  dispatch (state) -> ({...state, disabled: false})
+  [{...state, disabled: true}, logout({apiDialog: state.apiDialog})]
 
 // Effect Generotors
 
-logout := (): Effect<LogoutState> ->
-  runLogout
+logout := (payload: LogoutPayload): Effect<LogoutState, LogoutPayload> ->
+  [runLogout, payload]
+
+// Effecters
+
+runLogout: Effecter<LogoutState, LogoutPayload> := (dispatch, {apiDialog}) ->
+  await apiDialog.submitPromise {data: csrf()}
+  dispatch (state) -> ({...state, disabled: false})
 
 // App
 
-init := {disabled: false}
+init: Dispatchable<LogoutState, unknown> := (_state) ->
+  apiDialog := new APIDialog {}
+    id: LOGOUT_ID
+    name: "actions.logout"
+    method: "DELETE"
+    path: "/api/auth"
+    responseMessageCodeList: []
+      [200, {status: "success", message: "logout_succeeded", redirectTo: "/"}]
+      [410, {status: "error", message: "logout_failed", reload: true}]
+  {disabled: false, apiDialog}
 
 view := (state: LogoutState) ->
   html.button<LogoutState> {
@@ -52,6 +64,6 @@ view := (state: LogoutState) ->
   ]
 
 export default logoutApp := ->
-  if node? := document.getElementById("logout")
+  if node? := document.getElementById(LOGOUT_ID)
     console.debug "start logout app"
     app<LogoutState> {init, view, node}

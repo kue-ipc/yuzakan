@@ -3,6 +3,7 @@
 {app, text, type Action, type Dispatchable, type Effect, type Effecter, type VNode} from hyperapp
 * as html from @hyperapp/html
 {focus} from @hyperapp/dom
+{isNotEmpty} from ramda
 
 {t} from ~/common/i18n.civet
 csrf from ~/common/csrf.civet
@@ -18,7 +19,7 @@ icon from ~/app/icon.civet
 
 interface LoginState < AuthState
   disabled: boolean
-  dialog?: Dialog
+  dialog: Dialog
 
 interface LoginInputState < Validation
   value: string
@@ -31,16 +32,15 @@ LOGIN_PASSWORD_ID := "login-password"
 // fuctions
 
 submittable := (state: LoginState): boolean ->
-  !(state.disabled or !state.auth.username or !state.auth.password)
+  not state.disabled and [state.auth.username, state.auth.password].every(isNotEmpty)
 
 // Actions
 
 Login: Action<LoginState, Event> := (state: LoginState, _event: Event) ->
-  if submittable(state)
-    state.dialog?.show()
-    [{...state, disabled: true}, login(state.auth)]
-  else
-    state
+  return state unless submittable(state)
+
+  state.dialog?.show()
+  [{...state, disabled: true}, login(state.auth)]
 
 EnterToSubmitOrNextInput: Action<LoginState, KeyboardEvent> := (state, event) ->
   unless event.target <? HTMLInputElement
@@ -83,10 +83,6 @@ UpdatePassword: Action<LoginState, Event> := (state, event) ->
       valid: {...state.flash?.valid, password: []}
       invalid: {...state.flash?.invalid, password: []}
 
-PreventSubmit: Action<LoginState, SubmitEvent> := (state, event) ->
-  event.preventDefault()
-  state
-
 LoginFailure: Action<LoginState, ResponseData> := (state, _response) ->
   state.dialog?.hide()
   []
@@ -98,22 +94,14 @@ LoginFailure: Action<LoginState, ResponseData> := (state, _response) ->
 login := (auth: AuthProps): Effect<LoginState> ->
   [runLogin, auth]
 
-reloadWindow := (sec: number): Effect<LoginState> ->
-  [runReloadWindow, sec]
-
 // Effecters
 
 runLogin: Effecter<LoginState, AuthProps> := (dispatch, auth) ->
-  createAuth := createCreateAuth<LoginState>({
+  createAuth := createCreateAuth<LoginState> {}
     fallback: LoginFailure
-    effects: [reloadWindow(10)]
-  })
-  dispatch(createAuth, auth)
+    effects: [-> location.reload()]
 
-runReloadWindow: Effecter<LoginState, number> := (_dispach, sec) ->
-  console.debug `reload windows after ${sec} seconds`
-  setTimeout(-> location.reload(), sec)
-  ;
+  dispatch(createAuth, auth)
 
 // Views
 
@@ -178,12 +166,10 @@ init: Dispatchable<LoginState, any> := (_state) ->
 
 view := (state: LoginState): VNode<LoginState> ->
   html.div {},
-    html.form {onsubmit: PreventSubmit}, []
+    form.formNonSubmit {}, []
       loginTitle()
-      loginUsernameInput({value: state.auth.username, state.disabled,
-        ...flashValidation(state.flash, "username")})
-      loginPasswordInput({value: state.auth.password, state.disabled,
-        ...flashValidation(state.flash, "password")})
+      loginUsernameInput({value: state.auth.username, state.disabled, ...flashValidation(state.flash, "username")})
+      loginPasswordInput({value: state.auth.password, state.disabled, ...flashValidation(state.flash, "password")})
       loginSubmitButton({state.auth, disabled: submittable(state)})
 
 export default loginApp := ->
