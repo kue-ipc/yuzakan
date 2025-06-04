@@ -2,6 +2,10 @@
 
 module API
   class Slice < Hanami::Slice
-    config.actions.format :json
+    if Hanami.env?(:development)
+      config.actions.format :json, :html
+    else
+      config.actions.format :json
+    end
   end
 end

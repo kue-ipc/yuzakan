@@ -47,6 +47,7 @@ module API
     # patch "/users/:id", to: "users.update", as: :user
     # delete "/users/:id", to: "users.destroy", as: :user
     # post "/users/:id/password", to: "users/password.create", as: :user_password
+    patch "/users/:id/password", to: "users.password.update", as: :user_password
     # post "/users/:id/lock", to: "users/lock.create", as: :user_lock
     # delete "/users/:id/lock", to: "users/lock.destroy", as: :user_lock
 

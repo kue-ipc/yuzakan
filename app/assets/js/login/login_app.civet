@@ -136,11 +136,11 @@ loginPasswordInput := ({value, disabled, valid, invalid}: LoginInputState): VNod
     valid
     invalid
 
-loginSubmitButton := ({auth:: AuthProps, disabled:: boolean}): VNode<LoginState> ->
+loginSubmitButton := ({disabled:: boolean}): VNode<LoginState> ->
   html.div {class: "d-grid gap-auto"},
     html.button {
       class: "btn btn-primary d-flex align-items-center justify-content-center"
-      disabled: !disabled or !auth.username or !auth.password
+      disabled
       onclick: Login
     }, []
       icon {name: "box-arrow-in-right", class: "flex-shrink-0 me-1"}
@@ -170,7 +170,7 @@ view := (state: LoginState): VNode<LoginState> ->
       loginTitle()
       loginUsernameInput({value: state.auth.username, state.disabled, ...flashValidation(state.flash, "username")})
       loginPasswordInput({value: state.auth.password, state.disabled, ...flashValidation(state.flash, "password")})
-      loginSubmitButton({state.auth, disabled: submittable(state)})
+      loginSubmitButton({disabled: not submittable(state)})
 
 export default loginApp := ->
   if node? := document.getElementById(LOGIN_ID)

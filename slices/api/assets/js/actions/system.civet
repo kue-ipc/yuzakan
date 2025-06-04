@@ -1,5 +1,7 @@
 // /api/system
 
+// TODO: 古い
+
 {
   createRunShow
 } from ~api/hyper_json.civet

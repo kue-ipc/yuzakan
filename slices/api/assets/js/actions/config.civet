@@ -1,0 +1,69 @@
+// /api/config
+
+{type Action, type Dispatchable} from hyperapp
+
+{
+  createActionFallback, createShow, createUpdate,
+  type ActionFallback, type ActionFallbackEffects, type ActionOtherParams,type ResponseState
+} from ~api/app_creator.civet
+
+export interface ConfigProps
+  username: string
+  password: string
+  title: string
+  description: string
+  domain: string
+  session_timeout: number
+  auth_failure_waiting: number
+  auth_failure_limit: number
+  auth_failure_duration: number
+  password_min_size: string
+  password_max_size: string
+  password_min_types: string
+  password_prohibited_chars: string
+  password_min_score: string
+  password_extra_dict: string[]
+  generate_password_size: string
+  generate_password_type: string
+  generate_password_chars: string
+  contact_name: string
+  contact_email: string
+  contact_phone: string
+  created_at: Date
+  updated_at: Date
+
+export interface ConfigState < ResponseState
+  config?: ConfigProps
+
+// Actions
+
+SetConfig := <S < ConfigState>(state: S, config: ConfigProps): Dispatchable<S> ->
+  {...state, confifg: {...state.config, ...config}}
+
+// create Actions
+
+createActionFallbackSetConfig := <S < ConfigState>(actionFallbackEffects: ActionFallbackEffects<S, ConfigProps> = {}): ActionFallback<S, ConfigProps> ->
+  createActionFallback({action: SetConfig, ...actionFallbackEffects})
+
+// exports
+
+// create Actions
+
+export createShowConfig := <S < ConfigState>(
+  actionFallbackEffects: ActionFallbackEffects<S, ConfigProps> = {}
+  params: ActionOtherParams = {}
+): Action<S, undefined> ->
+  actionFallback := createActionFallbackSetConfig(actionFallbackEffects)
+  createShow("config", actionFallback, params)
+
+export createUpdateConfig := <S < ConfigState>(
+  actionFallbackEffects: ActionFallbackEffects<S, ConfigProps> = {}
+  params: ActionOtherParams = {}
+): Action<S, ConfigProps> ->
+  actionFallback := createActionFallbackSetConfig(actionFallbackEffects)
+  createUpdate("config", actionFallback, params)
+
+// Actions
+
+export ShowConfig := createShowConfig()
+export UpdateConfig := createUpdateConfig()

@@ -1,5 +1,7 @@
 // /api/attrs
 
+// TODO: 古い
+
 {
   createRunIndex
   createRunShowWithId

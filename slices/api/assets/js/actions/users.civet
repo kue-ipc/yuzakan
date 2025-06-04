@@ -1,5 +1,7 @@
 // /api/users
 
+// TODO: 古い
+
 {pickType} from ~/common/helper.civet
 
 {PAGINATION_PARAM_TYPES} from ~api/pagination.civet

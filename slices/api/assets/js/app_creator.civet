@@ -136,8 +136,7 @@ export createShowWithId := <S < ResponseState, P>(name: string,
   actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, undefined> ->
   path := `/api/${name}/:id`
-  createAction<S, P, undefined>(path, actionFallback,
-    {...params, method: "GET"})
+  createAction<S, P, undefined>(path, actionFallback, {...params, method: "GET"})
 
 // POST /resources
 export createCreateWithId := <S < ResponseState, P>(name: string,
@@ -168,8 +167,7 @@ export createShow := <S < ResponseState, P>(name: string,
   actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, undefined> ->
   path := `/api/${name}`
-  createAction<S, P, undefined>(path, actionFallback,
-    {...params, method: "GET"})
+  createAction<S, P, undefined>(path, actionFallback, {...params, method: "GET"})
 
 // POST /resource
 export createCreate := <S < ResponseState, P>(name: string,
@@ -190,5 +188,4 @@ export createDestroy := <S < ResponseState, P>(name: string,
   actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
 ): Action<S, undefined> ->
   path := `/api/${name}`
-  createAction<S, P, undefined>(path, actionFallback,
-    {...params, method: "DELETE"})
+  createAction<S, P, undefined>(path, actionFallback, {...params, method: "DELETE"})

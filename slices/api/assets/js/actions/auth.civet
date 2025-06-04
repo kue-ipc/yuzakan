@@ -1,6 +1,6 @@
 // /api/auth
 
-{type Action, type Effect} from hyperapp
+{type Action, type Dispatchable} from hyperapp
 
 {createActionFallback, createShow, createCreate, createDestroy,
   type ActionFallback, type ActionFallbackEffects, type ActionOtherParams,
@@ -15,8 +15,8 @@ export interface AuthState < ResponseState
 
 // Actions
 
-SetAuth := <S < AuthState>(state: S, auth: AuthProps) ->
-  {...state, auth}
+SetAuth := <S < AuthState>(state: S, auth: AuthProps): Dispatchable<S> ->
+  {...state, auth: {...state.auth, ...auth}}
 
 // create Actions
 

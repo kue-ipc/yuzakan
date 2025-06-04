@@ -1,5 +1,7 @@
 // /api/users/:user_id/lock
 
+// TODO: 古い
+
 {
   createRunCreate
   createRunDestroy
