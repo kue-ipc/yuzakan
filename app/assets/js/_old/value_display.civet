@@ -6,7 +6,7 @@ bsIcon from ~/app/bs_icon.civet
 
 export default valueDisplay := ({value, type = "string", color = "body", na = false}) ->
   unless value?
-    return html.span {class: "text-muted"}, text if na then"N/A" else ""
+    return html.span {class: "text-secondary"}, text if na then"N/A" else ""
 
   convertedValue := convertToType(value, type)
   html.span {class: `text-${color}`},

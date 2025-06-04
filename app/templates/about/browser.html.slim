@@ -7,7 +7,7 @@ ul
     li
       => link_to browser[:name], browser[:url], target: '_blank'
       - if browser[:note]&.size&.positive?
-        small.text-muted<
+        small.text-secondary<
           = browser[:note]
       - if browser[:admin] && current_level > 1
         | *

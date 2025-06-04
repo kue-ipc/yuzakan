@@ -124,7 +124,7 @@ module Yuzakan
                   form.label(label, for: name, class: ["col-form-label", LABEL_COL_CLASS]),
                   div(class: CONTROL_COL_CLASS, &),
                   help && div(class: HELP_COL_CLASS) do
-                    span(help, class: "form-text")
+                    div(help, class: "form-text")
                   end,
                 ])
               end

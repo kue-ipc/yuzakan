@@ -10,7 +10,6 @@ module Yuzakan
       include CSRFHelper
       include GridHelper
       include MarkdownHelper
-      include TitleHelper
     end
   end
 end

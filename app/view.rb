@@ -6,6 +6,10 @@ require "slim"
 
 module Yuzakan
   class View < Hanami::View
+    include Deps[
+      "i18n"
+    ]
+
     MenuItem = Data.define(:name, :params, :color, :level, :type) {
       def initialize(name:, color:, level:, params: {}, type: :link)
         super
@@ -27,6 +31,10 @@ module Yuzakan
       {name: :admin_attrs, color: "danger", level: 5},
     ].map { |params| MenuItem.new(**params) }.freeze
 
+    expose :title, layout: true, decorate: false do
+      nil
+    end
+
     expose :current_config, as: :config, layout: true
     expose :current_user, as: :user, layout: true
     expose :current_level, layout: true
@@ -37,10 +45,6 @@ module Yuzakan
 
     expose :admin_menu, as: :menu_item, layout: true do |current_level:|
       ADMIN_STATIC_MENU_ITEMS.select { |item| item.level <= current_level }
-    end
-
-    expose :title, layout: true, decorate: false do
-      nil
     end
   end
 end

@@ -55,7 +55,7 @@ providerCheck := ({provider_name, checked, edit := false}) ->
       html.span {class: `text-success`},
         bsIcon({name: "check-square"})
     else
-      html.span {class: `text-muted`},
+      html.span {class: `text-secondary`},
         bsIcon({name: "square"})
 
 providerTd := ({user, provider, name, type}) ->

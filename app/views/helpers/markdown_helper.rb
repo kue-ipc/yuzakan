@@ -9,8 +9,7 @@ module Yuzakan
     module Helpers
       module MarkdownHelper
         def markdown(str, **)
-          Kramdown::Document.new(str, input: "GFM", hard_wrap: false, **)
-            .to_html.html_safe
+          Kramdown::Document.new(str, input: "GFM", hard_wrap: false, **).to_html.html_safe
         end
       end
     end

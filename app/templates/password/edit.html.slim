@@ -1,4 +1,4 @@
-p 現在のパスワードと新しいパスワードを入力してください。新しいパスワード下記の「パスワードの要件」を満たす必要があります。
+= markdown(t("views.password_edit.change_password.description"))
 
 = javascript_tag "password_edit/app", type: "module"
 
@@ -7,78 +7,64 @@ p 現在のパスワードと新しいパスワードを入力してください
 /     - fields_for :password do
 /       - div id: 'change-password', 'data-change-password': ha(JSON.generate(change_password_data))
 
-pre.text-wrap
-  = context.request.path
-  / = context.request.fullpath
-  / = context.app_routes.path("aaaa")
-  / = context.request.methods - nil.methods
-
-p
-  | 新しいパスワードへの変更は、
-  | 現在ログインしているアカウント(メールアドレス)を使用する全ての学内システムに対して
-  | 適用されます。
-  - unless excluded_providers.empty?
-    | ただし、
-    = excluded_providers.map(&:label).join('、')
-    | 、Microsoft 365等の外部サービスについては、パスワードが別管理になっているため変更されません。
+- if included_providers&.size&.positive?
+  = markdown(t("views.password_edit.change_password.targets.included"))
+  p
+    = t("views.password_edit.change_password.included_providers")
+    | :
+    =< included_providers.map(&:label).join(" ")
+- elsif excluded_providers&.size&.positive?
+  = markdown(t("views.password_edit.change_password.targets.excluded"))
+  p
+    = t("views.password_edit.change_password.excluded_providers")
+    | :
+    =< excluded_providers.map(&:label).join(" ")
+- else
+  = markdown(t("views.password_edit.change_password.targets.all"))
 
 hr
 
-h4 パスワードの要件
-p 新しいパスワードは次の要件を満たす必要があります。
+h3 = t("views.password_edit.password_requirements.title")
+= markdown(t("views.password_edit.password_requirements.description"))
 ul
+  li = markdown(t("views.password_edit.password_requirements.requirements.size",
+    min: current_config.password_min_size, max: current_config.password_max_size))
   li
-    | 長さが
-    strong<>
-      = h(current_config.password_min_size)
-    | 文字以上、
-    strong<>
-      = h(current_config.password_max_size)
-    | 文字以下である。
-  li
-    - if current_config.password_prohibited_chars&.include?(' ')
-      - if current_config.password_prohibited_chars&.delete(' ')&.size&.positive?
-        | 下記を除くASCII印字可能文字(半角の英数字と記号)のみを使用している。
-        strong 空白(スペース)は使用できない。
-        br
-        | 使用できないASCII印字可能文字:
+    - case current_config.password_prohibited_chars
+    - when ""
+      = markdown(t("views.password_edit.password_requirements.requirements.chars.only.ascii"))
+    - when " "
+      = markdown(t("views.password_edit.password_requirements.requirements.chars.only.ascii_without_space"))
+    - when / /
+      = markdown(t("views.password_edit.password_requirements.requirements.chars.only.prohibited_without_space"))
+      p
+        = t("views.password_edit.password_requirements.requirements.chars.prohibited_chars")
+        | :
         - current_config.password_prohibited_chars.delete(' ').each_char do |char|
           strong<>
             code
-              = h(char)
-      - else
-        | すべてのASCII印字可能文字(半角の英数字と記号)のみを使用している。
-        strong 空白(スペース)は使用できない。
-    - elsif current_config.password_prohibited_chars&.size&.positive?
-      | 下記を除くASCII印字可能文字(半角の英数字と記号)、および、空白(スペース)のみが使用している。
-      br
-      | 使用できないASCII印字可能文字:
-      - current_config.password_prohibited_chars.each_char do |char|
-        strong<>
-          code
-            = h(char)
+              = char
     - else
-        | すべてのASCII印字可能文字(半角の英数字と記号)、および、空白(スペース)のみを使用している。
-    br
-    small.text-muted タブ等の制御文字、漢字やカナ等のASCII以外の文字は使用できない。
+      = markdown(t("views.password_edit.password_requirements.requirements.chars.only.prohibited"))
+      p
+        = t("views.password_edit.password_requirements.requirements.chars.prohibited_chars")
+        | :
+        - current_config.password_prohibited_chars.each_char do |char|
+          strong<>
+            code
+              = char
+    p
+      small.text-secondary = markdown(t("views.password_edit.password_requirements.requirements.chars.note"))
   - if current_config.password_min_types > 2
-    - if current_config.password_min_types == 4
-      li
-        | 数字、英小文字、英大文字、記号の文字種4つをすべて使用している。
-    - else
-      li
-        | 数字、英小文字、英大文字、記号の文字種4つのうち
-        strong<>
-          = current_config.password_min_types
-        | 種類以上使用している。
-
+    li
+      - if current_config.password_min_types == 4
+        = markdown(t("views.password_edit.password_requirements.requirements.types.all"))
+      - else
+        = markdown(t("views.password_edit.password_requirements.requirements.types.some",
+          num: current_config.password_min_types))
   - if current_config.password_min_score.positive?
-    li パスワードの強度が一定以上のスコアである。
+    li = markdown(t("views.password_edit.password_requirements.requirements.score"))
 
-h4 パスワードの強度について
-p
-  | 新しいパスワードを入力時に変化するパラメーターはパスワードの強度であり、そのパスワードを総当たりで解読するのにどれほど困難であるかを示しています。
-  | パスワードの強度は含まれる文字、長さ、パターン等からエントロピーを計測して数値化し、そのスコアから強弱を判断しています。
-  | 例えば、ユーザー名、現在のパスワード、固有の名前、英単語、キーボード配列、パスワードによく使われる文字列等の組み合わせや類似している場合は「弱い」と判断されます。
-  | 逆に、数字のみなどであっても十分に複雑で長ければ「強い」と判断される場合があります。
-  | 他人には推測しづらく、覚えやすいパスワードを設定してください。
+h3 = t("views.password_edit.password_strength.title")
+
+= markdown(t("views.password_edit.password_strength.description"))

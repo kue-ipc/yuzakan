@@ -4,8 +4,17 @@ module Yuzakan
   module Views
     module Password
       class Edit < Yuzakan::View
-        expose
+        expose :title, layout: true, decorate: false do
+          i18n.t("views.password_edit.title")
+        end
+
         expose :excluded_providers, as: :provider
+
+        # TODO: 将来作るかもしれないが、今はnil
+        expose :included_providers, as: :provider do
+          nil
+        end
+
         # def form
         #   Form.new(:user, routes.user_password_path, {}, {method: :patch})
         # end

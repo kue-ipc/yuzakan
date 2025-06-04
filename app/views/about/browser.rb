@@ -4,6 +4,10 @@ module Yuzakan
   module Views
     module About
       class Browser < Yuzakan::View
+        expose :title, layout: true, decorate: false do
+          i18n.t("views.about_browser.title")
+        end
+
         expose :supported_browsers, decorate: false do
           [
             {

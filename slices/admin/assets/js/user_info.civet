@@ -138,7 +138,7 @@ export default userInfo := ({mode, user, groups}) ->
           html.span {class: "text-danger"},
             text `削除済み (${user.deleted_at})`
         else if user.prohibited
-          html.span {class: "text-muted"},
+          html.span {class: "text-secondary"},
             text "使用禁止"
         else
           html.span {class: "text-success"},

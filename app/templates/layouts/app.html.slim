@@ -12,8 +12,9 @@ html lang="ja" data-bs-theme="auto"
   body
     = render "partial/header"
     .container-lg.mt-2
-      = title_h_tag
-      hr
+      - if title
+        h2 = title
+        hr
       = render "partial/alert"
       = yield
     = render "partial/footer"
