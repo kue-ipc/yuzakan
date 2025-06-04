@@ -3,5 +3,5 @@
 await waitInitializeBootstrap()
 await waitLoadTranslations()
 
-// editPasswordApp from ~/password_edit/edit_password_app.civet
-// editPasswordApp()
+changePasswordApp from ~/change_password/change_password_app.civet
+changePasswordApp()
