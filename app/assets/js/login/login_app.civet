@@ -34,75 +34,6 @@ LOGIN_PASSWORD_ID := "login-password"
 submittable := (state: LoginState): boolean ->
   not state.disabled and [state.auth.username, state.auth.password].every(isNotEmpty)
 
-// Actions
-
-Login: Action<LoginState, Event> := (state: LoginState, _event: Event) ->
-  return state unless submittable(state)
-
-  state.dialog?.show()
-  [{...state, disabled: true}, login(state.auth)]
-
-EnterToSubmitOrNextInput: Action<LoginState, KeyboardEvent> := (state, event) ->
-  unless event.target <? HTMLInputElement
-    console.warn "event target is not html input element"
-    return state
-
-  if event.code is "Enter"
-    if submittable(state)
-      Login
-    else if event.target.id is LOGIN_USERNAME_ID
-      [state, focus(LOGIN_PASSWORD_ID)]
-    else
-      [state, focus(LOGIN_USERNAME_ID)]
-  else
-    state
-
-UpdateUsername: Action<LoginState, Event> := (state, event) ->
-  unless event.target <? HTMLInputElement
-    console.warn "event target is not html input element"
-    return state
-
-  {}
-    ...state
-    auth: {...state.auth, username: event.target.value}
-    flash: {}
-      ...state.flash
-      valid: {...state.flash?.valid, username: []}
-      invalid: {...state.flash?.invalid, username: []}
-
-UpdatePassword: Action<LoginState, Event> := (state, event) ->
-  unless event.target <? HTMLInputElement
-    console.warn "event target is not html input element"
-    return state
-
-  {}
-    ...state
-    auth: {...state.auth, password: event.target.value}
-    flash: {}
-      ...state.flash
-      valid: {...state.flash?.valid, password: []}
-      invalid: {...state.flash?.invalid, password: []}
-
-LoginFailure: Action<LoginState, ResponseData> := (state, _response) ->
-  state.dialog?.hide()
-  []
-    {...state, auth: {...state.auth, password: ""}, disabled: false}
-    [runAlertFlash, state.flash]
-
-// Effect Generators
-
-login := (auth: AuthProps): Effect<LoginState> ->
-  [runLogin, auth]
-
-// Effecters
-
-runLogin: Effecter<LoginState, AuthProps> := (dispatch, auth) ->
-  createAuth := createCreateAuth<LoginState> {}
-    fallback: LoginFailure
-    effects: [-> location.reload()]
-
-  dispatch(createAuth, auth)
-
 // Views
 
 loginTitle := (): VNode<LoginState> ->
@@ -145,6 +76,75 @@ loginSubmitButton := ({disabled:: boolean}): VNode<LoginState> ->
     }, []
       icon {name: "box-arrow-in-right", class: "flex-shrink-0 me-1"}
       text t("actions.login")
+
+// Actions
+
+Login: Action<LoginState, Event> := (state: LoginState, _event: Event) ->
+  return state unless submittable(state)
+
+  state.dialog?.show()
+  [{...state, disabled: true}, login(state.auth)]
+
+LoginFailure: Action<LoginState, ResponseData> := (state, _response) ->
+  state.dialog?.hide()
+  []
+    {...state, auth: {...state.auth, password: ""}, disabled: false}
+    [runAlertFlash, state.flash]
+
+EnterToSubmitOrNextInput: Action<LoginState, KeyboardEvent> := (state, event) ->
+  unless event.target <? HTMLInputElement
+    console.warn "event target is not html input element"
+    return state
+
+  if event.code is "Enter"
+    if submittable(state)
+      Login
+    else if event.target.id is LOGIN_USERNAME_ID
+      [state, focus(LOGIN_PASSWORD_ID)]
+    else
+      [state, focus(LOGIN_USERNAME_ID)]
+  else
+    state
+
+UpdateUsername: Action<LoginState, Event> := (state, event) ->
+  unless event.target <? HTMLInputElement
+    console.warn "event target is not html input element"
+    return state
+
+  {}
+    ...state
+    auth: {...state.auth, username: event.target.value}
+    flash: {}
+      ...state.flash
+      valid: {...state.flash?.valid, username: []}
+      invalid: {...state.flash?.invalid, username: []}
+
+UpdatePassword: Action<LoginState, Event> := (state, event) ->
+  unless event.target <? HTMLInputElement
+    console.warn "event target is not html input element"
+    return state
+
+  {}
+    ...state
+    auth: {...state.auth, password: event.target.value}
+    flash: {}
+      ...state.flash
+      valid: {...state.flash?.valid, password: []}
+      invalid: {...state.flash?.invalid, password: []}
+
+// Effect Generators
+
+login := (auth: AuthProps): Effect<LoginState> ->
+  [runLogin, auth]
+
+// Effecters
+
+runLogin: Effecter<LoginState, AuthProps> := (dispatch, auth) ->
+  createAuth := createCreateAuth<LoginState> {}
+    fallback: LoginFailure
+    effects: [-> location.reload()]
+
+  dispatch(createAuth, auth)
 
 // App
 
