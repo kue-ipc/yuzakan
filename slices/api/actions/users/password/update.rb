@@ -5,7 +5,21 @@ module API
     module Users
       module Password
         class Update < API::Action
+          # TODO: confirmationはいらないと思う。
+          params do
+            required(:password_current).maybe(:name, max_size?: 255)
+            required(:password).filled(:string, max_size?: 255).confirmation
+            required(:password_confirmation).filled(:string, max_size?: 255)
+          end
+
           def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
+            unless request.params.valid?
+              response.flash[:invalid] = request.params.errors
+              halt_json request, response, 422
+            end
+
+
+
             result = ProviderChangePassword.new(config: current_config,
               user: current_user,
               client: client)

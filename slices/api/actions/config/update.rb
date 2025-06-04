@@ -9,6 +9,8 @@ module API
           show_view: "views.config.show"
         ]
 
+        security_level 5
+
         params do
           required(:title).filled(:string, max_size?: 255)
           required(:description).filled(:string, max_size?: 2048)
@@ -36,8 +38,6 @@ module API
           optional(:contact_email).maybe(:email, max_size?: 255)
           optional(:contact_phone).maybe(:string, max_size?: 255)
         end
-
-        security_level 5
 
         def handle(request, response)
           unless request.params.valid?

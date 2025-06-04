@@ -10,18 +10,18 @@ module API
           "management.sync_user",
           "providers.authenticate",
           "settings",
-          show_view: "views.auth.show",
+          show_view: "views.auth.show"
         ]
 
         include Dry::Monads[:result]
+
+        security_level 0
+        required_authentication false
 
         params do
           required(:username).filled(:name, max_size?: 255)
           required(:password).filled(:string, max_size?: 255)
         end
-
-        security_level 0
-        required_authentication false
 
         def handle(request, response)
           unless request.params.valid?
