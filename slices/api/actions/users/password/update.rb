@@ -6,6 +6,8 @@ module API
       module Password
         class Update < API::Action
           include Deps[
+            "providers.authenticate",
+            "providers.change_password",
             show_view: "views.users.password.show"
           ]
 

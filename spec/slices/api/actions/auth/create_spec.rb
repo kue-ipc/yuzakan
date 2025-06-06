@@ -121,10 +121,9 @@ RSpec.describe API::Actions::Auth::Create do
 
     describe "authentication failure" do
       let(:authenticate) {
-        instance_double(Yuzakan::Providers::Authenticate,
-          call: Failure([:failure, error_message]))
+        instance_double(Yuzakan::Providers::Authenticate, call: Failure([:failure, failure_message]))
       }
-      let(:error_message) { Faker::Lorem.paragraph }
+      let(:failure_message) { Faker::Lorem.paragraph }
 
       it "is failed" do
         response = action.call(params)
@@ -132,7 +131,7 @@ RSpec.describe API::Actions::Auth::Create do
         expect(response.status).to eq 422
         expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
-        expect(json[:flash]).to eq({failure: error_message})
+        expect(json[:flash]).to eq({failure: failure_message})
       end
     end
 

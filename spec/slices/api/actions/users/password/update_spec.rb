@@ -3,6 +3,13 @@
 RSpec.describe API::Actions::Users::Password::Update do
   init_action_spec
 
+  let(:action_opts) {
+    {
+      authenticate: authenticate,
+      change_password: change_password,
+    }
+  }
+
   let(:action_params) {
     {
       id: id,
@@ -11,6 +18,15 @@ RSpec.describe API::Actions::Users::Password::Update do
       password_confirmation: new_password,
     }
   }
+
+  let(:authenticate) {
+    instance_double(Yuzakan::Providers::Authenticate, call: Success(provider))
+  }
+
+  let(:change_password) {
+    instance_double(Yuzakan::Providers::ChangePassword, call: Success([provider]))
+  }
+
   # let(:action_opts) {
   #   allow(config_repo).to receive(:set).and_return(updated_config)
   #   {
@@ -99,36 +115,63 @@ RSpec.describe API::Actions::Users::Password::Update do
     expect(json[:flash]).to eq({invalid: {id: ["~と値が一致しません。"]}})
   end
 
-  describe "" do
-    let(:current_password) { "あ" }
-    let(:new_password) { "い" }
+  it "is failed with all wrong passwords" do
+    response = action.call(**params, password_current: "あ", password: "い", password_confirmation: "う")
+    expect(response).to be_client_error
+    expect(response.status).to eq 422
+    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+    json = JSON.parse(response.body.first, symbolize_names: true)
+    expect(json[:flash]).to eq({invalid: {
+      password_current: ["形式が間違っています。"],
+      password: ["形式が間違っています。"],
+      password_confirmation: ["形式が間違っています。", "新しいパスワードと値が一致しません。"],
+    }})
+  end
 
-    it "is failed with all wrong passwords" do
+  describe "authentication failuer" do
+    let(:authenticate) {
+      instance_double(Yuzakan::Providers::Authenticate, call: Failure[:failure, failure_message])
+    }
+    let(:failure_message) { Faker::Lorem.paragraph }
+
+    it "is failed" do
       response = action.call(params)
       expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:flash]).to eq({invalid: {
-        password_current: ["形式が間違っています。"],
-        password: ["形式が間違っています。"],
-        password_confirmation: ["形式が間違っています。"],
-      }})
+      expect(json[:flash]).to eq({invalid: {password_current: "現在のパスワードと値が一致しません。"}})
     end
   end
 
-  # context "when admin" do
-  #   let(:user) { create_struct(:user, :superuser) }
+  describe "unchanged" do
+    let(:change_password) {
+      instance_double(Yuzakan::Providers::ChangePassword, call: Success([]))
+    }
 
-  #   it "is successful" do
-  #     response = action.call(params)
-  #     expect(response).to be_successful
-  #     expect(response.status).to eq 200
-  #     expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-  #     json = JSON.parse(response.body.first, symbolize_names: true)
-  #     expect(json[:data]).to eq({
-  #       new: new_password,
-  #     })
-  #   end
-  # end
+    it "is failed" do
+      response = action.call(params)
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:flash]).to eq({failure: "どのサービスでもパスワードが変更されませんでした。"})
+    end
+  end
+
+  describe "change failure" do
+    let(:change_password) {
+      instance_double(Yuzakan::Providers::ChangePassword, call: Failure[error: error_message])
+    }
+    let(:error_message) { Faker::Lorem.paragraph }
+
+    it "is failed" do
+      response = action.call(params)
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:flash]).to eq({error: error_message})
+    end
+  end
 end
