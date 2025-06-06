@@ -22,17 +22,10 @@ RSpec.describe API::Actions::Users::Password::Update do
   let(:authenticate) {
     instance_double(Yuzakan::Providers::Authenticate, call: Success(provider))
   }
-
   let(:change_password) {
-    instance_double(Yuzakan::Providers::ChangePassword, call: Success([provider]))
+    instance_double(Yuzakan::Providers::ChangePassword, call: Success([[provider]]))
   }
 
-  # let(:action_opts) {
-  #   allow(config_repo).to receive(:set).and_return(updated_config)
-  #   {
-  #     config_repo: config_repo,
-  #   }
-  # }
   let(:id) { "~" }
   let(:new_password) { "new_password" }
   let(:current_password) { "current_password" }
@@ -45,6 +38,10 @@ RSpec.describe API::Actions::Users::Password::Update do
     json = JSON.parse(response.body.first, symbolize_names: true)
     expect(json[:data]).to eq({
       password: new_password,
+      providers: [provider.name],
+    })
+    expect(json[:flash]).to eq({
+      success: "パスワード変更に成功しました。",
     })
   end
 
@@ -140,22 +137,28 @@ RSpec.describe API::Actions::Users::Password::Update do
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:flash]).to eq({invalid: {password_current: "現在のパスワードと値が一致しません。"}})
+      expect(json[:flash]).to eq({invalid: {password_current: ["現在のパスワードと値が一致しません。"]}})
     end
   end
 
   describe "unchanged" do
     let(:change_password) {
-      instance_double(Yuzakan::Providers::ChangePassword, call: Success([]))
+      instance_double(Yuzakan::Providers::ChangePassword, call: Success([[]]))
     }
 
-    it "is failed" do
+    it "is successful" do
       response = action.call(params)
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:flash]).to eq({failure: "どのサービスでもパスワードが変更されませんでした。"})
+      expect(json[:data]).to eq({
+        password: new_password,
+        providers: [],
+      })
+      expect(json[:flash]).to eq({
+        warn: "どのサービスでもパスワード変更が実行されませんでした。",
+      })
     end
   end
 
@@ -167,8 +170,8 @@ RSpec.describe API::Actions::Users::Password::Update do
 
     it "is failed" do
       response = action.call(params)
-      expect(response).to be_client_error
-      expect(response.status).to eq 422
+      expect(response).to be_server_error
+      expect(response.status).to eq 500
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:flash]).to eq({error: error_message})

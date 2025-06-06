@@ -55,10 +55,12 @@ module API
 
             # パスワードの変更
             case change_password.call(username, new_password)
-            in Success([])
-              response.flash[:warn] = t("messages.no_providers", action: t("api.user_password.actions.update"))
-            in Success(_providers)
-              response.flash[:success] = t("messages.action.success", action: t("api.user_password.actions.update"))
+            in Success(providers)
+              if providers.empty?
+                response.flash[:warn] = t("messages.action.no_providers", action: t("api.user_password.actions.update"))
+              else
+                response.flash[:success] = t("messages.action.success", action: t("api.user_password.actions.update"))
+              end
             in Failure[:error, error]
               response.flash[:error] = error
               halt_json request, response, 500
@@ -67,7 +69,7 @@ module API
               halt_json request, response, 422
             end
 
-            response[:user_password] = {password: new_password}
+            response[:user_password] = {password: new_password, providers: providers.map(&:name)}
             response.render(show_view)
           end
         end
