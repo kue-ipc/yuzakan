@@ -101,9 +101,6 @@ Style/AccessModifierDeclarations:
   EnforcedStyle: inline
 Style/AsciiComments:
   Enabled: false
-Style/BlockDelimiters:
-  EnforcedStyle: semantic
-  AllowBracesOnProceduralOneLiners: true
 Style/Documentation:
   Enabled: false
 Style/EmptyMethod:
