@@ -7,7 +7,7 @@ module Yuzakan
   class Operation < Dry::Operation
     include Deps[
       "logger",
-      "i18n",
+      "i18n"
     ]
 
     # I18n

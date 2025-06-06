@@ -171,7 +171,7 @@ module Yuzakan
 
       # reply
 
-      private def reply_uninitialized(request, response)
+      private def reply_uninitialized(_request, response)
         response.flash[:error] = t("errors.initialized?")
         halt 503, response.render(unready_view)
       end

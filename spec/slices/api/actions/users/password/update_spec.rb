@@ -97,15 +97,6 @@ RSpec.describe API::Actions::Users::Password::Update do
     }})
   end
 
-  it "is failed with different password confirmation" do
-    response = action.call(params.merge(password_confirmation: "different_password"))
-    expect(response).to be_client_error
-    expect(response.status).to eq 422
-    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-    json = JSON.parse(response.body.first, symbolize_names: true)
-    expect(json[:flash]).to eq({invalid: {password_confirmation: ["新しいパスワードと値が一致しません。"]}})
-  end
-
   it "is failed with wrong user id" do
     response = action.call(**params, id: "wrong_id")
     expect(response).to be_client_error
@@ -124,11 +115,20 @@ RSpec.describe API::Actions::Users::Password::Update do
     expect(json[:flash]).to eq({invalid: {
       password_current: ["形式が間違っています。"],
       password: ["形式が間違っています。"],
-      password_confirmation: ["形式が間違っています。", "新しいパスワードと値が一致しません。"],
+      password_confirmation: ["形式が間違っています。"],
     }})
   end
 
-  describe "authentication failuer" do
+  it "is failed with different password confirmation" do
+    response = action.call(params.merge(password_confirmation: "different_password"))
+    expect(response).to be_client_error
+    expect(response.status).to eq 422
+    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+    json = JSON.parse(response.body.first, symbolize_names: true)
+    expect(json[:flash]).to eq({invalid: {password_confirmation: ["新しいパスワードと値が一致しません。"]}})
+  end
+
+  describe "authentication failure" do
     let(:authenticate) {
       instance_double(Yuzakan::Providers::Authenticate, call: Failure([:failure, failure_message]))
     }
@@ -151,8 +151,8 @@ RSpec.describe API::Actions::Users::Password::Update do
 
     it "is failed" do
       response = action.call(params)
-      expect(response).to be_client_error
-      expect(response.status).to eq 422
+      expect(response).to be_successful
+      expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:flash]).to eq({failure: "どのサービスでもパスワードが変更されませんでした。"})

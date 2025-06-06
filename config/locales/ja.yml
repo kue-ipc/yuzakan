@@ -91,12 +91,14 @@ ja:
   messages:
     action:
       success: '%{action}に成功しました。'
+      failure: '%{action}に失敗しました。'
+      no_providers: '%{action}が実行されたサービスがありませんでした。'
     session_timeout: セッションがタイムアウトしました。
     initialize_config: >-
       初期設定が必要です。
       管理者は設定の初期化を実施してください。
     already_authenticated: すでに認証済みです。
-  interactors:
+  operations:
     decrypt: 復号化
     encrypt: 暗号化
     find_network: ネットワーク検索
@@ -117,7 +119,7 @@ ja:
     sync_user: ユーザー同期
     unregister_group: グループ解除
     unregister_user: ユーザー解除
-  operations:
+  adapters:
     user_create: ユーザー作成
     user_update: ユーザー更新
     user_delete: ユーザー削除
@@ -451,6 +453,9 @@ ja:
       types: 種類
   api:
     user_password:
-      password_current: 現在のパスワード
-      password: 新しいパスワード
-      password_confirmation: パスワードの確認
+      actions:
+        update: パスワード更新
+      params:
+        password_current: 現在のパスワード
+        password: 新しいパスワード
+        password_confirmation: パスワードの確認

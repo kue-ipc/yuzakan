@@ -51,7 +51,7 @@ module API
 
           config = config_repo.set(**params)
           unless config
-            response.flash[:success] = t("messages.action.failuer", action: t("actions.update_config"))
+            response.flash[:success] = t("messages.action.failure", action: t("actions.update_config"))
             halt_json request, response, 422
           end
 

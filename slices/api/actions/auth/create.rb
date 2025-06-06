@@ -4,6 +4,8 @@ module API
   module Actions
     module Auth
       class Create < API::Action
+        include Dry::Monads[:result]
+
         include Deps[
           "repos.auth_log_repo",
           "repos.user_repo",
@@ -12,8 +14,6 @@ module API
           "settings",
           show_view: "views.auth.show"
         ]
-
-        include Dry::Monads[:result]
 
         security_level 0
         required_authentication false
@@ -42,8 +42,7 @@ module API
           if response[:current_user]
             auth_log_repo.create(**auth_log_params, result: "authenticated")
             response.flash[:info] = t("messages.already_authenticated")
-            redirect_to_json(request, response, routes.path(:api_auth),
-              status: 303)
+            redirect_to_json(request, response, routes.path(:api_auth), status: 303)
           end
 
           # 信頼さていないネットワークからのログイン
@@ -72,8 +71,7 @@ module API
             halt_json request, response, 500
           in Failure[level, message]
             # タイミング攻撃防止
-            waiting_time = response[:current_time] - Time.now +
-              response[:current_config].auth_failure_waiting
+            waiting_time = response[:current_time] - Time.now + response[:current_config].auth_failure_waiting
             sleep waiting_time if waiting_time.positive?
             auth_log_repo.create(**auth_log_params, result: "failure")
             response.flash[level] = message
@@ -114,10 +112,8 @@ module API
           # セッション情報を保存
           response.session[:user] = user.name
 
-          auth_log_repo.create(**auth_log_params, result: "success",
-            provider: provider.name)
-          response.flash[:success] =
-            t("messages.action.success", action: t("actions.login"))
+          auth_log_repo.create(**auth_log_params, result: "success", provider: provider.name)
+          response.flash[:success] = t("messages.action.success", action: t("actions.login"))
           response.status = :created
           response[:auth] = {username:}
           response.render(show_view)

@@ -13,7 +13,7 @@ module Yuzakan
       "adapters",
       "cache_store",
       "repos.attr_mapping_repo",
-      "repos.provider_repo",
+      "repos.provider_repo"
   ]
 
     # common flows
@@ -133,9 +133,7 @@ module Yuzakan
 
       converted_attrs = mappings
         .select { |mapping| attrs.key?(mapping.key) }
-        .to_h { |mapping|
-          [mapping.attr.name, mapping.convert_value(attrs[mapping.key])]
-        }
+        .to_h { |mapping| [mapping.attr.name, mapping.convert_value(attrs[mapping.key])] }
       Success(converted_attrs)
     end
 
@@ -145,9 +143,7 @@ module Yuzakan
       mapped_attrs = mappings
         .reject(&:readonly) # exclude read-only
         .select { |mapping| attrs.key?(mapping.attr.name) }
-        .to_h { |mapping|
-        [mapping.key, mapping.map_value(attrs[mapping.attr.name])]
-      }
+        .to_h { |mapping| [mapping.key, mapping.map_value(attrs[mapping.attr.name])] }
       Success(mapped_attrs)
     end
 

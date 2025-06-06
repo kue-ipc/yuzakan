@@ -5,6 +5,8 @@ module API
     module Users
       module Password
         class Update < API::Action
+          include Dry::Monads[:result]
+
           include Deps[
             "providers.authenticate",
             "providers.change_password",
@@ -27,45 +29,46 @@ module API
 
             if request.params[:password] != request.params[:password_confirmation]
               response.flash[:invalid] =
-                {password_confirmation: [t("errors.eql?", left: t("api.user_password.password"))]}
+                {password_confirmation: [t("errors.eql?", left: t("api.user_password.params.password"))]}
               halt_json request, response, 422
             end
 
-            response[:user_password] = {password: request.params[:password]}
+            username = response[:current_user].name
+            current_password = request.params[:password_current]
+            new_password = request.params[:password]
+
+            # 現在のパスワードの確認
+            case authenticate.call(username, current_password)
+            in Success(_provider)
+              # do next
+            in Failure[:error, error]
+              response.flash[:error] = error
+              halt_json request, response, 500
+            in Failure[:failure, message]
+              response.flash[:invalid] =
+                {password_current: [t("errors.eql?", left: t("api.user_password.params.password_current"))]}
+              halt_json request, response, 422
+            in Failure[level, message]
+              response.flash[level] = message
+              halt_json request, response, 422
+            end
+
+            # パスワードの変更
+            case change_password.call(username, new_password)
+            in Success([])
+              response.flash[:warn] = t("messages.no_providers", action: t("api.user_password.actions.update"))
+            in Success(_providers)
+              response.flash[:success] = t("messages.action.success", action: t("api.user_password.actions.update"))
+            in Failure[:error, error]
+              response.flash[:error] = error
+              halt_json request, response, 500
+            in Failure[level, message]
+              response.flash[level] = message
+              halt_json request, response, 422
+            end
+
+            response[:user_password] = {password: new_password}
             response.render(show_view)
-
-            # result = ProviderChangePassword.new(config: current_config,
-            #   user: current_user,
-            #   client: client)
-            #   .call(params[:user][:password])
-
-            # case format
-            # when :html
-            #   if result.successful?
-            #     flash[:success] = "パスワードを変更しました。"
-            #   else
-            #     flash[:errors] = result.errors
-            #     flash[:failure] = "パスワードを変更することができませんでした。"
-            #     redirect_to routes.path(:edit_user_password)
-            #   end
-            # when :json
-            #   @data = if result.successful?
-            #             {
-            #               result: "success",
-            #               messages: {
-            #                 success: "パスワードを変更しました。",
-            #               },
-            #             }
-            #           else
-            #             {
-            #               result: "failure",
-            #               messages: {
-            #                 errors: result.errors,
-            #                 failure: "パスワードを変更することができませんでした。",
-            #               },
-            #             }
-            #           end
-            # end
           end
         end
       end
