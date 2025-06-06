@@ -17,24 +17,23 @@ module Yuzakan
 
       def exist?(name) = by_name(name).exist?
 
-      def all = providers.to_a
+      private def ordered = providers.order(:order, :name)
 
-      def list = providers.pluck(:name)
+      def all = ordered.to_a
 
-      def all_capable_of_operation(operation)
-        ability = Yuzakan::Structs::Provider.operation_ability(operation)
-        providers.where(ability).to_a
+      def list = ordered.pluck(:name)
+
+      def all_callable(method)
+        abilities = Yuzakan::Structs::Provider.abilities_to(method)
+        condition = abilities.to_h { |k| [k, true] }
+        ordered.where(condition).to_a
       end
 
       def mget(*names)
-        providers.where(name: names.map { |name| normalize_name(name) }).to_a
+        ordered.where(name: names.map { |name| normalize_name(name) }).to_a
       end
 
       # TODO: 整理が必要
-
-      private def by_name(name)
-        providers.where(name: name)
-      end
 
       def find_by_name(name)
         by_name(name).one

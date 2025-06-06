@@ -279,26 +279,31 @@ module Yuzakan
         end
       end
 
-      def can_do?(operation)
-        ability = Provider.operation_ability(operation)
-        ability.all? { |name, value| __send__(name) == value }
+      def can_do?(method)
+        abilities = Provider.abilities_to(method)
+        abilities.all? { |name| __send__(name) }
       end
 
-      def self.operation_ability(operation)
-        case operation.intern.downcase
-        in nil | :check then {}
-        in :user_read | :user_list | :user_seacrh then {readable: true}
-        in :user_create | :user_update | :user_delete then {writable: true}
-        in :user_auth then {authenticatable: true}
+      def self.abilities_to(method)
+        case method.intern.downcase
+        in nil | :check
+          []
+        in :user_read | :user_list | :user_seacrh
+          [:readable]
+        in :user_create | :user_update | :user_delete
+          [:writable]
+        in :user_auth
+          [:authenticatable]
         in :user_change_password | :user_generate_code
-          {password_changeable: true}
-        in :user_reset_mfa | :user_generate_code then {mfa_changeable: true}
-        in :user_lock | :user_unlock then {lockable: true}
+          [:password_changeable]
+        in :user_reset_mfa | :user_generate_code
+          [:mfa_changeable]
+        in :user_lock | :user_unlock
+          [:lockable]
         in :group_read | :group_list | :group_search | :member_list
-          {group: true, readable: true}
-        in :group_create | :group_update | :group_delete | :member_add |
-          :member_remove
-          {group: true, writable: true}
+          [:group, :readable]
+        in :group_create | :group_update | :group_delete | :member_add | :member_remove
+          [:group, :writable]
         end
       end
 

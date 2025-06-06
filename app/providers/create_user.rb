@@ -7,7 +7,7 @@ module Yuzakan
 
       def call(username, providers = nil, **params)
         username = step validate_name(username)
-        providers = step get_providers(providers, operation: :user_create)
+        providers = step get_providers(providers, method: :user_create)
 
         password = params.delete(:password)
 

@@ -33,16 +33,16 @@ module Yuzakan
       end
     end
 
-    private def get_providers(providers = nil, operation: nil)
+    private def get_providers(providers = nil, method: nil)
       case providers
       in nil
-        Success(provider_repo.all_capable_of_operation(operation))
+        Success(provider_repo.all_callable(method))
       in []
         Success([])
       in [String | Symbol, *]
-        Success(provider_repo.mget(*providers).select { |provider| provider.can_do?(operation) })
+        Success(provider_repo.mget(*providers).select { |provider| provider.can_do?(method) })
       in [Yuzakan::Structs::Provider, *]
-        Success(providers.select { |provider| provider.can_do?(operation) })
+        Success(providers.select { |provider| provider.can_do?(method) })
       else
         Failure([:not_provider_list])
       end

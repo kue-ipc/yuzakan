@@ -10,10 +10,10 @@ module Yuzakan
         password = step validate_password(password)
         providers =
           if providers.nil?
-            all_providers = step get_providers(nil, operation: :user_change_password)
+            all_providers = step get_providers(nil, method: :user_change_password)
             all_providers.reject(&:individual_password)
           else
-            step get_providers(providers, operation: :user_change_password)
+            step get_providers(providers, method: :user_change_password)
           end
         step change_password(username, password, providers)
       end

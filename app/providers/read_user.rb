@@ -7,7 +7,7 @@ module Yuzakan
 
       def call(username, providers = nil)
         username = step validate_name(username)
-        providers = step get_providers(providers, operation: :user_read)
+        providers = step get_providers(providers, method: :user_read)
 
         # TODO: 途中で失敗した場合の処理
         providers.to_h { |provider|

@@ -7,7 +7,7 @@ module Yuzakan
 
       def call(groupname, providers = nil, **params)
         groupname = step validate_name(groupname)
-        providers = step get_providers(providers, operation: :group_create)
+        providers = step get_providers(providers, method: :group_create)
 
         # TODO: 途中で失敗した場合の処理
         providers.to_h do |provider|

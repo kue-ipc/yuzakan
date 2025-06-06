@@ -23,8 +23,7 @@ module Yuzakan
 
     private def call_providers(provider_names = nil, operation: :check)
       @changed = false
-      @providers = get_providers(provider_names,
-        operation: operation).to_h { |provider|
+      @providers = get_providers(provider_names, method: operation).to_h { |provider|
         begin
           data = yield provider
           @changed = true if data

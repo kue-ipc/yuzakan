@@ -8,7 +8,7 @@ module Yuzakan
       def call(username, password, providers = nil)
         username = step validate_name(username)
         password = step validate_password(password)
-        providers = step get_providers(providers, operation: :user_auth)
+        providers = step get_providers(providers, method: :user_auth)
         step authenticate(username, password, providers)
       end
 
