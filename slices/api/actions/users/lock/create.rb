@@ -28,7 +28,7 @@ module API
             result = call_interacttor(ProviderLockUser.new(provider_repository: @provider_repository),
               {username: params[:user_id]})
 
-            providers = result.providers.compact.transform_values { |v|  {locked: !!v} }
+            providers = result.providers.compact.transform_values { |v| {locked: !!v} }
             self.status = 200
             self.body = generate_json({providers: providers})
           end
