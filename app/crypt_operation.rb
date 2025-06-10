@@ -13,7 +13,7 @@ require "openssl"
 module Yuzakan
   class CryptOperation < Yuzakan::Operation
     include Deps[
-      "settings",
+      "settings"
     ]
 
     AUTH_DATA = "yuzakan"

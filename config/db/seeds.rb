@@ -70,6 +70,4 @@ Hanami.app["management.sync_group"].call(admin_groupname) =>
   Success(admin_group)
 Hanami.app["management.sync_user"].call(admin_username) => Success(admin_user)
 
-if admin_user.clearance_level < 5
-  Hanami.app["repos.user_repo"].set(admin_username, clearance_level: 5)
-end
+Hanami.app["repos.user_repo"].set(admin_username, clearance_level: 5) if admin_user.clearance_level < 5

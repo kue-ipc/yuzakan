@@ -10,11 +10,11 @@ module Yuzakan
       "i18n"
     ]
 
-    MenuItem = Data.define(:name, :params, :color, :level, :type) {
+    MenuItem = Data.define(:name, :params, :color, :level, :type) do
       def initialize(name:, color:, level:, params: {}, type: :link)
         super
       end
-    }
+    end
 
     List = Data.define(:list, :scope)
 

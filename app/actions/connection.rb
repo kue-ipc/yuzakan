@@ -22,7 +22,7 @@ module Yuzakan
           "repos.action_log_repo",
           login_view: "views.home.login",
           mfa_view: "views.home.mfa",
-          unready_view: "views.home.unready",
+          unready_view: "views.home.unready"
         ]
         action.extend Dry::Core::ClassAttributes
 

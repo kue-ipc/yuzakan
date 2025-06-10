@@ -30,14 +30,14 @@ module Yuzakan
       def ordered_filter(order: {name: :asc}, filter: {})
         order = {name: :asc} if order.nil? || order.empty?
 
-        order_attributes = order.map { |key, value|
+        order_attributes = order.map do |key, value|
           case value.downcase.intern
           when :asc
             users[key].qualified.asc
           when :desc
             users[key].qualified.desc
           end
-        }.compact
+        end.compact
 
         filter(**filter).order(*order_attributes)
       end

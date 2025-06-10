@@ -56,7 +56,7 @@ module API
           end
 
           mapping_errors = {}
-          mappings_params = (params[:mappings] || []).each_with_index.map { |mapping, idx|
+          mappings_params = (params[:mappings] || []).each_with_index.map do |mapping, idx|
             provider = provider_by_name(mapping[:provider])
             if provider.nil?
               mapping_errors[idx] = {provider: [t("errors.found?")]}
@@ -64,7 +64,7 @@ module API
             end
 
             {**mapping.except(:provider), provider_id: provider&.id}
-          }.compact
+          end.compact
           unless mapping_errors.empty?
             halt_json 422,
               errors: [{mappings: mapping_errors}]
@@ -99,9 +99,9 @@ module API
         end
 
         private def provider_by_name(name)
-          @named_providers ||= @provider_repository.all.to_h { |provider|
+          @named_providers ||= @provider_repository.all.to_h do |provider|
             [provider.name, provider]
-          }
+          end
           @named_providers[name]
         end
       end

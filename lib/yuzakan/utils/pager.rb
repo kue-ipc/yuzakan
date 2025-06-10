@@ -91,10 +91,10 @@ module Yuzakan
           prve: prev_page,
           next: next_page,
           last: last_page,
-        }.compact.map { |key, value|
+        }.compact.map do |key, value|
           link_item(@create_link.call({page: value, per_page: per_page}),
             rel: key.to_s)
-        }.join(", ")
+        end.join(", ")
       end
 
       private def header_content_range

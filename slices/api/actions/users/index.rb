@@ -151,9 +151,7 @@ module API
           all_items = users_providers.keys.sort
 
           # prohibitedなユーザーは隠す
-          if params[:hide_prohibited]
-            all_items -= @user_repository.filter(prohibited: true).map(:name)
-          end
+          all_items -= @user_repository.filter(prohibited: true).map(:name) if params[:hide_prohibited]
 
           # プロバイダーにないユーザーもすべて取り出す
           if params[:show_deleted]
@@ -172,16 +170,14 @@ module API
             routes.path(:users, **params.to_h, **link_params)
           end
 
-          users = get_users(pager.page_items).map { |user|
+          users = get_users(pager.page_items).map do |user|
             # プロバイダーから削除しされているが、レポジトリ―では残っている場合は同期する。
-            if !user.deleted && !users_providers.key?(user.name)
-              user = get_sync_user(user.name)
-            end
+            user = get_sync_user(user.name) if !user.deleted && !users_providers.key?(user.name)
             {
               **convert_for_json(user, assoc: true),
               providers: users_providers[user.name],
             }
-          }
+          end
 
           {
             users: users,
@@ -190,9 +186,9 @@ module API
         end
 
         private def get_users(usernames)
-          user_entities = @user_repository.all_with_groups_by_name(usernames).to_h { |user|
+          user_entities = @user_repository.all_with_groups_by_name(usernames).to_h do |user|
             [user.name, user]
-          }
+          end
           usernames.map do |username|
             user_entities[username] || get_sync_user(username)
           end

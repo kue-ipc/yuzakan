@@ -102,9 +102,9 @@ module Yuzakan
           groups: groups,
           attrs: YAML.safe_load(@params[:attrs]),
         }}
-        @groups = [primary_group, *groups].uniq.compact.to_h { |name|
+        @groups = [primary_group, *groups].uniq.compact.to_h do |name|
           [name, {groupname: name, display_name: name}]
-        }
+        end
       end
 
       def check
@@ -130,13 +130,13 @@ module Yuzakan
         raise AdapterError, "管理不可ユーザーであるため、更新できません。" if @users.dig(username,
           :unmanageable)
 
-        @users[username] = @users[username].merge(userdata) { |_key, self_val, other_val|
+        @users[username] = @users[username].merge(userdata) do |_key, self_val, other_val|
           if self_val.is_a?(Hash)
             self_val.merge(other_val)
           else
             other_val
           end
-        }
+        end
       end
 
       def user_delete(username)

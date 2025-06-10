@@ -487,9 +487,7 @@ module Yuzakan
       end
 
       private def ldap_group_read(groupname)
-        if @params[:group_name_suffix]&.size&.positive?
-          groupname += @params[:group_name_suffix]
-        end
+        groupname += @params[:group_name_suffix] if @params[:group_name_suffix]&.size&.positive?
         opts = search_group_opts(groupname)
         ldap_search(opts).first
       end
@@ -550,9 +548,9 @@ module Yuzakan
         changed = false
 
         # グループのチェック
-        remains = ldap_user_group_list(user).to_h { |group|
+        remains = ldap_user_group_list(user).to_h do |group|
           [group_entry_name(group), group]
-        }
+        end
 
         # プライマリーグループを管理しない場合は、プリマリーグループを無条件で追加する。
         # 管理している場合は追加しない
@@ -608,9 +606,9 @@ module Yuzakan
 
       private def create_user_attributes(username:, password: nil,
         display_name: nil, email: nil, **userdata)
-        attributes = userdata[:attrs].transform_keys { |key|
+        attributes = userdata[:attrs].transform_keys do |key|
           attribute_name(key)
-        }
+        end
         attributes.transform_values! { |value| convert_ldap_value(value) }
 
         # OpenLDAP環境では"top"が自動的に付与されないため、"top"を付けて置く
@@ -640,9 +638,9 @@ module Yuzakan
       end
 
       private def update_user_attributes(**userdata)
-        attributes = userdata[:attrs].transform_keys { |key|
+        attributes = userdata[:attrs].transform_keys do |key|
           attribute_name(key)
-        }
+        end
         attributes.transform_values! { |value| convert_ldap_value(value) }
 
         [:display_name, :email].each do |name|

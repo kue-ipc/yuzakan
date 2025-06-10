@@ -5,7 +5,7 @@ module Yuzakan
   module Management
     class RegisterGroup < Yuzakan::Operation
       include Deps[
-        "repos.group_repo",
+        "repos.group_repo"
       ]
 
       def call(groupname, params)

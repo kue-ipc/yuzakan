@@ -7,7 +7,7 @@ module Yuzakan
       include Deps[
         "providers.read_user",
         "management.register_user",
-        "management.unregister_user",
+        "management.unregister_user"
       ]
 
       def call(username)

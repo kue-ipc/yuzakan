@@ -45,9 +45,7 @@ module API
               errors: [only_first_errors(params.errors)]
           end
 
-          if @provider_repository.exist_by_name?(params[:name])
-            halt_json 422, errors: [{name: [t("errors.uniq?")]}]
-          end
+          halt_json 422, errors: [{name: [t("errors.uniq?")]}] if @provider_repository.exist_by_name?(params[:name])
 
           adapter_params = params.to_h.dup
           adapter_params_params = adapter_params.delete(:params)

@@ -48,9 +48,9 @@ module API
               end
 
               password_types = [/[0-9]/, /[a-z]/, /[A-Z]/,
-                /[^0-9a-zA-Z]/,].select { |reg|
+                /[^0-9a-zA-Z]/,].select do |reg|
                 reg.match(params[:password])
-              }.size
+              end.size
               if current_config.password_min_types&.> password_types
                 param_errors[:name] ||= []
                 param_errors[:name] << t("errors.min_types?",

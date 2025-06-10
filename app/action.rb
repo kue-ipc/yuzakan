@@ -14,9 +14,9 @@ module Yuzakan
     #        ため、configを設定した任意のサブクラスでContractが作られない。
     class Params < Hanami::Action::Params
       def self.params(&block)
-        @_contract = Class.new(Yuzakan::ValidationContract) {
+        @_contract = Class.new(Yuzakan::ValidationContract) do
           params(&block || -> {})
-        }.new
+        end.new
       end
     end
 

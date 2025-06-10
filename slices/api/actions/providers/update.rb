@@ -65,9 +65,9 @@ module API
 
                 if existing_value != value
                   param_name = param_type.name.to_s
-                  existing_adapter_param = @provider.adapter_params.find { |param|
+                  existing_adapter_param = @provider.adapter_params.find do |param|
                     param.name == param_name
-                  }
+                  end
                   if existing_adapter_param
                     @adapter_param_repository.update(
                       existing_adapter_param.id, data)

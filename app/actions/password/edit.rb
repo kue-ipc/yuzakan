@@ -5,7 +5,7 @@ module Yuzakan
     module Password
       class Edit < Yuzakan::Action
         include Deps[
-          "repos.provider_repo",
+          "repos.provider_repo"
         ]
 
         def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument

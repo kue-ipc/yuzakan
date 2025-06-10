@@ -18,7 +18,7 @@ module Yuzakan
       ].freeze
 
       include Deps[
-        "repo.config_repo",
+        "repo.config_repo"
       ]
       def call
         config = step current_config
@@ -44,16 +44,14 @@ module Yuzakan
       end
 
       private def generate_password(rule)
-        unless rule[:size].positive?
-          return Failure([:invalid, {size: [gt?: 0]}])
-        end
+        return Failure([:invalid, {size: [gt?: 0]}]) unless rule[:size].positive?
 
         char_list = charlist_from_rule(rule).value_or { return Failure(_1) }
         return Failure([:invalid, {char_list: [:filled?]}]) if char_list.empty?
 
-        password = rule[:size].times.map {
+        password = rule[:size].times.map do
           char_list[SecureRandom.random_number(char_list.size)]
-        }.join
+        end.join
         Success(password)
       rescue NotImplementedError => e
         Failure([:error, e])

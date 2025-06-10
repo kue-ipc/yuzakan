@@ -41,24 +41,24 @@ module API
 
             @providers = @provider_repository.ordered_all_with_adapter_by_operation(:member_list)
 
-            providers_items = @providers.to_h { |provider|
+            providers_items = @providers.to_h do |provider|
               list = provider.member_list(groupname)
               [provider.name, list&.to_set]
-            }
+            end
 
             all_items = providers_items.values.compact.sum(Set.new).to_a.sort
 
             @pager = Yuzakan::Utils::Pager.new(routes, :group_members, params,
               all_items)
 
-            @members = get_members(@pager.page_items).map { |member|
+            @members = get_members(@pager.page_items).map do |member|
               {
                 **convert_for_json(member),
-                providers: providers_items.filter { |_, v|
+                providers: providers_items.filter do |_, v|
                   v.include?(member.username)
-                }.keys,
+                end.keys,
               }
-            }
+            end
 
             self.status = 200
             headers.merge!(@pager.headers)
@@ -66,9 +66,9 @@ module API
           end
 
           private def get_members(usernames)
-            user_entities = @user_repository.by_username(usernames).to_a.to_h { |user|
+            user_entities = @user_repository.by_username(usernames).to_a.to_h do |user|
               [user.username, user]
-            }
+            end
             usernames.map do |username|
               if user_entities.key?(username)
                 user_entities[username]

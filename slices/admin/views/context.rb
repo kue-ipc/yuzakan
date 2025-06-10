@@ -6,7 +6,7 @@ module Admin
     class Context < Yuzakan::Views::Context
       include Deps[
         app_assets: "app.assets",
-        app_routes: "app.routes",
+        app_routes: "app.routes"
       ]
     end
   end

@@ -8,7 +8,7 @@ module Yuzakan
         "repos.user_repo",
         "repos.group_repo",
         "repos.member_repo",
-        "management.sync_group",
+        "management.sync_group"
       ]
 
       def call(username, params)
@@ -34,10 +34,10 @@ module Yuzakan
 
         if params.key?(:groups)
           validated_params[:groups] =
-            (params[:groups] - [params[:primary_group]]).map { |groupname|
+            (params[:groups] - [params[:primary_group]]).map do |groupname|
               get_group(groupname)
                 .value_or { return Failure(_1) }
-            }
+            end
         end
 
         Success(validated_params)
@@ -47,9 +47,7 @@ module Yuzakan
         user = user_repo.set(username, **params.except(:group, :groups),
           group_id: params[:group]&.id)
 
-        if params.key?(:groups)
-          member_repo.set_groups_for_user(user, params[:groups])
-        end
+        member_repo.set_groups_for_user(user, params[:groups]) if params.key?(:groups)
 
         Success(user_repo.get_with_groups(username))
       end

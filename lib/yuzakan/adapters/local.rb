@@ -67,9 +67,7 @@ module Yuzakan
           if member_groups
             remain_group_ids = member_groups.map(&:id)
             user_repo.find_with_members(user.id).local_members.each do |member|
-              unless remain_group_ids.delete(member.local_group_id)
-                member_repo.delete(member.id)
-              end
+              member_repo.delete(member.id) unless remain_group_ids.delete(member.local_group_id)
             end
             remain_group_ids.each do |group_id|
               member_repo.create(local_user_id: user.id,

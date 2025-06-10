@@ -7,7 +7,7 @@ module Yuzakan
       include Deps[
         "providers.read_group",
         "management.register_group",
-        "management.unregister_group",
+        "management.unregister_group"
       ]
 
       def call(groupname)

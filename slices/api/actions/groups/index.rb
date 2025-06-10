@@ -152,9 +152,7 @@ module API
           all_items = groups_providers.keys
 
           # prohibitedなグループは隠す
-          if params[:hide_prohibited]
-            all_items -= @group_repository.filter(prohibited: true).map(:name)
-          end
+          all_items -= @group_repository.filter(prohibited: true).map(:name) if params[:hide_prohibited]
 
           # プロバイダーにないグループもすべて取り出す
           if params[:show_deleted]
@@ -173,16 +171,14 @@ module API
             routes.path(:groups, **params.to_h, **link_params)
           end
 
-          groups = get_groups(pager.page_items).map { |group|
+          groups = get_groups(pager.page_items).map do |group|
             # プロバイダーから削除しされているが、レポジトリ―では残っている場合は同期する。
-            if !group.deleted && !groups_providers.key?(group.name)
-              group = get_sync_group(group.name)
-            end
+            group = get_sync_group(group.name) if !group.deleted && !groups_providers.key?(group.name)
             {
               **convert_for_json(group),
               providers: groups_providers[group.name] || [],
             }
-          }
+          end
 
           {
             groups: groups,
@@ -191,9 +187,9 @@ module API
         end
 
         private def get_groups(groupnames)
-          group_entities = @group_repository.all_by_name(groupnames).to_h { |group|
+          group_entities = @group_repository.all_by_name(groupnames).to_h do |group|
             [group.name, group]
-          }
+          end
           groupnames.map do |groupname|
             group_entities[groupname] || get_sync_group(groupname)
           end

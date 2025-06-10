@@ -101,6 +101,12 @@ Style/AccessModifierDeclarations:
   EnforcedStyle: inline
 Style/AsciiComments:
   Enabled: false
+Style/BlockDelimiters:
+  BracesRequiredMethods:
+    - let
+    - let!
+    - subject
+    - watch
 Style/Documentation:
   Enabled: false
 Style/EmptyMethod:
