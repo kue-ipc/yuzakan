@@ -50,5 +50,16 @@ module Yuzakan
         Failure([:not_string, "name"])
       end
     end
+
+    private def validate_password(password)
+      case password
+      when "", nil
+        Failure([:invalid, {password: [:filled?]}])
+      when String
+        Success(password)
+      else
+        Failure([:invalid, {password: [:str?]}])
+      end
+    end
   end
 end

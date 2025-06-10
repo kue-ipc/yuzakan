@@ -28,7 +28,7 @@ def init_request_spec
   let(:network) { Factory[:ipv4_loopback_network] }
   let(:group) { Factory[:group] }
   let(:provider) {
-    Factory[:mock_provdire, params: {
+    Factory[:mock_provider, params: {
       username: user.name,
       password: password,
       display_name: user.display_name,

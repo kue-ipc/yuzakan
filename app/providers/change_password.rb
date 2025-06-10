@@ -26,7 +26,7 @@ module Yuzakan
           return Failure([:error, e])
         end
 
-        Sucess(changed_providers)
+        Success[changed_providers]
       end
     end
   end

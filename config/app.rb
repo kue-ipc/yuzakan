@@ -9,6 +9,11 @@ Sequel.default_timezone = :local
 
 module Yuzakan
   class App < Hanami::App
+    # config.middleware.use Yuzakan::Middleware::JsonKeyTraseformer
+    # config.middleware.use :body_parser, :json
+
+    config.actions.format :html
+
     config.actions.sessions =
       if settings.redis_url
         [:redis, {
@@ -29,16 +34,18 @@ module Yuzakan
           expire_after: settings.session_expire,
         },]
       end
+
     config.inflections do |inflections|
       inflections.acronym "AD"
     end
-    config.actions.format :html
+
     config.shared_app_component_keys += [
       "repos.auth_log_repo",
       "repos.user_repo",
       "repos.config_repo",
       "management.sync_user",
       "providers.authenticate",
+      "providers.change_password",
     ]
   end
 end

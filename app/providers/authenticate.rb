@@ -22,17 +22,6 @@ module Yuzakan
 
         Failure([:failure, t("errors.wrong_username_or_password")])
       end
-
-      private def validate_password(password)
-        case password
-        when "", nil
-          Failure([:invalid, {password: [:filled?]}])
-        when String
-          Success(password)
-        else
-          Failure([:invalid, {password: [:str?]}])
-        end
-      end
     end
   end
 end
