@@ -11,16 +11,16 @@ RSpec.describe "PATCH /api/users/:id/password", :db, type: :request do
   }
   let(:params) {
     {
-      password_current: password,
+      passwordCurrent: password,
       password: new_password,
-      password_confirmation: new_password,
+      passwordConfirmation: new_password,
     }
   }
   let(:new_password) { "new_password" }
 
   it "is updated" do
     patch "/api/users/~/password", params.to_json, request_headers
-    # warn last_response.body
+    warn last_response.body
     expect(last_response).to be_ok
     expect(last_response.status).to eq 200
     expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
