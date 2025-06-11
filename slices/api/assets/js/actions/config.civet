@@ -13,24 +13,24 @@ export interface ConfigProps
   title: string
   description: string
   domain: string
-  session_timeout: number
-  auth_failure_waiting: number
-  auth_failure_limit: number
-  auth_failure_duration: number
-  password_min_size: string
-  password_max_size: string
-  password_min_types: string
-  password_prohibited_chars: string
-  password_min_score: string
-  password_extra_dict: string[]
-  generate_password_size: string
-  generate_password_type: string
-  generate_password_chars: string
-  contact_name: string
-  contact_email: string
-  contact_phone: string
-  created_at: Date
-  updated_at: Date
+  sessionTimeout: number
+  authFailureWaiting: number
+  authFailureLimit: number
+  authFailureDuration: number
+  passwordMinSize: string
+  passwordMaxSize: string
+  passwordMinTypes: string
+  passwordProhibitedChars: string
+  passwordMinScore: string
+  passwordExtraDict: string[]
+  generatePasswordSize: string
+  generatePasswordType: string
+  generatePasswordChars: string
+  contactName: string
+  contactEmail: string
+  contactPhone: string
+  createdAt: Date
+  updatedAt: Date
 
 export interface ConfigState < ResponseState
   config?: ConfigProps

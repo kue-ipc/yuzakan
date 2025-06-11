@@ -189,3 +189,32 @@ export createDestroy := <S < ResponseState, P>(name: string,
 ): Action<S, undefined> ->
   path := `/api/${name}`
   createAction<S, P, undefined>(path, actionFallback, {...params, method: "DELETE"})
+
+// RESTful Resource nested in Resources
+// GET /resources/:id/resource
+export createShowInId := <S < ResponseState, P>(parent: string, name: string,
+  actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
+): Action<S, undefined> ->
+  path := `/api/${parent}/:id/${name}`
+  createAction<S, P, undefined>(path, actionFallback, {...params, method: "GET"})
+
+// POST /resources/:id/resource
+export createCreateInId := <S < ResponseState, P>(parent: string, name: string,
+  actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
+): Action<S, P> ->
+  path := `/api/${parent}/:id/${name}`
+  createAction<S, P, P>(path, actionFallback, {...params, method: "POST"})
+
+// PATCH /resources/:id/resource
+export createUpdateInId := <S < ResponseState, P>(parent: string, name: string,
+  actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
+): Action<S, P> ->
+  path := `/api/${parent}/:id/${name}`
+  createAction<S, P, P>(path, actionFallback, {...params, method: "PATCH"})
+
+// DELETE /resources/:id/resource
+export createDestroyInId := <S < ResponseState, P>(parent: string, name: string,
+  actionFallback: ActionFallback<S, P>, params: ActionOtherParams = {}
+): Action<S, undefined> ->
+  path := `/api/${parent}/:id/${name}`
+  createAction<S, P, undefined>(path, actionFallback, {...params, method: "DELETE"})
