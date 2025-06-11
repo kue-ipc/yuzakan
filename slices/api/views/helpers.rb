@@ -4,7 +4,7 @@
 module API
   module Views
     module Helpers
-      # Add your view helpers here
+      include JSONHelper
     end
   end
 end

@@ -6,7 +6,7 @@ module API
     module Parts
       class Config < Yuzakan::Views::Parts::Config
         def to_h = value.to_h.except(:id)
-        def to_json(...) = to_h.to_json(...)
+        def to_json(...) = helpers.params_to_json(to_h)
       end
     end
   end

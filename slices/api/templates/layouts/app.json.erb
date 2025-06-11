@@ -1,7 +1,6 @@
-<%== JSON.generate({
-  status: status,
-  location: location,
+<%== params_to_json(Yuzakan::Utils::Hash.compact_blank({
+  status: status&.to_h,
+  location: location&.to_s,
   csrf: csrf.compact,
-  flash: flash.sweep.map { |k, v| [k, v] }.to_h, # rubocop: disable Style/MapToHash
-  data: JSON.parse(yield, symbolize_names: true),
-}.reject { |k, v| v.nil? || (v.respond_to?(:empty?) && v.empty?) }) %>
+  flash: flash.sweep.map(&:itself).to_h, # rubocop: disable Style/MapToHash
+})).delete_suffix("}") %>,"data":<%== yield %>}

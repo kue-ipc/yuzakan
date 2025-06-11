@@ -6,7 +6,7 @@ require "hanami/utils/string"
 module Yuzakan
   module Utils
     module String
-      def self.json_key(input)
+      def self.params_key(input)
         str = Hanami::Utils::String.underscore(input)
         if input.to_s.start_with?(/[A-Z]/)
           "_#{str}"
@@ -15,7 +15,7 @@ module Yuzakan
         end
       end
 
-      def self.params_key(input)
+      def self.json_key(input)
         str = Hanami::Utils::String.classify(input)
         if !str.empty? && input.to_s.start_with?("_")
           str

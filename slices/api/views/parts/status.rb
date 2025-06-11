@@ -15,7 +15,7 @@ module API
           }
         end
 
-        def to_json(...) = to_h.to_json(...)
+        def to_json(...) = helpers.params_to_json(to_h)
       end
     end
   end

@@ -2,22 +2,20 @@
 
 require "hanami"
 
-require "rack/session/redis"
-
-require "yuzakan/utils/params_json_parser"
-
 # Sequel timezone
 Sequel.default_timezone = :local
 
 module Yuzakan
   class App < Hanami::App
     # config.middleware.use Yuzakan::Middleware::JsonKeyTraseformer
-    config.middleware.use :body_parser, [Yuzakan::Utils::ParamsJsonParser]
+    require "yuzakan/middleware/body_parser/params_json_parser"
+    config.middleware.use :body_parser, [Yuzakan::Middleware::BodyParser::ParamsJsonParser]
 
     config.actions.format :html
 
     config.actions.sessions =
       if settings.redis_url
+        require "rack/session/redis"
         [:redis, {
           key: "yuzakan.session",
           expire_after: settings.session_expire,
