@@ -3,4 +3,4 @@
   location: location&.to_s,
   csrf: csrf.compact,
   flash: flash.sweep.map(&:itself).to_h, # rubocop: disable Style/MapToHash
-})).delete_suffix("}") %>,"data":<%== yield %>}
+})).delete_suffix("}") %><% if has_data then %>,"data":<%== yield %><% end %>}

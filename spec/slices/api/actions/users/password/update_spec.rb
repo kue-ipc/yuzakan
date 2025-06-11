@@ -122,7 +122,7 @@ RSpec.describe API::Actions::Users::Password::Update do
     expect(response.status).to eq 422
     expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
-    expect(json[:flash]).to eq({invalid: {password_confirmation: ["新しいパスワードと値が一致しません。"]}})
+    expect(json[:flash]).to eq({invalid: {passwordConfirmation: ["新しいパスワードと値が一致しません。"]}})
   end
 
   describe "authentication failure" do
@@ -137,7 +137,7 @@ RSpec.describe API::Actions::Users::Password::Update do
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:flash]).to eq({invalid: {password_current: ["現在のパスワードと値が一致しません。"]}})
+      expect(json[:flash]).to eq({invalid: {passwordCurrent: ["現在のパスワードと値が一致しません。"]}})
     end
   end
 
