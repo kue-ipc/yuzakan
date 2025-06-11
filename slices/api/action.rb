@@ -5,6 +5,14 @@ module API
   class Action < Yuzakan::Action
     include API::Actions::MessageJSON
 
+    # rubocop: disable Style/FormatString
+    if Hanami.env?(:development)
+      format :json, :html
+    else
+      format :json
+    end
+    # rubocop: enable Style/FormatString
+
     # FIXME: JSONで渡されるとrawでもキーがシンボルになっているが、
     #   CSRFProtectionではキーが文字列であることを前提としているため、
     #   CSRFトークンが探せなくて不正扱いになる。

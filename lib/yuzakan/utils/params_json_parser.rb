@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "hanami/middleware/body_parser/json_parser"
-require "hanami/utils/string"
 
 module Yuzakan
   module Utils
@@ -9,7 +8,7 @@ module Yuzakan
     class ParamsJsonParser < Hanami::Middleware::BodyParser::JsonParser
       def parse(...)
         obj = super
-        deep_transform_keys(obj) { |key| Hanami::Utils::String.underscore(key.to_s) }
+        deep_transform_keys(obj) { |key| Yuzakan::Utils::String.json_key(key) }
       end
       private def deep_transform_keys(obj, &block)
         case obj

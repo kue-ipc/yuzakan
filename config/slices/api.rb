@@ -2,10 +2,6 @@
 
 module API
   class Slice < Hanami::Slice
-    if Hanami.env?(:development)
-      config.actions.format :json, :html
-    else
-      config.actions.format :json
-    end
+    # NOTE: Cannot use `config.actions.format :json` here because middleware use :body_parser with default :json
   end
 end
