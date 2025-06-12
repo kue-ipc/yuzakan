@@ -1,3 +1,5 @@
+// file helper
+
 export basename := (path: string, suffix: string = ""): string ->
   base := path.split("/").reverse().find((_) => _) || ""
 

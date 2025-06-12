@@ -32,16 +32,18 @@ export formDataToObj := (formData: FormData): {} ->
         obj[subKey] = value
       else
         if keyList[0] is ""
+          // Array
           throw new Error("Empty key must be last") unless keyList.length is 1
           obj[subKey] ?= []
           throw new Error("sub object is not array") unless obj[subKey] <? Array
           obj[subKey].push value
         else if keyList[0].match(/^\d+$/)
+          // Array
           obj[subKey] ?= []
         else
           obj[subKey] ?= {}
         obj = obj[subKey]
-        throw new Error("sub object is not object") unless obj[subKey] <? Object
+        throw new Error("sub object is not object") unless obj <? Object
   root
 
 export formDataToJson := (formData: FormData): string ->

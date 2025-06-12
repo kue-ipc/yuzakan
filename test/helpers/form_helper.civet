@@ -1,12 +1,119 @@
 {assert} from chai
 
-{formName, parseParamName, generateParamName} from ../../app/assets/js/helpers/form_helper.civet
+{
+  parseParamName,
+  generateParamName,
+  formName,
+  formId,
+  formDataToObj,
+  formDataToJson,
+  formDataToUrlencoded,
+  objToFormData,objToUrlencoded
+} from ../../app/assets/js/helpers/form_helper.civet
 
-describe "form name", ->
-  it "paramNametoList", ->
+describe "comversion", ->
+  it "parseParamName", ->
+    str := "abc[def][ghi]"
+    assert.deepEqual parseParamName(str), ["abc", "def", "ghi"]
+
+  it "parseParamName for array", ->
+    str := "abc[def][]"
+    assert.deepEqual parseParamName(str), ["abc", "def", ""]
+
+  it "generateParamName", ->
+    assert.equal generateParamName("abc", "def", "ghi"), "abc[def][ghi]"
+
+  it "formName", ->
     assert.equal formName("abc", ["def", "ghi"]), "def[ghi][abc]"
 
-describe "param name", ->
-  str := "abc[def][ghi]"
-  it "paramNametoList", ->
-    assert.deepEqual parseParamName(str), ["abc", "def", "ghi"]
+  it "formId", ->
+    assert.equal formId("abc", ["def", "ghi"]), "def-ghi-abc"
+
+describe "form data", ->
+  describe "simple", ->
+    formData := new FormData()
+    formData.append("name", "value")
+
+    it "to obj", ->
+      obj := formDataToObj(formData)
+      assert.deepEqual obj, {"name": "value"}
+
+    it "to json", ->
+      json := formDataToJson(formData)
+      assert.equal json, '{"name":"value"}'
+
+    it "to urlencoded", ->
+      urlencoded := formDataToUrlencoded(formData)
+      assert.equal urlencoded, "name=value"
+
+
+  describe "nested", ->
+    formData := new FormData()
+    formData.append("user[name]", "John")
+    formData.append("user[age]", "30")
+  
+    it "to obj", ->
+      obj := formDataToObj(formData)
+      assert.deepEqual obj, {"user": {"name": "John", "age": "30"}}
+
+    it "to json", ->
+      json := formDataToJson(formData)
+      assert.equal json, '{"user":{"name":"John","age":"30"}}'
+
+    it "to urlencoded", ->
+      urlencoded := formDataToUrlencoded(formData)
+      assert.equal urlencoded, "user%5Bname%5D=John&user%5Bage%5D=30"
+
+  describe "array", ->
+    formData := new FormData()
+    formData.append("items[]", "item1")
+    formData.append("items[]", "item2")
+
+    it "to obj", ->
+      obj := formDataToObj(formData)
+      assert.deepEqual obj, {"items": ["item1", "item2"]}
+
+    it "to json", ->
+      json := formDataToJson(formData)
+      assert.equal json, '{"items":["item1","item2"]}'
+
+    it "to urlencoded", ->
+      urlencoded := formDataToUrlencoded(formData)
+      assert.equal urlencoded, "items%5B%5D=item1&items%5B%5D=item2"
+
+describe "obj", ->
+  describe "simple", ->
+    obj := {"name": "value"}
+
+    it "to form data", ->
+      formData := objToFormData(obj)
+      assert.equal formData.get("name"), "value"
+
+    it "to urlencoded", ->
+      urlencoded := objToUrlencoded(obj)
+      assert.equal urlencoded, "name=value"
+
+  describe "nested", ->
+    obj := {"user": {"name": "John", "age": "30"}}
+
+    it "to form data", ->
+      formData := objToFormData(obj)
+      assert.equal formData.get("user[name]"), "John"
+      assert.equal formData.get("user[age]"), "30"
+
+    it "to urlencoded", ->
+      urlencoded := objToUrlencoded(obj)
+      assert.equal urlencoded, "user%5Bname%5D=John&user%5Bage%5D=30"
+
+  describe "array", ->
+    obj := {"items": ["item1", "item2"]}
+
+    it "to form data", ->
+      formData := objToFormData(obj)
+      console.debug formData
+      assert.deepEqual formData.getAll("items[0]"), ["item1"]
+      assert.deepEqual formData.getAll("items[1]"), ["item2"]
+
+    it "to urlencoded", ->
+      urlencoded := objToUrlencoded(obj)
+      assert.equal urlencoded, "items%5B0%5D=item1&items%5B1%5D=item2"

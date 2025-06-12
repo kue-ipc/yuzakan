@@ -1,0 +1,94 @@
+{assert} from chai
+
+{basename} from ../../app/assets/js/helpers/file_helper.civet
+
+describe "basename", ->
+  describe "full path", ->
+    path := "/full/path/name.txt"
+
+    it "without suffix", ->
+      assert.equal basename(path), "name.txt"
+
+    it "with suffix", ->
+      assert.equal basename(path, ".txt"), "name"
+
+    it "with suffix any", ->
+      assert.equal basename(path, ".*"), "name"
+
+    it "with suffix other", ->
+      assert.equal basename(path, ".exe"), "name.txt"
+
+  describe "relative path", ->
+    path := "relative/path/name.txt"
+
+    it "without suffix", ->
+      assert.equal basename(path), "name.txt"
+
+    it "with suffix", ->
+      assert.equal basename(path, ".txt"), "name"
+
+    it "with suffix any", ->
+      assert.equal basename(path, ".*"), "name"
+
+    it "with suffix other", ->
+      assert.equal basename(path, ".exe"), "name.txt"
+  
+  describe "no path", ->
+    path := "name.txt"
+
+    it "without suffix", ->
+      assert.equal basename(path), "name.txt"
+
+    it "with suffix", ->
+      assert.equal basename(path, ".txt"), "name"
+
+    it "with suffix any", ->
+      assert.equal basename(path, ".*"), "name"
+
+    it "with suffix other", ->
+      assert.equal basename(path, ".exe"), "name.txt"
+
+  describe "no extension", ->
+    path := "name"
+
+    it "without suffix", ->
+      assert.equal basename(path), "name"
+
+    it "with suffix", ->
+      assert.equal basename(path, ".txt"), "name"
+
+    it "with suffix any", ->
+      assert.equal basename(path, ".*"), "name"
+
+    it "with suffix other", ->
+      assert.equal basename(path, ".exe"), "name"
+
+  describe "empty path", ->
+    path := ""
+
+    it "without suffix", ->
+      assert.equal basename(path), ""
+
+    it "with suffix", ->
+      assert.equal basename(path, ".txt"), ""
+
+    it "with suffix any", ->
+      assert.equal basename(path, ".*"), ""
+
+    it "with suffix other", ->
+      assert.equal basename(path, ".exe"), ""
+
+  describe "path with spaces", ->
+    path := "path with spaces/name.txt"
+
+    it "without suffix", ->
+      assert.equal basename(path), "name.txt"
+
+    it "with suffix", ->
+      assert.equal basename(path, ".txt"), "name"
+
+    it "with suffix any", ->
+      assert.equal basename(path, ".*"), "name"
+
+    it "with suffix other", ->
+      assert.equal basename(path, ".exe"), "name.txt"
