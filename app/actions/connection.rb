@@ -159,7 +159,7 @@ module Yuzakan
         log_info = {
           uuid: response[:current_uuid],
           client: response[:current_client],
-          user: response[:current_user]&.name,
+          user: response[:current_user]&.name || "",
           action: self.class.name,
           method: request.request_method,
           path: request.path,
