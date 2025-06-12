@@ -1,0 +1,59 @@
+{assert} from chai
+
+{normalizeBigint, normalizeNumber} from ../../app/assets/js/helpers/number_helper.civet
+
+describe "bigint", ->
+  value := 42n
+  it "to bigint without range", ->
+    assert.equal normalizeBigint(value), 42n
+  it "to bigint with range [0..100]", ->
+    assert.equal normalizeBigint(value, {min: 0n, max: 100n}), 42n
+  it "to bigint with range [-100..0]", ->
+    assert.equal normalizeBigint(value, {min: -100n, max: 0n}), undefined
+  it "to bigint with range [100, 200]", ->
+    assert.equal normalizeBigint(value, {min: 100n, max: 200n}), undefined
+  it "to bigint with range [42, 42]", ->
+    assert.equal normalizeBigint(value, {min: 42n, max: 42n}), 42n
+  it "to bigint with range [0, 0]", ->
+    assert.equal normalizeBigint(value, {min: 0n, max: 0n}), undefined
+
+  it "to nunmebr without range", ->
+    assert.equal normalizeNumber(value), 42
+  it "to number with range [0..100]", ->
+    assert.equal normalizeNumber(value, {min: 0, max: 100}), 42
+  it "to number with range [-100..0]", ->
+    assert.equal normalizeNumber(value, {min: -100, max: 0}), undefined
+  it "to number with range [100, 200]", ->
+    assert.equal normalizeNumber(value, {min: 100, max: 200}), undefined
+  it "to number with range [42, 42]", ->
+    assert.equal normalizeNumber(value, {min: 42, max: 42}), 42
+  it "to number with range [0, 0]", ->
+    assert.equal normalizeNumber(value, {min: 0, max: 0}), undefined
+
+describe "number", ->
+  value := 42.5
+  it "to bigint without range", ->
+    assert.equal normalizeBigint(value), 42n
+  it "to bigint with range [0..100]", ->
+    assert.equal normalizeBigint(value, {min: 0n, max: 100}), 42n
+  it "to bigint with range [-100..0]", ->
+    assert.equal normalizeBigint(value, {min: -100n, max: 0}), undefined
+  it "to bigint with range [100, 200]", ->
+    assert.equal normalizeBigint(value, {min: 100n, max: 200}), undefined
+  it "to bigint with range [42, 42]", ->
+    assert.equal normalizeBigint(value, {min: 42n, max: 42n}), undefined
+  it "to bigint with range [0, 0]", ->
+    assert.equal normalizeBigint(value, {min: 0n, max: 0n}), undefined
+
+  it "to number without range", ->
+    assert.equal normalizeNumber(value), 42.5
+  it "to number with range [0..100]", ->
+    assert.equal normalizeNumber(value, {min: 0, max: 100}), 42.5
+  it "to number with range [-100..0]", ->
+    assert.equal normalizeNumber(value, {min: -100, max: 0}), undefined
+  it "to number with range [100, 200]", ->
+    assert.equal normalizeNumber(value, {min: 100, max: 200}), undefined
+  it "to number with range [42.5, 42.5]", ->
+    assert.equal normalizeNumber(value, {min: 42.5, max: 42.5}), 42.5
+  it "to number with range [0, 0]", ->
+    assert.equal normalizeNumber(value, {min: 0, max: 0}), undefined
