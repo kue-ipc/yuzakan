@@ -53,6 +53,28 @@ module API
             self.status = 200
             self.body = generate_json({password: result.password})
           end
+
+          def handle_google(_request, _response)
+            provider = ProviderRepository.new.first_google_with_adapter
+
+            result = ResetPassword.new(user: current_user,
+              client: client,
+              config: current_config,
+              providers: [provider])
+              .call(params.get(:google_password_create))
+
+            if result.failure?
+              flash[:errors] = result.errors
+              flash[:failure] = "Google アカウントのパスワードリセットに失敗しました。"
+              redirect_to routes.path(:google)
+            end
+
+            @user = result.user_datas[provider.name]
+            @password = result.password
+
+            flash[:success] = "Google アカウントのパスワードをリセットしました。"
+          end
+
         end
       end
     end

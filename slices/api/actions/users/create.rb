@@ -81,6 +81,31 @@ module API
           headers["Content-Location"] = routes.user_path(@user.name)
           self.body = user_json(password: password)
         end
+
+        def handle_google(_request, _response)
+          unless params.get(:agreement)
+            flash[:failure] = "同意がありません。"
+            redirect_to routes.path(:google)
+          end
+
+          provider = ProviderRepository.new.first_google_with_adapter
+
+          result = ProviderCreateUser.new(user: current_user, client: client,
+            config: current_config,
+            providers: [provider])
+            .call(params.get(:google_create))
+
+          if result.failure?
+            flash[:errors] = result.errors
+            flash[:failure] = "Google アカウント の作成に失敗しました。"
+            redirect_to routes.path(:google)
+          end
+
+          @user = result.user_datas[provider.name]
+          @password = result.password
+
+          flash[:success] = "Google アカウント を作成しました。"
+        end
       end
     end
   end
