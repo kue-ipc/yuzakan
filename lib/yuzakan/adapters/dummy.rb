@@ -6,7 +6,7 @@ module Yuzakan
       self.name = "dummy"
       self.display_name = "ダミー"
       self.version = "0.0.1"
-      self.params = []
+      self.params = [].freeze
 
       hidden Hanami.env?(:production)
     end

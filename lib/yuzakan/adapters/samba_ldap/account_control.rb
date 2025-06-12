@@ -3,6 +3,19 @@
 # Samba Account Control
 # http://www.samba.gr.jp/project/translation/Samba3-HOWTO/passdb.html#accountflags
 
+# sambaAcctFlags の意味は下記の通り
+#   D: アカウント無効
+#   H: ホームディレクトリ必須
+#   I: ドメイン信頼アカウント
+#   L: 自動ロック中
+#   M: MNSログオンユーザーアカウント
+#   N: パスワード不要(パスワード無しでログオン可能)
+#   S: サーバー信頼アカウント
+#   T: 一時的な重複アカウント
+#   U: 一般ユーザーアカウント
+#   W: ワークステーション信頼アカウント
+#   X: パスワード無期限
+
 module Yuzakan
   module Adatpers
     class SambaLdap < PosixLdap

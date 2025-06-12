@@ -81,7 +81,7 @@ module Yuzakan
           default: "",
           description: "YAML形式で記入",
         },
-      ]
+      ].tap(&Yuzakan::Utils::Object.method(:deep_freeze))
 
       group :primary
 

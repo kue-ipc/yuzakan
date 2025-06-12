@@ -233,7 +233,7 @@ module Yuzakan
           default: "inetOrgPerson",
           placeholder: "inetOrgPerson",
         },
-      ]
+      ].tap(&Yuzakan::Utils::Object.method(:deep_freeze))
 
       class << self
         attr_accessor :multi_attrs, :hide_attrs

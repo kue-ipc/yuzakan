@@ -3,18 +3,6 @@
 # Samba LDAP
 # sambaLMPassword はデフォルト無効とし、設定済みは削除する。
 # sambaNTPassword はデフォルト有効とし、設定する。
-# sambaAcctFlags の意味は下記の通り
-#   D: アカウント無効
-#   H: ホームディレクトリ必須
-#   I: ドメイン信頼アカウント
-#   L: 自動ロック中
-#   M: MNSログオンユーザーアカウント
-#   N: パスワード不要(パスワード無しでログオン可能)
-#   S: サーバー信頼アカウント
-#   T: 一時的な重複アカウント
-#   U: 一般ユーザーアカウント
-#   W: ワークステーション信頼アカウント
-#   X: パスワード無期限
 
 require "securerandom"
 require "smbhash"
@@ -25,46 +13,48 @@ module Yuzakan
       self.name = "samba_ldap"
       self.display_name = "Samba LDAP"
       self.version = "0.0.1"
-      self.params = ha_merge(
-        PosixLdap.params + [
-          {
-            name: :user_search_filter,
-            default: "(&(objectclass=posixAccount)(objectClass=sambaSamAccount))",
-          }, {
-            name: :create_user_object_classes,
-            description: "オブジェクトクラスをカンマ区切りで入力してください。" \
-                         "posixAccount と sambaSamAccount は自動的に追加されます。",
-          }, {
-            name: :samba_domain_sid,
-            label: "Samba ドメインSID",
-            description: "ユーザーのプリフィックスに使用するSambaドメインのSIDです。" \
-                         '"S-1-5-21-(0..4294967295)-(0..4294967295)-(0..4294967295)"の形式で、' \
-                         "ランダムな数を割り当ててください。",
-            type: :string,
-            placeholder: "S-1-5-21-x-y-z",
-            required: true,
-          }, {
-            name: :samba_nt_password,
-            label: "Samba NT パスワード設定",
-            description: "パスワード設定時にSamba NT パスワード(sambaNTPassword)を設定します。",
-            type: :boolean,
-            default: true,
-          }, {
-            name: :samba_lm_password,
-            label: "Samba Lanman パスワード設定",
-            description:
+      self.params = [
+        {
+          name: :user_search_filter,
+          default: "(&(objectclass=posixAccount)(objectClass=sambaSamAccount))",
+        }, {
+          name: :create_user_object_classes,
+          description: "オブジェクトクラスをカンマ区切りで入力してください。" \
+                       "posixAccount と sambaSamAccount は自動的に追加されます。",
+        }, {
+          name: :samba_domain_sid,
+          label: "Samba ドメインSID",
+          description: "ユーザーのプリフィックスに使用するSambaドメインのSIDです。" \
+                       '"S-1-5-21-(0..4294967295)-(0..4294967295)-(0..4294967295)"の形式で、' \
+                       "ランダムな数を割り当ててください。",
+          type: :string,
+          placeholder: "S-1-5-21-x-y-z",
+          required: true,
+        }, {
+          name: :samba_nt_password,
+          label: "Samba NT パスワード設定",
+          description: "パスワード設定時にSamba NT パスワード(sambaNTPassword)を設定します。",
+          type: :boolean,
+          default: true,
+        }, {
+          name: :samba_lm_password,
+          label: "Samba Lanman パスワード設定",
+          description:
               "パスワード設定時にSamba LM パスワード(sambaLMPassword)も設定します。" \
               "LM パスワードは14文字までしか有効ではないため、使用を推奨しません。",
-            type: :boolean,
-            default: false,
-          }, {
-            name: :auth_nt_password,
-            label: "Samba NT パスワード認証",
-            description: "NT パスワードでも認証を行います。",
-            type: :boolean,
-            default: false,
-          },
-        ], key: :name)
+          type: :boolean,
+          default: false,
+        }, {
+          name: :auth_nt_password,
+          label: "Samba NT パスワード認証",
+          description: "NT パスワードでも認証を行います。",
+          type: :boolean,
+          default: false,
+        },
+        *PosixLdap.params,
+      ].uniq { |param| param[:name] }.reject { |param| param[:delete] }
+        .tap(&Yuzakan::Utils::Object.method(:deep_freeze))
+
       self.multi_attrs = PosixLdap.multi_attrs
       self.hide_attrs = PosixLdap.hide_attrs + %w[sambaNTPassword
         sambaLMPassword].map(&:downcase)

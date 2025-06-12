@@ -9,67 +9,69 @@ module Yuzakan
       self.name = "posix_ldap"
       self.display_name = "Posix LDAP"
       self.version = "0.0.1"
-      self.params = ha_merge(
-        Ldap.params + [
-          {
-            name: :user_name_attr,
-            default: "uid",
-            placeholder: "uid",
-          }, {
-            name: :user_search_filter,
-            description: "ユーザー検索を行うときのフィルターです。" \
-                         "LDAPの形式で指定します。" \
-                         "何も指定しない場合は(objectclass=posixAccount)になります。",
-            default: "(objectclass=posixAccount)",
-          }, {
-            name: :group_search_filter,
-            description: "ユーザー検索を行うときのフィルターです。" \
-                         "LDAPの形式で指定します。" \
-                         "何も指定しない場合は(objectclass=posixGroup)になります。",
-            default: "(objectclass=posixGroup)",
-          }, {
-            name: :create_user_object_classes,
-            description: "オブジェクトクラスをカンマ区切りで入力してください。" \
-                         "posixAccount は自動的に追加されます。",
-            default: "account",
-            placeholder: "account",
-          }, {
-            name: :shadow_account,
-            label: "shadowAccountの有効化",
-            description: "オブジェクトクラスにshadowAccountを追加し、最終変更日が記録するようにします。",
-            type: :boolean,
-            default: true,
-          }, {
-            name: :uid_min,
-            label: "UID番号の最小値",
-            description: "UID番号の最小値です。",
-            type: :integer,
-            default: 1000,
-          }, {
-            name: :uid_max,
-            label: "UID番号の最大値",
-            description: "UID番号の最大値です。",
-            type: :integer,
-            default: 60000,
-          }, {
-            name: :search_free_uid,
-            label: "UID番号の探索アルゴリズム",
-            description: "空いているUID番号を探すアルゴリズムです。",
-            type: :string,
-            default: "next",
-            list: [
-              {name: :min, label: "最小", value: "min"},
-              {name: :next, label: "次", value: "next"},
-              {name: :random, label: "ランダム", value: "random"},
+      self.params = [
+        {
+          name: :user_name_attr,
+          default: "uid",
+          placeholder: "uid",
+        }, {
+          name: :user_search_filter,
+          description: "ユーザー検索を行うときのフィルターです。" \
+                       "LDAPの形式で指定します。" \
+                       "何も指定しない場合は(objectclass=posixAccount)になります。",
+          default: "(objectclass=posixAccount)",
+        }, {
+          name: :group_search_filter,
+          description: "ユーザー検索を行うときのフィルターです。" \
+                       "LDAPの形式で指定します。" \
+                       "何も指定しない場合は(objectclass=posixGroup)になります。",
+          default: "(objectclass=posixGroup)",
+        }, {
+          name: :create_user_object_classes,
+          description: "オブジェクトクラスをカンマ区切りで入力してください。" \
+                       "posixAccount は自動的に追加されます。",
+          default: "account",
+          placeholder: "account",
+        }, {
+          name: :shadow_account,
+          label: "shadowAccountの有効化",
+          description: "オブジェクトクラスにshadowAccountを追加し、最終変更日が記録するようにします。",
+          type: :boolean,
+          default: true,
+        }, {
+          name: :uid_min,
+          label: "UID番号の最小値",
+          description: "UID番号の最小値です。",
+          type: :integer,
+          default: 1000,
+        }, {
+          name: :uid_max,
+          label: "UID番号の最大値",
+          description: "UID番号の最大値です。",
+          type: :integer,
+          default: 60000,
+        }, {
+          name: :search_free_uid,
+          label: "UID番号の探索アルゴリズム",
+          description: "空いているUID番号を探すアルゴリズムです。",
+          type: :string,
+          default: "next",
+          list: [
+            {name: :min, label: "最小", value: "min"},
+            {name: :next, label: "次", value: "next"},
+            {name: :random, label: "ランダム", value: "random"},
             ],
-          }, {
-            name: :user_gid_number,
-            label: "ユーザーのGID番号",
-            description: "プライマリーグループが指定されなかった場合に設定されるユーザーのGID番号です。",
-            type: :integer,
-            default: 100,
-          },
-        ], key: :name)
+        }, {
+          name: :user_gid_number,
+          label: "ユーザーのGID番号",
+          description: "プライマリーグループが指定されなかった場合に設定されるユーザーのGID番号です。",
+          type: :integer,
+          default: 100,
+        },
+        *Ldap.params,
+      ].uniq { |param| param[:name] }.reject { |param| param[:delete] }
+        .tap(&Yuzakan::Utils::Object.method(:deep_freeze))
+
       self.multi_attrs = Ldap.multi_attrs
       self.hide_attrs = Ldap.hide_attrs
 

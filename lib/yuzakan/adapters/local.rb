@@ -6,7 +6,7 @@ module Yuzakan
       self.name = "local"
       self.display_name = "ローカル"
       self.version = "0.0.2"
-      self.params = []
+      self.params = [].freeze
 
       group :primary
 

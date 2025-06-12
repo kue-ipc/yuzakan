@@ -62,7 +62,7 @@ module Yuzakan
              deprecated: true,},
           ],
         },
-      ]
+      ].tap(&Yuzakan::Utils::Object.method(:deep_freeze))
 
       group :primary
 

@@ -15,7 +15,6 @@ module Yuzakan
       self.name = "google"
       self.display_name = "Google Workspace"
       self.version = "0.0.1"
-      self.params = []
       self.params = [
         {
           name: :domain,
@@ -50,7 +49,7 @@ module Yuzakan
           PLACE_H
           encrypted: true,
         },
-      ]
+      ].tap(&Yuzakan::Utils::Object.method(:deep_freeze))
 
       group false
 

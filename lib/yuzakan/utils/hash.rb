@@ -5,8 +5,8 @@ require "yuzakan/utils/array"
 module Yuzakan
   module Utils
     module Hash
-      def self.deep_transform_keys(obj, &block)
-        obj.to_h do |k, v|
+      def self.deep_transform_keys(hash, &block)
+        hash.to_h do |k, v|
           key = block.call(k)
           value =
             case v
@@ -25,8 +25,8 @@ module Yuzakan
         end
       end
 
-      def self.deep_transform_values(obj, &block)
-        obj.to_h do |k, v|
+      def self.deep_transform_values(hash, &block)
+        hash.to_h do |k, v|
           key = k
           value =
             case v
@@ -45,9 +45,21 @@ module Yuzakan
         end
       end
 
-      def self.compact_blank(obj)
-        obj.reject do |_k, v|
+      def self.compact_blank(hash)
+        hash.reject do |_k, v|
           v.nil? || (v.respond_to?(:empty?) && v.empty?)
+        end
+      end
+
+      def self.deep_merge(first, *others, &block)
+        first.merge(*others) do |key, self_val, other_val|
+          if self_val.is_a?(Hash) && other_val.is_a?(Hash)
+            deep_merge(self_val, other_val, &block)
+          elsif block_given?
+            block.call(key, self_val, other_val)
+          else
+            other_val
+          end
         end
       end
     end

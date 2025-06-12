@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../../../../lib/yuzakan/utils/hash_array"
-require_relative "show"
+require_relative "hanami/utils/hash"
 
 module Admin
   module Views
@@ -56,7 +55,7 @@ module Admin
             providers: providers_data,
             attrs: attrs_data,
           }
-          raw YAML.dump(Yuzakan::Utils::HashArray.stringify_keys(data))
+          raw YAML.dump(Hanami::Utils::Hash.deep_stringify(data))
         end
 
         private def config_data

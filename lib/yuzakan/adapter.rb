@@ -60,7 +60,6 @@ require "logger"
 
 module Yuzakan
   class Adapter
-    extend Yuzakan::Utils::HashArray
     class AdapterError < StandardError
     end
 
