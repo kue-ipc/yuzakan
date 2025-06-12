@@ -2,14 +2,14 @@
 
 ROM::SQL.migration do
   change do
-    create_table :attr_mappings do
+    create_table :mappings do
       primary_key :id
 
       foreign_key :provider_id, :providers, on_delete: :cascade, null: false
       foreign_key :attr_id, :attrs, on_delete: :cascade, null: false
 
       column :key, String, null: false
-      column :conversion, String
+      column :conversion, String, null: false
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

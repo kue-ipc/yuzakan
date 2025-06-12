@@ -8,9 +8,9 @@ ROM::SQL.migration do
       foreign_key :local_group_id, :local_groups, on_delete: :set_null
 
       column :name, String, null: false
-      column :hashed_password, String
-      column :display_name, String
-      column :email, String
+      column :hashed_password, String, null: false, default: ""
+      column :display_name, String, null: false, default: ""
+      column :email, String, null: false, default: ""
 
       column :locked, TrueClass, null: false, default: false
 

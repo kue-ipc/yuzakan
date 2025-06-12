@@ -6,8 +6,8 @@ ROM::SQL.migration do
       primary_key :id
 
       column :name, String, null: false
-      column :display_name, String
-      column :description, "text"
+      column :display_name, String, null: false, default: ""
+      column :description, "text", null: false, default: ""
 
       column :order, Integer, null: false
 

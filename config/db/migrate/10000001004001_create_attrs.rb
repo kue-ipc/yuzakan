@@ -6,8 +6,8 @@ ROM::SQL.migration do
       primary_key :id
 
       column :name, String, null: false
-      column :display_name, String
-      column :description, "text"
+      column :display_name, String, null: false, default: ""
+      column :description, "text", null: false, default: ""
 
       column :category, String, null: false
       column :type, String, null: false
@@ -16,7 +16,7 @@ ROM::SQL.migration do
       column :hidden, TrueClass, null: false, default: false
       column :readonly, TrueClass, null: false, default: false
 
-      column :code, "text"
+      column :code, "text", null: false, default: ""
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

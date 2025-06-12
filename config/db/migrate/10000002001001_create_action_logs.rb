@@ -7,7 +7,7 @@ ROM::SQL.migration do
 
       column :uuid, String, null: false
       column :client, String, null: false
-      column :user, String
+      column :user, String, null: false
 
       column :action, String, null: false
       column :method, String, null: false

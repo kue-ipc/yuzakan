@@ -8,13 +8,14 @@ ROM::SQL.migration do
       foreign_key :affiliation_id, :affiliations, on_delete: :restrict
 
       column :name, String, null: false
-      column :display_name, String
-      column :note, "text"
+      column :display_name, String, null: false, default: ""
+      column :note, "text", null: false, default: ""
 
       column :basic, TrueClass, null: false, default: false
       column :prohibited, TrueClass, null: false, default: false
 
       column :deleted, TrueClass, null: false, default: false
+      # null if not deleted
       column :deleted_at, DateTime
 
       column :created_at, DateTime, null: false

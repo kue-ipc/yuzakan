@@ -5,8 +5,7 @@ ROM::SQL.migration do
     create_table :terms do
       primary_key :id
 
-      foreign_key :dictionary_id, :dictionaries, on_delete: :cascade,
-        null: false
+      foreign_key :dictionary_id, :dictionaries, on_delete: :cascade, null: false
 
       column :term, String, null: false
       column :description, "text", null: false

@@ -9,15 +9,16 @@ ROM::SQL.migration do
       foreign_key :group_id, :groups, on_delete: :restrict
 
       column :name, String, null: false
-      column :display_name, String
-      column :email, String
-      column :note, "text"
+      column :display_name, String, null: false, default: ""
+      column :email, String, null: false, default: ""
+      column :note, "text", null: false, default: ""
 
       column :clearance_level, Integer, null: false, default: 1
 
       column :prohibited, TrueClass, null: false, default: false
 
       column :deleted, TrueClass, null: false, default: false
+      # null if not deleted
       column :deleted_at, DateTime
 
       column :created_at, DateTime, null: false
