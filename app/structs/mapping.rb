@@ -2,7 +2,7 @@
 
 module Yuzakan
   module Structs
-    class AttrMapping < Yuzakan::DB::Struct
+    class Mapping < Yuzakan::DB::Struct
       CONVERSIONS = %w[
         posix_time
         posix_date

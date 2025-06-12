@@ -193,7 +193,7 @@ module Admin
             data = attr_data.dup
             data[:order] = idx * 8
 
-            data[:attr_mappings] = data[:attr_mappings]
+            data[:mappings] = data[:mappings]
               &.reject { |am_params| am_params[:key].nil? || am_params[:key].empty? }
               &.map do |am_params|
                 {

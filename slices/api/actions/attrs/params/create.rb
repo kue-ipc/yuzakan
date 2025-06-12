@@ -14,10 +14,10 @@ module API
             optional(:readonly).filled(:bool?)
             optional(:code).maybe(:str?, max_size?: 4096)
             optional(:description).maybe(:str?, max_size?: 4096)
-            optional(:attr_mappings).array(:hash) do
+            optional(:mappings).array(:hash) do
               required(:provider).filled(:str?, :name?, max_size?: 255)
               required(:key).filled(:str?, max_size?: 255)
-              optional(:conversion).maybe(included_in?: AttrMapping::CONVERSIONS)
+              optional(:conversion).maybe(included_in?: Mapping::CONVERSIONS)
             end
           end
         end

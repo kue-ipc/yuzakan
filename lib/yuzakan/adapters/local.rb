@@ -31,8 +31,8 @@ module Yuzakan
         params = {
           name: username,
           hashed_password: hashed_password,
-          display_name: userdata.display_name,
-          email: userdata.email,
+          display_name: userdata.display_name || "",
+          email: userdata.email || "",
           attrs: userdata.attrs || {},
           local_group_id: primary_group&.id,
           local_members: member_groups

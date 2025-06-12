@@ -118,7 +118,7 @@ attrs:
   hidden: false
   readonly: false
   code: ''
-  attr_mappings:
+  mappings:
   - provider: ldap
     key: displayName
     conversion: 
@@ -128,7 +128,7 @@ attrs:
   hidden: false
   readonly: false
   code: display_name?.split(/\s/)?.at(0)
-  attr_mappings:
+  mappings:
   - provider: ldap
     key: sn;lang-ja
     conversion: 
@@ -138,7 +138,7 @@ attrs:
   hidden: false
   readonly: false
   code: display_name?.split(/\s/)?.at(1)
-  attr_mappings:
+  mappings:
   - provider: ldap
     key: givenName;lang-ja
     conversion: 
@@ -148,7 +148,7 @@ attrs:
   hidden: false
   readonly: false
   code: attrs.get("display_name_latin")?.split(/\s/)?.at(0)
-  attr_mappings:
+  mappings:
   - provider: ldap
     key: sn
     conversion: 
@@ -158,7 +158,7 @@ attrs:
   hidden: false
   readonly: false
   code: attrs.get("display_name_latin")?.split(/\s/)?.at(1)
-  attr_mappings:
+  mappings:
   - provider: ldap
     key: givenName
     conversion: 
@@ -168,7 +168,7 @@ attrs:
   hidden: false
   readonly: true
   code: ''
-  attr_mappings:
+  mappings:
   - provider: posix_samba
     key: uidNumber
     conversion: 
@@ -178,7 +178,7 @@ attrs:
   hidden: false
   readonly: false
   code: name
-  attr_mappings:
+  mappings:
   - provider: posix_samba
     key: cn
     conversion: 
@@ -191,7 +191,7 @@ attrs:
   hidden: false
   readonly: true
   code: ''
-  attr_mappings:
+  mappings:
   - provider: posix_samba
     key: sambaSID
     conversion: 
@@ -201,7 +201,7 @@ attrs:
   hidden: false
   readonly: false
   code: "`/home/${name}`"
-  attr_mappings:
+  mappings:
   - provider: posix_samba
     key: homeDirectory
     conversion: 
@@ -211,7 +211,7 @@ attrs:
   hidden: false
   readonly: false
   code: 'false'
-  attr_mappings:
+  mappings:
   - provider: ldap
     key: mozillaUseHtmlMail
     conversion: 
@@ -221,7 +221,7 @@ attrs:
   hidden: false
   readonly: false
   code: 
-  attr_mappings:
+  mappings:
   - provider: ldap
     key: eduPersonAffiliation
     conversion: 
@@ -231,7 +231,7 @@ attrs:
   hidden: false
   readonly: true
   code: 
-  attr_mappings:
+  mappings:
   - provider: posix_samba
     key: shadowLastChange
     conversion: posix_date
@@ -241,7 +241,7 @@ attrs:
   hidden: false
   readonly: false
   code: '0'
-  attr_mappings:
+  mappings:
   - provider: posix_samba
     key: shadowMin
     conversion: 
@@ -251,7 +251,7 @@ attrs:
   hidden: false
   readonly: false
   code: '99999'
-  attr_mappings:
+  mappings:
   - provider: posix_samba
     key: shadowMax
     conversion: 

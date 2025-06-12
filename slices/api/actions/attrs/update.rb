@@ -30,7 +30,7 @@ module API
                 required(:provider).filled(:str?, :name?, max_size?: 255)
                 required(:key).maybe(:str?, max_size?: 255)
                 optional(:conversion) do
-                  none? | included_in?(AttrMapping::CONVERSIONS)
+                  none? | included_in?(Mapping::CONVERSIONS)
                 end
               end
             end
@@ -40,12 +40,12 @@ module API
         params Params
 
         def initialize(attr_repository: AttrRepository.new,
-          attr_mapping_repository: AttrMappingRepository.new,
+          mapping_repository: MappingRepository.new,
           provider_repository: ProviderRepository.new,
           **opts)
           super
           @attr_repository ||= attr_repository
-          @attr_mapping_repository ||= attr_mapping_repository
+          @mapping_repository ||= mapping_repository
           @provider_repository ||= provider_repository
         end
 

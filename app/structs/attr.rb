@@ -26,7 +26,7 @@ module Yuzakan
       end
 
       def mappings
-        attr_mappings
+        mappings
       end
 
       def mapping_by_provider_id(provider_id)

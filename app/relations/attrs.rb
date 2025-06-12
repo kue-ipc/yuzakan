@@ -5,8 +5,8 @@ module Yuzakan
     class Attrs < Yuzakan::DB::Relation
       schema :attrs, infer: true do
         associations do
-          has_many :attr_mappings
-          has_many :providers, throught: :attr_mappings
+          has_many :mappings
+          has_many :providers, throught: :mappings
         end
       end
 

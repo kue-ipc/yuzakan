@@ -42,7 +42,7 @@ module Yuzakan
       end
 
       def to_h
-        super.except(:attr_mappings)
+        super.except(:mappings)
       end
 
       # TODO: ここから下はたぶんほとんど移動すべき
@@ -120,7 +120,7 @@ module Yuzakan
       private def map_attrs(attrs)
         return {} if attrs.nil?
 
-        attr_mappings
+        mappings
           .reject { |mapping| mapping.attr.readonly } # 読み取り専用の属性は除外する
           .to_h do |mapping|
           [mapping.key,
@@ -143,7 +143,7 @@ module Yuzakan
       end
 
       def need_mappings!
-        raise NoMappingsError unless attr_mappings
+        raise NoMappingsError unless mappings
       end
 
       def need_group!

@@ -25,7 +25,7 @@ RSpec.describe API::Actions::Attrs::Show do
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         **attr_attributes.except(:id),
-        mappings: attr_mappings_attributes,
+        mappings: mappings_attributes,
       })
     end
 

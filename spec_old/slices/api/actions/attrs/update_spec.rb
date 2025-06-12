@@ -5,7 +5,7 @@ RSpec.describe API::Actions::Attrs::Update do
   let(:action_opts) {
     {
       attr_repository: attr_repository,
-      attr_mapping_repository: attr_mapping_repository,
+      mapping_repository: mapping_repository,
       provider_repository: provider_repository,
     }
   }
@@ -14,7 +14,7 @@ RSpec.describe API::Actions::Attrs::Update do
     {
       id: "attr42",
       **attr_attributes.except(:id),
-      mappings: attr_mappings_attributes,
+      mappings: mappings_attributes,
     }
   }
 
@@ -37,7 +37,7 @@ RSpec.describe API::Actions::Attrs::Update do
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         **attr_attributes.except(:id),
-        mappings: attr_mappings_attributes,
+        mappings: mappings_attributes,
       })
     end
 
@@ -49,7 +49,7 @@ RSpec.describe API::Actions::Attrs::Update do
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         **attr_attributes.except(:id),
-        mappings: attr_mappings_attributes,
+        mappings: mappings_attributes,
       })
     end
 
@@ -80,7 +80,7 @@ RSpec.describe API::Actions::Attrs::Update do
         json = JSON.parse(response.body.first, symbolize_names: true)
         expect(json).to eq({
           **attr_attributes.except(:id),
-          mappings: attr_mappings_attributes,
+          mappings: mappings_attributes,
         })
       end
 
@@ -91,7 +91,7 @@ RSpec.describe API::Actions::Attrs::Update do
         json = JSON.parse(response.body.first, symbolize_names: true)
         expect(json).to eq({
           **attr_attributes.except(:id),
-          mappings: attr_mappings_attributes,
+          mappings: mappings_attributes,
         })
       end
 

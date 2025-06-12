@@ -76,18 +76,18 @@ module Yuzakan
       end
 
       def ordered_all_with_adapter
-        aggregate(:adapter_params, attr_mappings: :attr).order(:order,
+        aggregate(:adapter_params, mappings: :attr).order(:order,
           :name).map_to(Provider).to_a
       end
 
       def find_with_adapter(id)
         aggregate(:adapter_params,
-          attr_mappings: :attr).where(id: id).map_to(Provider).one
+          mappings: :attr).where(id: id).map_to(Provider).one
       end
 
       def find_with_adapter_by_name(name)
         aggregate(:adapter_params,
-          attr_mappings: :attr).where(name: name).map_to(Provider).one
+          mappings: :attr).where(name: name).map_to(Provider).one
       end
 
       def first_google
@@ -99,7 +99,7 @@ module Yuzakan
       end
 
       def first_google_with_adapter
-        aggregate(:adapter_params, attr_mappings: :attr)
+        aggregate(:adapter_params, mappings: :attr)
           .where(adapter: "google")
           .where(self_management: true)
           .order(:order)
@@ -108,7 +108,7 @@ module Yuzakan
       end
 
       def ordered_all_with_adapter_self_management
-        aggregate(:adapter_params, attr_mappings: :attr).where(self_management: true)
+        aggregate(:adapter_params, mappings: :attr).where(self_management: true)
           .order(:order, :name).as(Provider).to_a
       end
 

@@ -196,9 +196,9 @@ deleteAttrAction := (state, {name}) ->
   attrs := state.attrs.filter (attr) -> attr.name is not name
   {...state, attrs}
 
-replaceAttrMapping := (mappings, mapping) ->
+replaceMapping := (mappings, mapping) ->
   replaced := false
-  new_attr_mappings := for each current of mappings
+  new_mappings := for each current of mappings
     if current.provider is mapping.provider
       replaced := true
       {...current, ...mapping}
@@ -206,22 +206,22 @@ replaceAttrMapping := (mappings, mapping) ->
       current
 
   if replaced
-    new_attr_mappings
+    new_mappings
   else
-    [...new_attr_mappings, {key: "", conversion: null, ...mapping}]
+    [...new_mappings, {key: "", conversion: null, ...mapping}]
 
 attrMappingAction := (state, {name, mapping}) ->
   if name
     attrs := for each attr of state.attrs
       if attr.name is name
-        {...attr, mappings: replaceAttrMapping(attr.mappings, mapping)}
+        {...attr, mappings: replaceMapping(attr.mappings, mapping)}
       else
         attr
     {...state, attrs}
   else
     {
       ...state
-      newAttr: {...state.newAttr, mappings: replaceAttrMapping(state.newAttr.mappings, mapping)}
+      newAttr: {...state.newAttr, mappings: replaceMapping(state.newAttr.mappings, mapping)}
     }
 
 inputCodeRunner := (dispatch, {attr}) ->

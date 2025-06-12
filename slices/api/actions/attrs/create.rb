@@ -24,7 +24,7 @@ module API
                 required(:provider).filled(:str?, :name?, max_size?: 255)
                 required(:key).maybe(:str?, max_size?: 255)
                 optional(:conversion).maybe(:str?,
-                  included_in?: AttrMapping::CONVERSIONS)
+                  included_in?: Mapping::CONVERSIONS)
               end
             end
           end
@@ -52,7 +52,7 @@ module API
           end
 
           mapping_errors = {}
-          attr_mappings = (params[:mappings] || []).each_with_index.map do |mapping, idx|
+          mappings = (params[:mappings] || []).each_with_index.map do |mapping, idx|
             next if mapping[:key].nil? || mapping[:key].empty?
 
             provider = provider_by_name(mapping[:provider])
@@ -72,7 +72,7 @@ module API
           @attr = @attr_repository.create_with_mappings(
             **params.to_h.except(:mapping),
             order: order,
-            attr_mappings: attr_mappings)
+            mappings: mappings)
 
           self.status = 201
           headers["Content-Location"] = routes.attr_path(@attr.name)

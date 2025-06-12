@@ -7,7 +7,7 @@ RSpec.describe API::Actions::Attrs::Create do
   let(:action_params) {
     {
       **attr_attributes.except(:id),
-      mappings: attr_mappings_attributes,
+      mappings: mappings_attributes,
     }
   }
 
@@ -31,7 +31,7 @@ RSpec.describe API::Actions::Attrs::Create do
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         **attr_attributes.except(:id),
-        mappings: attr_mappings_attributes,
+        mappings: mappings_attributes,
       })
     end
 
@@ -43,7 +43,7 @@ RSpec.describe API::Actions::Attrs::Create do
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         **attr_attributes.except(:id),
-        mappings: attr_mappings_attributes,
+        mappings: mappings_attributes,
       })
     end
 

@@ -22,7 +22,7 @@ RSpec.describe API::Actions::Self::Show do
         groups: "admin, staff",
         attrs: YAML.dump({"jaDisplayName" => "表示ユーザー"}),
       },
-      attr_mappings: [{
+      mappings: [{
         key: "jaDisplayName", conversion: nil,
         attr: {name: "ja_display_name", display_name: "日本語表示名", type: "string", hidden: false},
       }])]

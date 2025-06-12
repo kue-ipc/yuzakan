@@ -15,13 +15,13 @@ RSpec.describe API::Actions::Attrs::Destroy do
   #   }
   # }
   # let(:attr_attributes) {
-  #   attr_mappings = attr_params[:mappings].map do |mapping|
+  #   mappings = attr_params[:mappings].map do |mapping|
   #     {**mapping.except(:provider), provider: {name: mapping[:provider]}}
   #   end
-  #   {**attr_params.except(:mappings), attr_mappings: attr_mappings}
+  #   {**attr_params.except(:mappings), mappings: mappings}
   # }
   # let(:attr_with_mappings) { Attr.new(id: 42, **attr_attributes) }
-  # let(:attr_without_mappings) { Attr.new(id: 42, **attr_attributes.except(:attr_mappings)) }
+  # let(:attr_without_mappings) { Attr.new(id: 42, **attr_attributes.except(:mappings)) }
   # let(:attr_repository) {
   #   instance_double('AttrRepository', find_with_mappings_by_name: attr_with_mappings, delete: attr_without_mappings)
   # }
@@ -45,7 +45,7 @@ RSpec.describe API::Actions::Attrs::Destroy do
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         **attr_attributes.except(:id),
-        mappings: attr_mappings_attributes,
+        mappings: mappings_attributes,
       })
     end
 

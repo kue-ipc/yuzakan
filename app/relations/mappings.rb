@@ -2,8 +2,8 @@
 
 module Yuzakan
   module Relations
-    class AttrMappings < Yuzakan::DB::Relation
-      schema :attr_mappings, infer: true do
+    class Mappings < Yuzakan::DB::Relation
+      schema :mappings, infer: true do
         associations do
           belongs_to :provider
           belongs_to :attr

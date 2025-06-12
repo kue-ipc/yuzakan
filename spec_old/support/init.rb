@@ -6,8 +6,8 @@ def let_mock_repositories
   let(:action_log_repository) {
     instance_double(ActionLogRepository, **action_log_repository_stubs)
   }
-  let(:attr_mapping_repository) {
-    instance_double(AttrMappingRepository, **attr_mapping_repository_stubs)
+  let(:mapping_repository) {
+    instance_double(MappingRepository, **mapping_repository_stubs)
   }
   let(:attr_repository) {
     instance_double(AttrRepository, **attr_repository_stubs)
@@ -50,7 +50,7 @@ def let_mock_repositories
   #   }
   # }
   let(:action_log_repository_stubs) { {create: action_log} }
-  let(:attr_mapping_repository_stubs) { {} }
+  let(:mapping_repository_stubs) { {} }
   let(:attr_repository_stubs) {
     {
       update: attr,
@@ -61,7 +61,7 @@ def let_mock_repositories
       exist_by_name?: false,
       last_order: 42,
       create_with_mappings: attr_with_mappings,
-      add_mapping: attr_mappings.first,
+      add_mapping: mappings.first,
     }
   }
   let(:auth_log_repository_stubs) { {} }
@@ -112,16 +112,16 @@ def let_mock_repositories
   }
 
   let(:attr_with_mappings) {
-    Attr.new(**attr_attributes, attr_mappings: attr_mappings)
+    Attr.new(**attr_attributes, mappings: mappings)
   }
   let(:user_with_groups) {
     User.new(**user_attributes, groups: user_members.map(&:group),
       members: user_members)
   }
 
-  let(:attr_mappings) {
-    attr_mappings_attributes.map do |attributes|
-      AttrMapping.new(provider: Provider.new(name: attributes[:provider]),
+  let(:mappings) {
+    mappings_attributes.map do |attributes|
+      Mapping.new(provider: Provider.new(name: attributes[:provider]),
                       **attributes.except(:provider))
     end
   }
@@ -179,7 +179,7 @@ def let_mock_repositories
                           type: "string", order: 32, readonly: true,},
     ]
   }
-  let(:attr_mappings_attributes) {
+  let(:mappings_attributes) {
     [
       {provider: "provider42", key: "map42", conversion: nil},
       {provider: "provider1", key: "path", conversion: "path"},

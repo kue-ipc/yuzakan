@@ -81,19 +81,19 @@ module Admin
           attrs.map do |attr|
             attr_data = KEYS[:attr].to_h { |key| [key, attr.__send__(key)] }
 
-            attr_mappings_data = attr.attr_mappings.map do |attr_mapping|
+            mappings_data = attr.mappings.map do |mapping|
               {
                 provider: providers.find do |provider|
-                  provider.id == attr_mapping.provider_id
+                  provider.id == mapping.provider_id
                 end&.name,
-                key: attr_mapping.key,
-                conversion: attr_mapping.conversion,
+                key: mapping.key,
+                conversion: mapping.conversion,
               }
             end
 
             {
               **attr_data,
-              attr_mappings: attr_mappings_data,
+              mappings: mappings_data,
             }
           end
         end

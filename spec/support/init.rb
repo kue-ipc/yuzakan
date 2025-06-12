@@ -143,7 +143,7 @@ def let_mock_repos
   let(:member_repo) { instance_double(Yuzakan::Repos::MemberRepo) }
   let(:provider_repo) { instance_double(Yuzakan::Repos::ProviderRepo) }
   let(:attr_repo) { instance_double(Yuzakan::Repos::AttrRepo) }
-  let(:attr_mapping_repo) { instance_double(Yuzakan::Repos::AttrMappingRepo) }
+  let(:mapping_repo) { instance_double(Yuzakan::Repos::MappingRepo) }
   let(:auth_log_repo) { instance_double(Yuzakan::Repos::AuthLogRepo) }
   let(:action_log_repo) { instance_double(Yuzakan::Repos::ActionLogRepo) }
 end

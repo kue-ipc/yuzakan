@@ -12,7 +12,7 @@ module Yuzakan
     include Deps[
       "adapters",
       "cache_store",
-      "repos.attr_mapping_repo",
+      "repos.mapping_repo",
       "repos.provider_repo"
   ]
 
@@ -63,12 +63,12 @@ module Yuzakan
 
     private def get_mappings(provider, category: self.category)
       mappings =
-        if provider.respond_to?(:attr_mappings) &&
-            (provider.attr_mappings.empty? ||
-            provider.attr_mappings.first.respond_to?(:attr))
-          provider.attr_mappings
+        if provider.respond_to?(:mappings) &&
+            (provider.mappings.empty? ||
+            provider.mappings.first.respond_to?(:attr))
+          provider.mappings
         else
-          attr_mapping_repo.all_with_attrs_by_provider(provider)
+          mapping_repo.all_with_attrs_by_provider(provider)
         end
       mappings.select { |mapping| mapping.category_of?(category) } if category
 
