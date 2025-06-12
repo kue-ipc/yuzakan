@@ -239,9 +239,9 @@ module Yuzakan
         attr_accessor :multi_attrs, :hide_attrs
       end
 
-      self.multi_attrs = Yuzakan::Utils::IgnoreCaseStringSet.new(%w[objectClass
+      self.multi_attrs = Yuzakan::Utils::DowncaseStringSet.new(%w[objectClass
         member memberOf])
-      self.hide_attrs = Yuzakan::Utils::IgnoreCaseStringSet.new(%w[userPassword])
+      self.hide_attrs = Yuzakan::Utils::DowncaseStringSet.new(%w[userPassword])
 
       group true
 

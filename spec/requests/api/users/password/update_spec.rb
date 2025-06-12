@@ -20,7 +20,6 @@ RSpec.describe "PATCH /api/users/:id/password", :db, type: :request do
 
   it "is updated" do
     patch "/api/users/~/password", params.to_json, request_headers
-    warn last_response.body
     expect(last_response).to be_ok
     expect(last_response.status).to eq 200
     expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
