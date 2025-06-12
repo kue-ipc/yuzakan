@@ -4,9 +4,7 @@ require "hanami/validations"
 require_relative "../provider_interactor"
 module Yuzakan
   module Providers
-    class UnlockUser < Yuzakan::Operation
-      include Yuzakan::ProviderInteractor
-
+    class UnlockUser < Yuzakan::ProviderOperation
       class Validator
         include Hanami::Validations
         predicates NamePredicates

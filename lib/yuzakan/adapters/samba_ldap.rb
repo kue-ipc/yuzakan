@@ -88,7 +88,7 @@ module Yuzakan
         # object class
         attributes[attribute_name("objectClass")] << "sambaSamAccount"
 
-        # smaba SID
+        # samba SID
         unless attributes.key?(attribute_name("sambaSID"))
           uid_number = Array(attributes[attribute_name("uidNumber")]).first.to_i
           samba_sid = generate_samba_sid(uid_number)
@@ -96,8 +96,8 @@ module Yuzakan
         end
 
         # samba SAC
-        attributes[attribute_name(SambaAccountControl::ATTRIBUTE_NAME)] =
-          convert_ldap_value(SambaAccountControl.new.to_s)
+        attributes[attribute_name(AccountControl::ATTRIBUTE_NAME)] =
+          convert_ldap_value(AccountControl.new.to_s)
 
         attributes
       end
@@ -158,7 +158,7 @@ module Yuzakan
         unless sac.accountdisable?
           sac.accountdisable = true
           operations << operation_add_or_replace(
-            SambaAccountControl::ATTRIBUTE_NAME, sac.to_s, user)
+            AccountControl::ATTRIBUTE_NAME, sac.to_s, user)
         end
 
         operations
@@ -172,7 +172,7 @@ module Yuzakan
         if sac.accountdisable?
           sac.accountdisable = false
           operations << operation_add_or_replace(
-            SambaAccountControl::ATTRIBUTE_NAME, sac.to_s, user)
+            AccountControl::ATTRIBUTE_NAME, sac.to_s, user)
         end
 
         operations
@@ -180,8 +180,8 @@ module Yuzakan
 
       # Samba
       private def user_entry_sac(user)
-        SambaAccountControl.new(
-          user.first(SambaAccountControl::ATTRIBUTE_NAME) || SambaAccountControl::DEFAULT_USER_FLAGS)
+        AccountControl.new(
+          user.first(AccountControl::ATTRIBUTE_NAME) || AccountControl::DEFAULT_USER_FLAGS)
       end
 
       private def generate_samba_sid(uid_number)

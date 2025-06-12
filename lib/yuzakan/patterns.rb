@@ -2,6 +2,9 @@
 
 # Regular expressions patterns comiptale with
 # Ruby Regexp and ECMAScript RegExp with v flag
+# https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/RegExp/unicodeSets
+# require escape to specail characters in character classes
+#   ( ) - / [ \ ] { | }
 
 require "forwardable"
 
