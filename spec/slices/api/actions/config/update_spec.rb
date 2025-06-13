@@ -6,20 +6,34 @@ RSpec.describe API::Actions::Config::Update do
   let(:action_params) { updated_config.to_h }
   let(:action_opts) {
     allow(config_repo).to receive(:set).and_return(updated_config)
-    {
-      config_repo: config_repo,
-    }
+    {config_repo: config_repo}
   }
   let(:updated_config) { create_struct(:config, :another_config) }
 
-  it "is failure" do
-    response = action.call(params)
-    expect(response).to be_client_error
-    expect(response.status).to eq 403
+  it_behaves_like "forbidden"
+
+  context "when guest" do
+    include_context "when guest"
+    it_behaves_like "forbidden"
   end
 
-  context "when admin" do
-    let(:user) { create_struct(:user, :superuser) }
+  context "when observer" do
+    include_context "when observer"
+    it_behaves_like "forbidden"
+  end
+
+  context "when operator" do
+    include_context "when operator"
+    it_behaves_like "forbidden"
+  end
+
+  context "when administrator" do
+    include_context "when administrator"
+    it_behaves_like "forbidden"
+  end
+
+  context "when superuser" do
+    include_context "when superuser"
 
     it "is successful" do
       response = action.call(params)

@@ -255,7 +255,7 @@ def let_mock_repositories
 end
 
 # controller spec
-def init_controller_spec
+def init_action_spec
   let_mock_repositories
   let(:action) { described_class.new(**connection_opts, **action_opts) }
   let(:connection_opts) {

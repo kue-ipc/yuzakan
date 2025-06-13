@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Admin::Actions::Attrs::Index do
-  init_controller_spec
+  init_action_spec
 
   it "is failure" do
     response = action.call(params)

@@ -3,7 +3,7 @@
 require "yaml"
 
 RSpec.describe API::Actions::Self::Show do
-  init_controller_spec
+  init_action_spec
   let(:action_opts) {
     {provider_repository: provider_repository,
      user_repository: user_repository,

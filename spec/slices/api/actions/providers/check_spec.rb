@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe API::Actions::Providers::Check do
-  init_controller_spec
+  init_action_spec
   let(:action_opts) { {provider_repository: provider_repository} }
   let(:format) { "application/json" }
   let(:action_params) { {id: "provider1"} }

@@ -92,6 +92,49 @@ def init_action_spec
   # override if necessary for each action
   let(:action_opts) { {} }
   let(:action_params) { {} }
+
+  # shared examples
+  shared_examples "forbidden" do
+    it "is forbidden" do
+      response = action.call(params)
+      expect(response).to be_client_error
+      expect(response.status).to eq 403
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json).to eq({status: {code: 403, message: "Forbidden"}})
+    end
+  end
+
+  shared_examples "not found" do
+    it "is not found" do
+      response = action.call(params)
+      expect(response).to be_client_error
+      expect(response.status).to eq 404
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json).to eq({status: {code: 404, message: "Not Found"}, flash: {invalid: {id: ["存在しません。"]}}})
+    end
+  end
+
+  shared_context "when guest" do
+    let(:user) { create_struct(:user, :guest) }
+  end
+
+  shared_context "when observer" do
+    let(:user) { create_struct(:user, :observer) }
+  end
+
+  shared_context "when operator" do
+    let(:user) { create_struct(:user, :operator) }
+  end
+
+  shared_context "when administrator" do
+    let(:user) { create_struct(:user, :administrator) }
+  end
+
+  shared_context "when superuser" do
+    let(:user) { create_struct(:user, :superuser) }
+  end
 end
 
 def init_operation_spec
@@ -176,6 +219,7 @@ def let_structs
   let(:user) { create_struct(:user) }
   let(:provider) { create_struct(:provider) }
   let(:attr) { create_struct(:attr) }
+  let(:mapping) { create_struct(:mapping) }
   let(:auth_log) { create_struct(:auth_log) }
   let(:action_log) { create_struct(:action_log) }
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Admin::Actions::Providers::Show do
-  init_controller_spec
+  init_action_spec
   let(:action_opts) { {provider_repository: provider_repository} }
   let(:action_params) { {id: "provider1"} }
   let(:provider_repository_stubs) { {exist_by_name?: true} }

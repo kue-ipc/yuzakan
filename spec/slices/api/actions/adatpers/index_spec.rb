@@ -1,36 +1,53 @@
 # frozen_string_literal: true
 
 RSpec.describe API::Actions::Adapters::Index do
-  init_controller_spec
-  let(:format) { "application/json" }
+  init_action_spec
 
-  it "is successful" do
-    response = action.call(params)
-    expect(response.status).to eq 200
-    expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
-    json = JSON.parse(response.body.first, symbolize_names: true)
-    expect(json).to eq [
-      {name: "ad",          label: "Active Directory"},
-      {name: "dummy",       label: "ダミー"},
-      {name: "google",      label: "Google Workspace"},
-      {name: "ldap",        label: "LDAP"},
-      {name: "local",       label: "ローカル"},
-      {name: "mock",        label: "モック"},
-      {name: "posix_ldap",  label: "Posix LDAP"},
-      {name: "samba_ldap",  label: "Samba LDAP"},
-      {name: "test",        label: "テスト"},
-    ]
+  shared_examples "ok" do
+    it "is ok" do
+      response = action.call(params)
+      expect(response).to be_successful
+      expect(response.status).to eq 200
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:data]).to eq([
+        {name: "ad",          displayName: "Active Directory"},
+        {name: "dummy",       displayName: "ダミー"},
+        {name: "google",      displayName: "Google Workspace"},
+        {name: "ldap",        displayName: "LDAP"},
+        {name: "local",       displayName: "ローカル"},
+        {name: "mock",        displayName: "モック"},
+        {name: "posix_ldap",  displayName: "Posix LDAP"},
+        {name: "samba_ldap",  displayName: "Samba LDAP"},
+        {name: "test",        displayName: "テスト"},
+      ])
+    end
   end
 
-  describe "no login session" do
-    let(:session) { {uuid: uuid} }
+  it_behaves_like "ok"
 
-    it "is error" do
-      response = action.call(params)
-      expect(response.status).to eq 401
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({code: 401, message: "Unauthorized"})
-    end
+  context "when guest" do
+    include_context "when guest"
+    it_behaves_like "forbidden"
+  end
+
+  context "when observer" do
+    include_context "when observer"
+    it_behaves_like "ok"
+  end
+
+  context "when operator" do
+    include_context "when operator"
+    it_behaves_like "ok"
+  end
+
+  context "when administrator" do
+    include_context "when administrator"
+    it_behaves_like "ok"
+  end
+
+  context "when superuser" do
+    include_context "when superuser"
+    it_behaves_like "ok"
   end
 end

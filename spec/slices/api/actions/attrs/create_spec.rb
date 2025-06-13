@@ -1,22 +1,26 @@
 # frozen_string_literal: true
 
 RSpec.describe API::Actions::Attrs::Create do
-  init_controller_spec
-  let(:action_opts) { {attr_repository: attr_repository, provider_repository: provider_repository} }
-  let(:format) { "application/json" }
+  init_action_spec
+
+  let(:action_opts) { {
+    attr_repo: attr_repo,
+    provider_repo: provider_repo,
+  } }
   let(:action_params) {
     {
-      **attr_attributes.except(:id),
-      mappings: mappings_attributes,
+      **attr.to_h.except(:id),
+      mappings: mappings.to_h,
     }
   }
 
   it "is failure" do
     response = action.call(params)
+    expect(response).to be_client_error
     expect(response.status).to eq 403
-    expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
-    expect(json).to eq({code: 403, message: "Forbidden"})
+    expect(json).to eq({status: {code: 403, message: "Forbidden"}})
   end
 
   describe "admin" do
