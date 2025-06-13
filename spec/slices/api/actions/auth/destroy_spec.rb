@@ -9,7 +9,7 @@ RSpec.describe API::Actions::Auth::Destroy do
     response = action.call(params)
     expect(response).to be_successful
     expect(response.status).to eq 200
-    expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
     expect(json[:data]).to eq({username: user.name})
   end
@@ -21,7 +21,7 @@ RSpec.describe API::Actions::Auth::Destroy do
       response = action.call(params)
       expect(response).to be_client_error
       expect(response.status).to eq 404
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:flash]).to eq({error: "ログインしていません。"})
     end
@@ -34,7 +34,7 @@ RSpec.describe API::Actions::Auth::Destroy do
       response = action.call(params)
       expect(response).to be_client_error
       expect(response.status).to eq 404
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:flash]).to eq({error: "ログインしていません。"})
     end

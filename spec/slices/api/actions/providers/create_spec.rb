@@ -66,7 +66,7 @@ RSpec.describe API::Actions::Providers::Create do
   it "is failure" do
     response = action.call(params)
     expect(response.status).to eq 403
-    expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
     expect(json).to eq({code: 403, message: "Forbidden"})
   end
@@ -78,7 +78,7 @@ RSpec.describe API::Actions::Providers::Create do
     it "is successful" do
       response = action.call(params)
       expect(response.status).to eq 201
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       expect(response.headers["Content-Location"]).to eq "/api/providers/#{provider_with_params.name}"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
@@ -90,7 +90,7 @@ RSpec.describe API::Actions::Providers::Create do
     it "is successful without order param" do
       response = action.call(params.except(:order))
       expect(response.status).to eq 201
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       expect(response.headers["Content-Location"]).to eq "/api/providers/#{provider_with_params.name}"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
@@ -102,7 +102,7 @@ RSpec.describe API::Actions::Providers::Create do
     it "is failure with bad name pattern" do
       response = action.call({**params, name: "!"})
       expect(response.status).to eq 400
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         code: 400,
@@ -114,7 +114,7 @@ RSpec.describe API::Actions::Providers::Create do
     it "is failure with name over" do
       response = action.call({**params, name: "a" * 256})
       expect(response.status).to eq 400
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         code: 400,
@@ -126,7 +126,7 @@ RSpec.describe API::Actions::Providers::Create do
     it "is failure with name number" do
       response = action.call({**params, name: 1})
       expect(response.status).to eq 400
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         code: 400,
@@ -141,7 +141,7 @@ RSpec.describe API::Actions::Providers::Create do
         params: "abc",
       })
       expect(response.status).to eq 400
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         code: 400,
@@ -155,7 +155,7 @@ RSpec.describe API::Actions::Providers::Create do
     it "is failure without params" do
       response = action.call(env)
       expect(response.status).to eq 400
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         code: 400,
@@ -177,7 +177,7 @@ RSpec.describe API::Actions::Providers::Create do
       it "is failure" do
         response = action.call(params)
         expect(response.status).to eq 422
-        expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
         expect(json).to eq({
           code: 422,
@@ -189,7 +189,7 @@ RSpec.describe API::Actions::Providers::Create do
       it "is failure with bad name pattern" do
         response = action.call({**params, name: "!"})
         expect(response.status).to eq 400
-        expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
         expect(json).to eq({
           code: 400,
@@ -206,7 +206,7 @@ RSpec.describe API::Actions::Providers::Create do
     it "is error" do
       response = action.call(params)
       expect(response.status).to eq 401
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({code: 401, message: "Unauthorized"})
     end

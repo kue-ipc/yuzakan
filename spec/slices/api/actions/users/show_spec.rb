@@ -43,7 +43,7 @@ RSpec.describe API::Actions::Self::Show do
 
     response = action.call(params)
     expect(response.status).to eq 200
-    expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
     expect(json).to eq({
       name: "user",
@@ -79,7 +79,7 @@ RSpec.describe API::Actions::Self::Show do
     it "is error" do
       response = action.call(params)
       expect(response.status).to eq 401
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({code: 401, message: "Unauthorized"})
     end
@@ -91,7 +91,7 @@ RSpec.describe API::Actions::Self::Show do
     it "is error" do
       response = action.call(params)
       expect(response.status).to eq 401
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({code: 401, message: "Unauthorized"})
     end
@@ -103,7 +103,7 @@ RSpec.describe API::Actions::Self::Show do
     it "is error" do
       response = action.call(params)
       expect(response.status).to eq 401
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         code: 401,

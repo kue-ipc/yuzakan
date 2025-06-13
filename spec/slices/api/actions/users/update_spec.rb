@@ -26,7 +26,7 @@ RSpec.describe API::Actions::Users::Update do
   it "is failure" do
     response = action.call(params)
     expect(response.status).to eq 403
-    expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
     expect(json).to eq({code: 403, message: "Forbidden"})
   end

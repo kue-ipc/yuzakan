@@ -23,7 +23,7 @@ RSpec.describe API::Actions::Providers::Check do
   it "is successful" do
     response = action.call(params)
     expect(response.status).to eq 200
-    expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
     expect(json).to eq({check: true})
   end
@@ -34,7 +34,7 @@ RSpec.describe API::Actions::Providers::Check do
     it "is successful, but false" do
       response = action.call(params)
       expect(response.status).to eq 200
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({check: false})
     end
@@ -46,7 +46,7 @@ RSpec.describe API::Actions::Providers::Check do
     it "is error" do
       response = action.call(params)
       expect(response.status).to eq 401
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({code: 401, message: "Unauthorized"})
     end

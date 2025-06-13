@@ -3,38 +3,30 @@
 RSpec.describe API::Actions::Adapters::Show do
   init_action_spec
 
-  let(:action_params) { {id: "dummy"} }
+  let(:action_params) { {id: id} }
+  let(:id) { "dummy" }
 
-  it "is successful" do
-    response = action.call(params)
-    expect(response).to be_successful
-    expect(response.status).to eq 200
-    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-    json = JSON.parse(response.body.first, symbolize_names: true)
-    expect(json[:data]).to eq({name: "dummy", displayName: "ダミー", group: false})
+  shared_examples "ok" do
+    it "is successful" do
+      response = action.call(params)
+      expect(response).to be_successful
+      expect(response.status).to eq 200
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:data]).to eq({name: "dummy", displayName: "ダミー", group: false})
+    end
+
+    it "is successful with test adapter" do
+      response = action.call({**params, id: "test"})
+      expect(response).to be_successful
+      expect(response.status).to eq 200
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:data]).to eq({name: "test", displayName: "テスト", group: true})
+    end
   end
 
-  it "is successful with test adapter" do
-    response = action.call({**params, id: "test"})
-    expect(response).to be_successful
-    expect(response.status).to eq 200
-    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-    json = JSON.parse(response.body.first, symbolize_names: true)
-    expect(json[:data]).to eq({name: "test", displayName: "テスト", group: true})
-  end
-
-  it "is failure with unknown id" do
-    response = action.call({**params, id: "hoge"})
-    expect(response).to be_client_error
-    expect(response.status).to eq 404
-    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-    json = JSON.parse(response.body.first, symbolize_names: true)
-    expect(json[:flash]).to eq({invalid: {id: ["存在しません。"]}})
-  end
-
-  describe "admin" do
-    let(:user) { create_struct(:user, :superuser) }
-
+  shared_examples "ok with params type" do
     it "is successful" do
       response = action.call(params)
       expect(response).to be_successful
@@ -79,14 +71,58 @@ RSpec.describe API::Actions::Adapters::Show do
         ],
       })
     end
+  end
 
-    it "is failure with unknown id" do
-      response = action.call({**params, id: "hoge"})
-      expect(response).to be_client_error
-      expect(response.status).to eq 404
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:flash]).to eq({invalid: {id: ["存在しません。"]}})
+  it_behaves_like "ok"
+  context "with nonexstent id" do
+    let(:id) { "hoge" }
+
+    it_behaves_like "not found"
+  end
+
+  context "when guest" do
+    include_context "when guest"
+    it_behaves_like "forbidden"
+  end
+
+  context "when observer" do
+    include_context "when observer"
+    it_behaves_like "ok"
+    context "with nonexstent id" do
+      let(:id) { "hoge" }
+
+      it_behaves_like "not found"
+    end
+  end
+
+  context "when operator" do
+    include_context "when operator"
+    it_behaves_like "ok"
+    context "with nonexstent id" do
+      let(:id) { "hoge" }
+
+      it_behaves_like "not found"
+    end
+  end
+
+  # TODO: 本当にparamsTypesが必要か？
+  context "when administrator" do
+    include_context "when administrator"
+    it_behaves_like "ok with params type"
+    context "with nonexstent id" do
+      let(:id) { "hoge" }
+
+      it_behaves_like "not found"
+    end
+  end
+
+  context "when superuser" do
+    include_context "when superuser"
+    it_behaves_like "ok with params type"
+    context "with nonexstent id" do
+      let(:id) { "hoge" }
+
+      it_behaves_like "not found"
     end
   end
 end

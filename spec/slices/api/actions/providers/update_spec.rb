@@ -68,7 +68,7 @@ RSpec.describe API::Actions::Providers::Update do
   it "is failure" do
     response = action.call(params)
     expect(response.status).to eq 403
-    expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
     expect(json).to eq({code: 403, message: "Forbidden"})
   end
@@ -80,7 +80,7 @@ RSpec.describe API::Actions::Providers::Update do
     it "is successful" do
       response = action.call(params)
       expect(response.status).to eq 200
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         **adapter_params,
@@ -91,7 +91,7 @@ RSpec.describe API::Actions::Providers::Update do
     it "is successful with different" do
       response = action.call({**params, name: "hoge", display_name: "ほげ"})
       expect(response.status).to eq 200
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         **adapter_params,
@@ -107,7 +107,7 @@ RSpec.describe API::Actions::Providers::Update do
       it "is failure" do
         response = action.call(params)
         expect(response.status).to eq 404
-        expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
         expect(json).to eq({
           code: 404,
@@ -132,7 +132,7 @@ RSpec.describe API::Actions::Providers::Update do
       it "is successful" do
         response = action.call(params)
         expect(response.status).to eq 200
-        expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
         expect(json).to eq({
           **adapter_params,
@@ -143,7 +143,7 @@ RSpec.describe API::Actions::Providers::Update do
       it "is successful with diffrent only display_name" do
         response = action.call({**params, display_name: "ほげ"})
         expect(response.status).to eq 200
-        expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
         expect(json).to eq({
           **adapter_params,
@@ -154,7 +154,7 @@ RSpec.describe API::Actions::Providers::Update do
       it "is failure with different" do
         response = action.call({**params, name: "hoge", display_name: "ほげ"})
         expect(response.status).to eq 422
-        expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
         expect(json).to eq({
           code: 422,
@@ -171,7 +171,7 @@ RSpec.describe API::Actions::Providers::Update do
     it "is error" do
       response = action.call(params)
       expect(response.status).to eq 401
-      expect(response.headers["Content-Type"]).to eq "#{format}; charset=utf-8"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({code: 401, message: "Unauthorized"})
     end
