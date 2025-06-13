@@ -2,7 +2,7 @@
 
 // object -> other
 
-export objToJson := (obj: {}, space?: string | number): string ->
+export objToJson := (obj: {}, {space?:: string | number} = {}): string ->
   JSON.stringify(obj, jsonReplacer, space)
 
 // bigint, Map, Set

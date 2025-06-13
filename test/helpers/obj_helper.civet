@@ -1,0 +1,69 @@
+{assert} from chai
+
+{objToJson} from ../../app/assets/js/helpers/obj_helper.civet
+
+describe "objToJson", ->
+  it "should convert object to JSON string", ->
+    obj := {a: 1, b: 2, c: {d: 3, e: [4, 5]}}
+    json := objToJson(obj)
+    assert.equal json, '{"a":1,"b":2,"c":{"d":3,"e":[4,5]}}'
+
+  it "should handle bigint values", ->
+    obj := {bigintValue: 1234567890n}
+    json := objToJson(obj)
+    assert.equal json, '{"bigintValue":1234567890}'
+
+  it "should handle bigint values over MAX_SAFE_INTEGER", ->
+    obj := {bigintValue: 12345678901234567890n}
+    json := objToJson(obj)
+    assert.equal json, '{"bigintValue":12345678901234567000}'
+
+  it "should handle bigint values under MIN_SAFE_INTEGER", ->
+    obj := {bigintValue: -12345678901234567890n}
+    json := objToJson(obj)
+    assert.equal json, '{"bigintValue":-12345678901234567000}'
+
+
+  it "should handle Map values", ->
+    obj := {mapValue: new Map([["key1", "value1"], ["key2", "value2"]])}
+    json := objToJson(obj)
+    assert.equal json, '{"mapValue":{"key1":"value1","key2":"value2"}}'
+
+  it "should handle Set values", ->
+    obj := {setValue: new Set([1, 2, 3])}
+    json := objToJson(obj)
+    assert.equal json, '{"setValue":[1,2,3]}'
+
+  it "should convert object to JSON string with space", ->
+    obj := {a: 1, b: 2, c: {d: 3, e: [4, 5]}}
+    json := objToJson(obj, space: 2)
+    assert.equal json, '''
+      {
+        "a": 1,
+        "b": 2,
+        "c": {
+          "d": 3,
+          "e": [
+            4,
+            5
+          ]
+        }
+      }
+    '''
+
+  it "should convert object to JSON string with space", ->
+    obj := {a: 1, b: 2, c: {d: 3, e: [4, 5]}}
+    json := objToJson(obj, space: "  ")
+    assert.equal json, '''
+      {
+        "a": 1,
+        "b": 2,
+        "c": {
+          "d": 3,
+          "e": [
+            4,
+            5
+          ]
+        }
+      }
+    '''
