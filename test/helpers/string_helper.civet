@@ -2,8 +2,6 @@
 
 {
   capitalize, camelize, pascalize, snakize, kebabize, pluralize, singularize,
-  strToList,
-  listToCamelCase, listToPascalCase, listToSnakeCase, listToKebabCase, listToAllCaps, listToTrainCase
 } from ../../app/assets/js/helpers/string_helper.civet
 
 describe "simple word", ->
@@ -27,23 +25,88 @@ describe "multiple words", ->
   str := "abc def ghi"
   it "captialize", ->
     assert.equal capitalize(str), "Abc def ghi"
+  it "camelize", ->
+    assert.equal camelize(str), "abcDefGhi"
+  it "pascalize", ->
+    assert.equal pascalize(str), "AbcDefGhi"
+  it "snakize", ->
+    assert.equal snakize(str), "abc_def_ghi"
+  it "kebabize", ->
+    assert.equal kebabize(str), "abc-def-ghi"
 
 describe "all caps word", ->
   str := "ABCDEFGHI"
   it "captialize", ->
     assert.equal capitalize(str), "Abcdefghi"
+  it "camelize", ->
+    assert.equal camelize(str), "Abcdefghi"
+  it "pascalize", ->
+    assert.equal pascalize(str), "Abcdefghi"
+  it "snakize", ->
+    assert.equal snakize(str), "_abcdefghi"
+  it "kebabize", ->
+    assert.equal kebabize(str), "-abcdefghi"
 
 describe "captial word", ->
   str := "Abcdefghi"
+  it "captialize", ->
+    assert.equal capitalize(str), "Abcdefghi"
+  it "camelize", ->
+    assert.equal camelize(str), "Abcdefghi"
+  it "pascalize", ->
+    assert.equal pascalize(str), "Abcdefghi"
+  it "snakize", ->
+    assert.equal snakize(str), "_abcdefghi"
+  it "kebabize", ->
+    assert.equal kebabize(str), "-abcdefghi"
 
 describe "camel case", ->
   str := "abcDefGhi"
+  it "captialize", ->
+    assert.equal capitalize(str), "Abcdefghi"
+  it "camelize", ->
+    assert.equal camelize(str), "abcDefGhi"
+  it "pascalize", ->
+    assert.equal pascalize(str), "AbcDefGhi"
+  it "snakize", ->
+    assert.equal snakize(str), "abc_def_ghi"
+  it "kebabize", ->
+    assert.equal kebabize(str), "abc-def-ghi"
+
 
 describe "pascal case", ->
   str := "AbcDefGhi"
+  it "captialize", ->
+    assert.equal capitalize(str), "Abcdefghi"
+  it "camelize", ->
+    assert.equal camelize(str), "AbcDefGhi"
+  it "pascalize", ->
+    assert.equal pascalize(str), "AbcDefGhi"
+  it "snakize", ->
+    assert.equal snakize(str), "_abc_def_ghi"
+  it "kebabize", ->
+    assert.equal kebabize(str), "-abc-def-ghi"
 
 describe "sake case", ->
   str := "abc_def_ghi"
+  it "captialize", ->
+    assert.equal capitalize(str), "Abc_def_ghi"
+  it "camelize", ->
+    assert.equal camelize(str), "abcDefGhi"
+  it "pascalize", ->
+    assert.equal pascalize(str), "AbcDefGhi"
+  it "snakize", ->
+    assert.equal snakize(str), "abc_def_ghi"
+  it "kebabize", ->
+    assert.equal kebabize(str), "abc-def-ghi"
 
 describe "kebab case", ->
   str := "abc-def-ghi"
+  it "captialize", ->
+    assert.equal capitalize(str), "Abc-def-ghi"
+  it "camelize", ->
+    assert.equal camelize(str), "abcDefGhi"
+  it "pascalize", ->
+    assert.equal pascalize(str), "AbcDefGhi"
+  it "snakize", ->
+    assert.equal snakize(str), "abc_def_ghi"
