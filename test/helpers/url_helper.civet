@@ -1,0 +1,69 @@
+{assert} from chai
+import "global-jsdom/register"
+
+{
+  getCurrentURL, getCurrentURLPath,
+  normalizeURL, getBasenameFromURL, getQueryParamsFromURL, relativePath 
+} from ../../app/assets/js/helpers/url_helper.civet
+
+describe "localhost URL", ->
+  // beforeEach ->
+  //   globalThis.location = new URL("http://localhost:3000/path/to/resource?query=param#hash")
+
+  describe "getCurrentURL", ->
+    it "should return the current URL as a URL object", ->
+      url := getCurrentURL()
+      assert.instanceOf url, URL
+      assert.isTrue(Object.isFrozen(url))
+      assert.equal url.href, globalThis.location.href
+
+  describe "getCurrentURLPath", ->
+    it "should return the current URL path as a string", ->
+      path := getCurrentURLPath()
+      assert.equal path, globalThis.location.href
+  
+  describe "normalizeURL", ->
+    it "should normalize a URL string", ->
+      url := "http://example.com/path/to/resource"
+      normalized := normalizeURL(url)
+      assert.instanceOf normalized, URL
+      assert.isTrue(Object.isFrozen(normalized))
+      assert.equal normalized.href, "http://example.com/path/to/resource"
+
+    it "should normalize a URL object", ->
+      url := new URL("http://example.com/path/to/resource")
+      normalized := normalizeURL(url)
+      assert.instanceOf normalized, URL
+      assert.isTrue(Object.isFrozen(normalized))
+      assert.equal normalized.href, "http://example.com/path/to/resource"
+    
+  describe "getBasenameFromURL", ->
+    it "should return the basename of a URL", ->
+      url := "http://example.com/path/to/resource.html"
+      basename := getBasenameFromURL(url)
+      assert.equal basename, "resource.html"
+
+    it "should return the basename without suffix", ->
+      url := "http://example.com/path/to/resource.html"
+      basename := getBasenameFromURL(url, ".html")
+      assert.equal basename, "resource"
+
+  describe "getQueryParamsFromURL", ->
+    it "should return query parameters as a Map", ->
+      url := "http://example.com/path?param1=value1&param2=value2"
+      params := getQueryParamsFromURL(url)
+      assert.instanceOf params, Map
+      assert.equal params.get("param1"), "value1"
+      assert.equal params.get("param2"), "value2"
+
+  describe "relativePath", ->
+    it "should return the relative path from a URL", ->
+      base := new URL("http://example.com/base/path/")
+      url := new URL("http://example.com/base/path/to/resource")
+      relPath := relativePath(url, base)
+      assert.equal relPath, "/base/path/to/resource"
+
+    it "should return the relative path with no base", ->
+      url := new URL("http://localhost:3000/path/to/resource")
+      relPath := relativePath(url)
+      assert.equal relPath, "/path/to/resource"
