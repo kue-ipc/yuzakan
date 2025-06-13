@@ -1,5 +1,5 @@
 {toRomaji, toKatakana, toHiragana} from ~/common/ja_conv.civet
-{capitalize} from ~/helpers/string_helper.civet
+{capitalize} from ~/helpers/str_helper.civet
 {xxh32, xxh64} from ~/common/hash.civet
 
 calcUserAttrValue := ({user, attrs, code}) ->

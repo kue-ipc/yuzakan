@@ -1,6 +1,6 @@
 // form helper
 
-{listToKebabCase} from ./string_helper.civet
+{listToKebabCase} from ./str_helper.civet
 
 // abc[def][ghi] -> abc def ghi
 export parseParamName = (str: string): string[] ->

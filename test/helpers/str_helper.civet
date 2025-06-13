@@ -2,7 +2,7 @@
 
 {
   capitalize, camelize, pascalize, snakize, kebabize, pluralize, singularize,
-} from ../../app/assets/js/helpers/string_helper.civet
+} from ../../app/assets/js/helpers/str_helper.civet
 
 describe "simple word", ->
   str := "abcdefghi"

@@ -1,6 +1,6 @@
 {assert} from chai
 
-{normalizeBigint, normalizeNumber} from ../../app/assets/js/helpers/number_helper.civet
+{normalizeBigint, normalizeNumber} from ../../app/assets/js/helpers/num_helper.civet
 
 describe "bigint", ->
   value := 42n
