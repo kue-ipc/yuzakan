@@ -8,52 +8,193 @@ describe "bigint", ->
     assert.equal normalizeBigint(value), 42n
   it "to bigint with range [0..100]", ->
     assert.equal normalizeBigint(value, {min: 0n, max: 100n}), 42n
-  it "to bigint with range [-100..0]", ->
-    assert.equal normalizeBigint(value, {min: -100n, max: 0n}), undefined
+  it "to bigint with range [-200..-100]", ->
+    assert.equal normalizeBigint(value, {min: -200n, max: -100n}), -100n
   it "to bigint with range [100, 200]", ->
-    assert.equal normalizeBigint(value, {min: 100n, max: 200n}), undefined
+    assert.equal normalizeBigint(value, {min: 100n, max: 200n}), 100n
   it "to bigint with range [42, 42]", ->
     assert.equal normalizeBigint(value, {min: 42n, max: 42n}), 42n
   it "to bigint with range [0, 0]", ->
-    assert.equal normalizeBigint(value, {min: 0n, max: 0n}), undefined
+    assert.equal normalizeBigint(value, {min: 0n, max: 0n}), 0n
 
   it "to nunmebr without range", ->
     assert.equal normalizeNumber(value), 42
   it "to number with range [0..100]", ->
     assert.equal normalizeNumber(value, {min: 0, max: 100}), 42
-  it "to number with range [-100..0]", ->
-    assert.equal normalizeNumber(value, {min: -100, max: 0}), undefined
+  it "to number with range [-200..-100]", ->
+    assert.equal normalizeNumber(value, {min: -200, max: -100}), -100
   it "to number with range [100, 200]", ->
-    assert.equal normalizeNumber(value, {min: 100, max: 200}), undefined
+    assert.equal normalizeNumber(value, {min: 100, max: 200}), 100
   it "to number with range [42, 42]", ->
     assert.equal normalizeNumber(value, {min: 42, max: 42}), 42
   it "to number with range [0, 0]", ->
-    assert.equal normalizeNumber(value, {min: 0, max: 0}), undefined
+    assert.equal normalizeNumber(value, {min: 0, max: 0}), 0
 
 describe "number", ->
-  value := 42.5
+  value := 42
   it "to bigint without range", ->
     assert.equal normalizeBigint(value), 42n
   it "to bigint with range [0..100]", ->
-    assert.equal normalizeBigint(value, {min: 0n, max: 100}), 42n
-  it "to bigint with range [-100..0]", ->
-    assert.equal normalizeBigint(value, {min: -100n, max: 0}), undefined
+    assert.equal normalizeBigint(value, {min: 0n, max: 100n}), 42n
+  it "to bigint with range [-200..-100]", ->
+    assert.equal normalizeBigint(value, {min: -200n, max: -100n}), -100n
   it "to bigint with range [100, 200]", ->
-    assert.equal normalizeBigint(value, {min: 100n, max: 200}), undefined
+    assert.equal normalizeBigint(value, {min: 100n, max: 200n}), 100n
   it "to bigint with range [42, 42]", ->
-    assert.equal normalizeBigint(value, {min: 42n, max: 42n}), undefined
+    assert.equal normalizeBigint(value, {min: 42n, max: 42n}), 42n
   it "to bigint with range [0, 0]", ->
-    assert.equal normalizeBigint(value, {min: 0n, max: 0n}), undefined
+    assert.equal normalizeBigint(value, {min: 0n, max: 0n}), 0n
 
   it "to number without range", ->
-    assert.equal normalizeNumber(value), 42.5
+    assert.equal normalizeNumber(value), 42
   it "to number with range [0..100]", ->
-    assert.equal normalizeNumber(value, {min: 0, max: 100}), 42.5
-  it "to number with range [-100..0]", ->
-    assert.equal normalizeNumber(value, {min: -100, max: 0}), undefined
+    assert.equal normalizeNumber(value, {min: 0, max: 100}), 42
+  it "to number with range [-200..-100]", ->
+    assert.equal normalizeNumber(value, {min: -200, max: -100}), -100
   it "to number with range [100, 200]", ->
-    assert.equal normalizeNumber(value, {min: 100, max: 200}), undefined
-  it "to number with range [42.5, 42.5]", ->
-    assert.equal normalizeNumber(value, {min: 42.5, max: 42.5}), 42.5
+    assert.equal normalizeNumber(value, {min: 100, max: 200}), 100
+  it "to number with range [42, 42]", ->
+    assert.equal normalizeNumber(value, {min: 42, max: 42}), 42
   it "to number with range [0, 0]", ->
-    assert.equal normalizeNumber(value, {min: 0, max: 0}), undefined
+    assert.equal normalizeNumber(value, {min: 0, max: 0}), 0
+
+describe "string", ->
+  value := "42"
+  it "to bigint without range", ->
+    assert.equal normalizeBigint(value), 42n
+  it "to bigint with range [0..100]", ->
+    assert.equal normalizeBigint(value, {min: 0n, max: 100n}), 42n
+  it "to bigint with range [-200..-100]", ->
+    assert.equal normalizeBigint(value, {min: -200n, max: -100n}), -100n
+  it "to bigint with range [100, 200]", ->
+    assert.equal normalizeBigint(value, {min: 100n, max: 200n}), 100n
+  it "to bigint with range [42, 42]", ->
+    assert.equal normalizeBigint(value, {min: 42n, max: 42n}), 42n
+  it "to bigint with range [0, 0]", ->
+    assert.equal normalizeBigint(value, {min: 0n, max: 0n}), 0n
+
+  it "to number without range", ->
+    assert.equal normalizeNumber(value), 42
+  it "to number with range [0..100]", ->
+    assert.equal normalizeNumber(value, {min: 0, max: 100}), 42
+  it "to number with range [-200..-100]", ->
+    assert.equal normalizeNumber(value, {min: -200, max: -100}), -100
+  it "to number with range [100, 200]", ->
+    assert.equal normalizeNumber(value, {min: 100, max: 200}), 100
+  it "to number with range [42, 42]", ->
+    assert.equal normalizeNumber(value, {min: 42, max: 42}), 42
+  it "to number with range [0, 0]", ->
+    assert.equal normalizeNumber(value, {min: 0, max: 0}), 0
+
+describe "undefined", ->
+  value := undefined
+  it "to bigint without range", ->
+    assert.equal normalizeBigint(value), 0n
+  it "to bigint with range [0..100]", ->
+    assert.equal normalizeBigint(value, {min: 0n, max: 100n}), 0n
+  it "to bigint with range [-200..-100]", ->
+    assert.equal normalizeBigint(value, {min: -200n, max: -100n}), -100n
+  it "to bigint with range [100, 200]", ->
+    assert.equal normalizeBigint(value, {min: 100n, max: 200n}), 100n
+  it "to bigint with range [42, 42]", ->
+    assert.equal normalizeBigint(value, {min: 42n, max: 42n}), 42n
+  it "to bigint with range [0, 0]", ->
+    assert.equal normalizeBigint(value, {min: 0n, max: 0n}), 0n
+
+  it "to number without range", ->
+    assert.equal normalizeNumber(value), 0
+  it "to number with range [0..100]", ->
+    assert.equal normalizeNumber(value, {min: 0, max: 100}), 0
+  it "to number with range [-200..-100]", ->
+    assert.equal normalizeNumber(value, {min: -200, max: -100}), -100
+  it "to number with range [100, 200]", ->
+    assert.equal normalizeNumber(value, {min: 100, max: 200}), 100
+  it "to number with range [42, 42]", ->
+    assert.equal normalizeNumber(value, {min: 42, max: 42}), 42
+  it "to number with range [0, 0]", ->
+    assert.equal normalizeNumber(value, {min: 0, max: 0}), 0
+
+describe "float", ->
+  describe "number", ->
+    value := 42.42
+    it "to bigint without range", ->
+      assert.equal normalizeBigint(value), 42n
+    it "to bigint with range nearly [0..100]", ->
+      assert.equal normalizeBigint(value, {min: 0.5, max: 99.5}), 42n
+    it "to bigint with range nearly [-200..-100]", ->
+      assert.equal normalizeBigint(value, {min: -199.5, max: -99.5}), -100n
+    it "to bigint with range nearly [100, 200]", ->
+      assert.equal normalizeBigint(value, {min: 99.5, max: 199.5}), 100n
+    it "to bigint with range nearly [42, 42]", ->
+      assert.throws ->
+        normalizeBigint(value, {min: 42.42, max: 42.42})
+
+    it "to number without range", ->
+      assert.equal normalizeNumber(value), 42.42
+    it "to number with range nearly [0..100]", ->
+      assert.equal normalizeNumber(value, {min: 0.5, max: 99.5}), 42.42
+    it "to number with range nearly [-200..-100]", ->
+      assert.equal normalizeNumber(value, {min: -199.5, max: -99.5}), -99.5
+    it "to number with range nearly [100, 200]", ->
+      assert.equal normalizeNumber(value, {min: 99.5, max: 199.5}), 99.5
+    it "to number with range nearly [42, 42]", ->
+      assert.equal normalizeNumber(value, {min: 42.42, max: 42.42}), 42.42
+  
+  describe "string", ->
+    value := "42.42"
+    it "to bigint without range", ->
+      assert.throws ->
+        normalizeBigint(value)
+
+    it "to number without range", ->
+      assert.equal normalizeNumber(value), 42.42
+    it "to number with range nearly [0..100]", ->
+      assert.equal normalizeNumber(value, {min: 0.5, max: 99.5}), 42.42
+    it "to number with range nearly [-200..-100]", ->
+      assert.equal normalizeNumber(value, {min: -199.5, max: -99.5}), -99.5
+    it "to number with range nearly [100, 200]", ->
+      assert.equal normalizeNumber(value, {min: 99.5, max: 199.5}), 99.5
+    it "to number with range nearly [42, 42]", ->
+      assert.equal normalizeNumber(value, {min: 42.42, max: 42.42}), 42.42
+
+  describe "minus number", ->
+    value := -42.42
+    it "to bigint without range", ->
+      assert.equal normalizeBigint(value), -42n
+    it "to bigint with range nearly [-100..0]", ->
+      assert.equal normalizeBigint(value, {min: -99.5, max: 0.5}), -42n
+    it "to bigint with range nearly [-200..-100]", ->
+      assert.equal normalizeBigint(value, {min: -199.5, max: -99.5}), -100n
+    it "to bigint with range nearly [100, 200]", ->
+      assert.equal normalizeBigint(value, {min: 99.5, max: 199.5}), 100n
+    it "to bigint with range nearly [-42, -42]", ->
+      assert.throws ->
+        normalizeBigint(value, {min: -42.42, max: -42.42})
+
+    it "to number without range", ->
+      assert.equal normalizeNumber(value), -42.42
+    it "to number with range nearly [-100..0]", ->
+      assert.equal normalizeNumber(value, {min: -99.5, max: -0.5}), -42.42
+    it "to number with range nearly [-200..-100]", ->
+      assert.equal normalizeNumber(value, {min: -199.5, max: -99.5}), -99.5
+    it "to number with range nearly [100, 200]", ->
+      assert.equal normalizeNumber(value, {min: 99.5, max: 199.5}), 99.5
+    it "to number with range nearly [-42, -42]", ->
+      assert.equal normalizeNumber(value, {min: -42.42, max: -42.42}), -42.42
+
+  describe "nan", ->
+    value := NaN
+    it "to bigint without range", ->
+      assert.throws ->
+        normalizeBigint(value)
+
+    it "to number without range", ->
+      assert.isNaN(normalizeNumber(value))
+    it "to number with range [0..100]", ->
+      assert.isNaN(normalizeNumber(value, {min: 0, max: 100}))
+    it "to number with range [-200..-100]", ->
+      assert.isNaN(normalizeNumber(value, {min: -200, max: -100}))
+    it "to number with range [100, 200]", ->
+      assert.isNaN(normalizeNumber(value, {min: 100, max: 200}))
+    it "to number with range [42, 42]", ->
+      assert.isNaN(normalizeNumber(value, {min: 42, max: 42}))

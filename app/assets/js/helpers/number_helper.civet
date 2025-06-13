@@ -6,22 +6,40 @@ interface NumberRange
   min?: bigint | number
   max?: bigint | number
 
-export normalizeBigint := (value: NumberValue, {min, max}: NumberRange = {}): bigint? ->
-  return unless value?
+export normalizeBigint := (value: NumberValue, {min, max}: NumberRange = {}): bigint ->
+  value =
+    if not value?
+      value = 0n
+    else if value <? "number"
+      BigInt(Math.trunc(value))
+    else if value <? "string"
+      BigInt(value)
+    else
+      value
+  
+  min = undefined if min is Number.NEGATIVE_INFINITY
+  min = BigInt(Math.ceil(min)) if min <? "number"
+  max = undefined if max is Number.POSITIVE_INFINITY
+  max = BigInt(Math.floor(max)) if max <? "number"
+  if min? and max? and min > max
+    throw new Error `min (${min}) cannot be greater than max (${max})`
 
-  value = BigInt(value) unless value <? "bigint"
-  if value < min? or value > max?
-    console.warn "out of range: %i", value
-    return 
+  value = min if min? and value < min
+  value = max if max? and value > max
 
   value
 
-export normalizeNumber := (value: NumberValue, {min, max}: NumberRange = {}): number? ->
-  return unless value?
-
+export normalizeNumber := (value: NumberValue, {min, max}: NumberRange = {}): number ->
+  value = 0 unless value?
   value = Number(value) unless value <? "number"
-  if value < min? or value > max?
-    console.warn "out of range: %f", value
-    return 
+  return value if isNaN(value)
+
+  min = Number(min) if min <? "bigint"
+  max = Number(max) if max <? "bigint"
+  if min? and max? and min > max
+    throw new Error `min (${min}) cannot be greater than max (${max})`
+
+  value = Math.max(value, min) if min?
+  value = Math.min(value, max) if max?
 
   value
