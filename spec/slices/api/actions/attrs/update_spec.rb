@@ -2,21 +2,54 @@
 
 RSpec.describe API::Actions::Attrs::Update do
   init_action_spec
+
   let(:action_opts) {
     {
-      attr_repository: attr_repository,
-      mapping_repository: mapping_repository,
-      provider_repository: provider_repository,
+      attr_repo: attr_repo,
+      provider_repo: provider_repo,
     }
   }
-  let(:format) { "application/json" }
   let(:action_params) {
     {
       id: "attr42",
-      **attr_attributes.except(:id),
-      mappings: mappings_attributes,
+      **attr.to_h.except(:id),
+      mappings: mappings.to_h,
     }
   }
+
+  shared_examples "ok" do
+    it "is ok" do
+      response = action.call(params)
+      expect(response).to be_successful
+      expect(response.status).to eq 200
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:data]).to eq({
+        **attr.to_h.except(:id),
+        mappings: mappings.map { |mapping| mapping.to_h.except(:id) },
+      })
+    end
+  end
+
+  context "when guest" do
+    include_context "when guest"
+    it_behaves_like "forbidden"
+  end
+
+  context "when observer" do
+    include_context "when observer"
+    it_behaves_like "forbidden"
+  end
+
+  context "when operator" do
+    include_context "when operator"
+    it_behaves_like "forbidden"
+  end
+
+  context "when administrator" do
+    include_context "when administrator"
+    it_behaves_like "forbidden"
+  end
 
   it "is failure" do
     response = action.call(params)
@@ -26,98 +59,47 @@ RSpec.describe API::Actions::Attrs::Update do
     expect(json).to eq({code: 403, message: "Forbidden"})
   end
 
-  describe "admin" do
-    let(:user) { User.new(**user_attributes, clearance_level: 5) }
-    let(:client) { "127.0.0.1" }
+  context "when superuser" do
+    include_context "when superuser"
 
-    it "is successful" do
-      response = action.call(params)
-      expect(response.status).to eq 200
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({
-        **attr_attributes.except(:id),
-        mappings: mappings_attributes,
-      })
-    end
+    it_behaves_like "created"
 
-    it "is successful with different" do
-      response = action.call({**params, name: "hoge", display_name: "ほげ"})
-      expect(response.status).to eq 200
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      expect(response.headers["Content-Location"]).to eq "/api/attrs/hoge"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({
-        **attr_attributes.except(:id),
-        mappings: mappings_attributes,
-      })
-    end
-
-    describe "not existed" do
-      let(:attr_repository) {
-        instance_double(AttrRepository, **attr_repository_stubs, find_with_mappings_by_name: nil)
+    describe "not existend" do
+      let(:action_opts) {
+        allow(action_repo).to receive_messages(get: nil, unset: nil)
+        {attr_repo: attr_repo}
       }
 
-      it "is failure" do
-        response = action.call(params)
-        expect(response.status).to eq 404
-        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-        json = JSON.parse(response.body.first, symbolize_names: true)
-        expect(json).to eq({
-          code: 404,
-          message: "Not Found",
-        })
-      end
+      it_behaves_like "not found"
+    end
+
+    it "is ok with different name" do
+      response = action.call({**params, name: "hoge", display_name: "ほげ"})
+      expect(response).to be_successful
+      expect(response.status).to eq 200
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:data]).to eq({
+        **attr.to_h.except(:id),
+        name: "hoge",
+        display_name: "ほげ",
+        mappings: mappings.map { |mapping| mapping.to_h.except(:id) },
+      })
     end
 
     describe "existed name" do
       let(:attr_repository) { instance_double(AttrRepository, **attr_repository_stubs, exist_by_name?: true) }
 
-      it "is successful" do
-        response = action.call(params)
-        expect(response.status).to eq 200
-        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-        json = JSON.parse(response.body.first, symbolize_names: true)
-        expect(json).to eq({
-          **attr_attributes.except(:id),
-          mappings: mappings_attributes,
-        })
-      end
+      it_behaves_like "not found"
 
-      it "is successful with diffrent only display_name" do
-        response = action.call({**params, display_name: "ほげ"})
-        expect(response.status).to eq 200
-        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-        json = JSON.parse(response.body.first, symbolize_names: true)
-        expect(json).to eq({
-          **attr_attributes.except(:id),
-          mappings: mappings_attributes,
-        })
-      end
-
-      it "is failure with different" do
-        response = action.call({**params, name: "hoge", display_name: "ほげ"})
+      it "is failure with different name that exsits" do
+        response = action.call({**params, name: "hoge"})
+        expect(response).to be_client_error
         expect(response.status).to eq 422
         expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
-        expect(json).to eq({
-          code: 422,
-          message: "Unprocessable Entity",
-          errors: [{name: ["重複しています。"]}],
-        })
+        expect(json[:flash]).to eq({invalid: {name: ["重複しています。"]}})
       end
-    end
-  end
-
-  describe "no login session" do
-    let(:session) { {uuid: uuid} }
-
-    it "is error" do
-      response = action.call(params)
-      expect(response.status).to eq 401
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({code: 401, message: "Unauthorized"})
     end
   end
 end

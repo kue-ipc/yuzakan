@@ -16,6 +16,21 @@ RSpec.describe API::Actions::Attrs::Create do
     }
   }
 
+  shared_examples "created" do
+    it "is created" do
+      response = action.call(params)
+      expect(response).to be_successful
+      expect(response.status).to eq 201
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      expect(response.headers["Content-Location"]).to eq "/api/attrs/#{attr.name}"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:data]).to eq({
+        **attr.to_h.except(:id),
+        mappings: mappings.map { |mapping| mapping.to_h.except(:id) },
+      })
+    end
+  end
+
   it_behaves_like "forbidden"
 
   context "when guest" do
@@ -41,65 +56,46 @@ RSpec.describe API::Actions::Attrs::Create do
   context "when superuser" do
     include_context "when superuser"
 
-    it "is successful" do
-      response = action.call(params)
+    it_behaves_like "created"
+
+    it "is created without order param" do
+      response = action.call(params.except(:order))
+      expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       expect(response.headers["Content-Location"]).to eq "/api/attrs/#{attr.name}"
-
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json["data"]).to eq({
-        **attr_attributes.except(:id),
-        mappings: mappings.to_h,
-      })
-    end
-
-    it "is successful without order param" do
-      response = action.call(params.except(:order))
-      expect(response.status).to eq 201
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      expect(response.headers["Content-Location"]).to eq "/api/attrs/#{attr_with_mappings.name}"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({
-        **attr_attributes.except(:id),
-        mappings: mappings_attributes,
+      expect(json[:data]).to eq({
+        **attr.to_h.except(:id),
+        mappings: mappings.map { |mapping| mapping.to_h.except(:id) },
       })
     end
 
     it "is failure with bad name pattern" do
       response = action.call({**params, name: "!"})
-      expect(response.status).to eq 400
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({
-        code: 400,
-        message: "Bad Request",
-        errors: [{name: ["名前付けの規則に違反しています。"]}],
-      })
+      expect(json[:flash]).to eq({invalid: {name: ["名前付けの規則に違反しています。"]}})
     end
 
     it "is failure with name over" do
       response = action.call({**params, name: "a" * 256})
-      expect(response.status).to eq 400
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({
-        code: 400,
-        message: "Bad Request",
-        errors: [{name: ["サイズが255を超えてはいけません。"]}],
-      })
+      expect(json[:flash]).to eq({invalid: {name: ["サイズが255を超えてはいけません。"]}})
     end
 
-    it "is failure with name over" do
+    it "is failure with name number" do
       response = action.call({**params, name: 1})
-      expect(response.status).to eq 400
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({
-        code: 400,
-        message: "Bad Request",
-        errors: [{name: ["文字列を入力してください。"]}],
-      })
+      expect(json[:flash]).to eq({invalid: {name: ["文字列を入力してください。"]}})
     end
 
     it "is failure with bad mapping params" do
@@ -110,31 +106,23 @@ RSpec.describe API::Actions::Attrs::Create do
           {name: "attr1_2", conversion: "e2j"},
         ],
       })
-      expect(response.status).to eq 400
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({
-        code: 400,
-        message: "Bad Request",
-        errors: [{
-          mappings: {
-            "0": {provider: ["入力が必須です。"], key: ["存在しません。"]},
-            "1": {provider: ["存在しません。"], key: ["存在しません。"]},
-          },
-        }],
-      })
+      expect(json[:flash]).to eq({invalid: {mappings: {
+        "0": {provider: ["入力が必須です。"], key: ["存在しません。"]},
+        "1": {provider: ["存在しません。"], key: ["存在しません。"]},
+      }}})
     end
 
     it "is failure without params" do
       response = action.call(env)
-      expect(response.status).to eq 400
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({
-        code: 400,
-        message: "Bad Request",
-        errors: [{name: ["存在しません。"], type: ["存在しません。"]}],
-      })
+      expect(json[:flash]).to eq({invalid: {name: ["存在しません。"], type: ["存在しません。"]}})
     end
 
     describe "existed name" do
@@ -145,23 +133,16 @@ RSpec.describe API::Actions::Attrs::Create do
         expect(response.status).to eq 422
         expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
-        expect(json).to eq({
-          code: 422,
-          message: "Unprocessable Entity",
-          errors: [{name: ["重複しています。"]}],
-        })
+        expect(json[:flash]).to eq({invalid: {name: ["重複しています。"]}})
       end
 
       it "is failure with bad name pattern" do
         response = action.call({**params, name: "!"})
-        expect(response.status).to eq 400
+        expect(response).to be_client_error
+        expect(response.status).to eq 422
         expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
-        expect(json).to eq({
-          code: 400,
-          message: "Bad Request",
-          errors: [{name: ["名前付けの規則に違反しています。"]}],
-        })
+        expect(json[:flash]).to eq({invalid: {name: ["名前付けの規則に違反しています。"]}})
       end
     end
 
@@ -175,27 +156,12 @@ RSpec.describe API::Actions::Attrs::Create do
 
       it "is failure" do
         response = action.call(params)
+        expect(response).to be_client_error
         expect(response.status).to eq 422
         expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
-        expect(json).to eq({
-          code: 422,
-          message: "Unprocessable Entity",
-          errors: [{mappings: {"1": {provider: ["見つかりません。"]}}}],
-        })
+        expect(json[:flash]).to eq({mappings: {"1": {provider: ["見つかりません。"]}}})
       end
-    end
-  end
-
-  describe "no login session" do
-    let(:session) { {uuid: uuid} }
-
-    it "is error" do
-      response = action.call(params)
-      expect(response.status).to eq 401
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({code: 401, message: "Unauthorized"})
     end
   end
 end

@@ -2,30 +2,27 @@
 
 RSpec.describe API::Actions::Attrs::Index do
   init_action_spec
-  let(:action_opts) { {attr_repository: attr_repository} }
-  let(:format) { "application/json" }
 
-  it "is successful" do
-    response = action.call(params)
-    expect(response.status).to eq 200
-    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-    json = JSON.parse(response.body.first, symbolize_names: true)
-    expect_json = attrs_attributes
-      .sort_by { |data| data[:name] }
-      .sort_by { |data| data[:order] }
-      .map { |data| data.except(:id) }
-    expect(json).to eq expect_json
-  end
+  let(:action_opts) {
+    allow(action_repo).to receive_messages(get: attr, unset: attr)
+    {attr_repo: attr_repo}
+  }
 
-  describe "no login session" do
-    let(:session) { {uuid: uuid} }
-
-    it "is error" do
+  shared_examples "ok" do
+    it "is ok" do
       response = action.call(params)
-      expect(response.status).to eq 401
+      expect(response).to be_successful
+      expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({code: 401, message: "Unauthorized"})
+      expect(json[:data]).to eq(attrs.map { |attr| attr.to_h.except(:id) })
     end
   end
+
+  context "when guest" do
+    include_context "when guest"
+    it_behaves_like "forbidden"
+  end
+
+  it_behaves_like "ok"
 end
