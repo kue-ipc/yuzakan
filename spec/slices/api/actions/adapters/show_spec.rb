@@ -74,6 +74,7 @@ RSpec.describe API::Actions::Adapters::Show do
   end
 
   it_behaves_like "ok"
+
   context "with nonexstent id" do
     let(:id) { "hoge" }
 
@@ -88,6 +89,7 @@ RSpec.describe API::Actions::Adapters::Show do
   context "when observer" do
     include_context "when observer"
     it_behaves_like "ok"
+
     context "with nonexstent id" do
       let(:id) { "hoge" }
 

@@ -116,6 +116,18 @@ def init_action_spec
     end
   end
 
+  shared_examples "session timeout" do
+    it "is forbidden due to session timeout" do
+      response = action.call(params)
+      expect(response.status).to eq 403
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json).to eq({status: {code: 403, message: "Forbidden"}, flash: {warn: "セッションがタイムアウトしました。"}})
+    end
+  end
+
+  end
+
   shared_context "when guest" do
     let(:user) { create_struct(:user, :guest) }
   end
@@ -134,6 +146,18 @@ def init_action_spec
 
   shared_context "when superuser" do
     let(:user) { create_struct(:user, :superuser) }
+  end
+
+  shared_context "when logout" do
+    let(:session) { logout_session }
+  end
+
+  shared_context "when timeover" do
+    let(:session) { timeover_session }
+  end
+
+  shared_context "when first" do
+    let(:session) { first_session }
   end
 end
 

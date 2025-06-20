@@ -25,20 +25,8 @@ RSpec.describe API::Actions::Auth::Create do
     instance_double(Yuzakan::Providers::Authenticate, call: Success(provider))
   }
 
-  it "is redirection (see other)" do
-    response = action.call(params)
-    expect(response).to be_redirection
-    expect(response.status).to eq 303
-    expect(response.headers["Location"]).to eq "/api/auth"
-    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-    json = JSON.parse(response.body.first, symbolize_names: true)
-    expect(json[:location]).to eq "/api/auth"
-  end
-
-  context "when no login" do
-    let(:session) { logout_session }
-
-    it "is successful" do
+  shared_examples "created" do
+    it "is created" do
       response = action.call(params)
       expect(response).to be_successful
       expect(response.status).to eq 201
@@ -46,6 +34,51 @@ RSpec.describe API::Actions::Auth::Create do
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:data]).to eq({username: user.name})
     end
+  end
+
+  shared_examples "redirection" do
+    it "is redirection" do
+      response = action.call(params)
+      expect(response).to be_redirection
+      expect(response.status).to eq 303
+      expect(response.headers["Location"]).to eq "/api/auth"
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:location]).to eq "/api/auth"
+    end
+  end
+
+  it_behaves_like "redirection"
+
+  context "when guest" do
+    include_context "when guest"
+    it_behaves_like "redirection"
+  end
+
+  context "when observer" do
+    include_context "when observer"
+    it_behaves_like "redirection"
+  end
+
+  context "when operator" do
+    include_context "when operator"
+    it_behaves_like "redirection"
+  end
+
+  context "when administrator" do
+    include_context "when administrator"
+    it_behaves_like "redirection"
+  end
+
+  context "when superuser" do
+    include_context "when superuser"
+    it_behaves_like "redirection"
+  end
+
+  context "when logout" do
+    include_context "when logout"
+
+    it_behaves_like "created"
 
     it "is failed without username" do
       response = action.call(params.except(:username))
@@ -173,16 +206,8 @@ RSpec.describe API::Actions::Auth::Create do
     end
   end
 
-  context "when no session" do
-    let(:session) { {} }
-
-    it "is successful" do
-      response = action.call(params)
-      expect(response).to be_successful
-      expect(response.status).to eq 201
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({username: user.name})
-    end
+  context "when first" do
+    include_context "when first"
+    it_behaves_like "created"
   end
 end

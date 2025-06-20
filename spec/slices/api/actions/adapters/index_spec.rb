@@ -50,4 +50,19 @@ RSpec.describe API::Actions::Adapters::Index do
     include_context "when superuser"
     it_behaves_like "ok"
   end
+
+  context "when logout" do
+    include_context "when logout"
+    it_behaves_like "forbidden"
+  end
+
+  context "when first" do
+    include_context "when first"
+    it_behaves_like "forbidden"
+  end
+
+  conthext "when timeover" do
+    include_context "when timeover"
+    it_behaves_like "session timeout"
+  end
 end

@@ -3,21 +3,19 @@
 RSpec.describe API::Actions::Auth::Destroy do
   init_action_spec
 
-  let(:format) { "application/json" }
-
-  it "is successful" do
-    response = action.call(params)
-    expect(response).to be_successful
-    expect(response.status).to eq 200
-    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-    json = JSON.parse(response.body.first, symbolize_names: true)
-    expect(json[:data]).to eq({username: user.name})
+  shared_examples "ok" do
+    it "is ok" do
+      response = action.call(params)
+      expect(response).to be_successful
+      expect(response.status).to eq 200
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:data]).to eq({username: user.name})
+    end
   end
 
-  context "when no login" do
-    let(:session) { logout_session }
-
-    it "is failure" do
+  shared_examples "not found" do
+    it "is not found" do
       response = action.call(params)
       expect(response).to be_client_error
       expect(response.status).to eq 404
@@ -27,16 +25,40 @@ RSpec.describe API::Actions::Auth::Destroy do
     end
   end
 
-  context "when no session" do
-    let(:session) { {} }
+  it_behaves_like "ok"
 
-    it "is failure" do
-      response = action.call(params)
-      expect(response).to be_client_error
-      expect(response.status).to eq 404
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:flash]).to eq({error: "ログインしていません。"})
-    end
+  context "when guest" do
+    include_context "when guest"
+    it_behaves_like "ok"
+  end
+
+  context "when observer" do
+    include_context "when observer"
+    it_behaves_like "ok"
+  end
+
+  context "when operator" do
+    include_context "when operator"
+    it_behaves_like "ok"
+  end
+
+  context "when administrator" do
+    include_context "when administrator"
+    it_behaves_like "ok"
+  end
+
+  context "when superuser" do
+    include_context "when superuser"
+    it_behaves_like "ok"
+  end
+
+  context "when logout" do
+    include_context "when logout"
+    it_behaves_like "not found"
+  end
+
+  context "when first" do
+    include_context "when first"
+    it_behaves_like "not found"
   end
 end
