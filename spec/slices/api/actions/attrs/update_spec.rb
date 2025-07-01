@@ -4,6 +4,7 @@ RSpec.describe API::Actions::Attrs::Update do
   init_action_spec
 
   let(:action_opts) {
+    allow(attr_repo).to receive(get).and_return(attr)
     {
       attr_repo: attr_repo,
       provider_repo: provider_repo,
@@ -31,6 +32,8 @@ RSpec.describe API::Actions::Attrs::Update do
     end
   end
 
+  it_behaves_like "forbidden"
+
   context "when guest" do
     include_context "when guest"
     it_behaves_like "forbidden"
@@ -51,22 +54,14 @@ RSpec.describe API::Actions::Attrs::Update do
     it_behaves_like "forbidden"
   end
 
-  it "is failure" do
-    response = action.call(params)
-    expect(response.status).to eq 403
-    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-    json = JSON.parse(response.body.first, symbolize_names: true)
-    expect(json).to eq({code: 403, message: "Forbidden"})
-  end
-
   context "when superuser" do
     include_context "when superuser"
 
-    it_behaves_like "created"
+    it_behaves_like "ok"
 
     describe "not existend" do
       let(:action_opts) {
-        allow(action_repo).to receive_messages(get: nil, unset: nil)
+        allow(attr_repo).to receive_messages(get: nil, unset: nil)
         {attr_repo: attr_repo}
       }
 

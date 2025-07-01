@@ -3,7 +3,7 @@
 RSpec.describe API::Actions::Attrs::Show do
   init_action_spec
   let(:action_opts) {
-    allow(action_repo).to receive(get).and_return(attr)
+    allow(attr_repo).to receive(get).and_return(attr)
     {attr_repo: attr_repo}
   }
   let(:action_params) { {id: "attr42"} }
@@ -22,11 +22,6 @@ RSpec.describe API::Actions::Attrs::Show do
     end
   end
 
-  context "when guest" do
-    include_context "when guest"
-    it_behaves_like "forbidden"
-  end
-
   it_behaves_like "ok"
 
   describe "not existend" do
@@ -36,5 +31,29 @@ RSpec.describe API::Actions::Attrs::Show do
     }
 
     it_behaves_like "not found"
+  end
+
+  context "when guest" do
+    include_context "when guest"
+    it_behaves_like "forbidden"
+  end
+
+  context "when observer" do
+    include_context "when observer"
+    it_behaves_like "ok"
+  end
+
+  context "when operator" do
+    include_context "when operator"
+    it_behaves_like "ok"
+  end
+
+  context "when administrator" do
+    include_context "when administrator"
+    it_behaves_like "ok"
+  end
+
+  context "when superuser" do
+    it_behaves_like "ok"
   end
 end

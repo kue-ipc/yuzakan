@@ -3,7 +3,7 @@
 RSpec.describe API::Actions::Attrs::Destroy do
   init_action_spec
   let(:action_opts) {
-    allow(action_repo).to receive_messages(get: attr, unset: attr)
+    allow(attr_repo).to receive_messages(get: attr, unset: attr)
     {attr_repo: attr_repo}
   }
   let(:action_params) { {id: "attr42"} }

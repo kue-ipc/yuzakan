@@ -100,6 +100,7 @@ RSpec.describe API::Actions::Adapters::Show do
   context "when operator" do
     include_context "when operator"
     it_behaves_like "ok"
+
     context "with nonexstent id" do
       let(:id) { "hoge" }
 

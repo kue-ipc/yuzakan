@@ -4,7 +4,7 @@ RSpec.describe API::Actions::Attrs::Index do
   init_action_spec
 
   let(:action_opts) {
-    allow(action_repo).to receive_messages(get: attr, unset: attr)
+    allow(attr_repo).to receive_messages(get: attr, unset: attr)
     {attr_repo: attr_repo}
   }
 
@@ -19,10 +19,29 @@ RSpec.describe API::Actions::Attrs::Index do
     end
   end
 
+  it_behaves_like "ok"
+
   context "when guest" do
     include_context "when guest"
     it_behaves_like "forbidden"
   end
 
-  it_behaves_like "ok"
+  context "when observer" do
+    include_context "when observer"
+    it_behaves_like "ok"
+  end
+
+  context "when operator" do
+    include_context "when operator"
+    it_behaves_like "ok"
+  end
+
+  context "when administrator" do
+    include_context "when administrator"
+    it_behaves_like "ok"
+  end
+
+  context "when superuser" do
+    it_behaves_like "ok"
+  end
 end
