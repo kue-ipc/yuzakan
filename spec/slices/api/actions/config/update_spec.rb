@@ -10,32 +10,8 @@ RSpec.describe API::Actions::Config::Update do
   }
   let(:updated_config) { create_struct(:config, :another_config) }
 
-  it_behaves_like "forbidden"
-
-  context "when guest" do
-    include_context "when guest"
-    it_behaves_like "forbidden"
-  end
-
-  context "when observer" do
-    include_context "when observer"
-    it_behaves_like "forbidden"
-  end
-
-  context "when operator" do
-    include_context "when operator"
-    it_behaves_like "forbidden"
-  end
-
-  context "when administrator" do
-    include_context "when administrator"
-    it_behaves_like "forbidden"
-  end
-
-  context "when superuser" do
-    include_context "when superuser"
-
-    it "is successful" do
+  shared_examples "ok" do
+    it "is ok" do
       response = action.call(params)
       expect(response).to be_successful
       expect(response.status).to eq 200
@@ -64,5 +40,33 @@ RSpec.describe API::Actions::Config::Update do
         createdAt: JSON.parse(updated_config.created_at.to_json),
         updatedAt: JSON.parse(updated_config.updated_at.to_json))
     end
+  end
+
+  it_behaves_like "forbidden"
+
+  context "when guest" do
+    include_context "when guest"
+    it_behaves_like "forbidden"
+  end
+
+  context "when observer" do
+    include_context "when observer"
+    it_behaves_like "forbidden"
+  end
+
+  context "when operator" do
+    include_context "when operator"
+    it_behaves_like "forbidden"
+  end
+
+  context "when administrator" do
+    include_context "when administrator"
+    it_behaves_like "forbidden"
+  end
+
+  context "when superuser" do
+    include_context "when superuser"
+
+    it_behaves_like "ok"
   end
 end
