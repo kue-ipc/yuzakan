@@ -126,8 +126,6 @@ def init_action_spec
     end
   end
 
-  end
-
   shared_context "when guest" do
     let(:user) { create_struct(:user, :guest) }
   end
