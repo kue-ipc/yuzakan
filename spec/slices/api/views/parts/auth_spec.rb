@@ -3,9 +3,14 @@
 RSpec.describe API::Views::Parts::Auth do
   subject { described_class.new(value:) }
 
-  let(:value) { double("auth") }
+  let(:value) { {username: Faker::Internet.username} }
 
-  it "works" do
-    expect(subject).to be_a(described_class)
+  it "to_h" do
+    expect(subject.to_h).to eq(value)
+  end
+
+  it "to_json" do
+    json = JSON.parse(subject.to_json, symbolize_names: true)
+    expect(json).to eq(value)
   end
 end

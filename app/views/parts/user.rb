@@ -10,7 +10,7 @@ module Yuzakan
         end
 
         def title
-          value.label_name
+          "#{value.label} (#{value.name})"
         end
 
         def link_tag(**, &)

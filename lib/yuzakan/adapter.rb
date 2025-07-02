@@ -57,9 +57,15 @@
 #
 
 require "logger"
+require "dry/core/class_attributes"
+require "hanami/utils/string"
 
 module Yuzakan
   class Adapter
+    extend Dry::Core::ClassAttributes
+
+    # nested classes
+
     class AdapterError < StandardError
     end
 
@@ -79,53 +85,73 @@ module Yuzakan
       end
     end
 
-    class << self
-      attr_accessor :name, :display_name, :version, :params
+    class Params < Hanami::Action::Params
+      def self.params(&block)
+        @_contract = Class.new(Yuzakan::ValidationContract) do
+          params(&block || -> {})
+        end.new
+      end
+    end
 
-      def label_name
-        if display_name
-          "#{display_name} (#{name})"
-        else
-          name
-        end
+    # class attributes and methods
+
+    define :adatper_name, :version, type: Dry::Types["strict.string"]
+    define :abstract, :hidden, type: Dry::Types["strict.bool"]
+    define :group, :primary, type: Dry::Types["strict.bool"]
+
+    class << self
+      def inherited(subclass)
+        super
+        subclass.adatper_name Hanmai::Utils::String.underscore(Hanami::Utils::String.demodulize(subclass.name))
+        subclass.display_name Hanmai::Utils::String.titleize(Hanami::Utils::String.demodulize(subclass.name))
+        subclass.version "0.0.0"
+        subclass.abstract false
+        subclass.hidden false
+        subclass.group false
+        subclass.primary false
+        subclass.params nil
       end
 
       def label
-        display_name || name
-      end
-
-      def abstract(bool = nil)
-        @abstract_adapter = bool
-      end
-
-      def hidden(bool = nil)
-        @hidden_adapter = bool
-      end
-
-      def group(type)
-        @group = type
+        Hanami.app["i18n"].t("adapters.#{adatper_name}.label", default: adatper_name)
       end
 
       def abstract?
-        !!@abstract_adapter
+        !!abstract
       end
 
       def hidden?
-        !!@hidden_adapter
+        !!hidden
       end
 
       def selectable?
-        !(abstract? || hidden?)
+        !(abstract || hidden)
       end
 
       def has_group?
-        !!@group
+        !!group
       end
 
       def has_primary_group?
-        @group == :primary
+        group && primary
       end
 
+      def params(klass = nil, &block)
+        contract_class =
+          if klass.nil?
+            Class.new(Yuzakan::ValidationContract) { params(&block) }
+          elsif klass < Yuzakan::Adatper::Params
+            # Handle subclasses of Hanami::Action::Params.
+            klass._contract.class
+          else
+            klass
+          end
+
+        config.contract_class = contract_class
+      end
+
+
+      # TODO: 古いparams
       def param_types
         @param_types ||= params&.map do |data|
           ParamType.new(**data)

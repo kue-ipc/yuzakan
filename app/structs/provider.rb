@@ -29,14 +29,6 @@ module Yuzakan
       # FIXME: adapterはoperationsで作る
       # @adapter_class, @cache_store, @params, @adapterを使用するメソッドはそちらに移動すること。
 
-      def label_name
-        if display_name
-          "#{display_name} (#{name})"
-        else
-          name
-        end
-      end
-
       def label
         display_name || name
       end

@@ -466,3 +466,17 @@ ja:
         password: 新しいパスワード
         password_confirmation: パスワードの確認
         providers: 対象サービス
+  adapters:
+    test:
+      label: テスト
+      params:
+        str:
+          label: 文字列
+          description: 詳細
+        required: 必須
+        list:
+          label: リスト
+          list:
+            one: ワン
+            two: ツー
+            three: スリー

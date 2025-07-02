@@ -5,11 +5,18 @@ require "yaml"
 module Yuzakan
   module Adapters
     class Test < Yuzakan::Adapter
+      display_name "テスト"
+      version "0.0.1"
       hidden Hanami.env?(:production)
+      group true
+      primary true
 
-      self.name = "test"
-      self.display_name = "テスト"
-      self.version = "0.0.1"
+      params do
+        required(:str).filled(:string, max_size?: 255)
+        optional(:text).filled(:string)
+        required(:int).filled(:integer)
+      end
+
       self.params = [
         {
           name: :default,
@@ -63,8 +70,6 @@ module Yuzakan
           ],
         },
       ].tap(&Yuzakan::Utils::Object.method(:deep_freeze))
-
-      group :primary
 
       def check
         true
