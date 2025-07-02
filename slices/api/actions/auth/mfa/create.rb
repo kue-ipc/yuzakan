@@ -2,9 +2,9 @@
 
 module API
   module Actions
-    module Mfa
-      module Email
-        class Update < API::Action
+    module Auth
+      module Mfa
+        class Create < API::Action
           security_level 0
           required_trusted_authentication false
 
