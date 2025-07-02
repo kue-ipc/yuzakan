@@ -9,6 +9,8 @@ ROM::SQL.migration do
       column :client, String, null: false
       column :user, String, null: false
 
+      column :type, String, null: false
+
       column :result, String, null: false
       column :provider, String, null: false
 
@@ -18,6 +20,7 @@ ROM::SQL.migration do
       index :uuid
       index :client
       index :user
+      index :type
     end
   end
 end

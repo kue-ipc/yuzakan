@@ -5,7 +5,6 @@ RSpec.describe API::Actions::Auth::Mfa::Create do
 
   let(:action_opts) {
     {
-      mfa_log_repo: mfa_log_repo,
       user_repo: user_repo,
     }
   }
@@ -156,7 +155,8 @@ RSpec.describe API::Actions::Auth::Mfa::Create do
     end
 
     describe "too many access" do
-      let(:mfa_log_repo) {
+      let(:auth_log_repo) {
+        # TODO: 何か
         instance_double(Yuzakan::Repos::AuthLogRepo, create: auth_log, recent: [
           Factory.structs[:failure_auth_log],
           Factory.structs[:failure_auth_log],
