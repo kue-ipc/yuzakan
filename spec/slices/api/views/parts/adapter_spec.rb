@@ -5,25 +5,34 @@ RSpec.describe API::Views::Parts::Adapter do
 
   let(:value) { Hanami.app["adapters"]["test"] }
 
-  let(:test_params) {
-    [
-      {name: "str", label: "文字列", description: "詳細", type: "string", maxlength: 255},
-      {name: "text", label: "テキスト", type: "string"},
-      {name: "int", label: "整数", type: "integer"},
-      {name: "float", label: "浮動小数点数", type: "float"},
-      {name: "bool", label: "真偽値", type: "boolean"},
-      {name: "date", label: "日付", type: "date"},
-      {name: "time", label: "時間", type: "time"},
-      {name: "datetime", label: "日時", type: "datetime"},
-      {name: "required_str", label: "必須文字列", type: "string", required: true, filled: true, maxlength: 255},
-      {name: "pattern_str", label: "フォーマット付き文字列", type: "string", pattern: "[a-z]*", maxlength: 255},
-      {name: "fixed_str", label: "固定文字列", type: "string", value: "abc"},
-      {name: "list", label: "リスト", type: "string", list: [
-        {name: "one", label: "ワン"},
-        {name: "two", label: "ツー"},
-        {name: "three", label: "スリー"},
-      ],},
-      ]
+  let(:test_params_schema) {
+    {
+      type: "object",
+      properties: {
+        str: {
+          title: "文字列",
+          description: "詳細",
+          type: "string",
+          max_length: 255,
+        },
+        text: {title: "テキスト", type: "string"},
+        int: {title: "整数", type: "integer"},
+        float: {title: "浮動小数点数", type: "number"},
+        bool: {title: "真偽値", type: "boolean"},
+        date: {title: "日付", type: "date"},
+        time: {title: "時間", type: "time"},
+        datetime: {title: "日時", type: "datetime"},
+        required_str: {title: "必須文字列", type: "string", max_length: 255, min_length: 1},
+        pattern_str: {title: "パターン", type: "string", pattern: "^[a-z]*$", max_length: 255},
+        fixed_str: {title: "固定値", type: "string", const: "abc"},
+        list: {
+          title: "リスト",
+          type: "string",
+          enum: ["one", "two", "three"],
+        },
+      },
+      required: ["required_str"],
+    }
   }
 
   it "to_h" do
@@ -32,7 +41,7 @@ RSpec.describe API::Views::Parts::Adapter do
       label: "テスト",
       group: true,
       primary: true,
-      params: test_params,
+      params: {schema: test_params_schema},
     })
   end
 
