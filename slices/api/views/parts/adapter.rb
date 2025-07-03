@@ -1,6 +1,8 @@
 # auto_register: false
 # frozen_string_literal: true
 
+require "hanami/utils/json"
+
 module API
   module Views
     module Parts
@@ -11,16 +13,26 @@ module API
             label: value.label,
             group: value.has_group?,
             primary: value.has_primary_group?,
-            params: params,
+            params: {schema: dry_schema},
           }
         end
 
-        def to_json(...) = helpers.params_to_json(to_h)
+        def to_json(...)
+          helpers.params_to_json({
+            **to_h.except(:params),
+            params: {schema: json_schema},
+          }, ...)
+        end
 
-        def params
-          value.schema.to_ast => [:set, rules]
-          rules.map do |rule|
-            required =
+        def dry_schema
+          value.schema
+        end
+
+        def json_schema
+          dry_schema.ast => [:set, rules]
+          required = []
+          properties = rules.to_h do |rule|
+            item_required =
               case rule
               in [:and, item]
                 true
@@ -28,14 +40,19 @@ module API
                 false
               end
             item => [[:predicate, [:key?, [[:name, name], [:input, _undefined]]]], [:key, [_name, Array => ast]]]
-            {
-              name:,
-              label: context.t("adapters.#{value.adapter_name}.params.#{name}.label", default: name.to_s),
-              description: context.t("adapters.#{value.adapter_name}.params.#{name}.description", default: nil),
-              required:,
-              **parse_ast(ast, name),
-            }
+            key = Yuzakan::Utils::String.json_key(name)
+            required << key if item_required
+            [key, ast_to_property(ast, name)]
           end
+          {type: "object", properties:, required:}
+        end
+
+        private def ast_to_property(ast, name)
+          {
+            title: context.t("adapters.#{value.adapter_name}.params.#{name}.label", default: nil),
+            description: context.t("adapters.#{value.adapter_name}.params.#{name}.description", default: nil),
+            **parse_ast(ast, name),
+          }.compact
         end
 
         private def parse_ast(ast, name)
@@ -43,44 +60,48 @@ module API
           in [:predicate, predicate]
             convert_predicate(predicate, name)
           in [:and, Array => nested_asts]
+            # NOTE: notはexcluded_from?の場合のみなのでdeep_mergeは今のところ不要。
+            # FIXME: string型以外はsize関係については間違ったプロパティになっている。
             {}.merge(*nested_asts.map { |nested_ast| parse_ast(nested_ast, name) })
           in [:implication, [:not, [:predicate, [:nil?, [[:input, _undefined]]]]], nested_ast]
             {**parse_ast(nested_ast, name), maybe: true}
           end
         end
 
-        private def convert_predicate(predicate, name)
+        private def convert_predicate(predicate, _name)
           # https://dry-rb.org/gems/dry-schema/main/basics/built-in-predicates/
           case predicate
+          # types
           in [:str?, [[:input, _undefined]]] then {type: "string"}
           in [:int?, [[:input, _undefined]]] then {type: "integer"}
-          in [:float?, [[:input, _undefined]]] then {type: "float"}
-          in [:decimal?, [[:input, _undefined]]] then {type: "decimal"}
+          in [:float? | :decimal?, [[:input, _undefined]]] then {type: "number"}
           in [:bool?, [[:input, _undefined]]] then {type: "boolean"}
           in [:date?, [[:input, _undefined]]] then {type: "date"}
           in [:time?, [[:input, _undefined]]] then {type: "time"}
           in [:date_time?, [[:input, _undefined]]] then {type: "datetime"}
           in [:array?, [[:input, _undefined]]] then {type: "array"}
-          in [:hash?, [[:input, _undefined]]] then {type: "hash"}
+          in [:hash?, [[:input, _undefined]]] then {type: "object"}
           in [:nil?, [[:input, _undefined]]] then {type: "null"}
-          in [:eql?, [[:left, left], [:right, _undefined]]] then {value: left}
-          in [:empty?, [[:input, _undefined]]] then {empty: true}
-          in [:filled?, [[:input, _undefined]]] then {filled: true}
-          in [:gt?, [[:num, Integer => num], [:input, _undefined]]] then {min: num + 1}
-          in [:gteq?, [[:num, Numeric => num], [:input, _undefined]]] then {min: num}
-          in [:lt?, [[:num, Integer => num], [:input, _undefined]]] then {max: num - 1}
-          in [:lteq?, [[:num, Numeric => num], [:input, _undefined]]] then {max: num}
-          in [:max_size?, [[:num, Integer => num], [:input, _undefined]]] then {maxlength: num}
-          in [:min_size?, [[:num, Integer => num], [:input, _undefined]]] then {minlength: num}
-          in [:size?, [[:size, Integer => size], [:input, _undefined]]] then {minlength: size, maxlength: size}
-          in [:size?, [[:size, Range => size], [:input, _undefined]]] then {minlength: size.min, maxlength: size.max}
+          # enum and const
+          in [:included_in?, [[:list, Array => list], [:input, _undefined]]] then {enum: list}
+          in [:excluded_from?, [[:list, Array => list], [:input, _undefined]]] then {not: {enum: list}}
+          in [:eql?, [[:left, left], [:right, _undefined]]] then {const: left}
+          # Numeric type only
+          in [:gt?, [[:num, Numeric => num], [:input, _undefined]]] then {exclusiveMinimum: num}
+          in [:gteq?, [[:num, Numeric => num], [:input, _undefined]]] then {minimum: num}
+          in [:lt?, [[:num, Numeric => num], [:input, _undefined]]] then {exclusiveMaximum: num}
+          in [:lteq?, [[:num, Numeric => num], [:input, _undefined]]] then {maximum: num}
+          # String type only
+          # NOTE: 実際のところは間違っているが、sizeとbytesizeは区別しない。
+          in [:max_size? | :max_bytesize?, [[:num, Integer => num], [:input, _undefined]]] then {maxLength: num}
+          in [:min_size? | :min_bytesize?, [[:num, Integer => num], [:input, _undefined]]] then {minLength: num}
+          in [:size? | :bytesize?, [[:size, Integer => size], [:input, _undefined]]]
+            {minLength: size, maxLength: size}
+          in [:size? | :bytesize?, [[:size, Range => size], [:input, _undefined]]]
+            {minLength: size.min, maxLength: size.max}
           in [:format?, [[:regex, Regexp => regex], [:input, _undefined]]] then {format: regex.source}
-          in [:included_in?, [[:list, Array => list], [:input, _undefined]]]
-            list = list.map do |item|
-              {name: item, label: context.t("adapters.#{value.adapter_name}.params.#{name}.list.#{item}")}
-            end
-            {list:}
-            # in [:excluded_from?, [[:list, Array => value], [:input, _undefined]]] then {excluded_from: value}
+          in [:empty?, [[:input, _undefined]]] then {maxLength: 0}
+          in [:filled?, [[:input, _undefined]]] then {minLength: 1}
           end
         end
       end

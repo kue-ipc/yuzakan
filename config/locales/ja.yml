@@ -489,9 +489,7 @@ ja:
         str:
           label: 文字列
           description: 詳細
-        required: 必須
         list:
-          label: リスト
           list:
             one: ワン
             two: ツー

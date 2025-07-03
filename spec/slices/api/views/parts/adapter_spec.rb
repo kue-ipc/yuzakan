@@ -5,44 +5,15 @@ RSpec.describe API::Views::Parts::Adapter do
 
   let(:value) { Hanami.app["adapters"]["test"] }
 
-  let(:test_params_schema) {
-    {
-      type: "object",
-      properties: {
-        str: {
-          title: "文字列",
-          description: "詳細",
-          type: "string",
-          max_length: 255,
-        },
-        text: {title: "テキスト", type: "string"},
-        int: {title: "整数", type: "integer"},
-        float: {title: "浮動小数点数", type: "number"},
-        bool: {title: "真偽値", type: "boolean"},
-        date: {title: "日付", type: "date"},
-        time: {title: "時間", type: "time"},
-        datetime: {title: "日時", type: "datetime"},
-        required_str: {title: "必須文字列", type: "string", max_length: 255, min_length: 1},
-        pattern_str: {title: "パターン", type: "string", pattern: "^[a-z]*$", max_length: 255},
-        fixed_str: {title: "固定値", type: "string", const: "abc"},
-        list: {
-          title: "リスト",
-          type: "string",
-          enum: ["one", "two", "three"],
-        },
-      },
-      required: ["required_str"],
-    }
-  }
-
   it "to_h" do
-    expect(subject.to_h).to eq({
+    hash = subject.to_h
+    expect(hash.except(:params)).to eq({
       name: "test",
       label: "テスト",
       group: true,
       primary: true,
-      params: {schema: test_params_schema},
     })
+    expect(hash[:params].keys).to contain_exactly(:schema)
   end
 
   it "to_json" do
@@ -52,7 +23,26 @@ RSpec.describe API::Views::Parts::Adapter do
       label: "テスト",
       group: true,
       primary: true,
-      params: test_params,
+      params: {schema: {
+        type: "object",
+        properties: {
+          str: {title: "文字列",description: "詳細", type: "string", maxLength: 255},
+          text: {type: "string"},
+          int: {type: "integer"},
+          float: {type: "number"},
+          bool: {type: "boolean"},
+          date: {type: "date"},
+          time: {type: "time"},
+          datetime: {type: "datetime"},
+          requiredStr: {type: "string", maxLength: 255},
+          filledStr: {type: "string", minLength: 1, maxLength: 255},
+          patternStr: {type: "string", pattern: "^[a-z]*$", maxLength: 255},
+          fixedStr: {type: "string", const: "abc"},
+          defaultStr: {type: "string", defalut: "xyz", maxLength: 255},
+          list: {type: "string", enum: ["one", "two", "three"]},
+        },
+        required: ["requiredStr"],
+      }},
     })
   end
 end

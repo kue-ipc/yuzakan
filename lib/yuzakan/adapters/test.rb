@@ -22,6 +22,7 @@ module Yuzakan
         required(:required_str).filled(:str?, max_size?: 255)
         optional(:pattern_str).value(:str?, format?: /\A[a-z]*\z/, max_size?: 255)
         optional(:fixed_str).value(:str?, eql?: "abc")
+        optional(:default_str).value(:str?, max_size?: 255)
         optional(:list).value(:str?, included_in?: %w[one two three])
       end
 
