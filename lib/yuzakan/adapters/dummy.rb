@@ -6,8 +6,7 @@ module Yuzakan
       version "0.1.0"
       hidden Hanami.env?(:production)
 
-      json do
-      end
+      json {} # rubocop:disable Lint/EmptyBlock
     end
   end
 end

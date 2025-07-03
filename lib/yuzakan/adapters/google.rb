@@ -13,6 +13,7 @@ module Yuzakan
   module Adapters
     class Google < Yuzakan::Adapter
       version "0.0.1"
+      group false
 
       json do
         required(:domain).filled(:str?, max_size?: 255)
@@ -20,43 +21,41 @@ module Yuzakan
         required(:json_key).filled(:str?)
       end
 
-      self.params = [
-        {
-          name: :domain,
-          label: "Google Workspaceのドメイン名",
-          description:
-            "Google Workspaceでのドメイン名を指定します。",
-          type: :string,
-          required: true,
-          placeholder: "google.example.jp",
-        }, {
-          name: :account,
-          label: "Google Workspaceの管理用アカウント",
-          description:
-            "Google Workspaceでユーザーに対する管理権限のあるアカウントを指定します。" \
-            "このユーザーの権限にて各処理が実行されます。",
-          type: :string,
-          required: true,
-          placeholder: "admin@google.example.jp",
-        }, {
-          name: :json_key,
-          label: "JSONキー",
-          description:
-            "Google Workspaceで作成したサービスアカウントのキーを貼り付けます。" \
-            "ドメイン全体の委任が有効でなければなりません。",
-          type: :text,
-          rows: 20,
-          required: true,
-          placeholder: <<~PLACE_H,
-            {
-              "type": "service_account",
-              "project_id": "yuzakan-...
-          PLACE_H
-          encrypted: true,
-        },
-      ].tap(&Yuzakan::Utils::Object.method(:deep_freeze))
-
-      group false
+      # self.params = [
+      #   {
+      #     name: :domain,
+      #     label: "Google Workspaceのドメイン名",
+      #     description:
+      #       "Google Workspaceでのドメイン名を指定します。",
+      #     type: :string,
+      #     required: true,
+      #     placeholder: "google.example.jp",
+      #   }, {
+      #     name: :account,
+      #     label: "Google Workspaceの管理用アカウント",
+      #     description:
+      #       "Google Workspaceでユーザーに対する管理権限のあるアカウントを指定します。" \
+      #       "このユーザーの権限にて各処理が実行されます。",
+      #     type: :string,
+      #     required: true,
+      #     placeholder: "admin@google.example.jp",
+      #   }, {
+      #     name: :json_key,
+      #     label: "JSONキー",
+      #     description:
+      #       "Google Workspaceで作成したサービスアカウントのキーを貼り付けます。" \
+      #       "ドメイン全体の委任が有効でなければなりません。",
+      #     type: :text,
+      #     rows: 20,
+      #     required: true,
+      #     placeholder: <<~PLACE_H,
+      #       {
+      #         "type": "service_account",
+      #         "project_id": "yuzakan-...
+      #     PLACE_H
+      #     encrypted: true,
+      #   },
+      # ].tap(&Yuzakan::Utils::Object.method(:deep_freeze))
 
       def initialize(params, **opts)
         super

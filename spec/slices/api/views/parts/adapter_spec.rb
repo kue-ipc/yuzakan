@@ -36,14 +36,14 @@ RSpec.describe API::Views::Parts::Adapter do
     })
   end
 
-  # it "to_json" do
-  #   json = JSON.parse(subject.to_json, symbolize_names: true)
-  #   expect(json).to eq({
-  #     name: "test",
-  #     label: "テスト",
-  #     group: true,
-  #     primary: true,
-  #     params: test_params,
-  #   })
-  # end
+  it "to_json" do
+    json = JSON.parse(subject.to_json, symbolize_names: true)
+    expect(json).to eq({
+      name: "test",
+      label: "テスト",
+      group: true,
+      primary: true,
+      params: test_params,
+    })
+  end
 end

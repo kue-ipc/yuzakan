@@ -7,83 +7,95 @@ require "securerandom"
 module Yuzakan
   module Adapters
     class Mock < Yuzakan::Adapter
+      version "0.1.0"
       hidden Hanami.env?(:production)
+      group true
+      primary true
 
-      self.name = "mock"
-      self.display_name = "モック"
-      self.version = "0.0.1"
-      self.params = [
-        {
-          name: :check,
-          label: "チェック",
-          type: :boolean,
-          default: true,
-        },
-        {
-          name: :username,
-          label: "ユーザー名",
-          type: :string,
-          default: "user",
-        },
-        {
-          name: :password,
-          label: "パスワード",
-          type: :string,
-          default: "password",
-        },
-        {
-          name: :display_name,
-          label: "表示名",
-          type: :string,
-          default: "ユーザー",
-        },
-        {
-          name: :email,
-          label: "メールアドレス",
-          type: :string,
-          default: "user@example.jp",
-        },
-        {
-          name: :locked,
-          label: "ロック済み",
-          type: :boolean,
-          default: false,
-        },
-        {
-          name: :unmanageable,
-          label: "管理不可",
-          type: :boolean,
-          default: false,
-        },
-        {
-          name: :mfa,
-          label: "多要素認証",
-          type: :boolean,
-          default: false,
-        },
-        {
-          name: :primary_group,
-          label: "プライマリーグループ",
-          type: :string,
-          default: "",
-        },
-        {
-          name: :groups,
-          label: "グループ",
-          type: :string,
-          description: "カンマまたは空白区切り",
-          default: "",
-        },
-        {
-          name: :attrs,
-          label: "属性",
-          type: :text,
-          default: "",
-          description: "YAML形式で記入",
-        },
-      ].tap(&Yuzakan::Utils::Object.method(:deep_freeze))
+      json do
+        required(:check).filled(:bool?)
+        required(:username).filled(:str?, max_size?: 255)
+        required(:password).filled(:str?, max_size?: 255)
+        required(:display_name).filled(:str?, max_size?: 255)
+        required(:email).filled(:str?, max_size?: 255)
+        optional(:locked).value(:bool?)
+        optional(:unmanageable).value(:bool?)
+        optional(:mfa).value(:bool?)
+        optional(:primary_group).value(:str?, max_size?: 255)
+        optional(:groups).value(:str?, max_size?: 255)
+        optional(:attrs).value(:str?, max_size?: 65535)
+      end
 
-      group :primary
+      # self.params = [
+      #   {
+      #     name: :check,
+      #     label: "チェック",
+      #     type: :boolean,
+      #     default: true,
+      #   },
+      #   {
+      #     name: :username,
+      #     label: "ユーザー名",
+      #     type: :string,
+      #     default: "user",
+      #   },
+      #   {
+      #     name: :password,
+      #     label: "パスワード",
+      #     type: :string,
+      #     default: "password",
+      #   },
+      #   {
+      #     name: :display_name,
+      #     label: "表示名",
+      #     type: :string,
+      #     default: "ユーザー",
+      #   },
+      #   {
+      #     name: :email,
+      #     label: "メールアドレス",
+      #     type: :string,
+      #     default: "user@example.jp",
+      #   },
+      #   {
+      #     name: :locked,
+      #     label: "ロック済み",
+      #     type: :boolean,
+      #     default: false,
+      #   },
+      #   {
+      #     name: :unmanageable,
+      #     label: "管理不可",
+      #     type: :boolean,
+      #     default: false,
+      #   },
+      #   {
+      #     name: :mfa,
+      #     label: "多要素認証",
+      #     type: :boolean,
+      #     default: false,
+      #   },
+      #   {
+      #     name: :primary_group,
+      #     label: "プライマリーグループ",
+      #     type: :string,
+      #     default: "",
+      #   },
+      #   {
+      #     name: :groups,
+      #     label: "グループ",
+      #     type: :string,
+      #     description: "カンマまたは空白区切り",
+      #     default: "",
+      #   },
+      #   {
+      #     name: :attrs,
+      #     label: "属性",
+      #     type: :text,
+      #     default: "",
+      #     description: "YAML形式で記入",
+      #   },
+      # ].tap(&Yuzakan::Utils::Object.method(:deep_freeze))
 
       def initialize(params, **opts)
         super

@@ -37,226 +37,224 @@ module Yuzakan
         optional(:group_search_filter).value(:str?, max_size?: 255)
       end
 
-
-
-      self.params = [
-        {
-          name: :host,
-          label: "サーバーのホスト名/IPアドレス",
-          description: "LDAPサーバーのホスト名またはIPアドレスを指定します。",
-          type: :string,
-          placeholder: "ldap.example.jp",
-        }, {
-          name: :port,
-          label: "ポート",
-          description: "LDAPサーバーにアクセスするポート番号をして指定します。" \
-                       "指定しない場合は既定値(LDAPは389、LDAPSは636)を使用します。",
-          type: :integer,
-          required: false,
-          placeholder: "389 or 636",
-        }, {
-          name: :protocol,
-          label: "プロトコル/暗号化形式",
-          description: "LDAPサーバーにアクセスするプロトコルを指定します。",
-          type: :string,
-          default: "ldaps",
-          list: [
-            {name: :ldap, label: "LDAP(平文)", value: "ldap", deprecated: true},
-            {name: :ldap_starttls, label: "LDAP+STARTTLS(暗号化)",
-             value: "ldap_starttls",},
-            {name: :ldaps, label: "LDAPS(暗号化)", value: "ldaps"},
-          ],
-          input: "radio",
-        }, {
-          name: :certificate_check,
-          label: "証明書チェックを行う。",
-          description: "サーバー証明書のチェックを行います。" \
-                       "LDAPサーバーには正式証明書が必要になります。",
-          type: :boolean,
-          default: true,
-        }, {
-          name: :base_dn,
-          label: "ベースDN",
-          description: "LDAPのベースです。",
-          type: :string,
-          placeholder: "dc=example,dc=jp",
-        }, {
-          name: :bind_username,
-          label: "接続ユーザー名",
-          type: :string,
-          placeholder: "cn=Admin,dc=example,dc=jp",
-        }, {
-          name: :bind_password,
-          label: "接続ユーザーのパスワード",
-          type: :string,
-          encrypted: true,
-          input: "password",
-        }, {
-          name: :user_name_attr,
-          label: "ユーザー名の属性",
-          type: :string,
-          required: true,
-          placeholder: "cn, uid, name, etc...",
-          description: "ユーザーの検索時に使用されます。",
-        }, {
-          name: :user_display_name_attr,
-          label: "ユーザー表示名の属性",
-          type: :string,
-          required: false,
-          placeholder: "displayName, displayName;lang-ja, etc...",
-          description: "設定しない場合は使われません。",
-        }, {
-          name: :user_email_attr,
-          label: "ユーザーメールの属性",
-          type: :string,
-          required: false,
-          placeholder: "mail, email, maildrop, etc...",
-          description: "設定しない場合は使われません。",
-        }, {
-          name: :user_search_base_dn,
-          label: "ユーザー検索のベースDN",
-          description: "ユーザー検索を行うときのベースです。" \
-                       "指定しない場合はLDAPサーバーのベースから検索します。",
-          type: :string,
-          required: false,
-          placeholder: "ou=Users,dc=example,dc=jp",
-        }, {
-          name: :user_search_scope,
-          label: "ユーザー検索のスコープ",
-          description: "ユーザー検索を行うときのスコープです。" \
-                       "通常は sub を使用します。",
-          type: :string,
-          default: "sub",
-          list: [
-            {name: :base, label: "ベースのみ検索(base)", value: "base"},
-            {name: :one, label: "ベース直下のみ検索(one)", value: "one"},
-            {name: :sub, label: "ベース配下全て検索(sub)", value: "sub"},
-          ],
-        }, {
-          name: :user_search_filter,
-          label: "ユーザー検索のフィルター",
-          description: "ユーザー検索を行うときのフィルターです。" \
-                       "LDAPの形式で指定します。" \
-                       "何も指定しない場合は(objectclass=*)になります。",
-          type: :string,
-          default: "(objectclass=*)",
-          required: false,
-        }, {
-          name: :group_name_attr,
-          label: "グループ名の属性",
-          type: :string,
-          default: "cn",
-          placeholder: "cn",
-        }, {
-          name: :group_name_suffix,
-          label: "グループ名のサフィックス",
-          description: "グループ名にサフィックスがある場合は自動的に追加・除去をします。",
-          type: :string,
-        }, {
-          name: :group_display_name_attr,
-          label: "グループ表示名の属性",
-          type: :string,
-          default: "description",
-          placeholder: "description",
-        }, {
-          name: :group_search_base_dn,
-          label: "グループ検索のベースDN",
-          description: "グループ検索を行うときのベースです。" \
-                       "指定しない場合はLDAPサーバーのベースから検索します。",
-          type: :string,
-          required: false,
-          placeholder: "ou=Groups,dc=example,dc=jp",
-        }, {
-          name: :group_search_scope,
-          label: "グループ検索のスコープ",
-          description: "グループ検索を行うときのスコープです。" \
-                       "通常は sub を使用します。",
-          type: :string,
-          default: "sub",
-          list: [
-            {name: :base, label: "ベースのみ検索(base)", value: "base"},
-            {name: :one, label: "ベース直下のみ検索(one)", value: "one"},
-            {name: :sub, label: "ベース配下全て検索(sub)", value: "sub"},
-          ],
-        }, {
-          name: :group_search_filter,
-          label: "グループ検索のフィルター",
-          description: "ユーザー検索を行うときのフィルターです。" \
-                       "LDAPの形式で指定します。" \
-                       "何も指定しない場合は(objectclass=*)になります。",
-          type: :string,
-          default: "(objectclass=*)",
-          required: false,
-        }, {
-          name: :password_scheme,
-          label: "パスワードのスキーム",
-          description: "パスワード設定時に使うスキームです。" \
-                       "{CRYPT}はソルトフォーマットも選択してください。" \
-                       "対応するスキームはLDAPサーバーの実装によります。",
-          type: :string,
-          required: true,
-          default: "{CRYPT}",
-          list: [
-            {name: :cleartext, label: "{CLEARTEXT} 平文", value: "{CLEARTEXT}",
-             deprecated: true,},
-            {name: :crypt, label: "{CRYPT} CRYPT", value: "{CRYPT}"},
-            {name: :md5, label: "{MD5} MD5", value: "{MD5}", deprecated: true},
-            {name: :sha, label: "{SHA} SHA-1", value: "{SHA}",
-             deprecated: true,},
-            {name: :sha256, label: "{SHA256} SHA-256", value: "{SHA256}",
-             deprecated: true,},
-            {name: :sha512, label: "{SHA512} SHA-512", value: "{SHA512}",
-             deprecated: true,},
-            {name: :smd5, label: "{SMD5} ソルト付MD5", value: "{SMD5}",
-             deprecated: true,},
-            {name: :ssha, label: "{SSHA} ソルト付SHA-1", value: "{SSHA}",
-             deprecated: true,},
-            {name: :ssha256, label: "{SSHA256} ソルト付-SHA256",
-             value: "{SSHA256}",},
-            {name: :ssha512, label: "{SSHA512} ソルト付SHA-512",
-             value: "{SSHA512}",},
-            {name: :pbkdf2_sha1, label: "{PBKDF2-SHA1} PBKDF2 SHA-1",
-             value: "{PBKDF2-SHA1}", deprecated: true,},
-            {name: :pbkdf2_sha256, label: "{PBKDF2-SHA256} PBKDF2 SHA256",
-             value: "{PBKDF2-SHA256}",},
-            {name: :pbkdf2_sha512, label: "{PBKDF2-SHA512} PBKDF2 SHA256",
-             value: "{PBKDF2-SHA512}",},
-          ],
-        }, {
-          name: :crypt_salt_format,
-          label: "CRYPTのソルトフォーマット",
-          description: "パスワードのスキームに{CRYPT}を使用している場合は、" \
-                       "記載のフォーマットでソルト値が作成されます。" \
-                       "対応する形式はサーバーのcryptの実装によります。",
-          type: :string,
-          default: "$6$%.16s",
-          list: [
-            {name: :des, label: "DES", value: "%.2s", deprecated: true},
-            {name: :md5, label: "MD5", value: "$1$%.8s", deprecated: true},
-            {name: :sha256, label: "SHA256", value: "$5$%.16s"},
-            {name: :sha512, label: "SHA512", value: "$6$%.16s"},
-          ],
-        }, {
-          name: :create_user_dn_attr,
-          label: "ユーザー作成時のDNの属性",
-          type: :string,
-          default: "cn",
-          placeholder: "cn",
-        }, {
-          name: :create_user_ou_dn,
-          label: "ユーザー作成時のOUのDN",
-          type: :string,
-          default: "ou=Users,dc=example,dc=jp",
-          placeholder: "ou=Users,dc=example,dc=jp",
-        }, {
-          name: :create_user_object_classes,
-          label: "ユーザー作成時のオブジェクトクラス",
-          description: "オブジェクトクラスをカンマ区切りで入力してください。",
-          type: :string,
-          default: "inetOrgPerson",
-          placeholder: "inetOrgPerson",
-        },
-      ].tap(&Yuzakan::Utils::Object.method(:deep_freeze))
+      # self.params = [
+      #   {
+      #     name: :host,
+      #     label: "サーバーのホスト名/IPアドレス",
+      #     description: "LDAPサーバーのホスト名またはIPアドレスを指定します。",
+      #     type: :string,
+      #     placeholder: "ldap.example.jp",
+      #   }, {
+      #     name: :port,
+      #     label: "ポート",
+      #     description: "LDAPサーバーにアクセスするポート番号をして指定します。" \
+      #                  "指定しない場合は既定値(LDAPは389、LDAPSは636)を使用します。",
+      #     type: :integer,
+      #     required: false,
+      #     placeholder: "389 or 636",
+      #   }, {
+      #     name: :protocol,
+      #     label: "プロトコル/暗号化形式",
+      #     description: "LDAPサーバーにアクセスするプロトコルを指定します。",
+      #     type: :string,
+      #     default: "ldaps",
+      #     list: [
+      #       {name: :ldap, label: "LDAP(平文)", value: "ldap", deprecated: true},
+      #       {name: :ldap_starttls, label: "LDAP+STARTTLS(暗号化)",
+      #        value: "ldap_starttls",},
+      #       {name: :ldaps, label: "LDAPS(暗号化)", value: "ldaps"},
+      #     ],
+      #     input: "radio",
+      #   }, {
+      #     name: :certificate_check,
+      #     label: "証明書チェックを行う。",
+      #     description: "サーバー証明書のチェックを行います。" \
+      #                  "LDAPサーバーには正式証明書が必要になります。",
+      #     type: :boolean,
+      #     default: true,
+      #   }, {
+      #     name: :base_dn,
+      #     label: "ベースDN",
+      #     description: "LDAPのベースです。",
+      #     type: :string,
+      #     placeholder: "dc=example,dc=jp",
+      #   }, {
+      #     name: :bind_username,
+      #     label: "接続ユーザー名",
+      #     type: :string,
+      #     placeholder: "cn=Admin,dc=example,dc=jp",
+      #   }, {
+      #     name: :bind_password,
+      #     label: "接続ユーザーのパスワード",
+      #     type: :string,
+      #     encrypted: true,
+      #     input: "password",
+      #   }, {
+      #     name: :user_name_attr,
+      #     label: "ユーザー名の属性",
+      #     type: :string,
+      #     required: true,
+      #     placeholder: "cn, uid, name, etc...",
+      #     description: "ユーザーの検索時に使用されます。",
+      #   }, {
+      #     name: :user_display_name_attr,
+      #     label: "ユーザー表示名の属性",
+      #     type: :string,
+      #     required: false,
+      #     placeholder: "displayName, displayName;lang-ja, etc...",
+      #     description: "設定しない場合は使われません。",
+      #   }, {
+      #     name: :user_email_attr,
+      #     label: "ユーザーメールの属性",
+      #     type: :string,
+      #     required: false,
+      #     placeholder: "mail, email, maildrop, etc...",
+      #     description: "設定しない場合は使われません。",
+      #   }, {
+      #     name: :user_search_base_dn,
+      #     label: "ユーザー検索のベースDN",
+      #     description: "ユーザー検索を行うときのベースです。" \
+      #                  "指定しない場合はLDAPサーバーのベースから検索します。",
+      #     type: :string,
+      #     required: false,
+      #     placeholder: "ou=Users,dc=example,dc=jp",
+      #   }, {
+      #     name: :user_search_scope,
+      #     label: "ユーザー検索のスコープ",
+      #     description: "ユーザー検索を行うときのスコープです。" \
+      #                  "通常は sub を使用します。",
+      #     type: :string,
+      #     default: "sub",
+      #     list: [
+      #       {name: :base, label: "ベースのみ検索(base)", value: "base"},
+      #       {name: :one, label: "ベース直下のみ検索(one)", value: "one"},
+      #       {name: :sub, label: "ベース配下全て検索(sub)", value: "sub"},
+      #     ],
+      #   }, {
+      #     name: :user_search_filter,
+      #     label: "ユーザー検索のフィルター",
+      #     description: "ユーザー検索を行うときのフィルターです。" \
+      #                  "LDAPの形式で指定します。" \
+      #                  "何も指定しない場合は(objectclass=*)になります。",
+      #     type: :string,
+      #     default: "(objectclass=*)",
+      #     required: false,
+      #   }, {
+      #     name: :group_name_attr,
+      #     label: "グループ名の属性",
+      #     type: :string,
+      #     default: "cn",
+      #     placeholder: "cn",
+      #   }, {
+      #     name: :group_name_suffix,
+      #     label: "グループ名のサフィックス",
+      #     description: "グループ名にサフィックスがある場合は自動的に追加・除去をします。",
+      #     type: :string,
+      #   }, {
+      #     name: :group_display_name_attr,
+      #     label: "グループ表示名の属性",
+      #     type: :string,
+      #     default: "description",
+      #     placeholder: "description",
+      #   }, {
+      #     name: :group_search_base_dn,
+      #     label: "グループ検索のベースDN",
+      #     description: "グループ検索を行うときのベースです。" \
+      #                  "指定しない場合はLDAPサーバーのベースから検索します。",
+      #     type: :string,
+      #     required: false,
+      #     placeholder: "ou=Groups,dc=example,dc=jp",
+      #   }, {
+      #     name: :group_search_scope,
+      #     label: "グループ検索のスコープ",
+      #     description: "グループ検索を行うときのスコープです。" \
+      #                  "通常は sub を使用します。",
+      #     type: :string,
+      #     default: "sub",
+      #     list: [
+      #       {name: :base, label: "ベースのみ検索(base)", value: "base"},
+      #       {name: :one, label: "ベース直下のみ検索(one)", value: "one"},
+      #       {name: :sub, label: "ベース配下全て検索(sub)", value: "sub"},
+      #     ],
+      #   }, {
+      #     name: :group_search_filter,
+      #     label: "グループ検索のフィルター",
+      #     description: "ユーザー検索を行うときのフィルターです。" \
+      #                  "LDAPの形式で指定します。" \
+      #                  "何も指定しない場合は(objectclass=*)になります。",
+      #     type: :string,
+      #     default: "(objectclass=*)",
+      #     required: false,
+      #   }, {
+      #     name: :password_scheme,
+      #     label: "パスワードのスキーム",
+      #     description: "パスワード設定時に使うスキームです。" \
+      #                  "{CRYPT}はソルトフォーマットも選択してください。" \
+      #                  "対応するスキームはLDAPサーバーの実装によります。",
+      #     type: :string,
+      #     required: true,
+      #     default: "{CRYPT}",
+      #     list: [
+      #       {name: :cleartext, label: "{CLEARTEXT} 平文", value: "{CLEARTEXT}",
+      #        deprecated: true,},
+      #       {name: :crypt, label: "{CRYPT} CRYPT", value: "{CRYPT}"},
+      #       {name: :md5, label: "{MD5} MD5", value: "{MD5}", deprecated: true},
+      #       {name: :sha, label: "{SHA} SHA-1", value: "{SHA}",
+      #        deprecated: true,},
+      #       {name: :sha256, label: "{SHA256} SHA-256", value: "{SHA256}",
+      #        deprecated: true,},
+      #       {name: :sha512, label: "{SHA512} SHA-512", value: "{SHA512}",
+      #        deprecated: true,},
+      #       {name: :smd5, label: "{SMD5} ソルト付MD5", value: "{SMD5}",
+      #        deprecated: true,},
+      #       {name: :ssha, label: "{SSHA} ソルト付SHA-1", value: "{SSHA}",
+      #        deprecated: true,},
+      #       {name: :ssha256, label: "{SSHA256} ソルト付-SHA256",
+      #        value: "{SSHA256}",},
+      #       {name: :ssha512, label: "{SSHA512} ソルト付SHA-512",
+      #        value: "{SSHA512}",},
+      #       {name: :pbkdf2_sha1, label: "{PBKDF2-SHA1} PBKDF2 SHA-1",
+      #        value: "{PBKDF2-SHA1}", deprecated: true,},
+      #       {name: :pbkdf2_sha256, label: "{PBKDF2-SHA256} PBKDF2 SHA256",
+      #        value: "{PBKDF2-SHA256}",},
+      #       {name: :pbkdf2_sha512, label: "{PBKDF2-SHA512} PBKDF2 SHA256",
+      #        value: "{PBKDF2-SHA512}",},
+      #     ],
+      #   }, {
+      #     name: :crypt_salt_format,
+      #     label: "CRYPTのソルトフォーマット",
+      #     description: "パスワードのスキームに{CRYPT}を使用している場合は、" \
+      #                  "記載のフォーマットでソルト値が作成されます。" \
+      #                  "対応する形式はサーバーのcryptの実装によります。",
+      #     type: :string,
+      #     default: "$6$%.16s",
+      #     list: [
+      #       {name: :des, label: "DES", value: "%.2s", deprecated: true},
+      #       {name: :md5, label: "MD5", value: "$1$%.8s", deprecated: true},
+      #       {name: :sha256, label: "SHA256", value: "$5$%.16s"},
+      #       {name: :sha512, label: "SHA512", value: "$6$%.16s"},
+      #     ],
+      #   }, {
+      #     name: :create_user_dn_attr,
+      #     label: "ユーザー作成時のDNの属性",
+      #     type: :string,
+      #     default: "cn",
+      #     placeholder: "cn",
+      #   }, {
+      #     name: :create_user_ou_dn,
+      #     label: "ユーザー作成時のOUのDN",
+      #     type: :string,
+      #     default: "ou=Users,dc=example,dc=jp",
+      #     placeholder: "ou=Users,dc=example,dc=jp",
+      #   }, {
+      #     name: :create_user_object_classes,
+      #     label: "ユーザー作成時のオブジェクトクラス",
+      #     description: "オブジェクトクラスをカンマ区切りで入力してください。",
+      #     type: :string,
+      #     default: "inetOrgPerson",
+      #     placeholder: "inetOrgPerson",
+      #   },
+      # ].tap(&Yuzakan::Utils::Object.method(:deep_freeze))
 
       class << self
         attr_accessor :multi_attrs, :hide_attrs

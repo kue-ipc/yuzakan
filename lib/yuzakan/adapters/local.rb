@@ -3,12 +3,10 @@
 module Yuzakan
   module Adapters
     class Local < Yuzakan::Adapter
-      self.name = "local"
-      self.display_name = "ローカル"
-      self.version = "0.0.2"
-      self.params = [].freeze
-
-      group :primary
+      version "0.1.0"
+      group true
+      primary true
+      json {} # rubocop:disable Lint/EmptyBlock
 
       def initialize(params, container: ::Local::Slice, **)
         super(params, **)
