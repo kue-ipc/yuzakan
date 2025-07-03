@@ -12,9 +12,14 @@ require "google/apis/admin_directory_v1"
 module Yuzakan
   module Adapters
     class Google < Yuzakan::Adapter
-      self.name = "google"
-      self.display_name = "Google Workspace"
-      self.version = "0.0.1"
+      version "0.0.1"
+
+      json do
+        required(:domain).filled(:str?, max_size?: 255)
+        required(:account).filled(:str?, max_size?: 255)
+        required(:json_key).filled(:str?)
+      end
+
       self.params = [
         {
           name: :domain,

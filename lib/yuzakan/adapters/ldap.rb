@@ -13,9 +13,32 @@ require "net/ldap/dn"
 module Yuzakan
   module Adapters
     class Ldap < Yuzakan::Adapter
-      self.name = "ldap"
-      self.display_name = "LDAP"
-      self.version = "0.0.1"
+      version "0.1.0"
+      group true
+
+      json do
+        required(:host).filled(:str?, max_size?: 255)
+        optional(:port).value(:int?, gt?: 0, lt?: 65535)
+        optional(:protocol).value(included_in?: %w[ldap_starttls ldaps ldap])
+        optional(:certificate_check).value(:bool?)
+        required(:base_dn).filled(:str?, max_size?: 255)
+        required(:bind_username).filled(:str?, max_size?: 255)
+        required(:user_name_attr).filled(:str?, max_size?: 255)
+        optional(:user_display_name_attr).value(:str?, max_size?: 255)
+        optional(:user_email_attr).value(:str?, max_size?: 255)
+        optional(:user_search_base_dn).value(:str?, max_size?: 255)
+        optional(:user_search_scope).value(included_in?: %w[base one sub])
+        optional(:user_search_filter).value(:str?, max_size?: 255)
+        required(:group_name_attr).filled(:str?, max_size?: 255)
+        optional(:group_name_suffix).value(:str?, max_size?: 255)
+        required(:group_display_name_attr).filled(:str?, max_size?: 255)
+        optional(:group_search_base_dn).value(:str?, max_size?: 255)
+        optional(:group_search_scope).value(included_in?: %w[base one sub])
+        optional(:group_search_filter).value(:str?, max_size?: 255)
+      end
+
+
+
       self.params = [
         {
           name: :host,
@@ -242,8 +265,6 @@ module Yuzakan
       self.multi_attrs = Yuzakan::Utils::DowncaseStringSet.new(%w[objectClass
         member memberOf])
       self.hide_attrs = Yuzakan::Utils::DowncaseStringSet.new(%w[userPassword])
-
-      group true
 
       # = 標準メソッド(抽象クラスの上書き)
 

@@ -467,6 +467,22 @@ ja:
         password_confirmation: パスワードの確認
         providers: 対象サービス
   adapters:
+    ad:
+      label: Active Directory
+    dummy:
+      label: ダミー
+    google:
+      label: Google Workspace
+    ldap:
+      label: LDAP
+    local:
+      label: ローカル
+    mock:
+      label: モック
+    posix_ldap:
+      label: Posix LDAP
+    samba_ldap:
+      label: Samba LDAP
     test:
       label: テスト
       params:

@@ -3,12 +3,11 @@
 module Yuzakan
   module Adapters
     class Dummy < Yuzakan::Adapter
-      self.name = "dummy"
-      self.display_name = "ダミー"
-      self.version = "0.0.1"
-      self.params = [].freeze
-
+      version "0.1.0"
       hidden Hanami.env?(:production)
+
+      json do
+      end
     end
   end
 end

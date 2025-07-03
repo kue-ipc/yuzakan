@@ -30,27 +30,26 @@ module API
             item => [[:predicate, [:key?, [[:name, name], [:input, _undefined]]]], [:key, [_name, Array => ast]]]
             {
               name:,
-              lable: context.t("adapters.#{value.adapter_name}.params.#{name}.label", default: name.to_s),
+              label: context.t("adapters.#{value.adapter_name}.params.#{name}.label", default: name.to_s),
               description: context.t("adapters.#{value.adapter_name}.params.#{name}.description", default: nil),
               required:,
-              **parse_ast(ast),
+              **parse_ast(ast, name),
             }
           end
         end
 
-        private def parse_ast(ast)
-          warn ast.inspect
+        private def parse_ast(ast, name)
           case ast
           in [:predicate, predicate]
-            convert_predicate(predicate)
+            convert_predicate(predicate, name)
           in [:and, Array => nested_asts]
-            {}.merge(*nested_asts.map { |nested_ast| parse_ast(nested_ast) })
+            {}.merge(*nested_asts.map { |nested_ast| parse_ast(nested_ast, name) })
           in [:implication, [:not, [:predicate, [:nil?, [[:input, _undefined]]]]], nested_ast]
-            {**parse_ast(nested_ast), maybe: true}
+            {**parse_ast(nested_ast, name), maybe: true}
           end
         end
 
-        private def convert_predicate(predicate)
+        private def convert_predicate(predicate, name)
           # https://dry-rb.org/gems/dry-schema/main/basics/built-in-predicates/
           case predicate
           in [:str?, [[:input, _undefined]]] then {type: "string"}
@@ -64,20 +63,24 @@ module API
           in [:array?, [[:input, _undefined]]] then {type: "array"}
           in [:hash?, [[:input, _undefined]]] then {type: "hash"}
           in [:nil?, [[:input, _undefined]]] then {type: "null"}
-          in [:eql?, [[:left, value], [:right, _undefined]]] then {value:}
+          in [:eql?, [[:left, left], [:right, _undefined]]] then {value: left}
           in [:empty?, [[:input, _undefined]]] then {empty: true}
           in [:filled?, [[:input, _undefined]]] then {filled: true}
-          # in [:gt?, [[:num, Numeric => value], [:input, _undefined]]] then {min: value}
-          in [:gteq?, [[:num, Numeric => value], [:input, _undefined]]] then {min: value}
-          # in [:lt?, [[:num, Numeric => value], [:input, _undefined]]] then {max: value}
-          in [:lteq?, [[:num, Numeric => value], [:input, _undefined]]] then {max: value}
-          in [:max_size?, [[:num, Numeric => value], [:input, _undefined]]] then {maxlength: value}
-          in [:min_size?, [[:num, Numeric => value], [:input, _undefined]]] then {minlength: value}
-          in [:size?, [[:size, Numeric => value], [:input, _undefined]]] then {minlength: value, maxlength: value}
-          in [:size?, [[:size, Range => value], [:input, _undefined]]] then {minlength: value.min, maxlength: value.max}
-          in [:format?, [[:regex, Regexp => value], [:input, _undefined]]] then {format: value.source}
-          in [:includeded_in?, [[:list, Array => value], [:input, _undefined]]] then {included_in: value}
-          in [:excluded_from?, [[:list, Array => value], [:input, _undefined]]] then {excluded_from: value}
+          in [:gt?, [[:num, Integer => num], [:input, _undefined]]] then {min: num + 1}
+          in [:gteq?, [[:num, Numeric => num], [:input, _undefined]]] then {min: num}
+          in [:lt?, [[:num, Integer => num], [:input, _undefined]]] then {max: num - 1}
+          in [:lteq?, [[:num, Numeric => num], [:input, _undefined]]] then {max: num}
+          in [:max_size?, [[:num, Integer => num], [:input, _undefined]]] then {maxlength: num}
+          in [:min_size?, [[:num, Integer => num], [:input, _undefined]]] then {minlength: num}
+          in [:size?, [[:size, Integer => size], [:input, _undefined]]] then {minlength: size, maxlength: size}
+          in [:size?, [[:size, Range => size], [:input, _undefined]]] then {minlength: size.min, maxlength: size.max}
+          in [:format?, [[:regex, Regexp => regex], [:input, _undefined]]] then {format: regex.source}
+          in [:included_in?, [[:list, Array => list], [:input, _undefined]]]
+            list = list.map do |item|
+              {name: item, label: context.t("adapters.#{value.adapter_name}.params.#{name}.list.#{item}")}
+            end
+            {list:}
+            # in [:excluded_from?, [[:list, Array => value], [:input, _undefined]]] then {excluded_from: value}
           end
         end
       end

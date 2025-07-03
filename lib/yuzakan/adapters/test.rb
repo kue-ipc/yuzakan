@@ -5,15 +5,24 @@ require "yaml"
 module Yuzakan
   module Adapters
     class Test < Yuzakan::Adapter
-      version "0.0.1"
+      version "0.1.0"
       hidden Hanami.env?(:production)
       group true
       primary true
 
       json do
-        required(:str).filled(:string, max_size?: 255)
-        optional(:text).filled(:string)
-        required(:int).filled(:integer)
+        optional(:str).value(:str?, max_size?: 255)
+        optional(:text).value(:str?)
+        optional(:int).value(:int?)
+        optional(:float).value(:float?)
+        optional(:bool).value(:bool?)
+        optional(:date).value(:date?)
+        optional(:time).value(:time?)
+        optional(:datetime).value(:date_time?)
+        required(:required_str).filled(:str?, max_size?: 255)
+        optional(:pattern_str).value(:str?, format?: /\A[a-z]*\z/, max_size?: 255)
+        optional(:fixed_str).value(:str?, eql?: "abc")
+        optional(:list).value(:str?, included_in?: %w[one two three])
       end
 
       # self.params = [

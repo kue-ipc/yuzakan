@@ -5,9 +5,16 @@ require "securerandom"
 module Yuzakan
   module Adapters
     class AD < Ldap
-      self.name = "ad"
-      self.display_name = "Active Directory"
-      self.version = "0.0.1"
+      version "0.1.0"
+      group true
+
+      json do
+        required(:host).filled(:str?, max_size?: 255)
+        optional(:port).value(:int?, gt?: 0, lt?: 65535)
+        optional(:protocol).value(included_in?: %w[ldap ldaps])
+        optional(:certificate_check).value(:bool?)
+        required(:bind_username).filled(:str?, max_size?: 255)
+      end
       self.params = [
         {
           name: :host,
@@ -76,8 +83,6 @@ module Yuzakan
 
       self.multi_attrs = Ldap.multi_attrs
       self.hide_attrs = Ldap.hide_attrs
-
-      group true
 
       # override
       private def run_after_user_create(user, password: nil, **userdata)
