@@ -58,15 +58,20 @@
 
 require "logger"
 require "dry/core/class_attributes"
+require "dry/configurable"
 require "hanami/utils/string"
 
 module Yuzakan
   class Adapter
+    extend Dry::Configurable
     extend Dry::Core::ClassAttributes
 
     # nested classes
 
     class AdapterError < StandardError
+    end
+
+    class VlaidationError < StandardError
     end
 
     UserData = Data.define(:name, :primary_group, :groups,
@@ -85,104 +90,98 @@ module Yuzakan
       end
     end
 
-    class Params < Hanami::Action::Params
-      def self.params(&block)
-        @_contract = Class.new(Yuzakan::ValidationContract) do
-          params(&block || -> {})
-        end.new
-      end
-    end
-
     # class attributes and methods
 
-    define :adatper_name, :version, type: Dry::Types["strict.string"]
-    define :abstract, :hidden, type: Dry::Types["strict.bool"]
-    define :group, :primary, type: Dry::Types["strict.bool"]
+    setting :contract_class
 
-    class << self
-      def inherited(subclass)
-        super
-        subclass.adatper_name Hanmai::Utils::String.underscore(Hanami::Utils::String.demodulize(subclass.name))
-        subclass.display_name Hanmai::Utils::String.titleize(Hanami::Utils::String.demodulize(subclass.name))
-        subclass.version "0.0.0"
-        subclass.abstract false
-        subclass.hidden false
-        subclass.group false
-        subclass.primary false
-        subclass.params nil
-      end
+    defines :version, type: Dry::Types["strict.string"]
+    defines :abstract, :hidden, type: Dry::Types["strict.bool"]
+    defines :group, :primary, type: Dry::Types["strict.bool"]
 
-      def label
-        Hanami.app["i18n"].t("adapters.#{adatper_name}.label", default: adatper_name)
-      end
+    version "0.0.0"
+    abstract false
+    hidden false
+    group false
+    primary false
 
-      def abstract?
-        !!abstract
-      end
-
-      def hidden?
-        !!hidden
-      end
-
-      def selectable?
-        !(abstract || hidden)
-      end
-
-      def has_group?
-        !!group
-      end
-
-      def has_primary_group?
-        group && primary
-      end
-
-      def params(klass = nil, &block)
-        contract_class =
-          if klass.nil?
-            Class.new(Yuzakan::ValidationContract) { params(&block) }
-          elsif klass < Yuzakan::Adatper::Params
-            # Handle subclasses of Hanami::Action::Params.
-            klass._contract.class
-          else
-            klass
-          end
-
-        config.contract_class = contract_class
-      end
-
-
-      # TODO: 古いparams
-      def param_types
-        @param_types ||= params&.map do |data|
-          ParamType.new(**data)
-        end
-      end
-
-      def param_type_by_name(name)
-        param_types_map.fetch(name)
-      end
-
-      def param_types_map
-        @param_types_map ||= param_types&.to_h do |type|
-          [type.name, type]
-        end
-      end
-
-      def normalize_params(params)
-        params = params.to_h(&:to_a) if params.is_a?(Array)
-        params = params.transform_keys(&:intern)
-        param_types.to_h do |param_type|
-          [param_type.name, param_type.load_value(params[param_type.name])]
-        end
-      end
+    def self.adapter_name
+      @adapter_name ||= Hanami::Utils::String.underscore(Hanami::Utils::String.demodulize(name))
     end
 
-    abstract true
+    def self.label
+      Hanami.app["i18n"].t("adapters.#{adapter_name}.label", default: adapter_name)
+    end
+
+    def self.abstract?
+      !!abstract
+    end
+
+    def self.hidden?
+      !!hidden
+    end
+
+    def self.selectable?
+      !(abstract || hidden)
+    end
+
+    def self.has_group?
+      !!group
+    end
+
+    def self.has_primary_group?
+      group && primary
+    end
+
+    # define validation contract use JSON schema
+    def self.json(&block)
+      config.contract_class = Class.new(Yuzakan::Validation::Contract) { json(&block) }
+    end
+
+    def self.validate(params)
+      raise "Contract class is not defined. Use `json` method to define it." if config.contract_class.nil?
+
+      config.contract_class.new.call(params)
+    end
+
+    def self.schema
+      raise "Contract class is not defined. Use `json` method to define it." if config.contract_class.nil?
+
+      config.contract_class.schema
+    end
+
+    # TODO: 古いparams
+    # def param_types
+    #   @param_types ||= params&.map do |data|
+    #     ParamType.new(**data)
+    #   end
+    # end
+
+    # def param_type_by_name(name)
+    #   param_types_map.fetch(name)
+    # end
+
+    # def param_types_map
+    #   @param_types_map ||= param_types&.to_h do |type|
+    #     [type.name, type]
+    #   end
+    # end
+
+    # def normalize_params(params)
+    #   params = params.to_h(&:to_a) if params.is_a?(Array)
+    #   params = params.transform_keys(&:intern)
+    #   param_types.to_h do |param_type|
+    #     [param_type.name, param_type.load_value(params[param_type.name])]
+    #   end
+    # end
+
+    # abstract true
 
     attr_reader :logger
 
     def initialize(params, group: false, logger: Logger.new($stderr))
-      @params = self.class.normalize_params(params)
+      @params = self.class.validate(params)
+      raise VlaidationError, @params.errors.to_h if @params.failure?
+
       @group = group
       @logger = logger
     end

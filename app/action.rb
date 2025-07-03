@@ -14,14 +14,14 @@ module Yuzakan
     #        ため、configを設定した任意のサブクラスでContractが作られない。
     class Params < Hanami::Action::Params
       def self.params(&block)
-        @_contract = Class.new(Yuzakan::ValidationContract) { params(&block || -> {}) }.new
+        @_contract = Class.new(Yuzakan::Validation::ActionContract) { params(&block || -> {}) }.new
       end
     end
 
     def self.params(klass = nil, &block)
       contract_class =
         if klass.nil?
-          Class.new(Yuzakan::ValidationContract) { params(&block) }
+          Class.new(Yuzakan::Validation::ActionContract) { params(&block) }
         elsif klass < Hanami::Action::Params
           # Handle subclasses of Hanami::Action::Params.
           klass._contract.class

@@ -4,7 +4,7 @@ module API
   module Views
     module Adapters
       class Index < API::View
-        expose :adatpers
+        expose :adapters
       end
     end
   end
