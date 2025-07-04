@@ -123,7 +123,7 @@ def init_action_spec
       expect(response.status).to eq 404
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({status: {code: 404, message: "Not Found"}, flash: {invalid: {id: ["存在しません。"]}}})
+      expect(json).to eq({status: {code: 404, message: "Not Found"}})
     end
   end
 

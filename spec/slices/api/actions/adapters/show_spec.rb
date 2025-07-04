@@ -4,6 +4,23 @@ RSpec.describe API::Actions::Adapters::Show do
   init_action_spec
 
   let(:action_params) { {id: id} }
+
+  let(:action_opts) { {adapter_map: adapter_map} }
+
+  let(:adapter_map) {
+    {
+      ad: Yuzakan::Adapters::AD,
+      dummy: Yuzakan::Adapters::Dummy,
+      google: Yuzakan::Adapters::Google,
+      ldap: Yuzakan::Adapters::Ldap,
+      local: Yuzakan::Adapters::Local,
+      mock: Yuzakan::Adapters::Mock,
+      posix_ldap: Yuzakan::Adapters::PosixLdap,
+      samba_ldap: Yuzakan::Adapters::SambaLdap,
+      test: Yuzakan::Adapters::Test,
+    }
+  }
+
   let(:id) { "dummy" }
 
   shared_examples "ok" do
@@ -13,7 +30,7 @@ RSpec.describe API::Actions::Adapters::Show do
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({name: "dummy", displayName: "ダミー", group: false})
+      expect(json[:data]).to eq({name: "dummy", label: "ダミー"})
     end
 
     it "is successful with test adapter" do
@@ -22,7 +39,7 @@ RSpec.describe API::Actions::Adapters::Show do
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({name: "test", displayName: "テスト", group: true})
+      expect(json[:data]).to eq({name: "test", label: "テスト"})
     end
   end
 
@@ -33,7 +50,13 @@ RSpec.describe API::Actions::Adapters::Show do
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({name: "dummy", displayName: "ダミー", group: false, paramTypes: []})
+      expect(json[:data]).to eq({
+        name: "dummy",
+        label: "ダミー",
+        group: false,
+        primary: false,
+        params: {schema: {type: "object", properties: {}, required: []}},
+      })
     end
 
     it "is successful with test adapter" do
@@ -44,31 +67,30 @@ RSpec.describe API::Actions::Adapters::Show do
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:data]).to eq({
         name: "test",
-        displayName: "テスト",
+        label: "テスト",
         group: true,
-        paramTypes: [
-          {name: "default", displayName: "default", description: nil, type: "string", default: nil, fixed: false,
-           encrypted: false, input: "text", list: nil, required: true, placeholder: nil,},
-          {name: "str", displayName: "文字列", description: "詳細", type: "string", default: nil, fixed: false,
-           encrypted: false, input: "text", list: nil, required: true, placeholder: "プレースホルダー",},
-          {name: "str_default", displayName: "デフォルト値", description: nil, type: "string", default: "デフォルト", fixed: false, encrypted: false, input: "text", list: nil, required: false, placeholder: "デフォルト"},
-          {name: "str_fixed", displayName: "固定値", description: nil, type: "string", default: "固定", fixed: true,
-           encrypted: false, input: "text", list: nil, required: false, placeholder: "固定",},
-          {name: "str_required", displayName: "必須文字列", description: nil, type: "string", default: nil, fixed: false,
-           encrypted: false, input: "text", list: nil, required: true, placeholder: nil,},
-          {name: "str_enc", displayName: "暗号文字列", description: nil, type: "string", default: nil, fixed: false,
-           encrypted: true, input: "text", list: nil, required: true, placeholder: nil,},
-          {name: "text", displayName: "テキスト", description: nil, type: "text", default: nil, fixed: false,
-           encrypted: false, input: "textarea", list: nil, required: true, placeholder: nil,},
-          {name: "int", displayName: "整数", description: nil, type: "integer", default: nil, fixed: false,
-           encrypted: false, input: "number", list: nil, required: true, placeholder: nil,},
-          {name: "list", displayName: "リスト", description: nil, type: "string", default: "default", fixed: false,
-           encrypted: false, input: "text", list: [
-             {name: "default", displayName: "デフォルト", value: "default", deprecated: false},
-             {name: "other", displayName: "その他", value: "other", deprecated: false},
-             {name: "deprecated", displayName: "非推奨", value: "deprecated", deprecated: true},
-           ], required: false, placeholder: "default",},
-        ],
+        primary: true,
+        params: {schema: {
+          type: "object",
+          properties: {
+            str: {title: "文字列", description: "詳細", type: "string", maxLength: 255},
+            text: {type: "string"},
+            int: {type: "integer"},
+            float: {type: "number"},
+            bool: {type: "boolean"},
+            date: {type: "date"},
+            time: {type: "time"},
+            datetime: {type: "datetime"},
+            requiredStr: {type: "string", maxLength: 255},
+            filledStr: {type: "string", minLength: 1, maxLength: 255},
+            patternStr: {type: "string", maxLength: 255, pattern: "^[a-z]*$"},
+            fixedStr: {type: "string", const: "abc"},
+            defaultStr: {type: "string", maxLength: 255, default: "xyz"},
+            encryptedStr: {type: "string", maxLength: 255},
+            list: {type: "string", enum: ["one", "two", "three"]},
+          },
+          required: ["requiredStr"],
+        }},
       })
     end
   end
@@ -108,7 +130,7 @@ RSpec.describe API::Actions::Adapters::Show do
     end
   end
 
-  # TODO: 本当にparamsTypesが必要か？
+  # TODO: 本当にparamsが必要か？
   context "when administrator" do
     include_context "when administrator"
     it_behaves_like "ok with params type"

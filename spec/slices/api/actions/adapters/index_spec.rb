@@ -3,11 +3,7 @@
 RSpec.describe API::Actions::Adapters::Index do
   init_action_spec
 
-  let(:action_opts) {
-    {
-      adapter_map: adapter_map,
-    }
-  }
+  let(:action_opts) { {adapter_map: adapter_map} }
 
   let(:adapter_map) {
     {

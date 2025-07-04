@@ -8,38 +8,21 @@ module API
       class Show < API::Action
         include Deps["adapter_map"]
 
-        params IdParams
-
-        def handle(_request, _response)
-          unless params.valid?
-            halt_json 400,
-              errors: [only_first_errors(params.errors)]
-          end
-
-          @adapter = adapters[params[:id]]
-          halt_json 404 unless @adapter
-
-          fresh etag: etag
-
-          self.body =
-            if current_level >= 5
-              generate_json({
-                name: @adapter.name,
-                label: @adapter.label,
-                group: @adapter.has_group?,
-                param_types: @adapter.param_types,
-              })
-            else
-              generate_json({
-                name: @adapter.name,
-                label: @adapter.label,
-                group: @adapter.has_group?,
-              })
-            end
+        params do
+          required(:id).filled(:name, max_size?: 255)
         end
 
-        private def etag
-          Digest::MD5.hexdigest("#{@adapter.name}-#{@adapter.version}")
+        def handle(request, response)
+          unless request.params.valid?
+            response.flash[:invalid] = request.params.errors
+            halt_json request, response, 422
+          end
+
+          id = request.params[:id]
+          adapter = adapter_map[id.intern]
+          halt_json request, response, 404 unless adapter
+
+          response[:adapter] = adapter
         end
       end
     end
