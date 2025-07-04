@@ -5,7 +5,8 @@ module Yuzakan
     class Local < Yuzakan::Adapter
       version "0.1.0"
       group true
-      primary true
+      primary_group true
+
       json {} # rubocop:disable Lint/EmptyBlock
 
       def initialize(params, container: ::Local::Slice, **)

@@ -12,7 +12,7 @@ module Yuzakan
     class SambaLdap < PosixLdap
       version "0.1.0"
       group true
-      primary true
+      primary_group true
 
       json do
         required(:samba_domain_sid).filled(:str?, max_size?: 255)

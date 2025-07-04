@@ -8,7 +8,7 @@ module Yuzakan
       version "0.1.0"
       hidden Hanami.env?(:production)
       group true
-      primary true
+      primary_group true
 
       json do
         optional(:str).value(:str?, max_size?: 255)
@@ -19,12 +19,17 @@ module Yuzakan
         optional(:date).value(:date?)
         optional(:time).value(:time?)
         optional(:datetime).value(:date_time?)
-        required(:required_str).filled(:str?, max_size?: 255)
+        required(:required_str).value(:str?, max_size?: 255)
+        optional(:filled_str).filled(:str?, max_size?: 255)
         optional(:pattern_str).value(:str?, format?: /\A[a-z]*\z/, max_size?: 255)
         optional(:fixed_str).value(:str?, eql?: "abc")
         optional(:default_str).value(:str?, max_size?: 255)
+        optional(:encrypted_str).value(:str?, max_size?: 255)
         optional(:list).value(:str?, included_in?: %w[one two three])
       end
+
+      set_default_param :default_str, "xyz"
+      add_encrypted_key :encrypted_str
 
       # self.params = [
       #   {

@@ -39,6 +39,7 @@ RSpec.describe API::Views::Parts::Adapter do
           patternStr: {type: "string", pattern: "^[a-z]*$", maxLength: 255},
           fixedStr: {type: "string", const: "abc"},
           defaultStr: {type: "string", defalut: "xyz", maxLength: 255},
+          encryptedStr: {type: "string", maxLength: 255},
           list: {type: "string", enum: ["one", "two", "three"]},
         },
         required: ["requiredStr"],

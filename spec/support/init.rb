@@ -214,7 +214,7 @@ def let_mock_repos
 end
 
 def create_struct(struct_name, factory_name = nil)
-  inflector = Yuzakan::App["inflector"]
+  inflector = Hanami.app["inflector"]
   factory_name ||= struct_name.intern
   class_name = inflector.classify(struct_name)
   if Yuzakan::Structs.const_defined?(class_name)

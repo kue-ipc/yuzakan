@@ -93,16 +93,18 @@ module Yuzakan
     # class attributes and methods
 
     setting :contract_class
+    setting :encrypted_keys, default: []
+    setting :default_params, default: {}
 
     defines :version, type: Dry::Types["strict.string"]
     defines :abstract, :hidden, type: Dry::Types["strict.bool"]
-    defines :group, :primary, type: Dry::Types["strict.bool"]
+    defines :group, :primary_group, type: Dry::Types["strict.bool"]
 
     version "0.0.0"
     abstract false
     hidden false
     group false
-    primary false
+    primary_group false
 
     def self.adapter_name
       @adapter_name ||= Hanami::Utils::String.underscore(Hanami::Utils::String.demodulize(name))
@@ -129,7 +131,7 @@ module Yuzakan
     end
 
     def self.has_primary_group?
-      group && primary
+      group && primary_group
     end
 
     # define validation contract use JSON schema
@@ -149,39 +151,49 @@ module Yuzakan
       config.contract_class.schema
     end
 
-    # TODO: 古いparams
-    # def param_types
-    #   @param_types ||= params&.map do |data|
-    #     ParamType.new(**data)
-    #   end
-    # end
+    # set deafault parameter value
+    def self.set_default_param(name, value)
+      config.default_params[name] = value
+    end
 
-    # def param_type_by_name(name)
-    #   param_types_map.fetch(name)
-    # end
+    def self.default_params
+      config.default_params
+    end
 
-    # def param_types_map
-    #   @param_types_map ||= param_types&.to_h do |type|
-    #     [type.name, type]
-    #   end
-    # end
+    # add encrypted key
+    def self.add_encrypted_key(name)
+      config.encrypted_keys << name
+    end
 
-    # def normalize_params(params)
-    #   params = params.to_h(&:to_a) if params.is_a?(Array)
-    #   params = params.transform_keys(&:intern)
-    #   param_types.to_h do |param_type|
-    #     [param_type.name, param_type.load_value(params[param_type.name])]
-    #   end
-    # end
+    def self.encrypted_keys
+      config.encrypted_keys
+    end
 
-    # abstract true
+    # parse and validate parameters
+    def self.parse_params(params)
+      validated_params = validate(params)
+      raise VlaidationError, validated_params.errors.to_h if validated_params.failure?
 
-    attr_reader :logger
+      default_params(validated_params.to_h).to_h do |key, value|
+        if encrypted_keys.include?(key)
+          case Hanami.app["operations.decrypt"].call(value)
+          in Success(decrypted_value)
+            [key, decrypted_value]
+          in Failure[:error, e]
+            raise AdapterError, "Failed to decrypt value for key '#{key}': #{e.message}"
+          end
+        else
+          [key, value]
+        end
+      end
+    end
+
+    # instance attributes and methods
+
+    attr_reader :params, :group, :logger
 
     def initialize(params, group: false, logger: Logger.new($stderr))
-      @params = self.class.validate(params)
-      raise VlaidationError, @params.errors.to_h if @params.failure?
-
+      @params = self.class.parse_params(params).freeze
       @group = group
       @logger = logger
     end

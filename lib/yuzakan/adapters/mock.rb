@@ -10,7 +10,7 @@ module Yuzakan
       version "0.1.0"
       hidden Hanami.env?(:production)
       group true
-      primary true
+      primary_group true
 
       json do
         required(:check).filled(:bool?)

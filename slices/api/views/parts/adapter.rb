@@ -51,6 +51,7 @@ module API
           {
             title: context.t("adapters.#{value.adapter_name}.params.#{name}.label", default: nil),
             description: context.t("adapters.#{value.adapter_name}.params.#{name}.description", default: nil),
+            default: value.default_params[name],
             **parse_ast(ast, name),
           }.compact
         end
@@ -99,10 +100,17 @@ module API
             {minLength: size, maxLength: size}
           in [:size? | :bytesize?, [[:size, Range => size], [:input, _undefined]]]
             {minLength: size.min, maxLength: size.max}
-          in [:format?, [[:regex, Regexp => regex], [:input, _undefined]]] then {format: regex.source}
+          in [:format?, [[:regex, Regexp => regex], [:input, _undefined]]]
+            {pattern: ruby_regex_to_js_regex(regex)}
           in [:empty?, [[:input, _undefined]]] then {maxLength: 0}
           in [:filled?, [[:input, _undefined]]] then {minLength: 1}
           end
+        end
+
+        private def ruby_regex_to_js_regex(ruby_regex)
+          ruby_regex.source
+            .sub(/\A\\A/, "^")
+            .sub(/\\z\z/, "$")
         end
       end
     end

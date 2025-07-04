@@ -8,7 +8,7 @@ module Yuzakan
     class PosixLdap < Ldap
       version "0.1.0"
       group true
-      primary true
+      primary_group true
 
       json do
         required(:host).filled(:str?, max_size?: 255)
