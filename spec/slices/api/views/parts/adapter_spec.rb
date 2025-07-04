@@ -26,7 +26,7 @@ RSpec.describe API::Views::Parts::Adapter do
       params: {schema: {
         type: "object",
         properties: {
-          str: {title: "文字列",description: "詳細", type: "string", maxLength: 255},
+          str: {title: "文字列", description: "詳細", type: "string", maxLength: 255},
           text: {type: "string"},
           int: {type: "integer"},
           float: {type: "number"},
@@ -36,9 +36,9 @@ RSpec.describe API::Views::Parts::Adapter do
           datetime: {type: "datetime"},
           requiredStr: {type: "string", maxLength: 255},
           filledStr: {type: "string", minLength: 1, maxLength: 255},
-          patternStr: {type: "string", pattern: "^[a-z]*$", maxLength: 255},
+          patternStr: {type: "string", maxLength: 255, pattern: "^[a-z]*$"},
           fixedStr: {type: "string", const: "abc"},
-          defaultStr: {type: "string", defalut: "xyz", maxLength: 255},
+          defaultStr: {type: "string", maxLength: 255, default: "xyz"},
           encryptedStr: {type: "string", maxLength: 255},
           list: {type: "string", enum: ["one", "two", "three"]},
         },
