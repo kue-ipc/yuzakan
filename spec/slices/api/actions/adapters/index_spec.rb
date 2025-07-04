@@ -11,15 +11,15 @@ RSpec.describe API::Actions::Adapters::Index do
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:data]).to eq([
-        {name: "ad",          displayName: "Active Directory"},
-        {name: "dummy",       displayName: "ダミー"},
-        {name: "google",      displayName: "Google Workspace"},
-        {name: "ldap",        displayName: "LDAP"},
-        {name: "local",       displayName: "ローカル"},
-        {name: "mock",        displayName: "モック"},
-        {name: "posix_ldap",  displayName: "Posix LDAP"},
-        {name: "samba_ldap",  displayName: "Samba LDAP"},
-        {name: "test",        displayName: "テスト"},
+        {name: "ad",          label: "Active Directory"},
+        {name: "dummy",       label: "ダミー"},
+        {name: "google",      label: "Google Workspace"},
+        {name: "ldap",        label: "LDAP"},
+        {name: "local",       label: "ローカル"},
+        {name: "mock",        label: "モック"},
+        {name: "posix_ldap",  label: "Posix LDAP"},
+        {name: "samba_ldap",  label: "Samba LDAP"},
+        {name: "test",        label: "テスト"},
       ])
     end
   end
@@ -61,7 +61,7 @@ RSpec.describe API::Actions::Adapters::Index do
     it_behaves_like "forbidden"
   end
 
-  conthext "when timeover" do
+  context "when timeover" do
     include_context "when timeover"
     it_behaves_like "session timeout"
   end
