@@ -4,47 +4,37 @@ module API
   module Actions
     module Attrs
       class Create < API::Action
+        include Deps[
+          "repos.attr_repo",
+          "repos.mapping_repo",
+          "repos.provider_repo",
+          show_view: "views.attrs.show"
+        ]
+
         security_level 5
 
-        class Params < Hanami::Action::Params
-          predicates NamePredicates
-          messages :i18n
-
-          params do
-            required(:name).filled(:str?, :name?, max_size?: 255)
-            optional(:display_name).maybe(:str?, max_size?: 255)
-            required(:type).filled(:str?, included_in?: Attr::TYPES)
-            optional(:order).filled(:int?)
-            optional(:hidden).filled(:bool?)
-            optional(:readonly).filled(:bool?)
-            optional(:code).maybe(:str?, max_size?: 4096)
-            optional(:mappings).each do
-              schema do
-                predicates NamePredicates
-                required(:provider).filled(:str?, :name?, max_size?: 255)
-                required(:key).maybe(:str?, max_size?: 255)
-                optional(:conversion).maybe(:str?,
-                  included_in?: Mapping::CONVERSIONS)
-              end
-            end
+        params do
+          required(:name).filled(:str?, :name?, max_size?: 255)
+          optional(:display_name).maybe(:str?, max_size?: 255)
+          required(:type).filled(:str?, included_in?: Yuzakan::Structs::Attr::TYPES)
+          optional(:order).filled(:int?)
+          optional(:hidden).filled(:bool?)
+          optional(:readonly).filled(:bool?)
+          optional(:code).maybe(:str?, max_size?: 4096)
+          optional(:mappings).array(:hash) do
+            required(:provider).filled(:str?, :name?, max_size?: 255)
+            required(:key).maybe(:str?, max_size?: 255)
+            optional(:conversion).maybe(included_in?: Yuzakan::Structs::Mapping::CONVERSIONS)
           end
         end
 
-        params Params
-
-        def initialize(attr_repository: AttrRepository.new,
-          provider_repository: ProviderRepository.new,
-          **opts)
-          super
-          @attr_repository ||= attr_repository
-          @provider_repository ||= provider_repository
-        end
-
-        def handle(_request, _response)
-          unless params.valid?
-            halt_json 400,
-              errors: [only_first_errors(params.errors)]
+        def handle(request, response)
+          unless request.params.valid?
+            response.flash[:invalid] = request.params.errors
+            halt_json request, response, 422
           end
+
+          # TODO: ここから下はまだ見てない
 
           if @attr_repository.exist_by_name?(params[:name])
             halt_json 422,

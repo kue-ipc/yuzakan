@@ -6,11 +6,23 @@ module API
   module Actions
     module Attrs
       class Show < API::Action
-        include SetAttr
+        include Deps["repos.attr_repo"]
 
-        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
-          self.status = 200
-          self.body = generate_json(@attr, assoc: current_level >= 2)
+        params do
+          required(:id).filled(:name, max_size?: 255)
+        end
+
+        def handle(request, response)
+          unless request.params.valid?
+            response.flash[:invalid] = request.params.errors
+            halt_json request, response, 422
+          end
+
+          id = request.params[:id]
+          attr = attr_repo.get(id)
+          halt_json request, response, 404 unless attr
+
+          response[:attr] = attr
         end
       end
     end

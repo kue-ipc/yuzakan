@@ -6,50 +6,49 @@ module API
   module Actions
     module Attrs
       class Update < API::Action
-        include SetAttr
+        include Deps[
+          "repos.attr_repo",
+          "repos.mapping_repo",
+          "repos.provider_repo",
+          show_view: "views.attrs.show"
+        ]
 
         security_level 5
 
-        class Params < Hanami::Action::Params
-          include Hanami::Validations::Form
-          predicates NamePredicates
-          messages :i18n
-
-          params do
-            required(:id).filled(:str?, :name?, max_size?: 255)
-            optional(:name).filled(:str?, :name?, max_size?: 255)
-            optional(:display_name).maybe(:str?, max_size?: 255)
-            optional(:type).filled(:str?, max_size?: 255)
-            optional(:order).filled(:int?)
-            optional(:hidden).filled(:bool?)
-            optional(:readonly).filled(:bool?)
-            optional(:code).maybe(:str?, max_size?: 4096)
-            optional(:mappings).each do
-              schema do
-                predicates NamePredicates
-                required(:provider).filled(:str?, :name?, max_size?: 255)
-                required(:key).maybe(:str?, max_size?: 255)
-                optional(:conversion) do
-                  none? | included_in?(Mapping::CONVERSIONS)
-                end
-              end
-            end
+        params do
+          required(:id).filled(:name, max_size?: 255)
+          optional(:name).filled(:name, max_size?: 255)
+          optional(:display_name).maybe(:str?, max_size?: 255)
+          optional(:type).filled(:str?, included_in?: Yuzakan::Structs::Attr::TYPES)
+          optional(:type).filled(:str?, max_size?: 255)
+          optional(:order).filled(:int?)
+          optional(:hidden).filled(:bool?)
+          optional(:readonly).filled(:bool?)
+          optional(:code).maybe(:str?, max_size?: 4096)
+          optional(:mappings).array(:hash) do
+            required(:provider).filled(:name, max_size?: 255)
+            required(:key).maybe(:str?, max_size?: 255)
+            optional(:conversion).maybe(included_in?: Yuzakan::Structs::Mapping::CONVERSIONS)
           end
         end
 
-        params Params
+        def handle(request, response)
+          unless request.params.valid?
+            response.flash[:invalid] = request.params.errors
+            halt_json request, response, 422
+          end
 
-        def initialize(attr_repository: AttrRepository.new,
-          mapping_repository: MappingRepository.new,
-          provider_repository: ProviderRepository.new,
-          **opts)
-          super
-          @attr_repository ||= attr_repository
-          @mapping_repository ||= mapping_repository
-          @provider_repository ||= provider_repository
-        end
+          id = request.params[:id]
+          attr = attr_repo.get(id)
+          halt_json request, response, 404 unless attr
 
-        def handle(_request, _response)
+          # この間に入れていく
+
+          response[:attr] = attr
+          response.render(show_view)
+
+          # TODO: ここから下はまだ見てない
+
           change_name = params[:name] && params[:name] != @attr.name
           if change_name && @attr_repository.exist_by_name?(params[:name])
             halt_json 422, errors: [{name: [t("errors.uniq?")]}]

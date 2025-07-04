@@ -6,20 +6,32 @@ module API
   module Actions
     module Attrs
       class Destroy < API::Action
-        include SetAttr
+        include Deps[
+          "repos.attr_repo",
+          show_view: "views.attrs.show"
+        ]
 
         security_level 5
 
-        def initialize(attr_repository: AttrRepository.new, **opts)
-          super
-          @attr_repository ||= attr_repository
+        params do
+          required(:id).filled(:name, max_size?: 255)
         end
 
-        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
-          @attr_repository.delete(@attr.id)
+        def handle(request, response)
+          unless request.params.valid?
+            response.flash[:invalid] = request.params.errors
+            halt_json request, response, 422
+          end
 
-          self.status = 200
-          self.body = generate_json(@attr, assoc: true)
+          id = request.params[:id]
+          attr = attr_repo.get(id)
+          halt_json request, response, 404 unless attr
+
+          # delete attr
+          response[:attr] = attr_repo.unset(id)
+
+          response[:attr] = attr
+          response.render(show_view)
         end
       end
     end
