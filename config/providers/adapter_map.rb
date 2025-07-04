@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-Hanami.app.register_provider(:adapters) do
+Hanami.app.register_provider(:adapter_map) do
   prepare do
-    register "adapters", {}
+    register "adapter_map", {}
   end
 
   start do
@@ -15,13 +15,13 @@ Hanami.app.register_provider(:adapters) do
 
         require_relative child.to_path
         name = child.basename(".*").to_s
-        target["adapters"][prefix + name] =
-          Yuzakan::Adapters.const_get(target["inflector"].camelize(name))
+        class_name = Yuzakan::Adapters.const_get(target["inflector"].camelize(name))
+        target["adapter_map"].store(prefix + name, Yuzakan::Adapters.const_get(class_name))
       end
     end
   end
 
   stop do
-    target["adapters"].clear
+    target["adapter_map"].clear
   end
 end

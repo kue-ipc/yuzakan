@@ -10,7 +10,7 @@ module Yuzakan
     end
 
     include Deps[
-      "adapters",
+      "adapter_map",
       "cache_store",
       "repos.mapping_repo",
       "repos.provider_repo"
@@ -49,7 +49,7 @@ module Yuzakan
     end
 
     private def get_adapter(provider)
-      adapter_class = adapters[provider.adapter]
+      adapter_class = adapter_map[provider.adapter]
       return Failure([:not_found, "adapter"]) if adapter_class.nil?
 
       begin

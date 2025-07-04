@@ -7,21 +7,25 @@ module API
   module Views
     module Parts
       class Adapter < API::Views::Part
-        def to_h
-          {
+        def to_h(simple: false)
+          hash = {
             name: value.adapter_name,
             label: value.label,
-            group: value.has_group?,
-            primary: value.has_primary_group?,
-            params: {schema: dry_schema},
           }
+          unless simple
+            hash.merge!({
+              group: value.has_group?,
+              primary: value.has_primary_group?,
+              params: {schema: dry_schema},
+            })
+          end
+          hash
         end
 
-        def to_json(...)
-          helpers.params_to_json({
-            **to_h.except(:params),
-            params: {schema: json_schema},
-          }, ...)
+        def to_json(simple: false)
+          hash = to_h(simple:).dup
+          hash.merge!({params: {schema: json_schema}}) unless simple
+          helpers.params_to_json(hash)
         end
 
         def dry_schema

@@ -94,6 +94,17 @@ def init_action_spec
   let(:action_params) { {} }
 
   # shared examples
+  shared_examples "unauthorized" do
+    it "is unauthorized" do
+      response = action.call(params)
+      expect(response).to be_client_error
+      expect(response.status).to eq 401
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json).to eq({status: {code: 401, message: "Unauthorized"}})
+    end
+  end
+
   shared_examples "forbidden" do
     it "is forbidden" do
       response = action.call(params)
@@ -116,7 +127,17 @@ def init_action_spec
     end
   end
 
-  shared_examples "session timeout" do
+  shared_examples "unauthorized session timeout" do
+    it "is unauthorized due to session timeout" do
+      response = action.call(params)
+      expect(response.status).to eq 401
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json).to eq({status: {code: 401, message: "Unauthorized"}, flash: {warn: "セッションがタイムアウトしました。"}})
+    end
+  end
+
+  shared_examples "forbidden session timeout" do
     it "is forbidden due to session timeout" do
       response = action.call(params)
       expect(response.status).to eq 403

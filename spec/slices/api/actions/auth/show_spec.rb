@@ -3,7 +3,7 @@
 RSpec.describe API::Actions::Auth::Show do
   init_action_spec
 
-    shared_examples "ok" do
+  shared_examples "ok" do
     it "is ok" do
     response = action.call(params)
     expect(response).to be_successful

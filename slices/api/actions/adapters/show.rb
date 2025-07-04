@@ -6,7 +6,7 @@ module API
   module Actions
     module Adapters
       class Show < API::Action
-        include Deps["adapters"]
+        include Deps["adapter_map"]
 
         params IdParams
 

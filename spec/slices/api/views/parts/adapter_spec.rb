@@ -3,7 +3,7 @@
 RSpec.describe API::Views::Parts::Adapter do
   subject { described_class.new(value:) }
 
-  let(:value) { Hanami.app["adapters"]["test"] }
+  let(:value) { Hanami.app["adapter_map"]["test"] }
 
   it "to_h" do
     hash = subject.to_h
@@ -14,6 +14,14 @@ RSpec.describe API::Views::Parts::Adapter do
       primary: true,
     })
     expect(hash[:params].keys).to contain_exactly(:schema)
+  end
+
+  it "to_h with sipmle" do
+    hash = subject.to_h(simple: true)
+    expect(hash).to eq({
+      name: "test",
+      label: "テスト",
+    })
   end
 
   it "to_json" do
@@ -44,6 +52,14 @@ RSpec.describe API::Views::Parts::Adapter do
         },
         required: ["requiredStr"],
       }},
+    })
+  end
+
+  it "to_json with simple" do
+    json = JSON.parse(subject.to_json(simple: true), symbolize_names: true)
+    expect(json).to eq({
+      name: "test",
+      label: "テスト",
     })
   end
 end

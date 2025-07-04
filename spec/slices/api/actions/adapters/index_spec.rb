@@ -3,6 +3,26 @@
 RSpec.describe API::Actions::Adapters::Index do
   init_action_spec
 
+  let(:action_opts) {
+    {
+      adapter_map: adapter_map,
+    }
+  }
+
+  let(:adapter_map) {
+    {
+      ad: Yuzakan::Adapters::AD,
+      dummy: Yuzakan::Adapters::Dummy,
+      google: Yuzakan::Adapters::Google,
+      ldap: Yuzakan::Adapters::Ldap,
+      local: Yuzakan::Adapters::Local,
+      mock: Yuzakan::Adapters::Mock,
+      posix_ldap: Yuzakan::Adapters::PosixLdap,
+      samba_ldap: Yuzakan::Adapters::SambaLdap,
+      test: Yuzakan::Adapters::Test,
+    }
+  }
+
   shared_examples "ok" do
     it "is ok" do
       response = action.call(params)
@@ -53,16 +73,16 @@ RSpec.describe API::Actions::Adapters::Index do
 
   context "when logout" do
     include_context "when logout"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when first" do
     include_context "when first"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when timeover" do
     include_context "when timeover"
-    it_behaves_like "session timeout"
+    it_behaves_like "unauthorized session timeout"
   end
 end
