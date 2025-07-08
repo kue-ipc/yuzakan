@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe API::Views::Parts::Adapter do
-  subject { described_class.new(value:) }
+  init_part_spec
 
   let(:value) { Hanami.app["adapter_map"]["test"] }
 

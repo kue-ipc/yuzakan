@@ -185,6 +185,12 @@ def init_operation_spec
   let_structs
 end
 
+def init_part_spec
+  let_structs
+
+  subject { described_class.new(value:) }
+end
+
 # require user
 def let_session
   let(:login_session) {

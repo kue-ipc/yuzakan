@@ -15,7 +15,7 @@ Hanami.app.register_provider(:adapter_map) do
 
         require_relative child.to_path
         name = child.basename(".*").to_s
-        class_name = Yuzakan::Adapters.const_get(target["inflector"].camelize(name))
+        class_name = target["inflector"].camelize(name)
         target["adapter_map"].store(prefix + name, Yuzakan::Adapters.const_get(class_name))
       end
     end
