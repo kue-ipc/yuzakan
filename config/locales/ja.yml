@@ -92,7 +92,7 @@ ja:
     action:
       success: '%{action}に成功しました。'
       failure: '%{action}に失敗しました。'
-      no_providers: 'どのサービスでも%{action}が実行されませんでした。'
+      no_services: 'どのサービスでも%{action}が実行されませんでした。'
     session_timeout: セッションがタイムアウトしました。
     initialize_config: >-
       初期設定が必要です。
@@ -103,15 +103,15 @@ ja:
     encrypt: 暗号化
     find_network: ネットワーク検索
     generate_password: パスワード生成
-    provider_authenticate: プロバイダーユーザー認証
-    provider_change_password: プロバイダーパスワード変更
-    provider_create_user: プロバイダーユーザー作成
-    provider_delete_user: プロバイダーユーザー削除
-    provider_lock_user: プロバイダーユーザーロック
-    provider_read_group: プロバイダーグループ読取
-    provider_read_user: プロバイダーユーザー読取
-    provider_unlock_user: プロバイダーユーザーアンロック
-    provider_update_user: プロバイダーユーザー更新
+    service_authenticate: サービスユーザー認証
+    service_change_password: サービスパスワード変更
+    service_create_user: サービスユーザー作成
+    service_delete_user: サービスユーザー削除
+    service_lock_user: サービスユーザーロック
+    service_read_group: サービスグループ読取
+    service_read_user: サービスユーザー読取
+    service_unlock_user: サービスユーザーアンロック
+    service_update_user: サービスユーザー更新
     register_group: グループ登録
     register_user: ユーザー登録
     reset_password: パスワードリセット
@@ -147,7 +147,7 @@ ja:
   entities:
     user: ユーザー
     group: グループ
-    provider: プロバイダー
+    service: サービス
     adapter: アダプター
     attr: 属性
     member: メンバー
@@ -178,8 +178,8 @@ ja:
     group:
       name: グループ名
       label: 表示名
-    provider:
-      name: プロバイダー名
+    service:
+      name: サービス名
       label: 表示名
     adapter:
       name: アダプター名
@@ -318,8 +318,8 @@ ja:
           excluded: >-
             新しいパスワードへの変更は、現在ログインしているアカウントを使用する全てのシステムに対して適用されます。
             ただし、下記システムはパスワードが別管理にあっているため、変更されません。
-        included_providers: 対象のシステム
-        excluded_providers: 対象外のシステム
+        included_services: 対象のシステム
+        excluded_services: 対象外のシステム
       password_requirements:
         title: パスワードの要件
         description: 新しいパスワードは次の要件を満たす必要があります。
@@ -350,7 +350,7 @@ ja:
           例えば、ユーザー名、現在のパスワード、固有の名前、英単語、キーボード配列、パスワードによく使われる文字列等の組み合わせや類似している場合は「弱い」と判断されます。
           逆に、数字のみなどであっても十分に複雑で長ければ「強い」と判断される場合があります。
           他人には推測しづらく、覚えやすいパスワードを設定してください。
-    provider:
+    service:
       title: '%{name}'
       description: '%{name}にある自分のアカウント情報を管理します。'
     admin:
@@ -375,8 +375,8 @@ ja:
         import_export:
           title: 全設定のインポート・エクスポート
           note: |
-            プロバイダー情報、属性情報、辞書を含む全ての設定をインポート・エクスポートします。
-            エクスポートされる設定にはプロバイダーのパスワード等が含まれていますが、暗号化されていません。
+            サービス情報、属性情報、辞書を含む全ての設定をインポート・エクスポートします。
+            エクスポートされる設定にはサービスのパスワード等が含まれていますが、暗号化されていません。
             **保存する場合は、別途暗号化を行ってください。**
         config:
           title: 設定の編集
@@ -390,20 +390,20 @@ ja:
         generate_password_chars: |
             パスワード生成時の文字種が「英数字」または「ASCII」の場合、ここに指定された文字が除外されます。
             パスワード生成時の文字種が「カスタム」の場合、ここに指定された文字が使用されます。
-    admin_providers:
-      title: プロバイダー一覧
+    admin_services:
+      title: サービス一覧
       description: >-
-        連携するシステムはプロバイダーとして登録します。
+        連携するシステムはサービスとして登録します。
         連携システムの追加や変更ができます。
     admin_attrs:
       title: 属性設定
-      description: 各プロバイダーからの属性の紐付けを行います。
+      description: 各サービスからの属性の紐付けを行います。
     admin_export_users:
       title: ユーザー情報エクスポート
-      description: 各プロバイダーにはないユーザー情報をエクスポートします。
+      description: 各サービスにはないユーザー情報をエクスポートします。
     admin_export_groups:
       title: グループ情報インポート
-      description: 各プロバイダーにはないグループ情報をエクスポートします。
+      description: 各サービスにはないグループ情報をエクスポートします。
   ui:
     buttons:
       toggle_navigation: ナビゲーション切替
@@ -465,7 +465,7 @@ ja:
         password_current: 現在のパスワード
         password: 新しいパスワード
         password_confirmation: パスワードの確認
-        providers: 対象サービス
+        services: 対象サービス
   adapters:
     ad:
       label: Active Directory
