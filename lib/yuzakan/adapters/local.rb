@@ -233,11 +233,11 @@ module Yuzakan
 
         UserData.new(
           name: user.name,
-          primary_group: user.primary_group&.name,
-          groups: user.groups.map(&:name),
+          primary_group: user.local_group&.name,
+          groups: user.local_member_groups.map(&:name),
           label: user.label,
           email: user.email,
-          locked: user.locked?)
+          locked: user.locked)
       end
 
       private def group_struct_to_data(group)

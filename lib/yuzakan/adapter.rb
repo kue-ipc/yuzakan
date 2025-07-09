@@ -174,7 +174,7 @@ module Yuzakan
       validated_params = validate(params)
       raise VlaidationError, validated_params.errors.to_h if validated_params.failure?
 
-      default_params(validated_params.to_h).to_h do |key, value|
+      default_params.merge(validated_params.to_h).to_h do |key, value|
         if encrypted_keys.include?(key)
           case Hanami.app["operations.decrypt"].call(value)
           in Success(decrypted_value)

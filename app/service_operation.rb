@@ -107,14 +107,12 @@ module Yuzakan
       if data.attrs.nil? || data.attrs.empty?
         attrs = data.attrs
       else
-        mappings = get_mappings(service, category:)
-          .value_or { return Failure(_1) }
-        attrs = convert_attrs(mappings, data.attrs)
-          .value_or { return Failure(_1) }
+        mappings = get_mappings(service, category:).value_or { return Failure(_1) }
+        attrs = convert_attrs(mappings, data.attrs).value_or { return Failure(_1) }
       end
 
       group_params =
-        if category == :user && !service.has_group?
+        if category == :user && service.group
           {primary_group: data.primary_group, groups: data.groups}
         else
           {}
@@ -141,7 +139,7 @@ module Yuzakan
       case category
       in :user
         keys = [:label, :email]
-        keys.push(:primary_group, :groups) if service.has_group?
+        keys.push(:primary_group, :groups) if service.group
         Success(Yuzakan::Adapter::UserData.new(**params.slice(*keys), attrs:))
       in :group
         keys = [:label]

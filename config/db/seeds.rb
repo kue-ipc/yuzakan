@@ -12,6 +12,9 @@ admin_username = ENV.fetch("ADMIN_USERNAME", "admin")
 admin_password = ENV.fetch("ADMIN_PASSWORD", admin_username)
 admin_groupname = ENV.fetch("ADMIN_GROUPNAME", admin_username)
 
+# FIXME: 予めi18nをロードしておかないと、jaが読み込まれない。バグ？
+Hanami.app["i18n"]
+
 # cache clear
 Hanami.app["cache_store"].clear
 
@@ -69,8 +72,7 @@ if user_services["local"].nil?
     primary_group: admin_groupname, groups: []) in Success(_)
 end
 
-Hanami.app["management.sync_group"].call(admin_groupname) =>
-  Success(admin_group)
+Hanami.app["management.sync_group"].call(admin_groupname) => Success(_admin_group)
 Hanami.app["management.sync_user"].call(admin_username) => Success(admin_user)
 
 Hanami.app["repos.user_repo"].set(admin_username, clearance_level: 5) if admin_user.clearance_level < 5
