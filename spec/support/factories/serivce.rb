@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Factory.define(:provider) do |f|
+Factory.define(:service) do |f|
   f.name Faker::Internet.username
   f.label Faker::Name.name
   f.description Faker::Lorem.paragraph
@@ -18,12 +18,12 @@ Factory.define(:provider) do |f|
   f.timestamps
 end
 
-Factory.define(provider_with_nil: :provider) do |f|
+Factory.define(service_with_nil: :service) do |f|
   f.label nil
   f.description nil
 end
 
-Factory.define(mock_provider: :provider) do |f|
+Factory.define(mock_service: :service) do |f|
   f.name "mock"
   f.adapter "mock"
   f.readable true

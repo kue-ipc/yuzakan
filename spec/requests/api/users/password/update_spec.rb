@@ -28,7 +28,7 @@ RSpec.describe "PATCH /api/users/:id/password", :db, type: :request do
       status: {code: 200, message: "OK"},
       location: "/api/users/~/password",
       flash: {success: "パスワード変更に成功しました。"},
-      data: {password: new_password, providers: ["mock"]},
+      data: {password: new_password, services: ["mock"]},
     })
   end
 end

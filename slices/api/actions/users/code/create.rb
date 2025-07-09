@@ -4,7 +4,7 @@ require "hanami/action/cache"
 
 module User
   module Actions
-    module Providers
+    module Services
       module Code
         class Create < User::Action
           include Hanami::Action::Cache
@@ -14,13 +14,13 @@ module User
           expose :codes
 
           def handle(_request, _response)
-            provider = ProviderRepository.new.first_google_with_adapter
+            service = ServiceRepository.new.first_google_with_adapter
 
             result = GenerateVerificationCode.new(
               user: current_user,
               client: client,
               config: current_config,
-              providers: [provider]).call(params.get(:google_code_create))
+              services: [service]).call(params.get(:google_code_create))
 
             if result.failure?
               flash[:errors] = result.errors
@@ -28,7 +28,7 @@ module User
               redirect_to routes.path(:google)
             end
 
-            @codes = result.user_datas[provider.name]
+            @codes = result.user_datas[service.name]
             flash[:success] = "バックアップコードを生成しました。"
           end
         end

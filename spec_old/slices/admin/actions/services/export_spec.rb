@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# RSpec.describe Admin::Actions::Providers::Export do
+# RSpec.describe Admin::Actions::Services::Export do
 #   let(:action) { described_class.new }
 #   let(:params) { Hash[] }
 

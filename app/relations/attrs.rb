@@ -16,7 +16,7 @@ module Yuzakan
       schema :attrs, infer: true do
         associations do
           has_many :mappings
-          has_many :providers, throught: :mappings
+          has_many :services, throught: :mappings
         end
       end
 

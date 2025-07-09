@@ -7,11 +7,11 @@
 {objToUrlencoded} from ~/common/convert.civet
 valueDisplay from ~/app/value_display.civet
 
-{runIndexProviders} from ~api/providers.civet
+{runIndexServices} from ~api/services.civet
 {SHOW_GROUP_PARAM_TYPES, runShowGroup} from ~api/groups.civet
 
 groupInfo from ~admin/group_info.civet
-groupProvider from ~admin/group_provider.civet
+groupService from ~admin/group_service.civet
 groupOperation from ~admin/group_operation.civet
 
 // main
@@ -24,12 +24,12 @@ main := ->
   queryParams := pickType(getQueryParamsFromUrl(location), SHOW_GROUP_PARAM_TYPES)
 
   init := [
-    {mode, id, group: null, providers: [], option: queryParams}
-    [runIndexProviders, {has_group: true}]
+    {mode, id, group: null, services: [], option: queryParams}
+    [runIndexServices, {has_group: true}]
     [runShowGroup, {id, ...queryParams}]
   ]
 
-  view := ({mode, id, group, providers, option}) ->
+  view := ({mode, id, group, services, option}) ->
     if mode is "none"
       return html.div {},
         html.strong {}, text "グループが見つかりませんでした。"
@@ -38,13 +38,13 @@ main := ->
       return html.div {},
         html.strong {}, text "グループの新規作成はできません。"
 
-    unless group? && providers?
+    unless group? && services?
       return html.div {}, text "読込中..."
 
     html.div {}, [
       groupInfo {mode, group}
       groupOperation {option}
-      groupProvider {mode, group, providers}
+      groupService {mode, group, services}
     ]
 
   node := document.getElementById("group")

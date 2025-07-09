@@ -12,12 +12,12 @@ module API
           result = sync_user({username: @name})
           @user = result.user
           @attrs = result.data[:attrs]
-          @providers = result.providers
+          @services = result.services
         end
 
         private def user_json(**data)
           hash = convert_for_json(@user, assoc: true).dup
-          hash[:providers] = @providers unless @providers.nil?
+          hash[:services] = @services unless @services.nil?
           hash[:attrs] = @attrs unless @attrs.nil?
           hash.merge!(data)
           generate_json(hash)

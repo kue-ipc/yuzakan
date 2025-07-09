@@ -22,7 +22,7 @@ LoginInfo from ~/app/login_info.civet
 } from ~api/users.civet
 {createRunCreateUserLock, createRunDestroyUserLock} from ~api/users_lock.civet
 {runIndexGroupsNoSync} from ~api/groups.civet
-{runIndexProviders} from ~api/providers.civet
+{runIndexServices} from ~api/services.civet
 {runIndexAttrs} from ~api/attrs.civet
 {runShowSystem} from ~api/system.civet
 
@@ -141,13 +141,13 @@ indexUsersOption := ({onchange: action, readonly := false, ...props}) ->
           html.label {class: "form-check-label", for: id}, text val
         ]
 
-usersTable := ({users, groups, providers}) ->
+usersTable := ({users, groups, services}) ->
   html.table {key: "table", class: "table"}, [
-    usersThead({providers})
-    usersTbody({users, groups, providers})
+    usersThead({services})
+    usersTbody({users, groups, services})
   ]
 
-usersThead := ({providers}) ->
+usersThead := ({services}) ->
   html.thead {key: "thead"},
     html.tr {key: "head"}, [
       html.th {key: "show"}, text ""
@@ -157,22 +157,22 @@ usersThead := ({providers}) ->
       html.th {key: "email"}, text "メールアドレス"
       html.th {key: "clearance-level"}, text "権限レベル"
       html.th {key: "primary-group"}, text "プライマリグループ"
-      ...(providerTh({provider}) for each provider of providers)
+      ...(serviceTh({service}) for each service of services)
     ]
 
-providerTh := ({provider}) ->
-  html.th {key: `provider[${provider.name}]`}, text entityLabel(provider)
+serviceTh := ({service}) ->
+  html.th {key: `service[${service.name}]`}, text entityLabel(service)
 
-usersTbody := ({users, groups, providers}) ->
+usersTbody := ({users, groups, services}) ->
   html.tbody {key: "tbody"},
     (for each user of users
       [
-        userTr({user, groups, providers})
-        userDetailTr({user, providers})
+        userTr({user, groups, services})
+        userDetailTr({user, services})
       ]
     ).flat()
 
-userTr := ({user, groups, providers}) ->
+userTr := ({user, groups, services}) ->
   color := switch user.action
     when "ADD"
       "primary"
@@ -241,17 +241,17 @@ userTr := ({user, groups, providers}) ->
           text entityLabel(findList(groups, user.primary_group, {key: "name"})) ?? user.primary_group
       else
         undefined
-    ...(userProviderTd({user, provider}) for each provider of providers)
+    ...(userServiceTd({user, service}) for each service of services)
   ]
 
-userProviderTd := ({user, provider}) ->
-  html.td {key: `provider[${provider.name}]`},
+userServiceTd := ({user, service}) ->
+  html.td {key: `service[${service.name}]`},
     valueDisplay {
-      value: user.providers?.includes(provider.name)
+      value: user.services?.includes(service.name)
       type: "boolean"
     }
 
-userDetailTr := ({user, providers}) ->
+userDetailTr := ({user, services}) ->
   html.tr {
     key: `user-detail[${user.name}]`
     class: {collapse: true, show: user.show_detail}
@@ -277,14 +277,14 @@ userDetailTr := ({user, providers}) ->
     ]
     html.td {key: "groups"},
       html.div {}, text user.groups?.join(", ") ?? ""
-    ...(userProviderDataTd({user, provider}) for each provider of providers)
+    ...(userServiceDataTd({user, service}) for each service of services)
   ]
 
-userProviderDataTd := ({user, provider}) ->
-  html.td {key: `provider-data[${provider.name}]`},
-    if user.providers_data?.has(provider.name)
+userServiceDataTd := ({user, service}) ->
+  html.td {key: `service-data[${service.name}]`},
+    if user.services_data?.has(service.name)
       html.div {key: "data", class: "small"},
-        preCode {code: objToJson(user.providers_data.get(provider.name), 2), language: "json"}
+        preCode {code: objToJson(user.services_data.get(service.name), 2), language: "json"}
 
 // Action Creaters
 
@@ -464,7 +464,7 @@ main := ->
     mode: "loading"
     users: []
     groups: []
-    providers: []
+    services: []
     attrs: []
     pagination: pickType(queryParams, PAGINATION_PARAM_TYPES)
     search: pickType(queryParams, SEARCH_PARAM_TYPES)
@@ -475,13 +475,13 @@ main := ->
   init := [
     initState
     [runShowSystem]
-    [runIndexProviders]
+    [runIndexServices]
     [runIndexAttrs]
     [runIndexGroupsNoSync]
     [runIndexUsers, indexOptionFromState(initState)]
   ]
 
-  view := ({mode, users, groups, providers, attrs, pagination, search, option, order, filename}) ->
+  view := ({mode, users, groups, services, attrs, pagination, search, option, order, filename}) ->
     html.div {}, [
       batchOperation {
         mode
@@ -505,7 +505,7 @@ main := ->
       else if users.length is 0
         html.p {}, text "ユーザーが存在しません。"
       else
-        usersTable({users, groups, providers})
+        usersTable({users, groups, services})
     ]
 
   node := document.getElementById("users")

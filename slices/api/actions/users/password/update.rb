@@ -8,8 +8,8 @@ module API
           include Dry::Monads[:result]
 
           include Deps[
-            "providers.authenticate",
-            "providers.change_password",
+            "services.authenticate",
+            "services.change_password",
             show_view: "views.users.password.show"
           ]
 
@@ -39,7 +39,7 @@ module API
 
             # 現在のパスワードの確認
             case authenticate.call(username, current_password)
-            in Success(_provider)
+            in Success(_service)
               # do next
             in Failure[:error, error]
               response.flash[:error] = error
@@ -98,9 +98,9 @@ module API
 
             # パスワードの変更
             case change_password.call(username, new_password)
-            in Success(providers)
-              if providers.empty?
-                response.flash[:warn] = t("messages.action.no_providers", action: t("api.user_password.actions.update"))
+            in Success(services)
+              if services.empty?
+                response.flash[:warn] = t("messages.action.no_services", action: t("api.user_password.actions.update"))
               else
                 response.flash[:success] = t("messages.action.success", action: t("api.user_password.actions.update"))
               end
@@ -122,7 +122,7 @@ module API
                 description: "アカウントのパスワードを変更しました。")
             end
 
-            response[:user_password] = {password: new_password, providers: providers.map(&:name)}
+            response[:user_password] = {password: new_password, services: services.map(&:name)}
             response.render(show_view)
           end
         end

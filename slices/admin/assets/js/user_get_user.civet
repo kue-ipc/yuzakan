@@ -6,13 +6,13 @@ newUser := {}
   name: ""
   clearance_level: 1
   userdata: {attrs: {}}
-  provider_userdatas: []
+  service_userdatas: []
 
 SetUserWithInit := (state, {user}) ->
-  providers := (provider_userdata.provider.name for each provider_userdata of user.provider_userdatas)
+  services := (service_userdata.service.name for each service_userdata of user.service_userdatas)
   primary_group := user.userdata.primary_group
   groups := user.userdata.groups || []
-  [InitUserAttrs, {user: {...user, providers, primary_group, groups}}]
+  [InitUserAttrs, {user: {...user, services, primary_group, groups}}]
 
 SetMode := (state, mode) -> {...state, mode}
 

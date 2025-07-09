@@ -30,8 +30,8 @@ def let_mock_repositories
   let(:adapter_param_repository) {
     instance_double(AdapterParamRepository, **adapter_param_repository_stubs)
   }
-  let(:provider_repository) {
-    instance_double(ProviderRepository, **provider_repository_stubs)
+  let(:service_repository) {
+    instance_double(ServiceRepository, **service_repository_stubs)
   }
   let(:user_repository) {
     instance_double(UserRepository, **user_repository_stubs)
@@ -76,9 +76,9 @@ def let_mock_repositories
   }
   let(:network_repository_stubs) { {all: networks} }
   let(:adapter_param_repository_stubs) { {} }
-  let(:provider_repository_stubs) {
+  let(:service_repository_stubs) {
     {
-      all: providers,
+      all: services,
     }
   }
   let(:user_repository_stubs) {
@@ -105,9 +105,9 @@ def let_mock_repositories
   }
   let(:users) { users_attributes.map { |attributes| User.new(attributes) } }
   let(:groups) { [group] }
-  let(:providers) {
-    providers_attributes.map do |attributes|
-      Provider.new(attributes)
+  let(:services) {
+    services_attributes.map do |attributes|
+      Service.new(attributes)
     end
   }
 
@@ -121,8 +121,8 @@ def let_mock_repositories
 
   let(:mappings) {
     mappings_attributes.map do |attributes|
-      Mapping.new(provider: Provider.new(name: attributes[:provider]),
-                      **attributes.except(:provider))
+      Mapping.new(service: Service.new(name: attributes[:service]),
+                      **attributes.except(:service))
     end
   }
   let(:user_members) {
@@ -156,9 +156,9 @@ def let_mock_repositories
     }
   }
   let(:group_attributes) { {id: 42, name: "group", label: "グループ"} }
-  let(:provider_attriubtes) {
+  let(:service_attriubtes) {
     {
-      id: 42, name: "provider42", label: "プロバイダー42", adapter: "dummy", order: 8,
+      id: 42, name: "service42", label: "プロバイダー42", adapter: "dummy", order: 8,
       readable: false, writable: false, authenticatable: false, password_changeable: false,
       lockable: false, group: false, individual_password: false, self_management: false,
       description: nil,
@@ -181,10 +181,10 @@ def let_mock_repositories
   }
   let(:mappings_attributes) {
     [
-      {provider: "provider42", key: "map42", conversion: nil},
-      {provider: "provider1", key: "path", conversion: "path"},
-      {provider: "provider2", key: "e2j", conversion: "e2j"},
-      {provider: "provider3", key: "j2e", conversion: "j2e"},
+      {service: "service42", key: "map42", conversion: nil},
+      {service: "service1", key: "path", conversion: "path"},
+      {service: "service2", key: "e2j", conversion: "e2j"},
+      {service: "service3", key: "j2e", conversion: "j2e"},
     ]
   }
   let(:networks_attributes) {
@@ -227,16 +227,16 @@ def let_mock_repositories
                           deleted_at: Time.now - (24 * 60 * 60),},
     ]
   }
-  let(:providers_attributes) {
+  let(:services_attributes) {
     [
-      provider_attriubtes,
-      {**provider_attriubtes, id: 1, name: "provider1", label: "プロ1",
+      service_attriubtes,
+      {**service_attriubtes, id: 1, name: "service1", label: "プロ1",
                               order: 8,},
-      {**provider_attriubtes, id: 2, name: "provider2", label: "プロ2",
+      {**service_attriubtes, id: 2, name: "service2", label: "プロ2",
                               order: 32,},
-      {**provider_attriubtes, id: 3, name: "provider3", label: nil,
+      {**service_attriubtes, id: 3, name: "service3", label: nil,
                               order: 16,},
-      {**provider_attriubtes, id: 4, name: "self_management_provider",
+      {**service_attriubtes, id: 4, name: "self_management_service",
                               self_management: true,},
     ]
   }

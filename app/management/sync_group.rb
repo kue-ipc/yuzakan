@@ -5,7 +5,7 @@ module Yuzakan
   module Management
     class SyncGroup < Yuzakan::Operation
       include Deps[
-        "providers.read_group",
+        "services.read_group",
         "management.register_group",
         "management.unregister_group"
       ]
@@ -17,12 +17,12 @@ module Yuzakan
       end
 
       private def read(groupname)
-        providers = read_group.call(groupname)
+        services = read_group.call(groupname)
           .value_or { return Failure(_1) }
-        return Success(nil) if providers.empty?
+        return Success(nil) if services.empty?
 
         params = {basic: false}
-        providers.each_value do |data|
+        services.each_value do |data|
           [:label, :basic].each do |name|
             params[name] ||= data[name] if data.key?(name)
           end

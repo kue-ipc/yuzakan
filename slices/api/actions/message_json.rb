@@ -55,11 +55,11 @@ module API
         when Yuzakan::Structs::Attr
           if assoc && struct.mappings
             mappings = struct.mappings.map do |mapping|
-              {**convert_struct(mapping), provider: mapping.provider&.name}
+              {**convert_struct(mapping), service: mapping.service&.name}
             end
             data.merge!({mappings: mappings})
           end
-        when Yuzakan::Structs::Provider
+        when Yuzakan::Structs::Service
           data.merge!({params: struct.params}) if assoc && struct.params
         when User
           if assoc && struct.members

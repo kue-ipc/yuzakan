@@ -30,7 +30,7 @@ module API
 
         def handle(_request, _response)
           unless @user.deleted?
-            provider_delete_user({username: @name}) unless @user.deleted?
+            service_delete_user({username: @name}) unless @user.deleted?
             sync_user({username: @name})
           end
 

@@ -5,7 +5,7 @@ module Yuzakan
   module Management
     class SyncUser < Yuzakan::Operation
       include Deps[
-        "providers.read_user",
+        "services.read_user",
         "management.register_user",
         "management.unregister_user"
       ]
@@ -17,12 +17,12 @@ module Yuzakan
       end
 
       private def read(username)
-        providers = read_user.call(username)
+        services = read_user.call(username)
           .value_or { return Failure(_1) }
-        return Success(nil) if providers.empty?
+        return Success(nil) if services.empty?
 
         params = {groups: []}
-        providers.each_value do |data|
+        services.each_value do |data|
           [:label, :email, :primary_group].each do |name|
             params[name] ||= data[name] if data.key?(name)
           end

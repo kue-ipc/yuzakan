@@ -8,8 +8,8 @@ module Admin
     put "/config/all", to: "config.export", as: :config_all
     get "/config/all", to: "config.import", as: :config_all
 
-    get "/providers", to: "providers.index", as: :providers
-    get "/providers/:id", to: "providers.show", as: :provider
+    get "/services", to: "services.index", as: :services
+    get "/services/:id", to: "services.show", as: :service
 
     get "/attrs", to: "attrs.index", as: :attrs
 

@@ -11,12 +11,12 @@ module API
         private def load_group
           result = sync_group({groupname: @name})
           @group = result.group
-          @providers = result.providers
+          @services = result.services
         end
 
         private def group_json(**data)
           hash = convert_for_json(@group, assoc: true).dup
-          hash[:providers] = @providers unless @providers.nil?
+          hash[:services] = @services unless @services.nil?
           hash.merge!(data)
           generate_json(hash)
         end

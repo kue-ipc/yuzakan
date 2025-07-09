@@ -22,7 +22,7 @@ RSpec.describe API::Actions::Auth::Create do
     instance_double(Yuzakan::Management::SyncUser, call: Success(user))
   }
   let(:authenticate) {
-    instance_double(Yuzakan::Providers::Authenticate, call: Success(provider))
+    instance_double(Yuzakan::Services::Authenticate, call: Success(service))
   }
 
   shared_examples "created" do
@@ -154,7 +154,7 @@ RSpec.describe API::Actions::Auth::Create do
 
     describe "authentication failure" do
       let(:authenticate) {
-        instance_double(Yuzakan::Providers::Authenticate, call: Failure([:failure, failure_message]))
+        instance_double(Yuzakan::Services::Authenticate, call: Failure([:failure, failure_message]))
       }
       let(:failure_message) { Faker::Lorem.paragraph }
 

@@ -38,7 +38,7 @@ module Admin
             },
             {
               name: "プロバイダー",
-              action: :providers,
+              action: :services,
               description: "連携するシステムはプロバイダーとして登録します。連携システムの追加や変更が可能です。",
               color: "danger",
               level: 2,

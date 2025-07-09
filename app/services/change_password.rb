@@ -1,32 +1,32 @@
 # frozen_string_literal: true
 
 module Yuzakan
-  module Providers
-    class ChangePassword < Yuzakan::ProviderOperation
+  module Services
+    class ChangePassword < Yuzakan::ServiceOperation
       category :user
 
-      def call(username, password, providers = nil)
+      def call(username, password, services = nil)
         username = step validate_name(username)
         password = step validate_password(password)
-        providers =
-          if providers.nil?
-            all_providers = step get_providers(nil, method: :user_change_password)
-            all_providers.reject(&:individual_password)
+        services =
+          if services.nil?
+            all_services = step get_services(nil, method: :user_change_password)
+            all_services.reject(&:individual_password)
           else
-            step get_providers(providers, method: :user_change_password)
+            step get_services(services, method: :user_change_password)
           end
-        step change_password(username, password, providers)
+        step change_password(username, password, services)
       end
 
-      private def change_password(username, password, providers)
-        changed_providers = providers.select do |provider|
-          adapter = step get_adapter(provider)
+      private def change_password(username, password, services)
+        changed_services = services.select do |service|
+          adapter = step get_adapter(service)
           adapter.user_change_password(username, password)
         rescue => e
           return Failure([:error, e])
         end
 
-        Success[changed_providers]
+        Success[changed_services]
       end
     end
   end

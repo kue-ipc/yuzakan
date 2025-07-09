@@ -37,20 +37,20 @@ RSpec.describe AttrRepository do
 
   describe "with mappings" do
     let(:mapping_repository) { MappingRepository.new }
-    let(:provider_repository) { ProviderRepository.new }
+    let(:service_repository) { ServiceRepository.new }
 
     before do
-      @provider_hoge = provider_repository.create(name: "hoge", label: "ほげ", adapter: "dummy", order: 8)
-      @provider_fuga = provider_repository.create(name: "fuga", label: "ふが", adapter: "dummy", order: 16)
+      @service_hoge = service_repository.create(name: "hoge", label: "ほげ", adapter: "dummy", order: 8)
+      @service_fuga = service_repository.create(name: "fuga", label: "ふが", adapter: "dummy", order: 16)
 
-      @mapping_hoge_hoge = mapping_repository.create(attr_id: @attr_hoge.id, provider_id: @provider_hoge.id,
+      @mapping_hoge_hoge = mapping_repository.create(attr_id: @attr_hoge.id, service_id: @service_hoge.id,
         key: "hoge_hoge")
-      @mapping_hoge_fuga = mapping_repository.create(attr_id: @attr_hoge.id, provider_id: @provider_fuga.id,
+      @mapping_hoge_fuga = mapping_repository.create(attr_id: @attr_hoge.id, service_id: @service_fuga.id,
         key: "hoge_fuga", conversion: "e2j")
     end
 
     after do
-      provider_repository.clear
+      service_repository.clear
       mapping_repository.clear
     end
 
@@ -72,8 +72,8 @@ RSpec.describe AttrRepository do
       attr_with_mappings = attr_repository.create_with_mappings(
         name: "moe", label: "もえ", type: "string", order: 40, hidden: false,
         mappings: [
-          {provider_id: @provider_hoge.id, key: "moe_hoge"},
-          {provider_id: @provider_fuga.id, key: "moe_fuga", conversion: "e2j"},
+          {service_id: @service_hoge.id, key: "moe_hoge"},
+          {service_id: @service_fuga.id, key: "moe_fuga", conversion: "e2j"},
         ])
       expect(attr_with_mappings).to be_instance_of Attr
       expect(attr_with_mappings.name).to eq "moe"
@@ -83,24 +83,24 @@ RSpec.describe AttrRepository do
     end
 
     it "add_mapping" do
-      mapping = attr_repository.add_mapping(@attr_fuga, {provider_id: @provider_hoge.id, key: "fuga_hoge"})
+      mapping = attr_repository.add_mapping(@attr_fuga, {service_id: @service_hoge.id, key: "fuga_hoge"})
       expect(mapping).to be_instance_of Mapping
       expect(mapping.key).to eq "fuga_hoge"
       expect(mapping_repository.all.count).to eq 3
     end
 
-    it "delete_mapping_by_provider_id" do
-      delete_count = attr_repository.delete_mapping_by_provider_id(@attr_hoge, @provider_hoge.id)
+    it "delete_mapping_by_service_id" do
+      delete_count = attr_repository.delete_mapping_by_service_id(@attr_hoge, @service_hoge.id)
       expect(delete_count).to eq 1
       expect(mapping_repository.all.count).to eq 1
 
-      delete_count = attr_repository.delete_mapping_by_provider_id(@attr_fuga, @provider_hoge.id)
+      delete_count = attr_repository.delete_mapping_by_service_id(@attr_fuga, @service_hoge.id)
       expect(delete_count).to eq 0
       expect(mapping_repository.all.count).to eq 1
     end
 
-    it "find_mapping_by_provider_id" do
-      mapping = attr_repository.find_mapping_by_provider_id(@attr_hoge, @provider_hoge.id)
+    it "find_mapping_by_service_id" do
+      mapping = attr_repository.find_mapping_by_service_id(@attr_hoge, @service_hoge.id)
       expect(mapping).to eq @mapping_hoge_hoge
     end
   end

@@ -38,7 +38,7 @@ module Yuzakan
 
       schema :mappings, infer: true do
         associations do
-          belongs_to :provider
+          belongs_to :service
           belongs_to :attr
         end
       end

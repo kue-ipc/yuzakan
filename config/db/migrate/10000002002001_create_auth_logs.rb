@@ -12,7 +12,7 @@ ROM::SQL.migration do
       column :type, String, null: false
 
       column :result, String, null: false
-      column :provider, String, null: false
+      column :service, String, null: false
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

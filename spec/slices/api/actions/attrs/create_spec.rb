@@ -6,7 +6,7 @@ RSpec.describe API::Actions::Attrs::Create do
   let(:action_opts) {
     {
       attr_repo: attr_repo,
-      provider_repo: provider_repo,
+      service_repo: service_repo,
     }
   }
   let(:action_params) {
@@ -102,7 +102,7 @@ RSpec.describe API::Actions::Attrs::Create do
       response = action.call({
         **params,
         mappings: [
-          {provider: "", name: "attr1_1", conversion: nil},
+          {service: "", name: "attr1_1", conversion: nil},
           {name: "attr1_2", conversion: "e2j"},
         ],
       })
@@ -111,8 +111,8 @@ RSpec.describe API::Actions::Attrs::Create do
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:flash]).to eq({invalid: {mappings: {
-        "0": {provider: ["入力が必須です。"], key: ["存在しません。"]},
-        "1": {provider: ["存在しません。"], key: ["存在しません。"]},
+        "0": {service: ["入力が必須です。"], key: ["存在しません。"]},
+        "1": {service: ["存在しません。"], key: ["存在しません。"]},
       }}})
     end
 
@@ -146,12 +146,12 @@ RSpec.describe API::Actions::Attrs::Create do
       end
     end
 
-    describe "not found provider" do
-      # provider1のみない
-      let(:providers) {
-        providers_attributes
-          .reject { |attributes| attributes[:name] == "provider1" }
-          .map { |attributes| Provider.new(attributes) }
+    describe "not found service" do
+      # service1のみない
+      let(:services) {
+        services_attributes
+          .reject { |attributes| attributes[:name] == "service1" }
+          .map { |attributes| Service.new(attributes) }
       }
 
       it "is failure" do
@@ -160,7 +160,7 @@ RSpec.describe API::Actions::Attrs::Create do
         expect(response.status).to eq 422
         expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
-        expect(json[:flash]).to eq({mappings: {"1": {provider: ["見つかりません。"]}}})
+        expect(json[:flash]).to eq({mappings: {"1": {service: ["見つかりません。"]}}})
       end
     end
   end

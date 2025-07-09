@@ -64,11 +64,11 @@ export SHOW_USER_PARAM_TYPES = {}
 
 export CREATE_USER_PARAM_TYPES = {}
   ...USER_PROPERTIES
-  providers: "list"
+  services: "list"
 
 export UPDATE_USER_PARAM_TYPES = {}
   ...USER_PROPERTIES
-  providers: "list"
+  services: "list"
 
 export DESTROY_USER_PARAM_TYPES = {}
   permanent: "boolean"
@@ -79,21 +79,21 @@ export normalizeUsers = (users, type = {}) ->
   normalizeUser(user, type) for each user of users
 
 export normalizeUser = (user, types = {}) ->
-  providersData =
-    if !user.providers?
+  servicesData =
+    if !user.services?
       {}
-    else if user.providers instanceof Array
-      {providers: user.providers}
+    else if user.services instanceof Array
+      {services: user.services}
     else
       {
-        providers: (provider for provider, data in user.providers when data?)
-        providers_data: new Map(
-          [provider, pickType(data, USER_DATA_PROPERTIES)] for provider, data in user.providers when data?
+        services: (service for service, data in user.services when data?)
+        services_data: new Map(
+          [service, pickType(data, USER_DATA_PROPERTIES)] for service, data in user.services when data?
         )
       }
   {
     ...pickType(user, {...USER_PROPERTIES, ...types})
-    ...providersData
+    ...servicesData
   }
 
 // Actions

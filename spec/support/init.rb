@@ -27,8 +27,8 @@ def init_request_spec
   # trusted level 5 network 127.0.0.0/8
   let(:network) { Factory[:ipv4_loopback_network] }
   let(:group) { Factory[:group] }
-  let(:provider) {
-    Factory[:mock_provider, params: {
+  let(:service) {
+    Factory[:mock_service, params: {
       username: user.name,
       password: password,
       label: user.label,
@@ -46,7 +46,7 @@ def init_request_spec
     user
     config
     network
-    provider
+    service
     rack_test_session.env "rack.session", session
     rack_test_session(:first).env "rack.session", first_session
     rack_test_session(:logout).env "rack.session", logout_session
@@ -233,7 +233,7 @@ def let_mock_repos
   let(:group_repo) { instance_double(Yuzakan::Repos::GroupRepo) }
   let(:user_repo) { instance_double(Yuzakan::Repos::UserRepo) }
   let(:member_repo) { instance_double(Yuzakan::Repos::MemberRepo) }
-  let(:provider_repo) { instance_double(Yuzakan::Repos::ProviderRepo) }
+  let(:service_repo) { instance_double(Yuzakan::Repos::ServiceRepo) }
   let(:attr_repo) { instance_double(Yuzakan::Repos::AttrRepo) }
   let(:mapping_repo) { instance_double(Yuzakan::Repos::MappingRepo) }
   let(:auth_log_repo) { instance_double(Yuzakan::Repos::AuthLogRepo) }
@@ -248,7 +248,7 @@ def let_structs
   let(:affiliation) { Factory.structs[:affiliation] }
   let(:group) { Factory.structs[:group] }
   let(:user) { Factory.structs[:user] }
-  let(:provider) { Factory.structs[:provider] }
+  let(:service) { Factory.structs[:service] }
   let(:attr) { Factory.structs[:attr] }
   let(:mapping) { Factory.structs[:mapping] }
   let(:auth_log) { Factory.structs[:auth_log] }

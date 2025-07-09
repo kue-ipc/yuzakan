@@ -17,7 +17,7 @@ preCode from ~/app/pre_code.civet
   normalizeGroup
   createRunIndexWithPageGroups, createRunShowGroup, createRunUpdateGroup
 } from ~api/groups.civet
-{runIndexProviders} from ~api/providers.civet
+{runIndexServices} from ~api/services.civet
 {PAGINATION_PARAM_TYPES} from ~api/pagination.civet
 {SEARCH_PARAM_TYPES} from ~api/search.civet
 {ORDER_PARAM_TYPES} from ~api/order.civet
@@ -107,35 +107,35 @@ indexGroupsOption := ({onchange: action, readonly := false, ...props}) ->
         ]
 
 
-groupsTable := ({groups, providers}) ->
+groupsTable := ({groups, services}) ->
   html.table {key: "table", class: "table"}, [
-    groupsThead({providers})
-    groupsTbody({groups, providers})
+    groupsThead({services})
+    groupsTbody({groups, services})
   ]
 
-groupsThead := ({providers}) ->
+groupsThead := ({services}) ->
   html.thead {key: "thead"},
     html.tr {key: "head"}, [
       html.th {key: "show"}, text ""
       html.th {key: "action"}, text "アクション"
       html.th {key: "name"}, text "グループ名"
       html.th {key: "label"}, text "ラベル"
-      ...(providerTh({provider}) for each provider of providers)
+      ...(serviceTh({service}) for each service of services)
     ]
 
-providerTh := ({provider}) ->
-  html.th {key: `provider[${provider.name}]`}, text entityLabel(provider)
+serviceTh := ({service}) ->
+  html.th {key: `service[${service.name}]`}, text entityLabel(service)
 
-groupsTbody := ({groups, providers}) ->
+groupsTbody := ({groups, services}) ->
   html.tbody {key: "tbody"},
     (for each group of groups
       [
-        groupTr({group, providers})
-        groupDetailTr({group, providers})
+        groupTr({group, services})
+        groupDetailTr({group, services})
       ]
     ).flat()
 
-groupTr := ({group, providers}) ->
+groupTr := ({group, services}) ->
   color := switch group.action
     when "ADD"
       "primary"
@@ -191,17 +191,17 @@ groupTr := ({group, providers}) ->
       html.span {class: "ms-2 badge text-bg-warning"}, text "使用禁止" if group.prohibited
       html.span {class: "ms-2 badge text-bg-danger"}, text "削除済み" if group.deleted
     ]
-    ...(groupProviderTd({group, provider}) for each provider of providers)
+    ...(groupServiceTd({group, service}) for each service of services)
   ]
 
-groupProviderTd := ({group, provider}) ->
-  html.td {key: `provider[${provider.name}]`},
+groupServiceTd := ({group, service}) ->
+  html.td {key: `service[${service.name}]`},
     valueDisplay {
-      value: group.providers?.includes(provider.name)
+      value: group.services?.includes(service.name)
       type: "boolean"
     }
 
-groupDetailTr := ({group, providers}) ->
+groupDetailTr := ({group, services}) ->
   html.tr {
     key: `group-detail[${group.name}]`
     class: {collapse: true, show: group.show_detail}
@@ -222,14 +222,14 @@ groupDetailTr := ({group, providers}) ->
           else
             preCode {code: objToJson(group.error, 2), language: "json"}
     ]
-    ...(groupProviderDataTd({group, provider}) for each provider of providers)
+    ...(groupServiceDataTd({group, service}) for each service of services)
   ]
 
-groupProviderDataTd := ({group, provider}) ->
-  html.td {key: `provider-data[${provider.name}]`},
-    if group.providers_data?.has(provider.name)
+groupServiceDataTd := ({group, service}) ->
+  html.td {key: `service-data[${service.name}]`},
+    if group.services_data?.has(service.name)
       html.div {key: "data", class: "small"},
-        preCode {code: objToJson(group.providers_data.get(provider.name), 2), language: "json"}
+        preCode {code: objToJson(group.services_data.get(service.name), 2), language: "json"}
 
 // Actions
 
@@ -379,7 +379,7 @@ main := ->
   initState := {}
     mode: "loading"
     groups: []
-    providers: []
+    services: []
     pagination: pickType(queryParams, PAGINATION_PARAM_TYPES)
     search: pickType(queryParams, SEARCH_PARAM_TYPES)
     option: pickType(queryParams, INDEX_GROUPS_OPTION_PARAM_TYPES)
@@ -388,11 +388,11 @@ main := ->
 
   init := [
     initState
-    [runIndexProviders, {has_group: true}]
+    [runIndexServices, {has_group: true}]
     [runIndexGroups, indexOptionFromState(initState)]
   ]
 
-  view := ({mode, groups, providers, pagination, search, option, order, filename}) ->
+  view := ({mode, groups, services, pagination, search, option, order, filename}) ->
     html.div {}, [
       batchOperation {
         mode
@@ -416,7 +416,7 @@ main := ->
       else if groups.length is 0
         html.p {key: "not-found"}, text "グループが存在しません。"
       else
-        groupsTable({groups, providers})
+        groupsTable({groups, services})
     ]
 
   node := document.getElementById("groups")

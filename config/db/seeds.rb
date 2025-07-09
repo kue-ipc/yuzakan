@@ -35,10 +35,10 @@ if network_repo.count.zero?
   end
 end
 
-# setup local provider
-provider_repo = Hanami.app["repos.provider_repo"]
-unless provider_repo.get("local")
-  local_provider_params = {
+# setup local service
+service_repo = Hanami.app["repos.service_repo"]
+unless service_repo.get("local")
+  local_service_params = {
     label: "ローカル",
     order: 0,
     adapter: "local",
@@ -50,21 +50,21 @@ unless provider_repo.get("local")
     lockable: true,
     group: true,
   }
-  provider_repo.set("local", **local_provider_params)
+  service_repo.set("local", **local_service_params)
 end
 
 # setup admin user and group
-Hanami.app["providers.read_group"].call(admin_groupname, ["local"]) =>
-  Success(group_providers)
-if group_providers["local"].nil?
-  Hanami.app["providers.create_group"].call(admin_groupname, ["local"],
+Hanami.app["services.read_group"].call(admin_groupname, ["local"]) =>
+  Success(group_services)
+if group_services["local"].nil?
+  Hanami.app["services.create_group"].call(admin_groupname, ["local"],
     label: "管理者") in Success(_)
 end
 
-Hanami.app["providers.read_user"].call(admin_username, ["local"]) =>
-  Success(user_providers)
-if user_providers["local"].nil?
-  Hanami.app["providers.create_user"].call(admin_username, ["local"],
+Hanami.app["services.read_user"].call(admin_username, ["local"]) =>
+  Success(user_services)
+if user_services["local"].nil?
+  Hanami.app["services.create_user"].call(admin_username, ["local"],
     password: admin_password, label: "ローカル管理者",
     primary_group: admin_groupname, groups: []) in Success(_)
 end

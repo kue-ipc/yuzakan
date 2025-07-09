@@ -68,22 +68,22 @@ export normalizeGroups := (groups, type = {}) ->
   normalizeGroup(group, type) for each group of groups
 
 export normalizeGroup := (group, types = {}) ->
-  providersData :=
-    if !group.providers?
+  servicesData :=
+    if !group.services?
       {}
-    else if group.providers instanceof Array
-      {providers: group.providers}
+    else if group.services instanceof Array
+      {services: group.services}
     else
       {
-        providers: (provider for provider, data in group.providers when data?)
-        providers_data: new Map(
-          [provider, pickType(data, GROUP_DATA_PROPERTIES)] for provider, data in group.providers when data?
+        services: (service for service, data in group.services when data?)
+        services_data: new Map(
+          [service, pickType(data, GROUP_DATA_PROPERTIES)] for service, data in group.services when data?
         )
       }
 
   {
     ...pickType(group, {...GROUP_PROPERTIES, ...types})
-    ...providersData
+    ...servicesData
   }
 
 // Actions

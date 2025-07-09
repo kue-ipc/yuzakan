@@ -8,14 +8,14 @@ valueDisplay from ~/app/value_display.civet
 
 // Views
 
-export default groupProvider := ({mode, group, providers}) ->
-  html.div {key: "group-provider"}, [
+export default groupService := ({mode, group, services}) ->
+  html.div {key: "group-service"}, [
     html.h4 {}, text "登録状況"
     html.table {class: "table"}, [
       html.thead {},
         html.tr {}, [
           html.th {}, text ""
-          ...(html.th({}, text entityLabel(provider)) for each provider of providers)
+          ...(html.th({}, text entityLabel(service)) for each service of services)
         ]
       html.tbody {},
         for each {name, label, type} of [
@@ -26,8 +26,8 @@ export default groupProvider := ({mode, group, providers}) ->
           html.tr {}, [
             html.td {}, text label
             // html.td {}, valueDisplay {value: group[name], type}
-            (for each provider of providers
-              groupdata := group.providers_data?.get(provider.name)
+            (for each service of services
+              groupdata := group.services_data?.get(service.name)
               html.td {},
                 valueDisplay {
                   value: groupdata?[name]

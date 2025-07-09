@@ -1,35 +1,35 @@
 # frozen_string_literal: true
 
-require_relative "entity_provider"
+require_relative "entity_service"
 
 module API
   module Actions
-    module Providers
-      module SetProvider
-        include EntityProvider
+    module Services
+      module SetService
+        include EntityService
 
         def self.included(action)
           action.class_eval do
             params IdParams
-            before :set_provider
+            before :set_service
           end
         end
 
-        def initialize(provider_repository: ProviderRepository.new, **opts)
+        def initialize(service_repository: ServiceRepository.new, **opts)
           super
-          @provider_repository ||= provider_repository
+          @service_repository ||= service_repository
         end
 
-        private def set_provider
+        private def set_service
           unless params.valid?
             halt_json 400,
               errors: [only_first_errors(params.errors)]
           end
 
           @name = params[:id]
-          load_provider
+          load_service
 
-          halt_json 404 if @provider.nil?
+          halt_json 404 if @service.nil?
         end
       end
     end

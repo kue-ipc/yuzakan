@@ -3,21 +3,21 @@
 # TODO: 見直し必要
 
 module Yuzakan
-  module Providers
-    class SearchGrup < Yuzakan::ProviderOperation
+  module Services
+    class SearchGrup < Yuzakan::ServiceOperation
       category :user
 
-      def call(username, password, providers = nil)
+      def call(username, password, services = nil)
         username = step validate_name(username)
         password = step validate_password(password)
-        providers = step get_providers(providers, method: :user_auth)
-        step authenticate(username, password, providers)
+        services = step get_services(services, method: :user_auth)
+        step authenticate(username, password, services)
       end
 
-      private def authenticate(username, password, providers)
-        providers.each do |provider|
-          adapter = step get_adapter(provider)
-          return Success(provider) if adapter.user_auth(username, password)
+      private def authenticate(username, password, services)
+        services.each do |service|
+          adapter = step get_adapter(service)
+          return Success(service) if adapter.user_auth(username, password)
         rescue => e
           return Failure([:error, e])
         end

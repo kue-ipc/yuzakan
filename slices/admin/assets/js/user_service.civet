@@ -15,40 +15,40 @@ PROVIDER_REG_ITEMS := [
   {name: "mfa", label: "多要素", type: "boolean"}
 ]
 
-userAddProviderAction := (state, {provider_name}) ->
-  if state.user.providers.includes(provider_name)
+userAddServiceAction := (state, {service_name}) ->
+  if state.user.services.includes(service_name)
     state
   else
     {
       ...state
       user: {
         ...state.user
-        providers: [...state.user.providers, provider_name]
+        services: [...state.user.services, service_name]
       }
     }
 
-userRemoveProviderAction := (state, {provider_name}) ->
+userRemoveServiceAction := (state, {service_name}) ->
   {
     ...state
     user: {
       ...state.user
-      providers: state.user.providers.filter (item) -> item is not provider_name
+      services: state.user.services.filter (item) -> item is not service_name
     }
   }
 
-providerCheck := ({provider_name, checked, edit := false}) ->
+serviceCheck := ({service_name, checked, edit := false}) ->
   if edit
     html.div {class: "form-check"},
       html.input {
-        id: `provider-${provider_name}`
+        id: `service-${service_name}`
         class: "form-check-input"
         type: "checkbox"
         checked
         onchange:
           if checked
-            [userRemoveProviderAction, {provider_name}]
+            [userRemoveServiceAction, {service_name}]
           else
-            [userAddProviderAction, {provider_name}]
+            [userAddServiceAction, {service_name}]
       }
   else
     if checked
@@ -58,10 +58,10 @@ providerCheck := ({provider_name, checked, edit := false}) ->
       html.span {class: `text-secondary`},
         bsIcon({name: "square"})
 
-providerTd := ({user, provider, name, type}) ->
-  return html.td {} unless user.providers.includes(provider.name)
+serviceTd := ({user, service, name, type}) ->
+  return html.td {} unless user.services.includes(service.name)
 
-  data := user.providers_data.get(provider.name)
+  data := user.services_data.get(service.name)
 
   html.td {},
     valueDisplay {
@@ -77,35 +77,35 @@ providerTd := ({user, provider, name, type}) ->
           "body"
     }
 
-providerTr := ({user, providers, name, label, type}) ->
+serviceTr := ({user, services, name, label, type}) ->
   html.tr {}, [
     html.th {}, text label
-    ...(providerTd {user, provider, name, type} for each provider of providers)
+    ...(serviceTd {user, service, name, type} for each service of services)
   ]
 
-providerCheckTd := ({mode, user, provider}) ->
+serviceCheckTd := ({mode, user, service}) ->
   html.td {},
-    providerCheck {
-      provider_name: provider.name
-      checked: user.providers.includes(provider.name)
+    serviceCheck {
+      service_name: service.name
+      checked: user.services.includes(service.name)
       edit: mode is not "show"
     }
 
-export default userProvider := ({mode, user, providers}) ->
+export default userService := ({mode, user, services}) ->
   html.div {}, [
     html.h4 {}, text "プロバイダー登録状況"
     html.table {class: "table"}, [
       html.thead {},
         html.tr {}, [
           html.th {}, text ""
-          ...(html.th({}, text entityLabel(provider)) for each provider of providers)
+          ...(html.th({}, text entityLabel(service)) for each service of services)
         ]
       html.tbody {}, [
         html.tr {}, [
           html.th {}, text "登録"
-          ...(providerCheckTd({mode, user, provider}) for each provider of providers)
+          ...(serviceCheckTd({mode, user, service}) for each service of services)
         ]
-        ...(if mode is not "new" then (providerTr {user, providers, ...item} for each item of PROVIDER_REG_ITEMS) else [])
+        ...(if mode is not "new" then (serviceTr {user, services, ...item} for each item of PROVIDER_REG_ITEMS) else [])
       ]
     ]
   ]

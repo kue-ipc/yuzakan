@@ -16,31 +16,31 @@ module API
             end
           end
 
-          def initialize(provider_repository: ProviderRepository.new,
+          def initialize(service_repository: ServiceRepository.new,
             **opts)
             super
-            @provider_repository ||= provider_repository
+            @service_repository ||= service_repository
           end
 
           def handle(_request, _response)
             halt_json 400, errors: [params.errors] unless params.valid?
 
-            result = call_interacttor(ProviderUnlockUser.new(provider_repository: @provider_repository),
+            result = call_interacttor(ServiceUnlockUser.new(service_repository: @service_repository),
               {username: params[:user_id]})
 
-            providers = result.providers.compact.transform_values { |v| {locked: !v} }
+            services = result.services.compact.transform_values { |v| {locked: !v} }
             self.status = 200
-            self.body = generate_json({providers: providers})
+            self.body = generate_json({services: services})
           end
 
           def handle_google(_request, _response)
-            provider = ProviderRepository.new.first_google_with_adapter
+            service = ServiceRepository.new.first_google_with_adapter
 
             result = UnlockUser.new(
               user: current_user,
               client: client,
               config: current_config,
-              providers: [provider]).call(params.get(:google_lock_destroy))
+              services: [service]).call(params.get(:google_lock_destroy))
 
             if result.failure?
               flash[:errors] = result.errors
@@ -48,7 +48,7 @@ module API
               redirect_to routes.path(:google)
             end
 
-            @user = result.user_datas[provider.name]
+            @user = result.user_datas[service.name]
             @password = result.password
 
             flash[:success] = if @password

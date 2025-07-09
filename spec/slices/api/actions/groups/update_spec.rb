@@ -6,7 +6,7 @@ RSpec.describe API::Actions::Groups::Update do
   let(:action_opts) {
     {
       group_repo: group_repo,
-      provider_repo: provider_repo,
+      service_repo: service_repo,
     }
   }
   let(:action_params) {

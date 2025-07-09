@@ -4,7 +4,7 @@ require "json"
 
 module Admin
   module Views
-    module Providers
+    module Services
       class Export < Admin::View
         format :jsonl
 

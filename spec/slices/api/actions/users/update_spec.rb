@@ -6,7 +6,7 @@ RSpec.describe API::Actions::Users::Update do
   let(:action_opts) {
     {
       config_repository: config_repository,
-      provider_repository: provider_repository,
+      service_repository: service_repository,
       user_repository: user_repository,
       group_repository: group_repository,
       member_repository: member_repository,
@@ -19,7 +19,7 @@ RSpec.describe API::Actions::Users::Update do
       primary_group: primary_group.name,
       groups: groups.map(&:name),
       attrs: user_attrs,
-      providers: providers.map(&:name),
+      services: services.map(&:name),
     }
   }
 
@@ -36,7 +36,7 @@ RSpec.describe API::Actions::Users::Update do
   #   let(:client) { '127.0.0.1' }
 
   #   it 'is successful' do
-  #     allow(provider_repository).to receive(:ordered_all_with_adapter_by_operation).and_return([])
+  #     allow(service_repository).to receive(:ordered_all_with_adapter_by_operation).and_return([])
 
   #     response = action.call(params)
   #     expect(response.status).to eq 200

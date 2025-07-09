@@ -3,7 +3,7 @@
 def db_clear
   UserRepository.new.clear
   LocalUserRepository.new.clear
-  ProviderRepository.new.clear
+  ServiceRepository.new.clear
   ConfigRepository.new.clear
   NetworkRepository.new.clear
 end
@@ -24,8 +24,8 @@ def db_initialize
        trusted: false,})
   end
 
-  provider_repository = ProviderRepository.new
-  provider_repository.create({
+  service_repository = ServiceRepository.new
+  service_repository.create({
     name: "local",
     label: "ローカル",
     order: "0",
@@ -36,21 +36,21 @@ def db_initialize
     password_changeable: true,
     lockable: true,
   })
-  provider_repository.create({
+  service_repository.create({
     name: "dummy",
     label: "ダミー",
     adapter: "dummy",
   })
-  local_provider = provider_repository.find_with_adapter_by_name("local")
-  local_provider.create("admin", "pass",
+  local_service = service_repository.find_with_adapter_by_name("local")
+  local_service.create("admin", "pass",
     label: "ローカル管理者",
     email: "admin@example.jp")
-  local_provider.create("user", "word",
+  local_service.create("user", "word",
     label: "一般ユーザー",
     email: "user@example.jp")
   user_repository.create(usenrname: "admin", clearance_level: 5)
   config_repository.current_create({title: "テストサイト", maintenace: false})
-  ProviderAuthenticate.new(client: "::1",
+  ServiceAuthenticate.new(client: "::1",
     app: "test").call({
       username: "user", password: "word",
     })

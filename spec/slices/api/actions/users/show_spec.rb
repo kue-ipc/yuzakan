@@ -5,16 +5,16 @@ require "yaml"
 RSpec.describe API::Actions::Self::Show do
   init_action_spec
   let(:action_opts) {
-    {provider_repository: provider_repository,
+    {service_repository: service_repository,
      user_repository: user_repository,
      member_repository: member_repository,
      group_repository: group_repository,}
   }
   let(:format) { "application/json" }
 
-  let(:providers) {
-    [create_mock_provider(
-      name: "provider",
+  let(:services) {
+    [create_mock_service(
+      name: "service",
       group: true,
       params: {
         username: "user", label: "ユーザー", email: "user@example.jp",
@@ -27,7 +27,7 @@ RSpec.describe API::Actions::Self::Show do
         attr: {name: "ja_display_name", label: "日本語表示名", type: "string", hidden: false},
       }])]
   }
-  let(:provider_repository) { instance_double(ProviderRepository, ordered_all_with_adapter_by_operation: providers) }
+  let(:service_repository) { instance_double(ServiceRepository, ordered_all_with_adapter_by_operation: services) }
   let(:user_with_groups) {
     User.new(**user.to_h,
       members: [
@@ -57,8 +57,8 @@ RSpec.describe API::Actions::Self::Show do
       primary_group: "group",
       groups: ["group", "admin", "staff"],
       attrs: {ja_display_name: "表示ユーザー"},
-      providers: {
-        provider: {
+      services: {
+        service: {
           username: "user",
           label: "ユーザー",
           email: "user@example.jp",

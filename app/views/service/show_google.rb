@@ -2,7 +2,7 @@
 
 module Yuzakan
   module Views
-    module Providers
+    module Services
       class Show < Yuzakan::View
         include Web::View
 

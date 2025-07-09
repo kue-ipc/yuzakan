@@ -2,8 +2,8 @@
 
 module Yuzakan
   module Relations
-    class Providers < Yuzakan::DB::Relation
-      schema :providers, infer: true do
+    class Services < Yuzakan::DB::Relation
+      schema :services, infer: true do
         associations do
           has_many :mappings
           has_many :attrs, throught: :mappings

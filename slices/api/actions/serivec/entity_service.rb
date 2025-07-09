@@ -2,20 +2,20 @@
 
 module API
   module Actions
-    module Providers
-      module EntityProvider
-        def initialize(provider_repository: ProviderRepository.new,
+    module Services
+      module EntityService
+        def initialize(service_repository: ServiceRepository.new,
           **opts)
           super
-          @provider_repository ||= provider_repository
+          @service_repository ||= service_repository
         end
 
-        private def load_provider
-          @provider = @provider_repository.find_with_params_by_name(@name)
+        private def load_service
+          @service = @service_repository.find_with_params_by_name(@name)
         end
 
-        private def provider_json
-          generate_json(@provider, assoc: current_level >= 5)
+        private def service_json
+          generate_json(@service, assoc: current_level >= 5)
         end
       end
     end

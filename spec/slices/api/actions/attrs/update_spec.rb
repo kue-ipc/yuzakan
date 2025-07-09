@@ -7,7 +7,7 @@ RSpec.describe API::Actions::Attrs::Update do
     allow(attr_repo).to receive(get).and_return(attr)
     {
       attr_repo: attr_repo,
-      provider_repo: provider_repo,
+      service_repo: service_repo,
     }
   }
   let(:action_params) {

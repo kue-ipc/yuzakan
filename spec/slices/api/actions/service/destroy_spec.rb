@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-RSpec.describe API::Actions::Providers::Destroy do
+RSpec.describe API::Actions::Services::Destroy do
   init_action_spec
-  let(:action_opts) { {provider_repository: provider_repository} }
+  let(:action_opts) { {service_repository: service_repository} }
   let(:format) { "application/json" }
-  let(:action_params) { {**env, id: "provider1"} }
+  let(:action_params) { {**env, id: "service1"} }
 
   let(:adapter_params) {
     {
-      name: "provider1",
+      name: "service1",
       label: "プロバイダー①",
       adapter: "test",
       order: 16,
@@ -40,12 +40,12 @@ RSpec.describe API::Actions::Providers::Destroy do
       list: "default",
     }
   }
-  let(:provider_with_params) { Provider.new(id: 3, **adapter_params, adapter_params: adapter_params_attributes) }
-  let(:provider_without_params) { Provider.new(id: 3, **adapter_params) }
-  let(:provider_repository) {
-    instance_double(ProviderRepository,
-      find_with_params_by_name: provider_with_params,
-      delete: provider_without_params)
+  let(:service_with_params) { Service.new(id: 3, **adapter_params, adapter_params: adapter_params_attributes) }
+  let(:service_without_params) { Service.new(id: 3, **adapter_params) }
+  let(:service_repository) {
+    instance_double(ServiceRepository,
+      find_with_params_by_name: service_with_params,
+      delete: service_without_params)
   }
 
   it "is failure" do
@@ -72,8 +72,8 @@ RSpec.describe API::Actions::Providers::Destroy do
     end
 
     describe "not existend" do
-      let(:provider_repository) {
-        instance_double(ProviderRepository, find_with_params_by_name: nil)
+      let(:service_repository) {
+        instance_double(ServiceRepository, find_with_params_by_name: nil)
       }
 
       it "is failure" do

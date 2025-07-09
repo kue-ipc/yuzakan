@@ -2,7 +2,7 @@
 
 module Admin
   module Actions
-    module Providers
+    module Services
       class Export < Admin::Action
         security_level 5
 
@@ -17,17 +17,17 @@ module Admin
 
         params Params
 
-        def initialize(provider_repository: ProviderRepository.new, **)
+        def initialize(service_repository: ServiceRepository.new, **)
           super(**)
-          @provider_repository = provider_repository
+          @service_repository = service_repository
         end
 
         def handle(_request, _response)
           halt 400 unless params.valid?
           @name = params[:id].to_s
-          @provider = @provider_repository.find_with_params_by_name(@name)
-          halt 404 unless @provider
-          halt 403 unless @provider.adapter == "local"
+          @service = @service_repository.find_with_params_by_name(@name)
+          halt 404 unless @service
+          halt 403 unless @service.adapter == "local"
         end
       end
     end

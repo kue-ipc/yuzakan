@@ -140,7 +140,7 @@ RSpec.describe API::Actions::Auth::Mfa::Create do
 
     describe "authentication failure" do
       let(:authenticate) {
-        instance_double(Yuzakan::Providers::Authenticate, call: Failure([:failure, failure_message]))
+        instance_double(Yuzakan::Services::Authenticate, call: Failure([:failure, failure_message]))
       }
       let(:failure_message) { Faker::Lorem.paragraph }
 

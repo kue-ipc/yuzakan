@@ -4,7 +4,7 @@ require "hanami/interactor"
 require "hanami/validations/form"
 
 module Yuzakan
-  module Providers
+  module Services
     class UnlockUser < Yuzakan::Operation
       include Hanami::Interactor
 
@@ -26,16 +26,16 @@ module Yuzakan
         user:,
         client:,
         config: ConfigRepository.new.current,
-        providers: nil,
-        provider_repository: ProviderRepository.new,
+        services: nil,
+        service_repository: ServiceRepository.new,
         generate_password: GeneratePassword.new,
         mailer: Mailers::UserNotify
       )
         @user = user
         @client = client
         @config = config
-        @providers = providers
-        @provider_repository = provider_repository
+        @services = services
+        @service_repository = service_repository
         @generate_password = generate_password
         @mailer = mailer
       end
@@ -81,19 +81,19 @@ module Yuzakan
             "アカウントのロックを解除し、パスワードをリセットしました。"
         end
 
-        if @providers
-          activity_params[:action] += ":#{@providers.map(&:name).join(',')}"
-          mailer_params[:providers] = @providers
+        if @services
+          activity_params[:action] += ":#{@services.map(&:name).join(',')}"
+          mailer_params[:services] = @services
         end
 
         @user_datas = {}
         result = :success
 
-        (@providers ||
-          @provider_repository.ordered_all_with_adapter_by_operation(:user_unlock)
-        ).each do |provider|
-          user_data = provider.user_unlock(@username, @password)
-          @user_datas[provider.name] = user_data if user_data
+        (@services ||
+          @service_repository.ordered_all_with_adapter_by_operation(:user_unlock)
+        ).each do |service|
+          user_data = service.user_unlock(@username, @password)
+          @user_datas[service.name] = user_data if user_data
         rescue => e
           logger.error e
           unless @user_datas.empty?
@@ -127,7 +127,7 @@ module Yuzakan
 
         return true if @user.clearance_level >= 3
 
-        unless @providers&.all?(&:self_management)
+        unless @services&.all?(&:self_management)
           error("自己管理可能なシステム以外でロックを解除することはできません。")
           return false
         end

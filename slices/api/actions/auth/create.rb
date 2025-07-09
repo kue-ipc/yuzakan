@@ -10,7 +10,7 @@ module API
           "repos.auth_log_repo",
           "repos.user_repo",
           "management.sync_user",
-          "providers.authenticate",
+          "services.authenticate",
           "settings",
           show_view: "views.auth.show"
         ]
@@ -36,7 +36,7 @@ module API
             uuid: response[:current_uuid],
             client: response[:current_client],
             user: username,
-            provider: "",
+            service: "",
           }
 
           # ログイン済みか確認
@@ -64,7 +64,7 @@ module API
 
           # 認証実行
           case authenticate.call(username, password)
-          in Success(provider)
+          in Success(service)
             # do next
           in Failure[:error, error]
             auth_log_repo.create(**auth_log_params, result: "error")
@@ -113,7 +113,7 @@ module API
           # セッション情報を保存
           response.session[:user] = user.name
 
-          auth_log_repo.create(**auth_log_params, result: "success", provider: provider.name)
+          auth_log_repo.create(**auth_log_params, result: "success", service: service.name)
           response.flash[:success] = t("messages.action.success", action: t("actions.login"))
           response.status = :created
           response[:auth] = {username:}

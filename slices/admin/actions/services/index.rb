@@ -2,7 +2,7 @@
 
 module Admin
   module Actions
-    module Providers
+    module Services
       class Index < Admin::Action
         def handle(request, response)
         end

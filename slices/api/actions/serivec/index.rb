@@ -2,7 +2,7 @@
 
 module API
   module Actions
-    module Providers
+    module Services
       class Index < API::Action
         class Params < Hanami::Action::Params
           predicates NamePredicates
@@ -15,9 +15,9 @@ module API
 
         params Params
 
-        def initialize(provider_repository: ProviderRepository.new, **opts)
+        def initialize(service_repository: ServiceRepository.new, **opts)
           super
-          @provider_repository ||= provider_repository
+          @service_repository ||= service_repository
         end
 
         def handle(_request, _response)
@@ -26,15 +26,15 @@ module API
               errors: [only_first_errors(params.errors)]
           end
 
-          @providers =
+          @services =
             if params[:has_group]
-              @provider_repository.ordered_all_group
+              @service_repository.ordered_all_group
             else
-              @provider_repository.ordered_all
+              @service_repository.ordered_all
             end
 
           self.status = 200
-          self.body = generate_json(@providers)
+          self.body = generate_json(@services)
         end
       end
     end

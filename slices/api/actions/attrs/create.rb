@@ -7,7 +7,7 @@ module API
         include Deps[
           "repos.attr_repo",
           "repos.mapping_repo",
-          "repos.provider_repo",
+          "repos.service_repo",
           show_view: "views.attrs.show"
         ]
 
@@ -22,7 +22,7 @@ module API
           optional(:readonly).filled(:bool?)
           optional(:code).maybe(:str?, max_size?: 4096)
           optional(:mappings).array(:hash) do
-            required(:provider).filled(:str?, :name?, max_size?: 255)
+            required(:service).filled(:str?, :name?, max_size?: 255)
             required(:key).maybe(:str?, max_size?: 255)
             optional(:conversion).maybe(included_in?: Yuzakan::Structs::Mapping::CONVERSIONS)
           end
@@ -45,13 +45,13 @@ module API
           mappings = (params[:mappings] || []).each_with_index.map do |mapping, idx|
             next if mapping[:key].nil? || mapping[:key].empty?
 
-            provider = provider_by_name(mapping[:provider])
-            if provider.nil?
-              mapping_errors[idx] = {provider: [t("errors.found?")]}
+            service = service_by_name(mapping[:service])
+            if service.nil?
+              mapping_errors[idx] = {service: [t("errors.found?")]}
               next
             end
 
-            {**mapping.except(:provider), provider_id: provider&.id}
+            {**mapping.except(:service), service_id: service&.id}
           end.compact
           unless mapping_errors.empty?
             halt_json 422,
@@ -69,11 +69,11 @@ module API
           self.body = generate_json(@attr, assoc: true)
         end
 
-        private def provider_by_name(name)
-          @named_providers ||= @provider_repository.all.to_h do |provider|
-            [provider.name, provider]
+        private def service_by_name(name)
+          @named_services ||= @service_repository.all.to_h do |service|
+            [service.name, service]
           end
-          @named_providers[name]
+          @named_services[name]
         end
       end
     end

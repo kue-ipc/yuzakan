@@ -1,5 +1,5 @@
-// path: /admin/providers/:name
-// node: provider
+// path: /admin/services/:name
+// node: service
 
 {text, app} from hyperapp
 * as html from @hyperapp/html
@@ -12,7 +12,7 @@ ConfirmDialog from ~/app/confirm_dialog.civet
 
 adapterParams from ~admin/adapter_params.civet
 
-parentNames := ["provider"]
+parentNames := ["service"]
 
 abilities := [
   {name: "readable", label: "読み取り"}
@@ -37,7 +37,7 @@ createAPIDialog := new APIDialog {
   id: formId("create", ["modal", "web", ...parentNames])
   title: "プロバイダーの作成"
   method: "POST"
-  url: "/api/providers"
+  url: "/api/services"
   codeActions: new Map [
     [201, {status: "success", message: "プロバイダーを作成しました。"}]
   ]
@@ -57,30 +57,30 @@ destroyAPIDialog := new APIDialog {
   title: "プロバイダーの削除"
   method: "DELETE"
   codeActions: new Map [
-    [200, {status: "success", message: "プロバイダーを削除しました。", redirectTo: "/admin/providers", reloadTime: 10}]
+    [200, {status: "success", message: "プロバイダーを削除しました。", redirectTo: "/admin/services", reloadTime: 10}]
   ]
 }
 
 adapterParamAction := (state, {name, value}) ->
-  {...state, provider: {...state.provider, params: {...state.provider.params, [name]: value}}}
+  {...state, service: {...state.service, params: {...state.service.params, [name]: value}}}
 
-providerAction := (state, {name, provider}) ->
-  history.pushState(null, null, `/admin/providers/${name}`) if name? && name is not state.name
+serviceAction := (state, {name, service}) ->
+  history.pushState(null, null, `/admin/services/${name}`) if name? && name is not state.name
 
   newState := {}
     ...state
     name: name ?? state.name
-    provider: {...state.provider, ...provider}
+    service: {...state.service, ...service}
 
-  return newState unless provider.adapter?
+  return newState unless service.adapter?
 
-  for each adapter of state.adapters when adapter.name is provider.adapter
+  for each adapter of state.adapters when adapter.name is service.adapter
     return newState if adapter.param_types?
     break
 
   [
     newState
-    [showAdapterRunner, {name: provider.adapter}]
+    [showAdapterRunner, {name: service.adapter}]
   ]
 
 adapterAction := (state, {name, adapter}) ->
@@ -101,39 +101,39 @@ showAdapterRunner := (dispatch, {name}) ->
   else
     console.error response
 
-createProviderRunner := (dispatch, {provider}) ->
-  response := await createAPIDialog.submitPromise {data: {...csrf(), ...provider}}
+createServiceRunner := (dispatch, {service}) ->
+  response := await createAPIDialog.submitPromise {data: {...csrf(), ...service}}
   if response.ok
-    provider := response.data
-    dispatch(providerAction, {name: provider.name, provider})
+    service := response.data
+    dispatch(serviceAction, {name: service.name, service})
   else
     console.error response
 
 
-updateProviderRunner := (dispatch, {name, provider}) ->
-  response := await updateAPIDialog.submitPromise {url: `/api/providers/${name}`, data: {...csrf(), ...provider}}
+updateServiceRunner := (dispatch, {name, service}) ->
+  response := await updateAPIDialog.submitPromise {url: `/api/services/${name}`, data: {...csrf(), ...service}}
   if response.ok
-    provider := response.data
-    dispatch(providerAction, {name: provider.name, provider})
+    service := response.data
+    dispatch(serviceAction, {name: service.name, service})
   else
     console.error response
 
-destroyProviderRunner := (dispatch, {name}) ->
+destroyServiceRunner := (dispatch, {name}) ->
   confirm := await destroyConfirm.showPromise({message: `属性「${name}」を削除してもよろしいですか？`})
   if confirm
-    response := await destroyAPIDialog.submitPromise {url: `/api/providers/${name}`, data: csrf()}
+    response := await destroyAPIDialog.submitPromise {url: `/api/services/${name}`, data: csrf()}
     if response.ok
       // ...redirect
     else
       console.error response
 
 
-showProviderRunner := (dispatch, {name}) ->
+showServiceRunner := (dispatch, {name}) ->
   return unless name?
 
-  response := await fetchAPIGet({url: `/api/providers/${name}`})
+  response := await fetchAPIGet({url: `/api/services/${name}`})
   if response.ok
-    dispatch(providerAction, {provider: response.data})
+    dispatch(serviceAction, {service: response.data})
   else
     console.error response
 
@@ -151,26 +151,26 @@ name := location.pathname.split("/").at(-1)
 name := undefined if name is "*"
 
 init := [
-  {name, provider: {params: {}}, adapters: []}
+  {name, service: {params: {}}, adapters: []}
   [indexAllAdaptersRunner]
-  [showProviderRunner, {name}]
+  [showServiceRunner, {name}]
 ]
 
-view := ({name, provider, adapters}) ->
-  provider_adapter := (adapter for each adapter of adapters when adapter.name is provider.adapter)[0]
+view := ({name, service, adapters}) ->
+  service_adapter := (adapter for each adapter of adapters when adapter.name is service.adapter)[0]
   html.div {}, [
     html.div {class: "mb-3"}, [
-      html.label {class: "form-label", for: "provider-name"}, text "名前"
+      html.label {class: "form-label", for: "service-name"}, text "名前"
       html.input {
-        id: "provider-name", class: "form-control", type: "text", required: true, value: provider.name
-        oninput: (state, event) -> [providerAction, {provider: {name: event.target.value}}]
+        id: "service-name", class: "form-control", type: "text", required: true, value: service.name
+        oninput: (state, event) -> [serviceAction, {service: {name: event.target.value}}]
       }
     ]
     html.div {class: "mb-3"}, [
-      html.label {class: "form-label", for: "provider-label"}, text "表示名"
+      html.label {class: "form-label", for: "service-label"}, text "表示名"
       html.input {
-        id: "provider-label", class: "form-control", type: "text", required: true, value: provider.label
-        oninput: (state, event) -> [providerAction, {provider: {label: event.target.value}}]
+        id: "service-label", class: "form-control", type: "text", required: true, value: service.label
+        oninput: (state, event) -> [serviceAction, {service: {label: event.target.value}}]
       }
     ]
     html.div {}, [
@@ -179,61 +179,61 @@ view := ({name, provider, adapters}) ->
       (abilities.map (ability) ->
         html.div {class: "form-check form-check-inline"}, [
           html.input {
-            id: `provider-${ability.name}`, class: "form-check-input", type: "checkbox"
-            checked: provider[ability.name]
-            onchange: (state, event) -> [providerAction, {provider: {[ability.name]: !provider[ability.name]}}]
+            id: `service-${ability.name}`, class: "form-check-input", type: "checkbox"
+            checked: service[ability.name]
+            onchange: (state, event) -> [serviceAction, {service: {[ability.name]: !service[ability.name]}}]
           }
-          html.label {class: "form-check-label", for: `provider-${ability.name}`}, text ability.label
+          html.label {class: "form-check-label", for: `service-${ability.name}`}, text ability.label
         ]
       )...
     ]
     html.div {class: "form-check"}, [
       html.input {
-        id: `provider-individual_password`, class: "form-check-input", type: "checkbox"
-        checked: provider.individual_password
-        onchange: (state, event) -> [providerAction, {provider: {individual_password: !provider.individual_password}}]
+        id: `service-individual_password`, class: "form-check-input", type: "checkbox"
+        checked: service.individual_password
+        onchange: (state, event) -> [serviceAction, {service: {individual_password: !service.individual_password}}]
       }
-      html.label {class: "form-check-label", for: `provider-individual_password`}, text "パスワード個別設定"
+      html.label {class: "form-check-label", for: `service-individual_password`}, text "パスワード個別設定"
       html.span {class: "ms-1 form-text"}, text "複数プロバイダー一括でのパスワード変更やリセットの対象になりません。"
     ]
     html.div {class: "form-check"}, [
       html.input {
-        id: `provider-self_management`, class: "form-check-input", type: "checkbox"
-        checked: provider.self_management
-        onchange: (state, event) -> [providerAction, {provider: {self_management: !provider.self_management}}]
+        id: `service-self_management`, class: "form-check-input", type: "checkbox"
+        checked: service.self_management
+        onchange: (state, event) -> [serviceAction, {service: {self_management: !service.self_management}}]
       }
-      html.label {class: "form-check-label", for: `provider-self_management`}, text "自己管理可能"
+      html.label {class: "form-check-label", for: `service-self_management`}, text "自己管理可能"
       html.span {class: "ms-1 form-text"}, text "ユーザー自身が登録やパスワードリセット等ができるようになります。"
     ]
     html.div {class: "form-check"}, [
       html.input {
-        id: `provider-group`, class: "form-check-input", type: "checkbox"
-        checked: provider.group
-        onchange: (state, event) -> [providerAction, {provider: {group: !provider.group}}]
+        id: `service-group`, class: "form-check-input", type: "checkbox"
+        checked: service.group
+        onchange: (state, event) -> [serviceAction, {service: {group: !service.group}}]
       }
-      html.label {class: "form-check-label", for: `provider-group`}, text "グループ"
+      html.label {class: "form-check-label", for: `service-group`}, text "グループ"
       html.span {class: "ms-1 form-text"}, text "グループの取得やメンバーの変更ができるようになります。(アダプターによっては対応していません。)"
     ]
     html.div {class: "mb-3"}, [
-      html.label {class: "form-label", for: "provider-adapter"}, text "アダプター"
+      html.label {class: "form-label", for: "service-adapter"}, text "アダプター"
       html.select {
-        id: "provider-adapter", class: "form-select"
-        oninput: (state, event) -> [providerAction, {provider: {adapter: event.target.value}}]
+        id: "service-adapter", class: "form-select"
+        oninput: (state, event) -> [serviceAction, {service: {adapter: event.target.value}}]
       },
-        if provider.adapter?
+        if service.adapter?
           for each adapter of adapters
-            html.option {value: adapter.name, selected: adapter.name is provider.adapter}, text adapter.label
+            html.option {value: adapter.name, selected: adapter.name is service.adapter}, text adapter.label
         else
           [
             html.option {selected: true}, text "選択してください。"
             ...(for each adapter of adapters
-              html.option {value: adapter.name, selected: adapter.name is provider.adapter}, text adapter.label
+              html.option {value: adapter.name, selected: adapter.name is service.adapter}, text adapter.label
             )
           ]
     ]
     adapterParams {
-      params: provider.params
-      param_types: provider_adapter?.param_types ?? []
+      params: service.params
+      param_types: service_adapter?.param_types ?? []
       action: adapterParamAction
     }
     html.div {class: "mb-1"},
@@ -241,22 +241,22 @@ view := ({name, provider, adapters}) ->
         [
           html.button {
             class: "btn btn-primary"
-            onclick: (state) -> [state, [createProviderRunner, {provider}]]
+            onclick: (state) -> [state, [createServiceRunner, {service}]]
           }, text "作成"
         ]
       else
         [
           html.button {
             class: "btn btn-warning"
-            onclick: (state) -> [state, [updateProviderRunner, {name, provider}]]
+            onclick: (state) -> [state, [updateServiceRunner, {name, service}]]
           }, text "更新"
           html.button {
             class: "ms-1 btn btn-danger"
-            onclick: (state) -> [state, [destroyProviderRunner, {name}]]
+            onclick: (state) -> [state, [destroyServiceRunner, {name}]]
           }, text "削除"
         ]
   ]
 
-node := document.getElementById("provider")
+node := document.getElementById("service")
 
 app {init, view, node}

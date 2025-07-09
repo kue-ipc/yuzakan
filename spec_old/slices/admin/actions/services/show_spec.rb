@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-RSpec.describe Admin::Actions::Providers::Show do
+RSpec.describe Admin::Actions::Services::Show do
   init_action_spec
-  let(:action_opts) { {provider_repository: provider_repository} }
-  let(:action_params) { {id: "provider1"} }
-  let(:provider_repository_stubs) { {exist_by_name?: true} }
+  let(:action_opts) { {service_repository: service_repository} }
+  let(:action_params) { {id: "service1"} }
+  let(:service_repository_stubs) { {exist_by_name?: true} }
 
   it "is failure" do
     response = action.call(params)
@@ -31,7 +31,7 @@ RSpec.describe Admin::Actions::Providers::Show do
     end
 
     describe "not existed" do
-      let(:provider_repository_stubs) { {exist_by_name?: false} }
+      let(:service_repository_stubs) { {exist_by_name?: false} }
 
       it "is failure" do
         response = action.call(params)

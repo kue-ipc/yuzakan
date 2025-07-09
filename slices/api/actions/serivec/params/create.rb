@@ -2,7 +2,7 @@
 
 module API
   module Actions
-    module Providers
+    module Services
       module Params
         class Create < Yuzakan::Action::Params
           params do

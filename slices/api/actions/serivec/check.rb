@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require_relative "set_provider"
+require_relative "set_service"
 
 module API
   module Actions
-    module Providers
+    module Services
       class Check < API::Action
-        include SetProvider
+        include SetService
 
         def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           self.status = 200
-          self.body = generate_json({check: @provider.check})
+          self.body = generate_json({check: @service.check})
         end
       end
     end

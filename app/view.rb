@@ -27,7 +27,7 @@ module Yuzakan
       {name: :admin_users, color: "secondary", level: 2},
       {name: :admin_groups, color: "secondary", level: 2},
       {name: :admin_config, color: "danger", level: 5},
-      {name: :admin_providers, color: "danger", level: 2},
+      {name: :admin_services, color: "danger", level: 2},
       {name: :admin_attrs, color: "danger", level: 5},
     ].map { |params| MenuItem.new(**params) }.freeze
 

@@ -18,12 +18,12 @@ module API
 
           params Params
 
-          def initialize(provider_repository: ProviderRepository.new,
+          def initialize(service_repository: ServiceRepository.new,
             user_repository: UserRepository.new,
             config_repository: ConfigRepository.new,
             **opts)
             super
-            @provider_repository ||= provider_repository
+            @service_repository ||= service_repository
             @user_repository ||= user_repository
             @config_repository ||= config_repository
           end
@@ -31,7 +31,7 @@ module API
           def handle(_request, _response)
             halt_json 400, errors: [params.errors] unless params.valid?
 
-            reset_password = ResetPassword.new(provider_repository: @provider_repository,
+            reset_password = ResetPassword.new(service_repository: @service_repository,
               config_repository: @config_repository)
             result = reset_password.call({username: params[:user_id]})
 
@@ -55,12 +55,12 @@ module API
           end
 
           def handle_google(_request, _response)
-            provider = ProviderRepository.new.first_google_with_adapter
+            service = ServiceRepository.new.first_google_with_adapter
 
             result = ResetPassword.new(user: current_user,
               client: client,
               config: current_config,
-              providers: [provider])
+              services: [service])
               .call(params.get(:google_password_create))
 
             if result.failure?
@@ -69,7 +69,7 @@ module API
               redirect_to routes.path(:google)
             end
 
-            @user = result.user_datas[provider.name]
+            @user = result.user_datas[service.name]
             @password = result.password
 
             flash[:success] = "Google アカウントのパスワードをリセットしました。"

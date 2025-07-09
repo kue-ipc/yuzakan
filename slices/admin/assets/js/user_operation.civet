@@ -126,7 +126,7 @@ runCreateUser := (dispatch, {user}) ->
       clearance_level: user.clearance_level
       primary_group: user.primary_group
       attrs: user.attrs
-      providers: user.providers
+      services: user.services
     }
   }
   if response.ok
@@ -148,7 +148,7 @@ runUpdateUser := (dispatch, {name, user}) ->
       clearance_level: user.clearance_level
       primary_group: user.primary_group
       attrs: user.attrs
-      providers: user.providers
+      services: user.services
     }
   }
   if response.ok

@@ -2,10 +2,10 @@
 
 module Yuzakan
   module Views
-    module Providers
+    module Services
       class Show < Yuzakan::View
         expose :title, layout: true, decorate: false do
-          i18n.t("views.provider.title")
+          i18n.t("views.service.title")
         end
       end
     end

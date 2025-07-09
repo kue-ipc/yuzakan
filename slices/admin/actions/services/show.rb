@@ -2,7 +2,7 @@
 
 module Admin
   module Actions
-    module Providers
+    module Services
       class Show < Admin::Action
         security_level 5
 
@@ -17,15 +17,15 @@ module Admin
 
         params Params
 
-        def initialize(provider_repository: ProviderRepository.new, **)
+        def initialize(service_repository: ServiceRepository.new, **)
           super(**)
-          @provider_repository = provider_repository
+          @service_repository = service_repository
         end
 
         def handle(_request, _response)
           halt 400 unless params.valid?
           name = params[:id].to_s
-          return if name == "*" || @provider_repository.exist_by_name?(name)
+          return if name == "*" || @service_repository.exist_by_name?(name)
 
           halt 404
         end

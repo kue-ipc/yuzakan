@@ -2,7 +2,7 @@
 
 module Admin
   module Views
-    module Providers
+    module Services
       class Show < Admin::View
       end
     end

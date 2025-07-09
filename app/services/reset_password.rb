@@ -4,7 +4,7 @@ require "hanami/interactor"
 require "hanami/validations"
 
 module Yuzakan
-  module Providers
+  module Services
     class ResetPassword < Yuzakan::Operation
       include Hanami::Interactor
 
@@ -15,17 +15,17 @@ module Yuzakan
 
         validations do
           required(:username).filled(:str?, :name?, max_size?: 255)
-          optional(:providers).each(:str?, :name?, max_size?: 255)
+          optional(:services).each(:str?, :name?, max_size?: 255)
         end
       end
 
       expose :username
       expose :password
-      expose :providers
+      expose :services
 
-      def initialize(provider_repository: ProviderRepository.new,
+      def initialize(service_repository: ServiceRepository.new,
         config_repository: ConfigRepository.new)
-        @provider_repository = provider_repository
+        @service_repository = service_repository
         @config_repository = config_repository
       end
 
@@ -33,7 +33,7 @@ module Yuzakan
         @username = params[:username]
         @password = generate_password
 
-        result = ProviderChangePassword.new(provider_repository: @provider_repository)
+        result = ServiceChangePassword.new(service_repository: @service_repository)
           .call({password: @password, **params})
         if result.failure?
           error(t("errors.action.failure",
@@ -42,7 +42,7 @@ module Yuzakan
           fail!
         end
 
-        @providers = result.providers
+        @services = result.services
       end
 
       private def valid?(params)

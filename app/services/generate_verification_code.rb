@@ -4,7 +4,7 @@ require "hanami/interactor"
 require "hanami/validations/form"
 
 module Yuzakan
-  module Providers
+  module Services
     class GenerateVerificationCode < Yuzakan::Operation
       include Hanami::Interactor
 
@@ -23,14 +23,14 @@ module Yuzakan
       def initialize(
         user:,
         client:,
-        providers:,
+        services:,
         config: ConfigRepository.new.current,
         mailer: Mailers::UserNotify
       )
         @user = user
         @client = client
         @config = config
-        @providers = providers
+        @services = services
         @mailer = mailer
       end
 
@@ -60,15 +60,15 @@ module Yuzakan
           description: "バックアップコードを生成しました。",
         }
 
-        activity_params[:action] += ":#{@providers.map(&:name).join(',')}"
-        mailer_params[:providers] = @providers
+        activity_params[:action] += ":#{@services.map(&:name).join(',')}"
+        mailer_params[:services] = @services
 
         @user_datas = {}
         result = :success
 
-        @providers.each do |provider|
-          user_data = provider.user_generate_code(@username)
-          @user_datas[provider.name] = user_data if user_data
+        @services.each do |service|
+          user_data = service.user_generate_code(@username)
+          @user_datas[service.name] = user_data if user_data
         rescue => e
           logger.error e
           error("バックアップコード生成時にエラーが発生しました。: #{e.message}")
@@ -100,7 +100,7 @@ module Yuzakan
 
         return true if @user.clearance_level >= 3
 
-        unless @providers&.all?(&:self_management)
+        unless @services&.all?(&:self_management)
           error("自己管理可能なシステム以外でバックアップコードを生成することはできません。")
           return false
         end

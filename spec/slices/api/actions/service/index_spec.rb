@@ -1,30 +1,30 @@
 # frozen_string_literal: true
 
-RSpec.describe API::Actions::Providers::Index do
+RSpec.describe API::Actions::Services::Index do
   init_action_spec
-  let(:action_opts) { {provider_repository: provider_repository} }
+  let(:action_opts) { {service_repository: service_repository} }
   let(:format) { "application/json" }
 
-  let(:providers_attributes) {
+  let(:services_attributes) {
     [
       {id: 1, name: "local", label: "ローカル", adapter: "local", order: 8},
-      {id: 24, name: "provider24", label: "プロバイダー24", adapter: "dummy", order: 16},
-      {id: 19, name: "provider19", label: "プロバイダー19", adapter: "test", order: 24},
-      {id: 27, name: "provider27", label: "プロバイダー27", adapter: "mock", order: 32},
-      {id: 42, name: "provider42", adapter: "test", order: 32},
+      {id: 24, name: "service24", label: "プロバイダー24", adapter: "dummy", order: 16},
+      {id: 19, name: "service19", label: "プロバイダー19", adapter: "test", order: 24},
+      {id: 27, name: "service27", label: "プロバイダー27", adapter: "mock", order: 32},
+      {id: 42, name: "service42", adapter: "test", order: 32},
     ]
   }
 
-  let(:providers) { providers_attributes.map { |attributes| Provider.new(attributes) } }
-  let(:provider_repository) { instance_double(ProviderRepository, ordered_all: providers) }
+  let(:services) { services_attributes.map { |attributes| Service.new(attributes) } }
+  let(:service_repository) { instance_double(ServiceRepository, ordered_all: services) }
 
   it "is successful" do
     response = action.call(params)
     expect(response.status).to eq 200
     expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
-    expect(json).to eq(providers_attributes.map do |provider|
-      provider.except(:id)
+    expect(json).to eq(services_attributes.map do |service|
+      service.except(:id)
     end)
   end
 

@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-RSpec.describe API::Actions::Providers::Create do
+RSpec.describe API::Actions::Services::Create do
   init_action_spec
-  let(:action_opts) { {provider_repository: provider_repository} }
+  let(:action_opts) { {service_repository: service_repository} }
   let(:format) { "application/json" }
   let(:action_params) { {**adapter_params, params: adapter_params_params} }
 
   let(:adapter_params) {
     {
-      name: "provider1",
+      name: "service1",
       label: "プロバイダー①",
       adapter: "test",
       order: 16,
@@ -51,15 +51,15 @@ RSpec.describe API::Actions::Providers::Create do
       list: "default",
     }
   }
-  let(:provider_without_params) { Provider.new(id: 3, **adapter_params) }
-  let(:provider_with_params) { Provider.new(id: 3, **adapter_params, adapter_params: adapter_params_attributes) }
-  let(:provider_repository) {
-    instance_double(ProviderRepository,
+  let(:service_without_params) { Service.new(id: 3, **adapter_params) }
+  let(:service_with_params) { Service.new(id: 3, **adapter_params, adapter_params: adapter_params_attributes) }
+  let(:service_repository) {
+    instance_double(ServiceRepository,
       exist_by_name?: false,
       last_order: 16,
-      create: provider_without_params,
-      find_with_params: provider_with_params,
-      find_with_params_by_name: provider_with_params,
+      create: service_without_params,
+      find_with_params: service_with_params,
+      find_with_params_by_name: service_with_params,
       add_param: AdapterParam.new)
   }
 
@@ -79,7 +79,7 @@ RSpec.describe API::Actions::Providers::Create do
       response = action.call(params)
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      expect(response.headers["Content-Location"]).to eq "/api/providers/#{provider_with_params.name}"
+      expect(response.headers["Content-Location"]).to eq "/api/services/#{service_with_params.name}"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         **adapter_params,
@@ -91,7 +91,7 @@ RSpec.describe API::Actions::Providers::Create do
       response = action.call(params.except(:order))
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      expect(response.headers["Content-Location"]).to eq "/api/providers/#{provider_with_params.name}"
+      expect(response.headers["Content-Location"]).to eq "/api/services/#{service_with_params.name}"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         **adapter_params,
@@ -165,12 +165,12 @@ RSpec.describe API::Actions::Providers::Create do
     end
 
     describe "existed name" do
-      let(:provider_repository) {
-        instance_double(ProviderRepository,
+      let(:service_repository) {
+        instance_double(ServiceRepository,
           exist_by_name?: true,
           last_order: 16,
-          create: provider_without_params,
-          find_with_params: provider_with_params,
+          create: service_without_params,
+          find_with_params: service_with_params,
           add_param: AdapterParam.new)
       }
 

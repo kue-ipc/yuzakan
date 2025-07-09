@@ -4,7 +4,7 @@
 module API
   module Views
     module Parts
-      class Provider < API::Views::Part
+      class Service < API::Views::Part
       end
     end
   end

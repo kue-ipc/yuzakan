@@ -2,7 +2,7 @@
 
 ROM::SQL.migration do
   change do
-    create_table :providers do
+    create_table :services do
       primary_key :id
 
       column :name, String, null: false

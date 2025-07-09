@@ -44,13 +44,13 @@ module API
 
         def initialize(user_repository: UserRepository.new,
           group_repository: GroupRepository.new,
-          provider_repository: ProviderRepository.new,
+          service_repository: ServiceRepository.new,
           member_repository: MemberRepository.new,
           **opts)
           super
           @user_repository ||= user_repository
           @group_repository ||= group_repository
-          @provider_repository ||= provider_repository
+          @service_repository ||= service_repository
           @member_repository ||= member_repository
         end
 
@@ -66,7 +66,7 @@ module API
             elsif params[:no_sync]
               get_users_from_repository(params.to_h)
             else
-              get_users_from_provider(params.to_h)
+              get_users_from_service(params.to_h)
             end
 
           self.status = 200
@@ -78,8 +78,8 @@ module API
         def get_users_all
           all_users = []
           all_users.concat(@user_repository.all.map(&:name))
-          @provider_repository.ordered_all_with_adapter_by_operation(:user_read).each do |provider|
-            all_users.concat(provider.user_list)
+          @service_repository.ordered_all_with_adapter_by_operation(:user_read).each do |service|
+            all_users.concat(service.user_list)
           end
           all_users.uniq!
           all_users.sort!
@@ -128,7 +128,7 @@ module API
         end
 
         # sync on
-        def get_users_from_provider(params)
+        def get_users_from_service(params)
           params = params.to_h
 
           if params.key?(:order) && !params[:key].start_with?("name")
@@ -136,19 +136,19 @@ module API
             params = params.except(:order)
           end
 
-          users_providers = Hash.new { |hash, key| hash[key] = [] }
+          users_services = Hash.new { |hash, key| hash[key] = [] }
           query = ("*#{params[:query]}*" if params[:query]&.size&.positive?)
 
-          @provider_repository.ordered_all_with_adapter_by_operation(:user_read).each do |provider|
+          @service_repository.ordered_all_with_adapter_by_operation(:user_read).each do |service|
             items =
               if query
-                provider.user_search(query)
+                service.user_search(query)
               else
-                provider.user_list
+                service.user_list
               end
-            items.each { |item| users_providers[item] << provider.name }
+            items.each { |item| users_services[item] << service.name }
           end
-          all_items = users_providers.keys.sort
+          all_items = users_services.keys.sort
 
           # prohibitedなユーザーは隠す
           all_items -= @user_repository.filter(prohibited: true).map(:name) if params[:hide_prohibited]
@@ -172,10 +172,10 @@ module API
 
           users = get_users(pager.page_items).map do |user|
             # プロバイダーから削除しされているが、レポジトリ―では残っている場合は同期する。
-            user = get_sync_user(user.name) if !user.deleted && !users_providers.key?(user.name)
+            user = get_sync_user(user.name) if !user.deleted && !users_services.key?(user.name)
             {
               **convert_for_json(user, assoc: true),
-              providers: users_providers[user.name],
+              services: users_services[user.name],
             }
           end
 
@@ -195,7 +195,7 @@ module API
         end
 
         private def get_sync_user(username)
-          @sync_user ||= SyncUser.new(provider_repository: @provider_repository,
+          @sync_user ||= SyncUser.new(service_repository: @service_repository,
             user_repository: @user_repository,
             group_repository: @group_repository,
             member_repository: @member_repository)

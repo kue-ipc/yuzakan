@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require_relative "entity_provider"
+require_relative "entity_service"
 
 module API
   module Actions
-    module Providers
+    module Services
       class Create < API::Action
-        include EntityProvider
+        include EntityService
 
         security_level 5
 
@@ -33,10 +33,10 @@ module API
 
         params Params
 
-        def initialize(provider_repository: ProviderRepository.new,
+        def initialize(service_repository: ServiceRepository.new,
           **opts)
           super
-          @provider_repository ||= provider_repository
+          @service_repository ||= service_repository
         end
 
         def handle(_request, _response)
@@ -45,30 +45,30 @@ module API
               errors: [only_first_errors(params.errors)]
           end
 
-          halt_json 422, errors: [{name: [t("errors.uniq?")]}] if @provider_repository.exist_by_name?(params[:name])
+          halt_json 422, errors: [{name: [t("errors.uniq?")]}] if @service_repository.exist_by_name?(params[:name])
 
           adapter_params = params.to_h.dup
           adapter_params_params = adapter_params.delete(:params)
-          adapter_params[:order] ||= @provider_repository.last_order + 8
-          provider = @provider_repository.create(adapter_params)
+          adapter_params[:order] ||= @service_repository.last_order + 8
+          service = @service_repository.create(adapter_params)
 
           if adapter_params_params
-            provider.adapter_param_types.each do |param_type|
+            service.adapter_param_types.each do |param_type|
               value = param_type.convert_value(adapter_params_params[param_type.name])
               next if value.nil?
 
               data = {name: param_type.name.to_s,
                       value: param_type.dump_value(value),}
-              @provider_repository.add_param(provider, data)
+              @service_repository.add_param(service, data)
             end
           end
 
           @name = params[:name]
-          load_provider
+          load_service
 
           self.status = 201
-          headers["Content-Location"] = routes.provider_path(@name)
-          self.body = provider_json
+          headers["Content-Location"] = routes.service_path(@name)
+          self.body = service_json
         end
       end
     end

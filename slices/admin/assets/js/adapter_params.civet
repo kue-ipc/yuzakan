@@ -4,7 +4,7 @@
 * as html from @hyperapp/html
 {formName, formId} from ~/helpers/form_helper.civet
 
-parentNames := ["provider", "params"]
+parentNames := ["service", "params"]
 
 inputControlPropKeys := [
   "required", "placeholder", "maxlength", "minlength", "pattern"

@@ -3,18 +3,18 @@
 # TODO: 見直し必要
 
 module Yuzakan
-  module Providers
-    class Authenticate < Yuzakan::ProviderOperation
-      category :provider
+  module Services
+    class Authenticate < Yuzakan::ServiceOperation
+      category :service
 
-      def call(provider)
-        providers = step get_providers([provider])
-        step authenticate(username, password, providers)
+      def call(service)
+        services = step get_services([service])
+        step authenticate(username, password, services)
       end
 
-      private def authenticate(username, password, providers)
-        providers.each do |provider|
-          adapter = step get_adapter(provider)
+      private def authenticate(username, password, services)
+        services.each do |service|
+          adapter = step get_adapter(service)
           adapter.status
           return Success(adapter.status)
         rescue => e

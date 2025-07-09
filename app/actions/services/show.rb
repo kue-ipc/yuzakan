@@ -2,7 +2,7 @@
 
 module Yuzakan
   module Actions
-    module Providers
+    module Services
       class Show < Yuzakan::Action
         def handle(request, response)
         end

@@ -5,7 +5,7 @@ Factory.define(:auth_log) do |f|
   f.client Faker::Internet.ip_v4_address
   f.user Faker::Internet.username
   f.result "success"
-  f.provider "local"
+  f.service "local"
   f.timestamps
 end
 

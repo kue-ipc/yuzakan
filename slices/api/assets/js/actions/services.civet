@@ -1,4 +1,4 @@
-// /api/providers
+// /api/services
 
 // TODO: 古い
 
@@ -14,7 +14,7 @@
 
 // Constants
 
-export API_PROVIDERS := "/api/providers"
+export API_PROVIDERS := "/api/services"
 
 export PROVIDER_PROPERTIES := {}
   name: "string"
@@ -46,11 +46,11 @@ export DESTROY_PROVIDER_PARAM_TYPES := {}
 
 // Functions
 
-export normalizeProviders := (providers, type = {}) ->
-  normalizeProvider(provider, type) for each provider of providers
+export normalizeServices := (services, type = {}) ->
+  normalizeService(service, type) for each service of services
 
-export normalizeProvider := (provider, types = {}) ->
-  pickType(provider, {
+export normalizeService := (service, types = {}) ->
+  pickType(service, {
     ...PROVIDER_PROPERTIES
     params: "map"
     ...types
@@ -58,60 +58,60 @@ export normalizeProvider := (provider, types = {}) ->
 
 // Actiosn
 
-export SetProviders := (state, providers) ->
+export SetServices := (state, services) ->
   {
     ...state
-    providers
+    services
   }
 
-export SetProvider := (state, provider) ->
+export SetService := (state, service) ->
   {
     ...state
-    provider
+    service
   }
 
 // create Effecters
 
-export createRunIndexProviders := (params = {}) ->
+export createRunIndexServices := (params = {}) ->
   createRunIndex({
-    action: SetProviders
-    normalizer: normalizeProviders
+    action: SetServices
+    normalizer: normalizeServices
     url: API_PROVIDERS
     dataTypes: INDEX_PROVIDERS_PARAM_TYPES
     ...params
   })
 
-export createRunShowProvider := (params = {}) ->
+export createRunShowService := (params = {}) ->
   createRunShowWithId({
-    action: SetProvider
-    normalizer: normalizeProvider
+    action: SetService
+    normalizer: normalizeService
     url: API_PROVIDERS
     dataTypes: SHOW_PROVIDER_PARAM_TYPES
     ...params
   })
 
-export createRunCreateProvider := (params = {}) ->
+export createRunCreateService := (params = {}) ->
   createRunCreateWithId({
-    action: SetProvider
-    normalizer: normalizeProvider
+    action: SetService
+    normalizer: normalizeService
     url: API_PROVIDERS
     dataTypes: CREATE_PROVIDER_PARAM_TYPES
     ...params
   })
 
-export createRunUpdateProvider := (params = {}) ->
+export createRunUpdateService := (params = {}) ->
   createRunUpdateWithId({
-    action: SetProvider
-    normalizer: normalizeProvider
+    action: SetService
+    normalizer: normalizeService
     url: API_PROVIDERS
     dataTypes: UPDATE_PROVIDER_PARAM_TYPES
     ...params
   })
 
-export createRunDestroyProvider := (params = {}) ->
+export createRunDestroyService := (params = {}) ->
   createRunDestroyWithId({
-    action: SetProvider
-    normalizer: normalizeProvider
+    action: SetService
+    normalizer: normalizeService
     url: API_PROVIDERS
     dataTypes: DESTROY_PROVIDER_PARAM_TYPES
     ...params
@@ -119,8 +119,8 @@ export createRunDestroyProvider := (params = {}) ->
 
 // Effecters
 
-export runIndexProviders := createRunIndexProviders()
-export runShowProvider := createRunShowProvider()
-export runCreateProvider := createRunCreateProvider()
-export runUpdateProvider := createRunUpdateProvider()
-export runDestroyProvider := createRunDestroyProvider()
+export runIndexServices := createRunIndexServices()
+export runShowService := createRunShowService()
+export runCreateService := createRunCreateService()
+export runUpdateService := createRunUpdateService()
+export runDestroyService := createRunDestroyService()

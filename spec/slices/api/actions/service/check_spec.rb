@@ -1,23 +1,23 @@
 # frozen_string_literal: true
 
-RSpec.describe API::Actions::Providers::Check do
+RSpec.describe API::Actions::Services::Check do
   init_action_spec
-  let(:action_opts) { {provider_repository: provider_repository} }
+  let(:action_opts) { {service_repository: service_repository} }
   let(:format) { "application/json" }
-  let(:action_params) { {id: "provider1"} }
+  let(:action_params) { {id: "service1"} }
 
   let(:adapter_params) {
     {
-      name: "provider1",
+      name: "service1",
       label: "プロバイダー①",
       adapter: "mock",
       order: 16,
     }
   }
   let(:adapter_params_attributes) { [{name: "check", value: Marshal.dump(true)}] }
-  let(:provider_with_params) { Provider.new(id: 3, **adapter_params, adapter_params: adapter_params_attributes) }
-  let(:provider_repository) {
-    instance_double(ProviderRepository, find_with_params_by_name: provider_with_params)
+  let(:service_with_params) { Service.new(id: 3, **adapter_params, adapter_params: adapter_params_attributes) }
+  let(:service_repository) {
+    instance_double(ServiceRepository, find_with_params_by_name: service_with_params)
   }
 
   it "is successful" do

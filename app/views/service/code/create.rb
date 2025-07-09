@@ -2,7 +2,7 @@
 
 module Yuzakan
   module Views
-    module Providers
+    module Services
       module Code
         class Create < Yuzakan::View
         end

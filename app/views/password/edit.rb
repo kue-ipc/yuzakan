@@ -8,10 +8,10 @@ module Yuzakan
           i18n.t("views.password_edit.title")
         end
 
-        expose :excluded_providers, as: :provider
+        expose :excluded_services, as: :service
 
         # TODO: 将来作るかもしれないが、今はnil
-        expose :included_providers, as: :provider do
+        expose :included_services, as: :service do
           nil
         end
 

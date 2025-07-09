@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../../../../lib/yuzakan/validators/update_config_validator"
-require_relative "../../../../lib/yuzakan/validators/create_provider_validator"
+require_relative "../../../../lib/yuzakan/validators/create_service_validator"
 require_relative "../../../../lib/yuzakan/validators/create_attr_validator"
 
 module Admin
@@ -31,7 +31,7 @@ module Admin
 
           validations do
             optional(:config).schema(UpdateConfigValidator)
-            optional(:providers).each(schema: CreateProviderValidator)
+            optional(:services).each(schema: CreateServiceValidator)
             optional(:attrs).each(schema: CreateAttrValidator)
           end
         end
@@ -42,14 +42,14 @@ module Admin
 
         def initialize(config_repository: ConfigRepository.new,
           network_repository: NetworkRepository.new,
-          provider_repository: ProviderRepository.new,
+          service_repository: ServiceRepository.new,
           adapter_param_repository: AdapterParamRepository.new,
           attr_repository: AttrRepository.new,
           **opts)
           super
           @config_repository ||= config_repository
           @network_repository ||= network_repository
-          @provider_repository ||= provider_repository
+          @service_repository ||= service_repository
           @adapter_param_repository ||= adapter_param_repository
           @attr_repository ||= attr_repository
         end
@@ -111,7 +111,7 @@ module Admin
           @config_repository.transaction do
             update_config(data[:config]) if data[:config]
 
-            update_providers(data[:providers])
+            update_services(data[:services])
 
             update_attrs(data[:attrs]) if data[:attrs]
           end
@@ -124,43 +124,43 @@ module Admin
           raise
         end
 
-        def update_providers(provider_datas)
-          existing_providers = @provider_repository.all.to_h do |provider|
-            [provider.name, provider]
+        def update_services(service_datas)
+          existing_services = @service_repository.all.to_h do |service|
+            [service.name, service]
           end
 
-          provider_datas.each_with_index do |provider_data, idx|
-            provider_name = provider_data[:name]
-            current_provider = existing_providers.delete(provider_name)
+          service_datas.each_with_index do |service_data, idx|
+            service_name = service_data[:name]
+            current_service = existing_services.delete(service_name)
 
-            data = {**provider_data, order: idx * 8}
+            data = {**service_data, order: idx * 8}
             adapter_params = data.delete(:params)
 
-            provider =
-              if current_provider
-                @provider_repository.update(current_provider.id, data)
+            service =
+              if current_service
+                @service_repository.update(current_service.id, data)
               else
-                @provider_repository.create(data)
+                @service_repository.create(data)
               end
 
-            update_adapter_params(provider, adapter_params) if adapter_params
+            update_adapter_params(service, adapter_params) if adapter_params
           end
 
           # リストになかったプロバイダーを削除
-          existing_providers.each_value do |provider|
-            @provider_repository.delete(provider.id)
+          existing_services.each_value do |service|
+            @service_repository.delete(service.id)
           end
         rescue
           flash[:errors] << "プロバイダーの設定に失敗しました。"
           raise
         end
 
-        def update_adapter_params(provider, params)
-          existing_params = @adapter_param_repository.all_by_provider(provider).to_h do |param|
+        def update_adapter_params(service, params)
+          existing_params = @adapter_param_repository.all_by_service(service).to_h do |param|
             [param.name, param]
           end
 
-          provider.adapter_param_types.each do |param_type|
+          service.adapter_param_types.each do |param_type|
             param_name = param_type.name
             # 存在チェック
             unless params.key?(param_name) && !(value = param_type.convert_value(params[param_type.name])).nil?
@@ -168,7 +168,7 @@ module Admin
             end
 
             current_param = existing_params.delete(param_name.to_s)
-            param_data = {provider_id: provider.id, name: param_name.to_s,
+            param_data = {service_id: service.id, name: param_name.to_s,
                           value: param_type.dump_value(value),}
             if current_param
               @adapter_param_repository.update(current_param.id, param_data)
@@ -184,8 +184,8 @@ module Admin
         end
 
         def update_attrs(attr_datas)
-          named_providers = @provider_repository.all.to_h do |provider|
-            [provider.name, provider]
+          named_services = @service_repository.all.to_h do |service|
+            [service.name, service]
           end
           @attr_repository.clear
 
@@ -198,7 +198,7 @@ module Admin
               &.map do |am_params|
                 {
                   **am_params.slice(:key, :conversion),
-                  provider_id: named_providers[am_params[:provider]].id,
+                  service_id: named_services[am_params[:service]].id,
                 }
               end
             @attr_repository.create_with_mappings(data)

@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-RSpec.describe API::Actions::Providers::Update do
+RSpec.describe API::Actions::Services::Update do
   init_action_spec
-  let(:action_opts) { {provider_repository: provider_repository, adapter_param_repository: adapter_param_repository} }
+  let(:action_opts) { {service_repository: service_repository, adapter_param_repository: adapter_param_repository} }
   let(:format) { "application/json" }
-  let(:action_params) { {id: "provider1", **adapter_params, params: adapter_params_params} }
+  let(:action_params) { {id: "service1", **adapter_params, params: adapter_params_params} }
 
   let(:adapter_params) {
     {
-      name: "provider1",
+      name: "service1",
       label: "プロバイダー①",
       adapter: "test",
       order: 16,
@@ -51,15 +51,15 @@ RSpec.describe API::Actions::Providers::Update do
       list: "default",
     }
   }
-  let(:provider_with_params) { Provider.new(id: 3, **adapter_params, adapter_params: adapter_params_attributes) }
-  let(:provider_without_params) { Provider.new(id: 3, **adapter_params) }
-  let(:provider_repository) {
-    instance_double(ProviderRepository,
-      find_with_params_by_name: provider_with_params,
-      find_with_params: provider_with_params,
+  let(:service_with_params) { Service.new(id: 3, **adapter_params, adapter_params: adapter_params_attributes) }
+  let(:service_without_params) { Service.new(id: 3, **adapter_params) }
+  let(:service_repository) {
+    instance_double(ServiceRepository,
+      find_with_params_by_name: service_with_params,
+      find_with_params: service_with_params,
       exist_by_name?: false,
       last_order: 16,
-      update: provider_without_params,
+      update: service_without_params,
       delete_param_by_name: 1,
       add_param: AdapterParam.new)
   }
@@ -100,8 +100,8 @@ RSpec.describe API::Actions::Providers::Update do
     end
 
     describe "not existed" do
-      let(:provider_repository) {
-        instance_double(ProviderRepository, find_with_params_by_name: nil)
+      let(:service_repository) {
+        instance_double(ServiceRepository, find_with_params_by_name: nil)
       }
 
       it "is failure" do
@@ -117,14 +117,14 @@ RSpec.describe API::Actions::Providers::Update do
     end
 
     describe "existed name" do
-      let(:provider_repository) {
+      let(:service_repository) {
         instance_double(
-          ProviderRepository,
-          find_with_params_by_name: provider_with_params,
-          find_with_params: provider_with_params,
+          ServiceRepository,
+          find_with_params_by_name: service_with_params,
+          find_with_params: service_with_params,
           exist_by_name?: true,
           last_order: 16,
-          update: provider_without_params,
+          update: service_without_params,
           delete_param_by_name: 1,
           add_param: AdapterParam.new)
       }

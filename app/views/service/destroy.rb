@@ -2,7 +2,7 @@
 
 module Yuzakan
   module Views
-    module Providers
+    module Services
       class Destroy < Yuzakan::View
       end
     end

@@ -3,21 +3,21 @@
 module Yuzakan
   module Repos
     class MappingRepo < Yuzakan::DB::Repo
-      def all_with_attrs_by_provider(provider)
-        mappings.by_provider_id(provider.id).combine(:attrs).to_a
+      def all_with_attrs_by_service(service)
+        mappings.by_service_id(service.id).combine(:attrs).to_a
       end
 
       # 以下は未整理
 
-      def find_by_provider_attr(provider_id, attr_id)
-        mappings.where(provider_id: provider_id)
+      def find_by_service_attr(service_id, attr_id)
+        mappings.where(service_id: service_id)
           .where(attr_id: attr_id)
           .one
       end
 
-      def by_provider_with_attr(provider_id)
+      def by_service_with_attr(service_id)
         aggregate(:attr)
-          .where(provider_id: provider_id)
+          .where(service_id: service_id)
           .map_to(Mapping)
       end
     end

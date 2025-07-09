@@ -26,7 +26,7 @@ module Admin
             contact_email
             contact_phone
           ],
-          provider: %i[
+          service: %i[
             name
             label
             adapter
@@ -52,7 +52,7 @@ module Admin
         def render
           data = {
             config: config_data,
-            providers: providers_data,
+            services: services_data,
             attrs: attrs_data,
           }
           raw YAML.dump(Hanami::Utils::Hash.deep_stringify(data))
@@ -62,16 +62,16 @@ module Admin
           KEYS[:config].to_h { |key| [key, current_config.__send__(key)] }
         end
 
-        private def providers_data
-          providers.map do |provider|
-            provider_data = KEYS[:provider].to_h do |key|
-              [key, provider.__send__(key)]
+        private def services_data
+          services.map do |service|
+            service_data = KEYS[:service].to_h do |key|
+              [key, service.__send__(key)]
             end
-            adapter_params_data = provider.adapter_param_types.to_h do |param_type|
-              [param_type.name.to_s, provider.params[param_type.name]]
+            adapter_params_data = service.adapter_param_types.to_h do |param_type|
+              [param_type.name.to_s, service.params[param_type.name]]
             end
             {
-              **provider_data,
+              **service_data,
               params: adapter_params_data,
             }
           end
@@ -83,8 +83,8 @@ module Admin
 
             mappings_data = attr.mappings.map do |mapping|
               {
-                provider: providers.find do |provider|
-                  provider.id == mapping.provider_id
+                service: services.find do |service|
+                  service.id == mapping.service_id
                 end&.name,
                 key: mapping.key,
                 conversion: mapping.conversion,

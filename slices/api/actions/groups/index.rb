@@ -44,11 +44,11 @@ module API
         params Params
 
         def initialize(group_repository: GroupRepository.new,
-          provider_repository: ProviderRepository.new,
+          service_repository: ServiceRepository.new,
           **opts)
           super
           @group_repository ||= group_repository
-          @provider_repository ||= provider_repository
+          @service_repository ||= service_repository
         end
 
         def handle(_request, _response)
@@ -63,7 +63,7 @@ module API
             elsif params[:no_sync]
               get_groups_from_repository(params.to_h)
             else
-              get_groups_from_provider(params.to_h)
+              get_groups_from_service(params.to_h)
             end
 
           self.status = 200
@@ -75,8 +75,8 @@ module API
         def get_groups_all
           all_groups = []
           all_groups.concat(@group_repository.all.map(&:name))
-          @provider_repository.ordered_all_with_adapter_by_operation(:group_read).each do |provider|
-            all_groups.concat(provider.group_list)
+          @service_repository.ordered_all_with_adapter_by_operation(:group_read).each do |service|
+            all_groups.concat(service.group_list)
           end
           all_groups.uniq!
           all_groups.sort!
@@ -126,7 +126,7 @@ module API
         end
 
         # sync on
-        def get_groups_from_provider(params)
+        def get_groups_from_service(params)
           params = params.to_h
 
           if params.key?(:order) && !params[:key].start_with?("name")
@@ -134,22 +134,22 @@ module API
             params = params.except(:order)
           end
 
-          groups_providers = Hash.new { |hash, key| hash[key] = [] }
+          groups_services = Hash.new { |hash, key| hash[key] = [] }
           query = ("*#{params[:query]}*" if params[:query]&.size&.positive?)
 
-          @provider_repository.ordered_all_with_adapter_by_operation(:group_read).each do |provider|
+          @service_repository.ordered_all_with_adapter_by_operation(:group_read).each do |service|
             # プライマリグループがある場合のみ検索
-            next if params[:primary_only] && !provider.has_primary_group?
+            next if params[:primary_only] && !service.has_primary_group?
 
             items =
               if query
-                provider.group_search(query)
+                service.group_search(query)
               else
-                provider.group_list
+                service.group_list
               end
-            items.each { |item| groups_providers[item] << provider.name }
+            items.each { |item| groups_services[item] << service.name }
           end
-          all_items = groups_providers.keys
+          all_items = groups_services.keys
 
           # prohibitedなグループは隠す
           all_items -= @group_repository.filter(prohibited: true).map(:name) if params[:hide_prohibited]
@@ -173,10 +173,10 @@ module API
 
           groups = get_groups(pager.page_items).map do |group|
             # プロバイダーから削除しされているが、レポジトリ―では残っている場合は同期する。
-            group = get_sync_group(group.name) if !group.deleted && !groups_providers.key?(group.name)
+            group = get_sync_group(group.name) if !group.deleted && !groups_services.key?(group.name)
             {
               **convert_for_json(group),
-              providers: groups_providers[group.name] || [],
+              services: groups_services[group.name] || [],
             }
           end
 
@@ -197,7 +197,7 @@ module API
 
         private def get_sync_group(groupname)
           @sync_group ||= SyncGroup.new(
-            provider_repository: @provider_repository, group_repository: @group_repository)
+            service_repository: @service_repository, group_repository: @group_repository)
           result = @sync_group.call({groupname: groupname})
           if result.failure?
             logger.error "[#{self.class.name}] Failed sync group: #{groupname} - #{result.errors}"

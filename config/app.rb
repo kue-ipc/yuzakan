@@ -44,8 +44,8 @@ module Yuzakan
       "repos.user_repo",
       "repos.config_repo",
       "management.sync_user",
-      "providers.authenticate",
-      "providers.change_password",
+      "services.authenticate",
+      "services.change_password",
     ]
   end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Admin::Actions::Providers::Index do
+RSpec.describe Admin::Actions::Services::Index do
   init_action_spec
 
   it "is failure" do

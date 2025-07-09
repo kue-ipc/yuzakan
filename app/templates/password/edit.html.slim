@@ -7,18 +7,18 @@
   /   - fields_for :password do
   /     - div id: 'change-password', 'data-change-password': ha(JSON.generate(change_password_data))
 
-- if included_providers&.size&.positive?
+- if included_services&.size&.positive?
   = markdown(t("views.password_edit.change_password.targets.included"))
   p
-    = t("views.password_edit.change_password.included_providers")
+    = t("views.password_edit.change_password.included_services")
     | :
-    =< included_providers.map(&:label).join(" ")
-- elsif excluded_providers&.size&.positive?
+    =< included_services.map(&:label).join(" ")
+- elsif excluded_services&.size&.positive?
   = markdown(t("views.password_edit.change_password.targets.excluded"))
   p
-    = t("views.password_edit.change_password.excluded_providers")
+    = t("views.password_edit.change_password.excluded_services")
     | :
-    =< excluded_providers.map(&:label).join(" ")
+    =< excluded_services.map(&:label).join(" ")
 - else
   = markdown(t("views.password_edit.change_password.targets.all"))
 

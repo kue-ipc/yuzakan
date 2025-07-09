@@ -31,7 +31,7 @@ module API
 
             optional(:attrs) { hash? }
 
-            optional(:providers).each(:str?, :name?, max_size?: 255)
+            optional(:services).each(:str?, :name?, max_size?: 255)
           end
         end
 
@@ -50,7 +50,7 @@ module API
           load_user
           halt_json 422, errors: {name: [t("errors.uniq?")]} if @user
 
-          if params[:providers] && params[:attrs].nil?
+          if params[:services] && params[:attrs].nil?
             halt_json 422,
               errors: {attrs: t("errors.filled?")}
           end
@@ -63,16 +63,16 @@ module API
             # 削除日時が指定されていない場合は現在の日時を削除日時とする。
             @user = @user_repository.create({deleted_at: Time.now,
                                              **params.to_h.except(:id),})
-          elsif params[:providers]&.size&.positive?
+          elsif params[:services]&.size&.positive?
             @user = @user_repository.create(params.to_h.except(:id))
-            provider_create_user({
+            service_create_user({
               **params.to_h,
               username: @name,
               password: password,
             })
           else
             halt_json 422,
-              errors: {providers: [t("errors.min_size?", num: 1)]}
+              errors: {services: [t("errors.min_size?", num: 1)]}
           end
 
           load_user
@@ -88,11 +88,11 @@ module API
             redirect_to routes.path(:google)
           end
 
-          provider = ProviderRepository.new.first_google_with_adapter
+          service = ServiceRepository.new.first_google_with_adapter
 
-          result = ProviderCreateUser.new(user: current_user, client: client,
+          result = ServiceCreateUser.new(user: current_user, client: client,
             config: current_config,
-            providers: [provider])
+            services: [service])
             .call(params.get(:google_create))
 
           if result.failure?
@@ -101,7 +101,7 @@ module API
             redirect_to routes.path(:google)
           end
 
-          @user = result.user_datas[provider.name]
+          @user = result.user_datas[service.name]
           @password = result.password
 
           flash[:success] = "Google アカウント を作成しました。"

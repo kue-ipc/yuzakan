@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require "hanami/validations"
-require_relative "../provider_interactor"
+require_relative "../service_interactor"
 module Yuzakan
-  module Providers
-    class UnlockUser < Yuzakan::ProviderOperation
+  module Services
+    class UnlockUser < Yuzakan::ServiceOperation
       class Validator
         include Hanami::Validations
         predicates NamePredicates
@@ -13,7 +13,7 @@ module Yuzakan
         validations do
           required(:username).filled(:str?, :name?, max_size?: 255)
           optional(:password).filled(:str?, max_size?: 255)
-          optional(:providers).each(:str?, :name?, max_size?: 255)
+          optional(:services).each(:str?, :name?, max_size?: 255)
         end
       end
 
@@ -21,9 +21,9 @@ module Yuzakan
         username = params[:username]
         password = params[:password]
 
-        call_providers(params[:providers],
-          operation: :user_unlock) do |provider|
-          provider.user_unlock(username, password)
+        call_services(params[:services],
+          operation: :user_unlock) do |service|
+          service.user_unlock(username, password)
         end
       end
 

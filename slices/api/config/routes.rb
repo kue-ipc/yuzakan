@@ -26,13 +26,13 @@ module API
     post "/mfa/email", to: "mfa.email.create", as: :mfa_email
     post "/mfa/totp", to: "mfa.totp.create", as: :mfa_totp
 
-    get "/providers", to: "providers.index", as: :providers
-    post "/providers", to: "providers.create", as: :providers
-    get "/providers/:id", to: "providers.show", as: :provider
-    patch "/providers/:id", to: "providers.update", as: :provider
-    delete "/providers/:id", to: "providers.destroy", as: :provider
+    get "/services", to: "services.index", as: :services
+    post "/services", to: "services.create", as: :services
+    get "/services/:id", to: "services.show", as: :service
+    patch "/services/:id", to: "services.update", as: :service
+    delete "/services/:id", to: "services.destroy", as: :service
 
-    get "/providers/:id/check", to: "providers.check", as: :provider_check
+    get "/services/:id/check", to: "services.check", as: :service_check
 
     get "/session", to: "session.show", as: :session
 

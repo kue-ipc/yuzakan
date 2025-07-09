@@ -31,7 +31,7 @@ module API
 
             optional(:attrs) { hash? }
 
-            optional(:providers).each(:str?, :name?, max_size?: 255)
+            optional(:services).each(:str?, :name?, max_size?: 255)
           end
         end
 
@@ -44,7 +44,7 @@ module API
             }
           end
 
-          if params[:providers] && params[:attrs].nil?
+          if params[:services] && params[:attrs].nil?
             halt_json 422,
               errors: {attrs: t("errors.filled?")}
           end
@@ -59,40 +59,40 @@ module API
           params[:groups] ||= @user.groups&.map(&:name) || []
 
           # グループと属性を各プロバイダーに反映
-          if params[:providers]
-            current_providers = @providers.compact.keys
+          if params[:services]
+            current_services = @services.compact.keys
 
-            add_providers = params[:providers] - current_providers
-            mod_providers = params[:providers] & current_providers
-            del_providers = current_providers - params[:providers]
+            add_services = params[:services] - current_services
+            mod_services = params[:services] & current_services
+            del_services = current_services - params[:services]
 
-            unless add_providers.empty?
-              provider_create_user({
+            unless add_services.empty?
+              service_create_user({
                 **params,
                 username: @name,
-                providers: add_providers,
+                services: add_services,
               })
             end
 
-            unless mod_providers.empty?
-              provider_update_user({
+            unless mod_services.empty?
+              service_update_user({
                 **params,
                 username: @name,
-                providers: mod_providers,
+                services: mod_services,
               })
             end
 
-            unless del_providers.empty?
-              provider_delete_user({
+            unless del_services.empty?
+              service_delete_user({
                 username: @name,
-                providers: del_providers,
+                services: del_services,
               })
             end
-          elsif !@providers.empty?
-            provider_update_user({
+          elsif !@services.empty?
+            service_update_user({
               **params,
               username: @name,
-              providers: @providers.keys,
+              services: @services.keys,
             })
           end
 

@@ -9,7 +9,7 @@ module Yuzakan
 
     get "/user", to: "user.show", as: :user
     get "/password/!", to: "password.edit", as: :password_edit
-    get "/providers/:id", to: "providers.show", as: :provider
+    get "/services/:id", to: "services.show", as: :service
 
     slice :admin, at: "/admin"
 

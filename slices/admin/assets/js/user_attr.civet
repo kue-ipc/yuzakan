@@ -133,26 +133,26 @@ attrValueTd := ({mode, user, attr}) ->
           "danger"
     }
 
-providerTd := ({user, attr, provider}) ->
-  return html.td {} unless user.providers.includes(provider.name)
+serviceTd := ({user, attr, service}) ->
+  return html.td {} unless user.services.includes(service.name)
 
-  data := user.providers_data.get(provider.name)
-  // provider_userdata := (user.provider_userdatas.find (data) -> data.provider.name is provider.name)
+  data := user.services_data.get(service.name)
+  // service_userdata := (user.service_userdatas.find (data) -> data.service.name is service.name)
   return html.td {} unless data?
 
-  provider_value := data.attrs.get(attr.name)
+  service_value := data.attrs.get(attr.name)
 
   html.td {},
     valueDisplay {
-      value: provider_value
+      value: service_value
       type: attr.type
-      color: if provider_value is user.attrs.get(attr.name) then "success" else "danger"
+      color: if service_value is user.attrs.get(attr.name) then "success" else "danger"
     }
 
-export default userAttr := ({mode, user, providers, attrs}) ->
-  // provider_userdatas := 
-  // for each provider of providers
-  //   (user.provider_userdatas.find (data) -> data.provider.name is provider.name)?.userdata
+export default userAttr := ({mode, user, services, attrs}) ->
+  // service_userdatas := 
+  // for each service of services
+  //   (user.service_userdatas.find (data) -> data.service.name is service.name)?.userdata
 
   html.div {}, [
     html.h4 {}, text "属性一覧"
@@ -164,7 +164,7 @@ export default userAttr := ({mode, user, providers, attrs}) ->
           // html.th {}, text "デフォルト値"
           // html.th {}, text "デファルト"
           html.th {}, text "設定値"
-          ...(html.th({}, text entityLabel(provider)) for each provider of providers)
+          ...(html.th({}, text entityLabel(service)) for each service of services)
         ]
       html.tbody {},
         for each attr of attrs
@@ -173,7 +173,7 @@ export default userAttr := ({mode, user, providers, attrs}) ->
             // attrDefaultTd {user, attr}
             // attrSettingTd {mode, user, attr}
             attrValueTd {mode, user, attr}
-            ...(providerTd {user, attr, provider} for each provider of providers)
+            ...(serviceTd {user, attr, service} for each service of services)
           ]
     ]
   ]

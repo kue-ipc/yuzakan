@@ -1,69 +1,69 @@
-// path: /admin/providers
-// node: providers
+// path: /admin/services
+// node: services
 
 {text, app} from hyperapp
 * as html from @hyperapp/html
 {fetchAPIGet} from ~api/fetch_api.civet
 
-providerTr := ({provider}) ->
+serviceTr := ({service}) ->
   html.tr {}, [
     html.td {},
-      html.a {href: `/admin/providers/${provider.name}`}, text provider.name
-    html.td {}, text provider.label
-    html.td {}, text provider.adapter
-    html.td {}, if provider.check?
-      if provider.check
+      html.a {href: `/admin/services/${service.name}`}, text service.name
+    html.td {}, text service.label
+    html.td {}, text service.adapter
+    html.td {}, if service.check?
+      if service.check
         html.span {class: "text-success"}, text "OK"
       else
         html.span {class: "text-danger"}, text "NG"
     else
       html.span {class: "text-secondary"}, text "確認中"
-    html.td {}, if provider.adapter is "local"
+    html.td {}, if service.adapter is "local"
       html.a {
         class: "btn btn-primary btn-sm"
-        href: `/admin/providers/${provider.name}/export`
+        href: `/admin/services/${service.name}/export`
         type: "application/json-lines"
-        download: `${provider.name}_${(new Date).getTime()}.jsonl` 
+        download: `${service.name}_${(new Date).getTime()}.jsonl` 
       }, text "取得"
     else
       ""
   ]
 
-providerAction := (state, {name, provider}) ->
-  name ?= provider.name
-  providers := for each current of state.providers
+serviceAction := (state, {name, service}) ->
+  name ?= service.name
+  services := for each current of state.services
     if current.name is name
-      {...current, ...provider}
+      {...current, ...service}
     else
       current
-  {...state, providers}
+  {...state, services}
 
-initAllProvidersAction := (state, {providers}) ->
+initAllServicesAction := (state, {services}) ->
   [
-    {...state, providers}
-    ...([checkProviderRunner, {provider}] for each provider of providers)
+    {...state, services}
+    ...([checkServiceRunner, {service}] for each service of services)
   ]
 
-checkProviderRunner := (dispatch, {provider}) ->
-  response := await fetchAPIGet({url: `/api/providers/${provider.name}/check`})
+checkServiceRunner := (dispatch, {service}) ->
+  response := await fetchAPIGet({url: `/api/services/${service.name}/check`})
   if response.ok
-    dispatch(providerAction, {name: provider.name, provider: response.data})
+    dispatch(serviceAction, {name: service.name, service: response.data})
   else
     console.error response
 
-indexAllProvidersRunner := (dispatch) ->
-  response := await fetchAPIGet({url: "/api/providers"})
+indexAllServicesRunner := (dispatch) ->
+  response := await fetchAPIGet({url: "/api/services"})
   if response.ok
-    dispatch(initAllProvidersAction, {providers: response.data})
+    dispatch(initAllServicesAction, {services: response.data})
   else
     console.error response
 
 init := [
-  {providers: []}
-  [indexAllProvidersRunner]
+  {services: []}
+  [indexAllServicesRunner]
 ]
 
-view := ({providers}) ->
+view := ({services}) ->
   html.table {class: "table"}, [
     html.thead {},
       html.tr {}, [
@@ -73,9 +73,9 @@ view := ({providers}) ->
         html.th {}, text "状態"
         html.th {}, text "エクスポート"
       ]
-    html.tbody {}, (providerTr({provider}) for each provider of providers)
+    html.tbody {}, (serviceTr({service}) for each service of services)
   ]
 
-node := document.getElementById("providers")
+node := document.getElementById("services")
 
 app {init, view, node}

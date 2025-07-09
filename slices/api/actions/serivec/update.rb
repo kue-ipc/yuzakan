@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require_relative "set_provider"
+require_relative "set_service"
 
 module API
   module Actions
-    module Providers
+    module Services
       class Update < API::Action
-        include SetProvider
+        include SetService
 
         security_level 5
 
@@ -34,27 +34,27 @@ module API
 
         params Params
 
-        def initialize(provider_repository: ProviderRepository.new,
+        def initialize(service_repository: ServiceRepository.new,
           adapter_param_repository: AdapterParamRepository.new,
           **opts)
           super
-          @provider_repository ||= provider_repository
+          @service_repository ||= service_repository
           @adapter_param_repository ||= adapter_param_repository
         end
 
         def handle(_request, _response)
-          change_name = params[:name] && params[:name] != @provider.name
-          if change_name && @provider_repository.exist_by_name?(params[:name])
+          change_name = params[:name] && params[:name] != @service.name
+          if change_name && @service_repository.exist_by_name?(params[:name])
             halt_json 422, errors: [{name: [t("errors.uniq?")]}]
           end
 
           adapter_params = params.to_h.except(:id)
           adapter_params_params = adapter_params.delete(:params)
-          @provider_repository.update(@provider.id, adapter_params)
+          @service_repository.update(@service.id, adapter_params)
 
           if adapter_params_params
-            existing_params = @provider.params.dup
-            @provider.adapter_param_types.each do |param_type|
+            existing_params = @service.params.dup
+            @service.adapter_param_types.each do |param_type|
               value = param_type.convert_value(adapter_params_params[param_type.name])
               next if value.nil?
 
@@ -65,7 +65,7 @@ module API
 
                 if existing_value != value
                   param_name = param_type.name.to_s
-                  existing_adapter_param = @provider.adapter_params.find do |param|
+                  existing_adapter_param = @service.adapter_params.find do |param|
                     param.name == param_name
                   end
                   if existing_adapter_param
@@ -73,27 +73,27 @@ module API
                       existing_adapter_param.id, data)
                   else
                     # 名前がないということはあり得ない？
-                    @provider_repository.add_param(@provider, data)
+                    @service_repository.add_param(@service, data)
                   end
                 end
               else
-                @provider_repository.add_param(@provider, data)
+                @service_repository.add_param(@service, data)
               end
             end
             existing_params.each_key do |key|
-              @provider_repository.delete_param_by_name(@provider, key.to_s)
+              @service_repository.delete_param_by_name(@service, key.to_s)
             end
           end
 
           @name = params[:name] if change_name
-          load_provider
+          load_service
 
           self.status = 200
           if change_name
             headers["Content-Location"] =
-              routes.provider_path(@name)
+              routes.service_path(@name)
           end
-          self.body = provider_json
+          self.body = service_json
         end
       end
     end
