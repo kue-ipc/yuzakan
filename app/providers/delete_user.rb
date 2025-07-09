@@ -47,6 +47,18 @@ module Yuzakan
         end
       end
 
+      def user_delete(username)
+        need_adapter!
+        need_mappings!
+
+        raw_userdata = @adapter.user_delete(username)
+        return if raw_userdata.nil?
+
+        @cache_store[user_key(username)] = nil
+        clear_user_list_cache
+        convert_userdata(raw_userdata)
+      end
+
       private def valid?(params)
         result = Validator.new(params).validate
         if result.failure?

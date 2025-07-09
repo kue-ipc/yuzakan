@@ -57,6 +57,15 @@ module Yuzakan
         end
       end
 
+      def user_update(username, **userdata)
+        need_adapter!
+        need_mappings!
+
+        raw_userdata = @adapter.user_update(username, **map_userdata(userdata))
+        @cache_store[user_key(username)] =
+          raw_userdata && convert_userdata(raw_userdata)
+      end
+
       private def valid?(params)
         result = Validator.new(params).validate
         if result.failure?

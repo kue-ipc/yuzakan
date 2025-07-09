@@ -3,6 +3,16 @@
 module Yuzakan
   module Relations
     class Attrs < Yuzakan::DB::Relation
+      TYPES = %w[
+        boolean
+        string
+        integer
+        float
+        date
+        time
+        datetime
+      ].freeze
+
       schema :attrs, infer: true do
         associations do
           has_many :mappings

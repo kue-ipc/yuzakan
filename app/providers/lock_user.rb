@@ -24,6 +24,15 @@ module Yuzakan
           provider.user_lock(username)
         end
       end
+
+      def user_lock(username)
+        need_adapter!
+        need_mappings!
+
+        @adapter.user_lock(username).tap do |result|
+          @cache_store.delete(user_key(username)) if result
+        end
+      end
     end
   end
 end

@@ -26,6 +26,14 @@ module Yuzakan
           provider.user_unlock(username, password)
         end
       end
+
+      def user_unlock(username, password = nil)
+        need_adapter!
+
+        @adapter.user_unlock(username, password).tap do |result|
+          @cache_store.delete(user_key(username)) if result
+        end
+      end
     end
   end
 end

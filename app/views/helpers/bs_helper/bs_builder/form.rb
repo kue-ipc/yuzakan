@@ -50,10 +50,11 @@ module Yuzakan
               end
             end
 
-            def text_area(form, name, **opts)
+            # Only text_area has a specified content.
+            def text_area(form, name, content = nil, **opts)
               label_opts, control_opts = divide_opts(opts)
               form_control(form, name, **label_opts) do |**add_opts|
-                form.text_area(name, class: "form-control", **add_opts, **control_opts)
+                form.text_area(name, content, class: "form-control", **add_opts, **control_opts)
               end
             end
 

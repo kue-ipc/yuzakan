@@ -34,17 +34,42 @@ module Yuzakan
     end
 
     private def get_providers(providers = nil, method: nil)
+      abilities = abilities_to_call(method)
+
       case providers
       in nil
-        Success(provider_repo.all_callable(method))
+        Success(provider_repo.all_with_abilities(*abilities))
       in []
         Success([])
       in [String | Symbol, *]
-        Success(provider_repo.mget(*providers).select { |provider| provider.can_do?(method) })
+        Success(provider_repo.mget(*providers).select { |provider| abilities.all? { |name| provider.__send__(name) } })
       in [Yuzakan::Structs::Provider, *]
-        Success(providers.select { |provider| provider.can_do?(method) })
+        Success(providers.select { |provider| abilities.all? { |name| provider.__send__(name) } })
       else
         Failure([:not_provider_list])
+      end
+    end
+
+    def abilities_to_call(method)
+      case method.intern.downcase
+      in nil | :check
+        []
+      in :user_read | :user_list | :user_seacrh
+        [:readable]
+      in :user_create | :user_update | :user_delete
+        [:writable]
+      in :user_auth
+        [:authenticatable]
+      in :user_change_password | :user_generate_code
+        [:password_changeable]
+      in :user_reset_mfa | :user_generate_code
+        [:mfa_changeable]
+      in :user_lock | :user_unlock
+        [:lockable]
+      in :group_read | :group_list | :group_search | :member_list
+        [:group, :readable]
+      in :group_create | :group_update | :group_delete | :member_add | :member_remove
+        [:group, :writable]
       end
     end
 

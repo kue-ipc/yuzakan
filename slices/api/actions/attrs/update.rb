@@ -72,7 +72,7 @@ module API
           @attr_repository.update(@attr.id, params.to_h.except(:id, :mappings))
 
           mappings_params.each do |mapping_params|
-            current_mapping = @attr.mapping_by_provider_id(mapping_params[:provider_id])
+            current_mapping = @attr.mapping.find_by { |mapping| mapping.provider_id == mapping_params[:provider_id] }
             if current_mapping
               if current_mapping.key == mapping_params[:key] &&
                   (!mapping_params.key?(:conversion) || current_mapping.conversion == mapping_params[:conversion])

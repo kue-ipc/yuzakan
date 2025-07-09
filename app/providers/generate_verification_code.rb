@@ -84,6 +84,12 @@ module Yuzakan
         @mailer&.deliver(**mailer_params, result: result)
       end
 
+      def user_generate_code(username)
+        need_adapter!
+
+        @adapter.user_generate_code(username)
+      end
+
       private def valid?(params)
         result = Validator.new(params).validate
         if result.failure?

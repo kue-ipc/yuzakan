@@ -23,8 +23,7 @@ module Yuzakan
 
       def list = ordered.pluck(:name)
 
-      def all_callable(method)
-        abilities = Yuzakan::Structs::Provider.abilities_to(method)
+      def all_with_abilities(*abilities)
         condition = abilities.to_h { |k| [k, true] }
         ordered.where(condition).to_a
       end
