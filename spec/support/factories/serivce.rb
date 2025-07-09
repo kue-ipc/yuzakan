@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 Factory.define(:service) do |f|
-  f.name Faker::Internet.username
-  f.label Faker::Name.name
-  f.description Faker::Lorem.paragraph
+  f.name { fake(:internet, :username) }
+  f.label { fake(:name, :name) }
+  f.description { fake(:lorem, :paragaph) }
   f.order 1
   f.adapter "dummy"
   f.params({})

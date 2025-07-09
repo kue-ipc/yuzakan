@@ -3,8 +3,8 @@
 Factory.define(:user) do |f|
   f.name { fake(:internet, :username) }
   f.label { fake(:name, :name) }
-  f.email Faker::Internet.email
-  f.note Faker::Lorem.paragraph
+  f.email { fake(:internet, :email) }
+  f.note { fake(:lorem, :paragraph) }
   f.clearance_level 1 # default
   f.prohibited false # default
   f.deleted false # default

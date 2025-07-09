@@ -22,7 +22,7 @@ def init_request_spec
   let_session
 
   let(:user) { Factory[:user] }
-  let(:password) { Faker::Internet.password }
+  let(:password) { fake(:internet, :password) }
   let(:config) { Factory[:config] }
   # trusted level 5 network 127.0.0.0/8
   let(:network) { Factory[:ipv4_loopback_network] }

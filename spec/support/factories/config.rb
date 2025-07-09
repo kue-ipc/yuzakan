@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 Factory.define(:config) do |f|
-  f.title Faker::Team.name
-  f.description Faker::Lorem.sentence
-  f.domain Faker::Internet.domain_name
+  f.title { fake(:team, :name) }
+  f.description { fake(:lorem, :sentence) }
+  f.domain { fake(:internet, :domain_name) }
   f.session_timeout 3600 # default
   f.auth_failure_waiting 2 # default
   f.auth_failure_limit 5 # default
@@ -17,9 +17,9 @@ Factory.define(:config) do |f|
   f.generate_password_size 24 # default
   f.generate_password_type "ascii" # default
   f.generate_password_chars " " # default
-  f.contact_name Faker::Name.name
-  f.contact_email Faker::Internet.email
-  f.contact_phone Faker::PhoneNumber.phone_number
+  f.contact_name { fake(:name, :name) }
+  f.contact_email { fake(:internet, :email) }
+  f.contact_phone { fake(:phone_number, :phone_number) }
   f.timestamps
 end
 
@@ -31,9 +31,9 @@ Factory.define(config_with_nil: :config) do |f|
 end
 
 Factory.define(another_config: :config) do |f|
-  f.title Faker::Team.name
-  f.description Faker::Lorem.sentence
-  f.domain Faker::Internet.domain_name
+  f.title { fake(:team, :name) }
+  f.description { fake(:lorem, :sentence) }
+  f.domain { fake(:internet, :domain_name) }
   f.session_timeout 7200
   f.auth_failure_waiting 10
   f.auth_failure_limit 1
@@ -47,9 +47,9 @@ Factory.define(another_config: :config) do |f|
   f.generate_password_size 8
   f.generate_password_type "alphanumeric"
   f.generate_password_chars "1Il0O"
-  f.contact_name Faker::Name.name
-  f.contact_email Faker::Internet.email
-  f.contact_phone Faker::PhoneNumber.phone_number
+  f.contact_name { fake(:name, :name) }
+  f.contact_email { fake(:internet, :email) }
+  f.contact_phone { fake(:phone_number, :phone_number) }
   f.timestamps
 end
 

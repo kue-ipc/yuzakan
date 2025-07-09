@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Factory.define(:attr) do |f|
-  f.name Faker::Internet.username
+  f.name { fake(:internet, :username) }
   f.label "" # default
   f.description "" # default
   f.category "user"
@@ -14,9 +14,9 @@ Factory.define(:attr) do |f|
 end
 
 Factory.define(another_attr: :attr) do |f|
-  f.name Faker::Internet.username
-  f.label Faker::Team.name
-  f.description Faker::Lorem.sentence
+  f.name { fake(:internet, :username) }
+  f.label { fake(:team, :name) }
+  f.description { fake(:lorem, sentence) }
   f.category "group"
   f.type "boolean"
   f.order 42

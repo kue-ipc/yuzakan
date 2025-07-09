@@ -3,7 +3,7 @@
 RSpec.describe API::Views::Parts::Auth do
   subject { described_class.new(value:) }
 
-  let(:value) { {username: Faker::Internet.username} }
+  let(:value) { {username: fake(:internet, :username)} }
 
   it "to_h" do
     expect(subject.to_h).to eq(value)

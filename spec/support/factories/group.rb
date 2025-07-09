@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 Factory.define(:group) do |f|
-  f.name Faker::Internet.username
-  f.label Faker::Music::RockBand.name
-  f.note Faker::Lorem.paragraph
+  f.name { fake(:internet, :username) }
+  f.label { fake(:music, :rock_band, :name) }
+  f.note { fake(:lorem, :paragaph) }
   f.basic false # default
   f.prohibited false # default
   f.deleted false # default

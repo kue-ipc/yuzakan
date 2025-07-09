@@ -12,7 +12,7 @@ RSpec.describe API::Actions::Auth::Create do
     }
   }
   let(:action_params) { {username: user.name, password: password} }
-  let(:password) { Faker::Internet.password }
+  let(:password) { fake(:internet, :password) }
 
   let(:auth_log_repo) {
     instance_double(Yuzakan::Repos::AuthLogRepo, create: auth_log, recent: [])
@@ -156,7 +156,7 @@ RSpec.describe API::Actions::Auth::Create do
       let(:authenticate) {
         instance_double(Yuzakan::Services::Authenticate, call: Failure([:failure, failure_message]))
       }
-      let(:failure_message) { Faker::Lorem.paragraph }
+      let(:failure_message) { { fake(:lorem, :paragaph) } }
 
       it "is failed" do
         response = action.call(params)
