@@ -9,7 +9,7 @@ RSpec.describe API::Actions::Providers::Check do
   let(:adapter_params) {
     {
       name: "provider1",
-      display_name: "プロバイダー①",
+      label: "プロバイダー①",
       adapter: "mock",
       order: 16,
     }

@@ -2,7 +2,7 @@
 
 Factory.define(:attr) do |f|
   f.name Faker::Internet.username
-  f.display_name "" # default
+  f.label "" # default
   f.description "" # default
   f.category "user"
   f.type "string"
@@ -15,7 +15,7 @@ end
 
 Factory.define(another_attr: :attr) do |f|
   f.name Faker::Internet.username
-  f.display_name Faker::Team.name
+  f.label Faker::Team.name
   f.description Faker::Lorem.sentence
   f.category "group"
   f.type "boolean"

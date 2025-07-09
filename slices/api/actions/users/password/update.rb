@@ -84,7 +84,7 @@ module API
             dict = current_config.password_extra_dict +
               [
                 current_user.name,
-                current_user.display_name&.split,
+                current_user.label&.split,
                 current_user.email,
                 current_user.email&.split("@"),
                 params[:current_password],

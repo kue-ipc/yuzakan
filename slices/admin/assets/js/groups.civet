@@ -209,7 +209,7 @@ groupDetailTr := ({group, providers}) ->
     html.td {key: "space"}
     html.td {key: "detail", colspan: 3}, [
       html.div {key: "properties"}, [
-        html.span {key: "display_name"}, text `表示名: ${group.display_name || "(無し)"}`
+        html.span {key: "label"}, text `表示名: ${group.label || "(無し)"}`
         html.span {key: "deleted_at", class: "ms-2"}, text `削除日: ${group.deleted_at}` if group.deleted_at
       ]
       if group.note

@@ -20,7 +20,7 @@ export default groupProvider := ({mode, group, providers}) ->
       html.tbody {},
         for each {name, label, type} of [
           {name: "name", label: "グループ名", type: "string"}
-          {name: "display_name", label: "表示名", type: "string"}
+          {name: "label", label: "表示名", type: "string"}
           {name: "primary", label: "プライマリ", type: "boolean"}
         ]
           html.tr {}, [

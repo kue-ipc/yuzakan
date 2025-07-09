@@ -17,7 +17,7 @@ module API
           params do
             required(:name).filled(:str?, :name?, max_size?: 255)
             optional(:password).maybe(:str?, max_size?: 255)
-            optional(:display_name).maybe(:str?, max_size?: 255)
+            optional(:label).maybe(:str?, max_size?: 255)
             optional(:email).maybe(:str?, :email?, max_size?: 255)
 
             optional(:note).maybe(:str?, max_size?: 4096)

@@ -9,7 +9,7 @@ providerTr := ({provider}) ->
   html.tr {}, [
     html.td {},
       html.a {href: `/admin/providers/${provider.name}`}, text provider.name
-    html.td {}, text provider.display_name
+    html.td {}, text provider.label
     html.td {}, text provider.adapter
     html.td {}, if provider.check?
       if provider.check

@@ -259,7 +259,7 @@ userDetailTr := ({user, providers}) ->
     html.td {key: "space"}
     html.td {key: "detail", colspan: 5}, [
       html.div {key: "properties"}, [
-        html.span {key: "display_name"}, text `表示名: ${user.display_name || "(無し)"}`
+        html.span {key: "label"}, text `表示名: ${user.label || "(無し)"}`
         html.span {key: "deleted_at", class: "ms-2"}, text `削除日: ${user.deleted_at}` if user.deleted_at
       ]
       if user.attrs?

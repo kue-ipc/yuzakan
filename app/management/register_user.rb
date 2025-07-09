@@ -21,7 +21,7 @@ module Yuzakan
 
       private def validate_params(params)
         validated_params = {
-          **params.slice(:display_name, :email),
+          **params.slice(:label, :email),
           deleted: false,
           deleted_at: nil,
         }

@@ -14,5 +14,5 @@ GRANT ALL ON *.* TO 'yuzakan'@'localhost' IDENTIFIED BY 'pass+yuzakan42';
 
 ```
 local_provider = ProviderRepository.new.find_with_adapter_by_name('local')
-('01'..'99').each { |n| local_provider.create("lu#{n}", 'pass', display_name: "ローカル#{n}") }
+('01'..'99').each { |n| local_provider.create("lu#{n}", 'pass', label: "ローカル#{n}") }
 ```

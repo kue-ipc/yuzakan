@@ -23,7 +23,7 @@ module Yuzakan
 
         params = {basic: false}
         providers.each_value do |data|
-          [:display_name, :basic].each do |name|
+          [:label, :basic].each do |name|
             params[name] ||= data[name] if data.key?(name)
           end
         end

@@ -13,7 +13,7 @@ RemoveGroup := (state, name) ->
 groupLi := ({name, groups, removable := false}) ->
   group := groups.find (item) -> item.name is name
   html.li {class: "list-inline-item border border-success rounded px-1 mb-1"}, [
-    text `${group.display_name} (${group.name})`
+    text `${group.label} (${group.name})`
     // if removable
     //   html.span {class: "px-1 rounded-3 ms-1 border boder-dark"},
     //     html.a {

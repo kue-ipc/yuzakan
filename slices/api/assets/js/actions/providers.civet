@@ -18,7 +18,7 @@ export API_PROVIDERS := "/api/providers"
 
 export PROVIDER_PROPERTIES := {}
   name: "string"
-  display_name: "string"
+  label: "string"
   adapter: "string"
   order: "integer"
   readable: "boolean"

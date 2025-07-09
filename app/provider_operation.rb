@@ -134,19 +134,17 @@ module Yuzakan
       if params[:attrs].nil? || params[:attrs].empty?
         attrs = params[:attrs]
       else
-        mappings = get_mappings(provider, category:)
-          .value_or { return Failure(_1) }
-        attrs = map_attrs(mappings, data.attrs)
-          .value_or { return Failure(_1) }
+        mappings = get_mappings(provider, category:).value_or { return Failure(_1) }
+        attrs = map_attrs(mappings, data.attrs).value_or { return Failure(_1) }
       end
 
       case category
       in :user
-        keys = [:display_name, :email]
+        keys = [:label, :email]
         keys.push(:primary_group, :groups) if provider.has_group?
         Success(Yuzakan::Adapter::UserData.new(**params.slice(*keys), attrs:))
       in :group
-        keys = [:display_name]
+        keys = [:label]
         Success(Yuzakan::Adapter::GroupData.new(**params.slice(*keys), attrs:))
       else
         Failure([:unknown, "category"])

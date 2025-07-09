@@ -9,7 +9,7 @@ RSpec.describe API::Actions::Providers::Destroy do
   let(:adapter_params) {
     {
       name: "provider1",
-      display_name: "プロバイダー①",
+      label: "プロバイダー①",
       adapter: "test",
       order: 16,
       readable: true,

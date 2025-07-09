@@ -12,7 +12,7 @@ module Admin
           text = UserRepository.new.all.map do |user|
             {
               name: user.name,
-              display_name: user.display_name,
+              label: user.label,
               email: user.email,
               note: user.note,
               clearance_level: user.clearance_level,

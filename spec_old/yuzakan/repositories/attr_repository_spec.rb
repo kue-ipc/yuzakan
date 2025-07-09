@@ -4,9 +4,9 @@ RSpec.describe AttrRepository do
   let(:attr_repository) { described_class.new }
 
   before do
-    @attr_hoge = attr_repository.create(name: "hoge", display_name: "ほげ", type: "string", order: 8)
-    @attr_fuga = attr_repository.create(name: "fuga", display_name: "ふが", type: "integer", order: 32)
-    @attr_piyo = attr_repository.create(name: "piyo", display_name: "ぴよ", type: "boolean", order: 16)
+    @attr_hoge = attr_repository.create(name: "hoge", label: "ほげ", type: "string", order: 8)
+    @attr_fuga = attr_repository.create(name: "fuga", label: "ふが", type: "integer", order: 32)
+    @attr_piyo = attr_repository.create(name: "piyo", label: "ぴよ", type: "boolean", order: 16)
   end
 
   after do
@@ -40,8 +40,8 @@ RSpec.describe AttrRepository do
     let(:provider_repository) { ProviderRepository.new }
 
     before do
-      @provider_hoge = provider_repository.create(name: "hoge", display_name: "ほげ", adapter: "dummy", order: 8)
-      @provider_fuga = provider_repository.create(name: "fuga", display_name: "ふが", adapter: "dummy", order: 16)
+      @provider_hoge = provider_repository.create(name: "hoge", label: "ほげ", adapter: "dummy", order: 8)
+      @provider_fuga = provider_repository.create(name: "fuga", label: "ふが", adapter: "dummy", order: 16)
 
       @mapping_hoge_hoge = mapping_repository.create(attr_id: @attr_hoge.id, provider_id: @provider_hoge.id,
         key: "hoge_hoge")
@@ -70,7 +70,7 @@ RSpec.describe AttrRepository do
 
     it "create_with_mappings" do
       attr_with_mappings = attr_repository.create_with_mappings(
-        name: "moe", display_name: "もえ", type: "string", order: 40, hidden: false,
+        name: "moe", label: "もえ", type: "string", order: 40, hidden: false,
         mappings: [
           {provider_id: @provider_hoge.id, key: "moe_hoge"},
           {provider_id: @provider_fuga.id, key: "moe_fuga", conversion: "e2j"},

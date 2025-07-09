@@ -38,7 +38,7 @@ inputCode := new InputTextDialog {
 // Viwes
 
 providerTh := ({provider}) ->
-  html.th {}, text provider.display_name ?? provider.name
+  html.th {}, text provider.label ?? provider.name
 
 attrMappingTd := ({attr, provider}) ->
   unless attr.mappings?
@@ -96,9 +96,9 @@ attrTr := ({attr, index, providers}) ->
       html.input {
         class: "form-control"
         type: "text"
-        value: attr.display_name
+        value: attr.label
         required: true
-        oninput: (state, event) -> [attrAction, {name: attr.name, attr: {display_name: event.target.value}}]
+        oninput: (state, event) -> [attrAction, {name: attr.name, attr: {label: event.target.value}}]
       }
     ]
     html.td {class: "table-primary"}, [

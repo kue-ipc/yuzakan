@@ -8,7 +8,7 @@ ROM::SQL.migration do
       foreign_key :affiliation_id, :affiliations, on_delete: :restrict
 
       column :name, String, null: false
-      column :display_name, String, null: false, default: ""
+      column :label, String, null: false, default: ""
       column :note, "text", null: false, default: ""
 
       column :basic, TrueClass, null: false, default: false

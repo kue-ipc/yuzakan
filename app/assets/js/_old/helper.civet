@@ -41,7 +41,7 @@ export pick := R.flip(R.pick)
 export entityLabel := (entity) ->
   return undefined unless entity?
 
-  entity.display_name || entity.name || ""
+  entity.label || entity.name || ""
 
 
 // TODO

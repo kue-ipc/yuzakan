@@ -30,7 +30,7 @@ module Yuzakan
         params = {
           name: username,
           hashed_password: hashed_password,
-          display_name: userdata.display_name || "",
+          label: userdata.label || "",
           email: userdata.email || "",
           attrs: userdata.attrs || {},
           local_group_id: primary_group&.id,
@@ -56,7 +56,7 @@ module Yuzakan
           &.then { |names| group_repo.all_by_names(names) }
 
         params = {
-          display_name: userdata.display_name,
+          label: userdata.label,
           email: userdata.email,
           **{attrs: userdata.attrs&.merge(user.attrs)}.comact,
           local_group_id: primary_group&.id,
@@ -135,7 +135,7 @@ module Yuzakan
 
         params = {
           name: groupname,
-          display_name: groupdata.display_name,
+          label: groupdata.label,
           attrs: groupdata.attrs || {},
         }
         group_struct_to_data(group_repo.create(**params))
@@ -150,7 +150,7 @@ module Yuzakan
         return if group.nil?
 
         params = {
-          display_name: groupdata.display_name,
+          label: groupdata.label,
           **{attrs: groupdata.attrs&.merge(group.attrs)}.comact,
         }
         group_struct_to_data(group_repo.update(group.id, **params))
@@ -235,7 +235,7 @@ module Yuzakan
           name: user.name,
           primary_group: user.primary_group&.name,
           groups: user.groups.map(&:name),
-          display_name: user.display_name,
+          label: user.label,
           email: user.email,
           locked: user.locked?)
       end
@@ -245,7 +245,7 @@ module Yuzakan
 
         GroupData.new(
           name: group.name,
-          display_name: group.display_name)
+          label: group.label)
       end
     end
   end

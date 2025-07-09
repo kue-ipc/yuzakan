@@ -27,7 +27,7 @@ def db_initialize
   provider_repository = ProviderRepository.new
   provider_repository.create({
     name: "local",
-    display_name: "ローカル",
+    label: "ローカル",
     order: "0",
     adapter: "local",
     readable: true,
@@ -38,15 +38,15 @@ def db_initialize
   })
   provider_repository.create({
     name: "dummy",
-    display_name: "ダミー",
+    label: "ダミー",
     adapter: "dummy",
   })
   local_provider = provider_repository.find_with_adapter_by_name("local")
   local_provider.create("admin", "pass",
-    display_name: "ローカル管理者",
+    label: "ローカル管理者",
     email: "admin@example.jp")
   local_provider.create("user", "word",
-    display_name: "一般ユーザー",
+    label: "一般ユーザー",
     email: "user@example.jp")
   user_repository.create(usenrname: "admin", clearance_level: 5)
   config_repository.current_create({title: "テストサイト", maintenace: false})

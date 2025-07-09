@@ -16,7 +16,7 @@ module Yuzakan
         required(:check).filled(:bool?)
         required(:username).filled(:str?, max_size?: 255)
         required(:password).filled(:str?, max_size?: 255)
-        required(:display_name).filled(:str?, max_size?: 255)
+        required(:label).filled(:str?, max_size?: 255)
         required(:email).filled(:str?, max_size?: 255)
         optional(:locked).value(:bool?)
         optional(:unmanageable).value(:bool?)
@@ -46,7 +46,7 @@ module Yuzakan
       #     default: "password",
       #   },
       #   {
-      #     name: :display_name,
+      #     name: :label,
       #     label: "表示名",
       #     type: :string,
       #     default: "ユーザー",
@@ -105,7 +105,7 @@ module Yuzakan
         groups = @params[:groups].to_s.split(/\s|,/).map(&:strip).reject(&:empty?)
         @users = {@params[:username] => {
           username: @params[:username],
-          display_name: @params[:display_name],
+          label: @params[:label],
           email: @params[:email],
           locked: @params[:locked],
           unmanageable: @params[:unmanageable],
@@ -115,7 +115,7 @@ module Yuzakan
           attrs: YAML.safe_load(@params[:attrs]),
         }}
         @groups = [primary_group, *groups].uniq.compact.to_h do |name|
-          [name, {groupname: name, display_name: name}]
+          [name, {groupname: name, label: name}]
         end
       end
 

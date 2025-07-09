@@ -29,10 +29,10 @@ module Local
         pattern = generate_like_pattern(query, **)
         local_users.where do
           if ignore_case
-            name.ilike(pattern) | display_name.ilike(pattern) |
+            name.ilike(pattern) | label.ilike(pattern) |
               email.ilike(pattern)
           else
-            name.like(pattern) | display_name.like(pattern) |
+            name.like(pattern) | label.like(pattern) |
               email.like(pattern)
           end
         end

@@ -15,7 +15,7 @@ module Admin
             {
               username: user.username,
               hashed_password: user.hashed_password,
-              display_name: user.display_name,
+              label: user.label,
               email: user.email,
               locked: user.locked,
             }

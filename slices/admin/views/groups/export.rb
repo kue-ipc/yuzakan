@@ -12,7 +12,7 @@ module Admin
           text = GroupRepository.new.all.map do |group|
             {
               name: group.name,
-              display_name: group.display_name,
+              label: group.label,
               note: group.note,
               basic: group.basic,
               prohibited: group.prohibited,

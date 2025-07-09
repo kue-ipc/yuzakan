@@ -70,7 +70,7 @@ module Yuzakan
         #   dict = current_config.password_extra_dict
         #   dict.concat([
         #     current_user.name,
-        #     current_user.display_name&.split,
+        #     current_user.label&.split,
         #     current_user.email,
         #     current_user.email&.split("@"),
         #   ].flatten.compact)

@@ -18,7 +18,7 @@ export API_ATTRS := "/api/attrs"
 
 export ATTR_PROPERTIES := {}
   name: "string"
-  display_name: "string"
+  label: "string"
   type: "string"
   order: "integer"
   hidden: "boolean"

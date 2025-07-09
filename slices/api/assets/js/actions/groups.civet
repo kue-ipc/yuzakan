@@ -23,7 +23,7 @@ export API_GROUPS := "/api/groups"
 
 export GROUP_PROPERTIES := {}
   name: "string"
-  display_name: "string"
+  label: "string"
   note: "string"
   primary: "boolean"
   prohibited: "boolean"
@@ -32,7 +32,7 @@ export GROUP_PROPERTIES := {}
 
 export GROUP_DATA_PROPERTIES := {}
   groupname: "string"
-  display_name: "string"
+  label: "string"
   primary: "boolean"
 
 export INDEX_GROUPS_OPTION_PARAM_TYPES := {}

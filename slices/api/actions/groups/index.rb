@@ -20,7 +20,7 @@ module API
 
             optional(:order).filled(:str?, included_in?: %w[
               name
-              display_name
+              label
               deleted_at
             ].flat_map { |name| [name, "#{name}.asc", "#{name}.desc"] })
 

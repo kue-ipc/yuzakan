@@ -15,7 +15,7 @@ module API
 
         params do
           required(:name).filled(:str?, :name?, max_size?: 255)
-          optional(:display_name).maybe(:str?, max_size?: 255)
+          optional(:label).maybe(:str?, max_size?: 255)
           required(:type).filled(:str?, included_in?: Yuzakan::Structs::Attr::TYPES)
           optional(:order).filled(:int?)
           optional(:hidden).filled(:bool?)

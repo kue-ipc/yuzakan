@@ -8,7 +8,7 @@ valueDisplay from ~/app/value_display.civet
 
 PROVIDER_REG_ITEMS := [
   {name: "username", label: "ユーザー名", type: "string"}
-  {name: "display_name", label: "表示名", type: "string"}
+  {name: "label", label: "表示名", type: "string"}
   {name: "email", label: "メールアドレス", type: "string"}
   {name: "locked", label: "ロック", type: "boolean"}
   {name: "unmanageable", label: "管理不可", type: "boolean"}

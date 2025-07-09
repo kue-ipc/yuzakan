@@ -23,7 +23,7 @@ export API_USERS = "/api/users"
 export USER_PROPERTIES = {}
   name: "string"
   password: "string"
-  display_name: "string"
+  label: "string"
   email: "string"
   note: "string"
   clearance_level: "integer"
@@ -36,7 +36,7 @@ export USER_PROPERTIES = {}
 
 export USER_DATA_PROPERTIES = {}
   username: "string"
-  display_name: "string"
+  label: "string"
   email: "string"
   primary_group: "string"
   groups: "list"

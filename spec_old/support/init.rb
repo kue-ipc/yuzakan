@@ -139,7 +139,7 @@ def let_mock_repositories
   # single attributes
   let(:attr_attributes) {
     {
-      id: 42, name: "attr42", display_name: "属性42", type: "string", order: 8,
+      id: 42, name: "attr42", label: "属性42", type: "string", order: 8,
       hidden: false, readonly: false, code: nil, description: nil,
     }
   }
@@ -151,14 +151,14 @@ def let_mock_repositories
   }
   let(:user_attributes) {
     {
-      id: 42, name: "user", display_name: "ユーザー", email: "user@example.jp", clearance_level: 1,
+      id: 42, name: "user", label: "ユーザー", email: "user@example.jp", clearance_level: 1,
       prohibited: false, deleted: false, deleted_at: nil, note: nil,
     }
   }
-  let(:group_attributes) { {id: 42, name: "group", display_name: "グループ"} }
+  let(:group_attributes) { {id: 42, name: "group", label: "グループ"} }
   let(:provider_attriubtes) {
     {
-      id: 42, name: "provider42", display_name: "プロバイダー42", adapter: "dummy", order: 8,
+      id: 42, name: "provider42", label: "プロバイダー42", adapter: "dummy", order: 8,
       readable: false, writable: false, authenticatable: false, password_changeable: false,
       lockable: false, group: false, individual_password: false, self_management: false,
       description: nil,
@@ -169,13 +169,13 @@ def let_mock_repositories
   let(:attrs_attributes) {
     [
       attr_attributes,
-      {**attr_attributes, id: 19, name: "attr_bool", display_name: "真偽値属性",
+      {**attr_attributes, id: 19, name: "attr_bool", label: "真偽値属性",
                           type: "boolean", order: 24,},
-      {**attr_attributes, id: 24, name: "attr_int", display_name: nil,
+      {**attr_attributes, id: 24, name: "attr_int", label: nil,
                           type: "整数属性", order: 16, code: '"hoge"',},
-      {**attr_attributes, id: 27, name: "attr_str", display_name: "文字列属性",
+      {**attr_attributes, id: 27, name: "attr_str", label: "文字列属性",
                           type: "string", order: 64, hidden: true,},
-      {**attr_attributes, id: 28, name: "attr_noname", display_name: nil,
+      {**attr_attributes, id: 28, name: "attr_noname", label: nil,
                           type: "string", order: 32, readonly: true,},
     ]
   }
@@ -220,7 +220,7 @@ def let_mock_repositories
   let(:users_attributes) {
     [
       user_attributes,
-      {**user_attributes, id: 1, name: "admin", display_name: "管理者",
+      {**user_attributes, id: 1, name: "admin", label: "管理者",
                           email: "admin@example.jp", clearance_level: 5,},
       {**user_attributes, id: 24, name: "prohibited", prohibited: true},
       {**user_attributes, id: 19, name: "deleted", deleted: true,
@@ -230,11 +230,11 @@ def let_mock_repositories
   let(:providers_attributes) {
     [
       provider_attriubtes,
-      {**provider_attriubtes, id: 1, name: "provider1", display_name: "プロ1",
+      {**provider_attriubtes, id: 1, name: "provider1", label: "プロ1",
                               order: 8,},
-      {**provider_attriubtes, id: 2, name: "provider2", display_name: "プロ2",
+      {**provider_attriubtes, id: 2, name: "provider2", label: "プロ2",
                               order: 32,},
-      {**provider_attriubtes, id: 3, name: "provider3", display_name: nil,
+      {**provider_attriubtes, id: 3, name: "provider3", label: nil,
                               order: 16,},
       {**provider_attriubtes, id: 4, name: "self_management_provider",
                               self_management: true,},

@@ -18,7 +18,7 @@ module API
             required(:id).filled(:str?, :name?, max_size?: 255)
             optional(:name).filled(:str?, :name?, max_size?: 255)
             optional(:adapter).filled(:str?, :name?, max_size?: 255)
-            optional(:display_name).maybe(:str?, max_size?: 255)
+            optional(:label).maybe(:str?, max_size?: 255)
             optional(:order).filled(:int?)
             optional(:readable).filled(:bool?)
             optional(:writable).filled(:bool?)

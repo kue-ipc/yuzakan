@@ -2,7 +2,7 @@
 
 Factory.define(:group) do |f|
   f.name Faker::Internet.username
-  f.display_name Faker::Music::RockBand.name
+  f.label Faker::Music::RockBand.name
   f.note Faker::Lorem.paragraph
   f.basic false # default
   f.prohibited false # default
@@ -12,6 +12,6 @@ Factory.define(:group) do |f|
 end
 
 Factory.define(group_with_nil: :group) do |f|
-  f.display_name nil
+  f.label nil
   f.note nil
 end

@@ -31,9 +31,9 @@ module Local
         pattern = generate_like_pattern(query, **)
         local_groups.where do
           if ignore_case
-            name.ilike(pattern) | display_name.ilike(pattern)
+            name.ilike(pattern) | label.ilike(pattern)
           else
-            name.like(pattern) | display_name.like(pattern)
+            name.like(pattern) | label.like(pattern)
           end
         end
       end

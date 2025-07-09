@@ -8,10 +8,10 @@ calcUserAttrValue := ({user, attrs, code}) ->
   code := `return (${code});` unless /\breturn\b/.test(code)
 
   try
-    func := new Function("{name, display_name, email, primary_group, attrs, tools}", code)
+    func := new Function("{name, label, email, primary_group, attrs, tools}", code)
     result := func {
       name: user.name
-      display_name: user.display_name
+      label: user.label
       email: user.email
       primary_group: user.primary_group
       attrs

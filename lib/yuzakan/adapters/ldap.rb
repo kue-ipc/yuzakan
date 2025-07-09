@@ -375,7 +375,7 @@ module Yuzakan
       def user_search(query)
         filter = Net::LDAP::Filter.eq(@params[:user_name_attr], query)
 
-        [:display_name, :email].each do |name|
+        [:label, :email].each do |name|
           attr_name = @params[:"user_#{name}_attr"]
           if attr_name&.size&.positive?
             filter |= Net::LDAP::Filter.eq(attr_name,
@@ -402,7 +402,7 @@ module Yuzakan
       def group_search(query)
         filter = Net::LDAP::Filter.eq(@params[:group_name_attr], query)
 
-        [:display_name].each do |name|
+        [:label].each do |name|
           attr_name = @params[:"group_#{name}_attr"]
           if attr_name&.size&.positive?
             filter |= Net::LDAP::Filter.eq(attr_name,
@@ -624,7 +624,7 @@ module Yuzakan
       end
 
       private def create_user_attributes(username:, password: nil,
-        display_name: nil, email: nil, **userdata)
+        label: nil, email: nil, **userdata)
         attributes = userdata[:attrs].transform_keys do |key|
           attribute_name(key)
         end
@@ -639,9 +639,9 @@ module Yuzakan
           attributes[attribute_name(@params[:user_name_attr])] = username
         end
 
-        if @params[:user_display_name_attr]&.size&.positive? && display_name&.size&.positive?
+        if @params[:user_display_name_attr]&.size&.positive? && label&.size&.positive?
           attributes[attribute_name(@params[:user_display_name_attr])] =
-            display_name
+            label
         end
         if @params[:user_email_attr]&.size&.positive? && email&.size&.positive?
           attributes[attribute_name(@params[:user_email_attr])] = email
@@ -662,7 +662,7 @@ module Yuzakan
         end
         attributes.transform_values! { |value| convert_ldap_value(value) }
 
-        [:display_name, :email].each do |name|
+        [:label, :email].each do |name|
           attr_name = @params[:"user_#{name}_attr"]
           if attr_name&.size&.positive? && userdata[name]
             attributes[attribute_name(@params[:"user_#{name}_attr"])] =
@@ -893,7 +893,7 @@ module Yuzakan
 
         {
           username: name,
-          display_name: @params[:user_display_name_attr] && user.first(@params[:user_display_name_attr]),
+          label: @params[:user_label_attr] && user.first(@params[:user_label_attr]),
           email: @params[:user_email_attr] && user.first(@params[:user_email_attr])&.downcase,
           locked: user_entry_locked?(user),
           unmanageable: user_entry_unmanageable?(user),
@@ -922,7 +922,7 @@ module Yuzakan
 
         {
           groupname: name,
-          display_name: group.first(@params[:group_display_name_attr]),
+          label: group.first(@params[:group_display_name_attr]),
           # attrs: attrs,
         }
       end

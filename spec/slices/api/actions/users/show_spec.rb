@@ -17,14 +17,14 @@ RSpec.describe API::Actions::Self::Show do
       name: "provider",
       group: true,
       params: {
-        username: "user", display_name: "ユーザー", email: "user@example.jp",
+        username: "user", label: "ユーザー", email: "user@example.jp",
         primary_group: "group",
         groups: "admin, staff",
         attrs: YAML.dump({"jaDisplayName" => "表示ユーザー"}),
       },
       mappings: [{
         key: "jaDisplayName", conversion: nil,
-        attr: {name: "ja_display_name", display_name: "日本語表示名", type: "string", hidden: false},
+        attr: {name: "ja_display_name", label: "日本語表示名", type: "string", hidden: false},
       }])]
   }
   let(:provider_repository) { instance_double(ProviderRepository, ordered_all_with_adapter_by_operation: providers) }
@@ -47,7 +47,7 @@ RSpec.describe API::Actions::Self::Show do
     json = JSON.parse(response.body.first, symbolize_names: true)
     expect(json).to eq({
       name: "user",
-      display_name: "ユーザー",
+      label: "ユーザー",
       email: "user@example.jp",
       note: nil,
       prohibited: false,
@@ -60,7 +60,7 @@ RSpec.describe API::Actions::Self::Show do
       providers: {
         provider: {
           username: "user",
-          display_name: "ユーザー",
+          label: "ユーザー",
           email: "user@example.jp",
           locked: false,
           unmanageable: false,

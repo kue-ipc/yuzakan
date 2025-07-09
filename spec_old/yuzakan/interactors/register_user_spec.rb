@@ -7,7 +7,7 @@ RSpec.describe RegisterUser do
   let(:params) {
     {
       username: "user",
-      display_name: "ユーザー",
+      label: "ユーザー",
       email: "user@exapmle.jp",
       primary_group: "group",
       groups: ["admin", "staff"],

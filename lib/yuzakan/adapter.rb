@@ -9,7 +9,7 @@
 #   attr_reader name: String
 #   attr_reader primary_group: String?
 #   attr_reader groups: Array[String]
-#   attr_reader display_name: String
+#   attr_reader label: String
 #   attr_reader email: String
 #   attr_reader locked: bool?
 #   attr_reader unmanageable: bool?
@@ -18,7 +18,7 @@
 #
 # GroupData:
 #   attr_reader name: String
-#   attr_reader display_name: String
+#   attr_reader label: String
 #   attr_reader unmanageable: bool?
 #   attr_reader attrs: Hash[Symbol, untyped]
 #
@@ -75,16 +75,16 @@ module Yuzakan
     end
 
     UserData = Data.define(:name, :primary_group, :groups,
-      :display_name, :email, :locked, :unmanageable, :mfa, :attrs) do
+      :label, :email, :locked, :unmanageable, :mfa, :attrs) do
       def initialize(name: nil, primary_group: nil, groups: [],
-        display_name: nil, email: nil,
+        label: nil, email: nil,
         locked: false, unmanageable: false, mfa: false, attrs: {})
         super
       end
     end
 
-    GroupData = Data.define(:name, :display_name, :unmanageable, :attrs) do
-      def initialize(name: nil, display_name: nil, unmanageable: false,
+    GroupData = Data.define(:name, :label, :unmanageable, :attrs) do
+      def initialize(name: nil, label: nil, unmanageable: false,
         attrs: {})
         super
       end

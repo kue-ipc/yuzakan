@@ -23,7 +23,7 @@ module Yuzakan
 
         params = {groups: []}
         providers.each_value do |data|
-          [:display_name, :email, :primary_group].each do |name|
+          [:label, :email, :primary_group].each do |name|
             params[name] ||= data[name] if data.key?(name)
           end
           params[:groups] |= data[:groups] if data.key?(:groups)

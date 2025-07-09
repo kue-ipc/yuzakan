@@ -20,7 +20,7 @@ SetUserUsername := (state, name) ->
   [CalcUserAttrs, {user: {...state.user, name, email}}]
 SetUserUsernameByEvent := createEventValueAction(SetUserUsername)
 
-SetUserDisplayName := (state, display_name) -> [CalcUserAttrs, {user: {...state.user, display_name}}]
+SetUserDisplayName := (state, label) -> [CalcUserAttrs, {user: {...state.user, label}}]
 SetUserDisplayNameByEvent := createEventValueAction(SetUserDisplayName)
 
 SetUserEmail := (state, email) -> [CalcUserAttrs, {user: {...state.user, email}}]
@@ -63,14 +63,14 @@ export default userInfo := ({mode, user, groups}) ->
         text "表示名"
       dlh.dd {},
         if mode is "show"
-          text user.display_name ?? ""
+          text user.label ?? ""
         else
           html.input {
-            id: "user-display_name"
+            id: "user-label"
             class: "form-control"
             type: "text"
             required: true
-            value: user.display_name ?? ""
+            value: user.label ?? ""
             oninput: SetUserDisplayNameByEvent
           }
       dlh.dt {},
@@ -80,7 +80,7 @@ export default userInfo := ({mode, user, groups}) ->
           text user.email ?? ""
         else
           html.input {
-            id: "user-display_name"
+            id: "user-label"
             class: "form-control"
             type: "text"
             required: true
@@ -108,8 +108,8 @@ export default userInfo := ({mode, user, groups}) ->
         if mode is "show"
           if user.primary_group
             primary_group := groups.find (group) -> group.name is user.primary_group
-            text if primary_group.display_name
-              `${primary_group.display_name} (${primary_group.name})`
+            text if primary_group.label
+              `${primary_group.label} (${primary_group.name})`
             else
               primary_group.name
           else
@@ -128,7 +128,7 @@ export default userInfo := ({mode, user, groups}) ->
                 html.option {
                   value: group.name
                   selected: group.name is user.primary_group
-                }, text if group.display_name then `${group.display_name} (${group.name})` else group.name
+                }, text if group.label then `${group.label} (${group.name})` else group.name
             )...
           ]
       dlh.dt {},

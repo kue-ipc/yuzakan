@@ -167,10 +167,10 @@ view := ({name, provider, adapters}) ->
       }
     ]
     html.div {class: "mb-3"}, [
-      html.label {class: "form-label", for: "provider-display_name"}, text "表示名"
+      html.label {class: "form-label", for: "provider-label"}, text "表示名"
       html.input {
-        id: "provider-display_name", class: "form-control", type: "text", required: true, value: provider.display_name
-        oninput: (state, event) -> [providerAction, {provider: {display_name: event.target.value}}]
+        id: "provider-label", class: "form-control", type: "text", required: true, value: provider.label
+        oninput: (state, event) -> [providerAction, {provider: {label: event.target.value}}]
       }
     ]
     html.div {}, [

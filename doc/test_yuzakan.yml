@@ -19,7 +19,7 @@ config:
   contact_phone: 00-0000-0000
 providers:
 - name: local
-  display_name: ローカル
+  label: ローカル
   adapter: local
   readable: true
   writable: true
@@ -31,7 +31,7 @@ providers:
   group: false
   params: {}
 - name: ldap
-  display_name: 普通のLDAP
+  label: 普通のLDAP
   adapter: ldap
   readable: true
   writable: true
@@ -67,7 +67,7 @@ providers:
     create_user_ou_dn: ou=User,dc=example,dc=jp
     create_user_object_classes: inetOrgPerson,eduPerson,mozillaAbPersonAlpha
 - name: posix_samba
-  display_name: PosixとSamba
+  label: PosixとSamba
   adapter: samba_ldap
   readable: true
   writable: true
@@ -113,7 +113,7 @@ providers:
     auth_nt_password: false
 attrs:
 - name: display_name_latin
-  display_name: 表示名(ローマ字)
+  label: 表示名(ローマ字)
   type: string
   hidden: false
   readonly: false
@@ -123,27 +123,27 @@ attrs:
     key: displayName
     conversion: 
 - name: family_name
-  display_name: 姓(日本語)
+  label: 姓(日本語)
   type: string
   hidden: false
   readonly: false
-  code: display_name?.split(/\s/)?.at(0)
+  code: label?.split(/\s/)?.at(0)
   mappings:
   - provider: ldap
     key: sn;lang-ja
     conversion: 
 - name: given_name
-  display_name: 名(日本語)
+  label: 名(日本語)
   type: string
   hidden: false
   readonly: false
-  code: display_name?.split(/\s/)?.at(1)
+  code: label?.split(/\s/)?.at(1)
   mappings:
   - provider: ldap
     key: givenName;lang-ja
     conversion: 
 - name: family_name_latin
-  display_name: 姓(ローマ字)
+  label: 姓(ローマ字)
   type: string
   hidden: false
   readonly: false
@@ -153,7 +153,7 @@ attrs:
     key: sn
     conversion: 
 - name: given_name_latin
-  display_name: 名(ローマ字)
+  label: 名(ローマ字)
   type: string
   hidden: false
   readonly: false
@@ -163,7 +163,7 @@ attrs:
     key: givenName
     conversion: 
 - name: uid
-  display_name: ユーザーID
+  label: ユーザーID
   type: integer
   hidden: false
   readonly: true
@@ -173,7 +173,7 @@ attrs:
     key: uidNumber
     conversion: 
 - name: cn
-  display_name: キャラクター名
+  label: キャラクター名
   type: string
   hidden: false
   readonly: false
@@ -186,7 +186,7 @@ attrs:
     key: cn
     conversion: 
 - name: samba_sid
-  display_name: Samba SID
+  label: Samba SID
   type: string
   hidden: false
   readonly: true
@@ -196,7 +196,7 @@ attrs:
     key: sambaSID
     conversion: 
 - name: home
-  display_name: ホームディレクトリ
+  label: ホームディレクトリ
   type: string
   hidden: false
   readonly: false
@@ -206,7 +206,7 @@ attrs:
     key: homeDirectory
     conversion: 
 - name: use_html_mail
-  display_name: 
+  label: 
   type: boolean
   hidden: false
   readonly: false
@@ -216,7 +216,7 @@ attrs:
     key: mozillaUseHtmlMail
     conversion: 
 - name: affiliation
-  display_name: 
+  label: 
   type: string
   hidden: false
   readonly: false
@@ -226,7 +226,7 @@ attrs:
     key: eduPersonAffiliation
     conversion: 
 - name: password_last_change
-  display_name: パスワード変更日
+  label: パスワード変更日
   type: date
   hidden: false
   readonly: true
@@ -236,7 +236,7 @@ attrs:
     key: shadowLastChange
     conversion: posix_date
 - name: password_min_day
-  display_name: パスワード変更不可日数
+  label: パスワード変更不可日数
   type: integer
   hidden: false
   readonly: false
@@ -246,7 +246,7 @@ attrs:
     key: shadowMin
     conversion: 
 - name: password_max_day
-  display_name: パスワード変更有効日数
+  label: パスワード変更有効日数
   type: integer
   hidden: false
   readonly: false

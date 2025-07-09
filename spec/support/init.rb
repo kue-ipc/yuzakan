@@ -31,7 +31,7 @@ def init_request_spec
     Factory[:mock_provider, params: {
       username: user.name,
       password: password,
-      display_name: user.display_name,
+      label: user.label,
       email: user.email,
       locked: false,
       unmanageable: false,

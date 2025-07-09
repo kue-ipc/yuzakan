@@ -2,7 +2,7 @@
 
 Factory.define(:user) do |f|
   f.name { fake(:internet, :username) }
-  f.display_name { fake(:name, :name) }
+  f.label { fake(:name, :name) }
   f.email Faker::Internet.email
   f.note Faker::Lorem.paragraph
   f.clearance_level 1 # default
@@ -13,7 +13,7 @@ Factory.define(:user) do |f|
 end
 
 Factory.define(user_with_nil: :user) do |f|
-  f.display_name nil
+  f.label nil
   f.email nil
   f.note nil
 end

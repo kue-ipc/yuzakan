@@ -9,7 +9,7 @@ RSpec.describe API::Actions::Providers::Update do
   let(:adapter_params) {
     {
       name: "provider1",
-      display_name: "プロバイダー①",
+      label: "プロバイダー①",
       adapter: "test",
       order: 16,
       readable: true,
@@ -89,7 +89,7 @@ RSpec.describe API::Actions::Providers::Update do
     end
 
     it "is successful with different" do
-      response = action.call({**params, name: "hoge", display_name: "ほげ"})
+      response = action.call({**params, name: "hoge", label: "ほげ"})
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -140,8 +140,8 @@ RSpec.describe API::Actions::Providers::Update do
         })
       end
 
-      it "is successful with diffrent only display_name" do
-        response = action.call({**params, display_name: "ほげ"})
+      it "is successful with diffrent only label" do
+        response = action.call({**params, label: "ほげ"})
         expect(response.status).to eq 200
         expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
@@ -152,7 +152,7 @@ RSpec.describe API::Actions::Providers::Update do
       end
 
       it "is failure with different" do
-        response = action.call({**params, name: "hoge", display_name: "ほげ"})
+        response = action.call({**params, name: "hoge", label: "ほげ"})
         expect(response.status).to eq 422
         expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)

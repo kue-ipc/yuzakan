@@ -28,7 +28,7 @@ module Admin
           ],
           provider: %i[
             name
-            display_name
+            label
             adapter
             readable
             writable
@@ -41,7 +41,7 @@ module Admin
           ],
           attr: %i[
             name
-            display_name
+            label
             type
             hidden
             readonly

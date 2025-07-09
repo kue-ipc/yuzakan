@@ -68,7 +68,7 @@ module Yuzakan
           when :partial
             "%#{query}%"
           end
-        users.where { name.ilike(sql_query) | display_name.ilike(sql_query) }
+        users.where { name.ilike(sql_query) | label.ilike(sql_query) }
       end
 
       private def by_name(name)

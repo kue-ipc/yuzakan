@@ -39,7 +39,7 @@ end
 provider_repo = Hanami.app["repos.provider_repo"]
 unless provider_repo.get("local")
   local_provider_params = {
-    display_name: "ローカル",
+    label: "ローカル",
     order: 0,
     adapter: "local",
     params: {},
@@ -58,14 +58,14 @@ Hanami.app["providers.read_group"].call(admin_groupname, ["local"]) =>
   Success(group_providers)
 if group_providers["local"].nil?
   Hanami.app["providers.create_group"].call(admin_groupname, ["local"],
-    display_name: "管理者") in Success(_)
+    label: "管理者") in Success(_)
 end
 
 Hanami.app["providers.read_user"].call(admin_username, ["local"]) =>
   Success(user_providers)
 if user_providers["local"].nil?
   Hanami.app["providers.create_user"].call(admin_username, ["local"],
-    password: admin_password, display_name: "ローカル管理者",
+    password: admin_password, label: "ローカル管理者",
     primary_group: admin_groupname, groups: []) in Success(_)
 end
 

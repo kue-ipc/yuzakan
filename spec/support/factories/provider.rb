@@ -2,7 +2,7 @@
 
 Factory.define(:provider) do |f|
   f.name Faker::Internet.username
-  f.display_name Faker::Name.name
+  f.label Faker::Name.name
   f.description Faker::Lorem.paragraph
   f.order 1
   f.adapter "dummy"
@@ -19,7 +19,7 @@ Factory.define(:provider) do |f|
 end
 
 Factory.define(provider_with_nil: :provider) do |f|
-  f.display_name nil
+  f.label nil
   f.description nil
 end
 

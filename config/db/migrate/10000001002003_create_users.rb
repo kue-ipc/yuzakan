@@ -9,7 +9,7 @@ ROM::SQL.migration do
       foreign_key :group_id, :groups, on_delete: :restrict
 
       column :name, String, null: false
-      column :display_name, String, null: false, default: ""
+      column :label, String, null: false, default: ""
       column :email, String, null: false, default: ""
       column :note, "text", null: false, default: ""
 

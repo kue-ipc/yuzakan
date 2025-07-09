@@ -69,7 +69,7 @@ RSpec.describe API::Actions::Attrs::Update do
     end
 
     it "is ok with different name" do
-      response = action.call({**params, name: "hoge", display_name: "ほげ"})
+      response = action.call({**params, name: "hoge", label: "ほげ"})
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
@@ -77,7 +77,7 @@ RSpec.describe API::Actions::Attrs::Update do
       expect(json[:data]).to eq({
         **attr.to_h.except(:id),
         name: "hoge",
-        display_name: "ほげ",
+        label: "ほげ",
         mappings: mappings.map { |mapping| mapping.to_h.except(:id) },
       })
     end
