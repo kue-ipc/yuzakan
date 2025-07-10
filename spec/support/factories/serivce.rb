@@ -3,7 +3,7 @@
 Factory.define(:service) do |f|
   f.name { fake(:internet, :username) }
   f.label { fake(:name, :name) }
-  f.description { fake(:lorem, :paragaph) }
+  f.description { fake(:lorem, :paragraph) }
   f.order 1
   f.adapter "dummy"
   f.params({})

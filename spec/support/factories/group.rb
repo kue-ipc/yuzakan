@@ -3,7 +3,7 @@
 Factory.define(:group) do |f|
   f.name { fake(:internet, :username) }
   f.label { fake(:music, :rock_band, :name) }
-  f.note { fake(:lorem, :paragaph) }
+  f.note { fake(:lorem, :paragraph) }
   f.basic false # default
   f.prohibited false # default
   f.deleted false # default

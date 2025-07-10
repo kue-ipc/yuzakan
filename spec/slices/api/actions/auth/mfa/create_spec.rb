@@ -9,7 +9,7 @@ RSpec.describe API::Actions::Auth::Mfa::Create do
     }
   }
   let(:action_params) { {code: code} }
-  let(:code) { fake(:internet, :password) }
+  let(:code) { Faker::Internet.password }
 
   shared_examples "created" do
     it "is created" do
@@ -142,7 +142,7 @@ RSpec.describe API::Actions::Auth::Mfa::Create do
       let(:authenticate) {
         instance_double(Yuzakan::Services::Authenticate, call: Failure([:failure, failure_message]))
       }
-      let(:failure_message) { fake(:lorem, :paragaph) }
+      let(:failure_message) { Faker::Lorem.paragraph }
 
       it "is failed" do
         response = action.call(params)
