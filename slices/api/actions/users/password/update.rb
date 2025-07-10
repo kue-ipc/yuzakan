@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "zxcvbn"
+
 module API
   module Actions
     module Users
@@ -54,44 +56,40 @@ module API
             end
 
             # TODO: パスワードのチェック(未整理)
-            password_size = params[:password].size
-            if current_config.password_min_size&.>(password_size)
-              param_errors[:name] =
-                [t("errors.min_size?",
-                  num: current_config.password_min_size)]
-            elsif current_config.password_max_size&.<(password_size)
-              param_errors[:name] =
-                [t("errors.max_size?",
-                  num: current_config.password_max_size)]
+            password_size = request.params[:password].size
+            if response[:current_config].password_min_size&.>(password_size)
+              param_errors[:name] = [t("errors.min_size?", num: response[:current_config].password_min_size)]
+            elsif response[:current_config].password_max_size&.<(password_size)
+              param_errors[:name] = [t("errors.max_size?", num: response[:current_config].password_max_size)]
             end
 
-            if params[:password] !~ /\A[\u0020-\u007e]*\z/ ||
-                !!(current_config.password_prohibited_chars&.chars || []).intersect?(params[:password].chars)
+            if request.params[:password] !~ /\A[\u0020-\u007e]*\z/ ||
+                !!(response[:current_config].password_prohibited_chars&.chars || []).intersect?(request.params[:password].chars)
               param_errors[:name] ||= []
               param_errors[:name] << t("errors.valid_chars?")
             end
 
             password_types = [/[0-9]/, /[a-z]/, /[A-Z]/,
               /[^0-9a-zA-Z]/,].select do |reg|
-              reg.match(params[:password])
+              reg.match(request.params[:password])
             end.size
-            if current_config.password_min_types&.> password_types
+            if response[:current_config].password_min_types&.> password_types
               param_errors[:name] ||= []
               param_errors[:name] << t("errors.min_types?",
-                num: current_config.password_min_types)
+                num: response[:current_config].password_min_types)
             end
 
-            dict = current_config.password_extra_dict +
+            dict = response[:current_config].password_extra_dict +
               [
-                current_user.name,
-                current_user.label&.split,
-                current_user.email,
-                current_user.email&.split("@"),
-                params[:current_password],
+                response[:current_user].name,
+                response[:current_user].label&.split,
+                response[:current_user].email,
+                response[:current_user].email&.split("@"),
+                request.params[:current_password],
               ].flatten.compact
 
-            password_score = Zxcvbn.test(params[:password], dict).score
-            if current_config.password_min_score&.>(password_score)
+            password_score = Zxcvbn.test(request.params[:password], dict).score
+            if response[:current_config].password_min_score&.>(password_score)
               param_errors[:name] ||= []
               param_errors[:name] << t("errors.strong_password?")
             end
@@ -113,14 +111,14 @@ module API
             end
 
             # TODO: メール通知
-            if current_user.email
-              @user_notify.deliver(
-                user: current_user,
-                config: current_config,
-                by_user: :self,
-                action: "パスワード変更",
-                description: "アカウントのパスワードを変更しました。")
-            end
+            # if current_user.email
+            #   @user_notify.deliver(
+            #     user: current_user,
+            #     config: response[:current_config],
+            #     by_user: :self,
+            #     action: "パスワード変更",
+            #     description: "アカウントのパスワードを変更しました。")
+            # end
 
             response[:user_password] = {password: new_password, services: services.map(&:name)}
             response.render(show_view)

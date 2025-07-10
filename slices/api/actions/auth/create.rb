@@ -36,6 +36,7 @@ module API
             uuid: response[:current_uuid],
             client: response[:current_client],
             user: username,
+            type: "auth",
             service: "",
           }
 

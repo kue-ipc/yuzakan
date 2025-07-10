@@ -29,6 +29,7 @@ def init_request_spec
   let(:group) { Factory[:group] }
   let(:service) {
     Factory[:mock_service, params: {
+      check: true,
       username: user.name,
       password: password,
       label: user.label,

@@ -25,6 +25,7 @@ module API
             uuid: response[:current_uuid],
             client: response[:current_client],
             user: response[:current_user].name,
+            type: "auth",
             service: "",
             result: "delete")
 

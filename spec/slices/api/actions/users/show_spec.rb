@@ -12,21 +12,7 @@ RSpec.describe API::Actions::Users::Show do
   }
   let(:format) { "application/json" }
 
-  let(:services) {
-    [create_mock_service(
-      name: "service",
-      group: true,
-      params: {
-        username: "user", label: "ユーザー", email: "user@example.jp",
-        primary_group: "group",
-        groups: "admin, staff",
-        attrs: YAML.dump({"jaDisplayName" => "表示ユーザー"}),
-      },
-      mappings: [{
-        key: "jaDisplayName", conversion: nil,
-        attr: {name: "ja_display_name", label: "日本語表示名", type: "string", hidden: false},
-      }])]
-  }
+  let(:services) { [Factory.structs[:mock_service]] }
   let(:service_repository) { instance_double(ServiceRepository, ordered_all_with_adapter_by_operation: services) }
   let(:user_with_groups) {
     User.new(**user.to_h,

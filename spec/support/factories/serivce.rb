@@ -32,4 +32,11 @@ Factory.define(mock_service: :service) do |f|
   f.password_changeable true
   f.lockable true
   f.group true
+  f.params({
+    check: true,
+    username: "user",
+    password: "password",
+    label: "label",
+    email: "user@exmaple.com",
+  })
 end
