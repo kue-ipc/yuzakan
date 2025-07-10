@@ -1,18 +1,11 @@
 # frozen_string_literal: true
 
-require_relative "entity_service"
-
 module API
   module Actions
     module Services
-      module SetService
-        include EntityService
-
-        def self.included(action)
-          action.class_eval do
-            params IdParams
-            before :set_service
-          end
+      class Index < API::Action
+        params do
+          optional(:has_group).filled(:bool?)
         end
 
         def initialize(service_repository: ServiceRepository.new, **opts)
@@ -20,16 +13,21 @@ module API
           @service_repository ||= service_repository
         end
 
-        private def set_service
+        def handle(_request, _response)
           unless params.valid?
             halt_json 400,
               errors: [only_first_errors(params.errors)]
           end
 
-          @name = params[:id]
-          load_service
+          @services =
+            if params[:has_group]
+              @service_repository.ordered_all_group
+            else
+              @service_repository.ordered_all
+            end
 
-          halt_json 404 if @service.nil?
+          self.status = 200
+          self.body = generate_json(@services)
         end
       end
     end

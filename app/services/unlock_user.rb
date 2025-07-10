@@ -11,9 +11,9 @@ module Yuzakan
         messages :i18n
 
         validations do
-          required(:username).filled(:str?, :name?, max_size?: 255)
+          required(:username).filled(:name, max_size?: 255)
           optional(:password).filled(:str?, max_size?: 255)
-          optional(:services).each(:str?, :name?, max_size?: 255)
+          optional(:services).each(:name, max_size?: 255)
         end
       end
 

@@ -62,7 +62,7 @@ RSpec.describe API::Actions::Auth::Mfa::Show do
     it_behaves_like "not found"
   end
 
-  conthext "when timeover" do
+  context "when timeover" do
     include_context "when timeover"
 
     it "is failure" do

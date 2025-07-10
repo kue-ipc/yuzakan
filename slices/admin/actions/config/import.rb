@@ -1,24 +1,16 @@
 # frozen_string_literal: true
 
-require_relative "../../../../lib/yuzakan/validators/update_config_validator"
-require_relative "../../../../lib/yuzakan/validators/create_service_validator"
-require_relative "../../../../lib/yuzakan/validators/create_attr_validator"
-
 module Admin
   module Actions
     module Config
       class Import < Admin::Action
         security_level 5
 
-        class Params < Hanami::Action::Params
-          messages :i18n
-
-          params do
-            required(:import).schema do
-              required(:yaml).schema do
-                required(:filename) { str? }
-                required(:tempfile) { size?(1..(1 * 1024 * 1024)) }
-              end
+        params do
+          required(:import).schema do
+            required(:yaml).schema do
+              required(:filename) { str? }
+              required(:tempfile) { size?(1..(1 * 1024 * 1024)) }
             end
           end
         end

@@ -4,13 +4,8 @@ module Admin
   module Actions
     module Groups
       class Show < Admin::Action
-        class Params < Hanami::Action::Params
-          predicates NamePredicates
-          messages :i18n
-
-          params do
-            required(:id).filled(:str?, :name?, max_size?: 255)
-          end
+        params do
+          required(:id).filled(:name, max_size?: 255)
         end
 
         params Params

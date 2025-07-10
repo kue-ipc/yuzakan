@@ -1,46 +1,37 @@
 # frozen_string_literal: true
 
-require_relative "../../../../lib/yuzakan/utils/pager"
-
 module API
   module Actions
     module Users
       class Index < API::Action
         security_level 2
 
-        class Params < Hanami::Action::Params
-          predicates NamePredicates
-          messages :i18n
+        params do
+          optional(:page).filled(:int?,
+            included_in?: Yuzakan::Utils::Pager::PAGE_RANGE)
+          optional(:per_page).filled(:int?,
+            included_in?: Yuzakan::Utils::Pager::PER_PAGE_RANGE)
 
-          params do
-            optional(:page).filled(:int?,
-              included_in?: Yuzakan::Utils::Pager::PAGE_RANGE)
-            optional(:per_page).filled(:int?,
-              included_in?: Yuzakan::Utils::Pager::PER_PAGE_RANGE)
+          optional(:order).filled(:str?, included_in?: %w[
+            name
+            label
+            deleted_at
+          ].flat_map { |name| [name, "#{name}.asc", "#{name}.desc"] })
 
-            optional(:order).filled(:str?, included_in?: %w[
-              name
-              label
-              deleted_at
-            ].flat_map { |name| [name, "#{name}.asc", "#{name}.desc"] })
+          optional(:query).maybe(:str?, max_size?: 255)
+          optional(:match).filled(:str?, included_in?: %w[
+            extract
+            partial
+            forward
+            backward
+                                  ])
 
-            optional(:query).maybe(:str?, max_size?: 255)
-            optional(:match).filled(:str?, included_in?: %w[
-              extract
-              partial
-              forward
-              backward
-                                    ])
+          optional(:no_sync).filled(:bool?)
+          optional(:hide_prohibited).filled(:bool?)
+          optional(:show_deleted).filled(:bool?)
 
-            optional(:no_sync).filled(:bool?)
-            optional(:hide_prohibited).filled(:bool?)
-            optional(:show_deleted).filled(:bool?)
-
-            optional(:all).filled(:bool?)
-          end
+          optional(:all).filled(:bool?)
         end
-
-        params Params
 
         def initialize(user_repository: UserRepository.new,
           group_repository: GroupRepository.new,

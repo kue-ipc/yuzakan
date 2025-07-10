@@ -33,7 +33,8 @@ module Yuzakan
       host = "[a-zA-Z0-9](?:[a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?"
       domain = "#{host}(?:\\.#{host})*"
       email = "[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~\\-]+@#{domain}"
-      {name:, password:, host:, domain:, email:}
+      name_or_symbol = "(?:#{name}|\\*|!|~)"
+      {name:, password:, host:, domain:, email:, name_or_symbol:}
     }.call.transform_values { |value| Pattern.new(value) }
 
     def self.[](key)

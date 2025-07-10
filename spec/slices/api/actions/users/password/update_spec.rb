@@ -166,7 +166,7 @@ RSpec.describe API::Actions::Users::Password::Update do
     let(:change_password) {
       instance_double(Yuzakan::Services::ChangePassword, call: Failure([:error, error_message]))
     }
-    let(:error_message) { { fake(:lorem, :paragaph) } }
+    let(:error_message) { fake(:lorem, :paragaph) }
 
     it "is failed" do
       response = action.call(params)

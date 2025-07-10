@@ -7,16 +7,9 @@ module API
         class Create < API::Action
           security_level 3
 
-          class Params < Hanami::Action::Params
-            predicates NamePredicates
-            messages :i18n
-
-            params do
-              required(:user_id).filled(:str?, :name?, max_size?: 255)
-            end
+          params do
+            required(:user_id).filled(:name, max_size?: 255)
           end
-
-          params Params
 
           def initialize(service_repository: ServiceRepository.new,
             user_repository: UserRepository.new,
@@ -74,7 +67,6 @@ module API
 
             flash[:success] = "Google アカウントのパスワードをリセットしました。"
           end
-
         end
       end
     end

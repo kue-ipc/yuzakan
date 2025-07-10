@@ -47,7 +47,7 @@ RSpec.describe API::Actions::Attrs::Destroy do
   context "when superuser" do
     include_context "when superuser"
 
-    it_behaves_like "created"
+    it_behaves_like "ok"
 
     describe "not existend" do
       let(:action_opts) {

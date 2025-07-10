@@ -6,16 +6,9 @@ module Admin
       class Export < Admin::Action
         security_level 5
 
-        class Params < Hanami::Action::Params
-          predicates NamePredicates
-          messages :i18n
-
-          params do
-            required(:id).filled(:str?, :name_or_star?, max_size?: 255)
-          end
+        params do
+          required(:id).filled(:name_or_symbol, max_size?: 255)
         end
-
-        params Params
 
         def initialize(service_repository: ServiceRepository.new, **)
           super(**)

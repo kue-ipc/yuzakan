@@ -6,9 +6,9 @@ module API
       module Params
         class Create < Yuzakan::Action::Params
           params do
-            required(:name).filled(:str?, :name?, max_size?: 255)
+            required(:name).filled(:name, max_size?: 255)
             optional(:label).maybe(:str?, max_size?: 255)
-            required(:adapter).filled(:str?, :name?, max_size?: 255)
+            required(:adapter).filled(:name, max_size?: 255)
             optional(:order).filled(:int?)
             optional(:readable).filled(:bool?)
             optional(:writable).filled(:bool?)

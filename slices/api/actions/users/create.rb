@@ -1,41 +1,30 @@
 # frozen_string_literal: true
 
-require_relative "entity_user"
-
 module API
   module Actions
     module Users
       class Create < API::Action
-        include EntityUser
-
         security_level 4
 
-        class Params < Hanami::Action::Params
-          predicates NamePredicates
-          messages :i18n
+        params do
+          required(:name).filled(:name, max_size?: 255)
+          optional(:password).maybe(:str?, max_size?: 255)
+          optional(:label).maybe(:str?, max_size?: 255)
+          optional(:email).maybe(:email, max_size?: 255)
 
-          params do
-            required(:name).filled(:str?, :name?, max_size?: 255)
-            optional(:password).maybe(:str?, max_size?: 255)
-            optional(:label).maybe(:str?, max_size?: 255)
-            optional(:email).maybe(:str?, :email?, max_size?: 255)
+          optional(:note).maybe(:str?, max_size?: 4096)
+          optional(:clearance_level).filled(:int?)
+          optional(:prohibited).filled(:bool?)
+          optional(:deleted).filled(:bool?)
+          optional(:deleted_at).filled(:date_time?)
 
-            optional(:note).maybe(:str?, max_size?: 4096)
-            optional(:clearance_level).filled(:int?)
-            optional(:prohibited).filled(:bool?)
-            optional(:deleted).filled(:bool?)
-            optional(:deleted_at).filled(:date_time?)
+          optional(:primary_group).maybe(:name, max_size?: 255)
+          optional(:groups).each(:name, max_size?: 255)
 
-            optional(:primary_group).maybe(:str?, :name?, max_size?: 255)
-            optional(:groups).each(:str?, :name?, max_size?: 255)
+          optional(:attrs) { hash? }
 
-            optional(:attrs) { hash? }
-
-            optional(:services).each(:str?, :name?, max_size?: 255)
-          end
+          optional(:services).each(:name, max_size?: 255)
         end
-
-        params Params
 
         def initialize(user_repository: UserRepository.new,
           **opts)

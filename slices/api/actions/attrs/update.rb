@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "set_attr"
-
 module API
   module Actions
     module Attrs
@@ -19,7 +17,7 @@ module API
           required(:id).filled(:name, max_size?: 255)
           optional(:name).filled(:name, max_size?: 255)
           optional(:label).maybe(:str?, max_size?: 255)
-          optional(:type).filled(:str?, included_in?: Yuzakan::Structs::Attr::TYPES)
+          optional(:type).filled(:str?, included_in?: Yuzakan::Relations::Attrs::TYPES)
           optional(:type).filled(:str?, max_size?: 255)
           optional(:order).filled(:int?)
           optional(:hidden).filled(:bool?)
@@ -28,7 +26,7 @@ module API
           optional(:mappings).array(:hash) do
             required(:service).filled(:name, max_size?: 255)
             required(:key).maybe(:str?, max_size?: 255)
-            optional(:conversion).maybe(included_in?: Yuzakan::Structs::Mapping::CONVERSIONS)
+            optional(:conversion).maybe(included_in?: Yuzakan::Relations::Mappings::CONVERSIONS)
           end
         end
 

@@ -2,7 +2,7 @@
 
 require "yaml"
 
-RSpec.describe API::Actions::Self::Show do
+RSpec.describe API::Actions::Users::Show do
   init_action_spec
   let(:action_opts) {
     {service_repository: service_repository,

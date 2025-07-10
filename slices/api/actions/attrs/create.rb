@@ -14,17 +14,17 @@ module API
         security_level 5
 
         params do
-          required(:name).filled(:str?, :name?, max_size?: 255)
+          required(:name).filled(:name, max_size?: 255)
           optional(:label).maybe(:str?, max_size?: 255)
-          required(:type).filled(:str?, included_in?: Yuzakan::Structs::Attr::TYPES)
+          required(:type).filled(:str?, included_in?: Yuzakan::Relations::Attrs::TYPES)
           optional(:order).filled(:int?)
           optional(:hidden).filled(:bool?)
           optional(:readonly).filled(:bool?)
           optional(:code).maybe(:str?, max_size?: 4096)
           optional(:mappings).array(:hash) do
-            required(:service).filled(:str?, :name?, max_size?: 255)
+            required(:service).filled(:name, max_size?: 255)
             required(:key).maybe(:str?, max_size?: 255)
-            optional(:conversion).maybe(included_in?: Yuzakan::Structs::Mapping::CONVERSIONS)
+            optional(:conversion).maybe(included_in?: Yuzakan::Relations::Mappings::CONVERSIONS)
           end
         end
 

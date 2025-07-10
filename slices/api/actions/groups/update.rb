@@ -4,30 +4,21 @@ module API
   module Actions
     module Groups
       class Update < API::Action
-        include SetGroup
-
         security_level 4
 
-        class Params < Hanami::Action::Params
-          predicates NamePredicates
-          messages :i18n
+        params do
+          required(:id).filled(:name, max_size?: 255)
 
-          params do
-            required(:id).filled(:str?, :name?, max_size?: 255)
+          optional(:name).filled(:name, max_size?: 255)
+          optional(:label).maybe(:str?, max_size?: 255)
+          optional(:note).maybe(:str?, max_size?: 4096)
 
-            optional(:name).filled(:str?, :name?, max_size?: 255)
-            optional(:label).maybe(:str?, max_size?: 255)
-            optional(:note).maybe(:str?, max_size?: 4096)
+          optional(:basic).filled(:bool?)
+          optional(:prohibited).filled(:bool?)
 
-            optional(:basic).filled(:bool?)
-            optional(:prohibited).filled(:bool?)
-
-            optional(:deleted).filled(:bool?)
-            optional(:deleted_at).maybe(:date_time?)
-          end
+          optional(:deleted).filled(:bool?)
+          optional(:deleted_at).maybe(:date_time?)
         end
-
-        params Params
 
         def initialize(group_repository: GroupRepository.new,
           **opts)
@@ -36,6 +27,14 @@ module API
         end
 
         def handle(_request, _response)
+          halt_json 400, errors: [params.errors] unless params.valid?
+
+          @name = params[:id]
+          load_group
+
+          halt_json 404 if @group.nil?
+          self.body = group_json
+
           if params[:name] && @group.name != params[:name]
             halt_json 422, errors: {
               name: t("errors.unchangeable", name: t("attributes.group.name")),

@@ -1,26 +1,15 @@
 # frozen_string_literal: true
 
-require_relative "set_user"
-
 module API
   module Actions
     module Users
       class Destroy < API::Action
-        include SetUser
-
         security_level 4
 
-        class Params < Hanami::Action::Params
-          predicates NamePredicates
-          messages :i18n
-
-          params do
-            required(:id).filled(:str?, :name?, max_size?: 255)
-            optional(:permanent).maybe(:bool?)
-          end
+        params do
+          required(:id).filled(:name, max_size?: 255)
+          optional(:permanent).maybe(:bool?)
         end
-
-        params Params
 
         def initialize(user_repository: UserRepository.new,
           **opts)

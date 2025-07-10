@@ -4,16 +4,9 @@ module Admin
   module Actions
     module Users
       class Show < Admin::Action
-        class Params < Hanami::Action::Params
-          predicates NamePredicates
-          messages :i18n
-
-          params do
-            required(:id).filled(:str?, :name_or_star?, max_size?: 255)
-          end
+        params do
+          required(:id).filled(:name_or_symbol, max_size?: 255)
         end
-
-        params Params
 
         def initialize(user_repository: UserRepository.new, **opts)
           super

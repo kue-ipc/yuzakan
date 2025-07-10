@@ -7,10 +7,6 @@ module User
     module Services
       module Code
         class Create < User::Action
-          include Hanami::Action::Cache
-
-          cache_control :no_store
-
           expose :codes
 
           def handle(_request, _response)

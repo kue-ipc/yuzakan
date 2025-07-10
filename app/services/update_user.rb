@@ -14,12 +14,12 @@ module Yuzakan
         messages :i18n
 
         validations do
-          required(:username).filled(:str?, :name?, max_size?: 255)
+          required(:username).filled(:name, max_size?: 255)
           optional(:label).filled(:str?, max_size?: 255)
-          optional(:email).filled(:str?, :email?, max_size?: 255)
-          optional(:primary_group).filled(:str?, :name?, max_size?: 255)
-          optional(:groups).each(:str?, :name?, max_size?: 255)
-          optional(:services).each(:str?, :name?, max_size?: 255)
+          optional(:email).filled(:email, max_size?: 255)
+          optional(:primary_group).filled(:name, max_size?: 255)
+          optional(:groups).each(:name, max_size?: 255)
+          optional(:services).each(:name, max_size?: 255)
           optional(:attrs) { hash? }
         end
       end

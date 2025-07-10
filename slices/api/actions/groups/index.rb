@@ -1,16 +1,10 @@
 # frozen_string_literal: true
 
-require_relative "../../../../lib/yuzakan/utils/pager"
-
 module API
   module Actions
     module Groups
       class Index < API::Action
         security_level 2
-
-        class Params < Hanami::Action::Params
-          predicates NamePredicates
-          messages :i18n
 
           params do
             optional(:page).filled(:int?,
@@ -39,11 +33,8 @@ module API
 
             optional(:all).filled(:bool?)
           end
-        end
 
-        params Params
-
-        def initialize(group_repository: GroupRepository.new,
+          def initialize(group_repository: GroupRepository.new,
           service_repository: ServiceRepository.new,
           **opts)
           super

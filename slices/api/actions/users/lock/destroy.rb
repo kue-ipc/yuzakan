@@ -7,13 +7,8 @@ module API
         class Destroy < API::Action
           security_level 3
 
-          class Params < Hanami::Action::Params
-            predicates NamePredicates
-            messages :i18n
-
-            params do
-              required(:user_id).filled(:str?, :name?, max_size?: 255)
-            end
+          params do
+            required(:user_id).filled(:name, max_size?: 255)
           end
 
           def initialize(service_repository: ServiceRepository.new,
