@@ -5,11 +5,13 @@ ROM::SQL.migration do
     create_table :mappings do
       primary_key :id
 
-      foreign_key :service_id, :services, on_delete: :cascade, null: false
       foreign_key :attr_id, :attrs, on_delete: :cascade, null: false
 
+      foreign_key :service_id, :services, on_delete: :cascade, null: false
       column :key, String, null: false
-      column :conversion, String, null: false
+
+      column :type, String, null: false
+      column :params, "jsonb", null: true
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
