@@ -3,7 +3,7 @@
 RSpec.describe API::Views::Parts::Affiliation do
   init_part_spec
 
-  let(:value) { Factory.struct[:affiliaiton] }
+  let(:value) { Factory.struct[:affiliation] }
 
   it "to_h" do
     hash = subject.to_h

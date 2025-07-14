@@ -5,6 +5,7 @@ module Yuzakan
     class Groups < Yuzakan::DB::Relation
       schema :groups, infer: true do
         associations do
+          belongs_to :affiliation
           has_many :users
           has_many :members
           has_many :users, as: :member_users, through: :members
