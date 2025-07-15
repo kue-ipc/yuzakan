@@ -7,7 +7,7 @@ Factory.define(:dictionary) do |f|
   f.timestamps
 end
 
-Factory.define(:dictionary_without_label) do |f|
+Factory.define(dictionary_without_label: :dictionary) do |f|
   f.label "" # default
   f.description "" # default
 end

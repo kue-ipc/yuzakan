@@ -472,7 +472,9 @@ CREATE TABLE public.terms (
     id integer NOT NULL,
     dictionary_id integer NOT NULL,
     term text NOT NULL,
-    description text NOT NULL
+    description text NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 

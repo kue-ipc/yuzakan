@@ -12,5 +12,5 @@ end
 
 Factory.define(failure_auth_log: :auth_log) do |f|
   f.result "failure"
-  f.serivec ""
+  f.service ""
 end

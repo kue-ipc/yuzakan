@@ -10,6 +10,9 @@ ROM::SQL.migration do
       column :term, String, null: false
       column :description, "text", null: false
 
+      column :created_at, DateTime, null: false
+      column :updated_at, DateTime, null: false
+
       index :dictionary_id
       index :term
     end
