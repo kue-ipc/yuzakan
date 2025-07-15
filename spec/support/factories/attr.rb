@@ -2,8 +2,8 @@
 
 Factory.define(:attr) do |f|
   f.name { fake(:internet, :username) }
-  f.label "" # default
-  f.description "" # default
+  f.label { fake(:japanese_media, :naruto, :eye) }
+  f.description { fake(:lorem, :sentence) }
   f.category "user"
   f.type "string"
   f.order 1
@@ -14,9 +14,6 @@ Factory.define(:attr) do |f|
 end
 
 Factory.define(another_attr: :attr) do |f|
-  f.name { fake(:internet, :username) }
-  f.label { fake(:team, :name) }
-  f.description { fake(:lorem, sentence) }
   f.category "group"
   f.type "boolean"
   f.order 42
@@ -24,4 +21,10 @@ Factory.define(another_attr: :attr) do |f|
   f.readonly true
   f.code "=>()"
   f.timestamps
+end
+
+Factory.define(attr_without_label: :attr) do |f|
+  f.label "" # default
+  f.description "" # default
+  f.order 1
 end

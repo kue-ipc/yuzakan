@@ -2,7 +2,7 @@
 
 Factory.define(:service) do |f|
   f.name { fake(:internet, :username) }
-  f.label { fake(:name, :name) }
+  f.label { fake(:app, :name) }
   f.description { fake(:lorem, :paragraph) }
   f.order 1
   f.adapter "dummy"
@@ -18,9 +18,9 @@ Factory.define(:service) do |f|
   f.timestamps
 end
 
-Factory.define(service_with_nil: :service) do |f|
-  f.label nil
-  f.description nil
+Factory.define(service_without_label: :service) do |f|
+  f.label "" # default
+  f.description "" # default
 end
 
 Factory.define(mock_service: :service) do |f|

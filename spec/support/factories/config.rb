@@ -23,17 +23,21 @@ Factory.define(:config) do |f|
   f.timestamps
 end
 
-Factory.define(config_with_nil: :config) do |f|
-  f.domain nil
-  f.contact_name nil
-  f.contact_email nil
-  f.contact_phone nil
+Factory.define(config_without_description: :config) do |f|
+  f.description ""
+end
+
+Factory.define(config_without_domain: :config) do |f|
+  f.domain ""
+end
+
+Factory.define(config_without_contact: :config) do |f|
+  f.contact_name ""
+  f.contact_email ""
+  f.contact_phone ""
 end
 
 Factory.define(another_config: :config) do |f|
-  f.title { fake(:team, :name) }
-  f.description { fake(:lorem, :sentence) }
-  f.domain { fake(:internet, :domain_name) }
   f.session_timeout 7200
   f.auth_failure_waiting 10
   f.auth_failure_limit 1
@@ -47,9 +51,6 @@ Factory.define(another_config: :config) do |f|
   f.generate_password_size 8
   f.generate_password_type "alphanumeric"
   f.generate_password_chars "1Il0O"
-  f.contact_name { fake(:name, :name) }
-  f.contact_email { fake(:internet, :email) }
-  f.contact_phone { fake(:phone_number, :phone_number) }
   f.timestamps
 end
 

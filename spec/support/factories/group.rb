@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Factory.define(:group) do |f|
+  f.association :affiliation
   f.name { fake(:internet, :username) }
   f.label { fake(:music, :rock_band, :name) }
   f.note { fake(:lorem, :paragraph) }
@@ -11,7 +12,7 @@ Factory.define(:group) do |f|
   f.timestamps
 end
 
-Factory.define(group_with_nil: :group) do |f|
-  f.label nil
-  f.note nil
+Factory.define(group_without_label: :group) do |f|
+  f.label ""
+  f.note ""
 end

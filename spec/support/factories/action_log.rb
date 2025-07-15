@@ -10,8 +10,3 @@ Factory.define(:action_log) do |f|
   f.status 200
   f.timestamps
 end
-
-Factory.define(action_log_with_nil: :action_log) do |f|
-  f.user nil
-  f.status nil
-end
