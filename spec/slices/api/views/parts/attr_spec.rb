@@ -1,73 +1,78 @@
 # frozen_string_literal: true
 
-RSpec.describe API::Views::Parts::Attr do
+# NOTE: get a combined entry from repo, so :db is required
+
+RSpec.describe API::Views::Parts::Attr, :db do
   init_part_spec
 
   let(:value) {
-    create_struct(:attr, mappings: [create_struct(:mapping)])
+    Hanami.app["repos.attr_repo"].get_with_mappings(Factory[:mapping].attr.name)
   }
 
   it "to_h" do
     hash = subject.to_h
-    expect(hash).to eq({
-      name: "attr",
-      label: "属性",
-      group: false,
-      primary: false,
-      params: {schema: {
-        type: "object",
-        properties: {
-          str: {type: "string", maxLength: 255},
-          text: {type: "string"},
-          int: {type: "integer"},
-          float: {type: "number"},
-          bool: {type: "boolean"},
-          date: {type: "date"},
-          time: {type: "time"},
-          datetime: {type: "datetime"},
-        },
-        required: [],
-      }},
+    expect(hash.except(:mappings)).to eq({
+      name: value.name,
+      label: value.label,
+      description: value.description,
+      category: value.category,
+      type: value.type,
+      order: value.order,
+      hidden: value.hidden,
+      readonly: value.readonly,
+      code: value.code,
     })
+    expcetd_mappings = value.mappings.map do |mapping|
+      {
+        key: mapping.key,
+        type: mapping.type,
+        params: mapping.params,
+        service: mapping.service.name,
+      }
+    end
+    expect(hash[:mappings]).to match_array(expcetd_mappings)
   end
 
   it "to_h with simple" do
     hash = subject.to_h(simple: true)
     expect(hash).to eq({
-      name: "attr",
-      label: "属性",
+      name: value.name,
+      label: value.label,
     })
   end
 
   it "to_json" do
-    json = JSON.parse(subject.to_json, symbolize_names: true)
-    expect(json).to eq({
-      name: "attr",
-      label: "属性",
-      group: false,
-      primary: false,
-      params: {schema: {
-        type: "object",
-        properties: {
-          str: {type: "string", maxLength: 255},
-          text: {type: "string"},
-          int: {type: "integer"},
-          float: {type: "number"},
-          bool: {type: "boolean"},
-          date: {type: "date"},
-          time: {type: "time"},
-          datetime: {type: "datetime"},
-        },
-        required: [],
-      }},
+    json = subject.to_json
+    warn json
+    data = JSON.parse(json, symbolize_names: true)
+    expect(data.except(:mappings)).to eq({
+      name: value.name,
+      label: value.label,
+      description: value.description,
+      category: value.category,
+      type: value.type,
+      order: value.order,
+      hidden: value.hidden,
+      readonly: value.readonly,
+      code: value.code,
     })
+    expcetd_mappings = value.mappings.map do |mapping|
+      {
+        key: mapping.key,
+        type: mapping.type,
+        params: mapping.params,
+        service: mapping.service.name,
+      }
+    end
+    expect(data[:mappings]).to match_array(expcetd_mappings)
   end
 
   it "to_json with simple" do
-    json = JSON.parse(subject.to_json(simple: true), symbolize_names: true)
-    expect(json).to eq({
-      name: "attr",
-      label: "属性",
+    json = subject.to_json(simple: true)
+    data = JSON.parse(json, symbolize_names: true)
+    expect(data).to eq({
+      name: value.name,
+      label: value.label,
     })
   end
 end

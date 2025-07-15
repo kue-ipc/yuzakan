@@ -14,7 +14,7 @@ module Yuzakan
               Yuzakan::Utils::Array.deep_map(v) do |item|
                 next item unless item.is_a?(::Hash)
 
-                deep_transform_keys(v, &block)
+                deep_transform_keys(item, &block)
               end
             when ::Hash
               deep_transform_keys(v, &block)
@@ -34,7 +34,7 @@ module Yuzakan
               Yuzakan::Utils::Array.deep_map(v) do |item|
                 next item unless item.is_a?(::Hash)
 
-                deep_transform_values(v, &block)
+                deep_transform_values(item, &block)
               end
             when ::Hash
               deep_transform_values(v, &block)

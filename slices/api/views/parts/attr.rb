@@ -10,7 +10,16 @@ module API
           if simple
             hash.slice(:name, :label)
           else
-            hash
+            mappings = hash[:mappings].map do |mapping|
+              {
+                **mapping.slice(:key, :type, :params),
+                service: mapping[:service][:name],
+              }
+            end
+            {
+              **hash.except(:id, :created_at, :updated_at, :mappings),
+              mappings:,
+            }
           end
         end
 
