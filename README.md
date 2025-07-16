@@ -103,11 +103,24 @@ memcachedは未テストです。
 
 ### 本番環境
 
+PostgreSQLに専用のデータベースを作成します。
+続けて、`.env.production`の内容を参考に`.env.local`または`.env.production.local`を作成します。
+
 ```sh
+export HANAMI_ENV=production
 bundle insntall --deployment
 npm install
-bundle exec rake build
+# bundle exec hanami db create (データベースは予め作成しておく)
+bundle exec hanami db migration
+bundle exec hanami db seed
 bundle exec hanami assets precompile
+```
+
+サーバー起動
+
+```sh
+export HANAMI_ENV=production
+bundle exec hanami server
 ```
 
 ### 開発・テスト環境
@@ -115,14 +128,14 @@ bundle exec hanami assets precompile
 ```sh
 bundle insntall
 npm install
-bundle exec rake build
+bundle exec hanami db prepare
 ```
 
 テスト実施:
 
 ```sh
+bundle exec hanami assets precompile
 bundle exec rake
-npm run test
 ```
 
 開発コンソール起動:
@@ -134,15 +147,13 @@ bundle exec hanami console
 開発サーバー起動:
 
 ```sh
-bundle exec hanami server
+bundle exec hanami dev
 ```
 
 `development`と`test`環境におけるDBの準備:
 
 ```sh
-bundle exec rake cache:clean
 bundle exec hanami db prepare
-HANAMI_ENV=test bundle exec hanami db prepare
 ```
 
 developmentではキャッシュを削除しておかないとseedが作られない時がある。
