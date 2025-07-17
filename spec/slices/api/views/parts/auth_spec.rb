@@ -1,16 +1,22 @@
 # frozen_string_literal: true
 
 RSpec.describe API::Views::Parts::Auth do
-  subject { described_class.new(value:) }
+  init_part_spec
 
-  let(:value) { {username: fake(:internet, :username)} }
+  let(:value) { {username: user.name } }
 
   it "to_h" do
-    expect(subject.to_h).to eq(value)
+    data = subject.to_h
+    expect(data).to eq({
+      username: value[:username],
+    })
   end
 
   it "to_json" do
-    json = JSON.parse(subject.to_json, symbolize_names: true)
-    expect(json).to eq(value)
+    json = subject.to_json
+    data = JSON.parse(json, symbolize_names: true)
+    expect(data).to eq({
+      username: value[:username],
+    })
   end
 end

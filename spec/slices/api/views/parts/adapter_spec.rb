@@ -6,27 +6,28 @@ RSpec.describe API::Views::Parts::Adapter do
   let(:value) { Hanami.app["adapter_map"]["test"] }
 
   it "to_h" do
-    hash = subject.to_h
-    expect(hash.except(:params)).to eq({
+    data = subject.to_h
+    expect(data.except(:params)).to eq({
       name: "test",
       label: "テスト",
       group: true,
       primary: true,
     })
-    expect(hash[:params].keys).to contain_exactly(:schema)
+    expect(data[:params].keys).to contain_exactly(:schema)
   end
 
   it "to_h with sipmle" do
-    hash = subject.to_h(simple: true)
-    expect(hash).to eq({
+    data = subject.to_h(simple: true)
+    expect(data).to eq({
       name: "test",
       label: "テスト",
     })
   end
 
   it "to_json" do
-    json = JSON.parse(subject.to_json, symbolize_names: true)
-    expect(json).to eq({
+    json = subject.to_json
+    data = JSON.parse(json, symbolize_names: true)
+    expect(data).to eq({
       name: "test",
       label: "テスト",
       group: true,
@@ -56,8 +57,8 @@ RSpec.describe API::Views::Parts::Adapter do
   end
 
   it "to_json with simple" do
-    json = JSON.parse(subject.to_json(simple: true), symbolize_names: true)
-    expect(json).to eq({
+    data = JSON.parse(subject.to_json(simple: true), symbolize_names: true)
+    expect(data).to eq({
       name: "test",
       label: "テスト",
     })

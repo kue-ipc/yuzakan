@@ -6,8 +6,8 @@ RSpec.describe API::Views::Parts::Affiliation do
   let(:value) { affiliation }
 
   it "to_h" do
-    hash = subject.to_h
-    expect(hash).to eq({
+    data = subject.to_h
+    expect(data).to eq({
       name: value.name,
       label: value.label,
       note: value.note,
@@ -15,8 +15,9 @@ RSpec.describe API::Views::Parts::Affiliation do
   end
 
   it "to_json" do
-    json = JSON.parse(subject.to_json, symbolize_names: true)
-    expect(json).to eq({
+    json = subject.to_json
+    data = JSON.parse(json, symbolize_names: true)
+    expect(data).to eq({
       name: value.name,
       label: value.label,
       note: value.note,

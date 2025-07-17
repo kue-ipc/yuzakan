@@ -10,8 +10,8 @@ RSpec.describe API::Views::Parts::Attr, :db do
   }
 
   it "to_h" do
-    hash = subject.to_h
-    expect(hash.except(:mappings)).to eq({
+    data = subject.to_h
+    expect(data.except(:mappings)).to eq({
       name: value.name,
       label: value.label,
       description: value.description,
@@ -30,12 +30,12 @@ RSpec.describe API::Views::Parts::Attr, :db do
         service: mapping.service.name,
       }
     end
-    expect(hash[:mappings]).to match_array(expcetd_mappings)
+    expect(data[:mappings]).to match_array(expcetd_mappings)
   end
 
   it "to_h with simple" do
-    hash = subject.to_h(simple: true)
-    expect(hash).to eq({
+    data = subject.to_h(simple: true)
+    expect(data).to eq({
       name: value.name,
       label: value.label,
     })
@@ -43,7 +43,6 @@ RSpec.describe API::Views::Parts::Attr, :db do
 
   it "to_json" do
     json = subject.to_json
-    warn json
     data = JSON.parse(json, symbolize_names: true)
     expect(data.except(:mappings)).to eq({
       name: value.name,
