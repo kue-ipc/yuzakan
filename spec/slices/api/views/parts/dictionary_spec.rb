@@ -33,7 +33,6 @@ RSpec.describe API::Views::Parts::Dictionary, :db do
 
   it "to_json" do
     json = subject.to_json
-    warn json
     data = JSON.parse(json, symbolize_names: true)
     expect(data.except(:terms)).to eq({
       name: value.name,

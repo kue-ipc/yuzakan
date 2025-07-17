@@ -9,8 +9,7 @@ module Yuzakan
 
       def set(name, **)
         by_name(name).changeset(:update, **).map(:touch).commit ||
-          attrs.changeset(:create, **, name: normalize_name(name))
-            .map(:add_timestamps).commit
+          attrs.changeset(:create, **, name: normalize_name(name)).map(:add_timestamps).commit
       end
 
       def unset(name) = by_name(name).changeset(:delete).commit
