@@ -21,6 +21,10 @@ module Yuzakan
 
       def list = groups.pluck(:name)
 
+      def get_with_affilitaion(name)
+        by_name(name).combine(:affiliation).one
+      end
+
       # TODO: ここらは下は未整理
 
       def ordered_all
