@@ -7,6 +7,9 @@ RSpec.describe API::Views::Parts::Group, :db do
     Hanami.app["repos.group_repo"].get_with_affilitaion(Factory[:group].name)
   }
 
+  it_behaves_like "to_h with simple"
+  it_behaves_like "to_json with simple"
+
   it "to_h" do
     data = subject.to_h
     expect(data).to eq({
@@ -18,14 +21,6 @@ RSpec.describe API::Views::Parts::Group, :db do
       deleted: value.deleted,
       deleted_at: value.deleted_at,
       affiliation: value.affiliation&.name,
-    })
-  end
-
-  it "to_h with simple" do
-    data = subject.to_h(simple: true)
-    expect(data).to eq({
-      name: value.name,
-      label: value.label,
     })
   end
 
@@ -41,15 +36,6 @@ RSpec.describe API::Views::Parts::Group, :db do
       deleted: value.deleted,
       deletedAt: value.deleted_at,
       affiliation: value.affiliation&.name,
-    })
-  end
-
-  it "to_json with simple" do
-    json = subject.to_json(simple: true)
-    data = JSON.parse(json, symbolize_names: true)
-    expect(data).to eq({
-      name: value.name,
-      label: value.label,
     })
   end
 end

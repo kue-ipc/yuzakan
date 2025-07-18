@@ -9,6 +9,9 @@ RSpec.describe API::Views::Parts::Attr, :db do
     Hanami.app["repos.attr_repo"].get_with_mappings(Factory[:mapping].attr.name)
   }
 
+  it_behaves_like "to_h with simple"
+  it_behaves_like "to_json with simple"
+
   it "to_h" do
     data = subject.to_h
     expect(data.except(:mappings)).to eq({
@@ -31,14 +34,6 @@ RSpec.describe API::Views::Parts::Attr, :db do
       }
     end
     expect(data[:mappings]).to match_array(expcetd_mappings)
-  end
-
-  it "to_h with simple" do
-    data = subject.to_h(simple: true)
-    expect(data).to eq({
-      name: value.name,
-      label: value.label,
-    })
   end
 
   it "to_json" do
@@ -64,14 +59,5 @@ RSpec.describe API::Views::Parts::Attr, :db do
       }
     end
     expect(data[:mappings]).to match_array(expcetd_mappings)
-  end
-
-  it "to_json with simple" do
-    json = subject.to_json(simple: true)
-    data = JSON.parse(json, symbolize_names: true)
-    expect(data).to eq({
-      name: value.name,
-      label: value.label,
-    })
   end
 end

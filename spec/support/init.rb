@@ -190,6 +190,27 @@ def init_part_spec
   let_structs
 
   subject { described_class.new(value:) }
+
+  shared_examples "to_h with simple" do
+    it "to_h with simple" do
+      data = subject.to_h(simple: true)
+      expect(data).to eq({
+        name: value.name,
+        label: value.label,
+      })
+    end
+  end
+
+  shared_examples "to_json with simple" do
+    it "to_h with simple" do
+      json = subject.to_json(simple: true)
+      data = JSON.parse(json, symbolize_names: true)
+      expect(data).to eq({
+        name: value.name,
+        label: value.label,
+      })
+    end
+  end
 end
 
 # require user

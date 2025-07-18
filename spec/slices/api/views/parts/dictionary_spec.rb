@@ -7,6 +7,9 @@ RSpec.describe API::Views::Parts::Dictionary, :db do
     Hanami.app["repos.dictionary_repo"].get_with_terms(Factory[:term].dictionary.name)
   }
 
+  it_behaves_like "to_h with simple"
+  it_behaves_like "to_json with simple"
+
   it "to_h" do
     data = subject.to_h
     expect(data.except(:terms)).to eq({
@@ -21,14 +24,6 @@ RSpec.describe API::Views::Parts::Dictionary, :db do
       }
     end
     expect(data[:terms]).to match_array(expcetd_terms)
-  end
-
-  it "to_h with simple" do
-    data = subject.to_h(simple: true)
-    expect(data).to eq({
-      name: value.name,
-      label: value.label,
-    })
   end
 
   it "to_json" do
@@ -46,14 +41,5 @@ RSpec.describe API::Views::Parts::Dictionary, :db do
       }
     end
     expect(data[:terms]).to match_array(expcetd_terms)
-  end
-
-  it "to_json with simple" do
-    json = subject.to_json(simple: true)
-    data = JSON.parse(json, symbolize_names: true)
-    expect(data).to eq({
-      name: value.name,
-      label: value.label,
-    })
   end
 end

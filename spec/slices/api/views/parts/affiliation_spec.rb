@@ -5,12 +5,14 @@ RSpec.describe API::Views::Parts::Affiliation do
 
   let(:value) { affiliation }
 
+  it_behaves_like "to_h with simple"
+  it_behaves_like "to_json with simple"
+
   it "to_h" do
     data = subject.to_h
     expect(data).to eq({
       name: value.name,
       label: value.label,
-      note: value.note,
     })
   end
 
