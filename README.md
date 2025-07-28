@@ -113,7 +113,7 @@ npm install
 # bundle exec hanami db create (データベースは予め作成しておく)
 bundle exec hanami db migration
 bundle exec hanami db seed
-bundle exec hanami assets precompile
+bundle exec hanami assets compile
 ```
 
 サーバー起動
