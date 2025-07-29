@@ -43,6 +43,7 @@ module Yuzakan
       "repos.auth_log_repo",
       "repos.user_repo",
       "repos.config_repo",
+      "repos.mapping_repo",
       "management.sync_user",
       "services.authenticate",
       "services.change_password",

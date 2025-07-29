@@ -3,7 +3,7 @@
 RSpec.describe API::Actions::Attrs::Show do
   init_action_spec
   let(:action_opts) {
-    allow(attr_repo).to receive(get).and_return(attr)
+    allow(attr_repo).to receive(:get).and_return(attr)
     {attr_repo: attr_repo}
   }
   let(:action_params) { {id: "attr42"} }
@@ -17,7 +17,7 @@ RSpec.describe API::Actions::Attrs::Show do
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:data]).to eq({
         **attr.to_h.except(:id),
-        mappings: mappings.map { |mapping| mapping.to_h.except(:id) },
+        mappings: attr.mappings.map { |mapping| mapping.to_h.except(:id) },
       })
     end
   end
@@ -26,7 +26,7 @@ RSpec.describe API::Actions::Attrs::Show do
 
   describe "not existend" do
     let(:action_opts) {
-      allow(action_repo).to receive(get).and_return(nil)
+      allow(action_repo).to receive(:get).and_return(nil)
       {attr_repo: attr_repo}
     }
 

@@ -2,9 +2,9 @@
 
 module API
   module Views
-    module Affiliations
+    module Attrs
       class Index < API::View
-        expose :affiliations
+        expose :attrs
       end
     end
   end
