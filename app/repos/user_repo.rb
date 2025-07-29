@@ -3,25 +3,32 @@
 module Yuzakan
   module Repos
     class UserRepo < Yuzakan::DB::Repo
+      # compatible interface
+      commands :create, use: :timestamps,
+        plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
+      commands update: :by_pk, use: :timestamps,
+        plugins_options: {timestamps: {timestamps: [:updated_at]}}
+      commands delete: :by_pk
+      def all = users.to_a
       def find(id) = users.by_pk(id).one
+      def first = users.first
+      def last = users.last
+      def clear = users.delete
 
+      # common interface
       private def by_name(name) = users.by_name(normalize_name(name))
-
       def get(name) = by_name(name).one
 
       def set(name, **)
         by_name(name).changeset(:update, **).map(:touch).commit ||
-          users.changeset(:create, **, name: normalize_name(name))
-            .map(:add_timestamps).commit
+          users.changeset(:create, **, name: normalize_name(name)).map(:add_timestamps).commit
       end
 
       def unset(name) = by_name(name).changeset(:delete).commit
-
       def exist?(name) = by_name(name).exist?
-
-      def all = users.to_a
-
       def list = users.pluck(:name)
+
+      # custom get
 
       def get_with_affilitaion(name)
         by_name(name).combine(:affiliation).one

@@ -3,6 +3,7 @@
 module Yuzakan
   module Repos
     class ActionLogRepo < Yuzakan::DB::Repo
+      # interface compatible with Hanami::Repository
       commands :create, use: :timestamps,
         plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
       commands update: :by_pk, use: :timestamps,
