@@ -239,6 +239,7 @@ GEM
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     io-console (0.8.1)
+    ipaddr (1.2.7)
     irb (1.15.2)
       pp (>= 0.6.0)
       rdoc (>= 4.0.0)
@@ -447,6 +448,7 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport (~> 8.0)
+  base64
   bcrypt
   capybara
   database_cleaner-sequel
@@ -468,6 +470,7 @@ DEPENDENCIES
   hanami-webconsole (~> 2.2)
   hiredis
   i18n
+  ipaddr (>= 1.2.7)
   kramdown
   kramdown-parser-gfm
   net-ldap

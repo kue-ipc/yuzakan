@@ -37,12 +37,16 @@ gem "bcrypt"
 gem "zxcvbn"
 gem "digest-xxhash"
 
+# default gems
+gem "ipaddr", ">= 1.2.7"
+
 ## for adapter ##
 
 # LDAP
 gem "net-ldap"
 # FIXME: https://github.com/ruby-ldap/ruby-net-ldap/issues/431
 gem "ostruct"
+gem "base64"
 gem "smbhash"
 
 # Google Workspace
