@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe API::Views::Parts::Service do
+RSpec.describe API::Views::Parts::Service, :db do
   init_part_spec
 
   let(:value) { service }
@@ -13,7 +13,18 @@ RSpec.describe API::Views::Parts::Service do
     expect(data).to eq({
       name: value.name,
       label: value.label,
-      note: value.note,
+      description: value.description,
+      order: 1,
+      adapter: "dummy",
+      params: {},
+      readable: false, # default
+      writable: false, # default
+      authenticatable: false, # default
+      password_changeable: false, # default
+      lockable: false, # default
+      group: false, # default
+      individual_password: false, # default
+      self_management: false, # default
     })
   end
 
@@ -23,7 +34,18 @@ RSpec.describe API::Views::Parts::Service do
     expect(data).to eq({
       name: value.name,
       label: value.label,
-      note: value.note,
+      description: value.description,
+      order: 1,
+      adapter: "dummy",
+      params: {},
+      readable: false, # default
+      writable: false, # default
+      authenticatable: false, # default
+      passwordChangeable: false, # default
+      lockable: false, # default
+      group: false, # default
+      individualPassword: false, # default
+      selfManagement: false, # default
     })
   end
 end

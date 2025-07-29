@@ -222,11 +222,23 @@ def let_session
       trusted: true,
       created_at: Time.now - 600,
       updated_at: Time.now - 60,
+      expires_at: Time.now - 60 + 3600, # 1 hour later
     }
   }
-  let(:logout_session) { {**login_session, user: nil, trusted: false} }
+  let(:logout_session) {
+    {
+      **login_session,
+      user: nil,
+      trusted: false,
+    }
+  }
   let(:timeover_session) {
-    {**login_session, created_at: Time.now - 7200, updated_at: Time.now - 7200}
+    {
+      **login_session,
+      created_at: Time.now - 7200,
+      updated_at: Time.now - 7200,
+      expires_at: Time.now - 7200 + 3600, # 1 hour later
+    }
   }
   let(:first_session) { {} }
   let(:session) { login_session }

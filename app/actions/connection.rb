@@ -62,32 +62,36 @@ module Yuzakan
         check_authorization(request, response)
       end
 
+      # before check session
+
       private def current_time(_request, _response) = Time.now
+
       private def current_client(request, _response)
         request.ip || raise("client ip is missing")
       end
-      private def current_config(_request, _response) = config_repo.current
-      private def current_uuid(request, response)
-        raise "session unchecked" unless session_checked?(request, response)
 
+      private def current_config(_request, _response) = config_repo.current
+
+      # after check session
+
+      private def current_uuid(request, _response)
         request.session[:uuid]
       end
-      private def current_user(request, response)
-        raise "session unchecked" unless session_checked?(request, response)
 
+      private def current_user(request, _response)
         request.session[:user]&.then { user_repo.get(_1) }
       end
+
       private def current_network(_request, response)
         network_repo.find_include(response[:current_client])
       end
+
       private def current_level(_request, response)
         [:current_user, :current_network]
           .map { response[_1]&.clearance_level || 0 }.min
       end
 
       private def current_trusted(request, response)
-        raise "session unchecked" unless session_checked?(request, response)
-
         response[:current_network]&.trusted || request.session[:trusted] || false
       end
 
@@ -104,27 +108,19 @@ module Yuzakan
         end
 
         # initial session
-        request.session[:uuid] ||= SecureRandom.uuid
-        request.session[:user] ||= nil
-        request.session[:trusted] ||= false
-        request.session[:created_at] ||= response[:current_time]
-        request.session[:updated_at] = response[:current_time]
+        response.session[:uuid] ||= SecureRandom.uuid
+        response.session[:user] ||= nil
+        response.session[:trusted] ||= false
+        response.session[:created_at] ||= response[:current_time].to_i
+        response.session[:updated_at] = response[:current_time].to_i
+        response.session[:expires_at] = response[:current_config]&.session_timeout&.+(response[:current_time].to_i)
       end
 
       private def session_timeout?(request, response)
-        return false if request.session[:updated_at].nil?
-
-        timeout = response[:current_config]&.session_timeout
-        return false unless timeout&.positive?
-
-        elapsed_time = response[:current_time] - request.session[:updated_at]
-        return false if elapsed_time <= timeout
+        return false if request.session[:expires_at].nil?
+        return false if request.session[:expires_at] >= response[:current_time].to_i
 
         true
-      end
-
-      private def session_checked?(request, response)
-        request.session[:updated_at] == response[:current_time]
       end
 
       private def check_configuration(request, response)

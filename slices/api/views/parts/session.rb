@@ -9,8 +9,8 @@ module API
           {
             uuid: value[:uuid],
             user: value[:user],
-            created_at: value[:created_at],
-            updated_at: value[:updated_at],
+            trusted: value[:trusted],
+            expires_at: value[:expires_at] && Time.at(value[:expires_at]),
           }
         end
 
