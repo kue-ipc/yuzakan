@@ -17,7 +17,7 @@ RSpec.describe API::Actions::Config::Update do
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq(
+      expect(json[:data]).to eq({
         title: updated_config.title,
         description: updated_config.description,
         domain: updated_config.domain,
@@ -37,8 +37,7 @@ RSpec.describe API::Actions::Config::Update do
         contactName: updated_config.contact_name,
         contactEmail: updated_config.contact_email,
         contactPhone: updated_config.contact_phone,
-        createdAt: JSON.parse(updated_config.created_at.to_json),
-        updatedAt: JSON.parse(updated_config.updated_at.to_json))
+      })
     end
   end
 

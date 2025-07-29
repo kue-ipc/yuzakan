@@ -30,8 +30,6 @@ RSpec.describe API::Actions::Config::Show do
         contactName: config.contact_name,
         contactEmail: config.contact_email,
         contactPhone: config.contact_phone,
-        createdAt: JSON.parse(config.created_at.to_json),
-        updatedAt: JSON.parse(config.updated_at.to_json),
       })
     end
   end
