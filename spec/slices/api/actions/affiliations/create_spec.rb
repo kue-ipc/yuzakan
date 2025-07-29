@@ -4,14 +4,14 @@ RSpec.describe API::Actions::Affiliations::Create do
   init_action_spec
 
   let(:action_opts) {
-    allow(attr_repo).to receive_messages(get: nil, set: affiliation)
+    allow(affiliation_repo).to receive_messages(get: nil, set: affiliation)
     {affiliation_repo: affiliation_repo}
   }
   let(:action_params) { affiliation.to_h.except(:id, :created_at, :updated_at) }
 
   shared_context "when exist" do
     let(:action_opts) {
-      allow(attr_repo).to receive_messages(get: affiliation)
+      allow(affiliation_repo).to receive_messages(get: affiliation)
       {affiliation_repo: affiliation_repo}
     }
   end
@@ -22,10 +22,9 @@ RSpec.describe API::Actions::Affiliations::Create do
       expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      expect(response.headers["Content-Location"]).to eq "/api/attrs/#{affiliation.name}"
-
+      expect(response.headers["Content-Location"]).to eq "/api/affiliations/#{affiliation.name}"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:location]).to eq "/api/attrs/#{affiliation.name}"
+      expect(json[:location]).to eq "/api/affiliations/#{affiliation.name}"
       expect(json[:data]).to eq({
         name: affiliation.name,
         label: affiliation.label,
@@ -38,12 +37,14 @@ RSpec.describe API::Actions::Affiliations::Create do
       expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      expect(response.headers["Content-Location"]).to eq "/api/attrs/#{affiliation.name}"
+      expect(response.headers["Content-Location"]).to eq "/api/affiliations/#{affiliation.name}"
+      # 返されるデータはdoubleで返すものなので、ついているものになる。
       json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:location]).to eq "/api/affiliations/#{affiliation.name}"
       expect(json[:data]).to eq({
         name: affiliation.name,
-        label: "",
-        note: "",
+        label: affiliation.label,
+        note: affiliation.note,
       })
     end
   end
@@ -74,7 +75,7 @@ RSpec.describe API::Actions::Affiliations::Create do
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:flash]).to eq({invalid: {name: ["名前付けの規則に違反しています。"]}})
+      expect(json[:flash]).to eq({invalid: {name: ["形式が間違っています。"]}})
     end
   end
 
