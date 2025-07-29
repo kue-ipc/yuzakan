@@ -13,6 +13,7 @@ RSpec.describe API::Views::Parts::Affiliation do
     expect(data).to eq({
       name: value.name,
       label: value.label,
+      note: value.note,
     })
   end
 

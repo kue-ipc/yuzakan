@@ -5,14 +5,12 @@ RSpec.describe API::Views::Parts::Network do
 
   let(:value) { network }
 
-  it_behaves_like "to_h with simple"
-  it_behaves_like "to_json with simple"
-
   it "to_h" do
     data = subject.to_h
     expect(data).to eq({
-      name: value.name,
-      label: value.label,
+      ip: "0.0.0.0/0",
+      clearance_level: 1,
+      trusted: false,
     })
   end
 
@@ -20,9 +18,9 @@ RSpec.describe API::Views::Parts::Network do
     json = subject.to_json
     data = JSON.parse(json, symbolize_names: true)
     expect(data).to eq({
-      name: value.name,
-      label: value.label,
-      note: value.note,
+      ip: "0.0.0.0/0",
+      clearanceLevel: 1,
+      trusted: false,
     })
   end
 end

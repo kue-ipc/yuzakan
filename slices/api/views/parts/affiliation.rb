@@ -5,11 +5,18 @@ module API
   module Views
     module Parts
       class Affiliation < API::Views::Part
+        # value is a DB::Sturct
+
         def to_h(simple: false)
-          value.to_h.slice(:name, :label, :note)
+          hash = value.to_h
+          if simple
+            hash.slice(:name, :label)
+          else
+            hash.except(:id, :created_at, :updated_at)
+          end
         end
 
-        def to_json(simple: false) = helpers.params_to_json(to_h(simple:))
+        def to_json(*, simple: false, **) = helpers.params_to_json(to_h(simple:), *, **)
       end
     end
   end

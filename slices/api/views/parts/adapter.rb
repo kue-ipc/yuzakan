@@ -22,10 +22,10 @@ module API
           hash
         end
 
-        def to_json(simple: false)
+        def to_json(*, simple: false, **)
           hash = to_h(simple:).dup
           hash.merge!({params: {schema: json_schema}}) unless simple
-          helpers.params_to_json(hash)
+          helpers.params_to_json(hash, *, **)
         end
 
         def dry_schema

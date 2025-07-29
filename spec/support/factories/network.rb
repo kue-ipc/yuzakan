@@ -25,7 +25,7 @@ Factory.define(ipv4_loopback_network: :trusted_network) do |f|
 end
 
 Factory.define(ipv6_loopback_network: :trusted_network) do |f|
-  f.ip IPAddr.new("::1")
+  f.ip IPAddr.new("::1/128")
 end
 
 Factory.define(ipv4_pn_a_network: :trusted_network) do |f|

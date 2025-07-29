@@ -5,6 +5,8 @@ module API
   module Views
     module Parts
       class Dictionary < API::Views::Part
+        # value is a DB::Sturct
+
         def to_h(simple: false)
           hash = value.to_h
           if simple
@@ -13,14 +15,11 @@ module API
             terms = hash[:terms].map do |term|
               term.except(:id, :created_at, :updated_at, :dictionary_id)
             end
-            {
-              **hash.except(:id, :created_at, :updated_at, :terms),
-              terms:,
-            }
+            hash.except(:id, :created_at, :updated_at).merge({terms:})
           end
         end
 
-        def to_json(simple: false) = helpers.params_to_json(to_h(simple:))
+        def to_json(*, simple: false, **) = helpers.params_to_json(to_h(simple:), *, **)
       end
     end
   end
