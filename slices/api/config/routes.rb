@@ -2,14 +2,14 @@
 
 module API
   class Routes < Hanami::Routes
-    post "/auth", to: "auth.create", as: :auth
-    delete "/auth", to: "auth.destroy", as: :auth
-    get "/auth", to: "auth.show", as: :auth
-    post "/auth/mfa", to: "auth.mfa.create", as: :auth_mfa
-    get "/auth/mfa", to: "auth.mfa.show", as: :auth_mfa
+    get "/adapters", to: "adapters.index"
+    get "/adapters/:id", to: "adapters.show"
 
-    get "/config", to: "config.show", as: :config
-    patch "/config", to: "config.update", as: :config
+    get "/affiliations", to: "affiliations.index"
+    post "/affiliations", to: "affiliations.create"
+    get "/affiliations/:id", to: "affiliations.show"
+    patch "/affiliations/:id", to: "affiliations.update"
+    delete "/affiliations/:id", to: "affiliations.destroy"
 
     get "/attrs", to: "attrs.index", as: :attrs
     post "/attrs", to: "attrs.create", as: :attrs
@@ -17,14 +17,21 @@ module API
     patch "/attrs/:id", to: "attrs.update", as: :attr
     delete "/attrs/:id", to: "attrs.destroy", as: :attr
 
+    post "/auth", to: "auth.create", as: :auth
+    get "/auth", to: "auth.show", as: :auth
+    delete "/auth", to: "auth.destroy", as: :auth
+
+    post "/auth/mfa", to: "auth.mfa.create", as: :auth_mfa
+    get "/auth/mfa", to: "auth.mfa.show", as: :auth_mfa
+
+    get "/config", to: "config.show", as: :config
+    patch "/config", to: "config.update", as: :config
+
     get "/groups", to: "groups.index", as: :groups
     post "/groups", to: "groups.create", as: :groups
     get "/groups/:id", to: "groups.show", as: :group
     patch "/groups/:id", to: "groups.update", as: :group
     delete "/groups/:id", to: "groups.destroy", as: :group
-
-    post "/mfa/email", to: "mfa.email.create", as: :mfa_email
-    post "/mfa/totp", to: "mfa.totp.create", as: :mfa_totp
 
     get "/services", to: "services.index", as: :services
     post "/services", to: "services.create", as: :services
@@ -63,7 +70,5 @@ module API
     get "/users/:id/mfa/totp", to: "users/mfa/totp.show", as: :user_mfa_totp
     patch "/users/:id/mfa/totp", to: "users/mfa/totp.update", as: :user_mfa_totp
     delete "/users/:id/mfa/totp", to: "users/mfa/totp.destroy", as: :user_mfa_totp
-
-
   end
 end
