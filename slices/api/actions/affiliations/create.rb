@@ -10,6 +10,7 @@ module API
         ]
 
         security_level 4
+
         params do
           required(:name).filled(:name, max_size?: 255)
           optional(:label).maybe(:str?, max_size?: 255)
@@ -30,6 +31,7 @@ module API
           end
 
           affiliation = affiliation_repo.set(name, **request.params.to_h.except(:name))
+
           response.status = :created
           response.headers["Content-Location"] = "/api/affiliations/#{affiliation.name}"
           response[:location] = "/api/affiliations/#{affiliation.name}"

@@ -11,7 +11,7 @@ RSpec.describe API::Actions::Affiliations::Destroy do
 
   shared_context "when not exist" do
     let(:action_opts) {
-      allow(attr_repo).to receive_messages(get: nil)
+      allow(affiliation_repo).to receive_messages(get: nil)
       {affiliation_repo: affiliation_repo}
     }
   end
