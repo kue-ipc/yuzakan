@@ -5,7 +5,7 @@ module Admin
     module Users
       class Show < Admin::Action
         params do
-          required(:id).filled(:name_or_symbol, max_size?: 255)
+          required(:id) { filled(:name, max_size?: 255) | eql?("~") }
         end
 
         def initialize(user_repository: UserRepository.new, **opts)

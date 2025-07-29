@@ -4,7 +4,7 @@ RSpec.describe API::Actions::Affiliations::Update do
   init_action_spec
 
   let(:action_opts) {
-    allow(affiliation_repo).to receive_messages(get: affiliation, set: affiliation, transaction: affiliation)
+    allow(affiliation_repo).to receive_messages(get: affiliation, set: affiliation)
     allow(affiliation_repo).to receive(:transaction).and_yield
     {affiliation_repo: affiliation_repo}
   }

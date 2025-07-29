@@ -7,7 +7,7 @@ module Admin
         security_level 5
 
         params do
-          required(:id).filled(:name_or_symbol, max_size?: 255)
+          required(:id).filled(:name, max_size?: 255)
         end
 
         def initialize(service_repository: ServiceRepository.new, **)
