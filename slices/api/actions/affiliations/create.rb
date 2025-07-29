@@ -13,8 +13,8 @@ module API
 
         params do
           required(:name).filled(:name, max_size?: 255)
-          optional(:label).maybe(:str?, max_size?: 255)
-          optional(:note).maybe(:str?, max_size?: 4096)
+          optional(:label).value(:str?, max_size?: 255)
+          optional(:note).value(:str?, max_size?: 4096)
         end
 
         def handle(request, response)
@@ -30,7 +30,7 @@ module API
             halt_json request, response, 422
           end
 
-          affiliation = affiliation_repo.set(name, **request.params.to_h.except(:name))
+          affiliation = affiliation_repo.set(name, **request.params)
 
           response.status = :created
           response.headers["Content-Location"] = "/api/affiliations/#{affiliation.name}"
