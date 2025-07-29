@@ -12,6 +12,10 @@ Factory.define(:group) do |f|
   f.timestamps
 end
 
+Factory.define(basic_group: :group) do |f|
+  f.basic true # default
+end
+
 Factory.define(group_without_label: :group) do |f|
   f.label ""
   f.note ""

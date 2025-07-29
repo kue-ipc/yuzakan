@@ -3,16 +3,13 @@
 RSpec.describe API::Views::Parts::Status do
   init_part_spec
 
-  let(:value) { }
-
-  it_behaves_like "to_h with simple"
-  it_behaves_like "to_json with simple"
+  let(:value) { 200 }
 
   it "to_h" do
     data = subject.to_h
     expect(data).to eq({
-      name: value.name,
-      label: value.label,
+      code: 200,
+      message: "OK",
     })
   end
 
@@ -20,9 +17,8 @@ RSpec.describe API::Views::Parts::Status do
     json = subject.to_json
     data = JSON.parse(json, symbolize_names: true)
     expect(data).to eq({
-      name: value.name,
-      label: value.label,
-      note: value.note,
+      code: 200,
+      message: "OK",
     })
   end
 end

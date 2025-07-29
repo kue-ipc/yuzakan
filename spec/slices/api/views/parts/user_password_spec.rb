@@ -3,16 +3,18 @@
 RSpec.describe API::Views::Parts::UserPassword do
   init_part_spec
 
-  let(:value) { }
-
-  it_behaves_like "to_h with simple"
-  it_behaves_like "to_json with simple"
+  let(:value) {
+    {
+      password: "password123",
+      services: ["service1", "service2"],
+    }
+  }
 
   it "to_h" do
     data = subject.to_h
     expect(data).to eq({
-      name: value.name,
-      label: value.label,
+      password: value[:password],
+      services: value[:services],
     })
   end
 
@@ -20,9 +22,8 @@ RSpec.describe API::Views::Parts::UserPassword do
     json = subject.to_json
     data = JSON.parse(json, symbolize_names: true)
     expect(data).to eq({
-      name: value.name,
-      label: value.label,
-      note: value.note,
+      password: value[:password],
+      services: value[:services],
     })
   end
 end

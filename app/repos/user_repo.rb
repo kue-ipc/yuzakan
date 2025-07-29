@@ -3,6 +3,8 @@
 module Yuzakan
   module Repos
     class UserRepo < Yuzakan::DB::Repo
+      def find(id) = users.by_pk(id).one
+
       private def by_name(name) = users.by_name(normalize_name(name))
 
       def get(name) = by_name(name).one
@@ -21,8 +23,16 @@ module Yuzakan
 
       def list = users.pluck(:name)
 
+      def get_with_affilitaion(name)
+        by_name(name).combine(:affiliation).one
+      end
+
       def get_with_groups(name)
         by_name(name).combine(:group, members: :group).one
+      end
+
+      def get_with_affilitaion_and_groups(name)
+        by_name(name).combine(:affiliation, :group, members: :group).one
       end
 
       # TODO: ここらは下は未整理
