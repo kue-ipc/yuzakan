@@ -149,23 +149,23 @@ def init_action_spec
   end
 
   shared_context "when guest" do
-    let(:user) { create_struct(:user, :guest) }
+    let(:user) { Factory.structs[:guest] }
   end
 
   shared_context "when observer" do
-    let(:user) { create_struct(:user, :observer) }
+    let(:user) { Factory.structs[:observer] }
   end
 
   shared_context "when operator" do
-    let(:user) { create_struct(:user, :operator) }
+    let(:user) { Factory.structs[:operator] }
   end
 
   shared_context "when administrator" do
-    let(:user) { create_struct(:user, :administrator) }
+    let(:user) { Factory.structs[:administrator] }
   end
 
   shared_context "when superuser" do
-    let(:user) { create_struct(:user, :superuser) }
+    let(:user) { Factory.structs[:superuser] }
   end
 
   shared_context "when logout" do
@@ -220,9 +220,9 @@ def let_session
       uuid: uuid,
       user: user.name,
       trusted: true,
-      created_at: Time.now - 600,
-      updated_at: Time.now - 60,
-      expires_at: Time.now - 60 + 3600, # 1 hour later
+      created_at: Time.now.to_i - 600,
+      updated_at: Time.now.to_i - 60,
+      expires_at: Time.now.to_i - 60 + 3600, # 1 hour later
     }
   }
   let(:logout_session) {
@@ -235,9 +235,9 @@ def let_session
   let(:timeover_session) {
     {
       **login_session,
-      created_at: Time.now - 7200,
-      updated_at: Time.now - 7200,
-      expires_at: Time.now - 7200 + 3600, # 1 hour later
+      created_at: Time.now.to_i - 7200,
+      updated_at: Time.now.to_i - 7200,
+      expires_at: Time.now.to_i - 7200 + 3600, # 1 hour later
     }
   }
   let(:first_session) { {} }

@@ -10,7 +10,7 @@ RSpec.describe Admin::Actions::Config::Show do
   end
 
   context "when admin" do
-    let(:user) { create_struct(:user, :superuser) }
+    let(:user) { Factory.structs[:superuser] }
 
     it "is successful" do
       response = action.call(params)

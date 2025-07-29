@@ -8,7 +8,7 @@ RSpec.describe API::Actions::Config::Update do
     allow(config_repo).to receive(:set).and_return(updated_config)
     {config_repo: config_repo}
   }
-  let(:updated_config) { create_struct(:config, :another_config) }
+  let(:updated_config) { Factory.structs[:another_config] }
 
   shared_examples "ok" do
     it "is ok" do
