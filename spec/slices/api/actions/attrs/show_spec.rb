@@ -2,6 +2,7 @@
 
 RSpec.describe API::Actions::Attrs::Show do
   init_action_spec
+
   let(:action_opts) {
     allow(attr_repo).to receive(:get).and_return(attr)
     {attr_repo: attr_repo}
