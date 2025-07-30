@@ -179,6 +179,10 @@ def init_action_spec
   shared_context "when first" do
     let(:session) { first_session }
   end
+
+  shared_context "when current id" do
+    let(:action_params) { {id: "~"} }
+  end
 end
 
 def init_operation_spec

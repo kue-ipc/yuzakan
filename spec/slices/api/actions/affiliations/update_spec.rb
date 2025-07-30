@@ -38,6 +38,15 @@ RSpec.describe API::Actions::Affiliations::Update do
     end
   end
 
+  shared_examples "update" do
+    it_behaves_like "ok"
+
+    context "when not exist" do
+      include_context "when not exist"
+      it_behaves_like "not found"
+    end
+  end
+
   it_behaves_like "forbidden"
 
   context "when guest" do
@@ -57,21 +66,11 @@ RSpec.describe API::Actions::Affiliations::Update do
 
   context "when administrator" do
     include_context "when administrator"
-    it_behaves_like "ok"
-
-    context "when not exist" do
-      include_context "when not exist"
-      it_behaves_like "not found"
-    end
+    it_behaves_like "update"
   end
 
   context "when superuser" do
     include_context "when superuser"
-    it_behaves_like "ok"
-
-    context "when not exist" do
-      include_context "when not exist"
-      it_behaves_like "not found"
-    end
+    it_behaves_like "update"
   end
 end

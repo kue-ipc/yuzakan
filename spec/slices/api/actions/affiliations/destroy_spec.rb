@@ -31,6 +31,38 @@ RSpec.describe API::Actions::Affiliations::Destroy do
     end
   end
 
+  shared_examples "failure bad params" do
+    it "is failure with bad id" do
+      response = action.call({**params, id: "!"})
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:flash]).to eq({invalid: {id: ["形式が間違っています。"]}})
+    end
+
+    it "is failure with bad id over 255" do
+      response = action.call({**params, id: "a" * 256})
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:flash]).to eq({invalid: {id: ["サイズが255を超えてはいけません。"]}})
+    end
+  end
+
+  # rubocop:disable RSpec/IncludeExamples
+  shared_examples "destroy" do
+    include_examples "ok"
+    include_examples "failure bad params"
+
+    context "when not exist" do
+      include_context "when not exist"
+      it_behaves_like "not found"
+    end
+  end
+  # rubocop:enable RSpec/IncludeExamples
+
   it_behaves_like "forbidden"
 
   context "when guest" do
@@ -50,21 +82,11 @@ RSpec.describe API::Actions::Affiliations::Destroy do
 
   context "when administrator" do
     include_context "when administrator"
-    it_behaves_like "ok"
-
-    context "when not exist" do
-      include_context "when not exist"
-      it_behaves_like "not found"
-    end
+    it_behaves_like "destroy"
   end
 
   context "when superuser" do
     include_context "when superuser"
-    it_behaves_like "ok"
-
-    context "when not exist" do
-      include_context "when not exist"
-      it_behaves_like "not found"
-    end
+    it_behaves_like "destroy"
   end
 end

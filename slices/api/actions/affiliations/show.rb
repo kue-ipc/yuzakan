@@ -20,7 +20,15 @@ module API
             halt_json request, response, 422
           end
 
-          affiliation = affiliation_repo.get(request.params[:id].to_s)
+          id = request.params[:id]
+
+          affiliation =
+            if id == "~"
+              affiliation_repo.find(response[:current_user].affiliation_id)
+            else
+              affiliation_repo.get(id)
+            end
+
           halt_json request, response, 404 if affiliation.nil?
 
           response[:affiliation] = affiliation

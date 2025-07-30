@@ -1,4 +1,5 @@
 ja:
+  or: または
   errors:
     or: または
     array?: 配列を入力してください。

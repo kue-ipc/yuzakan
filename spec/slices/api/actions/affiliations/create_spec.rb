@@ -79,6 +79,17 @@ RSpec.describe API::Actions::Affiliations::Create do
     end
   end
 
+  shared_examples "create" do
+    it_behaves_like "created"
+    it_behaves_like "failure params"
+
+    context "when exist" do
+      include_context "when exist"
+      it_behaves_like "failure params"
+      it_behaves_like "failure name duplication"
+    end
+      end
+
   it_behaves_like "forbidden"
 
   context "when guest" do
@@ -98,25 +109,11 @@ RSpec.describe API::Actions::Affiliations::Create do
 
   context "when administrator" do
     include_context "when administrator"
-    it_behaves_like "created"
-    it_behaves_like "failure params"
-
-    context "when exist" do
-      include_context "when exist"
-      it_behaves_like "failure params"
-      it_behaves_like "failure name duplication"
-    end
+    it_behaves_like "create"
   end
 
   context "when superuser" do
     include_context "when superuser"
-    it_behaves_like "created"
-    it_behaves_like "failure params"
-
-    context "when exist" do
-      include_context "when exist"
-      it_behaves_like "failure params"
-      it_behaves_like "failure name duplication"
-    end
+    it_behaves_like "create"
   end
 end

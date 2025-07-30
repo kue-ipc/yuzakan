@@ -41,7 +41,7 @@ module Yuzakan
 
     config.shared_app_component_keys += [
       "repos.auth_log_repo",
-      "repos.affilation_repo",
+      "repos.affiliation_repo",
       "repos.config_repo",
       "repos.mapping_repo",
       "repos.user_repo",
