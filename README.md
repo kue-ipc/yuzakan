@@ -134,7 +134,7 @@ bundle exec hanami db prepare
 テスト実施:
 
 ```sh
-bundle exec hanami assets precompile
+bundle exec hanami assets compile
 bundle exec rake
 ```
 
