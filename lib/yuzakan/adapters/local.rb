@@ -89,8 +89,8 @@ module Yuzakan
       def user_auth(username, password)
         user = user_repo.find_by_name(username)
         return if user.nil?
-        return false if user.locked?
-        return false if user.hashed_password.nil?
+        return false if user.locked
+        return false if user.hashed_password.empty?
 
         verify_password(password, user.hashed_password)
       end
@@ -107,7 +107,7 @@ module Yuzakan
       def user_lock(username)
         user = user_repo.find_by_name(username)
         return false if user.nil?
-        return false if user.locked?
+        return false if user.locked
 
         user_repo.update(user.id, locked: true)
         true
@@ -116,7 +116,7 @@ module Yuzakan
       def user_unlock(username, _password = nil)
         user = user_repo.find_by_name(username)
         return false if user.nil?
-        return false unless user.locked?
+        return false unless user.locked
 
         user_repo.update(user.id, locked: false)
         true
@@ -172,7 +172,7 @@ module Yuzakan
         group = group_repo.find_with_users_by_name(groupname)
         return if group.nil?
 
-        group.members.map(:name)
+        [group.lcoal_users + group.local_member_users].map(:name)
       end
 
       def member_add(groupname, username)
