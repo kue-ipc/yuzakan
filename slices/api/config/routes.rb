@@ -51,24 +51,24 @@ module API
     patch "/users/:id", to: "users.update", as: :user
     delete "/users/:id", to: "users.destroy", as: :user
 
-    post "/users/:id/lock", to: "users/lock.create", as: :user_lock
-    delete "/users/:id/lock", to: "users/lock.destroy", as: :user_lock
-    post "/users/:id/password", to: "users/password.create", as: :user_password
-    patch "/users/:id/password", to: "users.password.update", as: :user_password
+    # post "/users/:id/lock", to: "users/lock.create", as: :user_lock
+    # delete "/users/:id/lock", to: "users/lock.destroy", as: :user_lock
+    # post "/users/:id/password", to: "users/password.create", as: :user_password
+    # patch "/users/:id/password", to: "users.password.update", as: :user_password
 
-    post "/users/:id/mfa/code", to: "users/mfa/code.create", as: :user_mfa_code
-    get "/users/:id/mfa/code", to: "users/mfa/code.show", as: :user_mfa_code
-    # patch "/users/:id/mfa/code", to: "users/mfa/code.update", as: :user_mfa_code
-    delete "/users/:id/mfa/code", to: "users/mfa/code.destroy", as: :user_mfa_code
+    # post "/users/:id/mfa/code", to: "users/mfa/code.create", as: :user_mfa_code
+    # get "/users/:id/mfa/code", to: "users/mfa/code.show", as: :user_mfa_code
+    # # patch "/users/:id/mfa/code", to: "users/mfa/code.update", as: :user_mfa_code
+    # delete "/users/:id/mfa/code", to: "users/mfa/code.destroy", as: :user_mfa_code
 
-    post "/users/:id/mfa/email", to: "users/mfa/email.create", as: :user_mfa_email
-    get "/users/:id/mfa/email", to: "users/mfa/email.show", as: :user_mfa_email
-    # patch "/users/:id/mfa/email", to: "users/mfa/email.update", as: :user_mfa_email
-    delete "/users/:id/mfa/email", to: "users/mfa/email.destroy", as: :user_mfa_email
+    # post "/users/:id/mfa/email", to: "users/mfa/email.create", as: :user_mfa_email
+    # get "/users/:id/mfa/email", to: "users/mfa/email.show", as: :user_mfa_email
+    # # patch "/users/:id/mfa/email", to: "users/mfa/email.update", as: :user_mfa_email
+    # delete "/users/:id/mfa/email", to: "users/mfa/email.destroy", as: :user_mfa_email
 
-    post "/users/:id/mfa/totp", to: "users/mfa/totp.create", as: :user_mfa_totp
-    get "/users/:id/mfa/totp", to: "users/mfa/totp.show", as: :user_mfa_totp
-    patch "/users/:id/mfa/totp", to: "users/mfa/totp.update", as: :user_mfa_totp
-    delete "/users/:id/mfa/totp", to: "users/mfa/totp.destroy", as: :user_mfa_totp
+    # post "/users/:id/mfa/totp", to: "users/mfa/totp.create", as: :user_mfa_totp
+    # get "/users/:id/mfa/totp", to: "users/mfa/totp.show", as: :user_mfa_totp
+    # patch "/users/:id/mfa/totp", to: "users/mfa/totp.update", as: :user_mfa_totp
+    # delete "/users/:id/mfa/totp", to: "users/mfa/totp.destroy", as: :user_mfa_totp
   end
 end
