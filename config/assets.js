@@ -22,7 +22,7 @@ await assets.run({
     esbuildOptions.plugins ??= [];
     esbuildOptions.plugins.push(civetPlugin());
     esbuildOptions.plugins.push(sassPlugin({
-      silenceDeprecations: ['mixed-decls', 'color-functions', 'global-builtin', 'import'],
+      silenceDeprecations: ['color-functions', 'global-builtin', 'import'],
     }));
     esbuildOptions.plugins.push(YAMLPlugin());
 
