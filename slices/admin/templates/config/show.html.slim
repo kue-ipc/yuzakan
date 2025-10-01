@@ -57,7 +57,7 @@ h3 = t("views.admin_config.sections.config.title")
   = bs.select(f, :password_min_score, password_scores.values,
     layout: :horizontal, label: t(:password_min_score, scope:),  size: password_scores.size)
   // password_extra_dict is an Array, so use text area and join with space
-  = bs.text_area(f, :password_extra_dict_listing, currenc_config.password_extra_dict.join(" "), layout:,
+  = bs.text_area(f, :password_extra_dict_listing, current_config.password_extra_dict.join(" "), layout:,
     label: t(:password_extra_dict, scope:), rows: 3,
     help: markdown(t("views.admin_config.helps.password_extra_dict")))
 
