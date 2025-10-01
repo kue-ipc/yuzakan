@@ -22,7 +22,7 @@ module Local
       def delete_by_name(name) = by_name(name).command(:delete).call
       def find_by_name(name) = by_name(name).one
       def exist_by_name?(name) = by_name(name).exist?
-      def names = local.groups.pluck(:name)
+      def names = local_groups.pluck(:name)
 
       def all_by_names(*names) = local_groups.where(name: names.flatten).to_a
 
