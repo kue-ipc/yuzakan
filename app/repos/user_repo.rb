@@ -3,7 +3,7 @@
 module Yuzakan
   module Repos
     class UserRepo < Yuzakan::DB::Repo
-      # compatible interface
+      # compatible interfaces
       commands :create, use: :timestamps,
         plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
       commands update: :by_pk, use: :timestamps,
@@ -15,7 +15,7 @@ module Yuzakan
       def last = users.last
       def clear = users.delete
 
-      # common interface
+      # common interfaces
       private def by_name(name) = users.by_name(normalize_name(name))
       def get(name) = by_name(name).one
 
@@ -28,7 +28,7 @@ module Yuzakan
       def exist?(name) = by_name(name).exist?
       def list = users.pluck(:name)
 
-      # custom get
+      # other interfaces
 
       def get_with_affilitaion(name)
         by_name(name).combine(:affiliation).one

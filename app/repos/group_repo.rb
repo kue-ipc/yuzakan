@@ -3,25 +3,33 @@
 module Yuzakan
   module Repos
     class GroupRepo < Yuzakan::DB::Repo
-      private def by_name(name) = groups.by_name(normalize_name(name))
+      # compatible interfaces
+      commands :create, use: :timestamps,
+        plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
+      commands update: :by_pk, use: :timestamps,
+        plugins_options: {timestamps: {timestamps: [:updated_at]}}
+      commands delete: :by_pk
+      def all = groups.to_a
+      def find(id) = groups.by_pk(id).one
+      def first = groups.first
+      def last = groups.last
+      def clear = groups.delete
 
+      # common interfaces
+      private def by_name(name) = groups.by_name(normalize_name(name))
       def get(name) = by_name(name).one
 
       def set(name, **)
         by_name(name).changeset(:update, **).map(:touch).commit ||
-          groups.changeset(:create, **, name: normalize_name(name))
-            .map(:add_timestamps).commit
+          groups.changeset(:create, **, name: normalize_name(name)).map(:add_timestamps).commit
       end
 
       def unset(name) = by_name(name).changeset(:delete).commit
-
       def exist?(name) = by_name(name).exist?
-
-      def all = groups.to_a
-
       def list = groups.pluck(:name)
 
-      def get_with_affilitaion(name)
+      # other interfaces
+      def get_with_affiliation(name)
         by_name(name).combine(:affiliation).one
       end
 

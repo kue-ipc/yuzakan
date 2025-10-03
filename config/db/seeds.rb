@@ -24,17 +24,17 @@ config_repo.set(title: title, description: description) unless config_repo.curre
 
 # setup networks
 network_repo = Hanami.app["repos.network_repo"]
-if network_repo.count.zero?
+if network_repo.first.nil?
   [
     "127.0.0.0/8",
     "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16",
     "::1",
     "fc00::/7",
   ].each do |address|
-    network_repo.set(address, clearance_level: 5, trusted: true)
+    network_repo.create(ip: IPAddr.new(address), clearance_level: 5, trusted: true)
   end
   ["0.0.0.0/0", "::/0"].each do |address|
-    network_repo.set(address, clearance_level: 1, trusted: false)
+    network_repo.create(ip: IPAddr.new(address), clearance_level: 1, trusted: false)
   end
 end
 

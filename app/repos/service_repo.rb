@@ -3,25 +3,33 @@
 module Yuzakan
   module Repos
     class ServiceRepo < Yuzakan::DB::Repo
-      private def by_name(name) = services.by_name(normalize_name(name))
+      # compatible interfaces
+      commands :create, use: :timestamps,
+        plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
+      commands update: :by_pk, use: :timestamps,
+        plugins_options: {timestamps: {timestamps: [:updated_at]}}
+      commands delete: :by_pk
+      def all = services.to_a
+      def find(id) = services.by_pk(id).one
+      def first = services.first
+      def last = services.last
+      def clear = services.delete
 
+      # common interfaces
+      private def by_name(name) = services.by_name(normalize_name(name))
       def get(name) = by_name(name).one
 
       def set(name, **)
         by_name(name).changeset(:update, **).map(:touch).commit ||
-          services.changeset(:create, **, name: normalize_name(name))
-            .map(:add_timestamps).commit
+          services.changeset(:create, **, name: normalize_name(name)).map(:add_timestamps).commit
       end
 
       def unset(name) = by_name(name).changeset(:delete).commit
-
       def exist?(name) = by_name(name).exist?
+      def list = services.pluck(:name)
 
+      # other interfaces
       private def ordered = services.order(:order, :name)
-
-      def all = ordered.to_a
-
-      def list = ordered.pluck(:name)
 
       def all_with_abilities(*abilities)
         condition = abilities.to_h { |k| [k, true] }

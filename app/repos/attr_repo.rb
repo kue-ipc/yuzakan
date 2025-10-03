@@ -3,8 +3,20 @@
 module Yuzakan
   module Repos
     class AttrRepo < Yuzakan::DB::Repo
-      private def by_name(name) = attrs.by_name(normalize_name(name))
+      # compatible interface
+      commands :create, use: :timestamps,
+        plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
+      commands update: :by_pk, use: :timestamps,
+        plugins_options: {timestamps: {timestamps: [:updated_at]}}
+      commands delete: :by_pk
+      def all = attrs.to_a
+      def find(id) = attrs.by_pk(id).one
+      def first = attrs.first
+      def last = attrs.last
+      def clear = attrs.delete
 
+      # common interfaces
+      private def by_name(name) = attrs.by_name(normalize_name(name))
       def get(name) = by_name(name).one
 
       def set(name, **)
@@ -13,28 +25,22 @@ module Yuzakan
       end
 
       def unset(name) = by_name(name).changeset(:delete).commit
-
       def exist?(name) = by_name(name).exist?
-
-      def all = attrs.to_a
-
       def list = attrs.pluck(:name)
 
+      # other interfaces
       def get_with_mappings(name)
         by_name(name).combine(mappings: :service).one
       end
 
+      def create_with_mappings(**)
+        attrs.combine(mappings).command(:create).call(**)
+      end
+
       # TODO: 個々から下は未整理
-      # private def by_name(name)
-      #   attrs.where(name: name)
-      # end
 
       def find_by_name(name)
         by_name(name).one
-      end
-
-      def exist_by_name?(name)
-        by_name(name).exist?
       end
 
       def ordered_all
@@ -56,10 +62,6 @@ module Yuzakan
 
       def find_with_mappings_by_name(name)
         aggregate(mappings: :service).where(name: name).map_to(Attr).one
-      end
-
-      def create_with_mappings(data)
-        assoc(:mappings).create(data)
       end
 
       def add_mapping(attr, data)

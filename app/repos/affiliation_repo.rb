@@ -3,7 +3,7 @@
 module Yuzakan
   module Repos
     class AffiliationRepo < Yuzakan::DB::Repo
-      # compatible interface
+      # compatible interfaces
       commands :create, use: :timestamps,
         plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
       commands update: :by_pk, use: :timestamps,
@@ -15,7 +15,7 @@ module Yuzakan
       def last = affiliations.last
       def clear = affiliations.delete
 
-      # common interface
+      # common interfaces
       private def by_name(name) = affiliations.by_name(normalize_name(name))
       def get(name) = by_name(name).one
 

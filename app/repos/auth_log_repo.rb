@@ -3,6 +3,7 @@
 module Yuzakan
   module Repos
     class AuthLogRepo < Yuzakan::DB::Repo
+      # compatible interfaces
       commands :create, use: :timestamps,
         plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
       commands update: :by_pk, use: :timestamps,
@@ -14,6 +15,7 @@ module Yuzakan
       def last = auth_logs.last
       def clear = auth_logs.delete
 
+      # other interfaces
       def recent(user, type: :auth, period: nil, limit: 0, includes: nil, excludes: nil)
         period = Time.now - period if period.is_a?(Numeric)
 

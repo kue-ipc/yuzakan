@@ -5,38 +5,22 @@ require "ipaddr"
 module Yuzakan
   module Repos
     class NetworkRepo < Yuzakan::DB::Repo
-      private def by_ip(ip) = networks.by_ip(ip)
-
-      def get(ip)
-        return get(IPAddr.new(ip)) if ip.is_a?(String)
-
-        by_ip(ip).one
-      end
-
-      def set(ip, **)
-        return set(IPAddr.new(ip), **) if ip.is_a?(String)
-
-        by_ip(ip).changeset(:update, **).map(:touch).commit ||
-          networks.changeset(:create, **, ip: ip).map(:add_timestamps).commit
-      end
-
-      def unset(ip)
-        return unset(IPAddr.new(ip)) if ip.is_a?(String)
-
-        by_ip(ip).changeset(:delete).commit
-      end
-
-      def all
-        networks.to_a
-      end
-
-      def count
-        networks.count
-      end
+      # compatible interfaces
+      commands :create, use: :timestamps,
+        plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
+      commands update: :by_pk, use: :timestamps,
+        plugins_options: {timestamps: {timestamps: [:updated_at]}}
+      commands delete: :by_pk
+      def all = networks.to_a
+      def find(id) = networks.by_pk(id).one
+      def first = networks.first
+      def last = networks.last
+      def clear = networks.delete
 
       def find_include(addr)
         return if addr.nil?
-        return find_include(IPAddr.new(addr)) if addr.is_a?(String)
+
+        addr = IPAddr.new(addr) unless addr.is_a?(IPAddr)
 
         networks.where { Sequel.lit("ip >>= ?", addr.to_s) }
           .order { masklen(ip) }.last
