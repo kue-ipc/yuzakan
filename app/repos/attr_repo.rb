@@ -34,7 +34,13 @@ module Yuzakan
       end
 
       def create_with_mappings(**)
-        attrs.combine(mappings).command(:create).call(**)
+        attrs.combine(mappings)
+          .command(:create, use: :timestamps, plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}})
+          .call(**)
+      end
+
+      def last_order
+        attrs.order(:order).pluck(:order).last&.to_i
       end
 
       # TODO: 個々から下は未整理
@@ -47,9 +53,6 @@ module Yuzakan
         attrs.order(:order, :name).to_a
       end
 
-      def last_order
-        attrs.order(:order).last&.fetch(:order).to_i
-      end
 
       def ordered_all_with_mappings
         aggregate(mappings: :service).order(:order,

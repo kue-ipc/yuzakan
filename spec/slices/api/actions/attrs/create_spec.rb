@@ -11,7 +11,7 @@ RSpec.describe API::Actions::Attrs::Create do
   }
   let(:action_params) {
     attr.to_h.except(:id).merge({
-      mappings: mappings.to_h,
+      mappings: [mapping.to_h],
     })
   }
 

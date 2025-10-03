@@ -29,15 +29,13 @@ module Yuzakan
       def list = services.pluck(:name)
 
       # other interfaces
-      private def ordered = services.order(:order, :name)
-
       def all_with_abilities(*abilities)
         condition = abilities.to_h { |k| [k, true] }
-        ordered.where(condition).to_a
+        services.where(condition).to_a
       end
 
       def mget(*names)
-        ordered.where(name: names.map { |name| normalize_name(name) }).to_a
+        servicse.where(name: names.map { |name| normalize_name(name) }).to_a
       end
 
       # TODO: 整理が必要

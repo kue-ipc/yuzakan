@@ -3,19 +3,14 @@
 module Yuzakan
   module Relations
     class Mappings < Yuzakan::DB::Relation
-      CONVERSIONS = %w[
-        posix_time
-        posix_date
-        path
-        e2j
-        j2e
+      TYPES = %w[
+        boolean
+        string
+        number
       ].freeze
 
       TRUE_STR_VALUES = %w[true yes on].freeze
-      TRUE_VALUES = [true, 1] +
-        TRUE_STR_VALUES +
-        TRUE_STR_VALUES.map(&:upcase) +
-        TRUE_STR_VALUES.map(&:intern)
+      TRUE_VALUES = [true, 1] + TRUE_STR_VALUES + TRUE_STR_VALUES.map(&:upcase) + TRUE_STR_VALUES.map(&:intern)
 
       FALSE_STR_VALUES = %w[false no off].freeze
       FALSE_VALUES = [nil, false, 0] +
@@ -33,8 +28,6 @@ module Yuzakan
       ].freeze
       E2J_DICT = E2J_LIST.to_h
       J2E_DICT = E2J_LIST.to_h(&:reverse)
-
-
 
       schema :mappings, infer: true do
         associations do

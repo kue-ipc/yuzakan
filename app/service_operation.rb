@@ -95,7 +95,7 @@ module Yuzakan
         else
           mapping_repo.all_with_attrs_by_service(service)
         end
-      mappings.select { |mapping| mapping.category_of?(category) } if category
+      mappings.select { |mapping| mapping.attr.category == category } if category
 
       Success(mappings)
     end

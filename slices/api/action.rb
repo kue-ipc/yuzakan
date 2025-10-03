@@ -60,5 +60,27 @@ module API
     private def view_options(request, response)
       super.merge({status: response.status, location: request.path})
     end
+
+    # common methods
+    private def check_params!(request, response)
+      return if request.params.valid?
+
+      response.flash[:invalid] = request.params.errors
+      halt_json request, response, 422
+    end
+
+    private def unique_name!(request, response, repo)
+      return unless repo.get(request.params[:name])
+
+      response.flash[:invalid] = {name: [t("errors.uniq?")]}
+      halt_json request, response, 422
+    end
+
+    private def get_by_id!(request, response, repo)
+      struct = repo.get(request.params[:id])
+      return struct if struct
+
+      halt_json request, response, 404
+    end
   end
 end

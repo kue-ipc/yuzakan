@@ -23,29 +23,40 @@ module API
           optional(:code).maybe(:str?, max_size?: 4096)
           optional(:mappings).array(:hash) do
             required(:service).filled(:name, max_size?: 255)
-            required(:key).maybe(:str?, max_size?: 255)
-            optional(:conversion).maybe(included_in?: Yuzakan::Relations::Mappings::CONVERSIONS)
+            required(:key).filled(:str?, max_size?: 255)
+            required(:type).filled(:str?, included_in?: Yuzakan::Relations::Mappings::TYPES)
+            optional(:params).maybe(:any?)
           end
         end
 
         def handle(request, response)
-          unless request.params.valid?
-            response.flash[:invalid] = request.params.errors
-            halt_json request, response, 422
-          end
+          check_params!(request, response)
+          unique_name!(request, response, attr_repo)
 
-          # TODO: ここから下はまだ見てない
+          mappings = take_mappings(request, response)
 
-          if @attr_repository.exist_by_name?(params[:name])
-            halt_json 422,
-              errors: [{name: [t("errors.uniq?")]}]
-          end
+          attr = attr_repo.create_with_mappings(
+            **request.params.to_h.except(:order, :mappings),
+            order: request.params[:order] || next_order,
+            mappings: mappings)
 
+          response.status = :created
+          response.headers["Content-Location"] = "/api/attrs/#{attr.name}"
+          response[:location] = "/api/attrs/#{attr.name}"
+          response[:attr] = attr
+          response.render(show_view)
+        end
+
+        private def next_order
+          attr_repo.last_order + 1
+        end
+
+        private def take_mappings(request, response)
           mapping_errors = {}
-          mappings = (params[:mappings] || []).each_with_index.map do |mapping, idx|
-            next if mapping[:key].nil? || mapping[:key].empty?
 
-            service = service_by_name(mapping[:service])
+          services = service_repo.mget(*request.params[:mappings].map { _1[:service] }.uniq)
+          mappings = request.params[:mappings].each_with_index.map do |mapping, idx|
+            service = services[mapping[:service]]
             if service.nil?
               mapping_errors[idx] = {service: [t("errors.found?")]}
               next
@@ -53,20 +64,13 @@ module API
 
             {**mapping.except(:service), service_id: service&.id}
           end.compact
+
           unless mapping_errors.empty?
-            halt_json 422,
-              errors: [{mappings: mapping_errors}]
+            response.flash[:invalid] = {mappings: mapping_errors}
+            halt_json request, response, 422
           end
 
-          order = params[:order] || (@attr_repository.last_order + 8)
-          @attr = @attr_repository.create_with_mappings(
-            **params.to_h.except(:mapping),
-            order: order,
-            mappings: mappings)
-
-          self.status = 201
-          headers["Content-Location"] = routes.attr_path(@attr.name)
-          self.body = generate_json(@attr, assoc: true)
+          mappings
         end
 
         private def service_by_name(name)
