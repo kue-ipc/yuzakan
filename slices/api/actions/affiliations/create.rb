@@ -18,19 +18,10 @@ module API
         end
 
         def handle(request, response)
-          unless request.params.valid?
-            response.flash[:invalid] = request.params.errors
-            halt_json request, response, 422
-          end
+          check_params_validation(request, response)
+          check_unique_name(request, response, affiliation_repo)
 
-          name = request.params[:name]
-
-          if affiliation_repo.get(name)
-            response.flash[:invalid] = {name: [t("errors.uniq?")]}
-            halt_json request, response, 422
-          end
-
-          affiliation = affiliation_repo.set(name, **request.params)
+          affiliation = affiliation_repo.set(request.params[:name], **request.params)
 
           response.status = :created
           response.headers["Content-Location"] = "/api/affiliations/#{affiliation.name}"

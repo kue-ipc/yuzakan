@@ -16,13 +16,8 @@ module API
         end
 
         def handle(request, response)
-          unless request.params.valid?
-            response.flash[:invalid] = request.params.errors
-            halt_json request, response, 422
-          end
-
-          affiliation = affiliation_repo.get(request.params[:id].to_s)
-          halt_json request, response, 404 if affiliation.nil?
+          check_params_validation(request, response)
+          affiliation = get_by_id(request, response, affiliation_repo)
 
           affiliation_repo.unset(affiliation.name)
 

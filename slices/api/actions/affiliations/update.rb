@@ -19,27 +19,13 @@ module API
         end
 
         def handle(request, response)
-          unless request.params.valid?
-            response.flash[:invalid] = request.params.errors
-            halt_json request, response, 422
-          end
+          check_params_validation(request, response)
+          get_by_id(request, response, affiliation_repo)
+          check_unique_name(request, response, affiliation_repo)
 
-          id = request.params[:id]
-          name = request.params[:name]
+          affiliation = affiliation_repo.set(request.params[:id], **request.params)
 
-          affiliation =
-            affiliation_repo.transaction do
-              halt_json request, response, 404 if affiliation_repo.get(id).nil?
-
-              if name && name != id && affiliation_repo.get(name)
-                response.flash[:invalid] = {name: [t("errors.uniq?")]}
-                halt_json request, response, 422
-              end
-
-              affiliation_repo.set(name, **request.params)
-            end
-
-          if name && name != id
+          if request.params[:id] != affiliation.name
             response.headers["Content-Location"] = "/api/affiliations/#{affiliation.name}"
             response[:location] = "/api/affiliations/#{affiliation.name}"
           end

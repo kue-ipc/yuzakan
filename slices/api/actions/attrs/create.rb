@@ -29,8 +29,8 @@ module API
         end
 
         def handle(request, response)
-          check_params!(request, response)
-          unique_name!(request, response, attr_repo)
+          check_params_validation(request, response)
+          check_unique_name(request, response, attr_repo)
 
           mappings = take_mappings(request, response)
 

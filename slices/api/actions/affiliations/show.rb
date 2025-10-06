@@ -15,21 +15,14 @@ module API
         end
 
         def handle(request, response)
-          unless request.params.valid?
-            response.flash[:invalid] = request.params.errors
-            halt_json request, response, 422
-          end
-
-          id = request.params[:id]
+          check_params_validation(request, response)
 
           affiliation =
-            if id == "~"
+            if request.params[:id] == "~"
               affiliation_repo.find(response[:current_user].affiliation_id)
             else
-              affiliation_repo.get(id)
+              get_by_id(request, response, affiliation_repo)
             end
-
-          halt_json request, response, 404 if affiliation.nil?
 
           response[:affiliation] = affiliation
         end
