@@ -16,7 +16,6 @@ module Yuzakan
       # common interfaces
       private def by_name(name) = groups.by_name(name)
       def get(name) = by_name(name).one
-      def get(name) = by_name(name).one
       private def set_update(name, **) = by_name(name).command(:update, **UPDATE_TIMESTAMP).call(**)
       def set(name, **) = set_update(name, **) || create(name: name, **)
       def unset(name) = by_name(name).command(:delete).call
