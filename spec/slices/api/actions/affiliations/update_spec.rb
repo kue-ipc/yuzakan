@@ -10,7 +10,7 @@ RSpec.describe API::Actions::Affiliations::Update do
   let(:action_params) {
     {
       id: "affiliation42",
-      **affiliation.to_h.except(:id, :name, :created_at, :updated_at),
+      **struct_to_hash(affiliation, except: [:name]),
     }
   }
 

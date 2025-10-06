@@ -7,7 +7,7 @@ RSpec.describe API::Actions::Affiliations::Create do
     allow(affiliation_repo).to receive_messages(exist?: false, set: affiliation)
     {affiliation_repo: affiliation_repo}
   }
-  let(:action_params) { affiliation.to_h.except(:id, :created_at, :updated_at) }
+  let(:action_params) { struct_to_hash(affiliation) }
 
   shared_context "when exist" do
     let(:action_opts) {
