@@ -6,6 +6,8 @@ plugins:
 AllCops:
   TargetRubyVersion: 3.3
   NewCops: enable
+  Exclude:
+    - spec_old/**/*_spec.rb
 
 Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation
@@ -21,7 +23,6 @@ Layout/LineLength:
   Max: 120
   Exclude:
     - spec/**/*_spec.rb
-    - spec_old/**/*_spec.rb
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
 Layout/MultilineMethodCallBraceLayout:
@@ -37,6 +38,7 @@ Lint/Void:
   Enabled: false
 
 # double size metrics
+
 Metrics/AbcSize:
   Max: 30
   AllowedMethods:
@@ -93,9 +95,6 @@ Naming/MethodParameterName:
     - to
     - dn
     - iv
-Naming/PredicateName:
-  ForbiddenPrefixes: 
-    - is_
 
 Style/AccessModifierDeclarations:
   EnforcedStyle: inline
@@ -144,6 +143,7 @@ Lint/EmptyBlock:
   Exclude:
     - spec/**/*_spec.rb
     - spec_old/**/*_spec.rb
+
 # applications
 
 Bundler/OrderedGems:
@@ -161,4 +161,3 @@ RSpec/SpecFilePathFormat:
   IgnoreMethods: true
   CustomTransform:
     Yuzakan: .
-
