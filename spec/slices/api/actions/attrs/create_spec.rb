@@ -4,7 +4,7 @@ RSpec.describe API::Actions::Attrs::Create do
   init_action_spec
 
   let(:action_opts) {
-    allow(attr_repo).to receive_messages(get: nil, last_order: 9999, create_with_mappings: attr)
+    allow(attr_repo).to receive_messages(exist?: false, last_order: 9999, create_with_mappings: attr)
     allow(service_repo).to receive_messages(all: [mapping.service])
     {
       attr_repo: attr_repo,
@@ -126,7 +126,7 @@ RSpec.describe API::Actions::Attrs::Create do
 
     describe "when exist" do
       let(:action_opts) {
-        allow(attr_repo).to receive_messages(get: attr)
+        allow(attr_repo).to receive_messages(exist?: true)
         {
           attr_repo: attr_repo,
           service_repo: service_repo,
@@ -154,7 +154,7 @@ RSpec.describe API::Actions::Attrs::Create do
     describe "not found service" do
       # サービス一覧が異なるので見つからなくなる。
       let(:action_opts) {
-        allow(attr_repo).to receive_messages(get: nil)
+        allow(attr_repo).to receive_messages(exist?: false)
         allow(service_repo).to receive_messages(all: [service])
         {
           attr_repo: attr_repo,
