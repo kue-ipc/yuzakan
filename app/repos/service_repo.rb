@@ -35,7 +35,7 @@ module Yuzakan
       end
 
       def mget(*names)
-        servicse.where(name: names.map { |name| normalize_name(name) }).to_a
+        services.where(name: names.map { |name| normalize_name(name) }).to_a
       end
 
       # TODO: 整理が必要

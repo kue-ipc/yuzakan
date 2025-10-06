@@ -4,7 +4,7 @@ RSpec.describe API::Views::Parts::Group, :db do
   init_part_spec
 
   let(:value) {
-    Hanami.app["repos.group_repo"].get_with_affilitaion(Factory[:group].name)
+    Hanami.app["repos.group_repo"].get_with_affiliation(Factory[:group].name)
   }
 
   it_behaves_like "to_h with simple"

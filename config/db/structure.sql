@@ -2,8 +2,10 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.8
--- Dumped by pg_dump version 16.8
+\restrict on13oTFLnWtNPFTeM9DR9kXdUaVDfZeXxVeqqpPKmpMDIS8cC0gyCGM0Jvr9tii
+
+-- Dumped from database version 16.10
+-- Dumped by pg_dump version 16.10
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -685,6 +687,13 @@ CREATE INDEX action_logs_uuid_index ON public.action_logs USING btree (uuid);
 
 
 --
+-- Name: affiliations_name_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX affiliations_name_index ON public.affiliations USING btree (name);
+
+
+--
 -- Name: attrs_category_index; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -985,6 +994,8 @@ ALTER TABLE ONLY public.users
 --
 -- PostgreSQL database dump complete
 --
+
+\unrestrict on13oTFLnWtNPFTeM9DR9kXdUaVDfZeXxVeqqpPKmpMDIS8cC0gyCGM0Jvr9tii
 
 SET search_path TO "$user", public;
 

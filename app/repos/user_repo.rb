@@ -30,7 +30,7 @@ module Yuzakan
 
       # other interfaces
 
-      def get_with_affilitaion(name)
+      def get_with_affiliation(name)
         by_name(name).combine(:affiliation).one
       end
 
@@ -38,7 +38,7 @@ module Yuzakan
         by_name(name).combine(:group, members: :group).one
       end
 
-      def get_with_affilitaion_and_groups(name)
+      def get_with_affiliation_and_groups(name)
         by_name(name).combine(:affiliation, :group, members: :group).one
       end
 

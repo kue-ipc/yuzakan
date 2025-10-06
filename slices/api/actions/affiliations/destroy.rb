@@ -16,10 +16,10 @@ module API
         end
 
         def handle(request, response)
-          check_params_validation(request, response)
-          affiliation = get_by_id(request, response, affiliation_repo)
+          check_params(request, response)
+          check_exist_id(request, response, affiliation_repo)
 
-          affiliation_repo.unset(affiliation.name)
+          affiliation = affiliation_repo.unset(request.params[:id])
 
           response[:affiliation] = affiliation
           response.render(show_view)

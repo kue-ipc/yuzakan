@@ -4,14 +4,14 @@ RSpec.describe API::Actions::Affiliations::Show do
   init_action_spec
 
   let(:action_opts) {
-    allow(affiliation_repo).to receive_messages(get: affiliation)
+    allow(affiliation_repo).to receive_messages(exist?: true, get: affiliation)
     {affiliation_repo: affiliation_repo}
   }
   let(:action_params) { {id: "affiliation42"} }
 
   shared_context "when not exist" do
     let(:action_opts) {
-      allow(affiliation_repo).to receive_messages(get: nil)
+      allow(affiliation_repo).to receive_messages(exist?: false)
       {affiliation_repo: affiliation_repo}
     }
   end
