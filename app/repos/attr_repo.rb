@@ -53,7 +53,6 @@ module Yuzakan
         attrs.order(:order, :name).to_a
       end
 
-
       def ordered_all_with_mappings
         aggregate(mappings: :service).order(:order,
           :name).map_to(Attr).to_a

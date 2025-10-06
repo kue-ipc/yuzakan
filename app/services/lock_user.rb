@@ -8,6 +8,7 @@ module Yuzakan
     class LockUser < Yuzakan::ServiceOperation
       class Validator
         include Hanami::Validations
+
         predicates NamePredicates
         messages :i18n
 

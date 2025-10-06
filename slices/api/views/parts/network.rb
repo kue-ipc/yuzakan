@@ -15,7 +15,6 @@ module API
         def to_json(...) = helpers.params_to_json(to_h, ...)
 
         def ip_to_s(ip)
-
         end
       end
     end

@@ -10,6 +10,7 @@ module Yuzakan
 
       class Validator
         include Hanami::Validations
+
         predicates NamePredicates
         messages :i18n
 

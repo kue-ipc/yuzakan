@@ -12,7 +12,7 @@ module Yuzakan
         step authenticate(username, password, services)
       end
 
-      private def authenticate(username, password, services)
+      private def authenticate(_username, _password, services)
         services.each do |service|
           adapter = step get_adapter(service)
           adapter.status

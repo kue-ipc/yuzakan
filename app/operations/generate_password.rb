@@ -20,6 +20,7 @@ module Yuzakan
       include Deps[
         "repo.config_repo"
       ]
+
       def call
         config = step current_config
         rule = step rule_from_config(config)

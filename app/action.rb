@@ -42,6 +42,7 @@ module Yuzakan
 
     # Cache
     include Hanami::Action::Cache
+
     cache_control :private, :no_cache
 
     # handle

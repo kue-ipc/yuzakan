@@ -231,13 +231,13 @@ def let_mock_repositories
     [
       service_attriubtes,
       {**service_attriubtes, id: 1, name: "service1", label: "プロ1",
-                              order: 8,},
+                             order: 8,},
       {**service_attriubtes, id: 2, name: "service2", label: "プロ2",
-                              order: 32,},
+                             order: 32,},
       {**service_attriubtes, id: 3, name: "service3", label: nil,
-                              order: 16,},
+                             order: 16,},
       {**service_attriubtes, id: 4, name: "self_management_service",
-                              self_management: true,},
+                             self_management: true,},
     ]
   }
 

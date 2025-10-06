@@ -9,12 +9,10 @@ module Yuzakan
         conversion = step verify_conversion(conversion)
         params = step verify_params(params, conversion)
 
-        value = step map(value, conversion, **params)
-        value
+        step map(value, conversion, **params)
       end
 
-      private def convert(value, conversion, **params)
-
+      private def convert(value, conversion, **_params)
         return if value.nil?
         return value if conversion.nil?
 
@@ -56,7 +54,6 @@ module Yuzakan
           value
         end
       end
-
     end
   end
 end

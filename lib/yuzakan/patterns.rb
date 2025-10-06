@@ -12,6 +12,7 @@ module Yuzakan
   module Patterns
     class Pattern
       extend Forwardable
+
       attr_reader :pattern, :ruby, :ecma_script
 
       def initialize(pattern)

@@ -3,7 +3,7 @@
 RSpec.describe API::Views::Parts::Auth do
   init_part_spec
 
-  let(:value) { {username: user.name } }
+  let(:value) { {username: user.name} }
 
   it "to_h" do
     data = subject.to_h

@@ -12,11 +12,10 @@ module Yuzakan
         conversion = step verify_conversion(conversion)
         params = step verify_params(params, conversion)
 
-        value = step map(value, conversion, **params)
-        value
+        step map(value, conversion, **params)
       end
 
-      private def map(value, conversion, **params)
+      private def map(value, conversion, **_params)
         case conversion
         in "posix_time"
           value.to_time.to_i

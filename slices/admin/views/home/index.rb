@@ -80,7 +80,8 @@ module Admin
               color: menu[:color],
             }.merge(if menu[:filename] then {type: :download,
                                              filename: menu[:filename],} else
-                                                                           {} end)
+                                                                           {}
+                    end)
           end.compact
         end
       end

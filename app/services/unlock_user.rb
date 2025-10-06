@@ -7,6 +7,7 @@ module Yuzakan
     class UnlockUser < Yuzakan::ServiceOperation
       class Validator
         include Hanami::Validations
+
         predicates NamePredicates
         messages :i18n
 

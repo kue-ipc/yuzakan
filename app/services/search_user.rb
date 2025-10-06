@@ -26,20 +26,18 @@ module Yuzakan
       end
     end
 
-          def user_list
-        need_adapter!
-        @cache_store.fetch(user_list_key) do
-          @cache_store[user_list_key] = @adapter.user_list
-        end
+    def user_list
+      need_adapter!
+      @cache_store.fetch(user_list_key) do
+        @cache_store[user_list_key] = @adapter.user_list
       end
+    end
 
-            def user_search(query)
-        need_adapter!
-        @cache_store.fetch(user_search_key(query)) do
-          @cache_store[user_search_key(query)] = @adapter.user_search(query)
-        end
+    def user_search(query)
+      need_adapter!
+      @cache_store.fetch(user_search_key(query)) do
+        @cache_store[user_search_key(query)] = @adapter.user_search(query)
       end
-
-
+    end
   end
 end

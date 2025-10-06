@@ -10,6 +10,7 @@ module Yuzakan
 
       class Validator
         include Hanami::Validations::Form
+
         messages_path "config/messages.yml"
 
         validations do
