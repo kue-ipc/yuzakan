@@ -6,7 +6,6 @@ module API
       class Create < API::Action
         include Deps[
           "repos.attr_repo",
-          "repos.mapping_repo",
           "repos.service_repo",
           show_view: "views.attrs.show"
         ]
@@ -25,7 +24,7 @@ module API
             required(:service).filled(:name, max_size?: 255)
             required(:key).filled(:str?, max_size?: 255)
             required(:type).filled(:str?, included_in?: Yuzakan::Relations::Mappings::TYPES)
-            optional(:params).maybe(:any?)
+            optional(:params).value(:hash)
           end
         end
 
@@ -52,11 +51,12 @@ module API
         end
 
         private def take_mappings(request, response)
-          mapping_errors = {}
+          # NOTE: N+1を避けるためにまとめて取得
+          service_map = service_repo.all.to_h { |service| [service.name, service] }
 
-          services = service_repo.mget(*request.params[:mappings].map { _1[:service] }.uniq)
+          mapping_errors = {}
           mappings = request.params[:mappings].each_with_index.map do |mapping, idx|
-            service = services[mapping[:service]]
+            service = service_map[mapping[:service]]
             if service.nil?
               mapping_errors[idx] = {service: [t("errors.found?")]}
               next
@@ -71,13 +71,6 @@ module API
           end
 
           mappings
-        end
-
-        private def service_by_name(name)
-          @named_services ||= @service_repository.all.to_h do |service|
-            [service.name, service]
-          end
-          @named_services[name]
         end
       end
     end

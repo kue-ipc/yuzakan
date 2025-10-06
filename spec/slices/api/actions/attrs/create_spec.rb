@@ -4,31 +4,20 @@ RSpec.describe API::Actions::Attrs::Create do
   init_action_spec
 
   let(:action_opts) {
+    allow(attr_repo).to receive_messages(get: nil, last_order: 9999, create_with_mappings: attr)
+    allow(service_repo).to receive_messages(all: [mapping.service])
     {
       attr_repo: attr_repo,
       service_repo: service_repo,
     }
   }
-  let(:action_params) {
-    attr.to_h.except(:id).merge({
-      mappings: [mapping.to_h],
-    })
-  }
 
-  shared_examples "created" do
-    it "is created" do
-      response = action.call(params)
-      expect(response).to be_successful
-      expect(response.status).to eq 201
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      expect(response.headers["Content-Location"]).to eq "/api/attrs/#{attr.name}"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({
-        **attr.to_h.except(:id),
-        mappings: mappings.map { |mapping| mapping.to_h.except(:id) },
-      })
-    end
-  end
+  let(:action_params) {
+    {
+      **struct_to_hash(attr, except: [:mappings]),
+      mappings: [struct_to_hash(mapping, except: [:attr])],
+    }
+  }
 
   it_behaves_like "forbidden"
 
@@ -55,7 +44,18 @@ RSpec.describe API::Actions::Attrs::Create do
   context "when superuser" do
     include_context "when superuser"
 
-    it_behaves_like "created"
+    it "is created" do
+      response = action.call(params)
+      expect(response).to be_successful
+      expect(response.status).to eq 201
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      expect(response.headers["Content-Location"]).to eq "/api/attrs/#{attr.name}"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:data]).to eq({
+        **struct_to_hash(attr, except: [:mappings]),
+        mappings: attr.mappings.map { |mapping| struct_to_hash(mapping, except: [:attr]) },
+      })
+    end
 
     it "is created without order param" do
       response = action.call(params.except(:order))
@@ -65,8 +65,8 @@ RSpec.describe API::Actions::Attrs::Create do
       expect(response.headers["Content-Location"]).to eq "/api/attrs/#{attr.name}"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:data]).to eq({
-        **attr.to_h.except(:id),
-        mappings: mappings.map { |mapping| mapping.to_h.except(:id) },
+        **struct_to_hash(attr, except: [:mappings]),
+        mappings: attr.mappings.map { |mapping| struct_to_hash(mapping, except: [:attr]) },
       })
     end
 
@@ -76,7 +76,7 @@ RSpec.describe API::Actions::Attrs::Create do
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:flash]).to eq({invalid: {name: ["名前付けの規則に違反しています。"]}})
+      expect(json[:flash]).to eq({invalid: {name: ["形式が間違っています。"]}})
     end
 
     it "is failure with name over" do
@@ -110,8 +110,8 @@ RSpec.describe API::Actions::Attrs::Create do
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:flash]).to eq({invalid: {mappings: {
-        "0": {service: ["入力が必須です。"], key: ["存在しません。"]},
-        "1": {service: ["存在しません。"], key: ["存在しません。"]},
+        "0": {service: ["入力が必須です。"], key: ["存在しません。"], type: ["存在しません。"]},
+        "1": {service: ["存在しません。"], key: ["存在しません。"], type: ["存在しません。"]},
       }}})
     end
 
@@ -124,8 +124,14 @@ RSpec.describe API::Actions::Attrs::Create do
       expect(json[:flash]).to eq({invalid: {name: ["存在しません。"], type: ["存在しません。"]}})
     end
 
-    describe "existed name" do
-      let(:attr_repository) { instance_double(AttrRepository, **attr_repository_stubs, exist_by_name?: true) }
+    describe "when exist" do
+      let(:action_opts) {
+        allow(attr_repo).to receive_messages(get: attr)
+        {
+          attr_repo: attr_repo,
+          service_repo: service_repo,
+        }
+      }
 
       it "is failure" do
         response = action.call(params)
@@ -141,16 +147,19 @@ RSpec.describe API::Actions::Attrs::Create do
         expect(response.status).to eq 422
         expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
-        expect(json[:flash]).to eq({invalid: {name: ["名前付けの規則に違反しています。"]}})
+        expect(json[:flash]).to eq({invalid: {name: ["形式が間違っています。"]}})
       end
     end
 
     describe "not found service" do
-      # service1のみない
-      let(:services) {
-        services_attributes
-          .reject { |attributes| attributes[:name] == "service1" }
-          .map { |attributes| Service.new(attributes) }
+      # サービス一覧が異なるので見つからなくなる。
+      let(:action_opts) {
+        allow(attr_repo).to receive_messages(get: nil)
+        allow(service_repo).to receive_messages(all: [service])
+        {
+          attr_repo: attr_repo,
+          service_repo: service_repo,
+        }
       }
 
       it "is failure" do
@@ -159,7 +168,7 @@ RSpec.describe API::Actions::Attrs::Create do
         expect(response.status).to eq 422
         expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
-        expect(json[:flash]).to eq({mappings: {"1": {service: ["見つかりません。"]}}})
+        expect(json[:flash]).to eq({invalid: {mappings: {"0": {service: ["見つかりません。"]}}}})
       end
     end
   end

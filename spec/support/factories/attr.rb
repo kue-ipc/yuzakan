@@ -10,6 +10,7 @@ Factory.define(:attr) do |f|
   f.hidden false # default
   f.readonly false # default
   f.code "" # default
+  f.association(:mappings, count: 2)
   f.timestamps
 end
 

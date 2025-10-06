@@ -88,7 +88,7 @@ RSpec.describe API::Actions::Affiliations::Create do
       it_behaves_like "failure params"
       it_behaves_like "failure name duplication"
     end
-      end
+  end
 
   it_behaves_like "forbidden"
 

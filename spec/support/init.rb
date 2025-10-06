@@ -291,4 +291,5 @@ def let_structs
   let(:mapping) { Factory.structs[:mapping] }
   let(:auth_log) { Factory.structs[:auth_log] }
   let(:action_log) { Factory.structs[:action_log] }
+  let(:attr_with_mappings) { Factory.structs[:attr_with_mappings] }
 end
