@@ -214,9 +214,9 @@ UreateUser := (state) -> [state, [runUpdateUser, {name: state.name, user: state.
 
 DestroyUser := (state) -> [state, [runDestroyUser, {name: state.name}]]
 
-CreatPasswordUser := (state) -> [state, [runCreatePasswordUser, {user: state.user}]]
+CreatePasswordUser := (state) -> [state, [runCreatePasswordUser, {user: state.user}]]
 
-CreatLockUser := (state) -> [state, [runCreateLockUser, {name: state.name}]]
+CreaetLockUser := (state) -> [state, [runCreateLockUser, {name: state.name}]]
 
 DestroyLockUser := (state) -> [state, [runDestroyLockUser, {name: state.name}]]
 
@@ -232,7 +232,7 @@ export default userOperation := ({option}) ->
     html.div {}, [
       html.button {
         class: "btn btn-warning"
-        onclick: CreatPasswordUser
+        onclick: CreatePasswordUser
       }, text "パスワードリセット"
     ]
     html.p {}, text "その他は準備中です..."
@@ -278,11 +278,11 @@ export default userOperation := ({option}) ->
 //         html.div {}, [
 //           html.button {
 //             class: "btn btn-warning"
-//             onclick: CreatPasswordUser
+//             onclick: CreatePasswordUser
 //           }, text "パスワードリセット"
 //           html.button {
 //             class: "btn btn-primary ms-2"
-//             onclick: CreatLockUser
+//             onclick: CreateLockUser
 //           }, text "ロック"
 //           html.button {
 //             class: "btn btn-secondary ms-2"
