@@ -3,18 +3,20 @@
 RSpec.describe API::Actions::Attrs::Update do
   init_action_spec
 
-  let(:action_opts) {
-    allow(attr_repo).to receive(:get).and_return(attr)
+    let(:action_opts) {
+    allow(attr_repo).to receive_messages(exist?: false, last_order: 9999, set: attr)
+    allow(service_repo).to receive_messages(all: [mapping.service])
     {
       attr_repo: attr_repo,
       service_repo: service_repo,
     }
   }
+
   let(:action_params) {
     {
       id: "attr42",
-      **attr.to_h.except(:id),
-      mappings: mappings.to_h,
+      **struct_to_hash(attr, except: [:mappings]),
+      mappings: [struct_to_hash(mapping, except: [:attr])],
     }
   }
 
@@ -26,8 +28,8 @@ RSpec.describe API::Actions::Attrs::Update do
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:data]).to eq({
-        **attr.to_h.except(:id),
-        mappings: mappings.map { |mapping| mapping.to_h.except(:id) },
+        **struct_to_hash(attr, except: [:mappings]),
+        mappings: attr.mappings.map { |mapping| struct_to_hash(mapping, except: [:attr]) },
       })
     end
   end

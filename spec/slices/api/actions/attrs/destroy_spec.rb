@@ -2,10 +2,12 @@
 
 RSpec.describe API::Actions::Attrs::Destroy do
   init_action_spec
+
   let(:action_opts) {
-    allow(attr_repo).to receive_messages(get: attr, unset: attr)
+    allow(attr_repo).to receive_messages(exist?: true, unset: attr)
     {attr_repo: attr_repo}
   }
+
   let(:action_params) { {id: "attr42"} }
 
   shared_examples "ok" do
@@ -16,8 +18,8 @@ RSpec.describe API::Actions::Attrs::Destroy do
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:data]).to eq({
-        **attr.to_h.except(:id),
-        mappings: mappings.map { |mapping| mapping.to_h.except(:id) },
+        **struct_to_hash(attr, except: [:mappings]),
+        mappings: attr.mappings.map { |mapping| struct_to_hash(mapping, except: [:attr]) },
       })
     end
   end
@@ -51,7 +53,7 @@ RSpec.describe API::Actions::Attrs::Destroy do
 
     describe "not existend" do
       let(:action_opts) {
-        allow(action_repo).to receive_messages(get: nil, unset: nil)
+        allow(action_repo).to receive_messages(exist?: false)
         {attr_repo: attr_repo}
       }
 
