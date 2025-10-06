@@ -7,8 +7,8 @@ module Yuzakan
       alias current get
 
       def set(**)
-        configs.changeset(:update, **).map(:touch).commit ||
-          configs.changeset(:create, **).map(:add_timestamps).commit
+        configs.command(:update, **UPDATE_TIMESTAMP).call(**) ||
+          configs.command(:create, **CREATE_TIMESTAMP).call(**)
       end
     end
   end

@@ -3,11 +3,9 @@
 module Yuzakan
   module Repos
     class AttrRepo < Yuzakan::DB::Repo
-      # compatible interface
-      commands :create, use: :timestamps,
-        plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
-      commands update: :by_pk, use: :timestamps,
-        plugins_options: {timestamps: {timestamps: [:updated_at]}}
+      # compatible interfaces
+      commands :create, **CREATE_TIMESTAMP
+      commands update: :by_pk, **UPDATE_TIMESTAMP
       commands delete: :by_pk
       def all = attrs.to_a
       def find(id) = attrs.by_pk(id).one
@@ -16,15 +14,11 @@ module Yuzakan
       def clear = attrs.delete
 
       # common interfaces
-      private def by_name(name) = attrs.by_name(normalize_name(name))
+      private def by_name(name) = attrs.by_name(name)
       def get(name) = by_name(name).one
-
-      def set(name, **)
-        by_name(name).changeset(:update, **).map(:touch).commit ||
-          attrs.changeset(:create, **, name: normalize_name(name)).map(:add_timestamps).commit
-      end
-
-      def unset(name) = by_name(name).changeset(:delete).commit
+      private def set_update(name, **) = by_name(name).command(:update, **UPDATE_TIMESTAMP).call(**)
+      def set(name, **) = set_update(name, **) || create(name: name, **)
+      def unset(name) = by_name(name).command(:delete).call
       def exist?(name) = by_name(name).exist?
       def list = attrs.pluck(:name)
 
@@ -33,14 +27,23 @@ module Yuzakan
         by_name(name).combine(mappings: :service).one
       end
 
+      def set_with_mappings(name, mappings: nil, **params)
+
+      end
+
       def create_with_mappings(**)
         attrs.combine(mappings)
           .command(:create, use: :timestamps, plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}})
           .call(**)
       end
 
-      def last_order
-        attrs.order(:order).pluck(:order).last&.to_i
+      # なにもない場合は 0 を返す。
+      def last_order(category)
+        attrs.where(category: category).order(:order).pluck(:order).last&.to_i
+      end
+
+      def renumber_order(attr)
+
       end
 
       # TODO: 個々から下は未整理

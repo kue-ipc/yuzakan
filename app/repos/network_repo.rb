@@ -6,10 +6,8 @@ module Yuzakan
   module Repos
     class NetworkRepo < Yuzakan::DB::Repo
       # compatible interfaces
-      commands :create, use: :timestamps,
-        plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
-      commands update: :by_pk, use: :timestamps,
-        plugins_options: {timestamps: {timestamps: [:updated_at]}}
+      commands :create, **CREATE_TIMESTAMP
+      commands update: :by_pk, **UPDATE_TIMESTAMP
       commands delete: :by_pk
       def all = networks.to_a
       def find(id) = networks.by_pk(id).one
@@ -17,6 +15,7 @@ module Yuzakan
       def last = networks.last
       def clear = networks.delete
 
+      # other interfaces
       def find_include(addr)
         return if addr.nil?
 

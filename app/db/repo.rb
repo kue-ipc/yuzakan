@@ -5,9 +5,14 @@ require "hanami/db/repo"
 module Yuzakan
   module DB
     class Repo < Hanami::DB::Repo
-      private def normalize_name(name)
-        name.to_s.downcase
-      end
+      CREATE_TIMESTAMP = {
+        use: :timestamps,
+        plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}},
+      }.freeze
+      UPDATE_TIMESTAMP = {
+        use: :timestamps,
+        plugins_options: {timestamps: {timestamps: [:updated_at]}},
+      }.freeze
     end
   end
 end

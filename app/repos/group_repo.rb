@@ -4,10 +4,8 @@ module Yuzakan
   module Repos
     class GroupRepo < Yuzakan::DB::Repo
       # compatible interfaces
-      commands :create, use: :timestamps,
-        plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
-      commands update: :by_pk, use: :timestamps,
-        plugins_options: {timestamps: {timestamps: [:updated_at]}}
+      commands :create, **CREATE_TIMESTAMP
+      commands update: :by_pk, **UPDATE_TIMESTAMP
       commands delete: :by_pk
       def all = groups.to_a
       def find(id) = groups.by_pk(id).one
@@ -16,15 +14,12 @@ module Yuzakan
       def clear = groups.delete
 
       # common interfaces
-      private def by_name(name) = groups.by_name(normalize_name(name))
+      private def by_name(name) = groups.by_name(name)
       def get(name) = by_name(name).one
-
-      def set(name, **)
-        by_name(name).changeset(:update, **).map(:touch).commit ||
-          groups.changeset(:create, **, name: normalize_name(name)).map(:add_timestamps).commit
-      end
-
-      def unset(name) = by_name(name).changeset(:delete).commit
+      def get(name) = by_name(name).one
+      private def set_update(name, **) = by_name(name).command(:update, **UPDATE_TIMESTAMP).call(**)
+      def set(name, **) = set_update(name, **) || create(name: name, **)
+      def unset(name) = by_name(name).command(:delete).call
       def exist?(name) = by_name(name).exist?
       def list = groups.pluck(:name)
 

@@ -4,10 +4,8 @@ module Yuzakan
   module Repos
     class AuthLogRepo < Yuzakan::DB::Repo
       # compatible interfaces
-      commands :create, use: :timestamps,
-        plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}}
-      commands update: :by_pk, use: :timestamps,
-        plugins_options: {timestamps: {timestamps: [:updated_at]}}
+      commands :create, **CREATE_TIMESTAMP
+      commands update: :by_pk, **UPDATE_TIMESTAMP
       commands delete: :by_pk
       def all = auth_logs.to_a
       def find(id) = auth_logs.by_pk(id).one
