@@ -4,7 +4,7 @@ RSpec.describe API::Actions::Attrs::Create do
   init_action_spec
 
   let(:action_opts) {
-    allow(attr_repo).to receive_messages(exist?: false, last_order: 9999, create_with_mappings: attr)
+    allow(attr_repo).to receive_messages(exist?: false, last_order: 9999, create_with_mappings: attr, renumber_order: 0)
     allow(service_repo).to receive_messages(all: [mapping.service])
     {
       attr_repo: attr_repo,
@@ -121,7 +121,9 @@ RSpec.describe API::Actions::Attrs::Create do
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:flash]).to eq({invalid: {name: ["存在しません。"], type: ["存在しません。"]}})
+      expect(json[:flash]).to eq({invalid: {
+        name: ["存在しません。"], category: ["存在しません。"], type: ["存在しません。"],
+      }})
     end
 
     describe "when exist" do

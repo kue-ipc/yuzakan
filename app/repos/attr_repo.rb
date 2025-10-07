@@ -27,23 +27,32 @@ module Yuzakan
         by_name(name).combine(mappings: :service).one
       end
 
-      def set_with_mappings(name, mappings: nil, **params)
-
-      end
-
       def create_with_mappings(**)
-        attrs.combine(mappings)
-          .command(:create, use: :timestamps, plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}})
-          .call(**)
+        attrs.combine(:mappings).command(:create, **CREATE_TIMESTAMP).call(**)
       end
 
       # なにもない場合は 0 を返す。
       def last_order(category)
-        attrs.where(category: category).order(:order).pluck(:order).last&.to_i
+        attrs.where(category: category).order(:order).pluck(:order).last.to_i
       end
 
       def renumber_order(attr)
+        return 0 if attrs.where(category: attr.category, order: attr.order).count < 2
 
+        count = 0
+        transaction do
+          # OPTIMIZE: N+1 問題があるが、ROMではこの方法しかない。
+          attrs.exclude(id: attr.id)
+            .where(category: attr.category) { order >= attr.order }
+            .order(:order, :name).each.with_index do |a, idx|
+            new_order = attr.order + idx + 1
+            next if a.order == new_order
+
+            update(a.id, order: new_order)
+            count += 1
+          end
+        end
+        count
       end
 
       # TODO: 個々から下は未整理

@@ -15,11 +15,17 @@ module API
         params do
           required(:name).filled(:name, max_size?: 255)
           optional(:label).maybe(:str?, max_size?: 255)
+          optional(:description).maybe(:str?, max_size?: 16383)
+
+          required(:category).filled(:str?, included_in?: Yuzakan::Relations::Attrs::CATEGORIES)
           required(:type).filled(:str?, included_in?: Yuzakan::Relations::Attrs::TYPES)
+
           optional(:order).filled(:int?)
           optional(:hidden).filled(:bool?)
           optional(:readonly).filled(:bool?)
-          optional(:code).maybe(:str?, max_size?: 4096)
+
+          optional(:code).maybe(:str?, max_size?: 16383)
+
           optional(:mappings).array(:hash) do
             required(:service).filled(:name, max_size?: 255)
             required(:key).filled(:str?, max_size?: 255)
@@ -36,8 +42,9 @@ module API
 
           attr = attr_repo.create_with_mappings(
             **request.params.to_h.except(:order, :mappings),
-            order: request.params[:order] || next_order,
+            order: request.params[:order] || next_order(request.params[:category]),
             mappings: mappings)
+          attr_repo.renumber_order(attr)
 
           response.status = :created
           response.headers["Content-Location"] = "/api/attrs/#{attr.name}"
@@ -46,8 +53,8 @@ module API
           response.render(show_view)
         end
 
-        private def next_order
-          attr_repo.last_order + 1
+        private def next_order(category)
+          attr_repo.last_order(category) + 1
         end
 
         private def take_mappings(request, response)

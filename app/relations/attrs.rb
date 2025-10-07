@@ -3,6 +3,11 @@
 module Yuzakan
   module Relations
     class Attrs < Yuzakan::DB::Relation
+      CATEGORIES = %w[
+        user
+        group
+      ].freeze
+
       TYPES = %w[
         boolean
         string

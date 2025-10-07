@@ -46,6 +46,27 @@ module API
           response.render(show_view)
 
           # TODO: ここから下はまだ見てない
+          transaction do |t|
+            set_update(name, **) || t.rollback!
+            # update の場合は、mappings を作成、更新、削除する。
+            mappings_service_ids = mappings.map(&:service_id).to_set
+            existing_service_ids = attr.mappings.map(&:service_id).to_set
+
+            create_service_ids = mappings_service_ids - existing_service_ids
+            update_service_ids = mappings_service_ids & existing_service_ids
+            delete_service_ids = existing_service_ids - mappings_service_ids
+
+            # cerate
+            mappings.select { |m| create_service_ids.include?(m.service_id) }.each do |m|
+            end
+
+            # update
+            mappings.select { |m| update_service_ids.include?(m.service_id) }.each do |m|
+            end
+
+            # delete
+            assoc(:mappings, attr).where(service_id: delete_service_ids.to_a).command(:delete).call
+          end
 
           change_name = params[:name] && params[:name] != @attr.name
           if change_name && @attr_repository.exist_by_name?(params[:name])
