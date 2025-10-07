@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict jztKIliamzEmtrAU9sP3dWqd3wbacnX1r3d3Y7VOxExBEAKSknTJb8oMinxuxYd
+\restrict rArpBarNZYWOJZcHArh5m98NjrN3v8Mhs2dxUHuFpkCvJ9mcM1m1FYuRiefvLty
 
 -- Dumped from database version 16.10
 -- Dumped by pg_dump version 16.10
@@ -701,17 +701,10 @@ CREATE INDEX attrs_category_index ON public.attrs USING btree (category);
 
 
 --
--- Name: attrs_name_category_index; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX attrs_name_category_index ON public.attrs USING btree (name, category);
-
-
---
 -- Name: attrs_name_index; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX attrs_name_index ON public.attrs USING btree (name);
+CREATE UNIQUE INDEX attrs_name_index ON public.attrs USING btree (name);
 
 
 --
@@ -995,7 +988,7 @@ ALTER TABLE ONLY public.users
 -- PostgreSQL database dump complete
 --
 
-\unrestrict jztKIliamzEmtrAU9sP3dWqd3wbacnX1r3d3Y7VOxExBEAKSknTJb8oMinxuxYd
+\unrestrict rArpBarNZYWOJZcHArh5m98NjrN3v8Mhs2dxUHuFpkCvJ9mcM1m1FYuRiefvLty
 
 SET search_path TO "$user", public;
 
