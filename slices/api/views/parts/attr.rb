@@ -7,10 +7,10 @@ module API
       class Attr < API::Views::Part
         # value is a DB::Sturct
 
-        def to_h(simple: false)
+        def to_h(restrict: false)
           hash = value.to_h
-          if simple
-            hash.slice(:name, :label)
+          if restrict
+            hash.slice(:name, :label, :category, :type)
           else
             mappings = hash[:mappings].map do |mapping|
               mapping.except(:id, :created_at, :updated_at, :attr_id, :service_id)
@@ -20,7 +20,7 @@ module API
           end
         end
 
-        def to_json(*, simple: false, **) = helpers.params_to_json(to_h(simple:), *, **)
+        def to_json(*, restrict: false, **) = helpers.params_to_json(to_h(restrict:), *, **)
       end
     end
   end

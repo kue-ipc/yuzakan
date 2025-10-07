@@ -7,12 +7,12 @@ module API
   module Views
     module Parts
       class Adapter < API::Views::Part
-        def to_h(simple: false)
+        def to_h(restrict: false)
           hash = {
             name: value.adapter_name,
             label: value.label,
           }
-          unless simple
+          unless restrict
             hash.merge!({
               group: value.has_group?,
               primary: value.has_primary_group?,
@@ -22,9 +22,9 @@ module API
           hash
         end
 
-        def to_json(*, simple: false, **)
-          hash = to_h(simple:).dup
-          hash.merge!({params: {schema: json_schema}}) unless simple
+        def to_json(*, restrict: false, **)
+          hash = to_h(restrict:).dup
+          hash.merge!({params: {schema: json_schema}}) unless restrict
           helpers.params_to_json(hash, *, **)
         end
 
