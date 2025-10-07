@@ -8,7 +8,6 @@ Hanami.app.register_provider(:i18n) do
   end
 
   start do
-    warn "check I18n"
     load_path = Dir["#{target.root}/config/locales/**/*.yml"]
     I18n.load_path += load_path
     I18n.backend.load_translations
