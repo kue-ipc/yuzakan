@@ -16,17 +16,10 @@ module API
         end
 
         def handle(request, response)
-          unless request.params.valid?
-            response.flash[:invalid] = request.params.errors
-            halt_json request, response, 422
-          end
+          check_params(request, response)
+          check_exist_id(request, response, attr_repo)
 
-          id = request.params[:id]
-          attr = attr_repo.get(id)
-          halt_json request, response, 404 unless attr
-
-          # delete attr
-          response[:attr] = attr_repo.unset(id)
+          attr = attr_repo.unset(request.params[:id])
 
           response[:attr] = attr
           response.render(show_view)

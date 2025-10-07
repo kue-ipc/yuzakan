@@ -51,7 +51,7 @@ RSpec.describe API::Actions::Attrs::Destroy do
 
     describe "not existend" do
       let(:action_opts) {
-        allow(action_repo).to receive_messages(exist?: false)
+        allow(attr_repo).to receive_messages(exist?: false)
         {attr_repo: attr_repo}
       }
 
