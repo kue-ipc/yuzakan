@@ -38,12 +38,10 @@ module API
           check_params(request, response)
           check_unique_name(request, response, attr_repo)
 
+          order = request.params[:order] || next_order
           mappings = take_mappings(request, response)
 
-          attr = attr_repo.create_with_mappings(
-            **request.params.to_h.except(:order, :mappings),
-            order: request.params[:order] || next_order(request.params[:category]),
-            mappings: mappings)
+          attr = attr_repo.create_with_mappings(**request.params, order:, mappings:)
           attr_repo.renumber_order(attr)
 
           response.status = :created
@@ -53,8 +51,8 @@ module API
           response.render(show_view)
         end
 
-        private def next_order(category)
-          attr_repo.last_order(category) + 1
+        private def next_order
+          attr_repo.last_order + 1
         end
 
         private def take_mappings(request, response)

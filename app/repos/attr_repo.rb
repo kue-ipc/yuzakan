@@ -32,19 +32,19 @@ module Yuzakan
       end
 
       # なにもない場合は 0 を返す。
-      def last_order(category)
-        attrs.where(category: category).order(:order).pluck(:order).last.to_i
+      def last_order
+        attrs.order(:order).pluck(:order).last.to_i
       end
 
       def renumber_order(attr)
-        return 0 if attrs.where(category: attr.category, order: attr.order).count < 2
+        return 0 if attrs.where(order: attr.order).count < 2
 
         count = 0
         transaction do
           # OPTIMIZE: N+1 問題があるが、ROMではこの方法しかない。
           attrs.exclude(id: attr.id)
-            .where(category: attr.category) { order >= attr.order }
-            .order(:order, :name).each.with_index do |a, idx|
+            .where { order >= attr.order }
+            .each.with_index do |a, idx|
             new_order = attr.order + idx + 1
             next if a.order == new_order
 
