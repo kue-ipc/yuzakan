@@ -6,15 +6,15 @@ RSpec.describe API::Views::Parts::Adapter do
   let(:value) { Hanami.app["adapter_map"]["test"] }
 
   it "to_h with sipmle" do
-    data = subject.to_h(simple: true)
+    data = subject.to_h(restrict: true)
     expect(data).to eq({
       name: "test",
       label: "テスト",
     })
   end
 
-  it "to_json with simple" do
-    data = JSON.parse(subject.to_json(simple: true), symbolize_names: true)
+  it "to_json with restrict" do
+    data = JSON.parse(subject.to_json(restrict: true), symbolize_names: true)
     expect(data).to eq({
       name: "test",
       label: "テスト",

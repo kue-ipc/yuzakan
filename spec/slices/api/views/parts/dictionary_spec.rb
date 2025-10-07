@@ -7,8 +7,8 @@ RSpec.describe API::Views::Parts::Dictionary, :db do
     Hanami.app["repos.dictionary_repo"].get_with_terms(Factory[:term].dictionary.name)
   }
 
-  it_behaves_like "to_h with simple"
-  it_behaves_like "to_json with simple"
+  it_behaves_like "to_h with restrict"
+  it_behaves_like "to_json with restrict"
 
   it "to_h" do
     data = subject.to_h

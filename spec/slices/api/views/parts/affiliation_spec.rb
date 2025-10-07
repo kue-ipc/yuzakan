@@ -5,8 +5,8 @@ RSpec.describe API::Views::Parts::Affiliation do
 
   let(:value) { affiliation }
 
-  it_behaves_like "to_h with simple"
-  it_behaves_like "to_json with simple"
+  it_behaves_like "to_h with restrict"
+  it_behaves_like "to_json with restrict"
 
   it "to_h" do
     data = subject.to_h

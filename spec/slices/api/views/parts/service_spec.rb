@@ -5,8 +5,8 @@ RSpec.describe API::Views::Parts::Service, :db do
 
   let(:value) { service }
 
-  it_behaves_like "to_h with simple"
-  it_behaves_like "to_json with simple"
+  it_behaves_like "to_h with restrict"
+  it_behaves_like "to_json with restrict"
 
   it "to_h" do
     data = subject.to_h

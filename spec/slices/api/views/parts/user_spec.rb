@@ -8,8 +8,24 @@ RSpec.describe API::Views::Parts::User, :db do
     Hanami.app["repos.user_repo"].get_with_affiliation_and_groups(user.name)
   }
 
-  it_behaves_like "to_h with simple"
-  it_behaves_like "to_json with simple"
+  it "to_h with restrict" do
+    data = subject.to_h(restrict: true)
+    expect(data).to eq({
+      name: value.name,
+      label: value.label,
+      email: value.email,
+    })
+  end
+
+  it "to_h with restrict" do
+    json = subject.to_json(restrict: true)
+    data = JSON.parse(json, symbolize_names: true)
+    expect(data).to eq({
+      name: value.name,
+      label: value.label,
+      email: value.email,
+    })
+  end
 
   it "to_h" do
     data = subject.to_h

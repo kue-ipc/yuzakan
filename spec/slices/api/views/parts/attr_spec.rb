@@ -9,8 +9,26 @@ RSpec.describe API::Views::Parts::Attr, :db do
     Hanami.app["repos.attr_repo"].get_with_mappings(Factory[:mapping].attr.name)
   }
 
-  it_behaves_like "to_h with simple"
-  it_behaves_like "to_json with simple"
+  it "to_h with restrict" do
+    data = subject.to_h(restrict: true)
+    expect(data).to eq({
+      name: value.name,
+      label: value.label,
+      category: value.category,
+      type: value.type,
+    })
+  end
+
+  it "to_h with restrict" do
+    json = subject.to_json(restrict: true)
+    data = JSON.parse(json, symbolize_names: true)
+    expect(data).to eq({
+      name: value.name,
+      label: value.label,
+      category: value.category,
+      type: value.type,
+    })
+  end
 
   it "to_h" do
     data = subject.to_h
