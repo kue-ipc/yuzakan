@@ -19,10 +19,11 @@ module API
 
           affiliation =
             if request.params[:id] == "~"
+              # OPTIMIZE: affiliation_idがnilのときは無駄なDBアクセスを避けられるが、
+              # 　        テストが複雑になるので、このままにしておく。
               affiliation_repo.find(response[:current_user].affiliation_id)
             else
-              check_exist_id(request, response, affiliation_repo)
-              affiliation_repo.get(request.params[:id])
+              get_by_id(request, response, affiliation_repo)
             end
 
           response[:affiliation] = affiliation

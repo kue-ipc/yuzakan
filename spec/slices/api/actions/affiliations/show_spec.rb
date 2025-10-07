@@ -4,14 +4,21 @@ RSpec.describe API::Actions::Affiliations::Show do
   init_action_spec
 
   let(:action_opts) {
-    allow(affiliation_repo).to receive_messages(exist?: true, get: affiliation)
+    allow(affiliation_repo).to receive_messages(get: affiliation, find: affiliation)
     {affiliation_repo: affiliation_repo}
   }
   let(:action_params) { {id: "affiliation42"} }
 
+  shared_context "when current user without affiliation" do
+    let(:action_opts) {
+      allow(affiliation_repo).to receive_messages(get: affiliation, find: nil)
+      {affiliation_repo: affiliation_repo}
+    }
+  end
+
   shared_context "when not exist" do
     let(:action_opts) {
-      allow(affiliation_repo).to receive_messages(exist?: false)
+      allow(affiliation_repo).to receive_messages(get: nil)
       {affiliation_repo: affiliation_repo}
     }
   end
@@ -19,6 +26,19 @@ RSpec.describe API::Actions::Affiliations::Show do
   shared_examples "ok" do
     it "is ok" do
       response = action.call(params)
+      expect(response).to be_successful
+      expect(response.status).to eq 200
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:data]).to eq({
+        name: affiliation.name,
+        label: affiliation.label,
+        note: affiliation.note,
+      })
+    end
+
+    it "is ok with tilda id" do
+      response = action.call({**params, id: "~"})
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
@@ -57,9 +77,25 @@ RSpec.describe API::Actions::Affiliations::Show do
     end
   end
 
+  shared_examples "ok current nil" do
+    it "is ok with tilda id" do
+      response = action.call({**params, id: "~"})
+      expect(response).to be_successful
+      expect(response.status).to eq 200
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:data]).to be_nil
+    end
+  end
+
   shared_examples "show" do
     it_behaves_like "ok"
     it_behaves_like "bad id param without tilda"
+
+    context "when current user without affiliation" do
+      include_context "when current user without affiliation"
+      it_behaves_like "ok current nil"
+    end
 
     context "when not exist" do
       include_context "when not exist"
@@ -80,6 +116,11 @@ RSpec.describe API::Actions::Affiliations::Show do
   shared_examples "show simple" do
     it_behaves_like "ok simple"
     it_behaves_like "bad id param without tilda"
+
+    context "when current user without affiliation" do
+      include_context "when current user without affiliation"
+      it_behaves_like "ok current nil"
+    end
 
     context "when not exist" do
       include_context "when not exist"

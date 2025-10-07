@@ -25,6 +25,13 @@ module API
 
         halt_json request, response, 404
       end
+
+      private def get_by_id(request, response, repo)
+        struct = repo.get(request.params[:id])
+        return struct if struct
+
+        halt_json request, response, 404
+      end
     end
   end
 end

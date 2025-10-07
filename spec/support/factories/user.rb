@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 Factory.define(:user) do |f|
-  f.association :affiliation
-  f.association :group
+  f.association :members, count: 0
   f.name { fake(:internet, :username) }
   f.label { fake(:name, :name) }
   f.email { fake(:internet, :email) }
@@ -18,6 +17,15 @@ Factory.define(user_without_label: :user) do |f|
   f.label "" # default
   f.email "" # default
   f.note "" # default
+end
+
+Factory.define(user_with_affiliation: :user) do |f|
+  f.association :affiliation
+end
+
+Factory.define(user_with_groups: :user) do |f|
+  f.association :group
+  f.association :members, count: 2
 end
 
 Factory.define(guest: :user) do |f|
