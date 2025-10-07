@@ -3,8 +3,10 @@
 RSpec.describe API::Actions::Attrs::Index do
   init_action_spec
 
+  let(:another_attr) { Factory.structs[:another_attr] }
+
   let(:action_opts) {
-    allow(attr_repo).to receive_messages(alll: [attr])
+    allow(attr_repo).to receive_messages(all: [attr, another_attr], all_exposed: [attr])
     {attr_repo: attr_repo}
   }
 
@@ -15,11 +17,27 @@ RSpec.describe API::Actions::Attrs::Index do
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq([attr.to_h.slice(:name, :label)])
+      expect(json[:data]).to eq [
+        attr.to_h.slice(:name, :label, :category, :type),
+        another_attr.to_h.slice(:name, :label, :category, :type)
+      ]
     end
   end
 
-  it_behaves_like "ok"
+  shared_examples "ok only exposed" do
+    it "is ok only exposed" do
+      response = action.call(params)
+      expect(response).to be_successful
+      expect(response.status).to eq 200
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:data]).to eq [
+        attr.to_h.slice(:name, :label, :category, :type),
+      ]
+    end
+  end
+
+  it_behaves_like "ok only exposed"
 
   context "when guest" do
     include_context "when guest"
