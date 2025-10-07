@@ -19,7 +19,7 @@ RSpec.describe API::Views::Parts::Attr, :db do
     })
   end
 
-  it "to_h with restrict" do
+  it "to_json with restrict" do
     json = subject.to_json(restrict: true)
     data = JSON.parse(json, symbolize_names: true)
     expect(data).to eq({
