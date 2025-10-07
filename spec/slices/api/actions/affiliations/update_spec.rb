@@ -38,6 +38,7 @@ RSpec.describe API::Actions::Affiliations::Update do
 
   shared_examples "update" do
     it_behaves_like "ok"
+    it_behaves_like "bad id param"
 
     context "when not exist" do
       include_context "when not exist"

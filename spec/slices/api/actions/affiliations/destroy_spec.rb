@@ -7,6 +7,7 @@ RSpec.describe API::Actions::Affiliations::Destroy do
     allow(affiliation_repo).to receive_messages(exist?: true, unset: affiliation)
     {affiliation_repo: affiliation_repo}
   }
+
   let(:action_params) { {id: "affiliation42"} }
 
   shared_context "when not exist" do
@@ -31,30 +32,10 @@ RSpec.describe API::Actions::Affiliations::Destroy do
     end
   end
 
-  shared_examples "failure bad params" do
-    it "is failure with bad id" do
-      response = action.call({**params, id: "!"})
-      expect(response).to be_client_error
-      expect(response.status).to eq 422
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:flash]).to eq({invalid: {id: ["形式が間違っています。"]}})
-    end
-
-    it "is failure with bad id over 255" do
-      response = action.call({**params, id: "a" * 256})
-      expect(response).to be_client_error
-      expect(response.status).to eq 422
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:flash]).to eq({invalid: {id: ["サイズが255を超えてはいけません。"]}})
-    end
-  end
-
   # rubocop:disable RSpec/IncludeExamples
   shared_examples "destroy" do
     include_examples "ok"
-    include_examples "failure bad params"
+    include_examples "bad id param"
 
     context "when not exist" do
       include_context "when not exist"

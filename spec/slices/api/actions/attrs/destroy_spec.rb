@@ -10,20 +10,6 @@ RSpec.describe API::Actions::Attrs::Destroy do
 
   let(:action_params) { {id: "attr42"} }
 
-  shared_examples "ok" do
-    it "is ok" do
-      response = action.call(params)
-      expect(response).to be_successful
-      expect(response.status).to eq 200
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({
-        **struct_to_hash(attr, except: [:mappings]),
-        mappings: attr.mappings.map { |mapping| struct_to_hash(mapping, except: [:attr]) },
-      })
-    end
-  end
-
   context "when guest" do
     include_context "when guest"
     it_behaves_like "forbidden"
@@ -49,7 +35,19 @@ RSpec.describe API::Actions::Attrs::Destroy do
   context "when superuser" do
     include_context "when superuser"
 
-    it_behaves_like "ok"
+    it "is ok" do
+      response = action.call(params)
+      expect(response).to be_successful
+      expect(response.status).to eq 200
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:data]).to eq({
+        **struct_to_hash(attr, except: [:mappings]),
+        mappings: attr.mappings.map { |mapping| struct_to_hash(mapping, except: [:attr]) },
+      })
+    end
+
+    it_behaves_like "bad id param"
 
     describe "not existend" do
       let(:action_opts) {

@@ -138,6 +138,55 @@ def init_action_spec
     end
   end
 
+  shared_examples "bad id param" do
+    it "is failure with tilda id" do
+      response = action.call({**params, id: "~"})
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:flash]).to eq({invalid: {id: ["形式が間違っています。"]}})
+    end
+
+    it "is failure with exclamation id" do
+      response = action.call({**params, id: "!"})
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:flash]).to eq({invalid: {id: ["形式が間違っています。"]}})
+    end
+
+    it "is failure with over 255 id" do
+      response = action.call({**params, id: "a" * 256})
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:flash]).to eq({invalid: {id: ["サイズが255を超えてはいけません。"]}})
+    end
+  end
+
+  shared_examples "bad id param without tilda" do
+    it "is failure with exclamation id" do
+      response = action.call({**params, id: "!"})
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:flash]).to eq({invalid: {id: ["形式が間違っています。 または ~と値が一致しません。"]}})
+    end
+
+    it "is failure with over 255 id" do
+      response = action.call({**params, id: "a" * 256})
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:flash]).to eq({invalid: {id: ["サイズが255を超えてはいけません。 または ~と値が一致しません。"]}})
+    end
+  end
+
   shared_examples "forbidden session timeout" do
     it "is forbidden due to session timeout" do
       response = action.call(params)
