@@ -4,13 +4,9 @@ module API
   module Actions
     module Affiliations
       class Index < API::Action
-        include Deps[
-          "repos.affiliation_repo"
-        ]
+        include Deps["repos.affiliation_repo"]
 
-        security_level 1
-
-        def handle(_request, response)
+        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           affiliations = affiliation_repo.all
           response[:affiliations] = affiliations
         end

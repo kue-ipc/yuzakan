@@ -54,6 +54,10 @@ module Yuzakan
         count
       end
 
+      def exposed_all
+        attrs.where(hidden: false).to_a
+      end
+
       # TODO: 個々から下は未整理
 
       def find_by_name(name)

@@ -6,7 +6,7 @@ RSpec.describe API::Actions::Attrs::Index do
   let(:another_attr) { Factory.structs[:another_attr] }
 
   let(:action_opts) {
-    allow(attr_repo).to receive_messages(all: [attr, another_attr], all_exposed: [attr])
+    allow(attr_repo).to receive_messages(all: [attr, another_attr], exposed_all: [attr])
     {attr_repo: attr_repo}
   }
 
@@ -60,6 +60,7 @@ RSpec.describe API::Actions::Attrs::Index do
   end
 
   context "when superuser" do
+    include_context "when superuser"
     it_behaves_like "ok"
   end
 end
