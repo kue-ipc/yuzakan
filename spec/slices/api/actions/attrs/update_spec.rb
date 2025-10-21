@@ -3,8 +3,8 @@
 RSpec.describe API::Actions::Attrs::Update do
   init_action_spec
 
-    let(:action_opts) {
-    allow(attr_repo).to receive_messages(exist?: false, last_order: 9999, set: attr)
+  let(:action_opts) {
+    allow(attr_repo).to receive_messages(exist?: false, last_order: 9999, set: attr, renumber_order: 0)
     allow(service_repo).to receive_messages(all: [mapping.service])
     {
       attr_repo: attr_repo,

@@ -6,7 +6,7 @@ RSpec.describe API::Views::Parts::Attr, :db do
   init_part_spec
 
   let(:value) {
-    Hanami.app["repos.attr_repo"].get_with_mappings(Factory[:mapping].attr.name)
+    Hanami.app["repos.attr_repo"].get_with_mappings_and_services(Factory[:mapping].attr.name)
   }
 
   it "to_h with restrict" do

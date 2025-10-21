@@ -23,6 +23,10 @@ module Yuzakan
 
       # other interfaces
       def get_with_mappings(name)
+        by_name(name).combine(:mappings).one
+      end
+
+      def get_with_mappings_and_services(name)
         by_name(name).combine(mappings: :service).one
       end
 
