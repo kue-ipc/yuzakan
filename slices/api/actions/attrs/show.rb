@@ -6,20 +6,15 @@ module API
       class Show < API::Action
         include Deps["repos.attr_repo"]
 
+        security_level 1
+
         params do
           required(:id).filled(:name, max_size?: 255)
         end
 
         def handle(request, response)
-          unless request.params.valid?
-            response.flash[:invalid] = request.params.errors
-            halt_json request, response, 422
-          end
-
-          id = request.params[:id]
-          attr = attr_repo.get(id)
-          halt_json request, response, 404 unless attr
-
+          check_params(request, response)
+          attr = get_by_id(request, response, attr_repo)
           response[:attr] = attr
         end
       end

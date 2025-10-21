@@ -4,9 +4,7 @@ module API
   module Actions
     module Affiliations
       class Show < API::Action
-        include Deps[
-          "repos.affiliation_repo"
-        ]
+        include Deps["repos.affiliation_repo"]
 
         security_level 1
 
@@ -16,7 +14,6 @@ module API
 
         def handle(request, response)
           check_params(request, response)
-
           affiliation =
             if request.params[:id] == "~"
               # OPTIMIZE: affiliation_idがnilのときは無駄なDBアクセスを避けられるが、
@@ -25,7 +22,6 @@ module API
             else
               get_by_id(request, response, affiliation_repo)
             end
-
           response[:affiliation] = affiliation
         end
       end
