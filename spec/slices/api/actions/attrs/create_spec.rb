@@ -70,6 +70,19 @@ RSpec.describe API::Actions::Attrs::Create do
       })
     end
 
+    it "is created with minimum params" do
+      response = action.call(params.except(:lable, :description, :order, :hidden, :readonly, :code, :mappings))
+      expect(response).to be_successful
+      expect(response.status).to eq 201
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      expect(response.headers["Content-Location"]).to eq "/api/attrs/#{attr.name}"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:data]).to eq({
+        **struct_to_hash(attr, except: [:mappings]),
+        mappings: attr.mappings.map { |mapping| struct_to_hash(mapping, except: [:attr]) },
+      })
+    end
+
     it "is failure with bad name pattern" do
       response = action.call({**params, name: "!"})
       expect(response).to be_client_error
