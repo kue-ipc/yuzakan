@@ -19,13 +19,13 @@ module API
 
         def handle(request, response)
           check_params(request, response)
-          check_unique_name(request, response, affiliation_repo)
+          name = take_unique_name(request, response, affiliation_repo)
 
-          affiliation = affiliation_repo.set(request.params[:name], **request.params)
+          affiliation = affiliation_repo.set(name, **request.params)
 
           response.status = :created
-          response.headers["Content-Location"] = "/api/affiliations/#{affiliation.name}"
-          response[:location] = "/api/affiliations/#{affiliation.name}"
+          response.headers["Content-Location"] = "/api/affiliations/#{name}"
+          response[:location] = "/api/affiliations/#{name}"
           response[:affiliation] = affiliation
           response.render(show_view)
         end

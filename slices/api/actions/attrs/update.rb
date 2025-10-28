@@ -39,37 +39,33 @@ module API
 
         def handle(request, response)
           check_params(request, response)
-          check_exist_id(request, response, attr_repo)
-          check_unique_name(request, response, attr_repo)
+          id = take_exist_id(request, response, attr_repo)
+          name = take_unique_name(request, response, attr_repo)
 
           attr = nil
           attr_repo.transaction do
-            attr = attr_repo.set(request.params[:id], **request.params.except(:mappings))
+            attr_repo.set(request.params[:id], **request.params.to_h.except(:mappings))
+            attr = attr_repo.get_with_mappings_and_services(request.params[:id])
 
             if (mappings = take_mappings(request, response))
-              mappings_service_ids = mappings.to_set(&:service_id)
               existing_service_ids = attr.mappings.to_set(&:service_id)
 
-              create_service_ids = mappings_service_ids - existing_service_ids
-              update_service_ids = mappings_service_ids & existing_service_ids
-              delete_service_ids = existing_service_ids - mappings_service_ids
-
-              # cerate
               mappings.each do |m|
-                if existing_service_ids.include?(m.service_id)
+                if existing_service_ids.delete?(m[:service_id])
                   # create
                   mapping_repo.create(**m, attr_id: attr.id)
                 else
                   # update
-                  mapping_repo.update_by_attr_id_and_service_id(attr.id, m.service_id, **m.except(:service_id))
+                  mapping_repo.update_by_attr_id_and_service_id(attr.id, m[:service_id], **m.except(:service_id))
                 end
               end
-
               # delete
-              mappings_repo.delete_by_attr_id_and_service_ids(attr.id, delete_service_ids.to_a)
-              assoc(:mappings, attr).where(service_id: delete_service_ids.to_a).command(:delete).call
+              mapping_repo.delete_by_attr_id_and_service_id(attr.id, existing_service_ids.to_a)
             end
+            attr_repo.renumber_order(attr)
           end
+
+          attr = attr_repo.get_with_mappings_and_services(request.params[:id])
           response[:attr] = attr
           response.render(show_view)
         end

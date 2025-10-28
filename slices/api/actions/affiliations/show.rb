@@ -20,7 +20,8 @@ module API
               # 　        テストが複雑になるので、このままにしておく。
               affiliation_repo.find(response[:current_user].affiliation_id)
             else
-              get_by_id(request, response, affiliation_repo)
+              id = take_exist_id(request, response, affiliation_repo)
+              affiliation_repo.get(id)
             end
           response[:affiliation] = affiliation
         end

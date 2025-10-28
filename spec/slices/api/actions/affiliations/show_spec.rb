@@ -4,21 +4,28 @@ RSpec.describe API::Actions::Affiliations::Show do
   init_action_spec
 
   let(:action_opts) {
-    allow(affiliation_repo).to receive_messages(get: affiliation, find: affiliation)
+    allow(affiliation_repo).to receive_messages(exist?: true, get: affiliation)
     {affiliation_repo: affiliation_repo}
   }
   let(:action_params) { {id: "affiliation42"} }
 
+  shared_context "when current user with affiliation" do
+    let(:action_opts) {
+      allow(affiliation_repo).to receive_messages(find: affiliation)
+      {affiliation_repo: affiliation_repo}
+    }
+  end
+
   shared_context "when current user without affiliation" do
     let(:action_opts) {
-      allow(affiliation_repo).to receive_messages(get: affiliation, find: nil)
+      allow(affiliation_repo).to receive_messages(find: nil)
       {affiliation_repo: affiliation_repo}
     }
   end
 
   shared_context "when not exist" do
     let(:action_opts) {
-      allow(affiliation_repo).to receive_messages(get: nil)
+      allow(affiliation_repo).to receive_messages(exist?: false)
       {affiliation_repo: affiliation_repo}
     }
   end
@@ -37,17 +44,20 @@ RSpec.describe API::Actions::Affiliations::Show do
       })
     end
 
-    it "is ok with tilda id" do
-      response = action.call({**params, id: "~"})
-      expect(response).to be_successful
-      expect(response.status).to eq 200
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({
-        name: affiliation.name,
-        label: affiliation.label,
-        note: affiliation.note,
-      })
+    context "when current user with affiliation" do
+      include_context "when current user with affiliation"
+      it "is ok with tilda id" do
+        response = action.call({**params, id: "~"})
+        expect(response).to be_successful
+        expect(response.status).to eq 200
+        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+        json = JSON.parse(response.body.first, symbolize_names: true)
+        expect(json[:data]).to eq({
+          name: affiliation.name,
+          label: affiliation.label,
+          note: affiliation.note,
+        })
+      end
     end
   end
 
@@ -64,16 +74,19 @@ RSpec.describe API::Actions::Affiliations::Show do
       })
     end
 
-    it "is ok with tilda id" do
-      response = action.call({**params, id: "~"})
-      expect(response).to be_successful
-      expect(response.status).to eq 200
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({
-        name: affiliation.name,
-        label: affiliation.label,
-      })
+    context "when current user with affiliation" do
+      include_context "when current user with affiliation"
+      it "is ok with tilda id" do
+        response = action.call({**params, id: "~"})
+        expect(response).to be_successful
+        expect(response.status).to eq 200
+        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+        json = JSON.parse(response.body.first, symbolize_names: true)
+        expect(json[:data]).to eq({
+          name: affiliation.name,
+          label: affiliation.label,
+        })
+      end
     end
   end
 

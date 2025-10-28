@@ -21,6 +21,8 @@ module Yuzakan
       def exist?(name) = by_name(name).exist?
       def list = attrs.pluck(:name)
 
+      def gets(names) = by_name(names).to_a
+
       # other interfaces
       def get_with_mappings(name)
         by_name(name).combine(:mappings).one

@@ -20,14 +20,14 @@ module API
 
         def handle(request, response)
           check_params(request, response)
-          check_exist_id(request, response, affiliation_repo)
-          check_unique_name(request, response, affiliation_repo)
+          id = take_exist_id(request, response, affiliation_repo)
+          name = take_unique_name(request, response, affiliation_repo)
 
-          affiliation = affiliation_repo.set(request.params[:id], **request.params)
+          affiliation = affiliation_repo.set(id, **request.params)
 
-          if request.params[:id] != affiliation.name
-            response.headers["Content-Location"] = "/api/affiliations/#{affiliation.name}"
-            response[:location] = "/api/affiliations/#{affiliation.name}"
+          if id != name
+            response.headers["Content-Location"] = "/api/affiliations/#{name}"
+            response[:location] = "/api/affiliations/#{name}"
           end
           response[:affiliation] = affiliation
           response.render(show_view)

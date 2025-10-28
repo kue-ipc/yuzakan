@@ -36,18 +36,20 @@ module API
 
         def handle(request, response)
           check_params(request, response)
-          check_unique_name(request, response, attr_repo)
+          name = take_unique_name(request, response, attr_repo)
 
           order = request.params[:order] || next_order
           mappings = take_mappings(request, response) || []
 
-          attr = attr_repo.create_with_mappings(**request.params, order:, mappings:)
-          attr_repo.renumber_order(attr)
+          attr_repo.transaction do
+            attr = attr_repo.create_with_mappings(**request.params, order:, mappings:)
+            attr_repo.renumber_order(attr)
+          end
 
           response.status = :created
-          response.headers["Content-Location"] = "/api/attrs/#{attr.name}"
-          response[:location] = "/api/attrs/#{attr.name}"
-          response[:attr] = attr
+          response.headers["Content-Location"] = "/api/attrs/#{name}"
+          response[:location] = "/api/attrs/#{name}"
+          response[:attr] = attr_repo.get_with_mappings_and_services(name)
           response.render(show_view)
         end
 

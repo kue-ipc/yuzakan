@@ -4,7 +4,10 @@ RSpec.describe API::Actions::Attrs::Create do
   init_action_spec
 
   let(:action_opts) {
-    allow(attr_repo).to receive_messages(exist?: false, last_order: 9999, create_with_mappings: attr, renumber_order: 0)
+    allow(attr_repo).to receive_messages(exist?: false, last_order: 9999,
+      create_with_mappings: attr, renumber_order: 0,
+      get_with_mappings_and_services: attr)
+    allow(attr_repo).to receive(:transaction).and_yield
     allow(service_repo).to receive_messages(all: [mapping.service])
     {
       attr_repo: attr_repo,

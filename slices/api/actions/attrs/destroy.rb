@@ -17,9 +17,9 @@ module API
 
         def handle(request, response)
           check_params(request, response)
-          check_exist_id(request, response, attr_repo)
+          id = take_exist_id(request, response, attr_repo)
 
-          attr = attr_repo.unset(request.params[:id])
+          attr = attr_repo.unset(id)
 
           response[:attr] = attr
           response.render(show_view)

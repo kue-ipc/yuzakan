@@ -17,9 +17,9 @@ module API
 
         def handle(request, response)
           check_params(request, response)
-          check_exist_id(request, response, affiliation_repo)
+          id = take_exist_id(request, response, affiliation_repo)
 
-          affiliation = affiliation_repo.unset(request.params[:id])
+          affiliation = affiliation_repo.unset(id)
 
           response[:affiliation] = affiliation
           response.render(show_view)

@@ -14,7 +14,9 @@ module API
 
         def handle(request, response)
           check_params(request, response)
-          attr = get_by_id(request, response, attr_repo)
+          id = take_exist_id(request, response, attr_repo)
+
+          attr = attr_repo.get_with_mappings_and_services(id)
           response[:attr] = attr
         end
       end

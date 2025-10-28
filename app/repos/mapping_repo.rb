@@ -24,6 +24,7 @@ module Yuzakan
       def all_by_attr_id(attr_id) = by_attr_id(attr_id).to_a
       def all_by_service_id(service_id) = by_service_id(service_id).to_a
       def find_by_attr_id_and_service_id(attr_id, service_id) = by_attr_id_and_service_id(attr_id, service_id).one
+      def all_by_attr_id_and_service_id(attr_id, service_id) = by_attr_id_and_service_id(attr_id, service_id).to_a
 
       def update_by_attr_id_and_service_id(attr_id, service_id, **)
         by_attr_id_and_service_id(attr_id, service_id)

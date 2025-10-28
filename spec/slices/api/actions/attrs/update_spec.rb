@@ -4,10 +4,19 @@ RSpec.describe API::Actions::Attrs::Update do
   init_action_spec
 
   let(:action_opts) {
-    allow(attr_repo).to receive_messages(exist?: false, last_order: 9999, set: attr, renumber_order: 0)
+    allow(attr_repo).to receive_messages(set: attr,
+      get_with_mappings_and_services: attr, renumber_order: 0)
+    allow(attr_repo).to receive(:exist?).with("attr42").and_return(true)
+    allow(attr_repo).to receive(:exist?).with("hoge").and_return(false)
+    allow(attr_repo).to receive(:exist?).with("fuga").and_return(true)
+    allow(attr_repo).to receive(:transaction).and_yield
+    allow(mapping_repo).to receive_messages(create: mapping,
+      update_by_attr_id_and_service_id: mapping,
+      delete_by_attr_id_and_service_id: [mapping])
     allow(service_repo).to receive_messages(all: [mapping.service])
     {
       attr_repo: attr_repo,
+      mapping_repo: mapping_repo,
       service_repo: service_repo,
     }
   }
@@ -15,24 +24,10 @@ RSpec.describe API::Actions::Attrs::Update do
   let(:action_params) {
     {
       id: "attr42",
-      **struct_to_hash(attr, except: [:mappings]),
+      **struct_to_hash(attr, except: [:name, :mappings]),
       mappings: [struct_to_hash(mapping, except: [:attr])],
     }
   }
-
-  shared_examples "ok" do
-    it "is ok" do
-      response = action.call(params)
-      expect(response).to be_successful
-      expect(response.status).to eq 200
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({
-        **struct_to_hash(attr, except: [:mappings]),
-        mappings: attr.mappings.map { |mapping| struct_to_hash(mapping, except: [:attr]) },
-      })
-    end
-  end
 
   it_behaves_like "forbidden"
 
@@ -59,44 +54,46 @@ RSpec.describe API::Actions::Attrs::Update do
   context "when superuser" do
     include_context "when superuser"
 
-    it_behaves_like "ok"
+    it "is ok" do
+      response = action.call(params)
+      expect(response).to be_successful
+      expect(response.status).to eq 200
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:data]).to eq({
+        **struct_to_hash(attr, except: [:mappings]),
+        mappings: attr.mappings.map { |mapping| struct_to_hash(mapping, except: [:attr]) },
+      })
+    end
 
-    describe "not existend" do
+    context "when not exist" do
       let(:action_opts) {
-        allow(attr_repo).to receive_messages(get: nil, unset: nil)
-        {attr_repo: attr_repo}
+        allow(attr_repo).to receive_messages(exist?: nil)
+        {attr_repo: attr_repo, service_repo: service_repo}
       }
 
       it_behaves_like "not found"
     end
 
     it "is ok with different name" do
-      response = action.call({**params, name: "hoge", label: "ほげ"})
+      response = action.call({**params, name: "hoge"})
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:data]).to eq({
-        **attr.to_h.except(:id),
-        name: "hoge",
-        label: "ほげ",
-        mappings: mappings.map { |mapping| mapping.to_h.except(:id) },
+        **struct_to_hash(attr, except: [:mappings]),
+        mappings: attr.mappings.map { |mapping| struct_to_hash(mapping, except: [:attr]) },
       })
     end
 
-    describe "existed name" do
-      let(:attr_repository) { instance_double(AttrRepository, **attr_repository_stubs, exist_by_name?: true) }
-
-      it_behaves_like "not found"
-
-      it "is failure with different name that exsits" do
-        response = action.call({**params, name: "hoge"})
-        expect(response).to be_client_error
-        expect(response.status).to eq 422
-        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-        json = JSON.parse(response.body.first, symbolize_names: true)
-        expect(json[:flash]).to eq({invalid: {name: ["重複しています。"]}})
-      end
+    it "is failure with different name that exsits" do
+      response = action.call({**params, name: "fuga"})
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:flash]).to eq({invalid: {name: ["重複しています。"]}})
     end
   end
 end
