@@ -9,10 +9,7 @@ RSpec.describe API::Actions::Attrs::Create do
       get_with_mappings_and_services: attr)
     allow(attr_repo).to receive(:transaction).and_yield
     allow(service_repo).to receive_messages(all: [mapping.service])
-    {
-      attr_repo: attr_repo,
-      service_repo: service_repo,
-    }
+    {attr_repo: attr_repo,service_repo: service_repo}
   }
 
   let(:action_params) {
@@ -22,32 +19,24 @@ RSpec.describe API::Actions::Attrs::Create do
     }
   }
 
-  it_behaves_like "forbidden"
-
-  context "when guest" do
-    include_context "when guest"
-    it_behaves_like "forbidden"
+  shared_context "when exist" do
+    let(:action_opts) {
+      allow(attr_repo).to receive_messages(exist?: true)
+      {attr_repo: attr_repo, service_repo: service_repo}
+    }
   end
 
-  context "when observer" do
-    include_context "when observer"
-    it_behaves_like "forbidden"
+  shared_context "when not found service" do
+    let(:action_opts) {
+      allow(attr_repo).to receive_messages(exist?: false)
+      # サービス一覧が異なるので見つからなくなる。
+      allow(service_repo).to receive_messages(all: [service])
+      {attr_repo: attr_repo, service_repo: service_repo}
+    }
   end
 
-  context "when operator" do
-    include_context "when operator"
-    it_behaves_like "forbidden"
-  end
-
-  context "when administrator" do
-    include_context "when administrator"
-    it_behaves_like "forbidden"
-  end
-
-  context "when superuser" do
-    include_context "when superuser"
-
-    it "is created" do
+  shared_examples "ok" do
+    it "is ok" do
       response = action.call(params)
       expect(response).to be_successful
       expect(response.status).to eq 201
@@ -60,7 +49,7 @@ RSpec.describe API::Actions::Attrs::Create do
       })
     end
 
-    it "is created without order param" do
+    it "is ok without order param" do
       response = action.call(params.except(:order))
       expect(response).to be_successful
       expect(response.status).to eq 201
@@ -73,7 +62,7 @@ RSpec.describe API::Actions::Attrs::Create do
       })
     end
 
-    it "is created with minimum params" do
+    it "is ok with minimum params" do
       response = action.call(params.except(:lable, :description, :order, :hidden, :readonly, :code, :mappings))
       expect(response).to be_successful
       expect(response.status).to eq 201
@@ -85,7 +74,9 @@ RSpec.describe API::Actions::Attrs::Create do
         mappings: attr.mappings.map { |mapping| struct_to_hash(mapping, except: [:attr]) },
       })
     end
+  end
 
+  shared_examples "failure params" do
     it "is failure with bad name pattern" do
       response = action.call({**params, name: "!"})
       expect(response).to be_client_error
@@ -141,53 +132,71 @@ RSpec.describe API::Actions::Attrs::Create do
         name: ["存在しません。"], category: ["存在しません。"], type: ["存在しません。"],
       }})
     end
+  end
 
-    describe "when exist" do
-      let(:action_opts) {
-        allow(attr_repo).to receive_messages(exist?: true)
-        {
-          attr_repo: attr_repo,
-          service_repo: service_repo,
-        }
-      }
+  shared_examples "failure name duplication" do
+    it "is failure name duplication" do
+      response = action.call(params)
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:flash]).to eq({invalid: {name: ["重複しています。"]}})
+    end
+  end
 
-      it "is failure" do
-        response = action.call(params)
-        expect(response.status).to eq 422
-        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-        json = JSON.parse(response.body.first, symbolize_names: true)
-        expect(json[:flash]).to eq({invalid: {name: ["重複しています。"]}})
-      end
+  shared_examples "failure not found service" do
+    it "is failure not found service" do
+      response = action.call(params)
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:flash]).to eq({invalid: {mappings: {"0": {service: ["見つかりません。"]}}}})
+    end
+  end
 
-      it "is failure with bad name pattern" do
-        response = action.call({**params, name: "!"})
-        expect(response).to be_client_error
-        expect(response.status).to eq 422
-        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-        json = JSON.parse(response.body.first, symbolize_names: true)
-        expect(json[:flash]).to eq({invalid: {name: ["形式が間違っています。"]}})
-      end
+  shared_examples "create" do
+    it_behaves_like "ok"
+    it_behaves_like "failure params"
+
+    context "when exist" do
+      include_context "when exist"
+      it_behaves_like "failure params"
+      it_behaves_like "failure name duplication"
     end
 
-    describe "not found service" do
-      # サービス一覧が異なるので見つからなくなる。
-      let(:action_opts) {
-        allow(attr_repo).to receive_messages(exist?: false)
-        allow(service_repo).to receive_messages(all: [service])
-        {
-          attr_repo: attr_repo,
-          service_repo: service_repo,
-        }
-      }
-
-      it "is failure" do
-        response = action.call(params)
-        expect(response).to be_client_error
-        expect(response.status).to eq 422
-        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-        json = JSON.parse(response.body.first, symbolize_names: true)
-        expect(json[:flash]).to eq({invalid: {mappings: {"0": {service: ["見つかりません。"]}}}})
-      end
+    context "when not found service" do
+      include_context "when not found service"
+      it_behaves_like "failure not found service"
     end
+  end
+
+  # test cases
+
+  it_behaves_like "forbidden"
+
+  context "when guest" do
+    include_context "when guest"
+    it_behaves_like "forbidden"
+  end
+
+  context "when observer" do
+    include_context "when observer"
+    it_behaves_like "forbidden"
+  end
+
+  context "when operator" do
+    include_context "when operator"
+    it_behaves_like "forbidden"
+  end
+
+  context "when administrator" do
+    include_context "when administrator"
+    it_behaves_like "forbidden"
+  end
+
+  context "when superuser" do
+    include_context "when superuser"
+    it_behaves_like "create"
   end
 end

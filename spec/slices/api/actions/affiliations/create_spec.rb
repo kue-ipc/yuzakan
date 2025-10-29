@@ -16,8 +16,8 @@ RSpec.describe API::Actions::Affiliations::Create do
     }
   end
 
-  shared_examples "created" do
-    it "is created" do
+  shared_examples "ok" do
+    it "is ok" do
       response = action.call(params)
       expect(response).to be_successful
       expect(response.status).to eq 201
@@ -32,7 +32,7 @@ RSpec.describe API::Actions::Affiliations::Create do
       })
     end
 
-    it "is created without label or note" do
+    it "is ok without label or note" do
       response = action.call(params.except(:label, :note))
       expect(response).to be_successful
       expect(response.status).to eq 201
@@ -80,7 +80,7 @@ RSpec.describe API::Actions::Affiliations::Create do
   end
 
   shared_examples "create" do
-    it_behaves_like "created"
+    it_behaves_like "ok"
     it_behaves_like "failure params"
 
     context "when exist" do
