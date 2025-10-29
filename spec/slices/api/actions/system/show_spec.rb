@@ -49,7 +49,6 @@ RSpec.describe API::Actions::System::Show do
       expect(json[:data]).to eq({
         url: "http://0.0.0.0:2300/",
         title: config.title,
-        domain: "",
         contact: {name: config.contact_name, email: config.contact_email, phone: config.contact_phone},
         app: {name: "Yuzakan", version: Yuzakan::Version::VERSION,
               license: File.read(File.join(__dir__, "../../../../../LICENSE")),},
@@ -69,7 +68,6 @@ RSpec.describe API::Actions::System::Show do
         url: "http://0.0.0.0:2300/",
         title: config.title,
         domain: config.domain,
-        contact: {name: "", email: "", phone: ""},
         app: {name: "Yuzakan", version: Yuzakan::Version::VERSION,
               license: File.read(File.join(__dir__, "../../../../../LICENSE")),},
       })
@@ -86,9 +84,6 @@ RSpec.describe API::Actions::System::Show do
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:data]).to eq({
         url: "http://0.0.0.0:2300/",
-        title: nil,
-        domain: nil,
-        contact: {name: nil, email: nil, phone: nil},
         app: {name: "Yuzakan", version: Yuzakan::Version::VERSION,
               license: File.read(File.join(__dir__, "../../../../../LICENSE")),},
       })
