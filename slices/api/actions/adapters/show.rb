@@ -13,13 +13,9 @@ module API
         end
 
         def handle(request, response)
-          unless request.params.valid?
-            response.flash[:invalid] = request.params.errors
-            halt_json request, response, 422
-          end
+          check_params(request, response)
 
-          id = request.params[:id]
-          adapter = adapter_map[id]
+          adapter = adapter_map[request.params[:id]]
           halt_json request, response, 404 unless adapter
 
           response[:adapter] = adapter

@@ -14,6 +14,7 @@ module API
 
         def handle(request, response)
           check_params(request, response)
+
           affiliation =
             if request.params[:id] == "~"
               # OPTIMIZE: affiliation_idがnilのときは無駄なDBアクセスを避けられるが、
@@ -23,6 +24,7 @@ module API
               id = take_exist_id(request, response, affiliation_repo)
               affiliation_repo.get(id)
             end
+
           response[:affiliation] = affiliation
         end
       end

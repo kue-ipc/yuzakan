@@ -6,7 +6,7 @@ module API
       class Index < API::Action
         include Deps["adapter_map"]
 
-        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
+        def handle(request, response)
           response[:adapters] = adapter_map.values
         end
       end

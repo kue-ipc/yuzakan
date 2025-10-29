@@ -8,13 +8,13 @@ RSpec.describe API::Actions::Adapters::Show do
   let(:action_opts) { {adapter_map: adapter_map} }
 
   let(:adapter_map) {
-    {
-      "dummy" => Yuzakan::Adapters::Dummy,
-      "local" => Yuzakan::Adapters::Local,
-      "mock" => Yuzakan::Adapters::Mock,
-      "test" => Yuzakan::Adapters::Test,
-      "vendor.dummy" => Yuzakan::Adapters::Dummy,
-    }
+    [
+      {name: "dummy", class: Yuzakan::Adapters::Dummy},
+      {name: "local", class: Yuzakan::Adapters::Local},
+      {name: "mock", class: Yuzakan::Adapters::Mock},
+      {name: "test", class: Yuzakan::Adapters::Test},
+      {name: "vendor.dummy", class: Yuzakan::Adapters::Dummy},
+    ].to_h { |adapter| [adapter[:name], adapter] }
   }
 
   let(:id) { "dummy" }

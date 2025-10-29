@@ -6,13 +6,13 @@ RSpec.describe API::Actions::Adapters::Index do
   let(:action_opts) { {adapter_map: adapter_map} }
 
   let(:adapter_map) {
-    {
-      "dummy" => Yuzakan::Adapters::Dummy,
-      "local" => Yuzakan::Adapters::Local,
-      "mock" => Yuzakan::Adapters::Mock,
-      "test" => Yuzakan::Adapters::Test,
-      "vendor.dummy" => Yuzakan::Adapters::Dummy,
-    }
+    [
+      {name: "dummy", class: Yuzakan::Adapters::Dummy},
+      {name: "local", class: Yuzakan::Adapters::Local},
+      {name: "mock", class: Yuzakan::Adapters::Mock},
+      {name: "test", class: Yuzakan::Adapters::Test},
+      {name: "vendor.dummy", class: Yuzakan::Adapters::Dummy},
+    ].to_h { |adapter| [adapter[:name], adapter] }
   }
 
   shared_examples "ok" do
@@ -27,7 +27,7 @@ RSpec.describe API::Actions::Adapters::Index do
         {name: "local",       label: "ローカル"},
         {name: "mock",        label: "モック"},
         {name: "test",        label: "テスト"},
-        {name: "vendor.dummy", label: "ダミー"},
+        {name: "vendor.dummy", label: "vendor.dummy"},
       ])
     end
   end

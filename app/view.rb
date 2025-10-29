@@ -6,9 +6,7 @@ require "slim"
 
 module Yuzakan
   class View < Hanami::View
-    include Deps[
-      "i18n"
-    ]
+    include Deps["i18n"]
 
     MenuItem = Data.define(:name, :params, :color, :level, :type) do
       def initialize(name:, color:, level:, params: {}, type: :link)
