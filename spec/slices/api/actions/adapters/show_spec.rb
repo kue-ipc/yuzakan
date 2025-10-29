@@ -9,15 +9,11 @@ RSpec.describe API::Actions::Adapters::Show do
 
   let(:adapter_map) {
     {
-      ad: Yuzakan::Adapters::AD,
-      dummy: Yuzakan::Adapters::Dummy,
-      google: Yuzakan::Adapters::Google,
-      ldap: Yuzakan::Adapters::Ldap,
-      local: Yuzakan::Adapters::Local,
-      mock: Yuzakan::Adapters::Mock,
-      posix_ldap: Yuzakan::Adapters::PosixLdap,
-      samba_ldap: Yuzakan::Adapters::SambaLdap,
-      test: Yuzakan::Adapters::Test,
+      "dummy" => Yuzakan::Adapters::Dummy,
+      "local" => Yuzakan::Adapters::Local,
+      "mock" => Yuzakan::Adapters::Mock,
+      "test" => Yuzakan::Adapters::Test,
+      "vendor.dummy" => Yuzakan::Adapters::Dummy,
     }
   }
 

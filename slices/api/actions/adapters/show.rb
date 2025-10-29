@@ -19,7 +19,7 @@ module API
           end
 
           id = request.params[:id]
-          adapter = adapter_map[id.intern]
+          adapter = adapter_map[id]
           halt_json request, response, 404 unless adapter
 
           response[:adapter] = adapter

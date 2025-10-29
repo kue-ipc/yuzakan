@@ -31,6 +31,26 @@ module Yuzakan
         services.where(name: names.map { |name| name }).to_a
       end
 
+      def renumber_order(service)
+        return 0 if services.where(order: service.order).count < 2
+
+        count = 0
+        transaction do
+          # OPTIMIZE: N+1 問題があるが、ROMではこの方法しかない。
+          services.exclude(id: service.id)
+            .where { order >= service.order }
+            .each.with_index do |a, idx|
+            new_order = service.order + idx + 1
+            next if a.order == new_order
+
+            update(a.id, order: new_order)
+            count += 1
+          end
+        end
+        count
+      end
+
+
       # TODO: 整理が必要
 
       def find_by_name(name)

@@ -7,15 +7,11 @@ RSpec.describe API::Actions::Adapters::Index do
 
   let(:adapter_map) {
     {
-      ad: Yuzakan::Adapters::AD,
-      dummy: Yuzakan::Adapters::Dummy,
-      google: Yuzakan::Adapters::Google,
-      ldap: Yuzakan::Adapters::Ldap,
-      local: Yuzakan::Adapters::Local,
-      mock: Yuzakan::Adapters::Mock,
-      posix_ldap: Yuzakan::Adapters::PosixLdap,
-      samba_ldap: Yuzakan::Adapters::SambaLdap,
-      test: Yuzakan::Adapters::Test,
+      "dummy" => Yuzakan::Adapters::Dummy,
+      "local" => Yuzakan::Adapters::Local,
+      "mock" => Yuzakan::Adapters::Mock,
+      "test" => Yuzakan::Adapters::Test,
+      "vendor.dummy" => Yuzakan::Adapters::Dummy,
     }
   }
 
@@ -27,15 +23,11 @@ RSpec.describe API::Actions::Adapters::Index do
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:data]).to eq([
-        {name: "ad",          label: "Active Directory"},
         {name: "dummy",       label: "ダミー"},
-        {name: "google",      label: "Google Workspace"},
-        {name: "ldap",        label: "LDAP"},
         {name: "local",       label: "ローカル"},
         {name: "mock",        label: "モック"},
-        {name: "posix_ldap",  label: "Posix LDAP"},
-        {name: "samba_ldap",  label: "Samba LDAP"},
         {name: "test",        label: "テスト"},
+        {name: "vendor.dummy", label: "ダミー"},
       ])
     end
   end
