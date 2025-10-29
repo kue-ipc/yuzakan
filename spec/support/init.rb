@@ -49,8 +49,8 @@ def init_request_spec
     network
     service
     rack_test_session.env "rack.session", session
-    rack_test_session(:first).env "rack.session", first_session
     rack_test_session(:logout).env "rack.session", logout_session
+    rack_test_session(:first).env "rack.session", first_session
     rack_test_session(:timeover).env "rack.session", timeover_session
   end
 end
@@ -221,12 +221,12 @@ def init_action_spec
     let(:session) { logout_session }
   end
 
-  shared_context "when timeover" do
-    let(:session) { timeover_session }
-  end
-
   shared_context "when first" do
     let(:session) { first_session }
+  end
+
+  shared_context "when timeover" do
+    let(:session) { timeover_session }
   end
 
   shared_context "when current id" do
@@ -268,6 +268,7 @@ end
 
 # require user
 def let_session
+  let(:uuid) { "ffffffff-ffff-4fff-bfff-ffffffffffff" }
   let(:login_session) {
     {
       uuid: uuid,
@@ -278,6 +279,8 @@ def let_session
       expires_at: Time.now.to_i - 60 + 3600, # 1 hour later
     }
   }
+
+  let(:session) { login_session }
   let(:logout_session) {
     {
       **login_session,
@@ -285,6 +288,7 @@ def let_session
       trusted: false,
     }
   }
+  let(:first_session) { {} }
   let(:timeover_session) {
     {
       **login_session,
@@ -293,9 +297,6 @@ def let_session
       expires_at: Time.now.to_i - 7200 + 3600, # 1 hour later
     }
   }
-  let(:first_session) { {} }
-  let(:session) { login_session }
-  let(:uuid) { "ffffffff-ffff-4fff-bfff-ffffffffffff" }
 end
 
 # mock repostitories

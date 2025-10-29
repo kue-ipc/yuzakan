@@ -11,15 +11,16 @@ RSpec.describe API::Actions::Session::Show do
     expect(response.status).to eq 200
     expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
-    expect(json[:data].keys).to contain_exactly(:uuid, :user, :createdAt, :updatedAt)
-    expect(json[:data][:uuid]).to eq uuid
-    expect(json[:data][:user]).to eq user.name
-    expect(Time.parse(json[:data][:createdAt])).to be_within(1).of(session[:created_at])
-    expect(Time.parse(json[:data][:updatedAt])).to be_between(begin_time.floor, end_time)
+    expect(json[:data].except(:expiresAt)).to eq({
+      uuid: uuid,
+      user: user.name,
+      trusted: true,
+    })
+    expect(Time.parse(json[:data][:expiresAt])).to be_between(begin_time.floor + 3600, end_time + 3600)
   end
 
-  context "when no login" do
-    let(:session) { logout_session }
+  context "when logout" do
+    include_context "when logout"
 
     it "is successful" do
       begin_time = Time.now
@@ -29,16 +30,17 @@ RSpec.describe API::Actions::Session::Show do
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data].keys).to contain_exactly(:uuid, :user, :createdAt, :updatedAt)
-      expect(json[:data][:uuid]).to eq uuid
-      expect(json[:data][:user]).to be_nil
-      expect(Time.parse(json[:data][:createdAt])).to be_within(1).of(session[:created_at])
-      expect(Time.parse(json[:data][:updatedAt])).to be_between(begin_time.floor, end_time)
+      expect(json[:data].except(:expiresAt)).to eq({
+        uuid: uuid,
+        user: nil,
+        trusted: false,
+      })
+      expect(Time.parse(json[:data][:expiresAt])).to be_between(begin_time.floor + 3600, end_time + 3600)
     end
   end
 
-  context "when no session" do
-    let(:session) { {} }
+  context "when first" do
+    include_context "when first"
 
     it "is successful" do
       begin_time = Time.now
@@ -48,16 +50,19 @@ RSpec.describe API::Actions::Session::Show do
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data].keys).to contain_exactly(:uuid, :user, :createdAt, :updatedAt)
+      expect(json[:data].except(:uuid, :expiresAt)).to eq({
+        user: nil,
+        trusted: false,
+      })
+      expect(json[:data][:uuid]).not_to be_nil
       expect(json[:data][:uuid]).not_to eq uuid
-      expect(json[:data][:user]).to be_nil
-      expect(Time.parse(json[:data][:createdAt])).to be_between(begin_time.floor, end_time)
-      expect(Time.parse(json[:data][:updatedAt])).to be_between(begin_time.floor, end_time)
+      expect(json[:data][:uuid]).to be_a_uuid(version: 4)
+      expect(Time.parse(json[:data][:expiresAt])).to be_between(begin_time.floor + 3600, end_time + 3600)
     end
   end
 
-  describe "session timeout" do
-    let(:session) { timeover_session }
+  describe "when timeover" do
+    include_context "when timeover"
 
     it "is error" do
       begin_time = Time.now
@@ -67,11 +72,13 @@ RSpec.describe API::Actions::Session::Show do
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:flash]).to eq({warn: "セッションがタイムアウトしました。"})
-      expect(json[:data].keys).to contain_exactly(:uuid, :user, :createdAt, :updatedAt)
-      expect(json[:data][:uuid]).to eq uuid
-      expect(json[:data][:user]).to be_nil
-      expect(Time.parse(json[:data][:createdAt])).to be_within(1).of(session[:created_at])
-      expect(Time.parse(json[:data][:updatedAt])).to be_between(begin_time.floor, end_time)
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:data].except(:expiresAt)).to eq({
+        uuid: uuid,
+        user: nil,
+        trusted: false,
+      })
+      expect(Time.parse(json[:data][:expiresAt])).to be_between(begin_time.floor + 3600, end_time + 3600)
     end
   end
 end

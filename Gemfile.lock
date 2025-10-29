@@ -382,6 +382,8 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
     rspec-support (3.13.6)
+    rspec-uuid (0.6.0)
+      rspec-expectations (>= 3)
     rubocop (1.81.1)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
@@ -484,6 +486,7 @@ DEPENDENCIES
   redis
   redis-rack
   rom-factory
+  rspec-uuid
   rubocop
   rubocop-capybara
   rubocop-rake

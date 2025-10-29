@@ -87,4 +87,7 @@ group :test do
   # Web integration
   gem "capybara"
   gem "rack-test"
+
+  # Rspec
+  gem "rspec-uuid"
 end
