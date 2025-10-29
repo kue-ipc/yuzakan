@@ -1,0 +1,15 @@
+<%== params_to_json({
+  url: app_routes.url(:root),
+  title: current_config&.title,
+  domain: current_config&.domain,
+  contact: {
+    name: current_config&.contact_name,
+    email: current_config&.contact_email,
+    phone: current_config&.contact_phone,
+  },
+  app: {
+    name: Yuzakan::Version.name,
+    version: Yuzakan::Version.version,
+    license: Yuzakan::Version.license,
+  }
+}) %>
