@@ -70,19 +70,15 @@ $source-code-pro-fonts: (
     @each $key, $value in $attr {
       font-#{$key}: $value;
     }
-    src: url("#{$source-code-pro-path}/WOFF2/TTF/SourceCodePro-#{$name}.ttf.woff2")
-        format("woff2"),
-      url("#{$source-code-pro-path}/WOFF/OTF/SourceCodePro-#{$name}.otf.woff")
-        format("woff"),
-      url("#{$source-code-pro-path}/OTF/SourceCodePro-#{$name}.otf")
-        format("opentype"),
-      url("#{$source-code-pro-path}/TTF/SourceCodePro-#{$name}.ttf")
-        format("truetype");
+    src: url("#{$source-code-pro-path}/WOFF2/TTF/SourceCodePro-#{$name}.ttf.woff2") format("woff2"),
+         url("#{$source-code-pro-path}/WOFF/OTF/SourceCodePro-#{$name}.otf.woff") format("woff"),
+         url("#{$source-code-pro-path}/OTF/SourceCodePro-#{$name}.otf") format("opentype"),
+         url("#{$source-code-pro-path}/TTF/SourceCodePro-#{$name}.ttf") format("truetype");
   }
 }
 
 $source-code-variable-fonts: (
-  "Roman": (
+  "Upright": (
     "weight": 200 900,
     "style": normal,
   ),
@@ -94,16 +90,16 @@ $source-code-variable-fonts: (
 
 @each $name, $attr in $source-code-variable-fonts {
   @font-face {
-    font-family: "Source Code Variable";
+    font-family: "Source Code VF";
     font-stretch: normal;
     @each $key, $value in $attr {
       font-#{$key}: $value;
     }
-    src: url("#{$source-code-pro-path}/WOFF2/VAR/SourceCodeVariable-#{$name}.ttf.woff2")
-        format("woff2"),
-      url("#{$source-code-pro-path}/WOFF/VAR/SourceCodeVariable-#{$name}.ttf.woff")
-        format("woff"),
-      url("#{$source-code-pro-path}/VAR/SourceCodeVariable-#{$name}.ttf")
-        format("truetype");
+    src: url("#{$source-code-pro-path}/WOFF2/VF/SourceCodeVF-#{$name}.ttf.woff2") format("woff2-variations"),
+         url("#{$source-code-pro-path}/WOFF2/VF/SourceCodeVF-#{$name}.ttf.woff2") format("woff2 supports variations"),
+         url("#{$source-code-pro-path}/WOFF/VF/SourceCodeVF-#{$name}.ttf.woff") format("woff-variations"),
+         url("#{$source-code-pro-path}/WOFF/VF/SourceCodeVF-#{$name}.ttf.woff") format("woff supports variations"),
+         url("#{$source-code-pro-path}/VF/SourceCodeVF-#{$name}.ttf") format("truetype-variations"),
+         url("#{$source-code-pro-path}/VF/SourceCodeVF-#{$name}.ttf") format("truetype supports variations");
   }
 }
