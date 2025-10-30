@@ -315,7 +315,6 @@ end
 #   exist?: bool
 #   list: string[]
 # exist name: "#{name}42"
-# not exist name: "hoge"
 def let_mock_repos
   let(:config_repo) { instance_double(Yuzakan::Repos::ConfigRepo) }
   let(:network_repo) { instance_double(Yuzakan::Repos::NetworkRepo) }
@@ -334,14 +333,14 @@ def let_mock_repos
 
   let(:service_repo) {
     instance_double(Yuzakan::Repos::ServiceRepo).tap do |repo|
-      allow(repo).to receive(:all).and_return([service])
+      allow(repo).to receive_messages(
+        all: [service],
+        exist?: false, get: nil, set: service,
+        last_order: 42, renumber_order: 0)
+      allow(repo).to receive(:transaction).and_yield
+
       allow(repo).to receive(:exist?).with("service42").and_return(true)
       allow(repo).to receive(:get).with("service42").and_return(service)
-      allow(repo).to receive(:set).with("service42", anything).and_return(service)
-      allow(repo).to receive(:exist?).with("hoge").and_return(false)
-      # allow(repo).to receive(:get).with("hoge").and_return(nil)
-      allow(repo).to receive(:set).with("hoge", anything).and_return(service)
-      allow(repo).to receive(:transaction).and_yield
     end
   }
   let(:attr_repo) { instance_double(Yuzakan::Repos::AttrRepo) }

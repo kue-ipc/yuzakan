@@ -3,26 +3,29 @@
 RSpec.describe API::Actions::Services::Create do
   init_action_spec
 
-  let(:action_opts) {
-    dummy_adapter = Yuzakan::AdapterRepo::AdapterStruct.new(name: "dummy", class: Yuzakan::Adapters::Dummy)
-    allow(adapter_repo).to receive(:exist?).with("dummy").and_return(true)
-    allow(adapter_repo).to receive(:get).with("dummy").and_return(dummy_adapter)
+  let(:action_opts) { {service_repo: service_repo, adapter_repo: adapter_repo} }
 
-    allow(service_repo).to receive(:exist?).with(service.name).and_return(false)
-    allow(service_repo).to receive(:exist?).with("hoge").and_return(true)
-    allow(service_repo).to receive_messages(exist?: false, set: service, last_order: 9999, renumber_order: 0)
-    allow(service_repo).to receive(:transaction).and_yield
-
-    {service_repo: service_repo, adapter_repo: adapter_repo}
-  }
   let(:action_params) { struct_to_hash(service) }
 
-  # shared_context "when exist" do
-  #   let(:action_opts) {
-  #     allow(service_repo).to receive_messages(exist?: true)
-  #     {service_repo: service_repo}
-  #   }
-  # end
+  let(:data) {
+    {
+      name: service.name,
+      label: service.label,
+      description: service.description,
+      order: service.order,
+      adapter: service.adapter,
+      params: service.params,
+      readable: service.readable,
+      writable: service.writable,
+      authenticatable: service.authenticatable,
+      passwordChangeable: service.password_changeable,
+      lockable: service.lockable,
+      group: service.group,
+      individualPassword: service.individual_password,
+      selfManagement: service.self_management,
+    }
+  }
+  # shares
 
   shared_examples "ok" do
     it "is ok" do
@@ -33,7 +36,7 @@ RSpec.describe API::Actions::Services::Create do
       expect(response.headers["Content-Location"]).to eq "/api/services/#{service.name}"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:location]).to eq "/api/services/#{service.name}"
-      expect(json[:data]).to eq(struct_to_hash(service))
+      expect(json[:data]).to eq(data)
     end
 
     it "is ok without order param" do
@@ -44,7 +47,7 @@ RSpec.describe API::Actions::Services::Create do
       expect(response.headers["Content-Location"]).to eq "/api/services/#{service.name}"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:location]).to eq "/api/services/#{service.name}"
-      expect(json[:data]).to eq(struct_to_hash(service))
+      expect(json[:data]).to eq(data)
     end
 
     it "is ok with minimum params" do
@@ -53,10 +56,10 @@ RSpec.describe API::Actions::Services::Create do
       expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      expect(response.headers["Content-Location"]).to eq "/api/services/#{services.name}"
+      expect(response.headers["Content-Location"]).to eq "/api/services/#{service.name}"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:location]).to eq "/api/services/#{services.name}"
-      expect(json[:data]).to eq(struct_to_hash(service))
+      expect(json[:location]).to eq "/api/services/#{service.name}"
+      expect(json[:data]).to eq(data)
     end
   end
 
@@ -78,27 +81,24 @@ RSpec.describe API::Actions::Services::Create do
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:flash]).to eq({invalid: {name: ["形式が間違っています。"]}})
     end
+
+    describe "with exist name" do
+      it "is failure name duplication" do
+        response = action.call({**params, name: "service42"})
+        expect(response.status).to eq 422
+        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+        json = JSON.parse(response.body.first, symbolize_names: true)
+        expect(json[:flash]).to eq({invalid: {name: ["重複しています。"]}})
+      end
+    end
   end
 
   shared_examples "failure name duplication" do
-    it "is failure name duplication" do
-      response = action.call(params)
-      expect(response.status).to eq 422
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:flash]).to eq({invalid: {name: ["重複しています。"]}})
-    end
   end
 
   shared_examples "create" do
     it_behaves_like "ok"
     it_behaves_like "failure params"
-
-    context "when exist" do
-      include_context "when exist"
-      it_behaves_like "failure params"
-      it_behaves_like "failure name duplication"
-    end
   end
 
   # test cases
