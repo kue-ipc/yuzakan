@@ -3,16 +3,7 @@
 RSpec.describe API::Actions::Adapters::Index do
   init_action_spec
 
-  let(:action_opts) {
-    allow(adapter_repo).to receive(:all).and_return([
-      Yuzakan::AdapterRepo::AdapterStruct.new(name: "dummy", class: Yuzakan::Adapters::Dummy),
-      Yuzakan::AdapterRepo::AdapterStruct.new(name: "local", class: Yuzakan::Adapters::Local),
-      Yuzakan::AdapterRepo::AdapterStruct.new(name: "mock", class: Yuzakan::Adapters::Mock),
-      Yuzakan::AdapterRepo::AdapterStruct.new(name: "test", class: Yuzakan::Adapters::Test),
-      Yuzakan::AdapterRepo::AdapterStruct.new(name: "vendor.dummy", class: Yuzakan::Adapters::Dummy),
-    ])
-    {adapter_repo: adapter_repo }
-  }
+  let(:action_opts) { {adapter_repo: adapter_repo} }
 
   shared_examples "ok" do
     it "is ok" do
@@ -23,7 +14,6 @@ RSpec.describe API::Actions::Adapters::Index do
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:data]).to eq([
         {name: "dummy",       label: "ダミー"},
-        {name: "local",       label: "ローカル"},
         {name: "mock",        label: "モック"},
         {name: "test",        label: "テスト"},
         {name: "vendor.dummy", label: "vendor.dummy"},

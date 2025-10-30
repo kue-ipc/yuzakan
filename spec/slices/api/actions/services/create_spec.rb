@@ -4,18 +4,25 @@ RSpec.describe API::Actions::Services::Create do
   init_action_spec
 
   let(:action_opts) {
-    allow(service_repo).to receive_messages(exist?: false, set: service,
-      last_order: 9999, renumber_order: 0)
-    {service_repo: service_repo}
-  }
-  let(:action_params) { struct_to_hash(sevrice) }
+    dummy_adapter = Yuzakan::AdapterRepo::AdapterStruct.new(name: "dummy", class: Yuzakan::Adapters::Dummy)
+    allow(adapter_repo).to receive(:exist?).with("dummy").and_return(true)
+    allow(adapter_repo).to receive(:get).with("dummy").and_return(dummy_adapter)
 
-  shared_context "when exist" do
-    let(:action_opts) {
-      allow(service_repo).to receive_messages(exist?: true)
-      {service_repo: service_repo}
-    }
-  end
+    allow(service_repo).to receive(:exist?).with(service.name).and_return(false)
+    allow(service_repo).to receive(:exist?).with("hoge").and_return(true)
+    allow(service_repo).to receive_messages(exist?: false, set: service, last_order: 9999, renumber_order: 0)
+    allow(service_repo).to receive(:transaction).and_yield
+
+    {service_repo: service_repo, adapter_repo: adapter_repo}
+  }
+  let(:action_params) { struct_to_hash(service) }
+
+  # shared_context "when exist" do
+  #   let(:action_opts) {
+  #     allow(service_repo).to receive_messages(exist?: true)
+  #     {service_repo: service_repo}
+  #   }
+  # end
 
   shared_examples "ok" do
     it "is ok" do
@@ -23,9 +30,9 @@ RSpec.describe API::Actions::Services::Create do
       expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      expect(response.headers["Content-Location"]).to eq "/api/services/#{services.name}"
+      expect(response.headers["Content-Location"]).to eq "/api/services/#{service.name}"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:location]).to eq "/api/services/#{services.name}"
+      expect(json[:location]).to eq "/api/services/#{service.name}"
       expect(json[:data]).to eq(struct_to_hash(service))
     end
 
@@ -34,9 +41,9 @@ RSpec.describe API::Actions::Services::Create do
       expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      expect(response.headers["Content-Location"]).to eq "/api/services/#{services.name}"
+      expect(response.headers["Content-Location"]).to eq "/api/services/#{service.name}"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:location]).to eq "/api/services/#{services.name}"
+      expect(json[:location]).to eq "/api/services/#{service.name}"
       expect(json[:data]).to eq(struct_to_hash(service))
     end
 

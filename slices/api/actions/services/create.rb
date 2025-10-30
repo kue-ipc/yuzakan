@@ -54,7 +54,7 @@ module API
           order = request.params[:order] || next_order
 
           service = nil
-          serivce_repo.transaction do
+          service_repo.transaction do
             service = service_repo.set(name, **request.params, order:, params: result.to_h)
             service_repo.renumber_order(service)
           end

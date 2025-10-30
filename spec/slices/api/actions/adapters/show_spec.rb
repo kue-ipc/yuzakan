@@ -3,17 +3,7 @@
 RSpec.describe API::Actions::Adapters::Show do
   init_action_spec
 
-  let(:action_opts) {
-    dummy_adapter = Yuzakan::AdapterRepo::AdapterStruct.new(name: "dummy", class: Yuzakan::Adapters::Dummy)
-    test_adapter = Yuzakan::AdapterRepo::AdapterStruct.new(name: "test", class: Yuzakan::Adapters::Test)
-    allow(adapter_repo).to receive(:exist?).with(id).and_return(true)
-    allow(adapter_repo).to receive(:exist?).with("test").and_return(true)
-    allow(adapter_repo).to receive(:exist?).with("hoge").and_return(false)
-    allow(adapter_repo).to receive(:get).with(id).and_return(dummy_adapter)
-    allow(adapter_repo).to receive(:get).with("test").and_return(test_adapter)
-    # allow(adapter_repo).to receive(:get).with("hoge").and_return(nil)
-    {adapter_repo: adapter_repo}
-  }
+  let(:action_opts) { {adapter_repo: adapter_repo} }
 
   let(:action_params) { {id: id} }
 
@@ -102,6 +92,7 @@ RSpec.describe API::Actions::Adapters::Show do
   shared_examples "failure" do
     describe "with hoge id" do
       let(:id) { "hoge" }
+
       it_behaves_like "not found"
     end
   end
