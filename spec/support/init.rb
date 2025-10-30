@@ -334,7 +334,7 @@ def let_mock_repos
   let(:service_repo) {
     instance_double(Yuzakan::Repos::ServiceRepo).tap do |repo|
       allow(repo).to receive_messages(
-        all: [service],
+        all: [service, another_service],
         get: nil, set: service, unset: nil, exist?: false,
         last_order: 42, renumber_order: 0)
       allow(repo).to receive(:transaction).and_yield
@@ -387,4 +387,16 @@ def let_structs
   let(:auth_log) { Factory.structs[:auth_log] }
   let(:action_log) { Factory.structs[:action_log] }
   let(:attr_with_mappings) { Factory.structs[:attr_with_mappings] }
+
+  # another
+  # let(:another_network) { Factory.structs[:another_network] }
+  # let(:another_affiliation) { Factory.structs[:another_affiliation] }
+  # let(:another_group) { Factory.structs[:another_group] }
+  # let(:another_user) { Factory.structs[:another_user] }
+  let(:another_service) { Factory.structs[:another_service] }
+  # let(:another_attr) { Factory.structs[:another_attr] }
+  # let(:another_mapping) { Factory.structs[:another_mapping] }
+  # let(:another_auth_log) { Factory.structs[:another_auth_log] }
+  # let(:another_action_log) { Factory.structs[:another_action_log] }
+  # let(:another_attr_with_mappings) { Factory.structs[:another_attr_with_mappings] }
 end

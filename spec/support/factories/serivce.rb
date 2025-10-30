@@ -18,6 +18,20 @@ Factory.define(:service) do |f|
   f.timestamps
 end
 
+Factory.define(another_service: :service) do |f|
+  f.order 2
+  f.adapter "test"
+  f.params({requiredStr: "string"})
+  f.readable true
+  f.writable true
+  f.authenticatable true
+  f.password_changeable true
+  f.lockable true
+  f.group true
+  f.individual_password true
+  f.self_management true
+end
+
 Factory.define(service_without_label: :service) do |f|
   f.label "" # default
   f.description "" # default
