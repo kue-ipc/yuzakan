@@ -20,12 +20,12 @@ RSpec.describe "GET /api/session", :db, type: :request do
       status: {code: 200, message: "OK"},
       location: "/api/session",
     })
-    expect(json[:data].except(:createdAt, :updatedAt)).to eq({
+    expect(json[:data].except(:expiresAt)).to eq({
       uuid: uuid,
       user: user.name,
+      trusted: true,
     })
-    expect(Time.parse(json[:data][:createdAt])).to be_within(1).of(session[:created_at])
-    expect(Time.parse(json[:data][:updatedAt])).to be_between(begin_time.floor, end_time)
+    expect(Time.parse(json[:data][:expiresAt])).to be_between(begin_time.floor + 3600, end_time + 3600)
   end
 
   it "is ok on first" do
@@ -40,12 +40,13 @@ RSpec.describe "GET /api/session", :db, type: :request do
         status: {code: 200, message: "OK"},
         location: "/api/session",
       })
-      expect(json[:data].except(:uuid, :createdAt, :updatedAt)).to eq({
+      expect(json[:data].except(:uuid, :expiresAt)).to eq({
         user: nil,
+        trusted: false,
       })
-      expect(json[:data][:uuid]).to match(/\A[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\z/)
+      expect(json[:data][:uuid]).to be_a_uuid(version: 4)
       expect(json[:data][:uuid]).not_to eq uuid
-      expect(Time.parse(json[:data][:updatedAt])).to be_between(begin_time.floor, end_time)
+      expect(Time.parse(json[:data][:expiresAt])).to be_between(begin_time.floor + 3600, end_time + 3600)
     end
   end
 
@@ -61,12 +62,12 @@ RSpec.describe "GET /api/session", :db, type: :request do
         status: {code: 200, message: "OK"},
         location: "/api/session",
       })
-      expect(json[:data].except(:createdAt, :updatedAt)).to eq({
+      expect(json[:data].except(:expiresAt)).to eq({
         uuid: uuid,
         user: nil,
+        trusted: false,
       })
-      expect(Time.parse(json[:data][:createdAt])).to be_within(1).of(logout_session[:created_at])
-      expect(Time.parse(json[:data][:updatedAt])).to be_between(begin_time.floor, end_time)
+      expect(Time.parse(json[:data][:expiresAt])).to be_between(begin_time.floor + 3600, end_time + 3600)
     end
   end
 
@@ -83,12 +84,12 @@ RSpec.describe "GET /api/session", :db, type: :request do
         location: "/api/session",
         flash: {warn: "セッションがタイムアウトしました。"},
       })
-      expect(json[:data].except(:createdAt, :updatedAt)).to eq({
+      expect(json[:data].except(:expiresAt)).to eq({
         uuid: uuid,
         user: nil,
+        trusted: false,
       })
-      expect(Time.parse(json[:data][:createdAt])).to be_within(1).of(timeover_session[:created_at])
-      expect(Time.parse(json[:data][:updatedAt])).to be_between(begin_time.floor, end_time)
+      expect(Time.parse(json[:data][:expiresAt])).to be_between(begin_time.floor + 3600, end_time + 3600)
     end
   end
 end

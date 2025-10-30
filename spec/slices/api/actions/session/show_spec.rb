@@ -54,9 +54,8 @@ RSpec.describe API::Actions::Session::Show do
         user: nil,
         trusted: false,
       })
-      expect(json[:data][:uuid]).not_to be_nil
-      expect(json[:data][:uuid]).not_to eq uuid
       expect(json[:data][:uuid]).to be_a_uuid(version: 4)
+      expect(json[:data][:uuid]).not_to eq uuid
       expect(Time.parse(json[:data][:expiresAt])).to be_between(begin_time.floor + 3600, end_time + 3600)
     end
   end
