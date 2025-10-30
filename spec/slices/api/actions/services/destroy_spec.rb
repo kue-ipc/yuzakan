@@ -2,102 +2,84 @@
 
 RSpec.describe API::Actions::Services::Destroy do
   init_action_spec
-  let(:action_opts) { {service_repository: service_repository} }
-  let(:format) { "application/json" }
-  let(:action_params) { {**env, id: "service1"} }
 
-  let(:adapter_params) {
+  let(:action_opts) { {service_repo: service_repo} }
+
+  let(:action_params) { {id: id} }
+
+  let(:id) { "service42" }
+
+  let(:data) {
     {
-      name: "service1",
-      label: "プロバイダー①",
-      adapter: "test",
-      order: 16,
-      readable: true,
-      writable: true,
-      authenticatable: true,
-      password_changeable: true,
-      lockable: true,
-      individual_password: false,
-      self_management: false,
+      name: service.name,
+      label: service.label,
+      description: service.description,
+      order: service.order,
+      adapter: service.adapter,
+      params: service.params,
+      readable: service.readable,
+      writable: service.writable,
+      authenticatable: service.authenticatable,
+      passwordChangeable: service.password_changeable,
+      lockable: service.lockable,
+      group: service.group,
+      individualPassword: service.individual_password,
+      selfManagement: service.self_management,
     }
   }
-  let(:adapter_params_attributes) {
-    [
-      {name: "str", value: Marshal.dump("hoge")},
-      {name: "int", value: Marshal.dump(42)},
-    ]
-  }
-  let(:adapter_params_attributes_params) {
-    {
-      default: nil,
-      str: "hoge",
-      str_default: "デフォルト",
-      str_fixed: "固定",
-      str_required: nil,
-      str_enc: nil,
-      text: nil,
-      int: 42,
-      list: "default",
-    }
-  }
-  let(:service_with_params) { Service.new(id: 3, **adapter_params, adapter_params: adapter_params_attributes) }
-  let(:service_without_params) { Service.new(id: 3, **adapter_params) }
-  let(:service_repository) {
-    instance_double(ServiceRepository,
-      find_with_params_by_name: service_with_params,
-      delete: service_without_params)
-  }
 
-  it "is failure" do
-    response = action.call(params)
-    expect(response.status).to eq 403
-    expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-    json = JSON.parse(response.body.first, symbolize_names: true)
-    expect(json).to eq({code: 403, message: "Forbidden"})
-  end
-
-  describe "admin" do
-    let(:user) { User.new(**user_attributes, clearance_level: 5) }
-    let(:client) { "127.0.0.1" }
-
-    it "is successful" do
+  shared_examples "ok" do
+    it "is ok" do
       response = action.call(params)
+      expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({
-        **adapter_params,
-        params: adapter_params_attributes_params,
-      })
-    end
-
-    describe "not existend" do
-      let(:service_repository) {
-        instance_double(ServiceRepository, find_with_params_by_name: nil)
-      }
-
-      it "is failure" do
-        response = action.call(params)
-        expect(response.status).to eq 404
-        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-        json = JSON.parse(response.body.first, symbolize_names: true)
-        expect(json).to eq({
-          code: 404,
-          message: "Not Found",
-        })
-      end
+      expect(json[:data]).to eq(data)
     end
   end
 
-  describe "no login session" do
-    let(:session) { {uuid: uuid} }
+  shared_examples "failure" do
+    it_behaves_like "bad id param"
 
-    it "is error" do
-      response = action.call(params)
-      expect(response.status).to eq 401
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({code: 401, message: "Unauthorized"})
+    describe "with hoge id" do
+      let(:id) { "hoge" }
+
+      it_behaves_like "not found"
     end
+  end
+
+  shared_examples "destroy" do
+    it_behaves_like "ok"
+    it_behaves_like "failure"
+  end
+
+  # test cases
+
+  it_behaves_like "forbidden"
+
+  context "when guest" do
+    include_context "when guest"
+    it_behaves_like "forbidden"
+  end
+
+  context "when observer" do
+    include_context "when observer"
+    it_behaves_like "forbidden"
+  end
+
+  context "when operator" do
+    include_context "when operator"
+    it_behaves_like "forbidden"
+  end
+
+  context "when administrator" do
+    include_context "when administrator"
+    it_behaves_like "forbidden"
+  end
+
+  context "when superuser" do
+    include_context "when superuser"
+    it_behaves_like "destroy"
   end
 end

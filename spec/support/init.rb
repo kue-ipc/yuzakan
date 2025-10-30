@@ -335,12 +335,14 @@ def let_mock_repos
     instance_double(Yuzakan::Repos::ServiceRepo).tap do |repo|
       allow(repo).to receive_messages(
         all: [service],
-        exist?: false, get: nil, set: service,
+        get: nil, set: service, unset: nil, exist?: false,
         last_order: 42, renumber_order: 0)
       allow(repo).to receive(:transaction).and_yield
 
-      allow(repo).to receive(:exist?).with("service42").and_return(true)
       allow(repo).to receive(:get).with("service42").and_return(service)
+      # allow(repo).to receive(:set).with("service42", anything).and_return(service)
+      allow(repo).to receive(:unset).with("service42").and_return(service)
+      allow(repo).to receive(:exist?).with("service42").and_return(true)
     end
   }
   let(:attr_repo) { instance_double(Yuzakan::Repos::AttrRepo) }

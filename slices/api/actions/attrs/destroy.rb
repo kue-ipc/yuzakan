@@ -17,8 +17,8 @@ module API
 
         def handle(request, response)
           check_params(request, response)
-          id = take_exist_id(request, response, attr_repo)
 
+          id = take_exist_id(request, response, attr_repo)
           attr = attr_repo.unset(id)
 
           response[:attr] = attr
