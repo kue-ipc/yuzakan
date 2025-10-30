@@ -3,7 +3,7 @@
 
 # security level
 # level 0: guest
-# level 1: user
+# level 1: user (default)
 # level 2: observer
 # level 3: operator
 # level 4: administrator

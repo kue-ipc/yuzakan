@@ -3,7 +3,7 @@
 RSpec.describe API::Views::Parts::Adapter do
   init_part_spec
 
-  let(:value) { Hanami.app["adapter_map"]["test"] }
+  let(:value) { Hanami.app["adapter_repo"].get("test") }
 
   it "to_h with sipmle" do
     data = subject.to_h(restrict: true)

@@ -62,7 +62,7 @@ RSpec.describe API::Actions::Affiliations::Show do
   end
 
   shared_examples "ok restrict" do
-    it "is ok" do
+    it "is ok restrict" do
       response = action.call(params)
       expect(response).to be_successful
       expect(response.status).to eq 200

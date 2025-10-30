@@ -6,8 +6,6 @@ module API
       class Show < API::Action
         include Deps["repos.affiliation_repo"]
 
-        security_level 1
-
         params do
           required(:id) { filled(:name, max_size?: 255) | eql?("~") }
         end

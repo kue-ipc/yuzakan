@@ -7,19 +7,16 @@ module API
   module Views
     module Parts
       class Adapter < API::Views::Part
-        def adapter_name = value[:name]
-        def adapter_class = value[:class]
-
         def to_h(restrict: false)
           hash = {
-            name: adapter_name,
-            label: context.t("adapters.#{adapter_name}.label", default: adapter_name),
+            name: value.name,
+            label: context.t("adapters.#{value.name}.label", default: value.name),
           }
           unless restrict
             hash.merge!({
-              group: adapter_class.has_group?,
-              primary: adapter_class.has_primary_group?,
-              params: {schema: adapter_class.schema},
+              group: value.class.has_group?,
+              primary: value.class.has_primary_group?,
+              params: {schema: value.class.schema},
             })
           end
           hash
@@ -32,7 +29,7 @@ module API
         end
 
         def json_schema
-          adapter_class.schema.ast => [:set, rules]
+          value.class.schema.ast => [:set, rules]
           required = []
           properties = rules.to_h do |rule|
             item_required =
@@ -52,9 +49,9 @@ module API
 
         private def ast_to_property(ast, name)
           {
-            title: context.t("adapters.#{adapter_name}.params.#{name}.label", default: nil),
-            description: context.t("adapters.#{adapter_name}.params.#{name}.description", default: nil),
-            default: adapter_class.default_params[name],
+            title: context.t("adapters.#{value.name}.params.#{name}.label", default: nil),
+            description: context.t("adapters.#{value.name}.params.#{name}.description", default: nil),
+            default: value.class.default_params[name],
             **parse_ast(ast, name),
           }.compact
         end

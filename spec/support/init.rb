@@ -326,6 +326,9 @@ def let_mock_repos
   let(:mapping_repo) { instance_double(Yuzakan::Repos::MappingRepo) }
   let(:auth_log_repo) { instance_double(Yuzakan::Repos::AuthLogRepo) }
   let(:action_log_repo) { instance_double(Yuzakan::Repos::ActionLogRepo) }
+
+  # no database repos
+  let(:adapter_repo) { instance_double(Yuzakan::AdapterRepo) }
 end
 
 # Factory.sturcts[:...]はROM::Struct::...になる。

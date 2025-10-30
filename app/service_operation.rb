@@ -10,7 +10,7 @@ module Yuzakan
     end
 
     include Deps[
-      "adapter_map",
+      "adapter_repo",
       "cache_store",
       "repos.mapping_repo",
       "repos.service_repo"
@@ -74,7 +74,7 @@ module Yuzakan
     end
 
     private def get_adapter(service)
-      adapter_class = adapter_map[service.adapter]
+      adapter_class = adapter_repo.get(service.adapter)&.class
       return Failure([:not_found, "adapter"]) if adapter_class.nil?
 
       begin

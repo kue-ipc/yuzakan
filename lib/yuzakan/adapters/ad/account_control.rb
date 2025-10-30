@@ -4,7 +4,7 @@
 # https://learn.microsoft.com/ja-jp/troubleshoot/windows-server/identity/useraccountcontrol-manipulate-account-properties
 
 module Yuzakan
-  module Adatpers
+  module Adapters
     class AD < Ldap
       class AccountControl
         module Flag

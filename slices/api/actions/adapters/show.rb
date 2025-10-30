@@ -6,7 +6,7 @@ module API
   module Actions
     module Adapters
       class Show < API::Action
-        include Deps["adapter_map"]
+        include Deps["adapter_repo"]
 
         params do
           required(:id).filled(:name, max_size?: 255)
@@ -15,8 +15,8 @@ module API
         def handle(request, response)
           check_params(request, response)
 
-          adapter = adapter_map[request.params[:id]]
-          halt_json request, response, 404 unless adapter
+          id = take_exist_id(request, response, adapter_repo)
+          adapter = adapter_repo.get(id)
 
           response[:adapter] = adapter
         end

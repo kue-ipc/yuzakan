@@ -3,16 +3,15 @@
 RSpec.describe API::Actions::Adapters::Index do
   init_action_spec
 
-  let(:action_opts) { {adapter_map: adapter_map} }
-
-  let(:adapter_map) {
-    [
-      {name: "dummy", class: Yuzakan::Adapters::Dummy},
-      {name: "local", class: Yuzakan::Adapters::Local},
-      {name: "mock", class: Yuzakan::Adapters::Mock},
-      {name: "test", class: Yuzakan::Adapters::Test},
-      {name: "vendor.dummy", class: Yuzakan::Adapters::Dummy},
-    ].to_h { |adapter| [adapter[:name], adapter] }
+  let(:action_opts) {
+    allow(adapter_repo).to receive(:all).and_return([
+      Yuzakan::AdapterRepo::AdapterStruct.new(name: "dummy", class: Yuzakan::Adapters::Dummy),
+      Yuzakan::AdapterRepo::AdapterStruct.new(name: "local", class: Yuzakan::Adapters::Local),
+      Yuzakan::AdapterRepo::AdapterStruct.new(name: "mock", class: Yuzakan::Adapters::Mock),
+      Yuzakan::AdapterRepo::AdapterStruct.new(name: "test", class: Yuzakan::Adapters::Test),
+      Yuzakan::AdapterRepo::AdapterStruct.new(name: "vendor.dummy", class: Yuzakan::Adapters::Dummy),
+    ])
+    {adapter_repo: adapter_repo }
   }
 
   shared_examples "ok" do
@@ -31,6 +30,8 @@ RSpec.describe API::Actions::Adapters::Index do
       ])
     end
   end
+
+  # test cases
 
   it_behaves_like "ok"
 

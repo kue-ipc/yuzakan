@@ -17,7 +17,7 @@
 #   X: パスワード無期限
 
 module Yuzakan
-  module Adatpers
+  module Adapters
     class SambaLdap < PosixLdap
       class AccountControl < Yuzakan::Adpaters::AD::AccountControl
         SAMAB_FLAG_MAP = {

@@ -6,9 +6,8 @@ module API
       class Index < API::Action
         include Deps["repos.affiliation_repo"]
 
-        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
-          affiliations = affiliation_repo.all
-          response[:affiliations] = affiliations
+        def handle(_request, response)
+          response[:affiliations] = affiliation_repo.all
         end
       end
     end

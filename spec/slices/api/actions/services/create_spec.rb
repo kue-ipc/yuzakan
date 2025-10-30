@@ -3,8 +3,6 @@
 RSpec.describe API::Actions::Services::Create do
   init_action_spec
 
-  let(:adapter_map) { {dummy: } }
-
   let(:action_opts) {
     allow(service_repo).to receive_messages(exist?: false, set: service,
       last_order: 9999, renumber_order: 0)

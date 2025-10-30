@@ -4,7 +4,7 @@ RSpec.describe API::Actions::Affiliations::Index do
   init_action_spec
 
   let(:action_opts) {
-    allow(affiliation_repo).to receive_messages(all: [affiliation])
+    allow(affiliation_repo).to receive(:all).and_return([affiliation])
     {affiliation_repo: affiliation_repo}
   }
 

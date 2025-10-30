@@ -5,7 +5,7 @@ module API
     module Services
       class Create < API::Action
         include Deps[
-          "adapter_map",
+          "adapter_repo",
           "repos.service_repo",
           show_view: "views.services.show"
         ]
@@ -39,13 +39,13 @@ module API
           check_params(request, response)
           name = take_unique_name(request, response, service_repo)
 
-          adapter = adapter_map[request.params[:adapter]]
+          adapter = adapter_repo.get(request.params[:adapter])
           unless adapter
-            response.flash[:invalid] = {adatper: t("errors.found?")}
+            response.flash[:invalid] = {adapter: t("errors.found?")}
             halt_json request, response, 422
           end
 
-          result = adapter.validate(request.params[:params])
+          result = adapter.class.validate(request.params[:params])
           if result.failure?
             response.flash[:invalid] = {params: result.errors}
             halt_json request, response, 422
