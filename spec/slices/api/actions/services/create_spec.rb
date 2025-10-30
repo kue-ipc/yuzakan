@@ -25,6 +25,7 @@ RSpec.describe API::Actions::Services::Create do
       selfManagement: service.self_management,
     }
   }
+
   # shares
 
   shared_examples "ok" do

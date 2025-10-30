@@ -76,7 +76,7 @@ RSpec.describe API::Actions::Services::Show do
 
   it_behaves_like "show restrict"
 
- context "when guest" do
+  context "when guest" do
     include_context "when guest"
     it_behaves_like "forbidden"
   end

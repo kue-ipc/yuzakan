@@ -4,85 +4,70 @@ module API
   module Actions
     module Services
       class Update < API::Action
+        include Deps[
+          "adapter_repo",
+          "repos.service_repo",
+          show_view: "views.services.show"
+        ]
+
         security_level 5
 
         params do
           required(:id).filled(:name, max_size?: 255)
+
           optional(:name).filled(:name, max_size?: 255)
-          optional(:adapter).filled(:name, max_size?: 255)
           optional(:label).maybe(:str?, max_size?: 255)
+          optional(:description).maybe(:str?, max_size?: 16383)
+
           optional(:order).filled(:int?)
+
+          optional(:adapter).filled(:name, max_size?: 255)
+          optional(:params) { hash? }
+
           optional(:readable).filled(:bool?)
           optional(:writable).filled(:bool?)
+
           optional(:authenticatable).filled(:bool?)
           optional(:password_changeable).filled(:bool?)
           optional(:lockable).filled(:bool?)
+
+          optional(:group).filled(:bool?)
+
           optional(:individual_password).filled(:bool?)
           optional(:self_management).filled(:bool?)
-          optional(:group).filled(:bool?)
-          optional(:params) { hash? }
         end
 
-        def initialize(service_repository: ServiceRepository.new,
-          adapter_param_repository: AdapterParamRepository.new,
-          **opts)
-          super
-          @service_repository ||= service_repository
-          @adapter_param_repository ||= adapter_param_repository
-        end
+        def handle(request, response)
+          check_params(request, response)
+          id = take_exist_id(request, response, service_repo)
+          name = take_unique_name(request, response, service_repo)
 
-        def handle(_request, _response)
-          change_name = params[:name] && params[:name] != @service.name
-          if change_name && @service_repository.exist_by_name?(params[:name])
-            halt_json 422, errors: [{name: [t("errors.uniq?")]}]
+          current = service_repo.get(id)
+          adapter = adapter_repo.get(request.params[:adapter] || current.adapter)
+          unless adapter
+            response.flash[:invalid] = {adapter: t("errors.found?")}
+            halt_json request, response, 422
           end
 
-          adapter_params = params.to_h.except(:id)
-          adapter_params_params = adapter_params.delete(:params)
-          @service_repository.update(@service.id, adapter_params)
-
-          if adapter_params_params
-            existing_params = @service.params.dup
-            @service.adapter_param_types.each do |param_type|
-              value = param_type.convert_value(adapter_params_params[param_type.name])
-              next if value.nil?
-
-              data = {name: param_type.name.to_s,
-                      value: param_type.dump_value(value),}
-              if existing_params.key?(param_type.name)
-                existing_value = existing_params.delete(param_type.name)
-
-                if existing_value != value
-                  param_name = param_type.name.to_s
-                  existing_adapter_param = @service.adapter_params.find do |param|
-                    param.name == param_name
-                  end
-                  if existing_adapter_param
-                    @adapter_param_repository.update(
-                      existing_adapter_param.id, data)
-                  else
-                    # 名前がないということはあり得ない？
-                    @service_repository.add_param(@service, data)
-                  end
-                end
-              else
-                @service_repository.add_param(@service, data)
-              end
-            end
-            existing_params.each_key do |key|
-              @service_repository.delete_param_by_name(@service, key.to_s)
-            end
+          result = adapter.class.validate(request.params[:params] || current.params)
+          if result.failure?
+            response.flash[:invalid] = {params: result.errors}
+            halt_json request, response, 422
           end
 
-          @name = params[:name] if change_name
-          load_service
-
-          self.status = 200
-          if change_name
-            headers["Content-Location"] =
-              routes.service_path(@name)
+          service = nil
+          service_repo.transaction do
+            service = service_repo.set(id, **request.params, params: result.to_h)
+            service_repo.renumber_order(service)
           end
-          self.body = service_json
+
+          if id != name
+            response.headers["Content-Location"] = "/api/services/#{name}"
+            response[:location] = "/api/services/#{name}"
+          end
+          response[:service] = service
+          response.render(show_view)
+
         end
       end
     end

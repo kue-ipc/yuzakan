@@ -30,9 +30,9 @@ RSpec.describe API::Actions::Attrs::Update do
   }
 
   shared_context "when not exist" do
-      let(:action_opts) {
-        allow(attr_repo).to receive_messages(exist?: nil)
-        {attr_repo: attr_repo, service_repo: service_repo}
+    let(:action_opts) {
+      allow(attr_repo).to receive_messages(exist?: nil)
+      {attr_repo: attr_repo, service_repo: service_repo}
       }
   end
 
