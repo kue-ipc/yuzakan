@@ -11,6 +11,7 @@ spec/examples.txt
 vendor
 
 .*-version
+mise.toml
 
 .vscode
 .ruby-lsp
