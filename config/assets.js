@@ -1,16 +1,20 @@
 import * as assets from "hanami-assets";
 
 import civetPlugin from '@danielx/civet/esbuild-plugin';
-import {sassPlugin} from 'esbuild-sass-plugin';
-import {YAMLPlugin} from 'esbuild-yaml';
+import { sassPlugin } from 'esbuild-sass-plugin';
+import { YAMLPlugin } from 'esbuild-yaml';
+
+// Assets are managed by esbuild (https://esbuild.github.io), and can be
+// customized below.
+//
+// Learn more at https://guides.hanamirb.org/assets/customization/.
 
 await assets.run({
   esbuildOptionsFn: (args, esbuildOptions) => {
-    // Add to esbuildOptions here. Use `args.watch` as a condition for different options for
-    // compile vs watch.
-    // if (args.watch) {
-    // } else {
-    // }
+    // Customize your `esbuildOptions` here.
+    //
+    // Use the `args.watch` boolean as a condition to apply diffierent options
+    // when running `hanami assets watch` vs `hanami assets compile`.
 
     esbuildOptions.format = 'esm';
     esbuildOptions.target = [
@@ -27,5 +31,5 @@ await assets.run({
     esbuildOptions.plugins.push(YAMLPlugin());
 
     return esbuildOptions;
-  }
+  },
 });
