@@ -2,6 +2,6 @@
 
 module API
   class Slice < Hanami::Slice
-    # NOTE: Cannot use `config.actions.format :json` here because middleware use :body_parser with default :json
+    # NOTE: Cannot use `config.actions.formats.accept :json` here because middleware use :body_parser with default :json
   end
 end

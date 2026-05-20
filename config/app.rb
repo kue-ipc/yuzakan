@@ -11,7 +11,7 @@ module Yuzakan
     require "yuzakan/middleware/body_parser/params_json_parser"
     config.middleware.use :body_parser, [Yuzakan::Middleware::BodyParser::ParamsJsonParser]
 
-    config.actions.format :html
+    config.actions.formats.accept :html
 
     config.actions.sessions =
       if settings.redis_url

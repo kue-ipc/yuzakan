@@ -6,13 +6,11 @@ module API
     include API::Actions::MessageJSON
     include API::Actions::ParamsInspection
 
-    # rubocop: disable Style/FormatString
     if Hanami.env?(:development)
-      format :json, :html
+      config.formats.accept :json, :html
     else
-      format :json
+      config.formats.accept :json
     end
-    # rubocop: enable Style/FormatString
 
     # FIXME: JSONで渡されるとrawでもキーがシンボルになっているが、
     #   CSRFProtectionではキーが文字列であることを前提としているため、
