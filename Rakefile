@@ -1,21 +1,17 @@
 # frozen_string_literal: true
 
 require "rake"
-require "hanami/rake_tasks"
 require "rake/clean"
+require "hanami/rake_tasks"
 
-CLEAN << "public"
+# Add your custom rake tasks to the lib/tasks directory
+Rake.add_rakelib "lib/tasks"
 
-CLOBBER << "node_modules"
+CLEAN << "public/assets"
 
-begin
-  require "rspec/core/rake_task"
-  RSpec::Core::RakeTask.new(:spec)
-  task default: [:spec, "js:test"]
-rescue LoadError
-  # do nothing
-end
+CLOBBER << "node_modules" << "vendor/bundle"
 
+# TODO: lib/tasks以下に移動すべき。
 namespace :cache do
   desc "Remove any caches"
   task clean: :environment do
