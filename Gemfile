@@ -2,16 +2,16 @@
 
 source "https://rubygems.org"
 
-gem "hanami", "~> 2.2"
-gem "hanami-assets", "~> 2.2"
-gem "hanami-controller", "~> 2.2"
-gem "hanami-db", "~> 2.2"
-gem "hanami-router", "~> 2.2"
-gem "hanami-validations", "~> 2.2"
-gem "hanami-view", "~> 2.2"
+gem "hanami", "~> 2.3.0"
+gem "hanami-assets", "~> 2.3.0"
+gem "hanami-controller", "~> 2.3.0"
+gem "hanami-db", "~> 2.3.0"
+gem "hanami-router", "~> 2.3.0"
+gem "hanami-validations", "~> 2.3.0"
+gem "hanami-view", "~> 2.3.0"
 
 gem "dry-types", "~> 1.7"
-gem "dry-operation"
+gem "dry-operation", ">= 1.0.1"
 gem "puma"
 gem "rake"
 
@@ -53,7 +53,7 @@ gem "smbhash"
 gem "google-apis-admin_directory_v1"
 
 group :development do
-  gem "hanami-webconsole", "~> 2.2"
+  gem "hanami-webconsole", "~> 2.3.0"
 
   # Rubocop
   gem "rubocop"
@@ -72,11 +72,11 @@ group :development, :test do
 end
 
 group :cli, :development do
-  gem "hanami-reloader", "~> 2.2"
+  gem "hanami-reloader", "~> 2.3.0"
 end
 
 group :cli, :development, :test do
-  gem "hanami-rspec", "~> 2.2"
+  gem "hanami-rspec", "~> 2.3.0"
 end
 
 group :test do
