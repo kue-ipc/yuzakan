@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 namespace :js do
-  desc "Run JavaScript tests"
-  task test: ["node_modules/.bin/mocha"] do
+  desc "Install JavaScript dependencies"
+  task install: "node_modules"
+
+  task test: ["node_modules"] do
+    desc "Run JavaScript tests"
     sh "npm run test"
   end
 
-  rule %r{^node_modules/.*$} do
-    sh "npm install"
-  end
+  file "node_modules" => ["package.json", "package-lock.json"]
 end
