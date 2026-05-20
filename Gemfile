@@ -31,7 +31,7 @@ gem "redis", require: ["redis", "redis/connection/hiredis"]
 gem "redis-rack"
 
 # Uitls
-gem "activesupport", "~> 8.0"
+gem "activesupport", "~> 8.1"
 gem "i18n"
 gem "bcrypt"
 gem "zxcvbn"
