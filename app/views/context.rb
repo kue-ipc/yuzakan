@@ -4,6 +4,8 @@
 module Yuzakan
   module Views
     class Context < Hanami::View::Context
+      # Define your view context here. See https://guides.hanamirb.org/views/context/ for details.
+
       include Deps[
         "i18n",
         app_assets: "assets",
