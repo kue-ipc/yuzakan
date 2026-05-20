@@ -1,6 +1,7 @@
 import * as assets from "hanami-assets";
 
-import civetPlugin from "@danielx/civet/esbuild";
+// import civetPlugin from "@danielx/civet/esbuild";
+import civetPlugin from "./civet-esbuild-plugin.js";
 import { sassPlugin } from "esbuild-sass-plugin";
 import { YAMLPlugin } from "esbuild-yaml";
 
