@@ -1,5 +1,7 @@
 import * as assets from "hanami-assets";
 
+// FIXME: Civetのunpluginではtsconfig.jsonのpathsが解決されないため、古いプラグインを使用する。
+//        unpluginでの解決策は見つかっていない。
 // import civetPlugin from "@danielx/civet/esbuild";
 import civetPlugin from "./civet-esbuild-plugin.js";
 import { sassPlugin } from "esbuild-sass-plugin";
