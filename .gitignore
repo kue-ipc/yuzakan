@@ -1,17 +1,16 @@
-/.env*.local
-/log
-/public
-/node_modules
-/db/*.sqlite
-/db/*.sqlite-journal
-/spec/examples.txt
+.env*.local
+log/*
+public/*
+!public/404.html
+!public/500.html
+node_modules/
+db/*.sqlite
+spec/examples.txt
 
-/.bundle
-/vendor
+.bundle
+vendor
 
-/.*-version
+.*-version
 
-/rollup.config.mjs
-
-/.vscode
-/.ruby-lsp
+.vscode
+.ruby-lsp
