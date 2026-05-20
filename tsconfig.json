@@ -43,7 +43,7 @@
 
     // Other Options
     "paths": {
-      "appjs/*": ["./app/assets/js/*"],
+      "~/*": ["./app/assets/js/*"],
       "~admin/*": ["./slices/admin/assets/js/*"],
       "~api/*": ["./slices/api/assets/js/*"],
     },
