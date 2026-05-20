@@ -9,7 +9,7 @@
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
     "target": "esnext",
-    "types": ["esbuild-yaml/types", "mocha"],
+    "types": ["esbuild-yaml", "mocha"],
     // For nodejs:
     "lib": ["esnext", "dom", "dom.iterable"],
     // "types": ["node"],
