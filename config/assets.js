@@ -32,11 +32,6 @@ await assets.run({
       silenceDeprecations: ["color-functions", "global-builtin", "import"],
     }));
     esbuildOptions.plugins.push(YAMLPlugin());
-    esbuildOptions.alias = {
-      "~": "./app/assets/js",
-      "~admin": "./slices/admin/assets/js",
-      "~api": "./slices/api/assets/js",
-    };
 
     return esbuildOptions;
   },
