@@ -6,6 +6,14 @@ module API
     include API::Actions::MessageJSON
     include API::Actions::ParamsInspection
 
+    # FIXME: 全体で設定しないとapplication/jsonを返さない。
+    #       この設定で正しいのかは不明。
+    #       https://hanakai.org/learn/hanami/v2.3/upgrade-notes#use-new-formats-config-for-actions
+    #       これによると、depractedらしいが、代わりになる設定がわからない。
+    #       https://hanakai.org/learn/hanami/v2.3/actions/formats-and-media-types
+    #       これによるとresponse.format = :jsonらしいのだが、うまくいかなかった。なんで？
+    format :json
+
     if Hanami.env?(:development)
       config.formats.accept :json, :html
     else
