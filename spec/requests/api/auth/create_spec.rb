@@ -64,7 +64,7 @@ RSpec.describe "POST /api/auth", :db, type: :request do
       expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(last_response.body, symbolize_names: true)
       expect(json).to eq({
-        status: {code: 422, message: "Unprocessable Entity"},
+        status: {code: 422, message: "Unprocessable Content"},
         location: "/api/auth",
         flash: {failure: "ユーザー名またはパスワードが違います。"},
       })
@@ -97,7 +97,7 @@ RSpec.describe "POST /api/auth", :db, type: :request do
         expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(last_response.body, symbolize_names: true)
         expect(json).to eq({
-          status: {code: 422, message: "Unprocessable Entity"},
+          status: {code: 422, message: "Unprocessable Content"},
           location: "/api/auth",
           flash: {failure: "ユーザー名またはパスワードが違います。"},
         })
@@ -111,7 +111,7 @@ RSpec.describe "POST /api/auth", :db, type: :request do
         expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(last_response.body, symbolize_names: true)
         expect(json).to eq({
-          status: {code: 422, message: "Unprocessable Entity"},
+          status: {code: 422, message: "Unprocessable Content"},
           location: "/api/auth",
           flash: {failure: "ユーザー名またはパスワードが違います。"},
         })
@@ -125,7 +125,7 @@ RSpec.describe "POST /api/auth", :db, type: :request do
         expect(last_response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(last_response.body, symbolize_names: true)
         expect(json).to eq({
-          status: {code: 422, message: "Unprocessable Entity"},
+          status: {code: 422, message: "Unprocessable Content"},
           location: "/api/auth",
           flash: {failure: "ユーザー名またはパスワードが違います。"},
         })
