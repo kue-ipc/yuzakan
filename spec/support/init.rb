@@ -83,7 +83,7 @@ def init_action_spec
   let(:params) { {**action_params, **env} }
   let(:env) {
     {
-      "rack.session" => session,
+      "rack.session" => session.transform_keys(&:to_s),
       "REMOTE_ADDR" => client,
     }
   }
