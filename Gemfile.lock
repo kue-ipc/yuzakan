@@ -53,7 +53,7 @@ GEM
     digest-xxhash (0.2.9)
     dotenv (3.2.0)
     drb (2.2.3)
-    dry-auto_inject (1.2.0)
+    dry-auto_inject (1.2.1)
       dry-core (~> 1.1)
       zeitwerk (~> 2.6)
     dry-cli (1.4.1)
@@ -309,7 +309,7 @@ GEM
       date
       stringio
     public_suffix (7.0.5)
-    puma (7.2.0)
+    puma (7.2.1)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.6)
@@ -349,7 +349,7 @@ GEM
       declarative (< 0.1.0)
       trailblazer-option (>= 0.1.1, < 0.2.0)
       uber (< 0.2.0)
-    retriable (3.4.1)
+    retriable (3.8.0)
     rexml (3.4.4)
     rom (5.4.3)
       rom-changeset (~> 5.4)
@@ -383,7 +383,8 @@ GEM
       dry-types (~> 1.8)
       rom (~> 5.4)
       sequel (>= 4.49)
-    rouge (4.7.0)
+    rouge (5.0.0)
+      strscan (~> 3.1)
     rspec (3.13.2)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
@@ -443,6 +444,7 @@ GEM
       tilt (>= 2.1.0)
     smbhash (1.1.0)
     stringio (3.2.0)
+    strscan (3.1.8)
     temple (0.10.4)
     thor (1.5.0)
     tilt (2.7.0)
@@ -458,7 +460,7 @@ GEM
     uri (1.1.1)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    zeitwerk (2.8.1)
+    zeitwerk (2.8.2)
     zxcvbn (1.0.0)
 
 PLATFORMS
