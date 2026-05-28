@@ -10,10 +10,10 @@ module Yuzakan
           has_many :members
           has_many :users, as: :member_users, through: :members
         end
-
-        use :pagination
-        per_page 100
       end
+
+      use :pagination
+      per_page 100
 
       # always ordered by name
       dataset do

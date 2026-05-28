@@ -25,6 +25,9 @@ module Yuzakan
         end
       end
 
+      use :pagination
+      per_page 100
+
       # always ordered by order and name
       dataset do
         order(:order, :name)

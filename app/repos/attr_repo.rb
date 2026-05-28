@@ -3,11 +3,22 @@
 module Yuzakan
   module Repos
     class AttrRepo < Yuzakan::DB::Repo
+      # pagination
+      def paginate(page: nil, per_page: nil)
+        relation = attrs
+        relation = relation.page(page) if page
+        relation = relation.per_page(per_page) if per_page
+        relation
+      end
+
+      def pager(**) = paginate(**).pager
+
       # compatible interfaces
       commands :create, **CREATE_TIMESTAMP
       commands update: :by_pk, **UPDATE_TIMESTAMP
       commands delete: :by_pk
-      def all = attrs.to_a
+      def all(**) = paginate(**).to_a
+
       def find(id) = attrs.by_pk(id).one
       def first = attrs.first
       def last = attrs.last
@@ -19,27 +30,17 @@ module Yuzakan
       def set(name, **) = by_name(name).command(:update, **UPDATE_TIMESTAMP).call(**) || create(name: name, **)
       def unset(name) = by_name(name).command(:delete).call
       def exist?(name) = by_name(name).exist?
-      def list = attrs.pluck(:name)
+      def list(**) = paginate(**).pluck(:name)
 
       def gets(names) = by_name(names).to_a
 
       # other interfaces
-      def get_with_mappings(name)
-        by_name(name).combine(:mappings).one
-      end
-
-      def get_with_mappings_and_services(name)
-        by_name(name).combine(mappings: :service).one
-      end
-
-      def create_with_mappings(**)
-        attrs.combine(:mappings).command(:create, **CREATE_TIMESTAMP).call(**)
-      end
+      def get_with_mappings(name) = by_name(name).combine(:mappings).one
+      def get_with_mappings_and_services(name) = by_name(name).combine(mappings: :service).one
+      def create_with_mappings(**) = attrs.combine(:mappings).command(:create, **CREATE_TIMESTAMP).call(**)
 
       # なにもない場合は 0 を返す。
-      def last_order
-        attrs.order(:order).pluck(:order).last.to_i
-      end
+      def last_order = attrs.pluck(:order).last.to_i
 
       def renumber_order(attr)
         return 0 if attrs.where(order: attr.order).count < 2
@@ -60,9 +61,7 @@ module Yuzakan
         count
       end
 
-      def exposed_all
-        attrs.where(hidden: false).to_a
-      end
+      def exposed_all(**) = relation(**).where(hidden: false).to_a
 
       # TODO: 個々から下は未整理
 

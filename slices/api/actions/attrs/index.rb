@@ -6,12 +6,19 @@ module API
       class Index < API::Action
         include Deps["repos.attr_repo"]
 
-        def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
+        params do
+          optional(:page).value(:integer, gteq?: 1)
+          optional(:per_page).value(:integer, gteq?: 1, lteq?: 100)
+        end
+
+        def handle(request, response)
+          check_params(request, response)
+
           attrs =
             if response[:current_level] >= 2
-              attr_repo.all
+              attr_repo.all(**request.params.to_h.slice(:page, :per_page))
             else
-              attr_repo.exposed_all
+              attr_repo.exposed_all(**request.params.to_h.slice(:page, :per_page))
             end
 
           response[:attrs] = attrs
