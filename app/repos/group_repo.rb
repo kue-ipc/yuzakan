@@ -3,11 +3,21 @@
 module Yuzakan
   module Repos
     class GroupRepo < Yuzakan::DB::Repo
+      # pagination
+      def paginate(page: nil, per_page: nil)
+        relation = groups
+        relation = relation.page(page) if page
+        relation = relation.per_page(per_page) if per_page
+        relation
+      end
+
+      def pager(**) = paginate(**).pager
+
       # compatible interfaces
       commands :create, **CREATE_TIMESTAMP
       commands update: :by_pk, **UPDATE_TIMESTAMP
       commands delete: :by_pk
-      def all = groups.to_a
+      def all(**) = paginate(**).to_a
       def find(id) = groups.by_pk(id).one
       def first = groups.first
       def last = groups.last
@@ -19,7 +29,7 @@ module Yuzakan
       def set(name, **) = by_name(name).command(:update, **UPDATE_TIMESTAMP).call(**) || create(name: name, **)
       def unset(name) = by_name(name).command(:delete).call
       def exist?(name) = by_name(name).exist?
-      def list = groups.pluck(:name)
+      def list(**) = paginate(**).pluck(:name)
 
       # other interfaces
       def get_with_affiliation(name)

@@ -9,8 +9,8 @@ module API
         security_level 2
 
         params do
-          optional(:page).filled(:int?, included_in?: Yuzakan::Utils::Pager::PAGE_RANGE)
-          optional(:per_page).filled(:int?, included_in?: Yuzakan::Utils::Pager::PER_PAGE_RANGE)
+          optional(:page).value(:integer, gteq?: 1)
+          optional(:per_page).value(:integer, gteq?: 1, lteq?: 100)
 
           optional(:order).filled(:str?, included_in?: %w[
             name
@@ -97,23 +97,24 @@ module API
           relation = @group_repository.ordered_filter(order: order,
             filter: filter)
 
-          if params.key?(:page)
-            pager = Yuzakan::Utils::Pager.new(relation,
-                                              **params.slice(:page,
-                                                :per_page)) do |link_params|
-              routes.path(:groups, **params, **link_params)
-            end
-            {
-              groups: pager.page_items,
-              headers: pager.headers,
-            }
-          else
-            {
-              groups: relation.to_a,
-              headers: {"Content-Location" => routes.path(:groups,
-                                                          **params.except(:per_page))},
-            }
-          end
+
+          # if params.key?(:page)
+          #   pager = Yuzakan::Utils::Pager.new(relation,
+          #                                     **params.slice(:page,
+          #                                       :per_page)) do |link_params|
+          #     routes.path(:groups, **params, **link_params)
+          #   end
+          #   {
+          #     groups: pager.page_items,
+          #     headers: pager.headers,
+          #   }
+          # else
+          #   {
+          #     groups: relation.to_a,
+          #     headers: {"Content-Location" => routes.path(:groups,
+          #                                                 **params.except(:per_page))},
+          #   }
+          # end
         end
 
         # sync on
