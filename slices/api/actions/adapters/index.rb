@@ -4,7 +4,10 @@ module API
   module Actions
     module Adapters
       class Index < API::Action
-        def handle(request, response)
+        include Deps["adapter_repo"]
+
+        def handle(_request, response)
+          response[:adapters] = adapter_repo.all
         end
       end
     end

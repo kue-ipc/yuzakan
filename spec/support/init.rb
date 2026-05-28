@@ -76,12 +76,8 @@ def init_action_spec
       network_repo: network_repo,
       user_repo: user_repo,
       action_log_repo: action_log_repo,
-      view: view,
     }
   }
-
-  let(:view) { find_view_class(described_class)&.new(**view_opts) }
-
   let(:network) { Factory.structs[:trusted_network] }
 
   let(:params) { {**action_params, **env} }
@@ -97,7 +93,6 @@ def init_action_spec
   # override if necessary for each action
   let(:action_opts) { {} }
   let(:action_params) { {} }
-  let(:view_opts) { {} }
 
   # shared examples
   shared_examples "unauthorized" do
@@ -404,28 +399,4 @@ def let_structs
   # let(:another_auth_log) { Factory.structs[:another_auth_log] }
   # let(:another_action_log) { Factory.structs[:another_action_log] }
   # let(:another_attr_with_mappings) { Factory.structs[:another_attr_with_mappings] }
-end
-
-def find_view_class(action_class)
-  alt_names = {
-    "Create" => "New",
-    "Update" => "Edit",
-  }.freeze
-  # see Hanami::Action::ViewNameInferrer
-  action_class_name_parts = action_class.name.split("::")
-  raise "Not action class: #{action_class.name}" if action_class_name_parts[1] != "Actions"
-
-  view_class_name_parts = action_class_name_parts.dup.tap { |parts| parts[1] = "Views" }
-  view_class_name = view_class_name_parts.join("::")
-
-  return Object.const_get(view_class_name) if Object.const_defined?(view_class_name)
-
-  alt_name = alt_names[view_class_name_parts.last]
-  if alt_name
-    alt_view_class_name_parts = view_class_name_parts.dup.tap { |parts| parts[-1] = alt_name }
-    alt_view_class_name = alt_view_class_name_parts.join("::")
-    return Object.const_get(alt_view_class_name) if Object.const_defined?(alt_view_class_name)
-  end
-
-  nil
 end
