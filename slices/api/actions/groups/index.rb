@@ -4,13 +4,13 @@ module API
   module Actions
     module Groups
       class Index < API::Action
+        include Deps["repos.group_repo", "repos.service_repo"]
+
         security_level 2
 
         params do
-          optional(:page).filled(:int?,
-            included_in?: Yuzakan::Utils::Pager::PAGE_RANGE)
-          optional(:per_page).filled(:int?,
-            included_in?: Yuzakan::Utils::Pager::PER_PAGE_RANGE)
+          optional(:page).filled(:int?, included_in?: Yuzakan::Utils::Pager::PAGE_RANGE)
+          optional(:per_page).filled(:int?, included_in?: Yuzakan::Utils::Pager::PER_PAGE_RANGE)
 
           optional(:order).filled(:str?, included_in?: %w[
             name
@@ -24,7 +24,7 @@ module API
             partial
             forward
             backward
-                                  ])
+          ])
 
           optional(:no_sync).filled(:bool?)
           optional(:primary_only).filled(:bool?)
@@ -65,7 +65,7 @@ module API
         # all
         def get_groups_all
           all_groups = []
-          all_groups.concat(@group_repository.all.map(&:name))
+          all_groups.concat(group_repo.all.map(&:name))
           @service_repository.ordered_all_with_adapter_by_operation(:group_read).each do |service|
             all_groups.concat(service.group_list)
           end

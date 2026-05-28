@@ -3,12 +3,9 @@
 RSpec.describe API::Actions::Groups::Index do
   init_action_spec
 
-  let(:action_opts) {
-    # TODO: どうかく？
-    # allow(group_repo).to receive_messages(get: attr, unset: attr)
-    # {attr_repo: attr_repo}
-    {}
-  }
+  let(:action_opts) { {group_repo: group_repo, service_repo: service_repo} }
+
+  # shares
 
   shared_examples "ok" do
     it "is ok" do
@@ -21,7 +18,13 @@ RSpec.describe API::Actions::Groups::Index do
     end
   end
 
-  it_behaves_like "ok"
+  shared_examples "index" do
+    it_behaves_like "ok"
+  end
+
+  # test cases
+
+  it_behaves_like "index"
 
   context "when guest" do
     include_context "when guest"
@@ -30,20 +33,20 @@ RSpec.describe API::Actions::Groups::Index do
 
   context "when observer" do
     include_context "when observer"
-    it_behaves_like "ok"
+    it_behaves_like "index"
   end
 
   context "when operator" do
     include_context "when operator"
-    it_behaves_like "ok"
+    it_behaves_like "index"
   end
 
   context "when administrator" do
     include_context "when administrator"
-    it_behaves_like "ok"
+    it_behaves_like "index"
   end
 
   context "when superuser" do
-    it_behaves_like "ok"
+    it_behaves_like "index"
   end
 end
