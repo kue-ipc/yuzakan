@@ -6,7 +6,7 @@
     "test": "mocha"
   },
   "dependencies": {
-    "@danielx/civet": "^0.11.10",
+    "@danielx/civet": "^0.11.12",
     "@hyperapp/dom": "^1.0.0",
     "@hyperapp/events": "^2.0.0",
     "@hyperapp/html": "^2.0.0",
@@ -44,9 +44,9 @@
     "eslint-plugin-civet": "^0.1.0",
     "global-jsdom": "^29.0.0",
     "jsdom": "^29.1.1",
-    "mocha": "^11.7.5",
+    "mocha": "^11.7.6",
     "stylelint": "^17.12.0",
     "stylelint-config-recommended-scss": "^17.0.1",
-    "typescript-eslint": "^8.59.4"
+    "typescript-eslint": "^8.60.0"
   }
 }
