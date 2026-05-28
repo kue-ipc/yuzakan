@@ -5,6 +5,8 @@ RSpec.describe API::Actions::Services::Index do
 
   let(:action_opts) { {service_repo: service_repo} }
 
+  # shares
+
   shared_examples "ok" do
     it "is ok" do
       response = action.call(params)
@@ -23,6 +25,10 @@ RSpec.describe API::Actions::Services::Index do
     it_behaves_like "ok"
   end
 
+  # test cases
+
+  it_behaves_like "index"
+
   context "when guest" do
     include_context "when guest"
     it_behaves_like "forbidden"
@@ -30,21 +36,21 @@ RSpec.describe API::Actions::Services::Index do
 
   context "when observer" do
     include_context "when observer"
-    it_behaves_like "ok"
+    it_behaves_like "index"
   end
 
   context "when operator" do
     include_context "when operator"
-    it_behaves_like "ok"
+    it_behaves_like "index"
   end
 
   context "when administrator" do
     include_context "when administrator"
-    it_behaves_like "ok"
+    it_behaves_like "index"
   end
 
   context "when superuser" do
     include_context "when superuser"
-    it_behaves_like "ok"
+    it_behaves_like "index"
   end
 end
