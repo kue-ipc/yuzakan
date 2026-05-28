@@ -2,5 +2,5 @@
 
 require "rake/clean"
 
-CLEAN << "public/assets"
+CLEAN << "public/assets" << "public/assets.json"
 CLOBBER << "node_modules" << "vendor/bundle"
