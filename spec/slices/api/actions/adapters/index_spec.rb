@@ -3,7 +3,7 @@
 RSpec.describe API::Actions::Adapters::Index do
   init_action_spec
 
-  let(:action_opts) { {adapter_repo: adapter_repo} }
+  let(:view_opts) { {adapter_repo: adapter_repo} }
 
   shared_examples "ok" do
     it "is ok" do

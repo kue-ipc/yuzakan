@@ -4,7 +4,11 @@ module API
   module Views
     module Adapters
       class Index < API::View
-        expose :adapters
+        include Deps["adapter_repo"]
+
+        expose :adapters do
+          adapter_repo.all
+        end
       end
     end
   end
