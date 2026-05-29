@@ -94,9 +94,9 @@ memcachedは未テストです。
 
 ### サポートするOS/ディストリビューション
 
-* [x] AlmaLinux 9 / Rocky 9 (with app streams)
-* [ ] AlmaLinux 10 / Rocky 10 (予定)
-* [x] Debian 12 / Ubuntu 24.04 LTS (with non-default Ruby and Node.js)
+* [ ] AlmaLinux 9 / Rocky 9 (with app streams)
+* [x] AlmaLinux 10 / Rocky 10
+* [ ] Debian 12 / Ubuntu 24.04 LTS (with non-default Ruby and Node.js)
 * [ ] Debian 13 / Ubuntu 26.04 LTS (予定)
 
 ## セットアップ
@@ -110,17 +110,17 @@ PostgreSQLに専用のデータベースを作成します。
 export HANAMI_ENV=production
 bundle insntall --deployment
 npm install
-# bundle exec hanami db create (データベースは予め作成しておく)
-bundle exec hanami db migration
-bundle exec hanami db seed
-bundle exec hanami assets compile
+# bin/hanami db create (データベースは予め作成しておく)
+bin/hanami db migration
+bin/hanami db seed
+bin/hanami assets compile
 ```
 
 サーバー起動
 
 ```sh
 export HANAMI_ENV=production
-bundle exec hanami server
+bin/hanami server
 ```
 
 ### 開発・テスト環境
@@ -128,32 +128,26 @@ bundle exec hanami server
 ```sh
 bundle insntall
 npm install
-bundle exec hanami db prepare
+bin/hanami db prepare
 ```
 
 テスト実施:
 
 ```sh
-bundle exec hanami assets compile
-bundle exec rake
+bin/hanami assets compile
+bin/rake
 ```
 
 開発コンソール起動:
 
 ```sh
-bundle exec hanami console
+bin/hanami console
 ```
 
 開発サーバー起動:
 
 ```sh
-bundle exec hanami dev
-```
-
-`development`と`test`環境におけるDBの準備:
-
-```sh
-bundle exec hanami db prepare
+bin/dev
 ```
 
 developmentではキャッシュを削除しておかないとseedが作られない時がある。
