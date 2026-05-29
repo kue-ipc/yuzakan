@@ -17,7 +17,6 @@
     "bootstrap-icons": "^1.13.1",
     "csv": "^6.5.1",
     "esbuild-sass-plugin": "^3.7.0",
-    "esbuild-yaml": "^3.2.1",
     "file-saver": "^2.0.5",
     "firacode": "^6.2.0",
     "hanami-assets": "^2.3.0",
@@ -28,6 +27,7 @@
     "ramda": "^0.32.0",
     "source-code-pro": "^2.42.0",
     "typescript": "^6.0.3",
+    "unplugin-yaml": "^4.2.0",
     "xxhashjs": "^0.2.2",
     "zxcvbn": "^4.4.2"
   },
