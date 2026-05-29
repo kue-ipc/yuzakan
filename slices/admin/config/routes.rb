@@ -1,23 +1,25 @@
 # frozen_string_literal: true
 
+# haccking routers
+Hanami::Slice::Router::ResourceBuilder::ROUTE_OPTIONS[:new][:path_suffix] = "/\\*"
+Hanami::Slice::Router::ResourceBuilder::ROUTE_OPTIONS[:edit][:path_suffix] = "/:id/!"
+
 module Admin
   class Routes < Hanami::Routes
     root to: "home.index"
 
-    get "/config", to: "config.show", as: :config
-    put "/config/all", to: "config.export", as: :config_all
-    get "/config/all", to: "config.import", as: :config_all
+    resource :config, only: [:show] do
+      put "/all", to: "config.export", as: :all
+      get "/all", to: "config.import", as: :all
+    end
 
-    get "/services", to: "services.index", as: :services
-    get "/services/:id", to: "services.show", as: :service
+    resources :services, only: [:index, :show]
 
-    get "/attrs", to: "attrs.index", as: :attrs
+    resources :attrs, only: [:index]
 
-    get "/users", to: "users.index", as: :users
-    get "/users/\\*", to: "users.new", as: :user_new
-    get "/users/:id", to: "users.index", as: :user
+    resources :users, only: [:index, :new, :show]
 
-    get "/groups", to: "groups.index", as: :groups
-    get "/groups/:id", to: "groups.index", as: :group
+    # TODO: groupにもnewを作る？
+    resources :groups, only: [:index, :show]
   end
 end

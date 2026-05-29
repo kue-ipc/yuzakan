@@ -17,7 +17,7 @@ module API
 
           params do
             # NOTE: id is always "~" (current user)
-            required(:id).value(eql?: "~")
+            required(:user_id).value(eql?: "~")
             required(:password_current).filled(:password, max_size?: 255)
             required(:password).filled(:password, max_size?: 255)
             required(:password_confirmation).filled(:password, max_size?: 255)

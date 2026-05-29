@@ -5,7 +5,7 @@ module Yuzakan
     module Password
       class Edit < Yuzakan::View
         expose :title, layout: true, decorate: false do
-          i18n.t("views.password_edit.title")
+          i18n.t("views.edit_password.title")
         end
 
         expose :excluded_services, as: :service
