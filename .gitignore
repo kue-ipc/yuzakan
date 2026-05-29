@@ -9,6 +9,7 @@ spec/examples.txt
 
 .bundle
 vendor
+.cache
 
 .*-version
 mise.toml
