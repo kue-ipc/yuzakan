@@ -32,6 +32,7 @@ RSpec.describe "GET /api/auth", :db, type: :request do
         status: {code: 404, message: "Not Found"},
         location: "/api/auth",
         flash: {error: "ログインしていません。"},
+        data: nil,
       })
     end
   end
@@ -46,6 +47,7 @@ RSpec.describe "GET /api/auth", :db, type: :request do
         status: {code: 404, message: "Not Found"},
         location: "/api/auth",
         flash: {error: "ログインしていません。"},
+        data: nil,
       })
     end
   end
@@ -60,6 +62,7 @@ RSpec.describe "GET /api/auth", :db, type: :request do
         status: {code: 404, message: "Not Found"},
         location: "/api/auth",
         flash: {error: "ログインしていません。", warn: "セッションがタイムアウトしました。"},
+        data: nil,
       })
     end
   end

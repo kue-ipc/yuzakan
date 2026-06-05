@@ -102,7 +102,7 @@ def init_action_spec
       expect(response.status).to eq 401
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({status: {code: 401, message: "Unauthorized"}})
+      expect(json[:status]).to eq({code: 401, message: "Unauthorized"})
     end
   end
 
@@ -113,7 +113,7 @@ def init_action_spec
       expect(response.status).to eq 403
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({status: {code: 403, message: "Forbidden"}})
+      expect(json[:status]).to eq({code: 403, message: "Forbidden"})
     end
   end
 
@@ -124,7 +124,7 @@ def init_action_spec
       expect(response.status).to eq 404
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({status: {code: 404, message: "Not Found"}})
+      expect(json[:status]).to eq({code: 404, message: "Not Found"})
     end
   end
 
@@ -134,7 +134,8 @@ def init_action_spec
       expect(response.status).to eq 401
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({status: {code: 401, message: "Unauthorized"}, flash: {warn: "セッションがタイムアウトしました。"}})
+      expect(json[:status]).to eq({code: 401, message: "Unauthorized"})
+      expect(json[:flash]).to eq({warn: "セッションがタイムアウトしました。"})
     end
   end
 
@@ -145,6 +146,7 @@ def init_action_spec
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:status]).to eq({code: 422, message: "Unprocessable Content"})
       expect(json[:flash]).to eq({invalid: {id: ["形式が間違っています。"]}})
     end
 
@@ -154,6 +156,7 @@ def init_action_spec
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:status]).to eq({code: 422, message: "Unprocessable Content"})
       expect(json[:flash]).to eq({invalid: {id: ["形式が間違っています。"]}})
     end
 
@@ -163,6 +166,7 @@ def init_action_spec
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:status]).to eq({code: 422, message: "Unprocessable Content"})
       expect(json[:flash]).to eq({invalid: {id: ["サイズが255を超えてはいけません。"]}})
     end
   end
@@ -174,6 +178,7 @@ def init_action_spec
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:status]).to eq({code: 422, message: "Unprocessable Content"})
       expect(json[:flash]).to eq({invalid: {id: ["形式が間違っています。 または ~と値が一致しません。"]}})
     end
 
@@ -183,6 +188,7 @@ def init_action_spec
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:status]).to eq({code: 422, message: "Unprocessable Content"})
       expect(json[:flash]).to eq({invalid: {id: ["サイズが255を超えてはいけません。 または ~と値が一致しません。"]}})
     end
   end
@@ -193,7 +199,8 @@ def init_action_spec
       expect(response.status).to eq 403
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({status: {code: 403, message: "Forbidden"}, flash: {warn: "セッションがタイムアウトしました。"}})
+      expect(json[:status]).to eq({code: 403, message: "Forbidden"})
+      expect(json[:flash]).to eq({warn: "セッションがタイムアウトしました。"})
     end
   end
 

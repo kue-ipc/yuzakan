@@ -4,4 +4,4 @@
   pager: pager&.to_h,
   csrf: csrf.compact,
   flash: flash.sweep.map(&:itself).to_h, # rubocop: disable Style/MapToHash
-})).delete_suffix("}") %><% if has_data then %>,"data":<%== yield %><% end %>}
+})).delete_suffix("}") %>,"data":<%== yield %>}

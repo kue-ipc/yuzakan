@@ -22,6 +22,7 @@ RSpec.describe "POST /api/auth", :db, type: :request do
       status: {code: 303, message: "See Other"},
       location: "/api/auth",
       flash: {info: "すでに認証済みです。"},
+      data: nil,
     })
   end
 
@@ -67,6 +68,7 @@ RSpec.describe "POST /api/auth", :db, type: :request do
         status: {code: 422, message: "Unprocessable Content"},
         location: "/api/auth",
         flash: {failure: "ユーザー名またはパスワードが違います。"},
+        data: nil,
       })
       expect(end_time - start_time).to be >= config.auth_failure_waiting
     end
@@ -100,6 +102,7 @@ RSpec.describe "POST /api/auth", :db, type: :request do
           status: {code: 422, message: "Unprocessable Content"},
           location: "/api/auth",
           flash: {failure: "ユーザー名またはパスワードが違います。"},
+          data: nil,
         })
       end
     end
@@ -114,6 +117,7 @@ RSpec.describe "POST /api/auth", :db, type: :request do
           status: {code: 422, message: "Unprocessable Content"},
           location: "/api/auth",
           flash: {failure: "ユーザー名またはパスワードが違います。"},
+          data: nil,
         })
       end
     end
@@ -128,6 +132,7 @@ RSpec.describe "POST /api/auth", :db, type: :request do
           status: {code: 422, message: "Unprocessable Content"},
           location: "/api/auth",
           flash: {failure: "ユーザー名またはパスワードが違います。"},
+          data: nil,
         })
       end
     end
