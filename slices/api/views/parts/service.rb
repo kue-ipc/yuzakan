@@ -4,19 +4,16 @@
 module API
   module Views
     module Parts
-      class Service < API::Views::Part
+      class Service < API::Views::StructPart
         # value is a DB::Sturct
 
         def to_h(restrict: false)
-          hash = value.to_h
           if restrict
-            hash.slice(:name, :label)
+            super().slice(:name, :label)
           else
-            hash.except(:id, :created_at, :updated_at)
+            super()
           end
         end
-
-        def to_json(*, restrict: false, **) = helpers.params_to_json(to_h(restrict:), *, **)
       end
     end
   end

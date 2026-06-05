@@ -5,8 +5,7 @@ module API
   module Views
     module Parts
       class Auth < API::Views::Part
-        def to_h = value.slice(:username)
-        def to_json(...) = helpers.params_to_json(to_h, ...)
+        def to_h = super.slice(:username)
       end
     end
   end

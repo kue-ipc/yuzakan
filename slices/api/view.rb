@@ -6,6 +6,7 @@ module API
     config.default_format = :json
     expose :status, layout: true
     expose :location, decorate: false, layout: true
+    expose :pager, layout: true
     expose :has_data, decorate: false, layout: true do
       true
     end

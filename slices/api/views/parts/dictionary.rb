@@ -4,22 +4,20 @@
 module API
   module Views
     module Parts
-      class Dictionary < API::Views::Part
+      class Dictionary < API::Views::StructPart
         # value is a DB::Sturct
 
         def to_h(restrict: false)
-          hash = value.to_h
           if restrict
-            hash.slice(:name, :label)
+            super().slice(:name, :label)
           else
-            terms = hash[:terms].map do |term|
-              term.except(:id, :created_at, :updated_at, :dictionary_id)
-            end
-            hash.except(:id, :created_at, :updated_at).merge({terms:})
+            super().merge({terms: value.terms.map { |term| term_to_h(term) }})
           end
         end
 
-        def to_json(*, restrict: false, **) = helpers.params_to_json(to_h(restrict:), *, **)
+        def term_to_h(term)
+          term.to_h.except(:id, :created_at, :updated_at, :dictionary_id)
+        end
       end
     end
   end

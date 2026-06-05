@@ -4,7 +4,7 @@
 module API
   module Views
     module Parts
-      class Affiliation < API::Views::Part
+      class Affiliation < API::Views::StructPart
         # value is a DB::Sturct
 
         def to_h(restrict: false)
@@ -15,8 +15,6 @@ module API
             hash.except(:id, :created_at, :updated_at)
           end
         end
-
-        def to_json(*, restrict: false, **) = helpers.params_to_json(to_h(restrict:), *, **)
       end
     end
   end

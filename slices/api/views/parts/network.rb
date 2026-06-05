@@ -4,18 +4,10 @@
 module API
   module Views
     module Parts
-      class Network < API::Views::Part
+      class Network < API::Views::StructPart
         # value is a DB::Struct
 
-        def to_h
-          hash = value.to_h
-          hash.except(:id, :created_at, :updated_at).merge({ip: hash[:ip].cidr})
-        end
-
-        def to_json(...) = helpers.params_to_json(to_h, ...)
-
-        def ip_to_s(ip)
-        end
+        def to_h = super.merge({ip: value.ip.cidr})
       end
     end
   end
