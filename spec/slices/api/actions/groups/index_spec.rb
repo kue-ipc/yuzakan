@@ -3,7 +3,18 @@
 RSpec.describe API::Actions::Groups::Index do
   init_action_spec
 
-  let(:action_opts) { {group_repo: group_repo, service_repo: service_repo} }
+  # TODO: pagerを含めたrelaitonsを返す。
+  let(:action_opts) {
+    allow(group_repo).to receive.and_return(
+      instance_double(Yuzakan::Relations::Groups).tap { |relations|
+        allow(relations).to receive(:to_a).and_return(groups)
+        allow(relations).to receive(:pager).and_return(
+          ROM::SQL::Plugin::Pagination::Pager
+        )
+      }
+    )
+    {group_repo: group_repo, service_repo: service_repo}
+  }
 
   # shares
 
@@ -24,7 +35,7 @@ RSpec.describe API::Actions::Groups::Index do
 
   # test cases
 
-  it_behaves_like "index"
+  it_behaves_like "forbidden"
 
   context "when guest" do
     include_context "when guest"
@@ -47,6 +58,7 @@ RSpec.describe API::Actions::Groups::Index do
   end
 
   context "when superuser" do
+    include_context "when superuser"
     it_behaves_like "index"
   end
 end

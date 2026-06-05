@@ -15,7 +15,7 @@ module Yuzakan
       }.freeze
 
       private def paginate(relations, page: nil, per_page: nil)
-        relations = relations.page(page) if page
+        relations = relations.page(page || 1)
         relations = relations.per_page(per_page) if per_page
         relations
       end

@@ -22,13 +22,13 @@ module Yuzakan
       def list = groups.pluck(:name)
 
       # index = filter & search & order & paginate
-      private def index(page: nil, per_page: nil, order: nil, query: nil, filter: nil)
+      def index(page: nil, per_page: nil, order: nil, query: nil, filter: nil)
         relations = groups
 
-        relations = filter(relations, filter: filter)
-        relations = search(relations, targets: %i[name label], query: query)
-        relations = order(relations, order: order)
-        paginate(relations, page: page, per_page: per_page)
+        relations = filter(relations, filter:)
+        relations = search(relations, targets: %i[name label], query:)
+        relations = order(relations, order:)
+        paginate(relations, page:, per_page:)
       end
 
       # other interfaces
@@ -45,12 +45,12 @@ module Yuzakan
       def ordered_filter(order: {name: :asc}, filter: {})
       end
 
-      def filter(query: nil, match: :partial, basic: nil, prohibited: nil,
-        deleted: nil)
-      end
+      # def filter(query: nil, match: :partial, basic: nil, prohibited: nil,
+      #   deleted: nil)
+      # end
 
-      def search(query: nil, match: :partial)
-      end
+      # def search(query: nil, match: :partial)
+      # end
 
       def all_by_name(name)
         by_name(name).to_a
