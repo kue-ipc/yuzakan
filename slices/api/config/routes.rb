@@ -14,7 +14,9 @@ module API
 
     resource :config, only: [:show, :update]
 
-    resources :groups, only: [:index, :create, :show, :update, :destroy]
+    resources :groups, only: [:index, :create, :show, :update, :destroy] do
+      get "/sync", to: "groups.sync", as: :sync
+    end
 
     resources :services, only: [:index, :create, :show, :update, :destroy] do
       get "/check", to: "services.check", as: :check

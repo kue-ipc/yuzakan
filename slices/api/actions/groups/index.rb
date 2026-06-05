@@ -15,10 +15,9 @@ module API
           optional(:order).filled(:str?, included_in?: %w[
             name
             label
-            deleted_at
           ].flat_map { |name| [name, "#{name}.asc", "#{name}.desc"] })
 
-          optional(:query).maybe(:str?, max_size?: 255)
+          optional(:search).maybe(:str?, max_size?: 255)
           optional(:match).filled(:str?, included_in?: %w[
             extract
             partial
@@ -26,176 +25,56 @@ module API
             backward
           ])
 
-          optional(:no_sync).filled(:bool?)
           optional(:primary_only).filled(:bool?)
           optional(:hide_prohibited).filled(:bool?)
           optional(:show_deleted).filled(:bool?)
-
-          optional(:all).filled(:bool?)
         end
 
-        def initialize(group_repository: GroupRepository.new,
-          service_repository: ServiceRepository.new,
-          **opts)
-          super
-          @group_repository ||= group_repository
-          @service_repository ||= service_repository
+        def handle(request, response)
+          check_params(request, response)
+
+          page = request.params[:page]
+          per_page = request.params[:per_page]
+          order = order_from_params(request.params)
+          query = query_from_params(request.params)
+          filter = filter_from_params(request.params)
+
+          relations = group_repo.index(page:, per_page:, order:, query:, filter:)
+
+          response[:groups] = relations.to_a
+          response[:pager] = relations.pager
         end
 
-        def handle(_request, _response)
-          unless params.valid?
-            halt_json 400,
-              errors: [only_first_errors(params.errors)]
+        private def order_from_params(params)
+          return nil unless params[:order]
+
+          name, asc_desc = params[:order].split(".", 2).map(&:intern)
+          {name => asc_desc || :asc}
+        end
+
+        private def query_from_params(params)
+          return nil if params[:search].nil? || params[:search].empty?
+
+          search = params[:search].gsub("*", "%").gsub("?", "_")
+
+          case params[:match]
+          in :extract
+            search
+          in :forward
+            "#{search}%"
+          in :backward
+            "%#{search}"
+          in :partial
+            "%#{search}%"
           end
-
-          result =
-            if params[:all]
-              get_groups_all
-            elsif params[:no_sync]
-              get_groups_from_repository(params.to_h)
-            else
-              get_groups_from_service(params.to_h)
-            end
-
-          self.status = 200
-          headers.merge!(result[:headers])
-          self.body = generate_json(result[:groups])
         end
 
-        # all
-        def get_groups_all
-          all_groups = []
-          all_groups.concat(group_repo.all.map(&:name))
-          @service_repository.ordered_all_with_adapter_by_operation(:group_read).each do |service|
-            all_groups.concat(service.group_list)
-          end
-          all_groups.uniq!
-          all_groups.sort!
-          {
-            groups: all_groups.map { |name| {name: name} },
-            headers: {"Content-Location" => routes.path(:groups, all: true)},
-          }
-        end
-
-        # sync off
-        def get_groups_from_repository(params)
-          params = params.to_h
-
-          order =
-            if params[:order]
-              name, asc_desc = params[:order].split(".", 2).map(&:intern)
-              {name => asc_desc || :asc}
-            else
-              {name: :asc}
-            end
-
-          filter = params.slice(:query, :match)
+        private def filter_from_params(params)
+          filter = {}
           filter[:primary] = true if params[:primary_only]
           filter[:prohibited] = false if params[:hide_prohibited]
           filter[:deleted] = false unless params[:show_deleted]
-
-          relation = @group_repository.ordered_filter(order: order,
-            filter: filter)
-
-
-          # if params.key?(:page)
-          #   pager = Yuzakan::Utils::Pager.new(relation,
-          #                                     **params.slice(:page,
-          #                                       :per_page)) do |link_params|
-          #     routes.path(:groups, **params, **link_params)
-          #   end
-          #   {
-          #     groups: pager.page_items,
-          #     headers: pager.headers,
-          #   }
-          # else
-          #   {
-          #     groups: relation.to_a,
-          #     headers: {"Content-Location" => routes.path(:groups,
-          #                                                 **params.except(:per_page))},
-          #   }
-          # end
-        end
-
-        # sync on
-        def get_groups_from_service(params)
-          params = params.to_h
-
-          if params.key?(:order) && !params[:key].start_with?("name")
-            # nameに対する順序以外は無視される。
-            params = params.except(:order)
-          end
-
-          groups_services = Hash.new { |hash, key| hash[key] = [] }
-          query = ("*#{params[:query]}*" if params[:query]&.size&.positive?)
-
-          @service_repository.ordered_all_with_adapter_by_operation(:group_read).each do |service|
-            # プライマリグループがある場合のみ検索
-            next if params[:primary_only] && !service.has_primary_group?
-
-            items =
-              if query
-                service.group_search(query)
-              else
-                service.group_list
-              end
-            items.each { |item| groups_services[item] << service.name }
-          end
-          all_items = groups_services.keys
-
-          # prohibitedなグループは隠す
-          all_items -= @group_repository.filter(prohibited: true).map(:name) if params[:hide_prohibited]
-
-          # プロバイダーにないグループもすべて取り出す
-          if params[:show_deleted]
-            filter = params.slice(:query, :match)
-            filter[:primary] = true if params[:primary_only]
-            filter[:prohibited] = false if params[:hide_prohibited]
-            all_items |= @group_repository.filter(**filter).map(:name)
-          end
-
-          all_items.sort!
-          all_items.reverse! if params[:order] == "name.desc"
-
-          pager = Yuzakan::Utils::Pager.new(all_items,
-                                            **params.slice(:page,
-                                              :per_page)) do |link_params|
-            routes.path(:groups, **params.to_h, **link_params)
-          end
-
-          groups = get_groups(pager.page_items).map do |group|
-            # プロバイダーから削除しされているが、レポジトリ―では残っている場合は同期する。
-            group = get_sync_group(group.name) if !group.deleted && !groups_services.key?(group.name)
-            {
-              **convert_for_json(group),
-              services: groups_services[group.name] || [],
-            }
-          end
-
-          {
-            groups: groups,
-            headers: pager.headers,
-          }
-        end
-
-        private def get_groups(groupnames)
-          group_entities = @group_repository.all_by_name(groupnames).to_h do |group|
-            [group.name, group]
-          end
-          groupnames.map do |groupname|
-            group_entities[groupname] || get_sync_group(groupname)
-          end
-        end
-
-        private def get_sync_group(groupname)
-          @sync_group ||= SyncGroup.new(
-            service_repository: @service_repository, group_repository: @group_repository)
-          result = @sync_group.call({groupname: groupname})
-          if result.failure?
-            logger.error "[#{self.class.name}] Failed sync group: #{groupname} - #{result.errors}"
-            halt_json 500, errors: result.errors
-          end
-          result.group
+          filter
         end
       end
     end
