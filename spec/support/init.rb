@@ -407,3 +407,12 @@ def let_structs
   # let(:another_action_log) { Factory.structs[:another_action_log] }
   # let(:another_attr_with_mappings) { Factory.structs[:another_attr_with_mappings] }
 end
+
+def let_pager
+  let(:pager) {
+    instance_double(ROM::SQL::Plugin::Pagination::Pager).tap do |pager|
+      allow(pager).to receive_messages(current_page: 2, per_page: 20,
+        total_pages: 5, total: 100, first_in_page: 21, last_in_page: 40)
+    end
+  }
+end

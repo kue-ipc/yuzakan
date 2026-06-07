@@ -2,15 +2,13 @@
 
 RSpec.describe API::Actions::Groups::Index do
   init_action_spec
+  let_pager
 
   # TODO: pagerを含めたrelaitonsを返す。
   let(:action_opts) {
-    allow(group_repo).to receive.and_return(
+    allow(group_repo).to receive(:index).and_return(
       instance_double(Yuzakan::Relations::Groups).tap { |relations|
-        allow(relations).to receive(:to_a).and_return(groups)
-        allow(relations).to receive(:pager).and_return(
-          ROM::SQL::Plugin::Pagination::Pager
-        )
+        allow(relations).to receive_messages(to_a: [group], pager: pager)
       }
     )
     {group_repo: group_repo, service_repo: service_repo}
@@ -25,7 +23,7 @@ RSpec.describe API::Actions::Groups::Index do
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq(groups.map { |group| group.to_h.except(:id) })
+      expect(json[:data].first).to eq(group.to_h.slice(:name, :label))
     end
   end
 

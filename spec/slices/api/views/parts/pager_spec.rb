@@ -2,13 +2,9 @@
 
 RSpec.describe API::Views::Parts::Pager do
   init_part_spec
+  let_pager
 
-  let(:value) {
-    instance_double(ROM::SQL::Plugin::Pagination::Pager).tap do |pager|
-      allow(pager).to receive_messages(current_page: 2, per_page: 20,
-        total_pages: 5, total: 100, first_in_page: 21, last_in_page: 40)
-    end
-  }
+  let(:value) { pager }
 
   it "to_h" do
     data = subject.to_h
