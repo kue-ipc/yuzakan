@@ -6,7 +6,7 @@ module API
       class Create < API::Action
         include Deps[
           "repos.affiliation_repo",
-          show_view: "views.affiliations.show"
+          view: "views.affiliations.show"
         ]
 
         security_level 4
@@ -27,7 +27,6 @@ module API
           response.headers["Content-Location"] = "/api/affiliations/#{name}"
           response[:location] = "/api/affiliations/#{name}"
           response[:affiliation] = affiliation
-          response.render(show_view)
         end
       end
     end

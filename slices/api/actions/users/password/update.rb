@@ -12,7 +12,7 @@ module API
           include Deps[
             "services.authenticate",
             "services.change_password",
-            show_view: "views.users.password.show"
+            view: "views.users.password.show"
           ]
 
           params do
@@ -121,7 +121,6 @@ module API
             # end
 
             response[:user_password] = {password: new_password, services: services.map(&:name)}
-            response.render(show_view)
           end
         end
       end

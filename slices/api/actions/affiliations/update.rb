@@ -6,7 +6,7 @@ module API
       class Update < API::Action
         include Deps[
           "repos.affiliation_repo",
-          show_view: "views.affiliations.show"
+          view: "views.affiliations.show"
         ]
 
         security_level 4
@@ -30,7 +30,6 @@ module API
             response[:location] = "/api/affiliations/#{name}"
           end
           response[:affiliation] = affiliation
-          response.render(show_view)
         end
       end
     end

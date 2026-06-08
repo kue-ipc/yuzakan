@@ -6,7 +6,7 @@ module API
       class Destroy < API::Action
         include Deps[
           "repos.service_repo",
-          show_view: "views.services.show"
+          view: "views.services.show"
         ]
 
         security_level 5
@@ -22,7 +22,6 @@ module API
           service = service_repo.unset(id)
 
           response[:service] = service
-          response.render(show_view)
         end
       end
     end

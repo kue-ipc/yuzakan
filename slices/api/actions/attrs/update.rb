@@ -8,7 +8,7 @@ module API
           "repos.attr_repo",
           "repos.mapping_repo",
           "repos.service_repo",
-          show_view: "views.attrs.show"
+          view: "views.attrs.show"
         ]
 
         security_level 5
@@ -67,7 +67,6 @@ module API
 
           attr = attr_repo.get_with_mappings_and_services(request.params[:id])
           response[:attr] = attr
-          response.render(show_view)
         end
 
         # OPTIMIZE: createにも同じ物があるので、統一したい。

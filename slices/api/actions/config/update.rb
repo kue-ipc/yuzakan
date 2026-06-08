@@ -6,7 +6,7 @@ module API
       class Update < API::Action
         include Deps[
           "repos.config_repo",
-          show_view: "views.config.show"
+          view: "views.config.show"
         ]
 
         security_level 5
@@ -57,7 +57,6 @@ module API
 
           response.flash[:success] = t("messages.action.success", action: t("actions.update_config"))
           response[:config] = config
-          response.render(show_view)
         end
 
         private def convert_unique_chars(name, params)

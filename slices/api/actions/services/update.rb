@@ -7,7 +7,7 @@ module API
         include Deps[
           "adapter_repo",
           "repos.service_repo",
-          show_view: "views.services.show"
+          view: "views.services.show"
         ]
 
         security_level 5
@@ -66,8 +66,6 @@ module API
             response[:location] = "/api/services/#{name}"
           end
           response[:service] = service
-          response.render(show_view)
-
         end
       end
     end

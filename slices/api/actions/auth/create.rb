@@ -12,7 +12,7 @@ module API
           "management.sync_user",
           "services.authenticate",
           "settings",
-          show_view: "views.auth.show"
+          view: "views.auth.show"
         ]
 
         security_level 0
@@ -118,7 +118,6 @@ module API
           response.flash[:success] = t("messages.action.success", action: t("actions.login"))
           response.status = :created
           response[:auth] = {username:}
-          response.render(show_view)
         end
 
         private def failures_over?(username, count:, period:)

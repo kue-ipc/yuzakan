@@ -6,7 +6,7 @@ module API
       class Destroy < API::Action
         include Deps[
           "repos.attr_repo",
-          show_view: "views.attrs.show"
+          view: "views.attrs.show"
         ]
 
         security_level 5
@@ -22,7 +22,6 @@ module API
           attr = attr_repo.unset(id)
 
           response[:attr] = attr
-          response.render(show_view)
         end
       end
     end

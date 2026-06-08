@@ -7,7 +7,7 @@ module API
         include Deps[
           "repos.attr_repo",
           "repos.service_repo",
-          show_view: "views.attrs.show"
+          view: "views.attrs.show"
         ]
 
         security_level 5
@@ -50,7 +50,6 @@ module API
           response.headers["Content-Location"] = "/api/attrs/#{name}"
           response[:location] = "/api/attrs/#{name}"
           response[:attr] = attr_repo.get_with_mappings_and_services(name)
-          response.render(show_view)
         end
 
         private def next_order

@@ -6,7 +6,7 @@ module API
       class Destroy < API::Action
         include Deps[
           "repos.affiliation_repo",
-          show_view: "views.affiliations.show"
+          view: "views.affiliations.show"
         ]
 
         security_level 4
@@ -22,7 +22,6 @@ module API
           affiliation = affiliation_repo.unset(id)
 
           response[:affiliation] = affiliation
-          response.render(show_view)
         end
       end
     end
