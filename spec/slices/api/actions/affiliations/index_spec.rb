@@ -18,6 +18,15 @@ RSpec.describe API::Actions::Affiliations::Index do
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:data]).to eq([{name: affiliation.name, label: affiliation.label}])
     end
+
+    it "is ok with params" do
+      response = action.call({**params, page: 2, per_page: 50, order: "name.desc", search: "aff", match: "extract"})
+      expect(response).to be_successful
+      expect(response.status).to eq 200
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:data]).to eq([{name: affiliation.name, label: affiliation.label}])
+    end
   end
 
   it_behaves_like "forbidden"

@@ -4,10 +4,16 @@ RSpec.describe API::Actions::Groups::Index do
   init_action_spec
   let_pager
 
-  # TODO: pagerを含めたrelaitonsを返す。
   let(:action_opts) {
     allow(group_repo).to receive(:index).and_return([[group], pager])
     {group_repo: group_repo}
+  }
+
+  let(:index_params) {
+    {
+      page: 2, per_page: 50, order: "name.desc", search: "group", match: "extract",
+      primary_only: true, hide_prohibited: true, show_deleted: true,
+    }
   }
 
   # shares
@@ -21,10 +27,31 @@ RSpec.describe API::Actions::Groups::Index do
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:data].first).to eq(group.to_h.slice(:name, :label))
     end
+
+    it "is ok with params" do
+      response = action.call({**params, **index_params})
+      expect(response).to be_successful
+      expect(response.status).to eq 200
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:data].first).to eq(group.to_h.slice(:name, :label))
+    end
+  end
+
+  shared_examples "ng" do
+    it "is ng with bad params" do
+      response = action.call({**params, **index_params, show_deleted: "bad"})
+      expect(response).to be_client_error
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json[:status]).to eq({code: 422, message: "Unprocessable Content"})
+    end
   end
 
   shared_examples "index" do
     it_behaves_like "ok"
+    it_behaves_like "ng"
   end
 
   # test cases

@@ -57,14 +57,14 @@ module API
 
           search = params[:search].gsub("*", "%").gsub("?", "_")
 
-          case params[:match]
+          case params[:match].intern
           in :extract
             search
           in :forward
             "#{search}%"
           in :backward
             "%#{search}"
-          in :partial
+          in :partial | nil
             "%#{search}%"
           end
         end
