@@ -7,8 +7,8 @@ module API
       class Group < API::Views::StructPart
         # value is a DB::Struct
 
-        def to_h(restrict: false)
-          if restrict
+        def to_h(restricted: false)
+          if restricted
             super().slice(:name, :label)
           else
             super().except(:affiliation_id).merge({affiliation: value.affiliation.name})

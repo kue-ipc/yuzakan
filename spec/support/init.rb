@@ -251,9 +251,9 @@ def init_part_spec
 
   subject { described_class.new(value:) }
 
-  shared_examples "to_h with restrict" do
-    it "to_h with restrict" do
-      data = subject.to_h(restrict: true)
+  shared_examples "to_h with restricted" do
+    it "to_h with restricted" do
+      data = subject.to_h(restricted: true)
       expect(data).to eq({
         name: value.name,
         label: value.label,
@@ -261,9 +261,9 @@ def init_part_spec
     end
   end
 
-  shared_examples "to_json with restrict" do
-    it "to_h with restrict" do
-      json = subject.to_json(restrict: true)
+  shared_examples "to_json with restricted" do
+    it "to_h with restricted" do
+      json = subject.to_json(restricted: true)
       data = JSON.parse(json, symbolize_names: true)
       expect(data).to eq({
         name: value.name,

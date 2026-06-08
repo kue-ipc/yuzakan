@@ -36,7 +36,7 @@ RSpec.describe API::Actions::Attrs::Show do
     end
   end
 
-  shared_examples "ok restrict" do
+  shared_examples "ok restricted" do
     it "is ok" do
       response = action.call(params)
       expect(response).to be_successful
@@ -52,7 +52,7 @@ RSpec.describe API::Actions::Attrs::Show do
     end
   end
 
-  it_behaves_like "ok restrict"
+  it_behaves_like "ok restricted"
 
   context "when guest" do
     include_context "when guest"
@@ -61,12 +61,12 @@ RSpec.describe API::Actions::Attrs::Show do
 
   context "when observer" do
     include_context "when observer"
-    it_behaves_like "ok restrict"
+    it_behaves_like "ok restricted"
   end
 
   context "when operator" do
     include_context "when operator"
-    it_behaves_like "ok restrict"
+    it_behaves_like "ok restricted"
   end
 
   context "when administrator" do

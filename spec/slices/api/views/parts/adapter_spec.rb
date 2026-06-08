@@ -6,15 +6,15 @@ RSpec.describe API::Views::Parts::Adapter do
   let(:value) { Hanami.app["adapter_repo"].get("test") }
 
   it "to_h with sipmle" do
-    data = subject.to_h(restrict: true)
+    data = subject.to_h(restricted: true)
     expect(data).to eq({
       name: "test",
       label: "テスト",
     })
   end
 
-  it "to_json with restrict" do
-    data = JSON.parse(subject.to_json(restrict: true), symbolize_names: true)
+  it "to_json with restricted" do
+    data = JSON.parse(subject.to_json(restricted: true), symbolize_names: true)
     expect(data).to eq({
       name: "test",
       label: "テスト",

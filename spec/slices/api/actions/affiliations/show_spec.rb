@@ -61,8 +61,8 @@ RSpec.describe API::Actions::Affiliations::Show do
     end
   end
 
-  shared_examples "ok restrict" do
-    it "is ok restrict" do
+  shared_examples "ok restricted" do
+    it "is ok restricted" do
       response = action.call(params)
       expect(response).to be_successful
       expect(response.status).to eq 200
@@ -126,8 +126,8 @@ RSpec.describe API::Actions::Affiliations::Show do
     end
   end
 
-  shared_examples "show restrict" do
-    it_behaves_like "ok restrict"
+  shared_examples "show restricted" do
+    it_behaves_like "ok restricted"
     it_behaves_like "bad id param without tilda"
 
     context "when current user without affiliation" do
@@ -147,11 +147,11 @@ RSpec.describe API::Actions::Affiliations::Show do
         {affiliation_repo: affiliation_repo}
       }
 
-      it_behaves_like "ok restrict"
+      it_behaves_like "ok restricted"
     end
   end
 
-  it_behaves_like "show restrict"
+  it_behaves_like "show restricted"
 
   context "when guest" do
     include_context "when guest"

@@ -7,9 +7,9 @@ module API
       class Attr < API::Views::StructPart
         # value is a DB::Sturct
 
-        def to_h(restrict: false)
+        def to_h(restricted: false)
           hash = value.to_h
-          if restrict
+          if restricted
             hash.slice(:name, :label, :category, :type)
           else
             mappings = hash[:mappings].map do |mapping|

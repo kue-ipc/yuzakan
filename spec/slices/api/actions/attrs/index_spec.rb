@@ -43,13 +43,13 @@ RSpec.describe API::Actions::Attrs::Index do
     it_behaves_like "ok"
   end
 
-  shared_examples "index restrict" do
+  shared_examples "index restricted" do
     it_behaves_like "ok only exposed"
   end
 
   # test cases
 
-  it_behaves_like "index restrict"
+  it_behaves_like "index restricted"
 
   context "when guest" do
     include_context "when guest"

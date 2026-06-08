@@ -7,9 +7,9 @@ module API
       class Affiliation < API::Views::StructPart
         # value is a DB::Sturct
 
-        def to_h(restrict: false)
+        def to_h(restricted: false)
           hash = value.to_h
-          if restrict
+          if restricted
             hash.slice(:name, :label)
           else
             hash.except(:id, :created_at, :updated_at)

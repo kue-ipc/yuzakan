@@ -9,7 +9,7 @@ RSpec.describe API::Actions::Adapters::Show do
 
   let(:id) { "dummy" }
 
-  shared_examples "ok restrict" do
+  shared_examples "ok restricted" do
     it "is ok" do
       response = action.call(params)
       expect(response).to be_successful
@@ -97,7 +97,7 @@ RSpec.describe API::Actions::Adapters::Show do
     end
   end
 
-  it_behaves_like "ok restrict"
+  it_behaves_like "ok restricted"
   it_behaves_like "failure"
 
   context "when guest" do
@@ -107,17 +107,16 @@ RSpec.describe API::Actions::Adapters::Show do
 
   context "when observer" do
     include_context "when observer"
-    it_behaves_like "ok restrict"
+    it_behaves_like "ok restricted"
     it_behaves_like "failure"
   end
 
   context "when operator" do
     include_context "when operator"
-    it_behaves_like "ok restrict"
+    it_behaves_like "ok restricted"
     it_behaves_like "failure"
   end
 
-  # TODO: 本当にparamsが必要か？
   context "when administrator" do
     include_context "when administrator"
     it_behaves_like "ok"
