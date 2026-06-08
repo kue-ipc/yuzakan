@@ -10,7 +10,7 @@ module API
 
         params do
           optional(:page).value(:integer, gteq?: 1)
-          optional(:per_page).value(:integer, gteq?: 1, lteq?: 100)
+          optional(:per_page).value(:integer, gteq?: 1, lteq?: MAX_PER_PAGE)
 
           optional(:order).filled(:str?, included_in?: %w[
             name

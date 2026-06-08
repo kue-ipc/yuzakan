@@ -3,6 +3,8 @@
 
 module API
   class Action < Yuzakan::Action
+    MAX_PER_PAGE = 1000
+
     include API::Actions::MessageJSON
     include API::Actions::ParamsInspection
 

@@ -8,7 +8,7 @@ module API
 
         params do
           optional(:page).value(:integer, gteq?: 1)
-          optional(:per_page).value(:integer, gteq?: 1, lteq?: 100)
+          optional(:per_page).value(:integer, gteq?: 1, lteq?: MAX_PER_PAGE)
         end
 
         def handle(request, response)

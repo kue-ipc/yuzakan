@@ -26,7 +26,7 @@ module Yuzakan
       end
 
       use :pagination
-      per_page 100
+      per_page DEFAULT_PER_PAGE
 
       # always ordered by order and name
       dataset do
