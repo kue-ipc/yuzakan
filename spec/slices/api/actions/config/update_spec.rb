@@ -65,7 +65,6 @@ RSpec.describe API::Actions::Config::Update do
 
   context "when superuser" do
     include_context "when superuser"
-
     it_behaves_like "ok"
   end
 end

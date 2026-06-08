@@ -4,7 +4,7 @@ module API
   module Actions
     module Groups
       class Index < API::Action
-        include Deps["repos.group_repo", "repos.service_repo"]
+        include Deps["repos.group_repo"]
 
         security_level 2
 

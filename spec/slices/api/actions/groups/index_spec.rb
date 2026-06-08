@@ -7,7 +7,7 @@ RSpec.describe API::Actions::Groups::Index do
   # TODO: pagerを含めたrelaitonsを返す。
   let(:action_opts) {
     allow(group_repo).to receive(:index).and_return([[group], pager])
-    {group_repo: group_repo, service_repo: service_repo}
+    {group_repo: group_repo}
   }
 
   # shares

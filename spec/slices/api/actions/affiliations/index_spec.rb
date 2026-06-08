@@ -2,9 +2,10 @@
 
 RSpec.describe API::Actions::Affiliations::Index do
   init_action_spec
+  let_pager
 
   let(:action_opts) {
-    allow(affiliation_repo).to receive(:all).and_return([affiliation])
+    allow(affiliation_repo).to receive(:index).and_return([[affiliation], pager])
     {affiliation_repo: affiliation_repo}
   }
 
@@ -19,7 +20,7 @@ RSpec.describe API::Actions::Affiliations::Index do
     end
   end
 
-  it_behaves_like "ok"
+  it_behaves_like "forbidden"
 
   context "when guest" do
     include_context "when guest"
@@ -42,6 +43,7 @@ RSpec.describe API::Actions::Affiliations::Index do
   end
 
   context "when superuser" do
+    include_context "when superuser"
     it_behaves_like "ok"
   end
 end
