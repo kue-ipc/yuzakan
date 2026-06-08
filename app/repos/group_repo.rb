@@ -28,7 +28,8 @@ module Yuzakan
         relations = filter(relations, filter:)
         relations = search(relations, targets: %i[name label], query:)
         relations = order(relations, order:)
-        paginate(relations, page:, per_page:)
+        relations = paginate(relations, page:, per_page:)
+        [relations.to_a, relations.pager]
       end
 
       # other interfaces

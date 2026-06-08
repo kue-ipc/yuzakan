@@ -6,11 +6,7 @@ RSpec.describe API::Actions::Groups::Index do
 
   # TODO: pagerを含めたrelaitonsを返す。
   let(:action_opts) {
-    allow(group_repo).to receive(:index).and_return(
-      instance_double(Yuzakan::Relations::Groups).tap { |relations|
-        allow(relations).to receive_messages(to_a: [group], pager: pager)
-      }
-    )
+    allow(group_repo).to receive(:index).and_return([[group], pager])
     {group_repo: group_repo, service_repo: service_repo}
   }
 

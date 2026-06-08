@@ -39,10 +39,10 @@ module API
           query = query_from_params(request.params)
           filter = filter_from_params(request.params)
 
-          relations = group_repo.index(page:, per_page:, order:, query:, filter:)
+          groups, pager = group_repo.index(page:, per_page:, order:, query:, filter:)
 
-          response[:groups] = relations.to_a
-          response[:pager] = relations.pager
+          response[:groups] = groups
+          response[:pager] = pager
         end
 
         private def order_from_params(params)
