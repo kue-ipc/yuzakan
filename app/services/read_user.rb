@@ -9,7 +9,6 @@ module Yuzakan
         username = step validate_name(username)
         services = step get_services(services, method: :user_read)
 
-        # TODO: 途中で失敗した場合の処理
         services.to_h do |service|
           result =
             cache_fetch(service, username) do

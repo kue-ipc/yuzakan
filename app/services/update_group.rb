@@ -2,17 +2,17 @@
 
 module Yuzakan
   module Services
-    class CreateGroup < Yuzakan::ServiceOperation
+    class UpdateGroup < Yuzakan::ServiceOperation
       category :group
 
       def call(groupname, services = nil, **params)
         groupname = step validate_name(groupname)
-        services = step get_services(services, method: :group_create)
+        services = step get_services(services, method: :group_update)
 
         services.to_h do |service|
           adapter = step get_adapter(service)
           groupdata = step map_data(service, params)
-          new_groupdata = adapter.group_create(groupname, groupdata)
+          new_groupdata = adapter.group_update(groupname, groupdata)
           result =
             if new_groupdata
               new_params = step convert_data(service, new_groupdata)
@@ -21,7 +21,7 @@ module Yuzakan
               new_params
             end
           [service.name, result]
-        end
+        end.compact
       end
     end
   end
