@@ -12,6 +12,9 @@ module Yuzakan
         end
       end
 
+      use :pagination
+      per_page DEFAULT_PER_PAGE
+
       # always ordered by name
       dataset do
         order(:name)

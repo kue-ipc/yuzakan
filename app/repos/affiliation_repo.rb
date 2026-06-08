@@ -20,6 +20,17 @@ module Yuzakan
       def unset(name) = by_name(name).command(:delete).call
       def exist?(name) = by_name(name).exist?
       def list = affiliations.pluck(:name)
+
+      # index = filter & search & order & paginate
+      def index(page: nil, per_page: nil, order: nil, query: nil, filter: nil)
+        relations = affiliations
+
+        relations = filter(relations, filter:)
+        relations = search(relations, targets: [:name, :label], query:)
+        relations = order(relations, order:)
+        relations = paginate(relations, page:, per_page:)
+        [relations.to_a, relations.pager]
+      end
     end
   end
 end

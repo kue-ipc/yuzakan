@@ -21,6 +21,17 @@ module Yuzakan
       def exist?(name) = by_name(name).exist?
       def list = users.pluck(:name)
 
+      # index = filter & search & order & paginate
+      def index(page: nil, per_page: nil, order: nil, query: nil, filter: nil)
+        relations = affiliations
+
+        relations = filter(relations, filter:)
+        relations = search(relations, targets: [:name, :label, :email], query:)
+        relations = order(relations, order:)
+        relations = paginate(relations, page:, per_page:)
+        [relations.to_a, relations.pager]
+      end
+
       # other interfaces
       def get_with_affiliation(name)
         by_name(name).combine(:affiliation).one
