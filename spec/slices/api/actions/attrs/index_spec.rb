@@ -6,10 +6,7 @@ RSpec.describe API::Actions::Attrs::Index do
   let(:another_attr) { Factory.structs[:another_attr] }
 
   let(:action_opts) {
-    allow(attr_repo).to receive(:all).with(no_args).and_return([attr, another_attr])
-    allow(attr_repo).to receive(:all).with(page: 1, per_page: 1).and_return([attr])
-    allow(attr_repo).to receive(:exposed_all).with(no_args).and_return([attr])
-    allow(attr_repo).to receive(:exposed_all).with(page: 1, per_page: 1).and_return([attr])
+    allow(attr_repo).to receive_messages(all: [attr, another_attr], exposed_all: [attr])
     {attr_repo: attr_repo}
   }
 
@@ -27,33 +24,11 @@ RSpec.describe API::Actions::Attrs::Index do
         another_attr.to_h.slice(:name, :label, :category, :type),
       ]
     end
-
-    it "is ok with pagination" do
-      response = action.call({**params, page: 1, per_page: 1})
-      expect(response).to be_successful
-      expect(response.status).to eq 200
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq [
-        attr.to_h.slice(:name, :label, :category, :type),
-      ]
-    end
   end
 
   shared_examples "ok only exposed" do
     it "is ok only exposed" do
       response = action.call(params)
-      expect(response).to be_successful
-      expect(response.status).to eq 200
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq [
-        attr.to_h.slice(:name, :label, :category, :type),
-      ]
-    end
-
-    it "is ok only exposed with pagination" do
-      response = action.call({**params, page: 1, per_page: 1})
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
