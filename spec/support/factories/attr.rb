@@ -5,12 +5,16 @@ Factory.define(:attr) do |f|
   f.name { fake(:internet, :username) }
   f.label { fake(:japanese_media, :naruto, :eye) }
   f.description { fake(:lorem, :sentence) }
+
   f.category "user"
   f.type "string"
+
   f.order 1
   f.hidden false # default
   f.readonly false # default
+
   f.code "" # default
+
   f.timestamps
 end
 

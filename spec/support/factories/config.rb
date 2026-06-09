@@ -4,22 +4,29 @@ Factory.define(:config) do |f|
   f.title { fake(:team, :name) }
   f.description { fake(:lorem, :sentence) }
   f.domain { fake(:internet, :domain_name) }
+
   f.session_timeout 3600 # default
+
   f.auth_failure_waiting 2 # default
   f.auth_failure_limit 5 # default
   f.auth_failure_duration 600 # default
+
   f.password_min_size 8 # default
   f.password_max_size 64 # default
   f.password_min_types 1 # default
-  f.password_min_score 0 # default
   f.password_prohibited_chars "" # default
+
+  f.password_min_score 0 # default
   f.password_extra_dict [] # default
+
   f.generate_password_size 24 # default
   f.generate_password_type "ascii" # default
   f.generate_password_chars " " # default
+
   f.contact_name { fake(:name, :name) }
   f.contact_email { fake(:internet, :email) }
   f.contact_phone { fake(:phone_number, :phone_number) }
+
   f.timestamps
 end
 

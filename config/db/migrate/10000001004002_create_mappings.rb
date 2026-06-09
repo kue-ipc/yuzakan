@@ -6,10 +6,9 @@ ROM::SQL.migration do
       primary_key :id
 
       foreign_key :attr_id, :attrs, on_delete: :cascade, null: false
-
       foreign_key :service_id, :services, on_delete: :cascade, null: false
-      column :key, String, null: false
 
+      column :key, String, null: false
       column :type, String, null: false
       column :params, "jsonb", null: true
 

@@ -2,8 +2,10 @@
 
 Factory.define(:network) do |f|
   f.ip IPAddr.new("0.0.0.0/0")
+
   f.clearance_level 1 # default
   f.trusted false # default
+
   f.timestamps
 end
 

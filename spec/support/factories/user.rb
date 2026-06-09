@@ -2,14 +2,28 @@
 
 Factory.define(:user) do |f|
   f.association :members, count: 0
+  f.association :groups, count: 1
+
   f.name { fake(:internet, :username) }
   f.label { fake(:name, :name) }
   f.email { fake(:internet, :email) }
   f.note { fake(:lorem, :paragraph) }
+
+  f.unmanageable false # default
+  f.locked false # default
+  f.mfa false # default
+  f.attrs {} # default
+
+  f.services [] # default
+
   f.clearance_level 1 # default
+
   f.prohibited false # default
-  f.deleted false # default
+
   f.deleted_at nil
+
+  f.synced_at nil
+
   f.timestamps
 end
 
