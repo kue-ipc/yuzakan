@@ -18,8 +18,8 @@ module Yuzakan
         required(:password).filled(:str?, max_size?: 255)
         required(:label).filled(:str?, max_size?: 255)
         required(:email).filled(:str?, max_size?: 255)
-        optional(:locked).value(:bool?)
         optional(:unmanageable).value(:bool?)
+        optional(:locked).value(:bool?)
         optional(:mfa).value(:bool?)
         optional(:primary_group).value(:str?, max_size?: 255)
         optional(:groups).value(:str?, max_size?: 255)
@@ -58,14 +58,14 @@ module Yuzakan
       #     default: "user@example.jp",
       #   },
       #   {
-      #     name: :locked,
-      #     label: "ロック済み",
+      #     name: :unmanageable,
+      #     label: "管理不可",
       #     type: :boolean,
       #     default: false,
       #   },
       #   {
-      #     name: :unmanageable,
-      #     label: "管理不可",
+      #     name: :locked,
+      #     label: "ロック済み",
       #     type: :boolean,
       #     default: false,
       #   },
@@ -139,8 +139,7 @@ module Yuzakan
 
       def user_update(username, **userdata)
         return nil unless @users.key?(username)
-        raise AdapterError, "管理不可ユーザーであるため、更新できません。" if @users.dig(username,
-          :unmanageable)
+        raise AdapterError, "管理不可ユーザーであるため、更新できません。" if @users.dig(username, :unmanageable)
 
         @users[username] = @users[username].merge(userdata) do |_key, self_val, other_val|
           if self_val.is_a?(Hash)
@@ -153,8 +152,7 @@ module Yuzakan
 
       def user_delete(username)
         return nil unless @users.key?(username)
-        raise AdapterError, "管理不可ユーザーであるため、削除できません。" if @users.dig(username,
-          :unmanageable)
+        raise AdapterError, "管理不可ユーザーであるため、削除できません。" if @users.dig(username, :unmanageable)
 
         @users[username]
       end

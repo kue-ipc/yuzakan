@@ -11,8 +11,8 @@
 #   attr_reader groups: Array[String]
 #   attr_reader label: String
 #   attr_reader email: String
-#   attr_reader locked: bool?
 #   attr_reader unmanageable: bool?
+#   attr_reader locked: bool?
 #   attr_reader mfa: bool?
 #   attr_reader attrs: Hash[Symbol, untyped]
 #
@@ -74,18 +74,15 @@ module Yuzakan
     class VlaidationError < StandardError
     end
 
-    UserData = Data.define(:name, :primary_group, :groups,
-      :label, :email, :locked, :unmanageable, :mfa, :attrs) do
-      def initialize(name: nil, primary_group: nil, groups: [],
-        label: nil, email: nil,
-        locked: false, unmanageable: false, mfa: false, attrs: {})
+    UserData = Data.define(:name, :primary_group, :groups, :label, :email, :unmanageable, :locked, :mfa, :attrs) do
+      def initialize(name: nil, primary_group: nil, groups: [], label: nil, email: nil,
+        unmanageable: false, locked: false, mfa: false, attrs: {})
         super
       end
     end
 
     GroupData = Data.define(:name, :label, :unmanageable, :attrs) do
-      def initialize(name: nil, label: nil, unmanageable: false,
-        attrs: {})
+      def initialize(name: nil, label: nil, unmanageable: false, attrs: {})
         super
       end
     end

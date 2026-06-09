@@ -40,8 +40,8 @@ export USER_DATA_PROPERTIES = {}
   email: "string"
   primary_group: "string"
   groups: "list"
-  locked: "boolean"
   unmanageable: "boolean"
+  locked: "boolean"
   mfa: "boolean"
   attrs: "map"
 

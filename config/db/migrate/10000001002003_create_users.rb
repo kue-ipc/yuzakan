@@ -13,7 +13,12 @@ ROM::SQL.migration do
       column :email, String, null: false, default: ""
       column :note, "text", null: false, default: ""
 
+      column :unmanageable, TrueClass, null: false, default: false
+      column :locked, TrueClass, null: false, default: false
+      column :mfa, TrueClass, null: false, default: false
       column :attrs, "jsonb", null: false, default: "{}"
+
+      column :services, "text[]", null: false, default: []
 
       column :clearance_level, Integer, null: false, default: 1
 
