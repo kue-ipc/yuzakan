@@ -26,6 +26,8 @@ ROM::SQL.migration do
       column :individual_password, TrueClass, null: false, default: false
       column :self_management, TrueClass, null: false, default: false
 
+      column :synced_at, DateTime
+
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
 

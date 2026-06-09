@@ -14,7 +14,7 @@ ROM::SQL.migration do
 
       column :locked, TrueClass, null: false, default: false
 
-      column :attrs, "jsonb", null: false
+      column :attrs, "jsonb", null: false, default: "{}"
 
       index :local_group_id
       index :name, unique: true

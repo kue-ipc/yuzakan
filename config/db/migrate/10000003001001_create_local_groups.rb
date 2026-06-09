@@ -8,7 +8,7 @@ ROM::SQL.migration do
       column :name, String, null: false
       column :label, String, null: false, default: ""
 
-      column :attrs, "jsonb", null: false
+      column :attrs, "jsonb", null: false, default: "{}"
 
       index :name, unique: true
     end

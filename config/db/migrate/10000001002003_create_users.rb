@@ -13,13 +13,15 @@ ROM::SQL.migration do
       column :email, String, null: false, default: ""
       column :note, "text", null: false, default: ""
 
+      column :attrs, "jsonb", null: false, default: "{}"
+
       column :clearance_level, Integer, null: false, default: 1
 
       column :prohibited, TrueClass, null: false, default: false
 
-      column :deleted, TrueClass, null: false, default: false
-      # null if not deleted
       column :deleted_at, DateTime
+
+      column :synced_at, DateTime
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

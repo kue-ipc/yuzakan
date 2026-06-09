@@ -226,10 +226,11 @@ CREATE TABLE public.groups (
     name text NOT NULL,
     label text DEFAULT ''::text NOT NULL,
     note text DEFAULT ''::text NOT NULL,
+    attrs jsonb DEFAULT '{}'::jsonb NOT NULL,
     basic boolean DEFAULT false NOT NULL,
     prohibited boolean DEFAULT false NOT NULL,
-    deleted boolean DEFAULT false NOT NULL,
     deleted_at timestamp without time zone,
+    synced_at timestamp without time zone,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -257,7 +258,7 @@ CREATE TABLE public.local_groups (
     id integer NOT NULL,
     name text NOT NULL,
     label text DEFAULT ''::text NOT NULL,
-    attrs jsonb NOT NULL
+    attrs jsonb DEFAULT '{}'::jsonb NOT NULL
 );
 
 
@@ -312,7 +313,7 @@ CREATE TABLE public.local_users (
     label text DEFAULT ''::text NOT NULL,
     email text DEFAULT ''::text NOT NULL,
     locked boolean DEFAULT false NOT NULL,
-    attrs jsonb NOT NULL
+    attrs jsonb DEFAULT '{}'::jsonb NOT NULL
 );
 
 
@@ -444,6 +445,7 @@ CREATE TABLE public.services (
     "group" boolean DEFAULT false NOT NULL,
     individual_password boolean DEFAULT false NOT NULL,
     self_management boolean DEFAULT false NOT NULL,
+    synced_at timestamp without time zone,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -503,10 +505,11 @@ CREATE TABLE public.users (
     label text DEFAULT ''::text NOT NULL,
     email text DEFAULT ''::text NOT NULL,
     note text DEFAULT ''::text NOT NULL,
+    attrs jsonb DEFAULT '{}'::jsonb NOT NULL,
     clearance_level integer DEFAULT 1 NOT NULL,
     prohibited boolean DEFAULT false NOT NULL,
-    deleted boolean DEFAULT false NOT NULL,
     deleted_at timestamp without time zone,
+    synced_at timestamp without time zone,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
