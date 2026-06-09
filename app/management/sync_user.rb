@@ -17,16 +17,23 @@ module Yuzakan
       end
 
       private def read(username)
-        services = read_user.call(username)
-          .value_or { return Failure(_1) }
+        services = read_user.call(username).value_or { return Failure(_1) }
         return Success(nil) if services.empty?
 
-        params = {groups: []}
+        params = {
+          groups: [],
+          unmanageable: false,
+          locked: false,
+          mfa: false,
+          attrs: {},
+          services: services.keys,
+        }
         services.each_value do |data|
-          [:label, :email, :primary_group].each do |name|
+          params[:groups] |= data[:groups] if data.key?(:groups)
+          [:primary_group, :label, :email, :unmanageable, :locked, :mfa].each do |name|
             params[name] ||= data[name] if data.key?(name)
           end
-          params[:groups] |= data[:groups] if data.key?(:groups)
+          params[:attrs].merge!(data[:attrs]) { |_, v, _| v } if data.key?(:attrs)
         end
         Success(params)
       end

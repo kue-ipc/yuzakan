@@ -906,19 +906,18 @@ module Yuzakan
       private def group_entry_to_data(group)
         name = group_entry_name(group)
 
-        # 属性は渡さない
-        # attrs = {}
-        # group.each do |key, value|
-        #   key = key.downcase.to_s
-        #   next if self.class.hide_attrs.include?(key)
+        attrs = {}
+        group.each do |key, value|
+          key = key.downcase.to_s
+          next if self.class.hide_attrs.include?(key)
 
-        #   attrs[key] =
-        #     if self.class.multi_attrs.include?(key)
-        #       value.to_a
-        #     else
-        #       value.first
-        #     end
-        # end
+          attrs[key] =
+            if self.class.multi_attrs.include?(key)
+              value.to_a
+            else
+              value.first
+            end
+        end
 
         {
           groupname: name,

@@ -17,15 +17,19 @@ module Yuzakan
       end
 
       private def read(groupname)
-        services = read_group.call(groupname)
-          .value_or { return Failure(_1) }
+        services = read_group.call(groupname).value_or { return Failure(_1) }
         return Success(nil) if services.empty?
 
-        params = {basic: false}
+        params = {
+          unmanageable: false,
+          attrs: {},
+          services: services.keys,
+        }
         services.each_value do |data|
           [:label, :basic].each do |name|
             params[name] ||= data[name] if data.key?(name)
           end
+          params[:attrs].merge!(data[:attrs]) { |_, v, _| v } if data.key?(:attrs)
         end
         Success(params)
       end

@@ -17,12 +17,11 @@ module Yuzakan
       def unregister(groupname)
         group = group_repo.get(groupname)
         return Success(nil) if group.nil?
-        return Success(group) if group.deleted?
+        return Success(group) if group.deleted_at
 
         group_repo.transaction do
           member_repo.delete_by_group(group)
-          Success(group_repo.set(groupname,
-            deleted: true, deleted_at: Time.now))
+          Success(group_repo.set(groupname, deleted_at: Time.now))
         end
       end
     end

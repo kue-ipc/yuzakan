@@ -17,11 +17,11 @@ module Yuzakan
       def unregister(username)
         user = user_repo.get(username)
         return Success(nil) if user.nil?
-        return Success(user) if user.deleted?
+        return Success(user) if user.deleted_at
 
         user_repo.transaction do
           member_repo.delete_by_user(user)
-          Success(user_repo.set(username, deleted: true, deleted_at: Time.now))
+          Success(user_repo.set(username, deleted_at: Time.now))
         end
       end
     end
