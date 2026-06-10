@@ -18,8 +18,6 @@ ROM::SQL.migration do
       column :mfa, TrueClass, null: false, default: false
       column :attrs, "jsonb", null: false, default: "{}"
 
-      column :services, "text[]", null: false, default: []
-
       column :clearance_level, Integer, null: false, default: 1
 
       column :prohibited, TrueClass, null: false, default: false

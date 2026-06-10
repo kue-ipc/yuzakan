@@ -14,8 +14,6 @@ ROM::SQL.migration do
       column :unmanageable, TrueClass, null: false, default: false
       column :attrs, "jsonb", null: false, default: "{}"
 
-      column :services, "text[]", null: false, default: []
-
       column :basic, TrueClass, null: false, default: false
       column :prohibited, TrueClass, null: false, default: false
 
