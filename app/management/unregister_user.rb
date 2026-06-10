@@ -6,7 +6,7 @@ module Yuzakan
     class UnregisterUser < Yuzakan::Operation
       include Deps[
         "repos.user_repo",
-        "repos.member_repo"
+        "repos.managed_user_repo"
       ]
 
       def call(username)
