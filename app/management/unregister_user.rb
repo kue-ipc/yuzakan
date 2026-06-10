@@ -20,7 +20,7 @@ module Yuzakan
         return Success(user) if user.deleted_at
 
         user_repo.transaction do
-          member_repo.delete_by_user(user)
+          managed_users.delete_by_user(user)
           Success(user_repo.set(username, deleted_at: Time.now))
         end
       end

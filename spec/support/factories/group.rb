@@ -10,8 +10,6 @@ Factory.define(:group) do |f|
   f.unmanageable false # default
   f.attrs {} # default
 
-  f.services [] # default
-
   f.basic false # default
   f.prohibited false # default
 

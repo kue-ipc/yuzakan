@@ -7,6 +7,10 @@ module Yuzakan
         associations do
           has_many :mappings
           has_many :attrs, throught: :mappings
+          has_many :managed_users
+          has_many :users, through: :managed_users
+          has_many :managed_groups
+          has_many :groups, through: :managed_groups
         end
       end
 

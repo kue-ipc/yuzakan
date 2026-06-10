@@ -14,8 +14,6 @@ Factory.define(:user) do |f|
   f.mfa false # default
   f.attrs {} # default
 
-  f.services [] # default
-
   f.clearance_level 1 # default
 
   f.prohibited false # default
