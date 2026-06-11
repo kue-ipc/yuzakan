@@ -355,7 +355,7 @@ module Yuzakan
         ldap_modify(user.dn, operations)
       end
 
-      def user_unlock(username, password = nil)
+      def user_unlock(username, password: nil)
         user = ldap_user_read(username)
         return if user.nil?
         # 管理不可のユーザーは変更せずに、ロックがかかっていれば偽を返す。

@@ -113,7 +113,7 @@ module Yuzakan
         true
       end
 
-      def user_unlock(username, _password = nil)
+      def user_unlock(username, _password: nil)
         local_user = local_user_repo.find_by_name(username)
         return false if local_user.nil?
         return false unless local_user.locked

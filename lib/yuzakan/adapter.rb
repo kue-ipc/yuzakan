@@ -29,7 +29,7 @@
 # user_update(username, userdata) -> userdata? [writeable]
 # user_delete(username) -> userdata? [writable]
 #
-# user_rename(oldname, newname)
+# user_rename(oldname, newname) -> bool? [writable]
 #
 # user_auth(username, password) -> bool? [authenticatable]
 # user_change_password(username, password) -> bool? [password_changeable]
@@ -38,7 +38,7 @@
 # user_generate_code(username) -> codes? [mfa_changeable]
 #
 # user_lock(username) -> bool? [lockable]
-# user_unlock(username, password = nil) -> bool? [lockable]
+# user_unlock(username, password: nil) -> bool? [lockable]
 #
 # user_list -> Array[username] [readable]
 # user_search(query) -> Array[username] [readable]

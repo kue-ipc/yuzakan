@@ -1,38 +1,18 @@
 # frozen_string_literal: true
 
-require "hanami/validations"
-require_relative "../service_interactor"
 module Yuzakan
   module Services
     class UnlockUser < Yuzakan::ServiceOperation
-      class Validator
-        include Hanami::Validations
+      category :user
 
-        predicates NamePredicates
-        messages :i18n
+      def call(service, username, password = nil)
+        return unless can_call?(service, :user_unlock)
 
-        validations do
-          required(:username).filled(:name, max_size?: 255)
-          optional(:password).filled(:str?, max_size?: 255)
-          optional(:services).each(:name, max_size?: 255)
-        end
-      end
-
-      def call(params)
-        username = params[:username]
-        password = params[:password]
-
-        call_services(params[:services],
-          operation: :user_unlock) do |service|
-          service.user_unlock(username, password)
-        end
-      end
-
-      def user_unlock(username, password = nil)
-        need_adapter!
-
-        @adapter.user_unlock(username, password).tap do |result|
-          @cache_store.delete(user_key(username)) if result
+        username = step validate_name(username)
+        password = step validate_password(password) if password
+        adapter = step get_adapter(service)
+        adapter.user_unlock(username, password:).tap do |result|
+          cache_delete(service, username) if result
         end
       end
     end

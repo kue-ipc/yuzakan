@@ -85,49 +85,31 @@ module Yuzakan
       #   },
       # ].tap(&Yuzakan::Utils::Object.method(:deep_freeze))
 
-      def check
-        true
-      end
+      def check = true
 
-      def user_create(username, _password = nil, **userdata)
-        {**userdata, name: username}
-      end
+      def user_create(_username, _userade, password: nil) = nil
+      def user_read(_username) = nil
+      def user_update(_username, **_userdata) = nil
+      def user_delete(_username) = nil
+      def user_rename(_username, _new_username) = nil
+      def user_auth(_username, _password) = nil
+      def user_change_password(_username, _password) = nil
+      def user_generate_code(_username) = []
+      def user_lock(_username) = nil
+      def user_unlock(_username, password: nil) = nil
+      def user_list = []
+      def user_search(_query) = []
 
-      def user_read(_username)
-        nil
-      end
+      def group_create(_groupname, _groupdata) = nil
+      def group_read(_groupname) = nil
+      def group_update(_groupname, **_groupdata) = nil
+      def group_delete(_groupname) = nil
+      def group_list = []
+      def group_search(_query) = []
 
-      def user_update(_username, **_userdata)
-        nil
-      end
-
-      def user_delete(_username)
-        nil
-      end
-
-      def user_auth(_username, _password)
-        false
-      end
-
-      def user_change_password(_username, _password)
-        nil
-      end
-
-      def user_generate_code(_username)
-        []
-      end
-
-      def user_lock(_username)
-        nil
-      end
-
-      def user_unlock(_username, _password = nil)
-        nil
-      end
-
-      def user_list
-        []
-      end
+      def member_list(_groupname) = []
+      def member_add(_groupname, _username) = nil
+      def member_remove(_groupname, _username) = nil
     end
   end
 end

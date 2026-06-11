@@ -2,17 +2,15 @@
 
 module Yuzakan
   module Services
-    class LockUser < Yuzakan::ServiceOperation
+    class GenerateCodeUser < Yuzakan::ServiceOperation
       category :user
 
       def call(service, username)
-        return unless can_call?(service, :user_lock)
+        return unless can_call?(service, :user_generate_code)
 
         username = step validate_name(username)
         adapter = step get_adapter(service)
-        adapter.user_lock(username).tap do |result|
-          cache_delete(service, username) if result
-        end
+        adapter.user_generate_code(username)
       end
     end
   end

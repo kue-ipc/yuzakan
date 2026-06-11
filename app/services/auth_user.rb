@@ -6,7 +6,7 @@ module Yuzakan
       category :user
 
       def call(service, username, password)
-        return nil unless can_call?(service, :user_auth)
+        return unless can_call?(service, :user_auth)
 
         username = step validate_name(username)
         password = step validate_password(password)

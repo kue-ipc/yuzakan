@@ -5,16 +5,13 @@ module Yuzakan
     class ListGroup < Yuzakan::ServiceOperation
       category :group
 
-      def call(services = nil)
-        services = step get_services(services, method: :group_list)
+      def call(service)
+        return unless can_call?(service, :group_list)
 
-        services.to_h do |service|
-          result = cache_fetch(service) do
-            adapter = step get_adapter(service)
-            adapter.group_list
-          end
-          [service.name, result]
-        end.compact
+        cache_fetch(service) do
+          adapter = step get_adapter(service)
+          adapter.group_list
+        end
       end
     end
   end

@@ -5,23 +5,18 @@ module Yuzakan
     class UpdateUser < Yuzakan::ServiceOperation
       category :user
 
-      def call(username, services = nil, **params)
-        username = step validate_name(username)
-        params.delete(:password) # do not update password here
-        services = step get_services(services, method: :user_update)
+      def call(service, username, **params)
+        return unless can_call?(service, :user_update)
 
-        services.to_h do |service|
-          adapter = step get_adapter(service)
-          userdata = step map_data(service, params)
-          new_userdata = adapter.user_update(username, userdata)
-          result =
-            if new_userdata
-              new_params = step convert_data(service, new_userdata)
-              cache_write(service, username) { new_params }
-              new_params
-            end
-          [service.name, result]
-        end.compact
+        username = step validate_name(username)
+        adapter = step get_adapter(service)
+        userdata = step map_data(service, params)
+        new_userdata = adapter.user_update(username, userdata)
+        return unless new_userdata
+
+        new_params = step convert_data(service, new_userdata)
+        cache_write(service, username) { new_params }
+        new_params
       end
     end
   end

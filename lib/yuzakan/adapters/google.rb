@@ -131,7 +131,7 @@ module Yuzakan
       #   UNDER13: 13歳未満のため
       #   WEB_LOGIN_REQUIRED: ログイン前新規アカウント(使用され無い)
       #   null: その他の自動停止中
-      def user_unlock(username, password = nil)
+      def user_unlock(username, password: nil)
         email = "#{username}@#{@params[:domain]}"
         user = service.get_user(email)
         raise "ユーザーが存在しません。" if user.nil?

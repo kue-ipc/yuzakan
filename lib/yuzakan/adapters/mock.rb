@@ -191,7 +191,7 @@ module Yuzakan
         @users[username]
       end
 
-      def user_unlock(username, password = nil)
+      def user_unlock(username, password: nil)
         return nil unless @users.key?(username)
         raise AdapterError, "管理不可ユーザーであるため、アンロックできません。" if @users.dig(username,
           :unmanageable)
