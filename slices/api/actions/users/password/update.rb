@@ -12,7 +12,7 @@ module API
           include Deps[
             "services.authenticate",
             "services.change_password",
-            view: "views.users.password.show"
+            view: "views.users.password.show",
           ]
 
           params do
@@ -70,7 +70,7 @@ module API
             end
 
             password_types = [/[0-9]/, /[a-z]/, /[A-Z]/,
-              /[^0-9a-zA-Z]/,].select do |reg|
+              /[^0-9a-zA-Z]/].select do |reg|
               reg.match(request.params[:password])
             end.size
             if response[:current_config].password_min_types&.> password_types

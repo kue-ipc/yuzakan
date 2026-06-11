@@ -170,13 +170,13 @@ def let_mock_repositories
     [
       attr_attributes,
       {**attr_attributes, id: 19, name: "attr_bool", label: "真偽値属性",
-                          type: "boolean", order: 24,},
+                          type: "boolean", order: 24},
       {**attr_attributes, id: 24, name: "attr_int", label: nil,
-                          type: "整数属性", order: 16, code: '"hoge"',},
+                          type: "整数属性", order: 16, code: '"hoge"'},
       {**attr_attributes, id: 27, name: "attr_str", label: "文字列属性",
-                          type: "string", order: 64, hidden: true,},
+                          type: "string", order: 64, hidden: true},
       {**attr_attributes, id: 28, name: "attr_noname", label: nil,
-                          type: "string", order: 32, readonly: true,},
+                          type: "string", order: 32, readonly: true},
     ]
   }
   let(:mappings_attributes) {
@@ -221,23 +221,23 @@ def let_mock_repositories
     [
       user_attributes,
       {**user_attributes, id: 1, name: "admin", label: "管理者",
-                          email: "admin@example.jp", clearance_level: 5,},
+                          email: "admin@example.jp", clearance_level: 5},
       {**user_attributes, id: 24, name: "prohibited", prohibited: true},
       {**user_attributes, id: 19, name: "deleted", deleted: true,
-                          deleted_at: Time.now - (24 * 60 * 60),},
+                          deleted_at: Time.now - (24 * 60 * 60)},
     ]
   }
   let(:services_attributes) {
     [
       service_attriubtes,
       {**service_attriubtes, id: 1, name: "service1", label: "プロ1",
-                             order: 8,},
+                             order: 8},
       {**service_attriubtes, id: 2, name: "service2", label: "プロ2",
-                             order: 32,},
+                             order: 32},
       {**service_attriubtes, id: 3, name: "service3", label: nil,
-                             order: 16,},
+                             order: 16},
       {**service_attriubtes, id: 4, name: "self_management_service",
-                             self_management: true,},
+                             self_management: true},
     ]
   }
 
@@ -269,11 +269,11 @@ def init_action_spec
   let(:params) { {**action_params, **env} }
   let(:env) {
     {"REMOTE_ADDR" => client, "rack.session" => session,
-     "HTTP_ACCEPT" => format,}
+     "HTTP_ACCEPT" => format}
   }
   let(:session) {
     {uuid: uuid, user_id: user.id, created_at: Time.now - 600,
-     updated_at: Time.now - 60,}
+     updated_at: Time.now - 60}
   }
   let(:format) { "text/html" }
   # overwrite

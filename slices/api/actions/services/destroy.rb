@@ -6,7 +6,7 @@ module API
       class Destroy < API::Action
         include Deps[
           "repos.service_repo",
-          view: "views.services.show"
+          view: "views.services.show",
         ]
 
         security_level 5

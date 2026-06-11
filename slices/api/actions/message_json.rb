@@ -8,7 +8,7 @@ module API
     module MessageJSON
       def self.included(action)
         action.include Deps[
-          halt_view: "views.error.halt"
+          halt_view: "views.error.halt",
         ]
       end
 

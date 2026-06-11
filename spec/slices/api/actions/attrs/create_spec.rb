@@ -9,7 +9,7 @@ RSpec.describe API::Actions::Attrs::Create do
       get_with_mappings_and_services: attr)
     allow(attr_repo).to receive(:transaction).and_yield
     allow(service_repo).to receive_messages(all: [mapping.service])
-    {attr_repo: attr_repo,service_repo: service_repo}
+    {attr_repo: attr_repo, service_repo: service_repo}
   }
 
   let(:action_params) {

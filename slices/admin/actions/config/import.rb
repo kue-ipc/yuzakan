@@ -161,7 +161,7 @@ module Admin
 
             current_param = existing_params.delete(param_name.to_s)
             param_data = {service_id: service.id, name: param_name.to_s,
-                          value: param_type.dump_value(value),}
+                          value: param_type.dump_value(value)}
             if current_param
               @adapter_param_repository.update(current_param.id, param_data)
             else

@@ -51,7 +51,7 @@ module API
             # プロバイダーの指定は無視する。
             # 削除日時が指定されていない場合は現在の日時を削除日時とする。
             @user = @user_repository.create({deleted_at: Time.now,
-                                             **params.to_h.except(:id),})
+                                             **params.to_h.except(:id)})
           elsif params[:services]&.size&.positive?
             @user = @user_repository.create(params.to_h.except(:id))
             service_create_user({

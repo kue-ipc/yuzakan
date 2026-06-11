@@ -700,7 +700,7 @@ module Yuzakan
 
       private def generate_operation(operator, name, value = nil)
         raise LdapAdapterError, "invalid operator: #{operator}" unless [:add,
-          :replace, :delete,].include?(operator)
+          :replace, :delete].include?(operator)
 
         [operator, name, value]
       end

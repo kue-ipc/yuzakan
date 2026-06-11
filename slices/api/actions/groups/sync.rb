@@ -22,7 +22,6 @@ module API
           }
         end
 
-
         private def get_groups(groupnames)
           group_entities = @group_repository.all_by_name(groupnames).to_h do |group|
             [group.name, group]
@@ -103,7 +102,6 @@ module API
           end
           result.group
         end
-
       end
     end
   end

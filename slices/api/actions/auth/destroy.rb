@@ -6,7 +6,7 @@ module API
       class Destroy < API::Action
         include Deps[
           "repos.auth_log_repo",
-          view: "views.auth.show"
+          view: "views.auth.show",
         ]
 
         security_level 0

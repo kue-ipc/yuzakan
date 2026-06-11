@@ -13,7 +13,7 @@ module Yuzakan
       "adapter_repo",
       "cache_store",
       "repos.mapping_repo",
-      "repos.service_repo"
+      "repos.service_repo",
   ]
 
     # common flows

@@ -6,7 +6,7 @@ module Yuzakan
     class UnregisterGroup < Yuzakan::Operation
       include Deps[
         "repos.group_repo",
-        "repos.managed_group_repo"
+        "repos.managed_group_repo",
       ]
 
       def call(groupname)

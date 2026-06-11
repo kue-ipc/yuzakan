@@ -36,7 +36,6 @@ module Yuzakan
         by_attr_id_and_service_id(attr_id, service_id).command(:delete).call
       end
 
-
       # 以下は未整理
 
       def find_by_service_attr(service_id, attr_id)

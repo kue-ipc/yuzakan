@@ -50,7 +50,6 @@ module Yuzakan
         count
       end
 
-
       # TODO: 整理が必要
 
       def find_by_name(name)

@@ -13,15 +13,15 @@ def db_initialize
   ["127.0.0.0/8",
     "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16",
     "::1",
-    "fc00::/7",].each do |address|
+    "fc00::/7"].each do |address|
     network_repository.create_or_update_by_address(address,
       {clearance_level: 5,
-       trusted: true,})
+       trusted: true})
   end
   ["0.0.0.0/0", "::/0"].each do |address|
     network_repository.create_or_update_by_address(address,
       {clearance_level: 1,
-       trusted: false,})
+       trusted: false})
   end
 
   service_repository = ServiceRepository.new

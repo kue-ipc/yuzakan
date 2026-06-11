@@ -16,7 +16,7 @@ RSpec.describe API::Actions::System::Show do
         domain: config.domain,
         contact: {name: config.contact_name, email: config.contact_email, phone: config.contact_phone},
         app: {name: "Yuzakan", version: Yuzakan::Version::VERSION,
-              license: File.read(File.join(__dir__, "../../../../../LICENSE")),},
+              license: File.read(File.join(__dir__, "../../../../../LICENSE"))},
       })
     end
   end
@@ -51,7 +51,7 @@ RSpec.describe API::Actions::System::Show do
         title: config.title,
         contact: {name: config.contact_name, email: config.contact_email, phone: config.contact_phone},
         app: {name: "Yuzakan", version: Yuzakan::Version::VERSION,
-              license: File.read(File.join(__dir__, "../../../../../LICENSE")),},
+              license: File.read(File.join(__dir__, "../../../../../LICENSE"))},
       })
     end
   end
@@ -69,7 +69,7 @@ RSpec.describe API::Actions::System::Show do
         title: config.title,
         domain: config.domain,
         app: {name: "Yuzakan", version: Yuzakan::Version::VERSION,
-              license: File.read(File.join(__dir__, "../../../../../LICENSE")),},
+              license: File.read(File.join(__dir__, "../../../../../LICENSE"))},
       })
     end
   end
@@ -85,7 +85,7 @@ RSpec.describe API::Actions::System::Show do
       expect(json[:data]).to eq({
         url: "http://0.0.0.0:2300/",
         app: {name: "Yuzakan", version: Yuzakan::Version::VERSION,
-              license: File.read(File.join(__dir__, "../../../../../LICENSE")),},
+              license: File.read(File.join(__dir__, "../../../../../LICENSE"))},
       })
     end
   end

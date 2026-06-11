@@ -6,7 +6,7 @@ module API
       class Index < API::Action
         include Deps["repos.attr_repo"]
 
-        def handle(request, response)
+        def handle(_request, response)
           attrs =
             if response[:current_level] >= 2
               attr_repo.all

@@ -12,7 +12,7 @@ module API
           "management.sync_user",
           "services.authenticate",
           "settings",
-          view: "views.auth.show"
+          view: "views.auth.show",
         ]
 
         security_level 0

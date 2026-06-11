@@ -33,7 +33,7 @@ RSpec.describe API::Actions::Attrs::Update do
     let(:action_opts) {
       allow(attr_repo).to receive_messages(exist?: nil)
       {attr_repo: attr_repo, service_repo: service_repo}
-      }
+    }
   end
 
   shared_examples "ok" do

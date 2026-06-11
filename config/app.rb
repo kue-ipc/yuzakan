@@ -21,18 +21,18 @@ module Yuzakan
           expire_after: settings.session_expire,
           redis_server: "#{settings.redis_url}/yuzakan:session",
           expires_in: settings.session_expire,
-        },]
+        }]
       elsif settings.session_secret
         [:cookie, {
           key: "yuzakan.session",
           expire_after: settings.session_expire,
           secret: settings.session_secret,
-        },]
+        }]
       else
         [:pool, {
           key: "yuzakan.session",
           expire_after: settings.session_expire,
-        },]
+        }]
       end
 
     config.inflections do |inflections|

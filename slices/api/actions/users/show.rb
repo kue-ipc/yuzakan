@@ -6,7 +6,7 @@ module API
       class Show < API::Action
         include Deps[
           "repos.service_repo",
-          "repos.user_repo"
+          "repos.user_repo",
         ]
 
         security_level 2

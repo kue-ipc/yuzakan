@@ -91,7 +91,7 @@ RSpec.describe Yuzakan::Operations::GeneratePassword do
     it "is failed" do
       result = subject.call
       expect(result).to be_failure
-      expect(result.failure).to eq [:invalid, {size: [gt?: 0]}]
+      expect(result.failure).to eq [:invalid, {size: [{gt?: 0}]}]
     end
   end
 

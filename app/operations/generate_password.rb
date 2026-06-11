@@ -18,7 +18,7 @@ module Yuzakan
       ].freeze
 
       include Deps[
-        "repo.config_repo"
+        "repo.config_repo",
       ]
 
       def call
@@ -45,7 +45,7 @@ module Yuzakan
       end
 
       private def generate_password(rule)
-        return Failure([:invalid, {size: [gt?: 0]}]) unless rule[:size].positive?
+        return Failure([:invalid, {size: [{gt?: 0}]}]) unless rule[:size].positive?
 
         char_list = charlist_from_rule(rule).value_or { return Failure(_1) }
         return Failure([:invalid, {char_list: [:filled?]}]) if char_list.empty?

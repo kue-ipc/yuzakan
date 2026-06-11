@@ -8,7 +8,7 @@ module API
           "repos.attr_repo",
           "repos.mapping_repo",
           "repos.service_repo",
-          view: "views.attrs.show"
+          view: "views.attrs.show",
         ]
 
         security_level 5
@@ -39,8 +39,8 @@ module API
 
         def handle(request, response)
           check_params(request, response)
-          id = take_exist_id(request, response, attr_repo)
-          name = take_unique_name(request, response, attr_repo)
+          take_exist_id(request, response, attr_repo)
+          take_unique_name(request, response, attr_repo)
 
           attr = nil
           attr_repo.transaction do

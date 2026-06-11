@@ -7,7 +7,7 @@ module API
         include Deps[
           "adapter_repo",
           "repos.service_repo",
-          view: "views.services.show"
+          view: "views.services.show",
         ]
 
         security_level 5

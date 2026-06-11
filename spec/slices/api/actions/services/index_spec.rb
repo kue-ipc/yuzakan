@@ -16,7 +16,7 @@ RSpec.describe API::Actions::Services::Index do
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:data]).to eq [
         {name: service.name, label: service.label},
-        {name: another_service.name, label: another_service.label}
+        {name: another_service.name, label: another_service.label},
       ]
     end
   end

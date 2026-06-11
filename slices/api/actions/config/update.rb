@@ -6,7 +6,7 @@ module API
       class Update < API::Action
         include Deps[
           "repos.config_repo",
-          view: "views.config.show"
+          view: "views.config.show",
         ]
 
         security_level 5
