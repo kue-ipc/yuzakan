@@ -9,19 +9,19 @@ module Yuzakan
         "repos.managed_group_repo",
       ]
 
-      def call(groupname)
+      def call(groupname, time: Time.now)
         groupname = step validate_name(groupname)
-        step unregister(groupname)
+        step unregister(groupname, time:)
       end
 
-      def unregister(groupname)
+      def unregister(groupname, time: Time.now)
         group = group_repo.get(groupname)
         return Success(nil) if group.nil?
         return Success(group) if group.deleted_at
 
         group_repo.transaction do
           management_groups.clear_for_group(group)
-          Success(group_repo.set(groupname, deleted_at: Time.now))
+          Success(group_repo.set(groupname, deleted_at: time, synced_at: time))
         end
       end
     end

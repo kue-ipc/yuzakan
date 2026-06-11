@@ -12,38 +12,36 @@ module Yuzakan
         "management.sync_group",
       ]
 
-      def call(username, params)
+      def call(username, params, time: Time.now)
         username = step validate_name(username)
         params = step validate_params(params)
-        step register(username, params)
+        step register(username, params, time:)
       end
 
       private def validate_params(params)
-        validated_params = params.slice(:label, :email, :unmanageable, :locked, :mfa, :attrs)
+        validated_params = params.slice(:label, :email, :unmanageable, :locked, :mfa, :attrs, :services)
 
         if params.key?(:primary_group)
-          validated_params[:primary_group] = get_group(params[:primary_group]).value_or { return Failure(_1) }
+          primary_group = step get_group(params[:primary_group])
+          validated_params[:group_id] = primary_group&.id
         end
 
         if params.key?(:groups)
-          validated_params[:groups] = params[:groups].map do |groupname|
-            get_group(groupname).value_or { return Failure(_1) }
-          end
+          validated_params[:member_groups] = params[:groups].map do |groupname|
+            step get_group(groupname)
+          end.compact
         end
 
         Success(validated_params)
       end
 
-      def register(username, params)
+      private def register(username, params, time: Time.now)
         user_repo.transaction do
-          user_params = params.slice(:label, :email, :unmanageable, :locked, :mfa, :attrs)
-          user_params[:group_id] = params[:primary_group]&.id if params.key?(:primary_group)
-          user_params[:deleted_at] = nil
-          user = user_repo.set(username, **user_params)
-          member_repo.set_groups_for_user(user, params[:groups]) if params.key?(:groups)
+          user_params = params.expect(:member_groups, :services)
+          user = user_repo.set(username, **user_params, deleted_at: nil, synced_at: time)
+          member_repo.set_groups_for_user(user, params[:member_groups]) if params.key?(:member_groups)
           managed_user_repo.set_services_for_user(user, params[:services]) if params.key?(:services)
         end
-
         Success(user_repo.get_with_associations(username))
       end
 

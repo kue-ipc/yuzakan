@@ -231,7 +231,7 @@ CREATE TABLE public.groups (
     basic boolean DEFAULT false NOT NULL,
     prohibited boolean DEFAULT false NOT NULL,
     deleted_at timestamp without time zone,
-    synced_at timestamp without time zone,
+    synced_at timestamp without time zone NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -567,7 +567,7 @@ CREATE TABLE public.users (
     clearance_level integer DEFAULT 1 NOT NULL,
     prohibited boolean DEFAULT false NOT NULL,
     deleted_at timestamp without time zone,
-    synced_at timestamp without time zone,
+    synced_at timestamp without time zone NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );

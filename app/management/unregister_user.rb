@@ -9,19 +9,19 @@ module Yuzakan
         "repos.managed_user_repo",
       ]
 
-      def call(username)
+      def call(username, time: Time.now)
         username = step validate_name(username)
-        step unregister(username)
+        step unregister(username, time:)
       end
 
-      def unregister(username)
+      def unregister(username, time: Time.now)
         user = user_repo.get(username)
         return Success(nil) if user.nil?
         return Success(user) if user.deleted_at
 
         user_repo.transaction do
           managed_users.clear_for_user(user)
-          Success(user_repo.set(username, deleted_at: Time.now))
+          Success(user_repo.set(username, deleted_at: time, synced_at: time))
         end
       end
     end

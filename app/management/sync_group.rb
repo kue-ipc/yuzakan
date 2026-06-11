@@ -14,7 +14,7 @@ module Yuzakan
       def call(groupname)
         groupname = step validate_name(groupname)
         params = step read(groupname)
-        step sync(groupname, params)
+        step sync(groupname, params, time: Time.now)
       end
 
       private def read(groupname)
@@ -40,11 +40,11 @@ module Yuzakan
         Success(params)
       end
 
-      private def sync(groupname, params)
+      private def sync(groupname, params, time: Time.now)
         if params
-          register_group.call(groupname, params)
+          register_group.call(groupname, params, time:)
         else
-          unregister_group.call(groupname)
+          unregister_group.call(groupname, time:)
         end
       end
     end

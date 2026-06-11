@@ -14,7 +14,7 @@ module Yuzakan
       def call(username)
         username = step validate_name(username)
         params = step read(username)
-        step sync(username, params)
+        step sync(username, params, time: Time.now)
       end
 
       private def read(username)
@@ -44,11 +44,11 @@ module Yuzakan
         Success(params)
       end
 
-      private def sync(username, params)
+      private def sync(username, params, time: Time.now)
         if params
-          register_user.call(username, params)
+          register_user.call(username, params, time:)
         else
-          unregister_user.call(username)
+          unregister_user.call(username, time:)
         end
       end
     end

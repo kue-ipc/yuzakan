@@ -9,18 +9,22 @@ module Yuzakan
         "repos.managed_group_repo",
       ]
 
-      def call(groupname, params)
+      def call(groupname, params, time: Time.now)
         groupname = step validate_name(groupname)
-        step register(groupname, params)
+        params = step validate_params(params)
+        step register(groupname, params, time:)
       end
 
-      private def register(groupname, params)
+      private def validate_params(params)
+        Success(params.slice(:label, :unmanageable, :attrs, :services))
+      end
+
+      private def register(groupname, params, time: Time.now)
         group_repo.transaction do
-          group_params = params.slice(:label, :unmanageable, :attrs)
-          group = group_repo.set(groupname, **group_params)
+          group_params = params.except(:services)
+          group = group_repo.set(groupname, **group_params, deleted_at: nil, synced_at: time)
           managed_group_repo.set_services_for_group(group, params[:services]) if params.key?(:services)
         end
-
         Success(group_repo.get_with_associations(groupname))
       end
     end
