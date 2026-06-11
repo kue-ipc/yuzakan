@@ -5,8 +5,8 @@ module Yuzakan
     class UpdateGroup < Yuzakan::ServiceOperation
       category :group
 
-      def call(serivec, groupname, **params)
-        return unless can_call_any?(services, :group_update)
+      def call(service, groupname, **params)
+        return unless can_call_any?(service, :group_update)
 
         groupname = step validate_name(groupname)
         adapter = step get_adapter(service)
