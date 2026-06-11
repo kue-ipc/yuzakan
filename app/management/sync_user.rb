@@ -28,7 +28,7 @@ module Yuzakan
         }
 
         service_repo.all.each do |service|
-          result = read_user.call(serivce, username).value_or { return Failure(_1) }
+          result = read_user.call(service, username).value_or { return Failure(_1) }
           next unless result
 
           params[:groups] |= result[:groups] if result.key?(:groups)
