@@ -20,9 +20,6 @@ module Yuzakan
       private def read(username)
         params = {
           groups: [],
-          unmanageable: false,
-          locked: false,
-          mfa: false,
           attrs: {},
           services: [],
         }
@@ -31,13 +28,16 @@ module Yuzakan
           result = read_user.call(service, username).value_or { return Failure(_1) }
           next unless result
 
-          params[:groups] |= result[:groups] if result.key?(:groups)
-          [:primary_group, :label, :email, :unmanageable, :locked, :mfa].each do |name|
+          [:primary_group, :label, :email].each do |name|
             params[name] ||= result[name] if result.key?(name)
           end
+          params[:groups] |= result[:groups] if result.key?(:groups)
+          params[:groups] |= [result[:primary_group]] if result.key?(:primary_group)
           params[:attrs].merge!(result[:attrs]) { |_, v, _| v } if result.key?(:attrs)
-          params[:services] << service
+          params[:services] << [service, result.slice(:unmanageable, :locked, :mfa)]
         end
+        params[:groups] -= [params[:primary_group]] if params[:primary_group]
+        params[:groups] = params[:groups].uniq.compact
 
         return Success(nil) if params[:services].empty?
 

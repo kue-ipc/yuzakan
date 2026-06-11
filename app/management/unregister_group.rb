@@ -17,11 +17,14 @@ module Yuzakan
       def unregister(groupname, time: Time.now)
         group = group_repo.get(groupname)
         return Success(nil) if group.nil?
-        return Success(group) if group.deleted_at
 
         group_repo.transaction do
           management_groups.clear_for_group(group)
-          Success(group_repo.set(groupname, deleted_at: time, synced_at: time))
+          if group.deleted_at
+            Success(group_repo.set(groupname, synced_at: time))
+          else
+            Success(group_repo.set(groupname, deleted_at: time, synced_at: time))
+          end
         end
       end
     end

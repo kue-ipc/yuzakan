@@ -16,7 +16,13 @@ module Yuzakan
       end
 
       private def validate_params(params)
-        Success(params.slice(:label, :unmanageable, :attrs, :services))
+        validated_params = params.slice(:label, :attrs)
+        if params.key?(:services)
+          validated_params[:services] = params[:services].map do |service, service_params|
+            [service, service_params.slice(:unmanageable)]
+          end
+        end
+        Success(validated_params)
       end
 
       private def register(groupname, params, time: Time.now)

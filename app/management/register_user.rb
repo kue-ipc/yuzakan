@@ -19,19 +19,21 @@ module Yuzakan
       end
 
       private def validate_params(params)
-        validated_params = params.slice(:label, :email, :unmanageable, :locked, :mfa, :attrs, :services)
-
+        validated_params = params.slice(:label, :email, :attrs)
         if params.key?(:primary_group)
           primary_group = step get_group(params[:primary_group])
           validated_params[:group_id] = primary_group&.id
         end
-
         if params.key?(:groups)
           validated_params[:member_groups] = params[:groups].map do |groupname|
             step get_group(groupname)
           end.compact
         end
-
+        if params.key?(:services)
+          validated_params[:services] = params[:services].map do |service, service_params|
+            [service, service_params.slice(:unmanageable, :locked, :mfa)]
+          end
+        end
         Success(validated_params)
       end
 

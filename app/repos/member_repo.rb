@@ -37,7 +37,6 @@ module Yuzakan
             create_for_user_and_group(user, group)
           end
         end
-        all_for_user(user)
       end
     end
   end

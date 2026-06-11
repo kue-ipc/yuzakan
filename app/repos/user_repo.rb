@@ -34,7 +34,7 @@ module Yuzakan
 
       # with associations
       def get_with_associations(name)
-        by_name(name).combine(:affiliation, :group, :member_groups, :services).one
+        by_name(name).combine(:affiliation, :group, :member_groups, managings: :service).one
       end
 
       # def get_with_affiliation(name)

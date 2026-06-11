@@ -9,10 +9,6 @@ module Yuzakan
           belongs_to :user
         end
       end
-
-      def for_users(users)
-        where(user_id: users.map(&:id))
-      end
     end
   end
 end

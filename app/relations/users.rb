@@ -9,7 +9,7 @@ module Yuzakan
           belongs_to :group
           has_many :members
           has_many :groups, as: :member_groups, through: :members
-          has_many :managed_users
+          has_many :managed_users, as: :managings
           has_many :services, through: :managed_users
         end
       end

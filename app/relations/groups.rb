@@ -9,7 +9,7 @@ module Yuzakan
           has_many :users
           has_many :members
           has_many :users, as: :member_users, through: :members
-          has_many :managed_groups
+          has_many :managed_groups, as: :managings
           has_many :services, through: :managed_groups
         end
       end

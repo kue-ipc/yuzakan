@@ -19,7 +19,6 @@ module Yuzakan
 
       private def read(groupname)
         params = {
-          unmanageable: false,
           attrs: {},
           services: [],
         }
@@ -32,7 +31,7 @@ module Yuzakan
             params[name] ||= result[name] if result.key?(name)
           end
           params[:attrs].merge!(result[:attrs]) { |_, v, _| v } if result.key?(:attrs)
-          params[:services] << service
+          params[:services] << [service, result.slice(:unmanageable)]
         end
 
         return Success(nil) if params[:services].empty?
