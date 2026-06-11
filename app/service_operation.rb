@@ -196,7 +196,6 @@ module Yuzakan
     end
 
     private def cache_delete(service, name = nil, category: self.category)
-      pp service
       cache_store.delete(cache_key(service, name, category:))
     end
 

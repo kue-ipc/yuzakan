@@ -5,15 +5,12 @@ module Yuzakan
     class SearchGroup < Yuzakan::ServiceOperation
       category :group
 
-      def call(query, services = nil)
-        services = step get_services(services, method: :group_search)
+      def call(service, query)
+        return unless can_call?(service, :group_search)
 
         # No cache
-        services.to_h do |service|
-          adapter = step get_adapter(service)
-          result = adapter.group_search(query)
-          [service.name, result]
-        end.compact
+        adapter = step get_adapter(service)
+        adapter.group_search(query)
       end
     end
   end
