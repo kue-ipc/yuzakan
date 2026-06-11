@@ -16,7 +16,7 @@ module Yuzakan
               userdata = adapter.user_read(username)
               step convert_data(service, userdata)
             end
-          [service.name, result]
+          [service, result]
         end.compact
       end
     end

@@ -23,13 +23,13 @@ module Yuzakan
 
       # index = filter & search & order & paginate
       def index(page: nil, per_page: nil, order: nil, query: nil, filter: nil)
-        relations = affiliations
+        relation = affiliations
 
-        relations = filter(relations, filter:)
-        relations = search(relations, targets: [:name, :label], query:)
-        relations = order(relations, order:)
-        relations = paginate(relations, page:, per_page:)
-        [relations.to_a, relations.pager]
+        relation = filter(relation, filter:)
+        relation = search(relation, targets: [:name, :label], query:)
+        relation = order(relation, order:)
+        relation = paginate(relation, page:, per_page:)
+        [relation.to_a, relation.pager]
       end
     end
   end

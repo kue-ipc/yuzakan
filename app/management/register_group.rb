@@ -5,25 +5,23 @@ module Yuzakan
   module Management
     class RegisterGroup < Yuzakan::Operation
       include Deps[
-        "repos.group_repo"
+        "repos.group_repo",
+        "repos.managed_group_repo",
       ]
 
       def call(groupname, params)
         groupname = step validate_name(groupname)
-        params = step validate_params(params)
         step register(groupname, params)
       end
 
-      private def validate_params(params)
-        Success({
-          **params.slice(:label, :basic),
-          deleted: false,
-          deleted_at: nil,
-        })
-      end
-
       private def register(groupname, params)
-        Success(group_repo.set(groupname, **params))
+        group_repo.transaction do
+          group_params = params.slice(:label, :unmanageable, :attrs)
+          group = group_repo.set(groupname, **group_params)
+          managed_group_repo.set_services_for_group(group, params[:services]) if params.key?(:services)
+        end
+
+        Success(group_repo.get_with_associations(groupname))
       end
     end
   end

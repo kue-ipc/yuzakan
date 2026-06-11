@@ -20,7 +20,7 @@ module Yuzakan
         return Success(group) if group.deleted_at
 
         group_repo.transaction do
-          management_groups.delete_by_group(group)
+          management_groups.clear_for_group(group)
           Success(group_repo.set(groupname, deleted_at: Time.now))
         end
       end

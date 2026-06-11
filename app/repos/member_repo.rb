@@ -13,33 +13,31 @@ module Yuzakan
       def last = members.last
       def clear = members.delete
 
-      # other interfaces
-      private def by_user(user) = members.by_user_id(user.id)
-      private def by_group(group) = members.by_group_id(group.id)
-      private def by_user_and_group(user, group)
-        members.by_user_id(user.id).by_group_id(group.id)
-      end
+      # for associations
+      private def for_user(user) = members.by_user_id(user.id)
+      private def for_group(group) = members.by_group_id(group.id)
+      private def for_user_and_group(user, group) = members.by_user_id_and_group_id(user.id, group.id)
 
-      def delete_by_user(user) = by_user(user).command(:delete).call
-      def delete_by_group(group) = by_group(group).command(:delete).call
+      def all_for_user(user) = for_user(user).to_a
+      def all_for_group(group) = for_group(group).to_a
+      def clear_for_user(user) = for_user(user).command(:delete).call
+      def clear_for_group(group) = for_group(group).command(:delete).call
 
-      def create_by_user_and_group(user, group) = create(user_id: user.id, group_id: group.id)
-      def delete_by_user_and_group(user, group) = by_user_and_group(user, group).command(:delete).call
-      def find_by_user_and_group(user, group) = by_user_and_group(user, group).one
-      def exist_by_user_and_group?(user, group) = by_user_and_group(user, group).exist?
+      def create_for_user_and_group(user, group) = create(user_id: user.id, group_id: group.id)
+      def delete_for_user_and_group(user, group) = for_user_and_group(user, group).command(:delete).call
+      def find_for_user_and_group(user, group) = for_user_and_group(user, group).one
+      def exist_for_user_and_group?(user, group) = for_user_and_group(user, group).exist?
 
-      # TODO: メソッド名を変えたほうがいいのでは？
       def set_groups_for_user(user, groups)
         group_ids = groups.map(&:id)
         members.transaction do
-          by_user(user).exclude(group_id: group_ids).changeset(:delete).commit
-          current_group_ids = by_user(user).pluck(:group_id)
-          (group_ids - current_group_ids).each do |group_id|
-            members.changeset(:create, user_id: user.id, group_id: group_id)
-              .commit
+          for_user(user).exclude(group_id: group_ids).command(:delete).call
+          current_group_ids = for_user(user).pluck(:group_id)
+          groups.reject { |group| current_group_ids.include?(group.id) }.each do |group|
+            create_for_user_and_group(user, group)
           end
         end
-        by_user(user).to_a
+        all_for_user(user)
       end
     end
   end

@@ -14,26 +14,48 @@ module Yuzakan
         plugins_options: {timestamps: {timestamps: [:updated_at]}},
       }.freeze
 
-      private def paginate(relations, page: nil, per_page: nil)
-        relations = relations.page(page || 1)
-        relations = relations.per_page(per_page) if per_page
-        relations
+      # # compatible interfaces
+      # commands :create, **CREATE_TIMESTAMP
+      # commands update: :by_pk, **UPDATE_TIMESTAMP
+      # commands delete: :by_pk
+      # def all = relation.to_a
+      # def find(id) = relation.by_pk(id).one
+      # def first = relation.first
+      # def last = relation.last
+      # def clear = relation.delete
+
+      # # common interface
+      # private def by_name(name) = relation.by_name(name)
+      # def get(name) = by_name(name).one
+      # private def set_update(name, **) = by_name(name).command(:update, **UPDATE_TIMESTAMP).call(**)
+      # private def set_create(name, **) = create(name: name, **)
+      # # private def set_update(name, **) = by_name(name).changeset(:update, **).map(:touch).commit
+      # # private def set_create(name, **) = relation.changeset(:create, **, name: name).map(:add_timestamps).commit
+      # def set(name, **) = set_update(name, **) || set_create(name, **)
+      # def unset(name) = by_name(name).changeset(:delete).commit
+      # def exist?(name) = by_name(name).exist?
+      # def list = relation.pluck(:name)
+
+      private def paginate(relation, page: nil, per_page: nil)
+        relation = relation.page(page || 1)
+        relation = relation.per_page(per_page) if per_page
+        relation
       end
 
-      private def order(relations, order: nil)
-        return relations if order.nil? || order.empty?
+      private def order(relation, order: nil)
+        return relation if order.nil? || order.empty?
 
-        relations.order do
+        relation.order do
           order.compact.map do |key, value|
             __send__(key).send(value)
           end
         end
       end
 
-      private def search(relations, targets:, query: nil, case_sensitive: false)
-        return relations if query.nil? || query.empty? || query == "%"
+      private def search(relation, targets:, query: nil, case_sensitive: false)
+        return relation if query.nil? || query.empty? || query == "%"
 
-        relations.where do
+        relation.where do
           targets.map do |key|
             if case_sensitive
               __send__(key).like(query)
@@ -44,13 +66,13 @@ module Yuzakan
         end
       end
 
-      private def filter(relations, filter: nil)
-        return relations if filter.nil? || filter.empty?
+      private def filter(relation, filter: nil)
+        return relation if filter.nil? || filter.empty?
 
         filter.compact.each do |key, value|
-          relations = relations.where(key => value)
+          relation = relation.where(key => value)
         end
-        relations
+        relation
       end
     end
   end
