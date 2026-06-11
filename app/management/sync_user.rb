@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
-# Userレポジトリと各プロバイダーのユーザー情報を同期し、ユーザーを返す。
+# 各サービスと同期し、ユーザーを返す。
 module Yuzakan
   module Management
     class SyncUser < Yuzakan::Operation
       include Deps[
+        "repos.service_repo",
         "services.read_user",
         "management.register_user",
-        "management.unregister_user"
+        "management.unregister_user",
       ]
 
       def call(username)
@@ -17,24 +18,29 @@ module Yuzakan
       end
 
       private def read(username)
-        services = read_user.call(username).value_or { return Failure(_1) }
-        return Success(nil) if services.empty?
-
         params = {
           groups: [],
           unmanageable: false,
           locked: false,
           mfa: false,
           attrs: {},
-          services: services.keys,
+          services: [],
         }
-        services.each_value do |data|
-          params[:groups] |= data[:groups] if data.key?(:groups)
+
+        service_repo.all.each do |service|
+          result = read_user.call(serivce, username).value_or { return Failure(_1) }
+          next unless result
+
+          params[:groups] |= result[:groups] if result.key?(:groups)
           [:primary_group, :label, :email, :unmanageable, :locked, :mfa].each do |name|
-            params[name] ||= data[name] if data.key?(name)
+            params[name] ||= result[name] if result.key?(name)
           end
-          params[:attrs].merge!(data[:attrs]) { |_, v, _| v } if data.key?(:attrs)
+          params[:attrs].merge!(result[:attrs]) { |_, v, _| v } if result.key?(:attrs)
+          params[:services] << service
         end
+
+        return Success(nil) if params[:services].empty?
+
         Success(params)
       end
 

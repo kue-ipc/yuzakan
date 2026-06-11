@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
-# Groupレポジトリと各プロバイダーのグループ情報を同期し、グループを返す。
+# 各サービスと同期し、グループを返す。
 module Yuzakan
   module Management
     class SyncGroup < Yuzakan::Operation
       include Deps[
+        "repos.service_repo",
         "services.read_group",
         "management.register_group",
-        "management.unregister_group"
+        "management.unregister_group",
       ]
 
       def call(groupname)
@@ -17,20 +18,25 @@ module Yuzakan
       end
 
       private def read(groupname)
-        services = read_group.call(groupname).value_or { return Failure(_1) }
-        return Success(nil) if services.empty?
-
         params = {
           unmanageable: false,
           attrs: {},
-          services: services.keys,
+          services: [],
         }
-        services.each_value do |data|
-          [:label, :basic].each do |name|
-            params[name] ||= data[name] if data.key?(name)
+
+        service_repo.all.each do |service|
+          result = read_group.call(service, groupname).value_or { return Failure(_1) }
+          next unless result
+
+          [:label].each do |name|
+            params[name] ||= result[name] if result.key?(name)
           end
-          params[:attrs].merge!(data[:attrs]) { |_, v, _| v } if data.key?(:attrs)
+          params[:attrs].merge!(result[:attrs]) { |_, v, _| v } if result.key?(:attrs)
+          params[:services] << service
         end
+
+        return Success(nil) if params[:services].empty?
+
         Success(params)
       end
 

@@ -50,7 +50,12 @@ module Yuzakan
       end
     end
 
-    def abilities_to_call(method)
+    private def can_call?(service, method)
+      abilities = abilities_to_call(method)
+      abilities.all? { |name| service.__send__(name) }
+    end
+
+    private def abilities_to_call(method)
       case method.intern.downcase
       in nil | :check
         []

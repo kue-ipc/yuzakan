@@ -5,19 +5,16 @@ module Yuzakan
     class ReadUser < Yuzakan::ServiceOperation
       category :user
 
-      def call(username, services = nil)
-        username = step validate_name(username)
-        services = step get_services(services, method: :user_read)
+      def call(service, username)
+        return unless can_call?(service, :user_read)
 
-        services.to_h do |service|
-          result =
-            cache_fetch(service, username) do
-              adapter = step get_adapter(service)
-              userdata = adapter.user_read(username)
-              step convert_data(service, userdata)
-            end
-          [service, result]
-        end.compact
+        username = step validate_name(username)
+
+        cache_fetch(service, username) do
+          adapter = step get_adapter(service)
+          userdata = adapter.user_read(username)
+          step convert_data(service, userdata)
+        end
       end
     end
   end
