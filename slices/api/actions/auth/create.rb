@@ -10,7 +10,7 @@ module API
           "repos.auth_log_repo",
           "repos.user_repo",
           "management.sync_user",
-          "services.authenticate",
+          "management.authenticate",
           "settings",
           view: "views.auth.show",
         ]

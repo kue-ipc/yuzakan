@@ -9,7 +9,6 @@ module Yuzakan
         return unless can_call?(service, :group_read)
 
         groupname = step validate_name(groupname)
-
         cache_fetch(service, groupname) do
           adapter = step get_adapter(service)
           groupdata = adapter.group_read(groupname)

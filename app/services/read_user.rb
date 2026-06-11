@@ -9,7 +9,6 @@ module Yuzakan
         return unless can_call?(service, :user_read)
 
         username = step validate_name(username)
-
         cache_fetch(service, username) do
           adapter = step get_adapter(service)
           userdata = adapter.user_read(username)

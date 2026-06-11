@@ -10,7 +10,7 @@ module API
           include Dry::Monads[:result]
 
           include Deps[
-            "services.authenticate",
+            "management.authenticate",
             "services.change_password",
             view: "views.users.password.show",
           ]
