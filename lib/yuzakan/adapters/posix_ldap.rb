@@ -345,7 +345,7 @@ module Yuzakan
           when :gid
             group.first("gidNumber").to_i
           when :mem
-            group["memberUid"].to_a || []
+            group["memberUid"].to_a
           end
         end
         Etc::Group.new(*group_args)
