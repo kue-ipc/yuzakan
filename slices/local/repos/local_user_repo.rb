@@ -22,7 +22,7 @@ module Local
       def delete_by_name(name) = by_name(name).command(:delete).call
       def find_by_name(name) = by_name(name).one
       def exist_by_name?(name) = by_name(name).exist?
-      def names = local.users.pluck(:name)
+      def names = local_users.pluck(:name)
 
       # search
       private def search(query, ignore_case: true, **)

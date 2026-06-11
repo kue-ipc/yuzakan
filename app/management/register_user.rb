@@ -37,7 +37,7 @@ module Yuzakan
 
       private def register(username, params, time: Time.now)
         user_repo.transaction do
-          user_params = params.expect(:member_groups, :services)
+          user_params = params.except(:member_groups, :services)
           user = user_repo.set(username, **user_params, deleted_at: nil, synced_at: time)
           member_repo.set_groups_for_user(user, params[:member_groups]) if params.key?(:member_groups)
           managed_user_repo.set_services_for_user(user, params[:services]) if params.key?(:services)

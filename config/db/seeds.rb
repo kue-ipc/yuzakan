@@ -40,39 +40,35 @@ end
 
 # setup local service
 service_repo = Hanami.app["repos.service_repo"]
-unless service_repo.get("local")
-  local_service_params = {
-    label: "ローカル",
-    order: 0,
-    adapter: "local",
-    params: {},
-    readable: true,
-    writable: true,
-    authenticatable: true,
-    password_changeable: true,
-    lockable: true,
-    group: true,
-  }
-  service_repo.set("local", **local_service_params)
-end
+local_service = service_repo.get("local") || service_repo.set("local",
+  label: "ローカル",
+  order: 0,
+  adapter: "local",
+  params: {},
+  readable: true,
+  writable: true,
+  authenticatable: true,
+  password_changeable: true,
+  lockable: true,
+  group: true,
+)
 
 # setup admin user and group
-Hanami.app["services.read_group"].call(admin_groupname, ["local"]) =>
-  Success(group_services)
-if group_services["local"].nil?
-  Hanami.app["services.create_group"].call(admin_groupname, ["local"],
-    label: "管理者") in Success(_)
+case Hanami.app["services.read_group"].call(local_service, admin_groupname)
+in Success(nil)
+  params = {label: "管理者"}
+  Hanami.app["services.create_group"].call(local_service, admin_groupname, **params) => Success(_)
+in Success(_)
+  # do nothing
 end
 
-Hanami.app["services.read_user"].call(admin_username, ["local"]) =>
-  Success(user_services)
-if user_services["local"].nil?
-  Hanami.app["services.create_user"].call(admin_username, ["local"],
-    password: admin_password, label: "ローカル管理者",
-    primary_group: admin_groupname, groups: []) in Success(_)
+case Hanami.app["services.read_user"].call(local_service, admin_username)
+in Success(nil)
+  params = {label: "ローカル管理者", primary_group: admin_groupname, groups: []}
+  Hanami.app["services.create_user"].call(local_service, admin_username, admin_password, **params) => Success(_)
+in Success(_)
+  # do nothing
 end
 
-Hanami.app["management.sync_group"].call(admin_groupname) => Success(_admin_group)
 Hanami.app["management.sync_user"].call(admin_username) => Success(admin_user)
-
 Hanami.app["repos.user_repo"].set(admin_username, clearance_level: 5) if admin_user.clearance_level < 5
