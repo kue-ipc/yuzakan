@@ -11,7 +11,7 @@ module API
 
           include Deps[
             "management.authenticate",
-            "services.change_password",
+            "management.change_password",
             view: "views.users.password.show",
           ]
 

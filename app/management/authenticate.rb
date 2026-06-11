@@ -17,7 +17,7 @@ module Yuzakan
 
       private def authenticate(username, password)
         service = service_repo.all.find do |service|
-          auth_user.call(service, username, password).value_or { return Failure(_1) }
+          step auth_user.call(service, username, password)
         end
 
         if service

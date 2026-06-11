@@ -2,16 +2,16 @@
 
 module Yuzakan
   module Services
-    class AuthUser < Yuzakan::ServiceOperation
+    class ChangePasswordUser < Yuzakan::ServiceOperation
       category :user
 
       def call(service, username, password)
-        return nil unless can_call?(service, :user_auth)
+        return nil unless can_call?(service, :user_change_password)
 
         username = step validate_name(username)
         password = step validate_password(password)
         adapter = step get_adapter(service)
-        adapter.user_auth(username, password)
+        adapter.user_change_password(username, password)
       end
     end
   end

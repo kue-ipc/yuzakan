@@ -40,14 +40,14 @@ module Yuzakan
     end
 
     config.shared_app_component_keys += [
-      "repos.auth_log_repo",
       "repos.affiliation_repo",
+      "repos.auth_log_repo",
       "repos.config_repo",
       "repos.mapping_repo",
       "repos.user_repo",
-      "management.sync_user",
       "management.authenticate",
-      "services.change_password",
+      "management.change_password",
+      "management.sync_user",
     ]
   end
 end
