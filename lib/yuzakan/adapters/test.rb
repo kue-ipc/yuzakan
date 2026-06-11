@@ -91,7 +91,6 @@ module Yuzakan
       def user_read(_username) = nil
       def user_update(_username, **_userdata) = nil
       def user_delete(_username) = nil
-      def user_rename(_username, _new_username) = nil
       def user_auth(_username, _password) = nil
       def user_change_password(_username, _password) = nil
       def user_generate_code(_username) = []

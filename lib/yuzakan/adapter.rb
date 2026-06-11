@@ -29,8 +29,6 @@
 # user_update(username, userdata) -> userdata? [writeable]
 # user_delete(username) -> userdata? [writable]
 #
-# user_rename(oldname, newname) -> bool? [writable]
-#
 # user_auth(username, password) -> bool? [authenticatable]
 # user_change_password(username, password) -> bool? [password_changeable]
 #
@@ -54,6 +52,10 @@
 # member_list(groupname) -> Array[usernames] [readable]
 # member_add(groupname, username) -> bool [writable]
 # member_remove(groupname, username) -> bool [writable]
+#
+# TODO: Not implement yet
+# user_rename(oldname, newname) -> bool? [writable]
+# group_rename(oldname, newname) -> bool? [writable]
 #
 
 require "logger"
