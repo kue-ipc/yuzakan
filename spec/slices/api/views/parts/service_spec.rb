@@ -25,6 +25,7 @@ RSpec.describe API::Views::Parts::Service, :db do
       group: false, # default
       individual_password: false, # default
       self_management: false, # default
+      synced_at: nil,
     })
   end
 
@@ -46,6 +47,7 @@ RSpec.describe API::Views::Parts::Service, :db do
       group: false, # default
       individualPassword: false, # default
       selfManagement: false, # default
+      syncedAt: nil,
     })
   end
 end

@@ -96,7 +96,7 @@ module API
 
             # パスワードの変更
             case change_password.call(username, new_password)
-            in Success(services)
+            in Success(*services)
               if services.empty?
                 response.flash[:warn] = t("messages.action.no_services", action: t("api.user_password.actions.update"))
               else

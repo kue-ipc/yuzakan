@@ -14,14 +14,12 @@ Hanami.app.register_provider(:cache_store) do
       expires_in: target["settings"].cache_expire,
     }
     cache_store =
-      if target["settings"].cache_expire.zero?
+      if Hanami.env?(:test) || target["settings"].cache_expire.zero?
         ActiveSupport::Cache::NullStore.new(**store_opts)
       elsif target["settings"].redis_url
-        ActiveSupport::Cache::RedisCacheStore.new(**store_opts,
-          url: target["settings"].redis_url)
+        ActiveSupport::Cache::RedisCacheStore.new(**store_opts, url: target["settings"].redis_url)
       elsif target["settings"].cache_path
-        ActiveSupport::Cache::FileStore.new(target["settings"].cache_file,
-          **store_opts)
+        ActiveSupport::Cache::FileStore.new(target["settings"].cache_file, **store_opts)
       else
         ActiveSupport::Cache::MemoryStore.new(**store_opts)
       end
