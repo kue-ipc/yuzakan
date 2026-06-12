@@ -20,10 +20,10 @@ RSpec.describe API::Actions::Users::Password::Update do
   }
 
   let(:authenticate) {
-    instance_double(Yuzakan::Services::Authenticate, call: Success(service))
+    instance_double(Yuzakan::Management::Authenticate, call: Success(service))
   }
   let(:change_password) {
-    instance_double(Yuzakan::Services::ChangePassword, call: Success([[service]]))
+    instance_double(Yuzakan::Management::ChangePassword, call: Success([[service]]))
   }
 
   let(:id) { "~" }
@@ -127,7 +127,7 @@ RSpec.describe API::Actions::Users::Password::Update do
 
   describe "authentication failure" do
     let(:authenticate) {
-      instance_double(Yuzakan::Services::Authenticate, call: Failure([:failure, failure_message]))
+      instance_double(Yuzakan::Management::Authenticate, call: Failure([:failure, failure_message]))
     }
     let(:failure_message) { Faker::Lorem.paragraph }
 
@@ -143,7 +143,7 @@ RSpec.describe API::Actions::Users::Password::Update do
 
   describe "unchanged" do
     let(:change_password) {
-      instance_double(Yuzakan::Services::ChangePassword, call: Success([[]]))
+      instance_double(Yuzakan::Management::ChangePassword, call: Success([[]]))
     }
 
     it "is successful" do
@@ -164,7 +164,7 @@ RSpec.describe API::Actions::Users::Password::Update do
 
   describe "change failure" do
     let(:change_password) {
-      instance_double(Yuzakan::Services::ChangePassword, call: Failure([:error, error_message]))
+      instance_double(Yuzakan::Management::ChangePassword, call: Failure([:error, error_message]))
     }
     let(:error_message) { Faker::Lorem.paragraph }
 
