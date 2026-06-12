@@ -50,8 +50,7 @@ local_service = service_repo.get("local") || service_repo.set("local",
   authenticatable: true,
   password_changeable: true,
   lockable: true,
-  group: true,
-)
+  group: true)
 
 # setup admin user and group
 case Hanami.app["services.read_group"].call(local_service, admin_groupname)

@@ -46,7 +46,6 @@ module Yuzakan
       def get_with_all(name) = with_all(by_name(name)).one
       def get_with_associations(name) = with_associations(by_name(name)).one
 
-
       # def get_with_affiliation(name)
       #   by_name(name).combine(:affiliation).one
       # end
