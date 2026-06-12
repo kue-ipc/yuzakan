@@ -386,9 +386,11 @@ def let_structs
   let(:config) { Factory.structs[:config] }
   let(:network) { Factory.structs[:network] }
   let(:affiliation) { Factory.structs[:affiliation] }
-  let(:group) { Factory.structs[:group] }
-  let(:user) { Factory.structs[:user] }
+  let(:group) { Factory.structs[:group, managings: [managed_group]] }
+  let(:user) { Factory.structs[:user, member_groups: [group], managings: [managed_user]] }
   let(:service) { Factory.structs[:service] }
+  let(:managed_user) { Factory.structs[:managed_user] }
+  let(:managed_group) { Factory.structs[:managed_group] }
   let(:attr) { Factory.structs[:attr] }
   let(:mapping) { Factory.structs[:mapping] }
   let(:auth_log) { Factory.structs[:auth_log] }

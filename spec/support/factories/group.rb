@@ -2,6 +2,7 @@
 
 Factory.define(:group) do |f|
   f.association :affiliation
+  f.association :managings, count: 2
 
   f.name { fake(:internet, :username) }
   f.label { fake(:music, :rock_band, :name) }
