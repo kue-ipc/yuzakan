@@ -22,13 +22,9 @@ module API
       config.formats.accept :json
     end
 
-    # FIXME: JSONで渡されるとrawでもキーがシンボルになっているが、
-    #   CSRFProtectionではキーが文字列であることを前提としているため、
-    #   CSRFトークンが探せなくて不正扱いになる。
-    #   そのため、最初のチェックで文字列キーを生成しておく。
-    def missing_csrf_token?(request, *)
-      request.params.raw[CSRF_TOKEN.to_s] ||= request.params.raw[CSRF_TOKEN]
-      Hanami::Utils::Blank.blank?(request.params.raw[CSRF_TOKEN.to_s])
+    # skip to verify csrf token if Sec-Fetch-Site is same-origin.
+    def verify_csrf_token?(req, *)
+      super && req.get_header("HTTP_SEC_FETCH_SITE") != "same-origin"
     end
 
     # override reply
@@ -53,15 +49,17 @@ module API
 
     # override handle
 
-    def handle_standard_error(request, response, exception)
+    # handle_exception InvalidCSRFTokenError => :handle_invalid_csrf_token_error
+    handle_exception StandardError => :handle_standard_error
+
+    private def handle_standard_error(request, response, exception)
       logger.error exception
       halt_json request, response, 500
     end
 
-    def handle_invalid_csrf_token(request, response)
-      logger.warn "CSRF attack", expected: request.session[CSRF_TOKEN],
-        was: request.params.raw[CSRF_TOKEN.to_s]
-      flash[:error] = t("errors.invalid_csrf_token")
+    private def handle_invalid_csrf_token_error(request, response, _exception)
+      logger.warn "CSRF attack", expected: request.session[CSRF_TOKEN], was: request_csrf_token(request)
+      response.flash[:error] = t("errors.invalid_csrf_token")
       halt_json request, response, 400
     end
 

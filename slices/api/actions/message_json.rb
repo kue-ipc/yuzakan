@@ -14,7 +14,7 @@ module API
 
       private def halt_json(request, response, status, location: nil)
         location ||= request.path
-        body = response.render(halt_view, status:, location:)
+        body = response.render(halt_view, status:, location:, current_level: 0)
         halt status, body
       end
 
