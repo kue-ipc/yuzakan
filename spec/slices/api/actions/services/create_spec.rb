@@ -7,25 +7,6 @@ RSpec.describe API::Actions::Services::Create do
 
   let(:action_params) { struct_to_hash(service) }
 
-  let(:data) {
-    {
-      name: service.name,
-      label: service.label,
-      description: service.description,
-      order: service.order,
-      adapter: service.adapter,
-      params: service.params,
-      readable: service.readable,
-      writable: service.writable,
-      authenticatable: service.authenticatable,
-      passwordChangeable: service.password_changeable,
-      lockable: service.lockable,
-      group: service.group,
-      individualPassword: service.individual_password,
-      selfManagement: service.self_management,
-    }
-  }
-
   # shares
 
   shared_examples "ok" do
@@ -37,7 +18,7 @@ RSpec.describe API::Actions::Services::Create do
       expect(response.headers["Content-Location"]).to eq "/api/services/#{service.name}"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:location]).to eq "/api/services/#{service.name}"
-      expect(json[:data]).to eq(data)
+      expect(json[:data]).to eq(struct_to_hash(service, case: :camel))
     end
 
     it "is ok without order param" do
@@ -48,7 +29,7 @@ RSpec.describe API::Actions::Services::Create do
       expect(response.headers["Content-Location"]).to eq "/api/services/#{service.name}"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:location]).to eq "/api/services/#{service.name}"
-      expect(json[:data]).to eq(data)
+      expect(json[:data]).to eq(struct_to_hash(service, case: :camel))
     end
 
     it "is ok with minimum params" do
@@ -60,7 +41,7 @@ RSpec.describe API::Actions::Services::Create do
       expect(response.headers["Content-Location"]).to eq "/api/services/#{service.name}"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:location]).to eq "/api/services/#{service.name}"
-      expect(json[:data]).to eq(data)
+      expect(json[:data]).to eq(struct_to_hash(service, case: :camel))
     end
   end
 

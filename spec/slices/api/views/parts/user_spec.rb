@@ -5,7 +5,7 @@ RSpec.describe API::Views::Parts::User, :db do
 
   let(:value) {
     user = Hanami.app["repos.user_repo"].find(Factory[:member].user_id)
-    Hanami.app["repos.user_repo"].get_with_affiliation_and_groups(user.name)
+    Hanami.app["repos.user_repo"].get_with_associations(user.name)
   }
 
   it "to_h with restricted" do

@@ -9,9 +9,6 @@ Factory.define(:user) do |f|
   f.email { fake(:internet, :email) }
   f.note { fake(:lorem, :paragraph) }
 
-  f.unmanageable false # default
-  f.locked false # default
-  f.mfa false # default
   f.attrs {} # default
 
   f.clearance_level 1 # default
@@ -19,7 +16,6 @@ Factory.define(:user) do |f|
   f.prohibited false # default
 
   f.deleted_at nil
-
   f.synced_at nil
 
   f.timestamps

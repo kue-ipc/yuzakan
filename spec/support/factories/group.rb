@@ -7,14 +7,12 @@ Factory.define(:group) do |f|
   f.label { fake(:music, :rock_band, :name) }
   f.note { fake(:lorem, :paragraph) }
 
-  f.unmanageable false # default
   f.attrs {} # default
 
   f.basic false # default
   f.prohibited false # default
 
   f.deleted_at nil
-
   f.synced_at nil
 
   f.timestamps

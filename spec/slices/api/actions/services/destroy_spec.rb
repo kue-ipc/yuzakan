@@ -9,25 +9,6 @@ RSpec.describe API::Actions::Services::Destroy do
 
   let(:id) { "service42" }
 
-  let(:data) {
-    {
-      name: service.name,
-      label: service.label,
-      description: service.description,
-      order: service.order,
-      adapter: service.adapter,
-      params: service.params,
-      readable: service.readable,
-      writable: service.writable,
-      authenticatable: service.authenticatable,
-      passwordChangeable: service.password_changeable,
-      lockable: service.lockable,
-      group: service.group,
-      individualPassword: service.individual_password,
-      selfManagement: service.self_management,
-    }
-  }
-
   shared_examples "ok" do
     it "is ok" do
       response = action.call(params)
@@ -35,7 +16,8 @@ RSpec.describe API::Actions::Services::Destroy do
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq(data)
+      # expect(json[:data]).to eq(data)
+      expect(json[:data]).to eq(struct_to_hash(service, case: :camel))
     end
   end
 
