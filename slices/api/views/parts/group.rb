@@ -11,8 +11,24 @@ module API
           if restricted
             super().slice(:name, :label)
           else
-            super().except(:affiliation_id).merge({affiliation: value.affiliation.name})
+            # no user
+            super()
+              .except(:affiliation_id, :affiliation,
+                :users, :members, :member_users,
+                :managings, :services)
+              .merge({
+                affiliation: value.affiliation&.name,
+                services: value.managings&.map { |managing| mapping_to_h(managing) } ||
+                  value.services&.map(&:name),
+              })
           end
+        end
+
+        private def mapping_to_h(mapping)
+          {
+            name: mapping.service.name,
+            unmanageable: mapping.unmanageable,
+          }
         end
       end
     end

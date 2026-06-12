@@ -7,35 +7,58 @@ RSpec.describe API::Views::Parts::Group, :db do
     Hanami.app["repos.group_repo"].get_with_associations(Factory[:group].name)
   }
 
-  it_behaves_like "to_h with restricted"
-  it_behaves_like "to_json with restricted"
+  shared_examples "to_h_and_to_json" do
+    it_behaves_like "to_h with restricted"
+    it_behaves_like "to_json with restricted"
 
-  it "to_h" do
-    data = subject.to_h
-    expect(data).to eq({
-      name: value.name,
-      label: value.label,
-      note: value.note,
-      basic: value.basic,
-      prohibited: value.prohibited,
-      deleted: value.deleted,
-      deleted_at: value.deleted_at,
-      affiliation: value.affiliation&.name,
-    })
+    it "to_h" do
+      data = subject.to_h
+      services = value.managings.map do |managing|
+        {name: managing.service.name, unmanageable: false}
+      end
+      expect(data).to eq({
+        name: value.name,
+        label: value.label,
+        note: value.note,
+        affiliation: value.affiliation&.name,
+        services:,
+        attrs: nil,
+        basic: false,
+        prohibited: false,
+        deleted_at: nil,
+        synced_at: nil,
+      })
+    end
+
+    it "to_json" do
+      json = subject.to_json
+      data = JSON.parse(json, symbolize_names: true)
+      services = value.managings.map do |managing|
+        {name: managing.service.name, unmanageable: false}
+      end
+      expect(data).to eq({
+        name: value.name,
+        label: value.label,
+        note: value.note,
+        affiliation: value.affiliation&.name,
+        services:,
+        attrs: nil,
+        basic: false,
+        prohibited: false,
+        deletedAt: nil,
+        syncedAt: nil,
+      })
+    end
   end
 
-  it "to_json" do
-    json = subject.to_json
-    data = JSON.parse(json, symbolize_names: true)
-    expect(data).to eq({
-      name: value.name,
-      label: value.label,
-      note: value.note,
-      basic: value.basic,
-      prohibited: value.prohibited,
-      deleted: value.deleted,
-      deletedAt: value.deleted_at,
-      affiliation: value.affiliation&.name,
-    })
+  it_behaves_like "to_h_and_to_json"
+
+  context "with service" do
+    let(:value) {
+      group = Hanami.app["repos.group_repo"].find(Factory[:managed_group].group_id)
+      Hanami.app["repos.group_repo"].get_with_associations(group.name)
+    }
+
+    it_behaves_like "to_h_and_to_json"
   end
 end

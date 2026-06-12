@@ -11,13 +11,27 @@ module API
           if restricted
             super().slice(:name, :label, :email)
           else
-            super().except(:affiliation_id, :group_id, :members)
+            super()
+              .except(:affiliation_id, :affiliation, :group_id, :group,
+                :members, :member_groups, :groups,
+                :managings, :services)
               .merge({
                 affiliation: value.affiliation&.name,
-                group: value.group&.name,
-                groups: value.members.map { |member| member.group.name },
+                primary_group: value.group&.name,
+                groups: value.member_groups&.map(&:name),
+                services: value.managings&.map { |managing| mapping_to_h(managing) } ||
+                  value.services&.map(&:name),
               })
           end
+        end
+
+        private def mapping_to_h(mapping)
+          {
+            name: mapping.service.name,
+            unmanageable: mapping.unmanageable,
+            locked: mapping.locked,
+            mfa: mapping.mfa,
+          }
         end
       end
     end

@@ -17,7 +17,6 @@ module Yuzakan
       def unregister(username, time: Time.now)
         user = user_repo.get(username)
         return Success(nil) if user.nil?
-        return Success(user) if user.deleted_at
 
         user_repo.transaction do
           managed_users.clear_for_user(user)

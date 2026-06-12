@@ -23,19 +23,28 @@ module Yuzakan
 
       # index = filter & search & order & paginate
       def index(page: nil, per_page: nil, order: nil, query: nil, filter: nil)
-        relations = affiliations
+        relation = affiliations
 
-        relations = filter(relations, filter:)
-        relations = search(relations, targets: [:name, :label, :email], query:)
-        relations = order(relations, order:)
-        relations = paginate(relations, page:, per_page:)
-        [relations.to_a, relations.pager]
+        relation = filter(relation, filter:)
+        relation = search(relation, targets: [:name, :label, :email], query:)
+        relation = order(relation, order:)
+        relation = paginate(relation, page:, per_page:)
+        relation = with_associations(relation)
+        [relation.to_a, relation.pager]
       end
 
       # with associations
-      def get_with_associations(name)
-        by_name(name).combine(:affiliation, :group, :member_groups, managings: :service).one
+      private def with_all(relation)
+        relation.combine.combine(:affiliation, :group, members: :groups, managings: :service)
       end
+
+      # without members
+      private def with_associations(relation)
+        relation.combine(:affiliation, :group, :member_groups, managings: :service)
+      end
+
+      def get_with_all(name) = with_all(by_name(name)).one
+      def get_with_associations(name) = with_associations(by_name(name)).one
 
       # def get_with_affiliation(name)
       #   by_name(name).combine(:affiliation).one
