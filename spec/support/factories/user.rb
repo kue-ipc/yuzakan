@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 Factory.define(:user) do |f|
-  f.association :members, count: 0
-  f.association :groups, count: 1
+  f.association :affiliation
+  f.association :group
+  # f.association :members, count: 2
+  f.association :member_groups, count: 2
+  # f.association :managings, count: 2
+  f.association :services, count: 2
 
   f.name { fake(:internet, :username) }
   f.label { fake(:name, :name) }
