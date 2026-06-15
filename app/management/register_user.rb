@@ -19,7 +19,7 @@ module Yuzakan
       end
 
       private def validate_params(params)
-        validated_params = params.slice(:label, :email, :attrs)
+        validated_params = params.slice(:label, :email, :attrs, :locked_count)
         if params.key?(:primary_group)
           primary_group = step get_group(params[:primary_group])
           validated_params[:group_id] = primary_group&.id

@@ -14,6 +14,7 @@ ROM::SQL.migration do
       column :note, "text", null: false, default: ""
 
       column :attrs, "jsonb", null: false, default: "{}"
+      column :locked_count, Integer, null: false, default: 0
 
       column :clearance_level, Integer, null: false, default: 1
 

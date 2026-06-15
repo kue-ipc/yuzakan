@@ -564,6 +564,7 @@ CREATE TABLE public.users (
     email text DEFAULT ''::text NOT NULL,
     note text DEFAULT ''::text NOT NULL,
     attrs jsonb DEFAULT '{}'::jsonb NOT NULL,
+    locked_count integer DEFAULT 0 NOT NULL,
     clearance_level integer DEFAULT 1 NOT NULL,
     prohibited boolean DEFAULT false NOT NULL,
     deleted_at timestamp without time zone,

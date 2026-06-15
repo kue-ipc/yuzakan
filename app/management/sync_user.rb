@@ -21,6 +21,7 @@ module Yuzakan
         params = {
           groups: [],
           attrs: {},
+          locked_count: 0,
           services: [],
         }
 
@@ -34,6 +35,7 @@ module Yuzakan
           params[:groups] |= result[:groups] if result.key?(:groups)
           params[:groups] |= [result[:primary_group]] if result.key?(:primary_group)
           params[:attrs].merge!(result[:attrs]) { |_, v, _| v } if result.key?(:attrs)
+          params[:locked_count] += 1 if result[:locked]
           params[:services] << [service, result.slice(:unmanageable, :locked, :mfa)]
         end
         params[:groups] -= [params[:primary_group]] if params[:primary_group]

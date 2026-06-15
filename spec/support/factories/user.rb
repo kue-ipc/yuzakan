@@ -14,6 +14,7 @@ Factory.define(:user) do |f|
   f.note { fake(:lorem, :paragraph) }
 
   f.attrs {} # default
+  f.locked_count 0 # default
 
   f.clearance_level 1 # default
 
