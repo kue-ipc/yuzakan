@@ -6,7 +6,7 @@ RSpec.describe API::Views::Parts::Config do
   let(:value) { config }
 
   it "to_h" do
-    data = subject.to_h
+    data = subject.to_h(**opts)
     expect(data).to eq({
       title: value.title,
       description: value.description,
@@ -31,7 +31,7 @@ RSpec.describe API::Views::Parts::Config do
   end
 
   it "to_json" do
-    json = subject.to_json
+    json = subject.to_json(**opts)
     data = JSON.parse(json, symbolize_names: true)
     expect(data).to eq({
       title: value.title,
@@ -54,5 +54,32 @@ RSpec.describe API::Views::Parts::Config do
       contactEmail: value.contact_email,
       contactPhone: value.contact_phone,
     })
+  end
+
+  context "with restricted" do
+    let(:opts) { {restricted: true} }
+
+    it "to_h" do
+      data = subject.to_h(**opts)
+      expect(data).to eq({
+        title: value.title,
+        description: value.description,
+        contact_name: value.contact_name,
+        contact_email: value.contact_email,
+        contact_phone: value.contact_phone,
+      })
+    end
+
+    it "to_json" do
+      json = subject.to_json(**opts)
+      data = JSON.parse(json, symbolize_names: true)
+      expect(data).to eq({
+        title: value.title,
+        description: value.description,
+        contactName: value.contact_name,
+        contactEmail: value.contact_email,
+        contactPhone: value.contact_phone,
+      })
+    end
   end
 end

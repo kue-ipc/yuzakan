@@ -16,7 +16,7 @@ module API
           in [false, false]
             mappings = value.mappings&.map do |mapping|
               {
-                serivce: mapping.service.name,
+                service: mapping.service.name,
                 key: mapping.key,
                 type: mapping.type,
                 params: mapping.params,

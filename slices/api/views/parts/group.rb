@@ -12,15 +12,11 @@ module API
           in [true, _] | [_, true]
             super.slice(:name, :label)
           in [false, false]
-            super
-              .except(:affiliation_id, :affiliation,
-                :users, :members, :member_users,
-                :managings, :services)
-              .merge({
-                affiliation: value.affiliation&.name,
-                services: value.managings&.map { |managing| mapping_to_h(managing) } ||
-                  value.services&.map(&:name),
-              })
+            {
+              **super.except(:affiliation_id, :users, :members, :member_users, :managings),
+              affiliation: value.affiliation&.name,
+              services: value.services&.map(&:name),
+            }
           end
         end
 

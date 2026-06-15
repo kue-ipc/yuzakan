@@ -2,6 +2,7 @@
 
 Factory.define(:attr) do |f|
   f.association :mappings, count: 2
+
   f.name { fake(:internet, :username) }
   f.label { fake(:japanese_media, :naruto, :eye) }
   f.description { fake(:lorem, :sentence) }

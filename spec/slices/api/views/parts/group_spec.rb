@@ -1,22 +1,19 @@
 # frozen_string_literal: true
 
-RSpec.describe API::Views::Parts::Group, :db do
+RSpec.describe API::Views::Parts::Group do
   init_part_spec
 
   let(:value) { group }
 
   shared_examples "full data" do
     it "to_h" do
-      data = subject.to_h
-      services = value.managings.map do |managing|
-        {name: managing.service.name, unmanageable: false}
-      end
+      data = subject.to_h(**opts)
       expect(data).to eq({
         name: value.name,
         label: value.label,
         note: value.note,
         affiliation: value.affiliation&.name,
-        services:,
+        services: value.services&.map(&:name),
         attrs: nil,
         basic: false,
         prohibited: false,
@@ -26,17 +23,14 @@ RSpec.describe API::Views::Parts::Group, :db do
     end
 
     it "to_json" do
-      json = subject.to_json
+      json = subject.to_json(**opts)
       data = JSON.parse(json, symbolize_names: true)
-      services = value.managings.map do |managing|
-        {name: managing.service.name, unmanageable: false}
-      end
       expect(data).to eq({
         name: value.name,
         label: value.label,
         note: value.note,
         affiliation: value.affiliation&.name,
-        services:,
+        services: value.services&.map(&:name),
         attrs: nil,
         basic: false,
         prohibited: false,

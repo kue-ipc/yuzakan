@@ -11,6 +11,8 @@ module API
           case [restricted, simplified]
           in [true, _]
             {} # no data
+          in [_, true]
+            {ip: value.ip.cidr}
           else
             super.merge({ip: value.ip.cidr})
           end

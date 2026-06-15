@@ -262,7 +262,7 @@ def init_part_spec
     end
 
     it "to_json" do
-      json = subject.to_json(restricted: true)
+      json = subject.to_json(**opts)
       data = JSON.parse(json, symbolize_names: true)
       expect(data).to eq({
         name: value.name,
@@ -384,17 +384,24 @@ end
 def let_structs
   let(:config) { Factory.structs[:config] }
   let(:network) { Factory.structs[:network] }
+
   let(:affiliation) { Factory.structs[:affiliation] }
   let(:group) { Factory.structs[:group] }
   let(:user) { Factory.structs[:user] }
+  let(:member) { Factory.structs[:member] }
+
   let(:service) { Factory.structs[:service] }
-  let(:managed_user) { Factory.structs[:managed_user] }
   let(:managed_group) { Factory.structs[:managed_group] }
+  let(:managed_user) { Factory.structs[:managed_user] }
+
   let(:attr) { Factory.structs[:attr] }
   let(:mapping) { Factory.structs[:mapping] }
-  let(:auth_log) { Factory.structs[:auth_log] }
+
+  let(:dictionary) { Factory.structs[:dictionary] }
+  let(:term) { Factory.structs[:term] }
+
   let(:action_log) { Factory.structs[:action_log] }
-  let(:attr_with_mappings) { Factory.structs[:attr_with_mappings] }
+  let(:auth_log) { Factory.structs[:auth_log] }
 
   # another
   # let(:another_network) { Factory.structs[:another_network] }
@@ -406,7 +413,6 @@ def let_structs
   # let(:another_mapping) { Factory.structs[:another_mapping] }
   # let(:another_auth_log) { Factory.structs[:another_auth_log] }
   # let(:another_action_log) { Factory.structs[:another_action_log] }
-  # let(:another_attr_with_mappings) { Factory.structs[:another_attr_with_mappings] }
 end
 
 def let_pager

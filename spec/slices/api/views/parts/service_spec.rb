@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-RSpec.describe API::Views::Parts::Service, :db do
+RSpec.describe API::Views::Parts::Service do
   init_part_spec
 
   let(:value) { service }
 
   shared_examples "full data" do
     it "to_h" do
-      data = subject.to_h
+      data = subject.to_h(**opts)
       expect(data).to eq({
         name: value.name,
         label: value.label,
@@ -28,7 +28,7 @@ RSpec.describe API::Views::Parts::Service, :db do
     end
 
     it "to_json" do
-      json = subject.to_json
+      json = subject.to_json(**opts)
       data = JSON.parse(json, symbolize_names: true)
       expect(data).to eq({
         name: value.name,

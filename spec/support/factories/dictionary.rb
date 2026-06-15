@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 Factory.define(:dictionary) do |f|
+  f.association :terms, count: 2
+
   f.name { fake(:internet, :username) }
   f.label { fake(:japanese_media, :naruto, :village) }
   f.description { fake(:lorem, :sentence) }
