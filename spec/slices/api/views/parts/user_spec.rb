@@ -3,11 +3,9 @@
 RSpec.describe API::Views::Parts::User, :db do
   init_part_spec
 
-  let(:value) {
-    Hanami.app["repos.user_repo"].get_with_associations(Factory[:user].name)
-  }
+  let(:value) { user }
 
-  shared_examples "to_h_and_to_json" do
+  shared_examples "short data" do
     it "to_h with restricted" do
       data = subject.to_h(restricted: true)
       expect(data).to eq({
@@ -26,7 +24,9 @@ RSpec.describe API::Views::Parts::User, :db do
         email: value.email,
       })
     end
+  end
 
+  shared_examples "full data" do
     it "to_h" do
       data = subject.to_h
       services = value.managings.map do |managing|
@@ -73,23 +73,23 @@ RSpec.describe API::Views::Parts::User, :db do
     end
   end
 
-  it_behaves_like "to_h_and_to_json"
+  it_behaves_like "full data"
 
-  context "with member" do
-    let(:value) {
-      user = Hanami.app["repos.user_repo"].find(Factory[:member].user_id)
-      Hanami.app["repos.user_repo"].get_with_associations(user.name)
-    }
+  context "with restricted" do
+    let(:opts) { {restricted: true} }
 
-    it_behaves_like "to_h_and_to_json"
+    it_behaves_like "simple data"
   end
 
-  context "with service" do
-    let(:value) {
-      user = Hanami.app["repos.user_repo"].find(Factory[:managed_user].user_id)
-      Hanami.app["repos.user_repo"].get_with_associations(user.name)
-    }
+  context "with simplified" do
+    let(:opts) { {simplified: true} }
 
-    it_behaves_like "to_h_and_to_json"
+    it_behaves_like "simple data"
+  end
+
+  context "with restricted and simplified" do
+    let(:opts) { {restricted: true, simplified: true} }
+
+    it_behaves_like "simple data"
   end
 end

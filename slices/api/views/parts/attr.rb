@@ -7,16 +7,22 @@ module API
       class Attr < API::Views::StructPart
         # value is a DB::Sturct
 
-        def to_h(restricted: false)
-          hash = value.to_h
-          if restricted
-            hash.slice(:name, :label, :category, :type)
-          else
-            mappings = hash[:mappings].map do |mapping|
-              mapping.except(:id, :created_at, :updated_at, :attr_id, :service_id)
-                .merge({service: mapping.dig(:service, :name)})
+        def to_h(restricted: false, simplified: false)
+          case [restricted, simplified]
+          in [_, true]
+            super.slice(:name, :label)
+          in [true, _]
+            super.slice(:name, :label, :category, :type)
+          in [false, false]
+            mappings = value.mappings&.map do |mapping|
+              {
+                serivce: mapping.service.name,
+                key: mapping.key,
+                type: mapping.type,
+                params: mapping.params,
+              }
             end
-            hash.except(:id, :created_at, :updated_at).merge({mappings:})
+            {**super, mappings:}
           end
         end
       end

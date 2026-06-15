@@ -4,9 +4,8 @@ RSpec.describe API::Views::Parts::Adapter do
   init_part_spec
 
   let(:value) { Hanami.app["adapter_repo"].get("test") }
-  let(:opts) { {} }
 
-  shared_examples "full" do
+  shared_examples "full data" do
     it "to_h" do
       data = subject.to_h(**opts)
       expect(data.except(:params)).to eq({
@@ -51,7 +50,7 @@ RSpec.describe API::Views::Parts::Adapter do
     end
   end
 
-  shared_examples "short" do
+  shared_examples "simple data" do
     it "to_h" do
       data = subject.to_h(**opts)
       expect(data).to eq({
@@ -70,23 +69,23 @@ RSpec.describe API::Views::Parts::Adapter do
     end
   end
 
-  it_behaves_like "full"
+  it_behaves_like "full data"
 
   context "with restricted" do
     let(:opts) { {restricted: true} }
 
-    it_behaves_like "short"
+    it_behaves_like "simple data"
   end
 
   context "with simplified" do
     let(:opts) { {simplified: true} }
 
-    it_behaves_like "short"
+    it_behaves_like "simple data"
   end
 
   context "with restricted and simplified" do
     let(:opts) { {restricted: true, simplified: true} }
 
-    it_behaves_like "short"
+    it_behaves_like "simple data"
   end
 end

@@ -250,19 +250,18 @@ def init_part_spec
   let_structs
 
   subject { described_class.new(value:) }
+  let(:opts) { {} }
 
-  shared_examples "to_h with restricted" do
-    it "to_h with restricted" do
-      data = subject.to_h(restricted: true)
+  shared_examples "simple data" do
+    it "to_h" do
+      data = subject.to_h(**opts)
       expect(data).to eq({
         name: value.name,
         label: value.label,
       })
     end
-  end
 
-  shared_examples "to_json with restricted" do
-    it "to_h with restricted" do
+    it "to_json" do
       json = subject.to_json(restricted: true)
       data = JSON.parse(json, symbolize_names: true)
       expect(data).to eq({

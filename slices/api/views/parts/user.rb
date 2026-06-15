@@ -7,11 +7,12 @@ module API
       class User < API::Views::StructPart
         # value is a DB::Sturct
 
-        def to_h(restricted: false)
-          if restricted
-            super().slice(:name, :label, :email)
-          else
-            super()
+        def to_h(restricted: false, simplified: false)
+          case [restricted, simplified]
+          in [true, _] | [_, true]
+            super.slice(:name, :label, :email)
+          in [false, false]
+            super
               .except(:affiliation_id, :affiliation, :group_id, :group,
                 :members, :member_groups, :groups,
                 :managings, :services)
@@ -23,15 +24,6 @@ module API
                   value.services&.map(&:name),
               })
           end
-        end
-
-        private def mapping_to_h(mapping)
-          {
-            name: mapping.service.name,
-            unmanageable: mapping.unmanageable,
-            locked: mapping.locked,
-            mfa: mapping.mfa,
-          }
         end
       end
     end

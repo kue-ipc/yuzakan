@@ -7,7 +7,14 @@ module API
       class Network < API::Views::StructPart
         # value is a DB::Struct
 
-        def to_h = super.merge({ip: value.ip.cidr})
+        def to_h(restricted: false, simplified: false)
+          case [restricted, simplified]
+          in [true, _]
+            {} # no data
+          else
+            super.merge({ip: value.ip.cidr})
+          end
+        end
       end
     end
   end

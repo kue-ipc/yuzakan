@@ -7,12 +7,12 @@ module API
       class Group < API::Views::StructPart
         # value is a DB::Struct
 
-        def to_h(restricted: false)
-          if restricted
-            super().slice(:name, :label)
-          else
-            # no user
-            super()
+        def to_h(restricted: false, simplified: false)
+          case [restricted, simplified]
+          in [true, _] | [_, true]
+            super.slice(:name, :label)
+          in [false, false]
+            super
               .except(:affiliation_id, :affiliation,
                 :users, :members, :member_users,
                 :managings, :services)

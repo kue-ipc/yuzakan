@@ -3,14 +3,9 @@
 RSpec.describe API::Views::Parts::Group, :db do
   init_part_spec
 
-  let(:value) {
-    Hanami.app["repos.group_repo"].get_with_associations(Factory[:group].name)
-  }
+  let(:value) { group }
 
-  shared_examples "to_h_and_to_json" do
-    it_behaves_like "to_h with restricted"
-    it_behaves_like "to_json with restricted"
-
+  shared_examples "full data" do
     it "to_h" do
       data = subject.to_h
       services = value.managings.map do |managing|
@@ -51,14 +46,23 @@ RSpec.describe API::Views::Parts::Group, :db do
     end
   end
 
-  it_behaves_like "to_h_and_to_json"
+  it_behaves_like "full data"
 
-  context "with service" do
-    let(:value) {
-      group = Hanami.app["repos.group_repo"].find(Factory[:managed_group].group_id)
-      Hanami.app["repos.group_repo"].get_with_associations(group.name)
-    }
+  context "with restricted" do
+    let(:opts) { {restricted: true} }
 
-    it_behaves_like "to_h_and_to_json"
+    it_behaves_like "simple data"
+  end
+
+  context "with simplified" do
+    let(:opts) { {simplified: true} }
+
+    it_behaves_like "simple data"
+  end
+
+  context "with restricted and simplified" do
+    let(:opts) { {restricted: true, simplified: true} }
+
+    it_behaves_like "simple data"
   end
 end

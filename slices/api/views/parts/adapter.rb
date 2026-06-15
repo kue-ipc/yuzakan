@@ -8,20 +8,21 @@ module API
     module Parts
       class Adapter < API::Views::Part
         def to_h(restricted: false, simplified: false)
-          hash = {
-            name: value.name,
-            label: context.t("adapters.#{value.name}.label", default: value.name),
-          }
+          label = context.t("adapters.#{value.name}.label", default: value.name)
           case [restricted, simplified]
+          in [true, _] | [_, true]
+            {
+              name: value.name,
+              label:,
+            }
           in [false, false]
             {
-              **hash,
+              name: value.name,
+              label:,
               group: value.class.has_group?,
               primary: value.class.has_primary_group?,
               params: {schema: value.class.schema},
             }
-          else
-            hash
           end
         end
 

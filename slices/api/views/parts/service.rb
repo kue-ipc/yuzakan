@@ -7,11 +7,12 @@ module API
       class Service < API::Views::StructPart
         # value is a DB::Sturct
 
-        def to_h(restricted: false)
-          if restricted
-            super().slice(:name, :label)
-          else
-            super()
+        def to_h(restricted: false, simplified: false)
+          case [restricted, simplified]
+          in [true, _] | [_, true]
+            super.slice(:name, :label)
+          in [false, false]
+            super
           end
         end
       end
