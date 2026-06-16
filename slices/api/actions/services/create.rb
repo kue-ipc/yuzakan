@@ -14,8 +14,8 @@ module API
 
         params do
           required(:name).filled(:name, max_size?: 255)
-          optional(:label).maybe(:str?, max_size?: 255)
-          optional(:description).maybe(:str?, max_size?: 16383)
+          optional(:label).value(:str?, max_size?: 255)
+          optional(:description).value(:str?, max_size?: 16383)
 
           optional(:order).filled(:int?)
 

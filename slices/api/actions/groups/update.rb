@@ -4,46 +4,48 @@ module API
   module Actions
     module Groups
       class Update < API::Action
+        include Deps[
+          "repos.group_repo",
+          view: "views.groups.show",
+        ]
+
         security_level 4
 
         params do
           required(:id).filled(:name, max_size?: 255)
 
-          optional(:name).filled(:name, max_size?: 255)
-          optional(:label).maybe(:str?, max_size?: 255)
-          optional(:note).maybe(:str?, max_size?: 4096)
+          # cannot change name
+          # optional(:name).filled(:name, max_size?: 255)
+          optional(:label).value(:str?, max_size?: 255)
+          optional(:note).value(:str?, max_size?: 4096)
 
           optional(:basic).filled(:bool?)
           optional(:prohibited).filled(:bool?)
 
-          optional(:deleted).filled(:bool?)
-          optional(:deleted_at).maybe(:date_time?)
+          opional(:affiliation).maybe(:name, max_size?: 255)
         end
 
-        def initialize(group_repository: GroupRepository.new,
-          **opts)
-          super
-          @group_repository ||= group_repository
-        end
+        def handle(request, response)
+          check_params(request, response)
+          id = take_exist_id(request, response, group_repo)
 
-        def handle(_request, _response)
-          halt_json 400, errors: [params.errors] unless params.valid?
-
-          @name = params[:id]
-          load_group
-
-          halt_json 404 if @group.nil?
-          self.body = group_json
-
-          if params[:name] && @group.name != params[:name]
-            halt_json 422, errors: {
-              name: t("errors.unchangeable", name: t("attributes.group.name")),
-            }
+          update_params = request.params.slice(:label, :note, :basic, :prohibited)
+          if request.params.key?(:affiliation)
+            if request.params[:affiliation]
+              affiliation = affiliation_repo.get(request.params[:affiliation])
+              unless affiliation
+                response.flash[:invalid] = {affiliation: t("errors.found?")}
+                halt_json request, response, 422
+              end
+              update_params[:affiliation_id] = affiliation.id
+            else
+              update_params[:affiliation_id] = nil
+            end
           end
 
-          @group = @group_repository.update(@group.id,
-            params.to_h.except(:id, :name))
-          self.body = group_json
+          group = group_repo.set(id, **update_params)
+
+          response[:group] = group
         end
       end
     end

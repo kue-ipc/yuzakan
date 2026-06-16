@@ -13,6 +13,7 @@ module API
 
         params do
           required(:id).filled(:name, max_size?: 255)
+
           optional(:name).filled(:name, max_size?: 255)
           optional(:label).value(:str?, max_size?: 255)
           optional(:note).value(:str?, max_size?: 4096)
