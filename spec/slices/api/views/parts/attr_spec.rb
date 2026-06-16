@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-# NOTE: get an entry combined with grandchildren from repo, so :db is required
-RSpec.describe API::Views::Parts::Attr, :db do
+RSpec.describe API::Views::Parts::Attr do
   init_part_spec
 
-  let(:value) {
-    # Cannot use Factory::Struct, becaus it does not have grandchild associations
-    Hanami.app["repos.attr_repo"].get_with_mappings_and_services(Factory[:mapping].attr.name)
-  }
+  before do
+    allow(attr).to receive_messages(mappings: [mapping])
+  end
+
+  let(:value) { attr }
 
   shared_examples "limited data" do
     it "to_h" do

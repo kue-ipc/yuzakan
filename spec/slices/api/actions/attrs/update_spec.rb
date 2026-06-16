@@ -3,6 +3,10 @@
 RSpec.describe API::Actions::Attrs::Update do
   init_action_spec
 
+  before do
+    allow(attr).to receive_messages(mappings: [mapping])
+  end
+
   let(:action_opts) {
     allow(attr_repo).to receive_messages(set: attr,
       get_with_mappings_and_services: attr, renumber_order: 0)

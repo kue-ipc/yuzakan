@@ -3,6 +3,10 @@
 RSpec.describe API::Actions::Attrs::Create do
   init_action_spec
 
+  before do
+    allow(attr).to receive_messages(mappings: [mapping])
+  end
+
   let(:action_opts) {
     allow(attr_repo).to receive_messages(exist?: false, last_order: 9999,
       create_with_mappings: attr, renumber_order: 0,
