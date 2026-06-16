@@ -19,6 +19,7 @@ module API
 
           affiliations, pager = affiliation_repo.index(page:, per_page:, order:, query:, filter:)
 
+          response.format = :json
           response[:affiliations] = affiliations
           response[:pager] = pager
         end
