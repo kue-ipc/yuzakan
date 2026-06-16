@@ -4,6 +4,12 @@ module API
   module Actions
     module Users
       class Create < API::Action
+        include Deps[
+          "repos.user_repo",
+          "services.service_create_user",
+          view: "views.users.show",
+        ]
+
         security_level 4
 
         params do

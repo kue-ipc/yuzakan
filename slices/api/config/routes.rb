@@ -20,6 +20,8 @@ module API
 
     resources :services, only: [:index, :create, :show, :update, :destroy] do
       get "/check", to: "services.check", as: :check
+      resources :groups, only: [:create, :show, :update, :destroy]
+      resources :users, only: [:create, :show, :update, :destroy]
     end
 
     resource :session, only: [:show]
