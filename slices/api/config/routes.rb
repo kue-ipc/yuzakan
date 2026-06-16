@@ -21,7 +21,15 @@ module API
     resources :services, only: [:index, :create, :show, :update, :destroy] do
       get "/check", to: "services.check", as: :check
       resources :groups, only: [:create, :show, :update, :destroy]
-      resources :users, only: [:create, :show, :update, :destroy]
+      resources :users, only: [:create, :show, :update, :destroy] do
+        resource :lock, only: [:create, :destroy]
+        resource :password, only: [:create, :update]
+        resource :mfa, only: [:destroy] do
+          resource :code, only: [:create]
+          # resource :email, only: [:create, :destroy]
+          # resource :totp, only: [:create, :update, :destroy]
+        end
+      end
     end
 
     resource :session, only: [:show]
@@ -29,14 +37,8 @@ module API
     resource :system, only: [:show]
 
     resources :users, only: [:index, :create, :show, :update, :destroy] do
-      # resource :lock, only: [:create, :destroy]
-      # resource :password, only: [:create, :update]
-      resource :password, only: [:update]
-      # resource :mfa do
-      #   resource :code, only: [:create, :show, :update, :destroy]
-      #   resource :email, only: [:create, :show, :update, :destroy]
-      #   resource :totp, only: [:create, :show, :update, :destroy]
-      # end
+      resource :lock, only: [:create, :destroy]
+      resource :password, only: [:create, :update]
     end
   end
 end

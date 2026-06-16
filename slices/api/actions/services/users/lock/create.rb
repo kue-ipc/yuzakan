@@ -2,11 +2,12 @@
 
 module API
   module Actions
-    module Users
-      module Mfa
-        module Totp
-          class Destroy < API::Action
+    module Services
+      module Users
+        module Lock
+          class Create < API::Action
             def handle(request, response)
+              response.body = self.class.name
             end
           end
         end
