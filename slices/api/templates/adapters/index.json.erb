@@ -1,1 +1,1 @@
-[<%== adapters.map { |adapter| adapter.to_json(restricted:) }.join(",") %>]
+[<%== adapters.map { |adapter| adapter.to_json(restricted:, simplified: true) }.join(",") %>]

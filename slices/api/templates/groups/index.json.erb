@@ -1,1 +1,1 @@
-[<%== groups.map { |group| group.to_json(restricted:) }.join(",") %>]
+[<%== groups.map { |group| group.to_json(restricted:, simplified: true) }.join(",") %>]

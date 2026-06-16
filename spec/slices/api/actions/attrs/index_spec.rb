@@ -20,8 +20,8 @@ RSpec.describe API::Actions::Attrs::Index do
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:data]).to eq [
-        attr.to_h.slice(:name, :label, :category, :type),
-        another_attr.to_h.slice(:name, :label, :category, :type),
+        attr.to_h.slice(:name, :label),
+        another_attr.to_h.slice(:name, :label),
       ]
     end
   end
@@ -34,7 +34,7 @@ RSpec.describe API::Actions::Attrs::Index do
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:data]).to eq [
-        attr.to_h.slice(:name, :label, :category, :type),
+        attr.to_h.slice(:name, :label),
       ]
     end
   end

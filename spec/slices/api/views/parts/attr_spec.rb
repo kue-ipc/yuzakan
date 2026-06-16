@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# NOTE: get a combined entry from repo, so :db is required
+# NOTE: get an entry combined with grandchildren from repo, so :db is required
 RSpec.describe API::Views::Parts::Attr, :db do
   init_part_spec
 

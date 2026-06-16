@@ -1,1 +1,1 @@
-[<%== attrs.map { |attr| attr.to_json(restricted:) }.join(",") %>]
+[<%== attrs.map { |attr| attr.to_json(restricted:, simplified: true) }.join(",") %>]
