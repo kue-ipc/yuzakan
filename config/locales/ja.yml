@@ -89,7 +89,6 @@ ja:
     prohibited_user: 管理者より使用が禁止されています。ログインが必要な場合は、管理者にお問い合わせください。
     geust_user: ゲストユーザーであるため、システムを使用することができません。
     not_login: ログインしていません。
-    internal_server_error: サーバー処理でエラーが発生しました。管理者に問い合わせてください。
   messages:
     action:
       success: '%{action}に成功しました。'

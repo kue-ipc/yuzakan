@@ -90,7 +90,6 @@ def init_action_spec
       json = JSON.parse(response.body.first)
       expect(json).to eq({
         "message" => "指定のエンタイティはありません。",
-        "invalid" => {"id" => ["存在しません。"]},
       })
     end
   end

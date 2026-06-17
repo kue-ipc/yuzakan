@@ -13,8 +13,7 @@ module API
         def handle(request, response)
           check_params(request, response)
 
-          id = take_exist_id(request, response, affiliation_repo)
-          affiliation = affiliation_repo.get(id)
+          affiliation = affiliation_repo.get!(request.params[:id])
 
           response.fresh last_modified: affiliation.updated_at
           response.format = :json

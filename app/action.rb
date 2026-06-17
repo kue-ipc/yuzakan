@@ -52,6 +52,7 @@ module Yuzakan
 
     handle_exception StandardError => :handle_standard_error if Hanami.env?(:produciton)
     handle_exception InvalidCSRFTokenError => :handle_invalid_csrf_token_error
+    handle_exception "ROM::TupleCountMismatchError" => :handle_not_found
 
     private def handle_standard_error(_request, _response, exception)
       logger.error exception
@@ -62,6 +63,10 @@ module Yuzakan
       logger.warn "CSRF attack", expected: request.session[CSRF_TOKEN], was: request_csrf_token(request),
         fetch_site: req.get_header("HTTP_SEC_FETCH_SITE")
       halt 400
+    end
+
+    private def handle_not_found(_request, _response, _exception)
+      halt 404
     end
   end
 end

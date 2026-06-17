@@ -30,13 +30,21 @@ module API
 
     private def handle_standard_error(request, response, exception)
       logger.error exception
-      halt_json request, response, 500, message: t("errors.internal_server_error"), exception: exception
+      halt_json request, response, 500, message: t("response_messages.internal_server_error"), exception: exception
     end
 
     private def handle_invalid_csrf_token_error(request, response, _exception)
       logger.warn "CSRF attack", expected: request.session[CSRF_TOKEN], was: request_csrf_token(request),
         fetch_site: req.get_header("HTTP_SEC_FETCH_SITE")
       halt_json request, response, 400, message: t("errors.invalid_csrf_token")
+    end
+
+    private def handle_not_found(request, response, exception)
+      if exception.is_a?(ROM::TupleCountMismatchError)
+        halt_json request, response, 404, message: t("errors.non_existent")
+      else
+        halt_json request, response, 404, message: t("response_messages.not_found")
+      end
     end
 
     # override private api

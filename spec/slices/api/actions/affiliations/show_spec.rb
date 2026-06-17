@@ -4,14 +4,14 @@ RSpec.describe API::Actions::Affiliations::Show do
   init_action_spec
 
   let(:action_opts) {
-    allow(affiliation_repo).to receive_messages(exist?: true, get: affiliation)
+    allow(affiliation_repo).to receive(:get!).with("affiliation42").and_return(affiliation)
     {affiliation_repo: affiliation_repo}
   }
   let(:action_params) { {id: "affiliation42"} }
 
   shared_context "when not exist" do
     let(:action_opts) {
-      allow(affiliation_repo).to receive_messages(exist?: false)
+      allow(affiliation_repo).to receive(:get!).with("affiliation42").and_raise(ROM::TupleCountMismatchError)
       {affiliation_repo: affiliation_repo}
     }
   end
