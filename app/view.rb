@@ -37,11 +37,11 @@ module Yuzakan
     expose :current_user, as: :user, layout: true
     expose :current_level, layout: true
 
-    expose :user_menu, as: :menu_item, layout: true do |current_level:|
+    expose :user_menu, as: :menu_item, layout: true do |current_level|
       USER_STATIC_MENU_ITEMS.select { |item| item.level <= current_level }
     end
 
-    expose :admin_menu, as: :menu_item, layout: true do |current_level:|
+    expose :admin_menu, as: :menu_item, layout: true do |current_level|
       ADMIN_STATIC_MENU_ITEMS.select { |item| item.level <= current_level }
     end
   end

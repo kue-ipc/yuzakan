@@ -33,10 +33,7 @@ module API
           if request.params.key?(:affiliation)
             if request.params[:affiliation]
               affiliation = affiliation_repo.get(request.params[:affiliation])
-              unless affiliation
-                response.flash[:invalid] = {affiliation: t("errors.found?")}
-                halt_json request, response, 422
-              end
+              halt_json request, response, 422, invalid: {affiliation: t("errors.found?")} unless affiliation
               update_params[:affiliation_id] = affiliation.id
             else
               update_params[:affiliation_id] = nil

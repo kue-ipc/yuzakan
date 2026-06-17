@@ -9,20 +9,6 @@ RSpec.describe API::Actions::Affiliations::Show do
   }
   let(:action_params) { {id: "affiliation42"} }
 
-  shared_context "when current user with affiliation" do
-    let(:action_opts) {
-      allow(affiliation_repo).to receive_messages(find: affiliation)
-      {affiliation_repo: affiliation_repo}
-    }
-  end
-
-  shared_context "when current user without affiliation" do
-    let(:action_opts) {
-      allow(affiliation_repo).to receive_messages(find: nil)
-      {affiliation_repo: affiliation_repo}
-    }
-  end
-
   shared_context "when not exist" do
     let(:action_opts) {
       allow(affiliation_repo).to receive_messages(exist?: false)
@@ -36,28 +22,12 @@ RSpec.describe API::Actions::Affiliations::Show do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({
-        name: affiliation.name,
-        label: affiliation.label,
-        note: affiliation.note,
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
+        "name" => affiliation.name,
+        "label" => affiliation.label,
+        "note" => affiliation.note,
       })
-    end
-
-    context "when current user with affiliation" do
-      include_context "when current user with affiliation"
-      it "is ok with tilda id" do
-        response = action.call({**params, id: "~"})
-        expect(response).to be_successful
-        expect(response.status).to eq 200
-        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-        json = JSON.parse(response.body.first, symbolize_names: true)
-        expect(json[:data]).to eq({
-          name: affiliation.name,
-          label: affiliation.label,
-          note: affiliation.note,
-        })
-      end
     end
   end
 
@@ -67,26 +37,11 @@ RSpec.describe API::Actions::Affiliations::Show do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({
-        name: affiliation.name,
-        label: affiliation.label,
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
+        "name" => affiliation.name,
+        "label" => affiliation.label,
       })
-    end
-
-    context "when current user with affiliation" do
-      include_context "when current user with affiliation"
-      it "is ok with tilda id" do
-        response = action.call({**params, id: "~"})
-        expect(response).to be_successful
-        expect(response.status).to eq 200
-        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-        json = JSON.parse(response.body.first, symbolize_names: true)
-        expect(json[:data]).to eq({
-          name: affiliation.name,
-          label: affiliation.label,
-        })
-      end
     end
   end
 
@@ -96,58 +51,28 @@ RSpec.describe API::Actions::Affiliations::Show do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to be_nil
+      json = JSON.parse(response.body.first)
+      expect(json).to be_nil
     end
   end
 
   shared_examples "show" do
     it_behaves_like "ok"
-    it_behaves_like "bad id param without tilda"
-
-    context "when current user without affiliation" do
-      include_context "when current user without affiliation"
-      it_behaves_like "ok current nil"
-    end
+    it_behaves_like "bad id param"
 
     context "when not exist" do
       include_context "when not exist"
-      it_behaves_like "not found"
-    end
-
-    context "when current id" do
-      include_context "when current id"
-      let(:action_opts) {
-        allow(affiliation_repo).to receive_messages(find: affiliation)
-        {affiliation_repo: affiliation_repo}
-      }
-
-      it_behaves_like "ok"
+      it_behaves_like "non-existent"
     end
   end
 
   shared_examples "show restricted" do
     it_behaves_like "ok restricted"
-    it_behaves_like "bad id param without tilda"
-
-    context "when current user without affiliation" do
-      include_context "when current user without affiliation"
-      it_behaves_like "ok current nil"
-    end
+    it_behaves_like "bad id param"
 
     context "when not exist" do
       include_context "when not exist"
-      it_behaves_like "not found"
-    end
-
-    context "when current id" do
-      include_context "when current id"
-      let(:action_opts) {
-        allow(affiliation_repo).to receive_messages(find: affiliation)
-        {affiliation_repo: affiliation_repo}
-      }
-
-      it_behaves_like "ok restricted"
+      it_behaves_like "non-existent"
     end
   end
 
@@ -155,7 +80,7 @@ RSpec.describe API::Actions::Affiliations::Show do
 
   context "when guest" do
     include_context "when guest"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when observer" do

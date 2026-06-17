@@ -14,7 +14,7 @@ def init_action_spec
   let_mock_repos
 
   let(:base_action_opts) {
-    allow(config_repo).to receive(:current).and_return(config)
+    allow(config_repo).to receive(:current!).and_return(config)
     allow(network_repo).to receive(:find_include).and_return(network)
     allow(user_repo).to receive(:get).with(user.name).and_return(user)
     allow(action_log_repo).to receive(:create).and_return(action_log)
@@ -90,6 +90,7 @@ def init_action_spec
       json = JSON.parse(response.body.first)
       expect(json).to eq({
         "messaage" => "指定のエンタイティはありません。",
+        "invalid" => {"id" => ["存在しません。"]},
       })
     end
   end
@@ -111,7 +112,7 @@ def init_action_spec
       response = action.call(params)
       expect(response.status).to eq 403
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
+      json = JSON.parse(response.body.first)
       expect(json).to eq({
         "messaage" => "セッションがタイムアウトしました。",
       })
@@ -125,9 +126,11 @@ def init_action_spec
       expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:status]).to eq({code: 422, message: "Unprocessable Content"})
-      expect(json[:flash]).to eq({invalid: {id: ["形式が間違っています。"]}})
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
+        message: "URLパラメータが不正です。",
+        invalid: {id: ["形式が間違っています。"]},
+      })
     end
 
     it "is failure due to exclamation id" do
@@ -135,9 +138,11 @@ def init_action_spec
       expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:status]).to eq({code: 422, message: "Unprocessable Content"})
-      expect(json[:flash]).to eq({invalid: {id: ["形式が間違っています。"]}})
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
+        message: "URLパラメータが不正です。",
+        invalid: {id: ["形式が間違っています。"]},
+      })
     end
 
     it "is failure due to over 255 id" do
@@ -145,9 +150,11 @@ def init_action_spec
       expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:status]).to eq({code: 422, message: "Unprocessable Content"})
-      expect(json[:flash]).to eq({invalid: {id: ["サイズが255を超えてはいけません。"]}})
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
+        message: "URLパラメータが不正です。",
+        invalid: {id: ["サイズが255を超えてはいけません。"]},
+      })
     end
   end
 
@@ -157,9 +164,11 @@ def init_action_spec
       expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:status]).to eq({code: 422, message: "Unprocessable Content"})
-      expect(json[:flash]).to eq({invalid: {id: ["形式が間違っています。 または ~と値が一致しません。"]}})
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
+        message: "URLパラメータが不正です。",
+        invalid: {id: ["形式が間違っています。 または ~と値が一致しません。"]},
+      })
     end
 
     it "is failure due to over 255 id" do
@@ -167,9 +176,11 @@ def init_action_spec
       expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:status]).to eq({code: 422, message: "Unprocessable Content"})
-      expect(json[:flash]).to eq({invalid: {id: ["サイズが255を超えてはいけません。 または ~と値が一致しません。"]}})
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
+        message: "URLパラメータが不正です。",
+        invalid: {id: ["形式が間違っています。 または ~と値が一致しません。"]},
+      })
     end
   end
 

@@ -13,8 +13,7 @@ module API
         required_trusted_authentication false
 
         private def reply_unauthenticated(request, response)
-          response.flash[:error] = t("errors.not_login")
-          halt_json request, response, 404
+          halt_json request, response, 404, message: t("errors.not_login")
         end
 
         def handle(request, response)

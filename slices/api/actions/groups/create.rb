@@ -30,8 +30,7 @@ module API
             if request.params[:affiliation]
               affiliation_repo.get(request.params[:affiliation]) ||
                 begin
-                  response.flash[:invalid] = {affiliation: t("errors.found?")}
-                  halt_json request, response, 422
+                  halt_json request, response, 422, invalid: {affiliation: t("errors.found?")}
                 end
             end
 

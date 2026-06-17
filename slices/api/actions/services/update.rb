@@ -44,16 +44,10 @@ module API
 
           current = service_repo.get(id)
           adapter = adapter_repo.get(request.params[:adapter] || current.adapter)
-          unless adapter
-            response.flash[:invalid] = {adapter: t("errors.found?")}
-            halt_json request, response, 422
-          end
+          halt_json request, response, 422, invalid: {adapter: t("errors.found?")} unless adapter
 
           result = adapter.class.validate(request.params[:params] || current.params)
-          if result.failure?
-            response.flash[:invalid] = {params: result.errors}
-            halt_json request, response, 422
-          end
+          halt_json request, response, 422, invalid: {params: result.errors} if result.failure?
 
           service = nil
           service_repo.transaction do

@@ -4,6 +4,7 @@ module API
   module Views
     module Error
       class Halt < API::View
+        expose :error
       end
     end
   end

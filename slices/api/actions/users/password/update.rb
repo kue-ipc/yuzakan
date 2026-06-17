@@ -24,15 +24,11 @@ module API
           end
 
           def handle(request, response)
-            unless request.params.valid?
-              response.flash[:invalid] = request.params.errors
-              halt_json request, response, 422
-            end
+            halt_json request, response, 422, invalid: request.params.errors unless request.params.valid?
 
             if request.params[:password] != request.params[:password_confirmation]
-              response.flash[:invalid] =
-                {password_confirmation: [t("errors.eql?", left: t("api.user_password.params.password"))]}
-              halt_json request, response, 422
+              halt_json request, response, 422,
+                invalid: {password_confirmation: [t("errors.eql?", left: t("api.user_password.params.password"))]}
             end
 
             username = response[:current_user].name
@@ -44,15 +40,12 @@ module API
             in Success(_service)
               # do next
             in Failure[:error, error]
-              response.flash[:error] = error
-              halt_json request, response, 500
+              halt_json request, response, 500, message: error
             in Failure[:failure, message]
-              response.flash[:invalid] =
-                {password_current: [t("errors.eql?", left: t("api.user_password.params.password_current"))]}
-              halt_json request, response, 422
+              halt_json request, response, 422,
+                invalid: {password_current: [t("errors.eql?", left: t("api.user_password.params.password_current"))]}
             in Failure[level, message]
-              response.flash[level] = message
-              halt_json request, response, 422
+              halt_json request, response, 422, message: message
             end
 
             # TODO: パスワードのチェック(未整理)
@@ -103,11 +96,9 @@ module API
                 response.flash[:success] = t("messages.action.success", action: t("api.user_password.actions.update"))
               end
             in Failure[:error, error]
-              response.flash[:error] = error
-              halt_json request, response, 500
+              halt_json request, response, 500, message: error
             in Failure[level, message]
-              response.flash[level] = message
-              halt_json request, response, 422
+              halt_json request, response, 422, message: message
             end
 
             # TODO: メール通知

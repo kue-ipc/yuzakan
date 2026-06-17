@@ -73,10 +73,7 @@ module API
             {**mapping.except(:service), service_id: service&.id}
           end.compact
 
-          unless mapping_errors.empty?
-            response.flash[:invalid] = {mappings: mapping_errors}
-            halt_json request, response, 422
-          end
+          halt_json request, response, 422, invalid: {mappings: mapping_errors} unless mapping_errors.empty?
 
           mappings
         end

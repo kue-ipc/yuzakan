@@ -12,16 +12,10 @@ module API
         ]
       end
 
-      private def halt_json(request, response, status, location: nil)
-        location ||= request.path
+      private def halt_json(_request, response, status, **opts)
         response.format = :json
-        body = response.render(halt_view, status:, location:, current_level: 0)
+        body = response.render(halt_view, status:, error: opts)
         halt status, body
-      end
-
-      private def redirect_to_json(request, response, url, status: 302)
-        response.location = url
-        halt_json(request, response, status, location: url)
       end
     end
   end

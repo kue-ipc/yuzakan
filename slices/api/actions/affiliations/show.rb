@@ -23,6 +23,7 @@ module API
               affiliation_repo.get(id)
             end
 
+          response.format = :json
           response[:affiliation] = affiliation
         end
       end

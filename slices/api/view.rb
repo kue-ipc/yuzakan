@@ -4,11 +4,14 @@
 module API
   class View < Yuzakan::View
     config.default_format = :json
-    expose :status, layout: true
-    expose :location, decorate: false, layout: true
-    expose :pager, layout: true
-    expose :restricted, decorate: false do |current_level|
-      current_level < 2
+    config.layout = nil
+
+    expose :approved_level, decorate: false do
+      2
+    end
+
+    expose :restricted, decorate: false do |current_level, approved_level|
+      current_level < approved_level
     end
   end
 end

@@ -24,10 +24,7 @@ module API
         end
 
         def handle(request, response)
-          unless request.params.valid?
-            response.flash[:invalid] = request.params.errors
-            halt_json request, response, 422
-          end
+          halt_json request, response, 422, invalid: request.params.errors unless request.params.valid?
 
           username = request.params[:username]
           password = request.params[:password]
@@ -43,15 +40,13 @@ module API
           # ログイン済みか確認
           if response[:current_user]
             auth_log_repo.create(**auth_log_params, result: "authenticated")
-            response.flash[:info] = t("messages.already_authenticated")
-            redirect_to_json(request, response, routes.path(:api_auth), status: 303)
+            response.redirect_to routes.path(:api_auth), status: 303
           end
 
           # 信頼さていないネットワークからのログイン
           unless settings.auth_untrusted || response[:current_network].trusted
             auth_log_repo.create(**auth_log_params, result: "reject")
-            response.flash[:error] = t("errors.deny_network")
-            halt_json request, response, 403
+            halt_json request, response, 403, message: t("errors.deny_network")
           end
 
           # 失敗回数確認
@@ -59,8 +54,7 @@ module API
             count: response[:current_config].auth_failure_limit,
             period: response[:current_config].auth_failure_duration)
             auth_log_repo.create(**auth_log_params, result: "reject")
-            response.flash[:error] = t("errors.too_many_authentictaion_failure")
-            halt_json request, response, 403
+            halt_json request, response, 403, message: t("errors.too_many_authentictaion_failure")
           end
 
           # 認証実行
@@ -69,15 +63,13 @@ module API
             # do next
           in Failure[:error, error]
             auth_log_repo.create(**auth_log_params, result: "error")
-            response.flash[:error] = error
-            halt_json request, response, 500
+            halt_json request, response, 500, message: error
           in Failure[level, message]
             # タイミング攻撃防止
             waiting_time = response[:current_time] - Time.now + response[:current_config].auth_failure_waiting
             sleep waiting_time if waiting_time.positive?
             auth_log_repo.create(**auth_log_params, result: "failure")
-            response.flash[level] = message
-            halt_json request, response, 422
+            halt_json request, response, 422, message: message
           end
 
           # ユーザー同期
@@ -88,27 +80,23 @@ module API
               # do next
             in Failure[:error, error]
               auth_log_repo.create(**auth_log_params, result: "sync_error")
-              response.flash[:error] = error
-              halt_json request, response, 500
+              halt_json request, response, 500, message: error
             in Failure[level, message]
               auth_log_repo.create(**auth_log_params, result: "failure")
-              response.flash[level] = message
-              halt_json request, response, 422
+              halt_json request, response, 422, message: message
             end
           end
 
           # 使用禁止を確認
           if user.prohibited
             auth_log_repo.create(**auth_log_params, result: "prohibited")
-            response.flash[:warn] = t("errors.prohibited_user")
-            halt_json request, response, 403
+            halt_json request, response, 403, message: t("errors.prohibited_user")
           end
 
           # クリアランスレベルを確認
           unless settings.auth_guest || user.clearance_level.positive?
             auth_log_repo.create(**auth_log_params, result: "no_clearance")
-            response.flash[:warn] = t("errors.geust_user")
-            halt_json request, response, 403
+            halt_json request, response, 403, message: t("errors.geust_user")
           end
 
           # セッション情報を保存

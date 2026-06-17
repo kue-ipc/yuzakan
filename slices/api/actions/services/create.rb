@@ -40,16 +40,10 @@ module API
           name = take_unique_name(request, response, service_repo)
 
           adapter = adapter_repo.get(request.params[:adapter])
-          unless adapter
-            response.flash[:invalid] = {adapter: t("errors.found?")}
-            halt_json request, response, 422
-          end
+          halt_json request, response, 422, invalid: {adapter: t("errors.found?")} unless adapter
 
           result = adapter.class.validate(request.params[:params])
-          if result.failure?
-            response.flash[:invalid] = {params: result.errors}
-            halt_json request, response, 422
-          end
+          halt_json request, response, 422, invalid: {params: result.errors} if result.failure?
 
           order = request.params[:order] || next_order
 

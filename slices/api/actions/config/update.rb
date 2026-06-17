@@ -41,8 +41,7 @@ module API
 
         def handle(request, response)
           unless request.params.valid?
-            response.flash[:invalid] = request.params.errors
-            halt_json request, response, 422
+            halt_json request, response, 422, invalid: request.params.errors
           end
 
           params = request.params.to_h
@@ -51,8 +50,7 @@ module API
 
           config = config_repo.update_all(**params)
           unless config
-            response.flash[:success] = t("messages.action.failure", action: t("actions.update_config"))
-            halt_json request, response, 422
+            halt_json request, response, 422, message: t("messages.action.failure", action: t("actions.update_config"))
           end
 
           response.flash[:success] = t("messages.action.success", action: t("actions.update_config"))

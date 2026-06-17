@@ -55,30 +55,32 @@ def let_mock_repos
   let(:network_repo) { instance_double(Yuzakan::Repos::NetworkRepo) }
 
   let(:affiliation_repo) {
-    instance_double(Yuzakan::Repos::AffiliationRepo).tap do |repo|
-      allow(repo).to receive(:exist?).with("affiliation42").and_return(true)
-      allow(repo).to receive(:get).with("affiliation42").and_return(affiliation)
-      allow(repo).to receive(:exist?).with("hoge").and_return(false)
-      allow(repo).to receive(:get).with("hoge").and_return(nil)
-    end
+    instance_double(Yuzakan::Repos::AffiliationRepo)
+    # .tap do |repo|
+    #   allow(repo).to receive(:exist?).with("affiliation42").and_return(true)
+    #   allow(repo).to receive(:get).with("affiliation42").and_return(affiliation)
+    #   allow(repo).to receive(:exist?).with("hoge").and_return(false)
+    #   allow(repo).to receive(:get).with("hoge").and_return(nil)
+    # end
   }
   let(:group_repo) { instance_double(Yuzakan::Repos::GroupRepo) }
   let(:user_repo) { instance_double(Yuzakan::Repos::UserRepo) }
   let(:member_repo) { instance_double(Yuzakan::Repos::MemberRepo) }
 
   let(:service_repo) {
-    instance_double(Yuzakan::Repos::ServiceRepo).tap do |repo|
-      allow(repo).to receive_messages(
-        all: [service, another_service],
-        get: nil, set: service, unset: nil, exist?: false,
-        last_order: 42, renumber_order: 0)
-      allow(repo).to receive(:transaction).and_yield
+    instance_double(Yuzakan::Repos::ServiceRepo)
+    # .tap do |repo|
+    #   allow(repo).to receive_messages(
+    #     all: [service, another_service],
+    #     get: nil, set: service, unset: nil, exist?: false,
+    #     last_order: 42, renumber_order: 0)
+    #   allow(repo).to receive(:transaction).and_yield
 
-      allow(repo).to receive(:get).with("service42").and_return(service)
-      # allow(repo).to receive(:set).with("service42", anything).and_return(service)
-      allow(repo).to receive(:unset).with("service42").and_return(service)
-      allow(repo).to receive(:exist?).with("service42").and_return(true)
-    end
+    #   allow(repo).to receive(:get).with("service42").and_return(service)
+    #   # allow(repo).to receive(:set).with("service42", anything).and_return(service)
+    #   allow(repo).to receive(:unset).with("service42").and_return(service)
+    #   allow(repo).to receive(:exist?).with("service42").and_return(true)
+    # end
   }
   let(:attr_repo) { instance_double(Yuzakan::Repos::AttrRepo) }
   let(:mapping_repo) { instance_double(Yuzakan::Repos::MappingRepo) }
@@ -87,24 +89,25 @@ def let_mock_repos
 
   # no database repos
   let(:adapter_repo) {
-    instance_double(Yuzakan::AdapterRepo).tap do |repo|
-      dummy_adapter = Yuzakan::AdapterRepo::AdapterStruct.new(name: "dummy", class: Yuzakan::Adapters::Dummy)
-      mock_adapter = Yuzakan::AdapterRepo::AdapterStruct.new(name: "mock", class: Yuzakan::Adapters::Mock)
-      test_adapter = Yuzakan::AdapterRepo::AdapterStruct.new(name: "test", class: Yuzakan::Adapters::Test)
-      vendor_dummy_adapter = Yuzakan::AdapterRepo::AdapterStruct.new(name: "vendor.dummy", class: Yuzakan::Adapters::Dummy)
+    instance_double(Yuzakan::AdapterRepo)
+    # .tap do |repo|
+    #   dummy_adapter = Yuzakan::AdapterRepo::AdapterStruct.new(name: "dummy", class: Yuzakan::Adapters::Dummy)
+    #   mock_adapter = Yuzakan::AdapterRepo::AdapterStruct.new(name: "mock", class: Yuzakan::Adapters::Mock)
+    #   test_adapter = Yuzakan::AdapterRepo::AdapterStruct.new(name: "test", class: Yuzakan::Adapters::Test)
+    #   vendor_dummy_adapter = Yuzakan::AdapterRepo::AdapterStruct.new(name: "vendor.dummy", class: Yuzakan::Adapters::Dummy)
 
-      allow(repo).to receive(:all).and_return([
-        dummy_adapter,
-        mock_adapter,
-        test_adapter,
-        vendor_dummy_adapter,
-      ])
-      allow(repo).to receive(:exist?).with("dummy").and_return(true)
-      allow(repo).to receive(:get).with("dummy").and_return(dummy_adapter)
-      allow(repo).to receive(:exist?).with("test").and_return(true)
-      allow(repo).to receive(:get).with("test").and_return(test_adapter)
-      allow(repo).to receive(:exist?).with("hoge").and_return(false)
-    end
+    #   allow(repo).to receive(:all).and_return([
+    #     dummy_adapter,
+    #     mock_adapter,
+    #     test_adapter,
+    #     vendor_dummy_adapter,
+    #   ])
+    #   allow(repo).to receive(:exist?).with("dummy").and_return(true)
+    #   allow(repo).to receive(:get).with("dummy").and_return(dummy_adapter)
+    #   allow(repo).to receive(:exist?).with("test").and_return(true)
+    #   allow(repo).to receive(:get).with("test").and_return(test_adapter)
+    #   allow(repo).to receive(:exist?).with("hoge").and_return(false)
+    # end
   }
 end
 
