@@ -10,45 +10,33 @@ module API
 
     config.formats.accept :json
 
-    # skip to verify csrf token if Sec-Fetch-Site is same-origin.
-    def verify_csrf_token?(req, *)
-      super && req.get_header("HTTP_SEC_FETCH_SITE") != "same-origin"
-    end
-
     # override reply
 
-    private def reply_uninitialized(request, response)
-      halt_json request, response, 503, errors: [t("messages.uninitialized")]
-    end
-
-    # TODO: メッセージを付けるべき？
     private def reply_unauthenticated(request, response)
-      halt_json request, response, 401
+      halt_json request, response, 401, message: t("errors.authenticated?")
     end
 
-    # TODO: メッセージを付けるべき？
     private def reply_untrusted(request, response)
-      halt_json request, response, 401
+      halt_json request, response, 401, message: t("errors.trusted?")
     end
 
     private def reply_unauthorized(request, response)
-      halt_json request, response, 403
+      halt_json request, response, 403, message: t("errors.authorized?")
     end
 
     # override handle
 
-    # handle_exception InvalidCSRFTokenError => :handle_invalid_csrf_token_error
     handle_exception StandardError => :handle_standard_error
 
     private def handle_standard_error(request, response, exception)
       logger.error exception
-      halt_json request, response, 500
+      halt_json request, response, 500, message: t("errors.internal_server_error"), exception: exception
     end
 
     private def handle_invalid_csrf_token_error(request, response, _exception)
-      logger.warn "CSRF attack", expected: request.session[CSRF_TOKEN], was: request_csrf_token(request)
-      response.flash[:error] = t("errors.invalid_csrf_token")
-      halt_json request, response, 400
+      logger.warn "CSRF attack", expected: request.session[CSRF_TOKEN], was: request_csrf_token(request),
+        fetch_site: req.get_header("HTTP_SEC_FETCH_SITE")
+      halt_json request, response, 400, message: t("errors.invalid_csrf_token")
     end
 
     # override private api

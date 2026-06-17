@@ -30,10 +30,8 @@ module Yuzakan
         action.security_level 1
 
         # required
-        action.defines :required_configuration
         action.defines :required_authentication
         action.defines :required_trusted_authentication
-        action.required_configuration true
         action.required_authentication true
         # effect only if required_authentication is true
         action.required_trusted_authentication true
@@ -57,7 +55,6 @@ module Yuzakan
         response[:current_level] = current_level(request, response)
         response[:current_trusted] = current_trusted(request, response)
 
-        check_configuration(request, response)
         check_authentication(request, response)
         check_authorization(request, response)
       end
@@ -100,8 +97,7 @@ module Yuzakan
       private def check_session(request, response)
         # check session timeout
         if session_timeout?(request, response)
-          logger.debug "session timeout", user: request.session[:user],
-            update_at: request.session[:updated_at]
+          logger.debug "session timeout", user: request.session[:user], update_at: request.session[:updated_at]
           response.flash[:warn] = t("messages.session_timeout")
           response.session[:user] = nil
           response.session[:trusted] = false
@@ -121,13 +117,6 @@ module Yuzakan
         return false if request.session[:expires_at] >= response[:current_time].to_i
 
         true
-      end
-
-      private def check_configuration(request, response)
-        return unless self.class.required_configuration
-        return if response[:current_config]
-
-        reply_uninitialized(request, response)
       end
 
       private def check_authentication(request, response)

@@ -6,6 +6,9 @@ require "dry/monads"
 
 module Yuzakan
   class Action < Hanami::Action
+    include Deps["logger"]
+
+    # Other modules
     include Yuzakan::Actions::Flash
     include Yuzakan::Actions::Connection
     include Yuzakan::Actions::I18n
@@ -38,12 +41,12 @@ module Yuzakan
       config.contract_class = contract_class
     end
 
-    include Deps["logger"]
+    # override methods
 
-    # Cache
-    include Hanami::Action::Cache
-
-    cache_control :private, :no_cache
+    # skip to verify csrf token if Sec-Fetch-Site is same-origin.
+    def verify_csrf_token?(req, *)
+      super && req.get_header("HTTP_SEC_FETCH_SITE") != "same-origin"
+    end
 
     # handle
 
@@ -56,7 +59,8 @@ module Yuzakan
     end
 
     private def handle_invalid_csrf_token_error(request, _response, _exception)
-      logger.warn "CSRF attack", expected: request.session[CSRF_TOKEN], was: request_csrf_token(request)
+      logger.warn "CSRF attack", expected: request.session[CSRF_TOKEN], was: request_csrf_token(request),
+        fetch_site: req.get_header("HTTP_SEC_FETCH_SITE")
       halt 400
     end
   end

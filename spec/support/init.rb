@@ -9,9 +9,9 @@ def init_action_spec
 
   subject(:action) { described_class.new(**base_action_opts, **action_opts) }
 
+  let_session
   let_structs
   let_mock_repos
-  let_session
 
   let(:base_action_opts) {
     allow(config_repo).to receive(:current).and_return(config)
@@ -42,52 +42,85 @@ def init_action_spec
   let(:action_params) { {} }
 
   # shared examples
-  shared_examples "unauthorized" do
-    it "is unauthorized" do
+  shared_examples "unauthenticated" do
+    it "is unauthorized due to unauthenticated" do
       response = action.call(params)
       expect(response).to be_client_error
       expect(response.status).to eq 401
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:status]).to eq({code: 401, message: "Unauthorized"})
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
+        "messaage" => "ログインが必要です。",
+      })
     end
   end
 
-  shared_examples "forbidden" do
-    it "is forbidden" do
+  shared_examples "untrusted" do
+    it "is unauthorized due to untrusted" do
+      response = action.call(params)
+      expect(response).to be_client_error
+      expect(response.status).to eq 401
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
+        "messaage" => "多要素認証が必要です",
+      })
+    end
+  end
+
+  shared_examples "unauthorized" do
+    it "is forbidden due to unauthorized" do
       response = action.call(params)
       expect(response).to be_client_error
       expect(response.status).to eq 403
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:status]).to eq({code: 403, message: "Forbidden"})
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
+        "messaage" => "権限がありません。",
+      })
     end
   end
 
-  shared_examples "not found" do
-    it "is not found" do
+  shared_examples "non-existent" do
+    it "is not found due to non-existent" do
       response = action.call(params)
       expect(response).to be_client_error
       expect(response.status).to eq 404
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:status]).to eq({code: 404, message: "Not Found"})
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
+        "messaage" => "指定のエンタイティはありません。",
+      })
     end
   end
 
-  shared_examples "unauthorized session timeout" do
+  shared_examples "session timeout" do
     it "is unauthorized due to session timeout" do
       response = action.call(params)
       expect(response.status).to eq 401
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:status]).to eq({code: 401, message: "Unauthorized"})
-      expect(json[:flash]).to eq({warn: "セッションがタイムアウトしました。"})
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
+        "messaage" => "セッションがタイムアウトしました。",
+      })
     end
   end
 
+  shared_examples "session timeout" do
+    it "is forbidden due to session timeout" do
+      response = action.call(params)
+      expect(response.status).to eq 403
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json).to eq({
+        "messaage" => "セッションがタイムアウトしました。",
+      })
+    end
+  end
+
+
   shared_examples "bad id param" do
-    it "is failure with tilda id" do
+    it "is failure due to tilda id" do
       response = action.call({**params, id: "~"})
       expect(response).to be_client_error
       expect(response.status).to eq 422
@@ -97,7 +130,7 @@ def init_action_spec
       expect(json[:flash]).to eq({invalid: {id: ["形式が間違っています。"]}})
     end
 
-    it "is failure with exclamation id" do
+    it "is failure due to exclamation id" do
       response = action.call({**params, id: "!"})
       expect(response).to be_client_error
       expect(response.status).to eq 422
@@ -107,7 +140,7 @@ def init_action_spec
       expect(json[:flash]).to eq({invalid: {id: ["形式が間違っています。"]}})
     end
 
-    it "is failure with over 255 id" do
+    it "is failure due to over 255 id" do
       response = action.call({**params, id: "a" * 256})
       expect(response).to be_client_error
       expect(response.status).to eq 422
@@ -119,7 +152,7 @@ def init_action_spec
   end
 
   shared_examples "bad id param without tilda" do
-    it "is failure with exclamation id" do
+    it "is failure due to exclamation id" do
       response = action.call({**params, id: "!"})
       expect(response).to be_client_error
       expect(response.status).to eq 422
@@ -129,7 +162,7 @@ def init_action_spec
       expect(json[:flash]).to eq({invalid: {id: ["形式が間違っています。 または ~と値が一致しません。"]}})
     end
 
-    it "is failure with over 255 id" do
+    it "is failure due to over 255 id" do
       response = action.call({**params, id: "a" * 256})
       expect(response).to be_client_error
       expect(response.status).to eq 422
@@ -137,17 +170,6 @@ def init_action_spec
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json[:status]).to eq({code: 422, message: "Unprocessable Content"})
       expect(json[:flash]).to eq({invalid: {id: ["サイズが255を超えてはいけません。 または ~と値が一致しません。"]}})
-    end
-  end
-
-  shared_examples "forbidden session timeout" do
-    it "is forbidden due to session timeout" do
-      response = action.call(params)
-      expect(response.status).to eq 403
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:status]).to eq({code: 403, message: "Forbidden"})
-      expect(json[:flash]).to eq({warn: "セッションがタイムアウトしました。"})
     end
   end
 

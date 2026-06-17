@@ -66,11 +66,11 @@ ja:
     min_types?: '文字種は%{num}種類以上でなければなりません。'
     strong_password?: パスワードが弱すぎます。
     authenticated?: ログインが必要です。
-    trusted?: 信頼されていません。
+    trusted?: 多要素認証が必要です。
     authorized?: 権限がありません。
     initialized?: 初期化されていません。
     # messages
-    not_found: '%{name}が見つかりません。'
+    non_existent: 指定のエンタイティはありません。
     no_ability: '%{name}は%{action}を実行できません。'
     unchangeable: '%{name}は変更できません。'
     action:
@@ -80,7 +80,7 @@ ja:
       stopped_after_some: >-
         一部の%{target}については%{action}が実行されましたが、別の%{target}では%{action}時にエラーが発生し、処理が中断されました。
         実行されていない%{target}が存在する可能性があるため、 再度%{action}を実行してください。
-    invalid_csrf_token: CSRFトークンが不正です。
+    invalid_csrf_token: 異なるサイトからのアクセス、または、CSRFトークンが不正です。
     wrong_username_or_password: ユーザー名またはパスワードが違います。
     deny_network: 現在のネットワークからのログインは許可されていません。
     too_many_authentictaion_failure: >-
@@ -89,6 +89,7 @@ ja:
     prohibited_user: 管理者より使用が禁止されています。ログインが必要な場合は、管理者にお問い合わせください。
     geust_user: ゲストユーザーであるため、システムを使用することができません。
     not_login: ログインしていません。
+    internal_server_error: サーバー処理でエラーが発生しました。管理者に問い合わせてください。
   messages:
     action:
       success: '%{action}に成功しました。'
