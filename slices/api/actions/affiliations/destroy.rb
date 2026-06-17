@@ -19,9 +19,9 @@ module API
           check_params(request, response)
           id = take_exist_id(request, response, affiliation_repo)
 
-          affiliation = affiliation_repo.unset(id)
+          affiliation_repo.unset(id)
 
-          response[:affiliation] = affiliation
+          response.status = :no_content
         end
       end
     end

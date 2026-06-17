@@ -26,11 +26,9 @@ module API
 
           affiliation = affiliation_repo.set(id, **request.params)
 
-          if id != name
-            response.headers["Content-Location"] = "/api/affiliations/#{name}"
-            response[:location] = "/api/affiliations/#{name}"
-          end
-          response[:affiliation] = affiliation
+          response.fresh last_modified: affiliation.updated_at
+          response.format = :json
+          response.render(view, affiliation:)
         end
       end
     end

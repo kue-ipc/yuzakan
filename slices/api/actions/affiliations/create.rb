@@ -24,9 +24,9 @@ module API
           affiliation = affiliation_repo.set(name, **request.params)
 
           response.status = :created
-          response.headers["Content-Location"] = "/api/affiliations/#{name}"
-          response[:location] = "/api/affiliations/#{name}"
-          response[:affiliation] = affiliation
+          response.headers["Location"] = "/api/affiliations/#{name}"
+          response.format = :json
+          response.render(view, affiliation:)
         end
       end
     end

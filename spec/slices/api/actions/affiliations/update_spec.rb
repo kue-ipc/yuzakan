@@ -27,11 +27,12 @@ RSpec.describe API::Actions::Affiliations::Update do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({
-        name: affiliation.name,
-        label: affiliation.label,
-        note: affiliation.note,
+      expect(response.headers["Last-Modified"]).to eq affiliation.updated_at.httpdate
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
+        "name" => affiliation.name,
+        "label" => affiliation.label,
+        "note" => affiliation.note,
       })
     end
   end
@@ -42,25 +43,25 @@ RSpec.describe API::Actions::Affiliations::Update do
 
     context "when not exist" do
       include_context "when not exist"
-      it_behaves_like "not found"
+      it_behaves_like "non-existent"
     end
   end
 
-  it_behaves_like "forbidden"
+  it_behaves_like "unauthorized"
 
   context "when guest" do
     include_context "when guest"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when observer" do
     include_context "when observer"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when operator" do
     include_context "when operator"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when administrator" do

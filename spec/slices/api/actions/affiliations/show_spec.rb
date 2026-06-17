@@ -22,6 +22,7 @@ RSpec.describe API::Actions::Affiliations::Show do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      expect(response.headers["Last-Modified"]).to eq affiliation.updated_at.httpdate
       json = JSON.parse(response.body.first)
       expect(json).to eq({
         "name" => affiliation.name,
@@ -37,6 +38,7 @@ RSpec.describe API::Actions::Affiliations::Show do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      expect(response.headers["Last-Modified"]).to eq affiliation.updated_at.httpdate
       json = JSON.parse(response.body.first)
       expect(json).to eq({
         "name" => affiliation.name,
@@ -51,6 +53,7 @@ RSpec.describe API::Actions::Affiliations::Show do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      expect(response.headers["Last-Modified"]).to eq affiliation.updated_at.httpdate
       json = JSON.parse(response.body.first)
       expect(json).to be_nil
     end

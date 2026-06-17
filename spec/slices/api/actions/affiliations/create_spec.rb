@@ -22,13 +22,12 @@ RSpec.describe API::Actions::Affiliations::Create do
       expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      expect(response.headers["Content-Location"]).to eq "/api/affiliations/#{affiliation.name}"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:location]).to eq "/api/affiliations/#{affiliation.name}"
-      expect(json[:data]).to eq({
-        name: affiliation.name,
-        label: affiliation.label,
-        note: affiliation.note,
+      expect(response.headers["Location"]).to eq "/api/affiliations/#{affiliation.name}"
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
+        "name" => affiliation.name,
+        "label" => affiliation.label,
+        "note" => affiliation.note,
       })
     end
 
@@ -37,14 +36,13 @@ RSpec.describe API::Actions::Affiliations::Create do
       expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      expect(response.headers["Content-Location"]).to eq "/api/affiliations/#{affiliation.name}"
+      expect(response.headers["Location"]).to eq "/api/affiliations/#{affiliation.name}"
+      json = JSON.parse(response.body.first)
       # 返されるデータはdoubleで返すものなので、ついているものになる。
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:location]).to eq "/api/affiliations/#{affiliation.name}"
-      expect(json[:data]).to eq({
-        name: affiliation.name,
-        label: affiliation.label,
-        note: affiliation.note,
+      expect(json).to eq({
+        "name" => affiliation.name,
+        "label" => affiliation.label,
+        "note" => affiliation.note,
       })
     end
   end
@@ -54,8 +52,11 @@ RSpec.describe API::Actions::Affiliations::Create do
       response = action.call(params)
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:flash]).to eq({invalid: {name: ["重複しています。"]}})
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
+        "message" => "パラメーターが不正です。",
+        "invalid" => {"name" => ["重複しています。"]},
+      })
     end
   end
 
@@ -65,17 +66,23 @@ RSpec.describe API::Actions::Affiliations::Create do
       expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:flash]).to eq({invalid: {name: ["存在しません。"]}})
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
+        "message" => "パラメーターが不正です。",
+        "invalid" => {"name" => ["存在しません。"]},
+      })
     end
 
     it "is failure with bad name pattern" do
-      response = action.call({**params, name: "!"})
+      response = action.call({**params, "name" => "!"})
       expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:flash]).to eq({invalid: {name: ["形式が間違っています。"]}})
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
+        "message" => "パラメーターが不正です。",
+        "invalid" => {"name" => ["形式が間違っています。"]},
+      })
     end
   end
 
@@ -90,21 +97,21 @@ RSpec.describe API::Actions::Affiliations::Create do
     end
   end
 
-  it_behaves_like "forbidden"
+  it_behaves_like "unauthorized"
 
   context "when guest" do
     include_context "when guest"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when observer" do
     include_context "when observer"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when operator" do
     include_context "when operator"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when administrator" do

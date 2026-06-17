@@ -21,14 +21,7 @@ RSpec.describe API::Actions::Affiliations::Destroy do
     it "is ok" do
       response = action.call(params)
       expect(response).to be_successful
-      expect(response.status).to eq 200
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({
-        name: affiliation.name,
-        label: affiliation.label,
-        note: affiliation.note,
-      })
+      expect(response.status).to eq 204
     end
   end
 
@@ -39,26 +32,26 @@ RSpec.describe API::Actions::Affiliations::Destroy do
 
     context "when not exist" do
       include_context "when not exist"
-      it_behaves_like "not found"
+      include_examples "non-existent"
     end
   end
   # rubocop:enable RSpec/IncludeExamples
 
-  it_behaves_like "forbidden"
+  it_behaves_like "unauthorized"
 
   context "when guest" do
     include_context "when guest"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when observer" do
     include_context "when observer"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when operator" do
     include_context "when operator"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when administrator" do
