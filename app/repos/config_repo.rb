@@ -3,8 +3,6 @@
 module Yuzakan
   module Repos
     class ConfigRepo < Yuzakan::DB::Repo
-      commands :create, **CREATE_TIMESTAMP
-
       def created? = configs.exist?
       def current! = configs.one!
 
