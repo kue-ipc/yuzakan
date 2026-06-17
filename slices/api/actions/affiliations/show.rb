@@ -17,8 +17,7 @@ module API
           affiliation = affiliation_repo.get(id)
 
           response.format = :json
-          response[:affiliation] = affiliation
-          # response.render(view, affiliation:)
+          response.render(view, affiliation:)
         end
       end
     end

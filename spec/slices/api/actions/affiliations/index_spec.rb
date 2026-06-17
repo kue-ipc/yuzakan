@@ -15,8 +15,12 @@ RSpec.describe API::Actions::Affiliations::Index do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq([{name: affiliation.name, label: affiliation.label}])
+      expect(response.headers["Total-Count"]).to eq pager.total.to_s
+      expect(response.headers["Total-Pages"]).to eq pager.total_pages.to_s
+      expect(response.headers["Current-Page"]).to eq pager.current_page.to_s
+      expect(response.headers["Per-Page"]).to eq pager.per_page.to_s
+      json = JSON.parse(response.body.first)
+      expect(json).to eq([{"name" => affiliation.name, "label" => affiliation.label}])
     end
 
     it "is ok with params" do
@@ -24,35 +28,43 @@ RSpec.describe API::Actions::Affiliations::Index do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq([{name: affiliation.name, label: affiliation.label}])
+      expect(response.headers["Total-Count"]).to eq pager.total.to_s
+      expect(response.headers["Total-Pages"]).to eq pager.total_pages.to_s
+      expect(response.headers["Current-Page"]).to eq pager.current_page.to_s
+      expect(response.headers["Per-Page"]).to eq pager.per_page.to_s
+      json = JSON.parse(response.body.first)
+      expect(json).to eq([{"name" => affiliation.name, "label" => affiliation.label}])
     end
   end
 
-  it_behaves_like "forbidden"
+  shared_examples "index" do
+    it_behaves_like "ok"
+  end
+
+  it_behaves_like "unauthorized"
 
   context "when guest" do
     include_context "when guest"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when observer" do
     include_context "when observer"
-    it_behaves_like "ok"
+    it_behaves_like "index"
   end
 
   context "when operator" do
     include_context "when operator"
-    it_behaves_like "ok"
+    it_behaves_like "index"
   end
 
   context "when administrator" do
     include_context "when administrator"
-    it_behaves_like "ok"
+    it_behaves_like "index"
   end
 
   context "when superuser" do
     include_context "when superuser"
-    it_behaves_like "ok"
+    it_behaves_like "index"
   end
 end

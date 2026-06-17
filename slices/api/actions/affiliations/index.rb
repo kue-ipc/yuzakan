@@ -19,9 +19,12 @@ module API
 
           affiliations, pager = affiliation_repo.index(page:, per_page:, order:, query:, filter:)
 
+          response.headers["Total-Count"] = pager.total.to_s
+          response.headers["Total-Pages"] = pager.total_pages.to_s
+          response.headers["Current-Page"] = pager.current_page.to_s
+          response.headers["Per-Page"] = pager.per_page.to_s
           response.format = :json
-          response[:affiliations] = affiliations
-          response[:pager] = pager
+          response.render(view, affiliations:)
         end
       end
     end
