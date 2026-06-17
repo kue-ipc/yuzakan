@@ -21,12 +21,10 @@ module API
         def handle(request, response)
           check_params(request, response)
 
-          affiliation = affiliation_repo.get!(request.params[:id])
+          name = request.params[:id]
+          params = request.params.to_h.slice(:label, :note)
 
-          id = take_exist_id(request, response, affiliation_repo)
-          name = take_unique_name(request, response, affiliation_repo)
-
-          affiliation = affiliation_repo.put(id, **request.params)
+          affiliation = affiliation_repo.put!(name, **params)
 
           response.fresh last_modified: affiliation.updated_at
           response.format = :json

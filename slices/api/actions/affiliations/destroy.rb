@@ -17,9 +17,10 @@ module API
 
         def handle(request, response)
           check_params(request, response)
-          id = take_exist_id(request, response, affiliation_repo)
 
-          affiliation_repo.unset(id)
+          name = request.params[:id]
+
+          affiliation_repo.unset!(name)
 
           response.status = :no_content
         end

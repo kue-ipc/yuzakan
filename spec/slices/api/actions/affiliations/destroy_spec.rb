@@ -4,7 +4,7 @@ RSpec.describe API::Actions::Affiliations::Destroy do
   init_action_spec
 
   let(:action_opts) {
-    allow(affiliation_repo).to receive_messages(exist?: true, unset: affiliation)
+    allow(affiliation_repo).to receive(:unset!).with("affiliation42").and_return(affiliation)
     {affiliation_repo: affiliation_repo}
   }
 
@@ -12,7 +12,7 @@ RSpec.describe API::Actions::Affiliations::Destroy do
 
   shared_context "when not exist" do
     let(:action_opts) {
-      allow(affiliation_repo).to receive_messages(exist?: false)
+      allow(affiliation_repo).to receive(:unset!).with("affiliation42").and_raise(ROM::TupleCountMismatchError)
       {affiliation_repo: affiliation_repo}
     }
   end

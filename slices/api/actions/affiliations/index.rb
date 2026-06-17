@@ -4,7 +4,9 @@ module API
   module Actions
     module Affiliations
       class Index < API::IndexAction
-        include Deps["repos.affiliation_repo"]
+        include Deps[
+          "repos.affiliation_repo",
+        ]
 
         security_level 2
 

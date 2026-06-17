@@ -28,9 +28,13 @@ module Yuzakan
       private def by_name(name) = root.by_name(name)
       def get(name) = by_name(name).one
       def get!(name) = by_name(name).one!
-      def put(name, **) = by_name(name).changeset(:update, **).map(:touch).commit
+      def put(name, **) = by_name(name).changeset(:update, **, name: name).map(:touch).commit
+      def put!(...) = put(...) || raise(TupleCountMismatchError, "The relation does not contain any tuples")
       def set(name, **) = root.changeset(:create, **, name: name).map(:add_timestamps).commit
       def unset(name) = by_name(name).changeset(:delete).commit
+      def unset!(...) = unset(...) || raise(TupleCountMismatchError, "The relation does not contain any tuples")
+      def rename(old_name, new_name) = by_name(old_name).changeset(:update, name: new_name).map(:touch).commit
+      def rename!(...) = rename(...) || raise(TupleCountMismatchError, "The relation does not contain any tuples")
       def exist?(name) = by_name(name).exist?
       def list = root.pluck(:name)
 
