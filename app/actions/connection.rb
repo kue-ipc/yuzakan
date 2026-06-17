@@ -67,7 +67,7 @@ module Yuzakan
         request.ip || raise("client ip is missing")
       end
 
-      private def current_config(_request, _response) = config_repo.current
+      private def current_config(_request, _response) = config_repo.current!
 
       # after check session
 

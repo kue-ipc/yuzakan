@@ -22,18 +22,9 @@ module Yuzakan
       ]
 
       def call
-        config = step current_config
+        config = config_repo.current!
         rule = step rule_from_config(config)
         step generate_password(rule)
-      end
-
-      private def current_config
-        config = config_repo.current
-        if config
-          Success(config)
-        else
-          Failure([:failure, t("errors.uninitialized")])
-        end
       end
 
       private def rule_from_config(config)

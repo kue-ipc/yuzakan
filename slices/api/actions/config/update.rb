@@ -49,7 +49,7 @@ module API
           params = convert_unique_chars(:password_prohibited_chars, params)
           params = convert_unique_chars(:generate_password_chars, params)
 
-          config = config_repo.set(**params)
+          config = config_repo.update_all(**params)
           unless config
             response.flash[:success] = t("messages.action.failure", action: t("actions.update_config"))
             halt_json request, response, 422

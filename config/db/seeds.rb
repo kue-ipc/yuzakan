@@ -20,7 +20,7 @@ Hanami.app["cache_store"].clear
 
 # setup config
 config_repo = Hanami.app["repos.config_repo"]
-config_repo.set(title: title, description: description) unless config_repo.current
+config_repo.create(title: title, description: description) unless config_repo.created?
 
 # setup networks
 network_repo = Hanami.app["repos.network_repo"]

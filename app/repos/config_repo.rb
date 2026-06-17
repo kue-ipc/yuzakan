@@ -3,12 +3,13 @@
 module Yuzakan
   module Repos
     class ConfigRepo < Yuzakan::DB::Repo
-      def get = configs.last
-      alias current get
+      commands :create, **CREATE_TIMESTAMP
 
-      def set(**)
-        configs.command(:update, **UPDATE_TIMESTAMP).call(**) ||
-          configs.command(:create, **CREATE_TIMESTAMP).call(**)
+      def created? = configs.exist?
+      def current! = configs.one!
+
+      def update_all(**)
+        configs.command(:update, **UPDATE_TIMESTAMP).call(**)
       end
     end
   end
