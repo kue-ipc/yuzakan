@@ -22,7 +22,6 @@ module Yuzakan
           "repos.action_log_repo",
           login_view: "views.home.login",
           mfa_view: "views.home.mfa",
-          unready_view: "views.home.unready",
         ]
         action.extend Dry::Core::ClassAttributes
 
@@ -155,11 +154,6 @@ module Yuzakan
       end
 
       # reply
-
-      private def reply_uninitialized(_request, response)
-        response.flash[:error] = t("errors.initialized?")
-        halt 503, response.render(unready_view)
-      end
 
       private def reply_unauthenticated(_request, response)
         halt 401, response.render(login_view)

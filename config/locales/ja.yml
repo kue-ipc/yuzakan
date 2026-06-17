@@ -68,8 +68,7 @@ ja:
     authenticated?: ログインが必要です。
     trusted?: 多要素認証が必要です。
     authorized?: 権限がありません。
-    initialized?: 初期化されていません。
-    # messages
+\    # messages
     non_existent: 指定のエンタイティはありません。
     no_ability: '%{name}は%{action}を実行できません。'
     unchangeable: '%{name}は変更できません。'
