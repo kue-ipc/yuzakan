@@ -6,7 +6,7 @@ module API
       private def check_params(request, response)
         return if request.params.valid?
 
-        halt_json request, response, 422, invalid: request.params.errors
+        halt_json request, response, 422, message: t("errors.invalid_params"), invalid: request.params.errors
       end
 
       private def take_unique_name(request, response, repo)
@@ -15,7 +15,7 @@ module API
         return name if name == request.params[:id]
         return name unless repo.exist?(name)
 
-        halt_json request, response, 422, invalid: {name: [t("errors.uniq?")]}
+        halt_json request, response, 422, message: t("errors.invalid_params"), invalid: {name: [t("errors.uniq?")]}
       end
 
       private def take_exist_id(request, response, repo)

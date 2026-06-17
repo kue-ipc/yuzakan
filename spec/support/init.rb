@@ -50,7 +50,7 @@ def init_action_spec
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first)
       expect(json).to eq({
-        "messaage" => "ログインが必要です。",
+        "message" => "ログインが必要です。",
       })
     end
   end
@@ -63,7 +63,7 @@ def init_action_spec
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first)
       expect(json).to eq({
-        "messaage" => "多要素認証が必要です",
+        "message" => "多要素認証が必要です",
       })
     end
   end
@@ -76,7 +76,7 @@ def init_action_spec
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first)
       expect(json).to eq({
-        "messaage" => "権限がありません。",
+        "message" => "権限がありません。",
       })
     end
   end
@@ -89,7 +89,7 @@ def init_action_spec
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first)
       expect(json).to eq({
-        "messaage" => "指定のエンタイティはありません。",
+        "message" => "指定のエンタイティはありません。",
         "invalid" => {"id" => ["存在しません。"]},
       })
     end
@@ -102,7 +102,7 @@ def init_action_spec
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first)
       expect(json).to eq({
-        "messaage" => "セッションがタイムアウトしました。",
+        "message" => "セッションがタイムアウトしました。",
       })
     end
   end
@@ -114,11 +114,10 @@ def init_action_spec
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first)
       expect(json).to eq({
-        "messaage" => "セッションがタイムアウトしました。",
+        "message" => "セッションがタイムアウトしました。",
       })
     end
   end
-
 
   shared_examples "bad id param" do
     it "is failure due to tilda id" do
@@ -128,8 +127,8 @@ def init_action_spec
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first)
       expect(json).to eq({
-        message: "URLパラメータが不正です。",
-        invalid: {id: ["形式が間違っています。"]},
+        "message" => "パラメーターが不正です。",
+        "invalid" => {"id" => ["形式が間違っています。"]},
       })
     end
 
@@ -140,8 +139,8 @@ def init_action_spec
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first)
       expect(json).to eq({
-        message: "URLパラメータが不正です。",
-        invalid: {id: ["形式が間違っています。"]},
+        "message" => "パラメーターが不正です。",
+        "invalid" => {"id" => ["形式が間違っています。"]},
       })
     end
 
@@ -152,8 +151,8 @@ def init_action_spec
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first)
       expect(json).to eq({
-        message: "URLパラメータが不正です。",
-        invalid: {id: ["サイズが255を超えてはいけません。"]},
+        "message" => "パラメーターが不正です。",
+        "invalid" => {"id" => ["サイズが255を超えてはいけません。"]},
       })
     end
   end
@@ -166,8 +165,8 @@ def init_action_spec
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first)
       expect(json).to eq({
-        message: "URLパラメータが不正です。",
-        invalid: {id: ["形式が間違っています。 または ~と値が一致しません。"]},
+        "message" => "パラメーターが不正です。",
+        "invalid" => {"id" => ["形式が間違っています。 または ~と値が一致しません。"]},
       })
     end
 
@@ -178,8 +177,8 @@ def init_action_spec
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first)
       expect(json).to eq({
-        message: "URLパラメータが不正です。",
-        invalid: {id: ["形式が間違っています。 または ~と値が一致しません。"]},
+        "message" => "パラメーターが不正です。",
+        "invalid" => {"id" => ["形式が間違っています。 または ~と値が一致しません。"]},
       })
     end
   end

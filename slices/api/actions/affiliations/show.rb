@@ -7,24 +7,18 @@ module API
         include Deps["repos.affiliation_repo"]
 
         params do
-          required(:id) { filled(:name, max_size?: 255) | eql?("~") }
+          required(:id).filled(:name, max_size?: 255)
         end
 
         def handle(request, response)
           check_params(request, response)
 
-          affiliation =
-            if request.params[:id] == "~"
-              # OPTIMIZE: affiliation_idがnilのときは無駄なDBアクセスを避けられるが、
-              # 　        テストが複雑になるので、このままにしておく。
-              affiliation_repo.find(response[:current_user].affiliation_id)
-            else
-              id = take_exist_id(request, response, affiliation_repo)
-              affiliation_repo.get(id)
-            end
+          id = take_exist_id(request, response, affiliation_repo)
+          affiliation = affiliation_repo.get(id)
 
           response.format = :json
           response[:affiliation] = affiliation
+          # response.render(view, affiliation:)
         end
       end
     end
