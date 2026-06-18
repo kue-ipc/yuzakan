@@ -9,7 +9,7 @@ RSpec.describe API::Actions::System::Show do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         url: "http://0.0.0.0:2300/",
         title: config.title,
@@ -45,7 +45,7 @@ RSpec.describe API::Actions::System::Show do
       response = action.call(params)
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         url: "http://0.0.0.0:2300/",
         title: config.title,
@@ -63,7 +63,7 @@ RSpec.describe API::Actions::System::Show do
       response = action.call(params)
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         url: "http://0.0.0.0:2300/",
         title: config.title,
@@ -81,7 +81,7 @@ RSpec.describe API::Actions::System::Show do
       response = action.call(params)
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         url: "http://0.0.0.0:2300/",
         app: {name: "Yuzakan", version: Yuzakan::Version::VERSION,

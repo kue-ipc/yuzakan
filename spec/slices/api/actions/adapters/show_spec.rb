@@ -20,8 +20,8 @@ RSpec.describe API::Actions::Adapters::Show do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
-      expect(json).to eq({"name" => "dummy", "label" => "ダミー"})
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json).to eq({name: "dummy", label: "ダミー"})
     end
 
     describe "with test id" do
@@ -30,8 +30,8 @@ RSpec.describe API::Actions::Adapters::Show do
         expect(response).to be_successful
         expect(response.status).to eq 200
         expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-        json = JSON.parse(response.body.first)
-        expect(json).to eq({"name" => "test", "label" => "テスト"})
+        json = JSON.parse(response.body.first, symbolize_names: true)
+        expect(json).to eq({name: "test", label: "テスト"})
       end
     end
   end
@@ -42,13 +42,13 @@ RSpec.describe API::Actions::Adapters::Show do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
-        "name" => "dummy",
-        "label" => "ダミー",
-        "group" => false,
-        "primary" => false,
-        "params" => {"schema" => {"type" => "object", "properties" => {}, "required" => []}},
+        name: "dummy",
+        label: "ダミー",
+        group: false,
+        primary: false,
+        params: {schema: {type: "object", properties: {}, required: []}},
       })
     end
 
@@ -58,32 +58,32 @@ RSpec.describe API::Actions::Adapters::Show do
         expect(response).to be_successful
         expect(response.status).to eq 200
         expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-        json = JSON.parse(response.body.first)
+        json = JSON.parse(response.body.first, symbolize_names: true)
         expect(json).to eq({
-          "name" => "test",
-          "label" => "テスト",
-          "group" => true,
-          "primary" => true,
-          "params" => {"schema" => {
-            "properties" => {
-              "str" => {"description" => "詳細", "maxLength" => 255, "title" => "文字列", "type" => "string"},
-              "text" => {"type" => "string"},
-              "int" => {"type" => "integer"},
-              "float" => {"type" => "number"},
-              "bool" => {"type" => "boolean"},
-              "date" => {"type" => "date"},
-              "time" => {"type" => "time"},
-              "datetime" => {"type" => "datetime"},
-              "requiredStr" => {"maxLength" => 255, "type" => "string"},
-              "filledStr" => {"maxLength" => 255, "minLength" => 1, "type" => "string"},
-              "patternStr" => {"maxLength" => 255, "pattern" => "^[a-z]*$", "type" => "string"},
-              "fixedStr" => {"const" => "abc", "type" => "string"},
-              "defaultStr" => {"default" => "xyz", "maxLength" => 255, "type" => "string"},
-              "encryptedStr" => {"maxLength" => 255, "type" => "string"},
-              "list" => {"enum" => ["one", "two", "three"], "type" => "string"},
+          name: "test",
+          label: "テスト",
+          group: true,
+          primary: true,
+          params: {schema: {
+            properties: {
+              str: {description: "詳細", maxLength: 255, title: "文字列", type: "string"},
+              text: {type: "string"},
+              int: {type: "integer"},
+              float: {type: "number"},
+              bool: {type: "boolean"},
+              date: {type: "date"},
+              time: {type: "time"},
+              datetime: {type: "datetime"},
+              requiredStr: {maxLength: 255, type: "string"},
+              filledStr: {maxLength: 255, minLength: 1, type: "string"},
+              patternStr: {maxLength: 255, pattern: "^[a-z]*$", type: "string"},
+              fixedStr: {const: "abc", type: "string"},
+              defaultStr: {default: "xyz", maxLength: 255, type: "string"},
+              encryptedStr: {maxLength: 255, type: "string"},
+              list: {enum: ["one", "two", "three"], type: "string"},
             },
-            "required" => ["requiredStr"],
-            "type" => "object",
+            required: ["requiredStr"],
+            type: "object",
           }},
         })
       end

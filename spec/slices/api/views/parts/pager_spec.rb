@@ -22,12 +22,12 @@ RSpec.describe API::Views::Parts::Pager do
     json = subject.to_json
     data = JSON.parse(json)
     expect(data).to eq({
-      "currentPage" => value.current_page,
-      "perPage" => value.per_page,
-      "totalPages" => value.total_pages,
-      "total" => value.total,
-      "firstInPage" => value.first_in_page,
-      "lastInPage" => value.last_in_page,
+      currentPage: value.current_page,
+      perPage: value.per_page,
+      totalPages: value.total_pages,
+      total: value.total,
+      firstInPage: value.first_in_page,
+      lastInPage: value.last_in_page,
     })
   end
 end

@@ -14,17 +14,17 @@ RSpec.describe API::Actions::Adapters::Index do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to contain_exactly(
-        {"name" => "local", "label" => "ローカル"},
-        {"name" => "ldap", "label" => "LDAP"},
-        {"name" => "ad", "label" => "Active Directory"},
-        {"name" => "posix_ldap", "label" => "Posix LDAP"},
-        {"name" => "samba_ldap", "label" => "Samba LDAP"},
-        {"name" => "google", "label" => "Google Workspace"},
-        {"name" => "test", "label" => "テスト"},
-        {"name" => "dummy", "label" => "ダミー"},
-        {"name" => "mock", "label" => "モック"})
+        {name: "local", label: "ローカル"},
+        {name: "ldap", label: "LDAP"},
+        {name: "ad", label: "Active Directory"},
+        {name: "posix_ldap", label: "Posix LDAP"},
+        {name: "samba_ldap", label: "Samba LDAP"},
+        {name: "google", label: "Google Workspace"},
+        {name: "test", label: "テスト"},
+        {name: "dummy", label: "ダミー"},
+        {name: "mock", label: "モック"})
     end
   end
 

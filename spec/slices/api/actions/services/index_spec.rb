@@ -13,7 +13,7 @@ RSpec.describe API::Actions::Services::Index do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq [
         {name: service.name, label: service.label},
         {name: another_service.name, label: another_service.label},

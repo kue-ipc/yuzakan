@@ -27,7 +27,7 @@ RSpec.describe API::Actions::Attrs::Show do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         **struct_to_hash(attr, except: [:mappings]),
         mappings: attr.mappings.map { |mapping| struct_to_hash(mapping, except: [:attr]) },
@@ -46,7 +46,7 @@ RSpec.describe API::Actions::Attrs::Show do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq(attr.to_h.slice(:name, :label, :category, :type))
     end
 

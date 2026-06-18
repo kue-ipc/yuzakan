@@ -28,11 +28,11 @@ RSpec.describe API::Actions::Affiliations::Create do
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       expect(response.headers["Location"]).to eq "/api/affiliations/#{affiliation.name}"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
-        "name" => affiliation.name,
-        "label" => affiliation.label,
-        "note" => affiliation.note,
+        name: affiliation.name,
+        label: affiliation.label,
+        note: affiliation.note,
       })
     end
 
@@ -42,12 +42,12 @@ RSpec.describe API::Actions::Affiliations::Create do
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       expect(response.headers["Location"]).to eq "/api/affiliations/#{affiliation.name}"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       # 返されるデータはdoubleで返すものなので、ついているものになる。
       expect(json).to eq({
-        "name" => affiliation.name,
-        "label" => "",
-        "note" => "",
+        name: affiliation.name,
+        label: "",
+        note: "",
       })
     end
   end
@@ -57,10 +57,10 @@ RSpec.describe API::Actions::Affiliations::Create do
       response = action.call(params)
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
-        "message" => "パラメーターが不正です。",
-        "invalid" => {"name" => ["重複しています。"]},
+        message: "パラメーターが不正です。",
+        invalid: {name: ["重複しています。"]},
       })
     end
   end
@@ -71,22 +71,22 @@ RSpec.describe API::Actions::Affiliations::Create do
       expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
-        "message" => "パラメーターが不正です。",
-        "invalid" => {"name" => ["存在しません。"]},
+        message: "パラメーターが不正です。",
+        invalid: {name: ["存在しません。"]},
       })
     end
 
     it "is failure with bad name pattern" do
-      response = action.call({**params, "name" => "!"})
+      response = action.call({**params, name: "!"})
       expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
-        "message" => "パラメーターが不正です。",
-        "invalid" => {"name" => ["形式が間違っています。"]},
+        message: "パラメーターが不正です。",
+        invalid: {name: ["形式が間違っています。"]},
       })
     end
   end

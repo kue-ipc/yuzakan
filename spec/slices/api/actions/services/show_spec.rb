@@ -17,7 +17,7 @@ RSpec.describe API::Actions::Services::Show do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq(struct_to_hash(service, case: :camel))
     end
   end
@@ -28,7 +28,7 @@ RSpec.describe API::Actions::Services::Show do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq(struct_to_hash(service, case: :camel).slice(:name, :label))
     end
   end

@@ -35,7 +35,7 @@ RSpec.describe API::Actions::Users::Password::Update do
     expect(response).to be_successful
     expect(response.status).to eq 200
     expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-    json = JSON.parse(response.body.first)
+    json = JSON.parse(response.body.first, symbolize_names: true)
     expect(json).to eq({
       password: new_password,
       services: [service.name],
@@ -151,7 +151,7 @@ RSpec.describe API::Actions::Users::Password::Update do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         password: new_password,
         services: [],

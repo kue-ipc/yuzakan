@@ -48,9 +48,9 @@ def init_action_spec
       expect(response).to be_client_error
       expect(response.status).to eq 401
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
-        "message" => "ログインが必要です。",
+        message: "ログインが必要です。",
       })
     end
   end
@@ -61,9 +61,9 @@ def init_action_spec
       expect(response).to be_client_error
       expect(response.status).to eq 401
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
-        "message" => "多要素認証が必要です",
+        message: "多要素認証が必要です",
       })
     end
   end
@@ -74,9 +74,9 @@ def init_action_spec
       expect(response).to be_client_error
       expect(response.status).to eq 403
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
-        "message" => "権限がありません。",
+        message: "権限がありません。",
       })
     end
   end
@@ -87,9 +87,9 @@ def init_action_spec
       expect(response).to be_client_error
       expect(response.status).to eq 404
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
-        "message" => "指定のエンタイティはありません。",
+        message: "指定のエンタイティはありません。",
       })
     end
   end
@@ -99,9 +99,9 @@ def init_action_spec
       response = action.call(params)
       expect(response.status).to eq 401
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
-        "message" => "セッションがタイムアウトしました。",
+        message: "セッションがタイムアウトしました。",
       })
     end
   end
@@ -112,10 +112,10 @@ def init_action_spec
       expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
-        "message" => "パラメーターが不正です。",
-        "invalid" => {"id" => ["形式が間違っています。"]},
+        message: "パラメーターが不正です。",
+        invalid: {id: ["形式が間違っています。"]},
       })
     end
 
@@ -124,10 +124,10 @@ def init_action_spec
       expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
-        "message" => "パラメーターが不正です。",
-        "invalid" => {"id" => ["形式が間違っています。"]},
+        message: "パラメーターが不正です。",
+        invalid: {id: ["形式が間違っています。"]},
       })
     end
 
@@ -136,10 +136,10 @@ def init_action_spec
       expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
-        "message" => "パラメーターが不正です。",
-        "invalid" => {"id" => ["サイズが255を超えてはいけません。"]},
+        message: "パラメーターが不正です。",
+        invalid: {id: ["サイズが255を超えてはいけません。"]},
       })
     end
   end
@@ -150,10 +150,10 @@ def init_action_spec
       expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
-        "message" => "パラメーターが不正です。",
-        "invalid" => {"id" => ["形式が間違っています。 または ~と値が一致しません。"]},
+        message: "パラメーターが不正です。",
+        invalid: {id: ["形式が間違っています。 または ~と値が一致しません。"]},
       })
     end
 
@@ -162,10 +162,10 @@ def init_action_spec
       expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
+      json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
-        "message" => "パラメーターが不正です。",
-        "invalid" => {"id" => ["形式が間違っています。 または ~と値が一致しません。"]},
+        message: "パラメーターが不正です。",
+        invalid: {id: ["形式が間違っています。 または ~と値が一致しません。"]},
       })
     end
   end

@@ -19,8 +19,8 @@ RSpec.describe API::Actions::Affiliations::Index do
       expect(response.headers["Total-Pages"]).to eq pager.total_pages.to_s
       expect(response.headers["Current-Page"]).to eq pager.current_page.to_s
       expect(response.headers["Per-Page"]).to eq pager.per_page.to_s
-      json = JSON.parse(response.body.first)
-      expect(json).to eq([{"name" => affiliation.name, "label" => affiliation.label}])
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json).to eq([{name: affiliation.name, label: affiliation.label}])
     end
 
     it "is ok with params" do
@@ -32,8 +32,8 @@ RSpec.describe API::Actions::Affiliations::Index do
       expect(response.headers["Total-Pages"]).to eq pager.total_pages.to_s
       expect(response.headers["Current-Page"]).to eq pager.current_page.to_s
       expect(response.headers["Per-Page"]).to eq pager.per_page.to_s
-      json = JSON.parse(response.body.first)
-      expect(json).to eq([{"name" => affiliation.name, "label" => affiliation.label}])
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json).to eq([{name: affiliation.name, label: affiliation.label}])
     end
   end
 
