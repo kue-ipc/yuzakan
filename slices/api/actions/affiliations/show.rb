@@ -9,7 +9,7 @@ module API
         ]
 
         params do
-          required(:id).filled(:name, max_size?: 255)
+          required(:id).filled(:name, max_size?: MAX_STRING_SIZE)
         end
 
         def handle(request, response)

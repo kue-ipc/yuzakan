@@ -12,9 +12,9 @@ module API
         security_level 4
 
         params do
-          required(:name).filled(:name, max_size?: 255)
-          optional(:label).value(:str?, max_size?: 255)
-          optional(:note).value(:str?, max_size?: 4096)
+          required(:name).filled(:name, max_size?: MAX_STRING_SIZE)
+          optional(:label).value(:str?, max_size?: MAX_STRING_SIZE)
+          optional(:note).value(:str?, max_size?: MAX_TEXT_SIZE)
         end
 
         def handle(request, response)

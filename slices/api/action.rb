@@ -3,7 +3,8 @@
 
 module API
   class Action < Yuzakan::Action
-    MAX_PER_PAGE = 1000
+    MAX_STRING_SIZE = 255
+    MAX_TEXT_SIZE = 65535
 
     include API::Actions::MessageJSON
     include API::Actions::ParamsInspection
