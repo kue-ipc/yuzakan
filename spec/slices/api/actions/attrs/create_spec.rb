@@ -4,15 +4,17 @@ RSpec.describe API::Actions::Attrs::Create do
   init_action_spec
 
   before do
-    allow(attr).to receive_messages(mappings: [mapping])
+    allow(attr).to receive(:mappings).with(no_args).and_return([mapping])
   end
 
   let(:action_opts) {
-    allow(attr_repo).to receive_messages(exist?: false, last_order: 9999,
-      create_with_mappings: attr, renumber_order: 0,
-      get_with_mappings_and_services: attr)
+    allow(attr_repo).to receive(:exist?).with(attr.name).and_return(false)
+    allow(attr_repo).to receive(:last_order).with(no_args).and_return(9999)
+    allow(attr_repo).to receive(:create_with_mappings).and_return(attr) # TODO: 引数のマッチング
+    allow(attr_repo).to receive(:renumber_order).with(attr).and_return(0)
+    allow(attr_repo).to receive(:get_with_mappings_and_services).with(attr.name).and_return(attr)
     allow(attr_repo).to receive(:transaction).and_yield
-    allow(service_repo).to receive_messages(all: [mapping.service])
+    allow(service_repo).to receive(:all).with(no_args).and_return([mapping.service])
     {attr_repo: attr_repo, service_repo: service_repo}
   }
 

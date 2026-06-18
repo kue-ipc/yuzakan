@@ -3,7 +3,19 @@
 RSpec.describe API::Actions::Services::Create do
   init_action_spec
 
-  let(:action_opts) { {service_repo: service_repo, adapter_repo: adapter_repo} }
+  let(:action_opts) {
+    allow(service_repo).to receive_messages(
+      all: [service, another_service],
+      get: nil, set: service, unset: nil, exist?: false,
+      last_order: 42, renumber_order: 0)
+    allow(service_repo).to receive(:transaction).and_yield
+
+    allow(service_repo).to receive(:get).with("service42").and_return(service)
+    # allow(service_repo).to receive(:set).with("service42", anything).and_return(service)
+    allow(service_repo).to receive(:unset).with("service42").and_return(service)
+    allow(service_repo).to receive(:exist?).with("service42").and_return(true)
+    {service_repo: service_repo}
+  }
 
   let(:action_params) { struct_to_hash(service) }
 

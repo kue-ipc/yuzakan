@@ -3,7 +3,27 @@
 RSpec.describe API::Actions::Adapters::Index do
   init_action_spec
 
-  let(:action_opts) { {adapter_repo: adapter_repo} }
+  let(:action_opts) {
+    #     dummy_adapter = Yuzakan::AdapterRepo::AdapterStruct.new(name: "dummy", class: Yuzakan::Adapters::Dummy)
+    #     mock_adapter = Yuzakan::AdapterRepo::AdapterStruct.new(name: "mock", class: Yuzakan::Adapters::Mock)
+    #     test_adapter = Yuzakan::AdapterRepo::AdapterStruct.new(name: "test", class: Yuzakan::Adapters::Test)
+    #     vendor_dummy_adapter = Yuzakan::AdapterRepo::AdapterStruct.new(name: "vendor.dummy", class: Yuzakan::Adapters::Dummy)
+
+    #     allow(adapetr_repo).to receive(:all).and_return([
+    #       dummy_adapter,
+    #       mock_adapter,
+    #       test_adapter,
+    #       vendor_dummy_adapter,
+    #     ])
+    #     allow(adapetr_repo).to receive(:exist?).with("dummy").and_return(true)
+    #     allow(adapetr_repo).to receive(:get).with("dummy").and_return(dummy_adapter)
+    #     allow(adapetr_repo).to receive(:exist?).with("test").and_return(true)
+    #     allow(adapetr_repo).to receive(:get).with("test").and_return(test_adapter)
+    #     allow(adapetr_repo).to receive(:exist?).with("hoge").and_return(false)
+
+    # {adapter_repo: adapter_repo}
+    {}
+  }
 
   shared_examples "ok" do
     it "is ok" do
