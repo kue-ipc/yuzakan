@@ -4,10 +4,15 @@ RSpec.describe API::Actions::Affiliations::Create do
   init_action_spec
 
   let(:action_opts) {
-    allow(affiliation_repo).to receive_messages(exist?: false, set: affiliation)
+    allow(affiliation_repo).to receive(:exist?).with(affiliation.name).and_return(false)
+    allow(affiliation_repo).to receive(:set).with(affiliation.name, **affiliation_params).and_return(affiliation)
+    allow(affiliation_repo).to receive(:set).with(affiliation.name).and_return(affiliation_without_params)
     {affiliation_repo: affiliation_repo}
   }
-  let(:action_params) { struct_to_hash(affiliation) }
+  let(:action_params) { {name: affiliation.name, **affiliation_params} }
+
+  let(:affiliation_params) { struct_to_hash(affiliation, except: [:name]) }
+  let(:affiliation_without_params) { Factory.structs[:affiliation_without_params, name: affiliation.name] }
 
   shared_context "when exist" do
     let(:action_opts) {
@@ -41,8 +46,8 @@ RSpec.describe API::Actions::Affiliations::Create do
       # 返されるデータはdoubleで返すものなので、ついているものになる。
       expect(json).to eq({
         "name" => affiliation.name,
-        "label" => affiliation.label,
-        "note" => affiliation.note,
+        "label" => "",
+        "note" => "",
       })
     end
   end

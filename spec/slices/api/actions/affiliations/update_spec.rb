@@ -4,18 +4,17 @@ RSpec.describe API::Actions::Affiliations::Update do
   init_action_spec
 
   let(:action_opts) {
-    allow(affiliation_repo).to receive(:put!).with(struct_name, **struct_params).and_return(affiliation)
+    allow(affiliation_repo).to receive(:put!).with(affiliation.name, **affiliation_params).and_return(affiliation)
     {affiliation_repo: affiliation_repo}
   }
-  let(:action_params) { {id: struct_name, **struct_params} }
+  let(:action_params) { {id: affiliation.name, **affiliation_params} }
 
-  let(:struct_name) { affiliation.name }
-  let(:struct_params) { struct_to_hash(affiliation, except: [:name]) }
+  let(:affiliation_params) { struct_to_hash(affiliation, except: [:name]) }
 
   shared_context "when not exist" do
     let(:action_opts) {
       allow(affiliation_repo).to(
-        receive(:put!).with(struct_name, **struct_params).and_raise(ROM::TupleCountMismatchError))
+        receive(:put!).with(affiliation.name, **affiliation_params).and_raise(ROM::TupleCountMismatchError))
       {affiliation_repo: affiliation_repo}
     }
   end

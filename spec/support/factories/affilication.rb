@@ -7,3 +7,8 @@ Factory.define(:affiliation) do |f|
 
   f.timestamps
 end
+
+Factory.define(affiliation_without_params: :affiliation) do |f|
+  f.label "" # default
+  f.note "" # default
+end
