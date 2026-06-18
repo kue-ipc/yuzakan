@@ -21,6 +21,14 @@ module API
       optional(:match).filled(:str?, included_in?: MATCH_PATTERNS)
     end
 
+    private def index_params_from_request(request)
+      params = request.params.to_h.slice(:page, :per_page)
+      params[:order] = order_from_params(request.params)
+      params[:query] = query_from_params(request.params)
+      params[:filter] = filter_from_params(request.params)
+      params
+    end
+
     private def order_from_params(params)
       return nil unless params[:order]
 

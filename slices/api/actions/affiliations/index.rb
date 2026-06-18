@@ -13,13 +13,9 @@ module API
         def handle(request, response)
           check_params(request, response)
 
-          page = request.params[:page]
-          per_page = request.params[:per_page]
-          order = order_from_params(request.params)
-          query = query_from_params(request.params)
-          filter = filter_from_params(request.params)
+          params = index_params_from_request(request)
 
-          affiliations, pager = affiliation_repo.index(page:, per_page:, order:, query:, filter:)
+          affiliations, pager = affiliation_repo.index(**params)
 
           response.headers["Total-Count"] = pager.total.to_s
           response.headers["Total-Pages"] = pager.total_pages.to_s
