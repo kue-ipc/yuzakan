@@ -89,6 +89,7 @@ ja:
     prohibited_user: 管理者より使用が禁止されています。ログインが必要な場合は、管理者にお問い合わせください。
     geust_user: ゲストユーザーであるため、システムを使用することができません。
     not_login: ログインしていません。
+    session_timeout: セッションがタイムアウトしました。
   messages:
     action:
       success: '%{action}に成功しました。'

@@ -13,6 +13,10 @@ module API
 
     # override reply
 
+    private def reply_session_timeout(request, response)
+      halt_json request, response, 401, message: t("errors.session_timeout")
+    end
+
     private def reply_unauthenticated(request, response)
       halt_json request, response, 401, message: t("errors.authenticated?")
     end

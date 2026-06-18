@@ -106,18 +106,6 @@ def init_action_spec
     end
   end
 
-  shared_examples "session timeout" do
-    it "is forbidden due to session timeout" do
-      response = action.call(params)
-      expect(response.status).to eq 403
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first)
-      expect(json).to eq({
-        "message" => "セッションがタイムアウトしました。",
-      })
-    end
-  end
-
   shared_examples "bad id param" do
     it "is failure due to tilda id" do
       response = action.call({**params, id: "~"})

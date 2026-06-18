@@ -43,6 +43,8 @@ module Yuzakan
 
       private def check_connection(request, response)
         response[:current_time] = current_time(request, response)
+        response[:current_level] = 0 # default level is guest
+
         response[:current_client] = current_client(request, response)
         response[:current_config] = current_config(request, response)
 
@@ -51,7 +53,7 @@ module Yuzakan
         response[:current_uuid] = current_uuid(request, response)
         response[:current_user] = current_user(request, response)
         response[:current_network] = current_network(request, response)
-        response[:current_level] = current_level(request, response)
+        response[:current_level] = current_level(request, response) # override default level
         response[:current_trusted] = current_trusted(request, response)
 
         check_authentication(request, response)
@@ -97,9 +99,8 @@ module Yuzakan
         # check session timeout
         if session_timeout?(request, response)
           logger.debug "session timeout", user: request.session[:user], update_at: request.session[:updated_at]
-          response.flash[:warn] = t("messages.session_timeout")
-          response.session[:user] = nil
-          response.session[:trusted] = false
+          request.session.clear
+          reply_session_timeout(request, response) if self.class.required_authentication
         end
 
         # initial session
@@ -108,7 +109,7 @@ module Yuzakan
         response.session[:trusted] ||= false
         response.session[:created_at] ||= response[:current_time].to_i
         response.session[:updated_at] = response[:current_time].to_i
-        response.session[:expires_at] = response[:current_config]&.session_timeout&.+(response[:current_time].to_i)
+        response.session[:expires_at] = response[:current_time].to_i + response[:current_config].session_timeout
       end
 
       private def session_timeout?(request, response)
@@ -155,11 +156,18 @@ module Yuzakan
 
       # reply
 
+      private def reply_session_timeout(request, response)
+        add_flash(request, response, :warn, t("messages.session_timeout"))
+        halt 401, response.render(login_view)
+      end
+
       private def reply_unauthenticated(_request, response)
+        add_flash(request, response, :warn, t("messages.authenticated?"))
         halt 401, response.render(login_view)
       end
 
       private def reply_untrusted(_request, response)
+        add_flash(request, response, :warn, t("messages.trusted?"))
         halt 401, response.render(mfa_view)
       end
 

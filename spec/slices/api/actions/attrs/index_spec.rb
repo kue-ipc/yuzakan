@@ -53,7 +53,7 @@ RSpec.describe API::Actions::Attrs::Index do
 
   context "when guest" do
     include_context "when guest"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when observer" do

@@ -56,11 +56,11 @@ RSpec.describe API::Actions::Groups::Index do
 
   # test cases
 
-  it_behaves_like "forbidden"
+  it_behaves_like "unauthorized"
 
   context "when guest" do
     include_context "when guest"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when observer" do

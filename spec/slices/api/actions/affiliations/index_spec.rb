@@ -41,6 +41,8 @@ RSpec.describe API::Actions::Affiliations::Index do
     it_behaves_like "ok"
   end
 
+  # test cases
+
   it_behaves_like "unauthorized"
 
   context "when guest" do
@@ -66,5 +68,20 @@ RSpec.describe API::Actions::Affiliations::Index do
   context "when superuser" do
     include_context "when superuser"
     it_behaves_like "index"
+  end
+
+  context "when logout" do
+    include_context "when logout"
+    it_behaves_like "unauthenticated"
+  end
+
+  context "when first" do
+    include_context "when first"
+    it_behaves_like "unauthenticated"
+  end
+
+  context "when timeover" do
+    include_context "when timeover"
+    it_behaves_like "session timeout"
   end
 end

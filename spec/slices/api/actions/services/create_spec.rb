@@ -97,26 +97,26 @@ RSpec.describe API::Actions::Services::Create do
 
   # test cases
 
-  it_behaves_like "forbidden"
+  it_behaves_like "unauthorized"
 
   context "when guest" do
     include_context "when guest"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when observer" do
     include_context "when observer"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when operator" do
     include_context "when operator"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when administrator" do
     include_context "when administrator"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when superuser" do

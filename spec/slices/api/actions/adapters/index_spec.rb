@@ -41,33 +41,37 @@ RSpec.describe API::Actions::Adapters::Index do
     end
   end
 
+  shared_examples "index" do
+    it_behaves_like "ok"
+  end
+
   # test cases
 
   it_behaves_like "ok"
 
   context "when guest" do
     include_context "when guest"
-    it_behaves_like "forbidden"
+    it_behaves_like "unauthorized"
   end
 
   context "when observer" do
     include_context "when observer"
-    it_behaves_like "ok"
+    it_behaves_like "index"
   end
 
   context "when operator" do
     include_context "when operator"
-    it_behaves_like "ok"
+    it_behaves_like "index"
   end
 
   context "when administrator" do
     include_context "when administrator"
-    it_behaves_like "ok"
+    it_behaves_like "index"
   end
 
   context "when superuser" do
     include_context "when superuser"
-    it_behaves_like "ok"
+    it_behaves_like "index"
   end
 
   context "when logout" do
@@ -82,6 +86,6 @@ RSpec.describe API::Actions::Adapters::Index do
 
   context "when timeover" do
     include_context "when timeover"
-    it_behaves_like "unauthorized session timeout"
+    it_behaves_like "session timeout"
   end
 end
