@@ -20,7 +20,7 @@ RSpec.describe API::Views::Parts::Pager do
 
   it "to_json" do
     json = subject.to_json
-    data = JSON.parse(json)
+    data = JSON.parse(json, symbolize_names: true)
     expect(data).to eq({
       currentPage: value.current_page,
       perPage: value.per_page,
