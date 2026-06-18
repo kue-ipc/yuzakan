@@ -19,12 +19,12 @@ module API
         required_authentication false
 
         params do
-          required(:username).filled(:name, max_size?: 255)
-          required(:password).filled(:string, max_size?: 255)
+          required(:username).filled(:name, max_size?: MAX_STRING_SIZE)
+          required(:password).filled(:string, max_size?: MAX_STRING_SIZE)
         end
 
         def handle(request, response)
-          halt_json request, response, 422, invalid: request.params.errors unless request.params.valid?
+          check_params(request, response)
 
           username = request.params[:username]
           password = request.params[:password]
@@ -104,8 +104,11 @@ module API
 
           auth_log_repo.create(**auth_log_params, result: "success", service: service.name)
           response.flash[:success] = t("messages.action.success", action: t("actions.login"))
+          auth = {username:}
+
           response.status = :created
-          response[:auth] = {username:}
+          response.format = :json
+          response.render(view, auth:)
         end
 
         private def failures_over?(username, count:, period:)

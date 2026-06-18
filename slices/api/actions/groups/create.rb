@@ -13,35 +13,38 @@ module API
         security_level 4
 
         params do
-          required(:name).filled(:name, max_size?: 255)
-          optional(:label).value(:str?, max_size?: 255)
-          optional(:note).value(:str?, max_size?: 4096)
+          required(:name).filled(:name, max_size?: MAX_STRING_SIZE)
+          optional(:label).value(:str?, max_size?: MAX_STRING_SIZE)
+          optional(:note).value(:str?, max_size?: MAX_TEXT_SIZE)
 
           optional(:basic).filled(:bool?)
           optional(:prohibited).filled(:bool?)
 
-          opional(:affiliation).maybe(:name, max_size?: 255)
+          opional(:affiliation).maybe(:name, max_size?: MAX_STRING_SIZE)
         end
 
         def handle(request, response)
           check_params(request, response)
-          name = take_unique_name(request, response, group_repo)
-          affiliation =
-            if request.params[:affiliation]
-              affiliation_repo.get(request.params[:affiliation]) ||
-                begin
-                  halt_json request, response, 422, invalid: {affiliation: t("errors.found?")}
-                end
-            end
 
-          group = group_repo.set(name,
-            **request.params.slice(:label, :note, :basic, :prohibited),
-            affiliation_id: affiliation&.id)
+          name = request.params[:name]
+          params = request.params.to_h.slice(:label, :note, :basic, :prohibited)
+          affiliation = take_affiliation(request, response)
+
+          group = group_repo.set!(name, **params, affiliation_id: affiliation&.id)
 
           response.status = :created
-          response.headers["Content-Location"] = "/api/groups/#{name}"
-          response[:location] = "/api/groups/#{name}"
-          response[:group] = group
+          response.headers["Location"] = "/api/groups/#{name}"
+          response.format = :json
+          response.render(view, group:)
+        end
+
+        private def take_affiliation(request, response)
+          return nil unless request.params[:affiliation]
+
+          affiliation_repo.get!(request.params[:affiliation])
+        rescue Yuzakan::DB::Repo::NotFoundNameError
+          halt_json request, response, 422, message: t("errors.invalid_params"),
+            invalid: {affiliation: t("errors.found?")}
         end
       end
     end

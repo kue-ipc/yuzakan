@@ -6,6 +6,7 @@ module API
       class Create < API::Action
         include Deps[
           "repos.attr_repo",
+          "repos.mapping_repo",
           "repos.service_repo",
           view: "views.attrs.show",
         ]
@@ -13,9 +14,9 @@ module API
         security_level 5
 
         params do
-          required(:name).filled(:name, max_size?: 255)
-          optional(:label).maybe(:str?, max_size?: 255)
-          optional(:description).maybe(:str?, max_size?: 16383)
+          required(:name).filled(:name, max_size?: MAX_STRING_SIZE)
+          optional(:label).value(:str?, max_size?: MAX_STRING_SIZE)
+          optional(:description).value(:str?, max_size?: MAX_TEXT_SIZE)
 
           required(:category).filled(:str?, included_in?: Yuzakan::Relations::Attrs::CATEGORIES)
           required(:type).filled(:str?, included_in?: Yuzakan::Relations::Attrs::TYPES)
@@ -24,11 +25,11 @@ module API
           optional(:hidden).filled(:bool?)
           optional(:readonly).filled(:bool?)
 
-          optional(:code).maybe(:str?, max_size?: 16383)
+          optional(:code).maybe(:str?, max_size?: MAX_TEXT_SIZE)
 
           optional(:mappings).array(:hash) do
-            required(:service).filled(:name, max_size?: 255)
-            required(:key).filled(:str?, max_size?: 255)
+            required(:service).filled(:name, max_size?: MAX_STRING_SIZE)
+            required(:key).filled(:str?, max_size?: MAX_STRING_SIZE)
             required(:type).filled(:str?, included_in?: Yuzakan::Relations::Mappings::TYPES)
             optional(:params).value(:hash)
           end
@@ -36,20 +37,28 @@ module API
 
         def handle(request, response)
           check_params(request, response)
-          name = take_unique_name(request, response, attr_repo)
 
-          order = request.params[:order] || next_order
+          name = request.params[:name]
+          params = request.params.to_h.slice(:label, :description, :category, :type, :hidden, :readonly, :code)
+
+          params[:order] = request.params[:order] || next_order
+
           mappings = take_mappings(request, response) || []
 
           attr_repo.transaction do
-            attr = attr_repo.create_with_mappings(**request.params, order:, mappings:)
+            attr = attr_repo.set!(name, **params)
             attr_repo.renumber_order(attr)
+            mappings.each do |mapping_params|
+              mapping_repo.create(**mapping_params, attr_id: attr.id)
+            end
           end
 
+          attr = get_attr_with_associations(name)
+
           response.status = :created
-          response.headers["Content-Location"] = "/api/attrs/#{name}"
-          response[:location] = "/api/attrs/#{name}"
-          response[:attr] = attr_repo.get_with_mappings_and_services(name)
+          response.headers["Location"] = "/api/attrs/#{name}"
+          response.format = :json
+          response.render(view, attr:)
         end
 
         private def next_order

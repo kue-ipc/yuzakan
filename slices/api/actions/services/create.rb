@@ -13,13 +13,13 @@ module API
         security_level 5
 
         params do
-          required(:name).filled(:name, max_size?: 255)
-          optional(:label).value(:str?, max_size?: 255)
-          optional(:description).value(:str?, max_size?: 16383)
+          required(:name).filled(:name, max_size?: MAX_STRING_SIZE)
+          optional(:label).value(:str?, max_size?: MAX_STRING_SIZE)
+          optional(:description).value(:str?, max_size?: MAX_TEXT_SIZE)
 
           optional(:order).filled(:int?)
 
-          required(:adapter).filled(:name, max_size?: 255)
+          required(:adapter).filled(:name, max_size?: MAX_STRING_SIZE)
           required(:params) { hash? }
 
           optional(:readable).filled(:bool?)
@@ -37,26 +37,37 @@ module API
 
         def handle(request, response)
           check_params(request, response)
-          name = take_unique_name(request, response, service_repo)
 
-          adapter = adapter_repo.get(request.params[:adapter])
-          halt_json request, response, 422, invalid: {adapter: t("errors.found?")} unless adapter
+          request.params[:name]
+          request.params.to_h.slice(:label, :description, :readable, :writable, :authenticatable,
+            :password_changeable, :lockable, :group, :individual_password, :self_management)
+
+          adapter = take_adapter(request, response)
+          params[:adapter] = adapter.name
 
           result = adapter.class.validate(request.params[:params])
           halt_json request, response, 422, invalid: {params: result.errors} if result.failure?
 
-          order = request.params[:order] || next_order
+          params[:params] = result.to_h
 
-          service = nil
+          params[:order] = request.params[:order] || next_order
+
           service_repo.transaction do
-            service = service_repo.set(name, **request.params, order:, params: result.to_h)
+            service = service_repo.set!(name, **params)
             service_repo.renumber_order(service)
           end
+          service = service_repo.get_with_associations(name)
 
           response.status = :created
-          response.headers["Content-Location"] = "/api/services/#{name}"
-          response[:location] = "/api/services/#{name}"
-          response[:service] = service
+          response.headers["Location"] = "/api/services/#{name}"
+          response.format = :json
+          response.render(view, service:)
+        end
+
+        private def take_adapter(request, response)
+          adapter_repo.get!(request.params[:adapter])
+        rescue Yuzakan::DB::Repo::NotFoundNameError
+          halt_json request, response, 422, message: t("errors.invalid_params"), invalid: {adapter: t("errors.found?")}
         end
 
         private def next_order
