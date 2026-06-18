@@ -31,9 +31,9 @@ module Yuzakan
       # common interface
       private def by_name(name) = root.by_name(name)
       def get(name) = by_name(name).one
-      def get!(...) = get(...) || raise(NotFoundError, "Not found: #{name}")
+      def get!(name) = get(name) || raise(NotFoundError, "Not found: #{name}")
       def put(name, **) = by_name(name).changeset(:update, **, name: name).map(:touch).commit
-      def put!(...) = put(...) || raise(NotFoundError, "Not found: #{name}")
+      def put!(name, **) = put(name, **) || raise(NotFoundError, "Not found: #{name}")
 
       def set!(name, **)
         raise(DuplicateNameError, "Already exists: #{name}") if exist?(name)
@@ -42,7 +42,7 @@ module Yuzakan
       end
 
       def unset(name) = by_name(name).changeset(:delete).commit
-      def unset!(...) = unset(...) || raise(NotFoundError, "Not found: #{name}")
+      def unset!(name) = unset(name) || raise(NotFoundError, "Not found: #{name}")
 
       def rename!(old_name, new_name)
         if old_name == new_name

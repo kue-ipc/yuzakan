@@ -15,7 +15,9 @@ module API
         def handle(request, response)
           check_params(request, response)
 
-          adapter = adapter_repo.get!(id)
+          name = request.params[:id]
+
+          adapter = adapter_repo.get!(name)
 
           response.format = :json
           response.render(view, adapter:)

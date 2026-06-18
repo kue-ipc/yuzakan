@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "yuzakan/db/repo"
-
 module Yuzakan
   class AdapterRepo
     AdapterStruct = Data.define(:name, :class)
@@ -14,9 +12,9 @@ module Yuzakan
     def clear = @store.clear
 
     def get(name) = @store[name]
-    def get!(...) = get(...) || raise(Yuzakan::DB::Repo::NotFoundNameError, "Adapter not found: #{name}")
+    def get!(name) = get(name) || raise(Yuzakan::DB::Repo::NotFoundNameError, "Adapter not found: #{name}")
     def put(name, class:) = @store[name]&.with(class:)&.tap { |struct| @store[name] = struct }
-    def put!(...) = put(...) || raise(Yuzakan::DB::Repo::NotFoundNameError, "Adapter not found: #{name}")
+    def put!(name, **) = put(name, **) || raise(Yuzakan::DB::Repo::NotFoundNameError, "Adapter not found: #{name}")
 
     def set!(name, class:)
       raise(Yuzakan::DB::Repo::DuplicateNameError, "Adapter already exists: #{name}") if @store[name]
@@ -25,7 +23,7 @@ module Yuzakan
     end
 
     def unset(name) = @store.delete(name)
-    def unset!(...) = unset(...) || raise(Yuzakan::DB::Repo::NotFoundNameError, "Adapter not found: #{name}")
+    def unset!(name) = unset(name) || raise(Yuzakan::DB::Repo::NotFoundNameError, "Adapter not found: #{name}")
 
     def rename!(old_name, new_name)
       if old_name == new_name

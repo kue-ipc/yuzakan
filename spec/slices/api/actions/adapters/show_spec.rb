@@ -65,25 +65,25 @@ RSpec.describe API::Actions::Adapters::Show do
           "group" => true,
           "primary" => true,
           "params" => {"schema" => {
-            "type" => "object",
             "properties" => {
-              str: {title: "文字列", description: "詳細", "type" => "string", maxLength: 255},
-              text: {"type" => "string"},
-              int: {"type" => "integer"},
-              float: {"type" => "number"},
-              bool: {"type" => "boolean"},
-              date: {"type" => "date"},
-              time: {"type" => "time"},
-              datetime: {"type" => "datetime"},
-              requiredStr: {"type" => "string", maxLength: 255},
-              filledStr: {"type" => "string", minLength: 1, maxLength: 255},
-              patternStr: {"type" => "string", maxLength: 255, pattern: "^[a-z]*$"},
-              fixedStr: {"type" => "string", const: "abc"},
-              defaultStr: {"type" => "string", maxLength: 255, default: "xyz"},
-              encryptedStr: {"type" => "string", maxLength: 255},
-              list: {"type" => "string", enum: ["one", "two", "three"]},
+              "str" => {"description" => "詳細", "maxLength" => 255, "title" => "文字列", "type" => "string"},
+              "text" => {"type" => "string"},
+              "int" => {"type" => "integer"},
+              "float" => {"type" => "number"},
+              "bool" => {"type" => "boolean"},
+              "date" => {"type" => "date"},
+              "time" => {"type" => "time"},
+              "datetime" => {"type" => "datetime"},
+              "requiredStr" => {"maxLength" => 255, "type" => "string"},
+              "filledStr" => {"maxLength" => 255, "minLength" => 1, "type" => "string"},
+              "patternStr" => {"maxLength" => 255, "pattern" => "^[a-z]*$", "type" => "string"},
+              "fixedStr" => {"const" => "abc", "type" => "string"},
+              "defaultStr" => {"default" => "xyz", "maxLength" => 255, "type" => "string"},
+              "encryptedStr" => {"maxLength" => 255, "type" => "string"},
+              "list" => {"enum" => ["one", "two", "three"], "type" => "string"},
             },
             "required" => ["requiredStr"],
+            "type" => "object",
           }},
         })
       end
@@ -103,7 +103,7 @@ RSpec.describe API::Actions::Adapters::Show do
   end
 
   shared_examples "show restricted" do
-    it_behaves_like "ok"
+    it_behaves_like "ok restricted"
     it_behaves_like "failure"
   end
 
@@ -124,7 +124,7 @@ RSpec.describe API::Actions::Adapters::Show do
   context "when operator" do
     include_context "when operator"
     it_behaves_like "show restricted"
-end
+  end
 
   context "when administrator" do
     include_context "when administrator"
