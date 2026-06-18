@@ -3,16 +3,6 @@
 module Yuzakan
   module Repos
     class ManagedGroupRepo < Yuzakan::DB::Repo
-      # compatible interfaces
-      commands :create, **CREATE_TIMESTAMP
-      commands update: :by_pk, **UPDATE_TIMESTAMP
-      commands delete: :by_pk
-      def all = managed_groups.to_a
-      def find(id) = managed_groups.by_pk(id).one
-      def first = managed_groups.first
-      def last = managed_groups.last
-      def clear = managed_groups.delete
-
       # for associations
       private def for_group(group) = managed_groups.by_group_id(group.id)
       private def for_service(service) = managed_groups.by_service_id(service.id)

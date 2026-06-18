@@ -3,48 +3,12 @@
 module Yuzakan
   module Repos
     class UserRepo < Yuzakan::DB::Repo
-      # compatible interfaces
-      commands :create, **CREATE_TIMESTAMP
-      commands update: :by_pk, **UPDATE_TIMESTAMP
-      commands delete: :by_pk
-      def all = users.to_a
-      def find(id) = users.by_pk(id).one
-      def first = users.first
-      def last = users.last
-      def clear = users.delete
-
-      # common interfaces
-      private def by_name(name) = users.by_name(name)
-      def get(name) = by_name(name).one
-      def set(name, **) = by_name(name).command(:update, **UPDATE_TIMESTAMP).call(**) || create(name: name, **)
-      def unset(name) = by_name(name).command(:delete).call
-      def exist?(name) = by_name(name).exist?
-      def list = users.pluck(:name)
-
-      # index = filter & search & order & paginate
-      def index(page: nil, per_page: nil, order: nil, query: nil, filter: nil)
-        relation = affiliations
-
-        relation = filter(relation, filter:)
-        relation = search(relation, targets: [:name, :label, :email], query:)
-        relation = order(relation, order:)
-        relation = paginate(relation, page:, per_page:)
-        relation = with_associations(relation)
-        [relation.to_a, relation.pager]
-      end
-
-      # with associations
       private def with_all(relation)
         relation.combine.combine(:affiliation, :group, members: :groups, managings: :service)
       end
-
-      # without members
       private def with_associations(relation)
-        relation.combine(:affiliation, :group, :member_groups, managings: :service)
+        relation.combine(:affiliation, :group, :member_groups, :services)
       end
-
-      def get_with_all(name) = with_all(by_name(name)).one
-      def get_with_associations(name) = with_associations(by_name(name)).one
 
       # def get_with_affiliation(name)
       #   by_name(name).combine(:affiliation).one

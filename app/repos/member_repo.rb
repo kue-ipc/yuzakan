@@ -3,15 +3,7 @@
 module Yuzakan
   module Repos
     class MemberRepo < Yuzakan::DB::Repo
-      # compatible interfaces
-      commands :create, **CREATE_TIMESTAMP
-      commands update: :by_pk, **UPDATE_TIMESTAMP
-      commands delete: :by_pk
-      def all = members.to_a
-      def find(id) = members.by_pk(id).one
-      def first = members.first
-      def last = members.last
-      def clear = members.delete
+      private def with_all(relation) = relation.combine(:user, :group)
 
       # for associations
       private def for_user(user) = members.by_user_id(user.id)

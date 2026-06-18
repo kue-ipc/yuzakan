@@ -3,17 +3,6 @@
 module Yuzakan
   module Repos
     class MappingRepo < Yuzakan::DB::Repo
-      # compatible interfaces
-      commands :create, **CREATE_TIMESTAMP
-      commands update: :by_pk, **UPDATE_TIMESTAMP
-      commands delete: :by_pk
-      def all = mappings.to_a
-      def find(id) = mappings.by_pk(id).one
-      def first = mappings.first
-      def last = mappings.last
-      def clear = mappings.delete
-
-      # other interfaces
       def all_with_attrs_by_service(service)
         mappings.by_service_id(service.id).combine(:attrs).to_a
       end

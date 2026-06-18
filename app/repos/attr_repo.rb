@@ -3,28 +3,12 @@
 module Yuzakan
   module Repos
     class AttrRepo < Yuzakan::DB::Repo
-      # compatible interfaces
-      commands :create, **CREATE_TIMESTAMP
-      commands update: :by_pk, **UPDATE_TIMESTAMP
-      commands delete: :by_pk
-      def all = attrs.to_a
-      def find(id) = attrs.by_pk(id).one
-      def first = attrs.first
-      def last = attrs.last
-      def clear = attrs.delete
-
-      # common interfaces
-      private def by_name(name) = attrs.by_name(name)
-      def get(name) = by_name(name).one
-      def set(name, **) = by_name(name).command(:update, **UPDATE_TIMESTAMP).call(**) || create(name: name, **)
-      def unset(name) = by_name(name).command(:delete).call
-      def exist?(name) = by_name(name).exist?
-      def list = attrs.pluck(:name)
+      private def with_all(relation) = relation.combine(mappings: :service)
 
       # other interfaces
-      def get_with_mappings(name) = by_name(name).combine(:mappings).one
-      def get_with_mappings_and_services(name) = by_name(name).combine(mappings: :service).one
-      def create_with_mappings(**) = attrs.combine(:mappings).command(:create, **CREATE_TIMESTAMP).call(**)
+      # def get_with_mappings(name) = by_name(name).combine(:mappings).one
+      # def get_with_mappings_and_services(name) = by_name(name).combine(mappings: :service).one
+      # def create_with_mappings(**) = attrs.combine(:mappings).command(:create, **CREATE_TIMESTAMP).call(**)
 
       # return 0 if empty
       def last_order = attrs.pluck(:order).last.to_i

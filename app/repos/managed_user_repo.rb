@@ -3,19 +3,10 @@
 module Yuzakan
   module Repos
     class ManagedUserRepo < Yuzakan::DB::Repo
-      # compatible interfaces
-      commands :create, **CREATE_TIMESTAMP
-      commands update: :by_pk, **UPDATE_TIMESTAMP
-      commands delete: :by_pk
-      def all = managed_users.to_a
-      def find(id) = managed_users.by_pk(id).one
-      def first = managed_users.first
-      def last = managed_users.last
-      def clear = managed_users.delete
-
       # for associations
       private def for_user(user) = managed_users.by_user_id(user.id)
       private def for_service(service) = managed_users.by_service_id(service.id)
+
       private def for_user_and_service(user, service)
         managed_users.by_user_id_and_by_service_id(user.id, service.id)
       end

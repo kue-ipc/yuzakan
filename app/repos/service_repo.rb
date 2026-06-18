@@ -3,23 +3,8 @@
 module Yuzakan
   module Repos
     class ServiceRepo < Yuzakan::DB::Repo
-      # compatible interfaces
-      commands :create, **CREATE_TIMESTAMP
-      commands update: :by_pk, **UPDATE_TIMESTAMP
-      commands delete: :by_pk
-      def all = services.to_a
-      def find(id) = services.by_pk(id).one
-      def first = services.first
-      def last = services.last
-      def clear = services.delete
-
-      # common interfaces
-      private def by_name(name) = services.by_name(name)
-      def get(name) = by_name(name).one
-      def set(name, **) = by_name(name).command(:update, **UPDATE_TIMESTAMP).call(**) || create(name: name, **)
-      def unset(name) = by_name(name).command(:delete).call
-      def exist?(name) = by_name(name).exist?
-      def list = services.pluck(:name)
+      private def with_all(relation) = relation.combine(mappings: :attr, managed_groups: :group, managed_users: :user)
+      private def with_associations(relation) = relation
 
       # other interfaces
       def all_with_abilities(*abilities)
