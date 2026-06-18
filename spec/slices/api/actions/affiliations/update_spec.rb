@@ -14,7 +14,7 @@ RSpec.describe API::Actions::Affiliations::Update do
   shared_context "when not exist" do
     let(:action_opts) {
       allow(affiliation_repo).to(
-        receive(:put!).with(affiliation.name, **affiliation_params).and_raise(ROM::TupleCountMismatchError))
+        receive(:put!).with(affiliation.name, **affiliation_params).and_raise(Yuzakan::DB::Repo::NotFoundNameError))
       {affiliation_repo: affiliation_repo}
     }
   end

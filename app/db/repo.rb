@@ -5,6 +5,10 @@ require "hanami/db/repo"
 module Yuzakan
   module DB
     class Repo < Hanami::DB::Repo
+      class NameError < StandardError; end
+      class NotFoundNameError < NameError; end
+      class DuplicateNameError < NameError; end
+
       CREATE_TIMESTAMP = {
         use: :timestamps,
         plugins_options: {timestamps: {timestamps: [:created_at, :updated_at]}},
@@ -27,14 +31,30 @@ module Yuzakan
       # common interface
       private def by_name(name) = root.by_name(name)
       def get(name) = by_name(name).one
-      def get!(name) = by_name(name).one!
+      def get!(...) = get(...) || raise(NotFoundError, "Not found: #{name}")
       def put(name, **) = by_name(name).changeset(:update, **, name: name).map(:touch).commit
-      def put!(...) = put(...) || raise(TupleCountMismatchError, "The relation does not contain any tuples")
-      def set(name, **) = root.changeset(:create, **, name: name).map(:add_timestamps).commit
+      def put!(...) = put(...) || raise(NotFoundError, "Not found: #{name}")
+
+      def set!(name, **)
+        raise(DuplicateNameError, "Already exists: #{name}") if exist?(name)
+
+        root.changeset(:create, **, name: name).map(:add_timestamps).commit
+      end
+
       def unset(name) = by_name(name).changeset(:delete).commit
-      def unset!(...) = unset(...) || raise(TupleCountMismatchError, "The relation does not contain any tuples")
-      def rename(old_name, new_name) = by_name(old_name).changeset(:update, name: new_name).map(:touch).commit
-      def rename!(...) = rename(...) || raise(TupleCountMismatchError, "The relation does not contain any tuples")
+      def unset!(...) = unset(...) || raise(NotFoundError, "Not found: #{name}")
+
+      def rename!(old_name, new_name)
+        if old_name == new_name
+          get!(old_name)
+        elsif exist?(new_name)
+          raise(DuplicateNameError, "Already exists: #{new_name}")
+        else
+          by_name(old_name).changeset(:update, name: new_name).map(:touch).commit ||
+            raise(NotFoundError, "Not found: #{name}")
+        end
+      end
+
       def exist?(name) = by_name(name).exist?
       def list = root.pluck(:name)
 

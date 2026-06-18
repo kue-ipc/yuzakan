@@ -9,8 +9,8 @@ RSpec.describe API::Actions::Config::Show do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
         title: config.title,
         description: config.description,
         domain: config.domain,

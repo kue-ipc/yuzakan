@@ -27,7 +27,7 @@ RSpec.describe API::Actions::Services::Destroy do
     describe "with hoge id" do
       let(:id) { "hoge" }
 
-      it_behaves_like "not found"
+      it_behaves_like "non-existent"
     end
   end
 

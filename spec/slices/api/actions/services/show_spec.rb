@@ -17,8 +17,8 @@ RSpec.describe API::Actions::Services::Show do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq(struct_to_hash(service, case: :camel))
+      json = JSON.parse(response.body.first)
+      expect(json).to eq(struct_to_hash(service, case: :camel))
     end
   end
 
@@ -28,8 +28,8 @@ RSpec.describe API::Actions::Services::Show do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq(struct_to_hash(service, case: :camel).slice(:name, :label))
+      json = JSON.parse(response.body.first)
+      expect(json).to eq(struct_to_hash(service, case: :camel).slice(:name, :label))
     end
   end
 
@@ -39,7 +39,7 @@ RSpec.describe API::Actions::Services::Show do
     describe "with hoge id" do
       let(:id) { "hoge" }
 
-      it_behaves_like "not found"
+      it_behaves_like "non-existent"
     end
   end
 

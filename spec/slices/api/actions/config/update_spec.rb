@@ -16,8 +16,8 @@ RSpec.describe API::Actions::Config::Update do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
         title: updated_config.title,
         description: updated_config.description,
         domain: updated_config.domain,

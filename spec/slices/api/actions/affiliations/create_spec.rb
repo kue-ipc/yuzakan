@@ -4,9 +4,8 @@ RSpec.describe API::Actions::Affiliations::Create do
   init_action_spec
 
   let(:action_opts) {
-    allow(affiliation_repo).to receive(:exist?).with(affiliation.name).and_return(false)
-    allow(affiliation_repo).to receive(:set).with(affiliation.name, **affiliation_params).and_return(affiliation)
-    allow(affiliation_repo).to receive(:set).with(affiliation.name).and_return(affiliation_without_params)
+    allow(affiliation_repo).to receive(:set!).with(affiliation.name, **affiliation_params).and_return(affiliation)
+    allow(affiliation_repo).to receive(:set!).with(affiliation.name).and_return(affiliation_without_params)
     {affiliation_repo: affiliation_repo}
   }
   let(:action_params) { {name: affiliation.name, **affiliation_params} }
@@ -16,7 +15,8 @@ RSpec.describe API::Actions::Affiliations::Create do
 
   shared_context "when exist" do
     let(:action_opts) {
-      allow(affiliation_repo).to receive_messages(exist?: true)
+      allow(affiliation_repo).to(
+        receive(:set!).with(affiliation.name, **affiliation_params).and_raise(Yuzakan::DB::Repo::DuplicateNameError))
       {affiliation_repo: affiliation_repo}
     }
   end

@@ -32,6 +32,8 @@ module API
     # override handle
 
     handle_exception StandardError => :handle_standard_error
+    handle_exception Yuzakan::DB::Repo::NotFoundNameError => :handle_not_found_name_error
+    handle_exception Yuzakan::DB::Repo::DuplicateNameError => :handle_duplicate_name_error
 
     private def handle_standard_error(request, response, exception)
       logger.error exception
@@ -44,12 +46,12 @@ module API
       halt_json request, response, 400, message: t("errors.invalid_csrf_token")
     end
 
-    private def handle_not_found(request, response, exception)
-      if exception.is_a?(ROM::TupleCountMismatchError)
-        halt_json request, response, 404, message: t("errors.non_existent")
-      else
-        halt_json request, response, 404, message: t("response_messages.not_found")
-      end
+    private def handle_not_found_name_error(request, response, _exception)
+      halt_json request, response, 404, message: t("errors.non_existent")
+    end
+
+    private def handle_duplicate_name_error(request, response, _exception)
+      halt_json request, response, 422, message: t("errors.invalid_params"), invalid: {name: [t("errors.uniq?")]}
     end
 
     # override private api

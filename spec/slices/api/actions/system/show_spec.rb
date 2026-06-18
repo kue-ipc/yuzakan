@@ -9,8 +9,8 @@ RSpec.describe API::Actions::System::Show do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
         url: "http://0.0.0.0:2300/",
         title: config.title,
         domain: config.domain,
@@ -45,8 +45,8 @@ RSpec.describe API::Actions::System::Show do
       response = action.call(params)
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
         url: "http://0.0.0.0:2300/",
         title: config.title,
         contact: {name: config.contact_name, email: config.contact_email, phone: config.contact_phone},
@@ -63,8 +63,8 @@ RSpec.describe API::Actions::System::Show do
       response = action.call(params)
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
         url: "http://0.0.0.0:2300/",
         title: config.title,
         domain: config.domain,
@@ -81,8 +81,8 @@ RSpec.describe API::Actions::System::Show do
       response = action.call(params)
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
         url: "http://0.0.0.0:2300/",
         app: {name: "Yuzakan", version: Yuzakan::Version::VERSION,
               license: File.read(File.join(__dir__, "../../../../../LICENSE"))},

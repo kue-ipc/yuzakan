@@ -17,8 +17,8 @@ RSpec.describe API::Actions::Auth::Mfa::Create do
       expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({username: user.name})
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({username: user.name})
     end
   end
 

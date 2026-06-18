@@ -9,16 +9,16 @@ module API
         include Deps["adapter_repo"]
 
         params do
-          required(:id).filled(:name, max_size?: 255)
+          required(:id).filled(:name, max_size?: MAX_STRING_SIZE)
         end
 
         def handle(request, response)
           check_params(request, response)
 
-          id = take_exist_id(request, response, adapter_repo)
-          adapter = adapter_repo.get(id)
+          adapter = adapter_repo.get!(id)
 
-          response[:adapter] = adapter
+          response.format = :json
+          response.render(view, adapter:)
         end
       end
     end

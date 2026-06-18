@@ -22,8 +22,8 @@ RSpec.describe API::Actions::Groups::Update do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq(group.to_h.except(:id))
+      json = JSON.parse(response.body.first)
+      expect(json).to eq(group.to_h.except(:id))
     end
   end
 
@@ -60,7 +60,7 @@ RSpec.describe API::Actions::Groups::Update do
         {group_repo: group_repo}
       }
 
-      it_behaves_like "not found"
+      it_behaves_like "non-existent"
     end
 
     it "is ok with different name" do
@@ -68,8 +68,8 @@ RSpec.describe API::Actions::Groups::Update do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq({
+      json = JSON.parse(response.body.first)
+      expect(json).to eq({
         **attr.to_h.except(:id),
         name: "hoge",
         label: "ほげ",
@@ -80,7 +80,7 @@ RSpec.describe API::Actions::Groups::Update do
     describe "existed name" do
       let(:group_repository) { instance_double(AttrRepository, **group_repository_stubs, exist_by_name?: true) }
 
-      it_behaves_like "not found"
+      it_behaves_like "non-existent"
 
       it "is failure with different name that exsits" do
         response = action.call({**params, name: "hoge"})

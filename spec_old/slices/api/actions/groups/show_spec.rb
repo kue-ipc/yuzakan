@@ -14,8 +14,8 @@ RSpec.describe API::Actions::Groups::Show do
       expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json[:data]).to eq(group.to_h.except(:id))
+      json = JSON.parse(response.body.first)
+      expect(json).to eq(group.to_h.except(:id))
     end
   end
 
@@ -27,7 +27,7 @@ RSpec.describe API::Actions::Groups::Show do
       {attr_repo: group_repo}
     }
 
-    it_behaves_like "not found"
+    it_behaves_like "non-existent"
   end
 
   context "when guest" do

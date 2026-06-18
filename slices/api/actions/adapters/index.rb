@@ -7,7 +7,10 @@ module API
         include Deps["adapter_repo"]
 
         def handle(_request, response)
-          response[:adapters] = adapter_repo.all
+          adapters = adapter_repo.all
+
+          response.format = :json
+          response.render(view, adapters:)
         end
       end
     end

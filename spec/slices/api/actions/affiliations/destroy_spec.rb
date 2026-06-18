@@ -11,7 +11,7 @@ RSpec.describe API::Actions::Affiliations::Destroy do
 
   shared_context "when not exist" do
     let(:action_opts) {
-      allow(affiliation_repo).to receive(:unset!).with(affiliation.name).and_raise(ROM::TupleCountMismatchError)
+      allow(affiliation_repo).to receive(:unset!).with(affiliation.name).and_raise(Yuzakan::DB::Repo::NotFoundNameError)
       {affiliation_repo: affiliation_repo}
     }
   end
