@@ -6,16 +6,19 @@ module API
     module Parts
       class Error < API::Views::Part
         def to_h
-          hash = value.slice(:message, :invalid)
-          if value.key?(:exception)
-            hash[:exception] =
-              if Hanami.env?(:development)
-                value[:exception].full_message(highlight: false)
-              else
-                "#{value[:exception].class.name}: #{value[:exception].message}"
-              end
+          {
+            message: value[:message],
+            invalid: value[:invalid]&.to_h,
+            exception: value[:exception] && exception_to_string(value[:exception]),
+          }.compact
+        end
+
+        def exception_to_string(exception)
+          if Hanami.env?(:development)
+            exception.full_message(highlight: false)
+          else
+            "#{exception.class.name}: #{exception.message}"
           end
-          hash
         end
       end
     end
