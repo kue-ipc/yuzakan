@@ -16,7 +16,7 @@ module Yuzakan
       version "0.1.0"
       group true
 
-      json do
+      params do
         required(:host).filled(:str?, max_size?: 255)
         optional(:port).value(:int?, gt?: 0, lt?: 65535)
         optional(:protocol).value(included_in?: %w[ldap_starttls ldaps ldap])

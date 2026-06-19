@@ -10,7 +10,7 @@ module Yuzakan
       group true
       primary_group true
 
-      json do
+      params do
         optional(:str).value(:str?, max_size?: 255)
         optional(:text).value(:str?)
         optional(:int).value(:int?)

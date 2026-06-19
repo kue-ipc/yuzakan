@@ -12,7 +12,7 @@ module Yuzakan
       group true
       primary_group true
 
-      json do
+      params do
         required(:check).filled(:bool?)
         required(:username).filled(:str?, max_size?: 255)
         required(:password).filled(:str?, max_size?: 255)

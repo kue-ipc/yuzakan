@@ -15,7 +15,7 @@ module Yuzakan
       version "0.0.1"
       group false
 
-      json do
+      params do
         required(:domain).filled(:str?, max_size?: 255)
         required(:account).filled(:str?, max_size?: 255)
         required(:json_key).filled(:str?)

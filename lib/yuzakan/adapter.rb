@@ -133,19 +133,19 @@ module Yuzakan
       group && primary_group
     end
 
-    # define validation contract use JSON schema
-    def self.json(&block)
-      config.contract_class = Class.new(Yuzakan::Validation::Contract) { json(&block) }
+    # define validation contract use params
+    def self.params(&block)
+      config.contract_class = Class.new(Yuzakan::Validation::Contract) { params(&block) }
     end
 
     def self.validate(params)
-      raise "Contract class is not defined. Use `json` method to define it." if config.contract_class.nil?
+      raise "Contract class is not defined. Use `params` method to define it." if config.contract_class.nil?
 
       config.contract_class.new.call(params)
     end
 
     def self.schema
-      raise "Contract class is not defined. Use `json` method to define it." if config.contract_class.nil?
+      raise "Contract class is not defined. Use `params` method to define it." if config.contract_class.nil?
 
       config.contract_class.schema
     end

@@ -10,7 +10,7 @@ module Yuzakan
       group true
       primary_group true
 
-      json do
+      params do
         required(:host).filled(:str?, max_size?: 255)
         optional(:port).value(:int?, gt?: 0, lt?: 65536)
         optional(:protocol).value(included_in?: %w[ldap ldaps])

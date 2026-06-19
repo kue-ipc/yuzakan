@@ -14,7 +14,7 @@ module Yuzakan
       group true
       primary_group true
 
-      json do
+      params do
         required(:samba_domain_sid).filled(:str?, max_size?: 255)
         optional(:samba_nt_password).value(:bool?)
         optional(:samba_lm_password).value(:bool?)

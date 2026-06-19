@@ -7,7 +7,7 @@ module Yuzakan
       group true
       primary_group true
 
-      json {} # rubocop:disable Lint/EmptyBlock
+      params {} # rubocop:disable Lint/EmptyBlock
 
       def initialize(params, container: ::Local::Slice, **)
         super(params, **)
