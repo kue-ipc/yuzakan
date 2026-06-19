@@ -5,7 +5,7 @@ require "hanami/http/status"
 
 module API
   module Actions
-    module MessageJSON
+    module Halt
       def self.included(action)
         action.include Deps[
           halt_view: "views.error.halt",

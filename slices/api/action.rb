@@ -6,8 +6,9 @@ module API
     MAX_STRING_SIZE = 255
     MAX_TEXT_SIZE = 65535
 
-    include API::Actions::MessageJSON
-    include API::Actions::ParamsInspection
+    include API::Actions::Halt
+    include API::Actions::Params
+    include API::Actions::Result
 
     config.formats.accept :json
 
