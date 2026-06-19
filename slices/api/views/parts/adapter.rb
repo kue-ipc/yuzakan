@@ -23,7 +23,8 @@ module API
               primary: value.class.has_primary_group?,
               params: {
                 schema: value.class.schema,
-                defaults: value.class.default_params,
+                default_values: value.class.default_values,
+                encrypted_keys: value.class.encrypted_keys,
               },
             }
           end
@@ -33,14 +34,14 @@ module API
           hash = to_h(...)
           if hash[:params]
             schema = hash[:params][:schema]
-            defaults = hash[:params][:defaults]
-            i18n_scope = "adapters.#{value.name}.params"
-            hash = {**hash, params: json_schema(schema, defaults:, i18n_scope:)}
+            opts = hash[:params].slice(:default_values, :encrypted_keys)
+            opts[:i18n_scope] = "adapters.#{value.name}.params"
+            hash = {**hash, params: json_schema(schema, **opts)}
           end
           helpers.params_to_json(hash)
         end
 
-        def json_schema(schema, defaults: {}, i18n_scope: "")
+        def json_schema(schema, default_values: {}, encrypted_keys: [], i18n_scope: "")
           schema.ast => [:set, rules]
           rules.to_h do |rule|
             item_required =
@@ -51,17 +52,26 @@ module API
                 false
               end
             item => [[:predicate, [:key?, [[:name, name], [:input, _undefined]]]], [:key, [_name, Array => ast]]]
-            property = ast_to_property(ast, name, defaults:, i18n_scope:)
+            property = parse_ast(ast, name).dup
+            property[:title] = context.t("#{name}.label", scope: i18n_scope, default: nil)
+            property[:description] = context.t("#{name}.description", scope: i18n_scope, default: nil)
             property[:required] = true if item_required
-            [name, property]
+            property[:value] = default_values[name] if default_values.key?(name)
+            property[:encrypted] = true if encrypted_keys.include?(name)
+            if property[:list]
+              property[:list] = property[:list].map do |value|
+                {value: value, label: context.t(value, scope: "#{i18n_scope}.#{name}.list", default: value)}
+              end
+            end
+            [name, property.compact]
           end
         end
 
-        private def ast_to_property(ast, name, defaults: {}, i18n_scope: "")
+        private def ast_to_property(ast, name, default_values: {}, i18n_scope: "")
           {
             title: context.t("#{name}.label", scope: i18n_scope, default: nil),
             description: context.t("#{name}.description", scope: i18n_scope, default: nil),
-            default: defaults[name],
+            default: default_values[name],
             **parse_ast(ast, name),
           }.compact
         end
@@ -94,8 +104,8 @@ module API
           in [:hash?, [[:input, _undefined]]] then {type: "object"}
           in [:nil?, [[:input, _undefined]]] then {type: "null"}
           # enum and const
-          in [:included_in?, [[:list, Array => list], [:input, _undefined]]] then {enum: list}
-          in [:excluded_from?, [[:list, Array => list], [:input, _undefined]]] then {not: {enum: list}}
+          in [:included_in?, [[:list, Array => list], [:input, _undefined]]] then {list: list}
+          in [:excluded_from?, [[:list, Array => list], [:input, _undefined]]] then {excluded: list} # TODO: 使えない？
           in [:eql?, [[:left, left], [:right, _undefined]]] then {value: left, readonly: true} # 変更不可な固定値
           # Numeric type only
           # NOTE: gt?とlt?はintegerであることが前提

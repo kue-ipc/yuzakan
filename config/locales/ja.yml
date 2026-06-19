@@ -491,7 +491,20 @@ ja:
         str:
           label: 文字列
           description: 詳細
+        text:
+          label: "テキスト"
+        int:
+          label: "整数"
+        fixed_str:
+          label: "固定値"
+        required_str:
+          label: "必須文字列"
+        default_str:
+          label: "デフォルト値"
+        encrypted_str:
+          label: "暗号文字列"
         list:
+          label: "リスト"
           list:
             one: ワン
             two: ツー

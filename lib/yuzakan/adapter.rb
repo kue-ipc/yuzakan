@@ -93,7 +93,7 @@ module Yuzakan
 
     setting :contract_class
     setting :encrypted_keys, default: []
-    setting :default_params, default: {}
+    setting :default_values, default: {}
 
     defines :version, type: Dry::Types["strict.string"]
     defines :abstract, :hidden, type: Dry::Types["strict.bool"]
@@ -151,15 +151,15 @@ module Yuzakan
     end
 
     # set deafault parameter value
-    def self.set_default_param(name, value)
-      config.default_params[name] = value
+    def self.set_default_value(name, value)
+      config.default_values[name] = value
     end
 
-    def self.default_params
-      config.default_params
+    def self.default_values
+      config.default_values
     end
 
-    # add encrypted key
+    # add encrypted parameter key
     def self.add_encrypted_key(name)
       config.encrypted_keys << name
     end
@@ -173,7 +173,7 @@ module Yuzakan
       validated_params = validate(params)
       raise VlaidationError, validated_params.errors.to_h if validated_params.failure?
 
-      default_params.merge(validated_params.to_h).to_h do |key, value|
+      default_values.merge(validated_params.to_h).to_h do |key, value|
         if encrypted_keys.include?(key)
           case Hanami.app["operations.decrypt"].call(value)
           in Success(decrypted_value)

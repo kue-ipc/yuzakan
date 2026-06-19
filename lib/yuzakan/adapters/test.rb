@@ -29,7 +29,7 @@ module Yuzakan
         optional(:list).value(:str?, included_in?: %w[one two three])
       end
 
-      set_default_param :default_str, "xyz"
+      set_default_value :default_str, "xyz"
       add_encrypted_key :encrypted_str
 
       # self.params = [
