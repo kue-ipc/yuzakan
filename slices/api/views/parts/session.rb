@@ -10,7 +10,7 @@ module API
             uuid: value[:uuid],
             user: value[:user],
             trusted: value[:trusted],
-            expires_at: value[:expires_at] && Time.at(value[:expires_at]),
+            expires_at: value[:expires_at]&.then { |v| Time.at(v) },
           }
         end
       end
