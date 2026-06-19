@@ -14,6 +14,7 @@ module Yuzakan
         optional(:str).value(:str?, max_size?: 255)
         optional(:text).value(:str?)
         optional(:int).value(:int?)
+        optional(:limited_int).value(:int?, gteq?: 1, lteq?: 100)
         optional(:float).value(:float?)
         optional(:bool).value(:bool?)
         optional(:date).value(:date?)

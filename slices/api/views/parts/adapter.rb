@@ -21,21 +21,28 @@ module API
               label:,
               group: value.class.has_group?,
               primary: value.class.has_primary_group?,
-              params: {schema: value.class.schema},
+              params: {
+                schema: value.class.schema,
+                defaults: value.class.default_params,
+              },
             }
           end
         end
 
         def to_json(...)
           hash = to_h(...)
-          hash = {**hash, params: {schema: json_schema}} if hash[:params]
+          if hash[:params]
+            schema = hash[:params][:schema]
+            defaults = hash[:params][:defaults]
+            i18n_scope = "adapters.#{value.name}.params"
+            hash = {**hash, params: json_schema(schema, defaults:, i18n_scope:)}
+          end
           helpers.params_to_json(hash)
         end
 
-        def json_schema
-          value.class.schema.ast => [:set, rules]
-          required = []
-          properties = rules.to_h do |rule|
+        def json_schema(schema, defaults: {}, i18n_scope: "")
+          schema.ast => [:set, rules]
+          rules.to_h do |rule|
             item_required =
               case rule
               in [:and, item]
@@ -44,19 +51,17 @@ module API
                 false
               end
             item => [[:predicate, [:key?, [[:name, name], [:input, _undefined]]]], [:key, [_name, Array => ast]]]
-            # key = Yuzakan::Utils::String.json_key(name)
-            key = name
-            required << key if item_required
-            [key, ast_to_property(ast, name)]
+            property = ast_to_property(ast, name, defaults:, i18n_scope:)
+            property[:required] = true if item_required
+            [name, property]
           end
-          {type: "object", properties:, required:}
         end
 
-        private def ast_to_property(ast, name)
+        private def ast_to_property(ast, name, defaults: {}, i18n_scope: "")
           {
-            title: context.t("adapters.#{value.name}.params.#{name}.label", default: nil),
-            description: context.t("adapters.#{value.name}.params.#{name}.description", default: nil),
-            default: value.class.default_params[name],
+            title: context.t("#{name}.label", scope: i18n_scope, default: nil),
+            description: context.t("#{name}.description", scope: i18n_scope, default: nil),
+            default: defaults[name],
             **parse_ast(ast, name),
           }.compact
         end
@@ -91,14 +96,15 @@ module API
           # enum and const
           in [:included_in?, [[:list, Array => list], [:input, _undefined]]] then {enum: list}
           in [:excluded_from?, [[:list, Array => list], [:input, _undefined]]] then {not: {enum: list}}
-          in [:eql?, [[:left, left], [:right, _undefined]]] then {const: left}
+          in [:eql?, [[:left, left], [:right, _undefined]]] then {value: left, readonly: true} # 変更不可な固定値
           # Numeric type only
-          in [:gt?, [[:num, Numeric => num], [:input, _undefined]]] then {exclusiveMinimum: num}
-          in [:gteq?, [[:num, Numeric => num], [:input, _undefined]]] then {minimum: num}
-          in [:lt?, [[:num, Numeric => num], [:input, _undefined]]] then {exclusiveMaximum: num}
-          in [:lteq?, [[:num, Numeric => num], [:input, _undefined]]] then {maximum: num}
+          # NOTE: gt?とlt?はintegerであることが前提
+          in [:gt?, [[:num, Numeric => num], [:input, _undefined]]] then {min: num + 1}
+          in [:gteq?, [[:num, Numeric => num], [:input, _undefined]]] then {min: num}
+          in [:lt?, [[:num, Numeric => num], [:input, _undefined]]] then {max: num - 1}
+          in [:lteq?, [[:num, Numeric => num], [:input, _undefined]]] then {max: num}
           # String type only
-          # NOTE: 実際のところは間違っているが、sizeとbytesizeは区別しない。
+          # NOTE: 本当は異なるがが、sizeとbytesizeは区別しない。
           in [:max_size? | :max_bytesize?, [[:num, Integer => num], [:input, _undefined]]] then {maxlength: num}
           in [:min_size? | :min_bytesize?, [[:num, Integer => num], [:input, _undefined]]] then {minlength: num}
           in [:size? | :bytesize?, [[:size, Integer => size], [:input, _undefined]]]

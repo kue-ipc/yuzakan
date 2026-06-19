@@ -23,7 +23,7 @@ RSpec.describe API::Views::Parts::Adapter do
     it "to_h" do
       data = subject.to_h(**opts)
       expect(data.except(:params)).to eq(expected_data)
-      expect(data[:params].keys).to contain_exactly(:schema)
+      expect(data[:params].keys).to contain_exactly(:schema, :defaults)
     end
 
     it "to_json" do
@@ -31,27 +31,22 @@ RSpec.describe API::Views::Parts::Adapter do
       data = JSON.parse(json, symbolize_names: true)
       expect(data.except(:params)).to eq(expected_data)
       expect(data[:params]).to eq({
-        schema: {
-          type: "object",
-          properties: {
-            str: {title: "文字列", description: "詳細", type: "string", maxlength: 255},
-            text: {type: "string"},
-            int: {type: "integer"},
-            float: {type: "number"},
-            bool: {type: "boolean"},
-            date: {type: "date"},
-            time: {type: "time"},
-            datetime: {type: "datetime"},
-            required_str: {type: "string", maxlength: 255},
-            filled_str: {type: "string", minlength: 1, maxlength: 255},
-            pattern_str: {type: "string", maxlength: 255, pattern: "^[a-z]*$"},
-            fixed_str: {type: "string", const: "abc"},
-            default_str: {type: "string", maxlength: 255, default: "xyz"},
-            encrypted_str: {type: "string", maxlength: 255},
-            list: {type: "string", enum: ["one", "two", "three"]},
-          },
-          required: ["required_str"],
-        },
+        str: {title: "文字列", description: "詳細", type: "string", maxlength: 255},
+        text: {type: "string"},
+        int: {type: "integer"},
+        limited_int: {type: "integer", min: 1, max: 100},
+        float: {type: "number"},
+        bool: {type: "boolean"},
+        date: {type: "date"},
+        time: {type: "time"},
+        datetime: {type: "datetime"},
+        required_str: {type: "string", maxlength: 255, required: true},
+        filled_str: {type: "string", minlength: 1, maxlength: 255},
+        pattern_str: {type: "string", maxlength: 255, pattern: "^[a-z]*$"},
+        fixed_str: {type: "string", value: "abc", readonly: true},
+        default_str: {type: "string", maxlength: 255, default: "xyz"},
+        encrypted_str: {type: "string", maxlength: 255},
+        list: {type: "string", enum: ["one", "two", "three"]},
       })
     end
   end
