@@ -7,9 +7,7 @@ Sequel.default_timezone = :local
 
 module Yuzakan
   class App < Hanami::App
-    # config.middleware.use Yuzakan::Middleware::JsonKeyTraseformer
-    require "yuzakan/middleware/body_parser/params_json_parser"
-    config.middleware.use :body_parser, [Yuzakan::Middleware::BodyParser::ParamsJsonParser]
+    config.middleware.use :body_parser, :json
 
     config.actions.formats.accept :html
 
