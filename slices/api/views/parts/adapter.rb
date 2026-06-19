@@ -44,7 +44,8 @@ module API
                 false
               end
             item => [[:predicate, [:key?, [[:name, name], [:input, _undefined]]]], [:key, [_name, Array => ast]]]
-            key = Yuzakan::Utils::String.json_key(name)
+            # key = Yuzakan::Utils::String.json_key(name)
+            key = name
             required << key if item_required
             [key, ast_to_property(ast, name)]
           end
@@ -98,16 +99,16 @@ module API
           in [:lteq?, [[:num, Numeric => num], [:input, _undefined]]] then {maximum: num}
           # String type only
           # NOTE: 実際のところは間違っているが、sizeとbytesizeは区別しない。
-          in [:max_size? | :max_bytesize?, [[:num, Integer => num], [:input, _undefined]]] then {maxLength: num}
-          in [:min_size? | :min_bytesize?, [[:num, Integer => num], [:input, _undefined]]] then {minLength: num}
+          in [:max_size? | :max_bytesize?, [[:num, Integer => num], [:input, _undefined]]] then {maxlength: num}
+          in [:min_size? | :min_bytesize?, [[:num, Integer => num], [:input, _undefined]]] then {minlength: num}
           in [:size? | :bytesize?, [[:size, Integer => size], [:input, _undefined]]]
-            {minLength: size, maxLength: size}
+            {minlength: size, maxlength: size}
           in [:size? | :bytesize?, [[:size, Range => size], [:input, _undefined]]]
-            {minLength: size.min, maxLength: size.max}
+            {minlength: size.min, maxlength: size.max}
           in [:format?, [[:regex, Regexp => regex], [:input, _undefined]]]
             {pattern: ruby_regex_to_js_regex(regex)}
-          in [:empty?, [[:input, _undefined]]] then {maxLength: 0}
-          in [:filled?, [[:input, _undefined]]] then {minLength: 1}
+          in [:empty?, [[:input, _undefined]]] then {maxlength: 0}
+          in [:filled?, [[:input, _undefined]]] then {minlength: 1}
           end
         end
 

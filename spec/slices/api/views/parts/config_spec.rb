@@ -4,10 +4,8 @@ RSpec.describe API::Views::Parts::Config do
   init_part_spec
 
   let(:value) { config }
-
-  it "to_h" do
-    data = subject.to_h(**opts)
-    expect(data).to eq({
+  let(:full_data) {
+    {
       title: value.title,
       description: value.description,
       domain: value.domain,
@@ -27,59 +25,23 @@ RSpec.describe API::Views::Parts::Config do
       contact_name: value.contact_name,
       contact_email: value.contact_email,
       contact_phone: value.contact_phone,
-    })
-  end
-
-  it "to_json" do
-    json = subject.to_json(**opts)
-    data = JSON.parse(json, symbolize_names: true)
-    expect(data).to eq({
+    }
+  }
+  let(:simple_data) {
+    {
       title: value.title,
       description: value.description,
-      domain: value.domain,
-      sessionTimeout: 3600, # default
-      authFailureWaiting: 2, # default
-      authFailureLimit: 5, # default
-      authFailureDuration: 600, # default
-      passwordMinSize: 8, # default
-      passwordMaxSize: 64, # default
-      passwordMinTypes: 1, # default
-      passwordMinScore: 0, # default
-      passwordProhibitedChars: "", # default
-      passwordExtraDict: [], # default
-      generatePasswordSize: 24, # default
-      generatePasswordType: "ascii", # default
-      generatePasswordChars: " ", # default
-      contactName: value.contact_name,
-      contactEmail: value.contact_email,
-      contactPhone: value.contact_phone,
-    })
-  end
+      contact_name: value.contact_name,
+      contact_email: value.contact_email,
+      contact_phone: value.contact_phone,
+    }
+  }
+
+  it_behaves_like "full data"
 
   context "with restricted" do
     let(:opts) { {restricted: true} }
 
-    it "to_h" do
-      data = subject.to_h(**opts)
-      expect(data).to eq({
-        title: value.title,
-        description: value.description,
-        contact_name: value.contact_name,
-        contact_email: value.contact_email,
-        contact_phone: value.contact_phone,
-      })
-    end
-
-    it "to_json" do
-      json = subject.to_json(**opts)
-      data = JSON.parse(json, symbolize_names: true)
-      expect(data).to eq({
-        title: value.title,
-        description: value.description,
-        contactName: value.contact_name,
-        contactEmail: value.contact_email,
-        contactPhone: value.contact_phone,
-      })
-    end
+    it_behaves_like "simple data"
   end
 end

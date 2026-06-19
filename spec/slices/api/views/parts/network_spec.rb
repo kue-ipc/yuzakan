@@ -4,23 +4,18 @@ RSpec.describe API::Views::Parts::Network do
   init_part_spec
 
   let(:value) { network }
-
-  shared_examples "simple data" do
-    it "to_h" do
-      data = subject.to_h(**opts)
-      expect(data).to eq({
-        ip: "0.0.0.0/0",
-      })
-    end
-
-    it "to_json" do
-      json = subject.to_json(**opts)
-      data = JSON.parse(json, symbolize_names: true)
-      expect(data).to eq({
-        ip: "0.0.0.0/0",
-      })
-    end
-  end
+  let(:full_data) {
+    {
+      ip: "0.0.0.0/0",
+      clearance_level: 1,
+      trusted: false,
+    }
+  }
+  let(:simple_data) {
+    {
+      ip: "0.0.0.0/0",
+    }
+  }
 
   shared_examples "limited data" do
     it "to_h" do
@@ -32,27 +27,6 @@ RSpec.describe API::Views::Parts::Network do
       json = subject.to_json(**opts)
       data = JSON.parse(json, symbolize_names: true)
       expect(data).to eq({})
-    end
-  end
-
-  shared_examples "full data" do
-    it "to_h" do
-      data = subject.to_h(**opts)
-      expect(data).to eq({
-        ip: "0.0.0.0/0",
-        clearance_level: 1,
-        trusted: false,
-      })
-    end
-
-    it "to_json" do
-      json = subject.to_json(**opts)
-      data = JSON.parse(json, symbolize_names: true)
-      expect(data).to eq({
-        ip: "0.0.0.0/0",
-        clearanceLevel: 1,
-        trusted: false,
-      })
     end
   end
 

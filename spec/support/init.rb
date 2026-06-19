@@ -277,23 +277,37 @@ def init_part_spec
 
   let_structs
   let(:opts) { {} }
+  let(:full_data) { value.to_h }
+  let(:simple_data) {
+    {
+      name: value.name,
+      label: value.label,
+    }
+  }
 
-  shared_examples "simple data" do
+  shared_examples "full data" do
     it "to_h" do
       data = subject.to_h(**opts)
-      expect(data).to eq({
-        name: value.name,
-        label: value.label,
-      })
+      expect(data).to eq(full_data)
     end
 
     it "to_json" do
       json = subject.to_json(**opts)
       data = JSON.parse(json, symbolize_names: true)
-      expect(data).to eq({
-        name: value.name,
-        label: value.label,
-      })
+      expect(data).to eq(full_data)
+    end
+  end
+
+  shared_examples "simple data" do
+    it "to_h" do
+      data = subject.to_h(**opts)
+      expect(data).to eq(simple_data)
+    end
+
+    it "to_json" do
+      json = subject.to_json(**opts)
+      data = JSON.parse(json, symbolize_names: true)
+      expect(data).to eq(simple_data)
     end
   end
 end
