@@ -38,7 +38,7 @@ module API
                   user_repo.get!(request.params[:user_id])
                 end
 
-              generate_result = generate_password.call(service, user.name)
+              generate_result = generate_password.call
               password = take_result(request, response, generate_result)
               change_result = change_password_user.call(service, user.name, password)
               take_result(request, response, change_result)

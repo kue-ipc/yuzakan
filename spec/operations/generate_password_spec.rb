@@ -5,7 +5,7 @@ RSpec.describe Yuzakan::Operations::GeneratePassword do
 
   let(:params) { {config_repo: config_repo} }
   let(:config_repo) {
-    instance_double(Yuzakan::Repos::ConfigRepo, current: config)
+    instance_double(Yuzakan::Repos::ConfigRepo, current!: config)
   }
   let(:config) { Factory.structs[:config] }
 
