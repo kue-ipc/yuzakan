@@ -33,8 +33,8 @@ ROM::SQL.migration do
       column :contact_email, String, null: false, default: ""
       column :contact_phone, String, null: false, default: ""
 
-      column :created_at, DateTime, null: false
-      column :updated_at, DateTime, null: false
+      column :created_at, Time, null: false
+      column :updated_at, Time, null: false
     end
   end
 end

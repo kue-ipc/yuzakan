@@ -7,10 +7,10 @@ ROM::SQL.migration do
 
       column :name, String, null: false
       column :label, String, null: false, default: ""
-      column :note, "text", null: false, default: ""
+      column :note, String, text: true, null: false, default: ""
 
-      column :created_at, DateTime, null: false
-      column :updated_at, DateTime, null: false
+      column :created_at, Time, null: false
+      column :updated_at, Time, null: false
 
       index :name, unique: true
     end

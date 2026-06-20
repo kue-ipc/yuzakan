@@ -7,7 +7,7 @@ ROM::SQL.migration do
 
       column :name, String, null: false
       column :label, String, null: false, default: ""
-      column :description, "text", null: false, default: ""
+      column :description, String, text: true, null: false, default: ""
 
       column :category, String, null: false
       column :type, String, null: false
@@ -16,10 +16,10 @@ ROM::SQL.migration do
       column :hidden, TrueClass, null: false, default: false
       column :readonly, TrueClass, null: false, default: false
 
-      column :code, "text", null: false, default: ""
+      column :code, String, text: true, null: false, default: ""
 
-      column :created_at, DateTime, null: false
-      column :updated_at, DateTime, null: false
+      column :created_at, Time, null: false
+      column :updated_at, Time, null: false
 
       index :name, unique: true
       index :category

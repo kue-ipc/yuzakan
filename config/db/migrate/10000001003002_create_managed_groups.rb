@@ -10,8 +10,8 @@ ROM::SQL.migration do
 
       column :unmanageable, TrueClass, null: false, default: false
 
-      column :created_at, DateTime, null: false
-      column :updated_at, DateTime, null: false
+      column :created_at, Time, null: false
+      column :updated_at, Time, null: false
 
       index :service_id
       index :group_id

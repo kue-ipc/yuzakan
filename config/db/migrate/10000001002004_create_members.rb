@@ -8,8 +8,8 @@ ROM::SQL.migration do
       foreign_key :user_id, :users, on_delete: :cascade, null: false
       foreign_key :group_id, :groups, on_delete: :restrict, null: false
 
-      column :created_at, DateTime, null: false
-      column :updated_at, DateTime, null: false
+      column :created_at, Time, null: false
+      column :updated_at, Time, null: false
 
       index :user_id
       index :group_id

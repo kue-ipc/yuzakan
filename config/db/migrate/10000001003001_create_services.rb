@@ -7,7 +7,7 @@ ROM::SQL.migration do
 
       column :name, String, null: false
       column :label, String, null: false, default: ""
-      column :description, "text", null: false, default: ""
+      column :description, String, text: true, null: false, default: ""
 
       column :order, Integer, null: false
 
@@ -26,10 +26,10 @@ ROM::SQL.migration do
       column :individual_password, TrueClass, null: false, default: false
       column :self_management, TrueClass, null: false, default: false
 
-      column :synced_at, DateTime
+      column :synced_at, Time
 
-      column :created_at, DateTime, null: false
-      column :updated_at, DateTime, null: false
+      column :created_at, Time, null: false
+      column :updated_at, Time, null: false
 
       index :name, unique: true
     end

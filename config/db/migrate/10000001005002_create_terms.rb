@@ -8,10 +8,10 @@ ROM::SQL.migration do
       foreign_key :dictionary_id, :dictionaries, on_delete: :cascade, null: false
 
       column :term, String, null: false
-      column :description, "text", null: false
+      column :description, String, text: true, null: false
 
-      column :created_at, DateTime, null: false
-      column :updated_at, DateTime, null: false
+      column :created_at, Time, null: false
+      column :updated_at, Time, null: false
 
       index :dictionary_id
       index :term

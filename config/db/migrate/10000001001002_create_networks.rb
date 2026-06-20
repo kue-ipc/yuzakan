@@ -12,8 +12,8 @@ ROM::SQL.migration do
       column :clearance_level, Integer, null: false, default: 1
       column :trusted, TrueClass, null: false, default: false
 
-      column :created_at, DateTime, null: false
-      column :updated_at, DateTime, null: false
+      column :created_at, Time, null: false
+      column :updated_at, Time, null: false
 
       index :ip, unique: true
     end
