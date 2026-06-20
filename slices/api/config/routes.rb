@@ -6,7 +6,13 @@ module API
 
     resources :affiliations, only: [:index, :create, :show, :update, :destroy]
 
-    resources :attrs, only: [:index, :create, :show, :update, :destroy]
+    # resources :attrs, only: [:index, :create, :show, :update, :destroy]
+
+    get "/attrs/:category_id", to: "attrs.index", as: :attrs
+    post "/attrs/:category_id", to: "attrs.create", as: :attrs
+    get "/attrs/:category_id/:id", to: "attrs.show", as: :attr
+    put "/attrs/:category_id/:id", to: "attrs.update", as: :attr
+    delete "/attrs/:category_id/:id", to: "attrs.destroy", as: :attr
 
     resource :auth, only: [:create, :show, :destroy] do
       resource :mfa, only: [:create, :show]

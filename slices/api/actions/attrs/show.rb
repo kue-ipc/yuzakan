@@ -7,6 +7,8 @@ module API
         include Deps["repos.attr_repo"]
 
         params do
+          required(:category_id).filled(:str?, included_in?: Yuzakan::Relations::Attrs::CATEGORIES)
+
           required(:id).filled(:name, max_size?: 255)
         end
 

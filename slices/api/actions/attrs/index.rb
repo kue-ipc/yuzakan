@@ -6,7 +6,13 @@ module API
       class Index < API::Action
         include Deps["repos.attr_repo"]
 
-        def handle(_request, response)
+        params do
+          required(:category_id).filled(:str?, included_in?: Yuzakan::Relations::Attrs::CATEGORIES)
+        end
+
+        def handle(request, response)
+          check_params(request, response)
+
           attrs =
             if response[:current_level] >= 2
               attr_repo.all

@@ -14,11 +14,12 @@ module API
         security_level 5
 
         params do
+          required(:category_id).filled(:str?, included_in?: Yuzakan::Relations::Attrs::CATEGORIES)
+
           required(:name).filled(:name, max_size?: MAX_STRING_SIZE)
           optional(:label).value(:str?, max_size?: MAX_STRING_SIZE)
           optional(:description).value(:str?, max_size?: MAX_TEXT_SIZE)
 
-          required(:category).filled(:str?, included_in?: Yuzakan::Relations::Attrs::CATEGORIES)
           required(:type).filled(:str?, included_in?: Yuzakan::Relations::Attrs::TYPES)
 
           optional(:order).filled(:int?)
@@ -39,7 +40,8 @@ module API
           check_params(request, response)
 
           name = request.params[:name]
-          params = request.params.to_h.slice(:label, :description, :category, :type, :hidden, :readonly, :code)
+          params = request.params.to_h.slice(:label, :description, :type, :hidden, :readonly, :code)
+          params[:category] = request.params[:category_id]
 
           params[:order] = request.params[:order] || next_order
 

@@ -14,13 +14,14 @@ module API
         security_level 5
 
         params do
+          required(:category_id).filled(:str?, included_in?: Yuzakan::Relations::Attrs::CATEGORIES)
+
           required(:id).filled(:name, max_size?: 255)
 
           optional(:name).filled(:name, max_size?: 255)
           optional(:label).maybe(:str?, max_size?: 255)
           optional(:description).maybe(:str?, max_size?: 16383)
 
-          optional(:category).filled(:str?, included_in?: Yuzakan::Relations::Attrs::CATEGORIES)
           optional(:type).filled(:str?, included_in?: Yuzakan::Relations::Attrs::TYPES)
 
           optional(:order).filled(:int?)
