@@ -44,7 +44,7 @@ module API
 
           attr = nil
           attr_repo.transaction do
-            attr_repo.set(request.params[:id], **request.params.to_h.except(:mappings))
+            attr_repo.put!(request.params[:id], **request.params.to_h.except(:mappings))
             attr = attr_repo.get_with_mappings_and_services(request.params[:id])
 
             if (mappings = take_mappings(request, response))

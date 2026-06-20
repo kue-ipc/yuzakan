@@ -21,9 +21,9 @@ module Yuzakan
         group_repo.transaction do
           management_groups.clear_for_group(group)
           if group.deleted_at
-            Success(group_repo.set(groupname, synced_at: time))
+            Success(group_repo.put!(groupname, synced_at: time))
           else
-            Success(group_repo.set(groupname, deleted_at: time, synced_at: time))
+            Success(group_repo.put!(groupname, deleted_at: time, synced_at: time))
           end
         end
       end

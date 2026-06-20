@@ -5,8 +5,8 @@ module API
     module Groups
       class Create < API::Action
         include Deps[
-          group_repo: "repos.group_repo",
-          affiliation_repo: "repos.affiliation_repo",
+          "repos.group_repo",
+          "repos.affiliation_repo",
           view: "views.groups.show",
         ]
 
@@ -20,7 +20,9 @@ module API
           optional(:basic).filled(:bool?)
           optional(:prohibited).filled(:bool?)
 
-          opional(:affiliation).maybe(:name, max_size?: MAX_STRING_SIZE)
+          optional(:affiliation).maybe(:name, max_size?: MAX_STRING_SIZE)
+
+          optional(:attrs) { hash? }
         end
 
         def handle(request, response)

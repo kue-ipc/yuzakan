@@ -51,7 +51,7 @@ module API
 
           service = nil
           service_repo.transaction do
-            service = service_repo.set(id, **request.params, params: result.to_h)
+            service = service_repo.put!(id, **request.params, params: result.to_h)
             service_repo.renumber_order(service)
           end
 

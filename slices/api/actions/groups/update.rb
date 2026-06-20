@@ -40,7 +40,7 @@ module API
             end
           end
 
-          group = group_repo.set(id, **update_params)
+          group = group_repo.put!(id, **update_params)
 
           response[:group] = group
         end

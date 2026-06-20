@@ -40,7 +40,7 @@ end
 
 # setup local service
 service_repo = Hanami.app["repos.service_repo"]
-local_service = service_repo.get("local") || service_repo.set("local",
+local_service = service_repo.get("local") || service_repo.set!("local",
   label: "ローカル",
   order: 0,
   adapter: "local",
@@ -70,4 +70,4 @@ in Success(_)
 end
 
 Hanami.app["management.sync_user"].call(admin_username) => Success(admin_user)
-Hanami.app["repos.user_repo"].set(admin_username, clearance_level: 5) if admin_user.clearance_level < 5
+Hanami.app["repos.user_repo"].put!(admin_username, clearance_level: 5) if admin_user.clearance_level < 5

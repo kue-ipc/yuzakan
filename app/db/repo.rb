@@ -34,11 +34,13 @@ module Yuzakan
       def get!(name) = get(name) || raise(NotFoundError, "Not found: #{name}")
       def put(name, **) = by_name(name).changeset(:update, **, name: name).map(:touch).commit
       def put!(name, **) = put(name, **) || raise(NotFoundError, "Not found: #{name}")
+      private def _set(name, **) = root.changeset(:create, **, name: name).map(:add_timestamps).commit
+      def set(name, **) = put(name, **) || _set(name, **)
 
       def set!(name, **)
         raise(DuplicateNameError, "Already exists: #{name}") if exist?(name)
 
-        root.changeset(:create, **, name: name).map(:add_timestamps).commit
+        _set(name, **)
       end
 
       def unset(name) = by_name(name).changeset(:delete).commit
