@@ -653,7 +653,7 @@ module Yuzakan
       end
 
       private def create_user_password_attributes(password)
-        {attribute_name("userPassword") => generate_password(password)}
+        {attribute_name("userPassword") => generate_password_hash(password)}
       end
 
       private def update_user_attributes(**userdata)
@@ -1034,7 +1034,7 @@ module Yuzakan
       end
 
       private def change_password_operations(user, password, locked: false)
-        user_password = generate_password(password)
+        user_password = generate_password_hash(password)
         user_password = lock_password(user_password) if locked
 
         operations = []
@@ -1081,7 +1081,7 @@ module Yuzakan
       end
 
       # https://datatracker.ietf.org/doc/html/draft-stroeder-hashed-userpassword-values
-      private def generate_password(password) # rubocop: disable Metrics/AbcSize, Metrics/MethodLength
+      private def generate_password_hash(password) # rubocop: disable Metrics/AbcSize, Metrics/MethodLength
         case @params[:password_scheme].upcase
         when "{CLEARTEXT}" then password
         when "{CRYPT}" then "{CRYPT}#{generate_crypt_password(password)}"
