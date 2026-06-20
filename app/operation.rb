@@ -36,18 +36,18 @@ module Yuzakan
       case name
       when Yuzakan::Patterns[:name]
         if max_size&.<(name.size)
-          Failure([:max_size, {num: max_size}])
+          Failure[:invalid, {name: [t("errors.max_size?", num: max_size)]}]
         else
           Success(name)
         end
       when String
-        Failure([:invaild, "name"])
+        Failure[:invalid, {name: [t("errors.format?")]}]
       when Symbol
         validate_name(name.to_s)
       when nil
-        Failure([:nil, "name"])
+        Failure[:invalid, {name: [t("errors.filled?")]}]
       else
-        Failure([:not_string, "name"])
+        Failure[:invalid, {name: [t("errors.str?")]}]
       end
     end
 
