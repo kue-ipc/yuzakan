@@ -21,8 +21,9 @@ ROM::SQL.migration do
       column :created_at, Time, null: false
       column :updated_at, Time, null: false
 
-      index :name, unique: true
+      index :name
       index :category
+      index [:category, :name], unique: true
     end
   end
 end

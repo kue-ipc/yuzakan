@@ -60,6 +60,7 @@ CREATE TABLE public.affiliations (
     name text NOT NULL,
     label text DEFAULT ''::text NOT NULL,
     note text DEFAULT ''::text NOT NULL,
+    attrs jsonb DEFAULT '{}'::jsonb NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -776,10 +777,17 @@ CREATE INDEX attrs_category_index ON public.attrs USING btree (category);
 
 
 --
+-- Name: attrs_category_name_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX attrs_category_name_index ON public.attrs USING btree (category, name);
+
+
+--
 -- Name: attrs_name_index; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX attrs_name_index ON public.attrs USING btree (name);
+CREATE INDEX attrs_name_index ON public.attrs USING btree (name);
 
 
 --

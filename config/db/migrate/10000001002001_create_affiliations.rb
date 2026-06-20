@@ -9,6 +9,8 @@ ROM::SQL.migration do
       column :label, String, null: false, default: ""
       column :note, String, text: true, null: false, default: ""
 
+      column :attrs, "jsonb", null: false, default: "{}"
+
       column :created_at, Time, null: false
       column :updated_at, Time, null: false
 
