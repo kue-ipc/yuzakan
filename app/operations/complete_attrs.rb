@@ -5,8 +5,8 @@ module Yuzakan
     include Deps["repos.attr_repo"]
 
     # Complete attrs
-    class Complete < Yuzakan::Operation
-      def call(category, name, attrs)
+    class CompleteAttrs < Yuzakan::Operation
+      def call(category, data)
         category = step validate_category(category)
         name = step validate_name(name)
         step complete_attrs(category, name, attrs)
@@ -28,6 +28,9 @@ module Yuzakan
           [attr.name, value]
         end
         Success(completed_attrs)
+      end
+
+      private def complete_attr(category, name, attr_name, attrs)
       end
     end
   end

@@ -5,24 +5,43 @@ module Yuzakan
   module Management
     class RegisterGroup < Yuzakan::Operation
       include Deps[
+        "repo.config_repo",
         "repos.group_repo",
         "repos.managed_group_repo",
+        "operations.complete_attrs",
       ]
 
       def call(groupname, params, time: Time.now)
         groupname = step validate_name(groupname)
-        params = step validate_params(params)
-        step register(groupname, params, time:)
+
+        group = group_repo.get_with_associations(groupname)
+        affiliation = group&.affiliation
+
+        attrs = step complete_attrs.call(category, {name: :groupname, affiliation:, attrs: params[:attrs]})
+        label = step get_label(attrs)
+        label = groupname if label.nil? || label.empty?
+
+        group_params = {
+          label:,
+          attrs:,
+          deleted_at: nil,
+          synced_at: time
+        }
+
+        step register(groupname, {})
       end
 
-      private def validate_params(params)
-        validated_params = params.slice(:label, :attrs)
-        if params.key?(:services)
-          validated_params[:services] = params[:services].map do |service, service_params|
-            [service, service_params.slice(:unmanageable)]
-          end
+      private def get_label(groupname, attrs)
+        config = config_repo.current!
+        if config.group_label_attr.empty?
+          Success(groupname)
         end
-        Success(validated_params)
+        label = attrs[:label]
+        return Success(label) if label
+
+        return Failure("label is required for group #{groupname}") unless config_repo.get(:default_group_label)
+
+        Success(config_repo.get(:default_group_label))
       end
 
       private def register(groupname, params, time: Time.now)
