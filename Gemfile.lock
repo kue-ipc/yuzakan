@@ -144,7 +144,7 @@ GEM
     ffi (1.17.4-x86_64-linux-musl)
     formatador (1.2.3)
       reline
-    google-apis-admin_directory_v1 (0.78.0)
+    google-apis-admin_directory_v1 (0.79.0)
       google-apis-core (>= 0.15.0, < 2.a)
     google-apis-core (1.2.3)
       addressable (~> 2.9)
@@ -250,7 +250,7 @@ GEM
       binding_of_caller (~> 1.0)
     hansi (0.2.1)
     hiredis (0.6.3)
-    i18n (1.15.1)
+    i18n (1.15.2)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     io-console (0.8.2)
@@ -282,6 +282,7 @@ GEM
       drb (~> 2.0)
       prism (~> 1.5)
     multi_json (1.21.1)
+    mustache (1.1.2)
     mustermann (3.1.1)
     mustermann-contrib (3.1.1)
       hansi (~> 0.2.0)
@@ -325,7 +326,7 @@ GEM
     pg (1.6.3-x86_64-darwin)
     pg (1.6.3-x86_64-linux)
     pg (1.6.3-x86_64-linux-musl)
-    pp (0.6.3)
+    pp (0.6.4)
       prettyprint
     prettyprint (0.2.0)
     prism (1.9.0)
@@ -530,6 +531,7 @@ DEPENDENCIES
   ipaddr (>= 1.2.7)
   kramdown
   kramdown-parser-gfm
+  mustache
   net-ldap
   ostruct
   pg
@@ -608,7 +610,7 @@ CHECKSUMS
   ffi (1.17.4-x86_64-linux-gnu) sha256=9d3db14c2eae074b382fa9c083fe95aec6e0a1451da249eab096c34002bc752d
   ffi (1.17.4-x86_64-linux-musl) sha256=3fdf9888483de005f8ef8d1cf2d3b20d86626af206cbf780f6a6a12439a9c49e
   formatador (1.2.3) sha256=19fa898133c2c26cdbb5d09f6998c1e137ad9427a046663e55adfe18b950d894
-  google-apis-admin_directory_v1 (0.78.0) sha256=8b9e962a598eb935cdadf49041237cef6adb32496d3fc8b39f09e38056526a68
+  google-apis-admin_directory_v1 (0.79.0) sha256=388022ac2ab3f240e86955ffd279d098053a04efef28cd88d65092718b9ff454
   google-apis-core (1.2.3) sha256=2ce34c17c144e24d966ecb0efa5d46aaba3e3e3721ba1faa1ed80db2389e7b08
   google-cloud-env (2.3.1) sha256=0faac01eb27be78c2591d64433663b1a114f8f7af55a4f819755426cac9178e7
   google-logging-utils (0.2.0) sha256=675462b4ea5affa825a3442694ca2d75d0069455a1d0956127207498fca3df7b
@@ -630,7 +632,7 @@ CHECKSUMS
   hanami-webconsole (2.3.1) sha256=0fec8e5b4395ab3c93b976a4cb8a7b9d61ed85d19c67534aa74c99385f2c768f
   hansi (0.2.1) sha256=7e27dfd729f1692a3a7690fc0ef3af9d5e3cfc0285bb135cae7e56180e4805db
   hiredis (0.6.3) sha256=7f052e320f7d24b5c2a9fdf67c6ff6facdf6e256394a703511bce34ecf445212
-  i18n (1.15.1) sha256=505ec5de1f4e6c8a2cb028ef9700ca495f117911643455721dee5abdca797255
+  i18n (1.15.2) sha256=00f9eb62412fe593b2a65a97daa75300d37abb8f7202ec748e94b6d46a9dd1b5
   ice_nine (0.11.2) sha256=5d506a7d2723d5592dc121b9928e4931742730131f22a1a37649df1c1e2e63db
   io-console (0.8.2) sha256=d6e3ae7a7cc7574f4b8893b4fca2162e57a825b223a177b7afa236c5ef9814cc
   ipaddr (1.2.9) sha256=0f858a7b2e45def81ad2acf7997af77f2837709fa3b3acbbc05f33cfcc03deb7
@@ -649,6 +651,7 @@ CHECKSUMS
   mini_mime (1.1.5) sha256=8681b7e2e4215f2a159f9400b5816d85e9d8c6c6b491e96a12797e798f8bccef
   minitest (6.0.6) sha256=153ea36d1d987a62942382b61075745042a2b3123b1cd48f4c3675af9cc7d6f1
   multi_json (1.21.1) sha256=e6126a31808e3b4d19f483c775ceac34df190dffa62adfb63a165ee14ba68080
+  mustache (1.1.2) sha256=d420243400354da78ded2d81541b381ad8d94e8e9b95022d0d71d66f8ef36c00
   mustermann (3.1.1) sha256=4c6170c7234d5499c345562ba7c7dfe73e1754286dcc1abb053064d66a127198
   mustermann-contrib (3.1.1) sha256=c3ecf24f71668222e7554721fa6957d9dfe504997fd8c12a8557d8c39a82a81d
   nenv (0.3.0) sha256=d9de6d8fb7072228463bf61843159419c969edb34b3cef51832b516ae7972765
@@ -675,7 +678,7 @@ CHECKSUMS
   pg (1.6.3-x86_64-darwin) sha256=ee2e04a17c0627225054ffeb43e31a95be9d7e93abda2737ea3ce4a62f2729d6
   pg (1.6.3-x86_64-linux) sha256=5d9e188c8f7a0295d162b7b88a768d8452a899977d44f3274d1946d67920ae8d
   pg (1.6.3-x86_64-linux-musl) sha256=9c9c90d98c72f78eb04c0f55e9618fe55d1512128e411035fe229ff427864009
-  pp (0.6.3) sha256=2951d514450b93ccfeb1df7d021cae0da16e0a7f95ee1e2273719669d0ab9df6
+  pp (0.6.4) sha256=dfcb0fce700c41456265922884f9fe195d7fbb0674a3578e6c0f69588e82b570
   prettyprint (0.2.0) sha256=2bc9e15581a94742064a3cc8b0fb9d45aae3d03a1baa6ef80922627a0766f193
   prism (1.9.0) sha256=7b530c6a9f92c24300014919c9dcbc055bf4cdf51ec30aed099b06cd6674ef85
   pry (0.16.0) sha256=d76c69065698ed1f85e717bd33d7942c38a50868f6b0673c636192b3d1b6054e

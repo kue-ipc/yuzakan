@@ -24,6 +24,7 @@
     "highlight.js": "^11.11.1",
     "hyperapp": "^2.0.22",
     "luxon": "^3.7.2",
+    "mustache": "^4.2.0",
     "pluralize": "^8.0.0",
     "ramda": "^0.32.0",
     "source-code-pro": "^2.42.0",
