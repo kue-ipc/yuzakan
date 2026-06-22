@@ -94,6 +94,7 @@ CREATE TABLE public.attrs (
     "order" integer NOT NULL,
     hidden boolean DEFAULT false NOT NULL,
     readonly boolean DEFAULT false NOT NULL,
+    forced boolean DEFAULT false NOT NULL,
     code text DEFAULT ''::text NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL

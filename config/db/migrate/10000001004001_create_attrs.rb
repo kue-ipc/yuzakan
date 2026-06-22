@@ -14,8 +14,9 @@ ROM::SQL.migration do
 
       column :order, Integer, null: false
       column :hidden, TrueClass, null: false, default: false
-      column :readonly, TrueClass, null: false, default: false
 
+      column :readonly, TrueClass, null: false, default: false
+      column :forced, TrueClass, null: false, default: false
       column :code, String, text: true, null: false, default: ""
 
       column :created_at, Time, null: false

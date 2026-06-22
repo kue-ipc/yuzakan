@@ -8,8 +8,7 @@ module Yuzakan
     class CompleteAttrs < Yuzakan::Operation
       def call(category, data)
         category = step validate_category(category)
-        name = step validate_name(name)
-        step complete_attrs(category, name, attrs)
+        step complete_attrs(category, data)
       end
 
       private def validate_category(category)
@@ -21,16 +20,48 @@ module Yuzakan
         end
       end
 
-      private def complete_attrs(category, name, attrs)
-        completed_attrs = attr_repo.all_for_category(category).to_h do |attr|
-          value = attrs[attr.name] = attr_repo.get_exposed(category:, name: attr.name) if attrs.key?(attr.name)
-
-          [attr.name, value]
+      private def complete_attrs(category, data)
+        attrs = {}
+        attr_repo.all_for_category(category).to_h do |attr|
+          name = attr.name
+          value = data[:attrs][name]
+          attrs[name] =
+            if attr.readonly || code.empty? || (value && !attr.forced)
+              value
+            else
+              complete_attr(attr, data, attrs)
+            end
         end
-        Success(completed_attrs)
+        Success(attrs.compact)
       end
 
-      private def complete_attr(category, name, attr_name, attrs)
+      private def complete_attr(attr, data, attrs)
+        hash = {**data, attrs:}
+        value = Mustache.render(attr.code, hash)
+        convert_type(value, attr.type)
+      end
+
+      private def convert_type(value, type)
+        case type
+        when "boolean"
+          if TRUE_VALUES.include?(value)
+            true
+          elsif FALSE_VALUES.include?(value)
+            false
+          end
+        when "string"
+          value.to_s
+        when "integer"
+          value.to_i
+        when "float"
+          value.to_f
+        when "date"
+          value.to_date
+        when "time", "datetime"
+          value.to_time
+        else
+          value
+        end
       end
     end
   end
