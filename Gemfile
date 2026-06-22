@@ -36,7 +36,7 @@ gem "i18n"
 gem "bcrypt"
 gem "zxcvbn"
 gem "digest-xxhash"
-gem "mustache"
+gem "handlebars-engine"
 
 # default gems
 gem "ipaddr", ">= 1.2.7"

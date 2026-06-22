@@ -41,7 +41,7 @@ codeはmustacheを用いる。
 <https://mustache.github.io/>
 これは、RubyとJavaScript双方で使用できるようにするためである。
 
-
+TODO: mustacheだと限界があったのでHandlebarsを用いる。
 
 各パラメーターにはそのままアクセスできる。
 
