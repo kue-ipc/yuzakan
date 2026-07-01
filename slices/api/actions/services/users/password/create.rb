@@ -6,7 +6,7 @@ module API
       module Users
         module Password
           class Create < API::Action
-            incrlude Deps[
+            include Deps[
               "repos.service_repo",
               "repos.user_repo",
               "operations.generate_password",

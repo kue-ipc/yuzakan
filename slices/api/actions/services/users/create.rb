@@ -5,7 +5,7 @@ module API
     module Services
       module Users
         class Create < API::Action
-          incrlude Deps[
+          include Deps[
             "repos.service_repo",
             "repos.user_repo",
             "services.create_user",

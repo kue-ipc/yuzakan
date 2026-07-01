@@ -6,7 +6,7 @@ module API
       module Users
         module Mfa
           class Destroy < API::Action
-            incrlude Deps[
+            include Deps[
               "repos.service_repo",
               "repos.user_repo",
               "services.reset_mfa_user",

@@ -6,7 +6,7 @@ module API
       module Users
         module Lock
           class Create < API::Action
-            incrlude Deps[
+            include Deps[
               "repos.service_repo",
               "repos.user_repo",
               "services.lock_user",

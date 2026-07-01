@@ -6,7 +6,7 @@ module API
       module Users
         module Lock
           class Destroy < API::Action
-            incrlude Deps[
+            include Deps[
               "repos.service_repo",
               "repos.user_repo",
               "services.unlock_user",

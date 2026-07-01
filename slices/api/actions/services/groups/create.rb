@@ -5,7 +5,7 @@ module API
     module Services
       module Groups
         class Create < API::Action
-          incrlude Deps[
+          include Deps[
             "repos.service_repo",
             "repos.group_repo",
             "services.create_group",

@@ -7,7 +7,7 @@ module API
         module Mfa
           module Code
             class Create < API::Action
-            incrlude Deps[
+            include Deps[
               "repos.service_repo",
               "repos.user_repo",
               "services.generate_code_user",

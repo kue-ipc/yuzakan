@@ -6,7 +6,7 @@ module API
       module Users
         module Password
           class Update < API::Action
-            incrlude Deps[
+            include Deps[
               "repos.service_repo",
               "repos.user_repo",
               "services.change_password_user",
