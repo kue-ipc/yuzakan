@@ -6,7 +6,6 @@ require "dry/monads"
 include Dry::Monads[:result]
 
 title = ENV.fetch("TITLE", "Yuzakan")
-description = ENV.fetch("SUB_TITLE", "アカウント管理システム")
 
 admin_username = ENV.fetch("ADMIN_USERNAME", "admin")
 admin_password = ENV.fetch("ADMIN_PASSWORD", admin_username)
@@ -20,7 +19,7 @@ Hanami.app["cache_store"].clear
 
 # setup config
 config_repo = Hanami.app["repos.config_repo"]
-config_repo.create(title: title, description: description) unless config_repo.created?
+config_repo.create(title:) unless config_repo.created?
 
 # setup networks
 network_repo = Hanami.app["repos.network_repo"]
@@ -41,7 +40,6 @@ end
 # setup local service
 service_repo = Hanami.app["repos.service_repo"]
 local_service = service_repo.get("local") || service_repo.set!("local",
-  label: "ローカル",
   order: 0,
   adapter: "local",
   params: {},
@@ -52,18 +50,17 @@ local_service = service_repo.get("local") || service_repo.set!("local",
   lockable: true,
   group: true)
 
-# setup admin user and group
+# setup admin user and group for local service
 case Hanami.app["services.read_group"].call(local_service, admin_groupname)
 in Success(nil)
-  params = {label: "管理者"}
-  Hanami.app["services.create_group"].call(local_service, admin_groupname, **params) => Success(_)
+  Hanami.app["services.create_group"].call(local_service, admin_groupname) => Success(_)
 in Success(_)
   # do nothing
 end
 
 case Hanami.app["services.read_user"].call(local_service, admin_username)
 in Success(nil)
-  params = {label: "ローカル管理者", primary_group: admin_groupname, groups: []}
+  params = {primary_group: admin_groupname, groups: []}
   Hanami.app["services.create_user"].call(local_service, admin_username, admin_password, **params) => Success(_)
 in Success(_)
   # do nothing
