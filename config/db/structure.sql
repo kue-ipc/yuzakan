@@ -154,7 +154,6 @@ CREATE TABLE public.configs (
     id integer NOT NULL,
     title text NOT NULL,
     description text DEFAULT ''::text NOT NULL,
-    domain text DEFAULT ''::text NOT NULL,
     session_timeout integer DEFAULT 3600 NOT NULL,
     auth_failure_waiting integer DEFAULT 2 NOT NULL,
     auth_failure_limit integer DEFAULT 5 NOT NULL,
