@@ -16,12 +16,7 @@ module Yuzakan
       def clear_for_group(group) = for_group(group).command(:delete).call
       def clear_for_service(service) = for_service(service).command(:delete).call
 
-      def create_for_group_and_service(group, service, **) = create(group_id: group.id, service_id: service.id, **)
-
-      def update_for_group_and_service(group, service, **)
-        for_group_and_service(group, service).command(:update, **UPDATE_TIMESTAMP).call(**)
-      end
-
+      def create_for_group_and_service(group, service) = create(group_id: group.id, service_id: service.id)
       def delete_for_group_and_service(group, service) = for_group_and_service(group, service).command(:delete).call
       def find_for_group_and_service(group, service) = for_group_and_service(group, service).one
       def exist_for_group_and_service?(group, service) = for_group_and_service(group, service).exist?
@@ -31,12 +26,8 @@ module Yuzakan
         managed_groups.transaction do
           for_group(group).exclude(service_id: service_ids).command(:delete).call
           current_service_ids = for_group(group).pluck(:service_id)
-          services.each do |service, params|
-            if current_service_ids.include?(service.id)
-              update_for_group_and_service(group, service, **params)
-            else
-              create_for_group_and_service(group, service, **params)
-            end
+          services.reject { |service| current_service_ids.include?(service.id) }.each do |service|
+            create_for_group_and_service(group, service)
           end
         end
       end

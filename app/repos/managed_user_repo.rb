@@ -16,12 +16,7 @@ module Yuzakan
       def clear_for_user(user) = for_user(user).command(:delete).call
       def clear_for_service(service) = for_service(service).command(:delete).call
 
-      def create_for_user_and_service(user, service, **) = create(user_id: user.id, service_id: service.id, **)
-
-      def update_for_user_and_service(user, service, **)
-        for_user_and_service(user, service).command(:update, **UPDATE_TIMESTAMP).call(**)
-      end
-
+      def create_for_user_and_service(user, service) = create(user_id: user.id, service_id: service.id)
       def delete_for_user_and_service(user, service) = for_user_and_service(user, service).command(:delete).call
       def find_for_user_and_service(user, service) = for_user_and_service(user, service).one
       def exist_for_user_and_service?(user, service) = for_user_and_service(user, service).exist?
@@ -31,12 +26,8 @@ module Yuzakan
         managed_users.transaction do
           for_user(user).exclude(service_id: service_ids).command(:delete).call
           current_service_ids = for_user(user).pluck(:service_id)
-          services.each do |service, params|
-            if current_service_ids.include?(service.id)
-              update_for_user_and_service(user, service, **params)
-            else
-              create_for_user_and_service(user, service, **params)
-            end
+          services.reject { |service| current_service_ids.include?(service.id) }.each do |service|
+            create_for_user_and_service(user, service)
           end
         end
       end

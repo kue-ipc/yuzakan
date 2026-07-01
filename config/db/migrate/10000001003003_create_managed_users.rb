@@ -8,10 +8,6 @@ ROM::SQL.migration do
       foreign_key :service_id, :services, on_delete: :cascade, null: false
       foreign_key :user_id, :users, on_delete: :restrict, null: false
 
-      column :unmanageable, TrueClass, null: false, default: false
-      column :locked, TrueClass, null: false, default: false
-      column :mfa, TrueClass, null: false, default: false
-
       column :created_at, Time, null: false
       column :updated_at, Time, null: false
 

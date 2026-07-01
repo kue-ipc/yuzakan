@@ -168,6 +168,10 @@ CREATE TABLE public.configs (
     generate_password_size integer DEFAULT 24 NOT NULL,
     generate_password_type text DEFAULT 'ascii'::text NOT NULL,
     generate_password_chars text DEFAULT ' '::text NOT NULL,
+    affiliation_label_attr text DEFAULT ''::text NOT NULL,
+    group_label_attr text DEFAULT ''::text NOT NULL,
+    user_label_attr text DEFAULT ''::text NOT NULL,
+    user_email_attr text DEFAULT ''::text NOT NULL,
     contact_name text DEFAULT ''::text NOT NULL,
     contact_email text DEFAULT ''::text NOT NULL,
     contact_phone text DEFAULT ''::text NOT NULL,
@@ -341,7 +345,6 @@ CREATE TABLE public.managed_groups (
     id integer NOT NULL,
     service_id integer NOT NULL,
     group_id integer NOT NULL,
-    unmanageable boolean DEFAULT false NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -369,9 +372,6 @@ CREATE TABLE public.managed_users (
     id integer NOT NULL,
     service_id integer NOT NULL,
     user_id integer NOT NULL,
-    unmanageable boolean DEFAULT false NOT NULL,
-    locked boolean DEFAULT false NOT NULL,
-    mfa boolean DEFAULT false NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );

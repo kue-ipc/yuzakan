@@ -17,7 +17,6 @@ ROM::SQL.migration do
       column :locked_count, Integer, null: false, default: 0
 
       column :clearance_level, Integer, null: false, default: 1
-
       column :prohibited, TrueClass, null: false, default: false
 
       column :deleted_at, Time
