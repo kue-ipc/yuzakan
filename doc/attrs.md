@@ -67,7 +67,8 @@ codeはHandlebarsを用いる。
 
 - upcase _var_ ... 全て大文字にする。
 - downcase _var_ ... 全て小文字にする。
-- slice _start_ _end_ _var_ ... start番目からend番目までの文字を切り出す。end番目は含まない。サロゲートペアは考慮するが文字結合は考慮しない。endが`undefined`または`null`の場合は最後まで取り出す。
+- slice _var_ _start_ _length?_ ... start番目からlength文字切り出す。サロゲートペアは考慮するが文字結合は考慮しない。lengthが省略された場合は末まで切り出す。
+- strip ... 前後の空白を削除する。空白はWhite_Spaceプロパティであるかどうかで判別する。
 - first_word _var_ ... 空白区切りした最初の文字列。空白はWhite_Spaceプロパティであるかどうかで判別する。
 - last_word _var_... 空白区切りした最後の文字列。空白はWhite_Spaceプロパティであるかどうかで判別する。
 - digest "_algo_" _var_ ... 指定のアルゴリズムでハッシュ(メッセージダイジェスト)を作る。
