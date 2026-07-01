@@ -2,7 +2,10 @@
 
 module Yuzakan
   module Operations
-    include Deps["repos.attr_repo"]
+    include Deps[
+      "repos.attr_repo",
+      "handlebars",
+    ]
 
     # Complete attrs
     class CompleteAttrs < Yuzakan::Operation
@@ -37,7 +40,8 @@ module Yuzakan
 
       private def complete_attr(attr, data, attrs)
         hash = {**data, attrs:}
-        value = Mustache.render(attr.code, hash)
+        template = handlebars.compile(attr.code, noEscape: true)
+        value = template.call(hash)
         convert_type(value, attr.type)
       end
 
