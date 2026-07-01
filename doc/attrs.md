@@ -74,13 +74,13 @@ codeはHandlebarsを用いる。
 - digest "_algo_" _var_ ... 指定のアルゴリズムでハッシュ(メッセージダイジェスト)を作る。
     - md5
     - sha1
-    - sha256
+    - sha256 (sha2)
     - sha384
     - sha512
     - xxh32
     - xxh64
-    - xxh3
-    - xxh128
+    - xxh3_64 (xxh3)
+    - xxh3_128
 - dict "_dict_" _var_ ... 指定の辞書を引く。該当する名前がない場合は空文字列になる。
 
 first_wordとlast_wordは/\p{White_Space}/uで区切りを行う。
