@@ -9,8 +9,6 @@ ROM::SQL.migration do
 
       column :name, String, null: false
       column :hashed_password, String, null: false, default: ""
-      column :label, String, null: false, default: ""
-      column :email, String, null: false, default: ""
 
       column :locked, TrueClass, null: false, default: false
 

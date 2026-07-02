@@ -23,6 +23,17 @@ module Local
       def find_by_local_user_and_local_group(user, group)
         by_local_user_and_local_group(user, group).one
       end
+
+      def set_groups_for_user(user, groups)
+        group_ids = groups.map(&:id)
+        local_members.transaction do
+          local_members.by_local_user_id(user.id).exclude(local_group_id: group_ids).command(:delete).call
+          current_group_ids = local_members.by_local_user_id(user.id).pluck(:local_group_id)
+          groups.reject { |group| current_group_ids.include?(group.id) }.each do |group|
+            create(local_user_id: user.id, local_group_id: group.id)
+          end
+        end
+      end
     end
   end
 end

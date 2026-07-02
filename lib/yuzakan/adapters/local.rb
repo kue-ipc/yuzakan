@@ -22,17 +22,13 @@ module Yuzakan
         return if local_user_repo.exist_by_name?(username)
 
         hashed_password = hash_password(password)
-        local_group = userdata.primary_group
-          &.then { |name| local_group_repo.find_by_name(name) }
-        local_members = userdata.groups&.difference([userdata.primary_group])
-          &.then { |names| local_group_repo.all_by_names(names) }
+        local_group = userdata.primary_group&.then { |name| local_group_repo.find_by_name(name) }
+        local_members = local_group_repo.all_by_names(userdata.groups.reject { |name| name == userdata.primary_group })
 
         params = {
           name: username,
           hashed_password: hashed_password,
-          label: userdata.label || "",
-          email: userdata.email || "",
-          attrs: userdata.attrs || {},
+          attrs: userdata.attrs,
           local_group_id: local_group&.id,
           local_members: local_members
             &.map { |local_member| {local_group_id: local_member.id} } || [],
@@ -50,29 +46,16 @@ module Yuzakan
         local_user = local_user_repo.find_by_name(username)
         return if local_user.nil?
 
-        primary_group = userdata.primary_group
-          &.then { |name| local_group_repo.find_by_name(name) }
-        member_groups = userdata.groups&.difference([userdata.primary_group])
-          &.then { |names| local_group_repo.all_by_names(names) }
+        local_group = userdata.primary_group&.then { |name| local_group_repo.find_by_name(name) }
+        local_members = local_group_repo.all_by_names(userdata.groups.reject { |name| name == userdata.primary_group })
 
         params = {
-          label: userdata.label,
-          email: userdata.email,
-          **{attrs: userdata.attrs&.merge(local_user.attrs)}.comact,
-          local_group_id: primary_group&.id,
+          attrs: userdata.attrs.merge,
+          local_group_id: local_group&.id,
         }
         local_user_repo.transaction do
           local_user_repo.update(local_user.id, **params)
-          if member_groups
-            remain_group_ids = member_groups.map(&:id)
-            local_user_repo.find_with_members(local_user.id).local_members.each do |local_member|
-              local_member_repo.delete(local_member.id) unless remain_group_ids.delete(local_member.local_group_id)
-            end
-            remain_group_ids.each do |group_id|
-              local_member_repo.create(local_user_id: local_user.id,
-                local_group_id: group_id)
-            end
-          end
+          local_member_repo.set_groups_for_user(local_user, local_members)
         end
 
         user_read(username)
@@ -97,7 +80,7 @@ module Yuzakan
 
       def user_change_password(username, password)
         local_user = local_user_repo.find_by_name(username)
-        return false if local_user.nil?
+        return if local_user.nil?
 
         hashed_password = hash_password(password)
         local_user_repo.update(local_user.id, hashed_password:)
@@ -106,7 +89,7 @@ module Yuzakan
 
       def user_lock(username)
         local_user = local_user_repo.find_by_name(username)
-        return false if local_user.nil?
+        return if local_user.nil?
         return false if local_user.locked
 
         local_user_repo.update(local_user.id, locked: true)
@@ -115,7 +98,7 @@ module Yuzakan
 
       def user_unlock(username, _password: nil)
         local_user = local_user_repo.find_by_name(username)
-        return false if local_user.nil?
+        return if local_user.nil?
         return false unless local_user.locked
 
         local_user_repo.update(local_user.id, locked: false)
@@ -135,8 +118,7 @@ module Yuzakan
 
         params = {
           name: groupname,
-          label: groupdata.label,
-          attrs: groupdata.attrs || {},
+          attrs: groupdata.attrs,
         }
         group_struct_to_data(local_group_repo.create(**params))
       end
@@ -150,8 +132,7 @@ module Yuzakan
         return if local_group.nil?
 
         params = {
-          label: groupdata.label,
-          **{attrs: groupdata.attrs&.merge(local_group.attrs)}.comact,
+          attrs: groupdata.attrs,
         }
         group_struct_to_data(local_group_repo.update(local_group.id, **params))
       end
@@ -224,8 +205,7 @@ module Yuzakan
       end
 
       private def verify_password(password, hashed_password)
-        @container["operations.verify_password"]
-          .call(password, hashed_password).value_or(false)
+        @container["operations.verify_password"].call(password, hashed_password).value_or(false)
       end
 
       private def user_struct_to_data(local_user)
@@ -235,9 +215,8 @@ module Yuzakan
           name: local_user.name,
           primary_group: local_user.local_group&.name,
           groups: local_user.local_member_groups.map(&:name),
-          label: local_user.label,
-          email: local_user.email,
-          locked: local_user.locked)
+          locked: local_user.locked,
+          attrs: local_user.attrs)
       end
 
       private def group_struct_to_data(local_group)
@@ -245,7 +224,7 @@ module Yuzakan
 
         GroupData.new(
           name: local_group.name,
-          label: local_group.label)
+          attrs: local_group.attrs)
       end
     end
   end

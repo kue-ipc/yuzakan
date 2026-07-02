@@ -9,14 +9,14 @@
 #   attr_reader name: String
 #   attr_reader primary_group: String?
 #   attr_reader groups: Array[String]
-#   attr_reader unmanageable: bool?
-#   attr_reader locked: bool?
-#   attr_reader mfa: bool?
+#   attr_reader unmanageable: bool
+#   attr_reader locked: bool
+#   attr_reader mfa: bool
 #   attr_reader attrs: Hash[Symbol, untyped]
 #
 # GroupData:
 #   attr_reader name: String
-#   attr_reader unmanageable: bool?
+#   attr_reader unmanageable: bool
 #   attr_reader attrs: Hash[Symbol, untyped]
 #
 # -- CRUD --

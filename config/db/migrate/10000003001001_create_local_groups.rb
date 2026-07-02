@@ -6,7 +6,6 @@ ROM::SQL.migration do
       primary_key :id
 
       column :name, String, null: false
-      column :label, String, null: false, default: ""
 
       column :attrs, "jsonb", null: false, default: "{}"
 
