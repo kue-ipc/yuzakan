@@ -16,8 +16,6 @@ module Yuzakan
         required(:check).filled(:bool?)
         required(:username).filled(:str?, max_size?: 255)
         required(:password).filled(:str?, max_size?: 255)
-        required(:label).filled(:str?, max_size?: 255)
-        required(:email).filled(:str?, max_size?: 255)
         optional(:unmanageable).value(:bool?)
         optional(:locked).value(:bool?)
         optional(:mfa).value(:bool?)
@@ -44,18 +42,6 @@ module Yuzakan
       #     label: "パスワード",
       #     type: :string,
       #     default: "password",
-      #   },
-      #   {
-      #     name: :label,
-      #     label: "表示名",
-      #     type: :string,
-      #     default: "ユーザー",
-      #   },
-      #   {
-      #     name: :email,
-      #     label: "メールアドレス",
-      #     type: :string,
-      #     default: "user@example.jp",
       #   },
       #   {
       #     name: :unmanageable,
@@ -105,8 +91,6 @@ module Yuzakan
         groups = @params[:groups].to_s.split(/\s|,/).map(&:strip).reject(&:empty?)
         @users = {@params[:username] => {
           username: @params[:username],
-          label: @params[:label],
-          email: @params[:email],
           locked: @params[:locked],
           unmanageable: @params[:unmanageable],
           mfa: @params[:mfa],

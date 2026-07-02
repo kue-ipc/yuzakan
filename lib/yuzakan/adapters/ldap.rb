@@ -25,7 +25,6 @@ module Yuzakan
         required(:bind_username).filled(:str?, max_size?: 255)
         required(:user_name_attr).filled(:str?, max_size?: 255)
         optional(:user_display_name_attr).value(:str?, max_size?: 255)
-        optional(:user_email_attr).value(:str?, max_size?: 255)
         optional(:user_search_base_dn).value(:str?, max_size?: 255)
         optional(:user_search_scope).value(included_in?: %w[base one sub])
         optional(:user_search_filter).value(:str?, max_size?: 255)
@@ -102,13 +101,6 @@ module Yuzakan
       #     type: :string,
       #     required: false,
       #     placeholder: "displayName, displayName;lang-ja, etc...",
-      #     description: "設定しない場合は使われません。",
-      #   }, {
-      #     name: :user_email_attr,
-      #     label: "ユーザーメールの属性",
-      #     type: :string,
-      #     required: false,
-      #     placeholder: "mail, email, maildrop, etc...",
       #     description: "設定しない場合は使われません。",
       #   }, {
       #     name: :user_search_base_dn,
@@ -375,12 +367,9 @@ module Yuzakan
       def user_search(query)
         filter = Net::LDAP::Filter.eq(@params[:user_name_attr], query)
 
-        [:label, :email].each do |name|
-          attr_name = @params[:"user_#{name}_attr"]
-          if attr_name&.size&.positive?
-            filter |= Net::LDAP::Filter.eq(attr_name,
-              query)
-          end
+        # TODO: サーチ対象属性を追加すべき
+        @params[:search_user_attrs]&.each do |attr_name|
+          filter |= Net::LDAP::Filter.eq(attr_name, query)
         end
 
         opts = search_user_opts("*", filter: filter)
@@ -402,12 +391,9 @@ module Yuzakan
       def group_search(query)
         filter = Net::LDAP::Filter.eq(@params[:group_name_attr], query)
 
-        [:label].each do |name|
-          attr_name = @params[:"group_#{name}_attr"]
-          if attr_name&.size&.positive?
-            filter |= Net::LDAP::Filter.eq(attr_name,
-              query)
-          end
+        # TODO: サーチ対象属性を追加すべき
+        @params[:search_group_attrs]&.each do |attr_name|
+          filter |= Net::LDAP::Filter.eq(attr_name, query)
         end
 
         opts = search_group_opts("*", filter: filter)
@@ -623,8 +609,7 @@ module Yuzakan
         end
       end
 
-      private def create_user_attributes(username:, password: nil,
-        label: nil, email: nil, **userdata)
+      private def create_user_attributes(username:, password: nil, **userdata)
         attributes = userdata[:attrs].transform_keys do |key|
           attribute_name(key)
         end
@@ -637,14 +622,6 @@ module Yuzakan
         attributes[attribute_name(@params[:create_user_dn_attr])] = username
         unless @params[:user_name_attr].casecmp?(@params[:create_user_dn_attr])
           attributes[attribute_name(@params[:user_name_attr])] = username
-        end
-
-        if @params[:user_display_name_attr]&.size&.positive? && label&.size&.positive?
-          attributes[attribute_name(@params[:user_display_name_attr])] =
-            label
-        end
-        if @params[:user_email_attr]&.size&.positive? && email&.size&.positive?
-          attributes[attribute_name(@params[:user_email_attr])] = email
         end
 
         attributes.merge!(create_user_password_attributes(password)) if password
@@ -661,14 +638,6 @@ module Yuzakan
           attribute_name(key)
         end
         attributes.transform_values! { |value| convert_ldap_value(value) }
-
-        [:label, :email].each do |name|
-          attr_name = @params[:"user_#{name}_attr"]
-          if attr_name&.size&.positive? && userdata[name]
-            attributes[attribute_name(@params[:"user_#{name}_attr"])] =
-              userdata[name]
-          end
-        end
 
         attributes
       end
@@ -893,8 +862,6 @@ module Yuzakan
 
         {
           username: name,
-          label: @params[:user_label_attr] && user.first(@params[:user_label_attr]),
-          email: @params[:user_email_attr] && user.first(@params[:user_email_attr])&.downcase,
           unmanageable: user_entry_unmanageable?(user),
           locked: user_entry_locked?(user),
           mfa: user_entry_mfa?(user),
@@ -921,8 +888,7 @@ module Yuzakan
 
         {
           groupname: name,
-          label: group.first(@params[:group_display_name_attr]),
-          # attrs: attrs,
+          attrs: attrs,
         }
       end
 

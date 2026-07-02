@@ -239,8 +239,6 @@ module Yuzakan
 
         data = {
           username: user.primary_email.split("@").first,
-          label: user.name.full_name,
-          email: user.primary_email,
           unmanageable: !user.is_admin?,
           locked: user.suspended?,
           mfa: user.is_enrolled_in2_sv?,
