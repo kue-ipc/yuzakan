@@ -10,23 +10,20 @@ RSpec.configure do |config|
   #
   # Modify this proc (or any code below) if you only need specific databases cleaned.
   all_databases = -> {
-    slices = [Hanami.app] + Hanami.app.slices.with_nested
-
-    slices.each_with_object([]) do |slice, dbs|
+    Hanami.app.with_slices.each_with_object([]) { |slice, dbs|
       next unless slice.key?("db.rom")
 
       dbs.concat slice["db.rom"].gateways.values.map(&:connection)
-    end.uniq
+    }.uniq
   }
 
   config.before :suite do
     all_databases.call.each do |db|
-      DatabaseCleaner[:sequel, db: db].clean_with :truncation,
-        except: ["schema_migrations"]
+      DatabaseCleaner[:sequel, db: db].clean_with :truncation, except: ["schema_migrations"]
     end
   end
 
-  config.before :each, :db do |example|
+  config.prepend_before :each, :db do |example|
     strategy = example.metadata[:js] ? :truncation : :transaction
 
     all_databases.call.each do |db|
