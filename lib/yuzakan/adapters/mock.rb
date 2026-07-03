@@ -87,7 +87,7 @@ module Yuzakan
         super
         @passwords = {@params[:username] => BCrypt::Password.create(@params[:password])}
         primary_group = @params[:primary_group]
-        primary_group = nil if primary_group&.empty?
+        primary_group = nil if primary_group && primary_group.empty?
         groups = @params[:groups].to_s.split(/\s|,/).map(&:strip).reject(&:empty?)
         @users = {@params[:username] => {
           username: @params[:username],

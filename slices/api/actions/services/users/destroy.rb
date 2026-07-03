@@ -5,7 +5,7 @@ module API
     module Services
       module Users
         class Destroy < API::Action
-          def handle(request, response)
+          def handle(_request, response)
             response.body = self.class.name
           end
         end

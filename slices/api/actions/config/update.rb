@@ -40,9 +40,7 @@ module API
         end
 
         def handle(request, response)
-          unless request.params.valid?
-            halt_json request, response, 422, invalid: request.params.errors
-          end
+          halt_json request, response, 422, invalid: request.params.errors unless request.params.valid?
 
           params = request.params.to_h
           params = convert_unique_chars(:password_prohibited_chars, params)

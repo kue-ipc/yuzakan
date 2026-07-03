@@ -7,50 +7,49 @@ module API
         module Mfa
           module Code
             class Create < API::Action
-            include Deps[
-              "repos.service_repo",
-              "repos.user_repo",
-              "services.generate_code_user",
-            ]
+              include Deps[
+                "repos.service_repo",
+                "repos.user_repo",
+                "services.generate_code_user",
+              ]
 
-            security_level 1
+              security_level 1
 
-            params do
-              required(:service_id).filled(:name, max_size?: MAX_STRING_SIZE)
-              required(:user_id) { filled(:name, max_size?: 255) | eql?("~") }
-            end
+              params do
+                required(:service_id).filled(:name, max_size?: MAX_STRING_SIZE)
+                required(:user_id) { filled(:name, max_size?: 255) | eql?("~") }
+              end
 
-            def handle(request, response)
-              check_params(request, response)
+              def handle(request, response)
+                check_params(request, response)
 
-              service = srevice_repo.get!(request.params[:service_id])
+                service = srevice_repo.get!(request.params[:service_id])
 
-              user =
-                if request.params[:user_id] == "~"
-                  # current user mode
-                  response[:current_user]
-                else
-                  # can generate code for other users by operator
-                  reply_unauthorized(request, response) unless response[:current_level] >= 3
+                user =
+                  if request.params[:user_id] == "~"
+                    # current user mode
+                    response[:current_user]
+                  else
+                    # can generate code for other users by operator
+                    reply_unauthorized(request, response) unless response[:current_level] >= 3
 
-                  user_repo.get!(request.params[:user_id])
-                end
+                    user_repo.get!(request.params[:user_id])
+                  end
 
-              result = generate_code_user.call(service, user.name)
-              code = take_result(request, response, result)
+                result = generate_code_user.call(service, user.name)
+                code = take_result(request, response, result)
 
-              response.status = :created
-              response.format = :json
-              response.body = code.to_json
+                response.status = :created
+                response.format = :json
+                response.body = code.to_json
+              end
             end
           end
-        end
         end
       end
     end
   end
 end
-
 
 # def handle(_request, response)
 #                 response.body = self.class.name
