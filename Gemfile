@@ -2,26 +2,24 @@
 
 source "https://rubygems.org"
 
-gem "hanami", "~> 2.3.0"
-gem "hanami-assets", "~> 2.3.0"
-gem "hanami-controller", "~> 2.3.0"
-gem "hanami-db", "~> 2.3.0"
-gem "hanami-router", "~> 2.3.0"
-gem "hanami-validations", "~> 2.3.0"
-gem "hanami-view", "~> 2.3.0"
+gem "hanami", "~> 3.0.0"
+gem "hanami-assets", "~> 3.0.0"
+gem "hanami-action", "~> 3.0.0"
+gem "hanami-db", "~> 3.0.0"
+gem "hanami-mailer", "~> 3.0.0"
+gem "hanami-router", "~> 3.0.0"
+gem "hanami-view", "~> 3.0.0"
 
 gem "dry-types", "~> 1.7"
 gem "dry-operation", ">= 1.0.1"
-gem "puma"
+gem "dry-validation", "~> 1.11"
+gem "i18n", "~> 1.14"
+gem "puma", ">= 7.1"
 gem "rake"
-
-# Database
 gem "pg"
-# gem "mysql2"
-# gem "sqlite3"
+gem "slim"
 
 # Template
-gem "slim"
 gem "kramdown"
 gem "kramdown-parser-gfm"
 
@@ -32,7 +30,6 @@ gem "redis-rack"
 
 # Uitls
 gem "activesupport", "~> 8.1"
-gem "i18n"
 gem "bcrypt"
 gem "zxcvbn"
 gem "digest-xxhash"
@@ -54,7 +51,7 @@ gem "smbhash"
 gem "google-apis-admin_directory_v1"
 
 group :development do
-  gem "hanami-webconsole", "~> 2.3.0"
+  gem "hanami-webconsole", "~> 3.0.0"
 
   # Rubocop
   gem "rubocop"
@@ -70,24 +67,28 @@ end
 
 group :development, :test do
   gem "dotenv"
+  # Syntax highlighting SQL logs
+  gem "rouge"
 end
 
 group :cli, :development do
-  gem "hanami-reloader", "~> 2.3.0"
+  gem "hanami-reloader", "~> 3.0.0"
 end
 
 group :cli, :development, :test do
-  gem "hanami-rspec", "~> 2.3.0"
+  gem "hanami-rspec", "~> 3.0.0"
 end
 
 group :test do
   # Database
   gem "database_cleaner-sequel"
-  gem "rom-factory"
 
   # Web integration
   gem "capybara"
   gem "rack-test"
+
+  # Rom
+  gem "rom-factory"
 
   # Rspec
   gem "rspec-uuid"
