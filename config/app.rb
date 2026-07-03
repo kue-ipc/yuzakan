@@ -7,6 +7,8 @@ Sequel.default_timezone = :local
 
 module Yuzakan
   class App < Hanami::App
+    config.views.default_template_engine = "slim"
+
     config.middleware.use :body_parser, :json
 
     config.actions.formats.accept :html
