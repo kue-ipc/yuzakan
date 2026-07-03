@@ -5,7 +5,7 @@ module API
     module Users
       module Password
         class Show < API::View
-          expose :user_password
+          decorate :user_password
         end
       end
     end

@@ -6,7 +6,7 @@ module API
       class Show < API::View
         # NOTE: :configを指定するだけでは、設定のconfigを持ってきてしまうため、
         #   ブロックで設定する必要がある。
-        expose :config do |config:|
+        decorate :config do |config:|
           config
         end
       end

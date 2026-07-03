@@ -4,7 +4,7 @@ module Yuzakan
   module Views
     module Services
       class Show < Yuzakan::View
-        expose :title, layout: true, decorate: false do
+        expose :title, layout: true do
           i18n.t("views.service.title")
         end
       end

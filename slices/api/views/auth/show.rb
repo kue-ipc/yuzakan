@@ -4,7 +4,7 @@ module API
   module Views
     module Auth
       class Show < API::View
-        expose :auth
+        decorate :auth
       end
     end
   end

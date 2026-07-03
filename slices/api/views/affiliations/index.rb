@@ -4,7 +4,7 @@ module API
   module Views
     module Affiliations
       class Index < API::View
-        expose :affiliations
+        decorate :affiliations
       end
     end
   end

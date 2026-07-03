@@ -4,7 +4,7 @@ module API
   module Views
     module Error
       class Halt < API::View
-        expose :error
+        decorate :error
       end
     end
   end

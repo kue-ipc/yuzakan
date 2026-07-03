@@ -4,7 +4,7 @@ module API
   module Views
     module Affiliations
       class Show < API::View
-        expose :affiliation
+        decorate :affiliation
       end
     end
   end

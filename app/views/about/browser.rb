@@ -4,11 +4,11 @@ module Yuzakan
   module Views
     module About
       class Browser < Yuzakan::View
-        expose :title, layout: true, decorate: false do
+        expose :title, layout: true do
           i18n.t("views.about_browser.title")
         end
 
-        expose :supported_browsers, decorate: false do
+        expose :supported_browsers do
           [
             {
               name: "Google Chrome",
@@ -43,7 +43,7 @@ module Yuzakan
           ]
         end
 
-        expose :unsupported_browsers, decorate: false do
+        expose :unsupported_browsers do
           [
             "Microsoft Internet Explorer",
             "Opera以外のOpera製ブラウザー(Opera Mini等)",

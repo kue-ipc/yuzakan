@@ -4,7 +4,7 @@ module API
   module Views
     module Groups
       class Index < API::View
-        expose :groups
+        decorate :groups
       end
     end
   end

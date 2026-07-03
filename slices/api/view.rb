@@ -6,11 +6,11 @@ module API
     config.default_format = :json
     config.layout = nil
 
-    expose :approved_level, decorate: false do
+    expose :approved_level do
       2
     end
 
-    expose :restricted, decorate: false do |current_level, approved_level|
+    expose :restricted do |current_level, approved_level|
       current_level < approved_level
     end
   end

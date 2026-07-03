@@ -4,7 +4,7 @@ module Yuzakan
   module Views
     module User
       class Show < Yuzakan::View
-        expose :title, layout: true, decorate: false do
+        expose :title, layout: true do
           i18n.t("views.user.title")
         end
       end

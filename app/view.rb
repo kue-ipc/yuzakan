@@ -29,19 +29,19 @@ module Yuzakan
       {name: :admin_attrs, color: "danger", level: 5},
     ].map { |params| MenuItem.new(**params) }.freeze
 
-    expose :title, layout: true, decorate: false do
+    expose :title, layout: true do
       nil
     end
 
-    expose :current_config, as: :config, layout: true
-    expose :current_user, as: :user, layout: true
-    expose :current_level, layout: true
+    decorate :current_config, as: :config, layout: true
+    decorate :current_user, as: :user, layout: true
+    decorate :current_level, layout: true
 
-    expose :user_menu, as: :menu_item, layout: true do |current_level|
+    decorate :user_menu, as: :menu_item, layout: true do |current_level|
       USER_STATIC_MENU_ITEMS.select { |item| item.level <= current_level }
     end
 
-    expose :admin_menu, as: :menu_item, layout: true do |current_level|
+    decorate :admin_menu, as: :menu_item, layout: true do |current_level|
       ADMIN_STATIC_MENU_ITEMS.select { |item| item.level <= current_level }
     end
   end

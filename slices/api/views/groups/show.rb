@@ -4,7 +4,7 @@ module API
   module Views
     module Groups
       class Show < API::View
-        expose :group
+        decorate :group
       end
     end
   end

@@ -4,7 +4,7 @@ module API
   module Views
     module Session
       class Show < API::View
-        expose :session
+        decorate :session
       end
     end
   end
