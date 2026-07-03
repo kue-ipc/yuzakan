@@ -28,6 +28,7 @@ RSpec.describe API::Actions::Affiliations::Show do
         name: affiliation.name,
         label: affiliation.label,
         note: affiliation.note,
+        attrs: affiliation.attrs,
       })
     end
   end

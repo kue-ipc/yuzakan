@@ -12,7 +12,7 @@ Factory.define(:group) do |f|
   f.label { fake(:music, :rock_band, :name) }
   f.note { fake(:lorem, :paragraph) }
 
-  f.attrs {} # default
+  f.attrs({}) # default
 
   f.basic false # default
   f.prohibited false # default

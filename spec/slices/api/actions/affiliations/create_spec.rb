@@ -10,7 +10,13 @@ RSpec.describe API::Actions::Affiliations::Create do
   }
   let(:action_params) { {name: affiliation.name, **affiliation_params} }
 
-  let(:affiliation_params) { struct_to_hash(affiliation, except: [:name]) }
+  let(:affiliation_params) {
+    {
+      note: affiliation.note,
+      attrs: affiliation.attrs,
+    }
+  }
+
   let(:affiliation_without_params) { Factory.structs[:affiliation_without_params, name: affiliation.name] }
 
   shared_context "when exist" do
@@ -33,22 +39,28 @@ RSpec.describe API::Actions::Affiliations::Create do
         name: affiliation.name,
         label: affiliation.label,
         note: affiliation.note,
+        attrs: affiliation.attrs,
       })
     end
 
-    it "is ok without label or note" do
-      response = action.call(params.except(:label, :note))
-      expect(response).to be_successful
-      expect(response.status).to eq 201
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      expect(response.headers["Location"]).to eq "/api/affiliations/#{affiliation.name}"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      # 返されるデータはdoubleで返すものなので、ついているものになる。
-      expect(json).to eq({
-        name: affiliation.name,
-        label: "",
-        note: "",
-      })
+    context "when without no param" do
+      let(:affiliation_params) { {} }
+
+      it "is ok without label or note" do
+        response = action.call(params)
+        expect(response).to be_successful
+        expect(response.status).to eq 201
+        expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+        expect(response.headers["Location"]).to eq "/api/affiliations/#{affiliation.name}"
+        json = JSON.parse(response.body.first, symbolize_names: true)
+        # 返されるデータはdoubleで返すものなので、ついているものになる。
+        expect(json).to eq({
+          name: affiliation.name,
+          label: "",
+          note: "",
+          attrs: {},
+        })
+      end
     end
   end
 

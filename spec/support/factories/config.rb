@@ -3,7 +3,6 @@
 Factory.define(:config) do |f|
   f.title { fake(:team, :name) }
   f.description { fake(:lorem, :sentence) }
-  f.domain { fake(:internet, :domain_name) }
 
   f.session_timeout 3600 # default
 
@@ -23,6 +22,11 @@ Factory.define(:config) do |f|
   f.generate_password_type "ascii" # default
   f.generate_password_chars " " # default
 
+  f.affiliation_label_attr "" # default
+  f.group_label_attr "" # default
+  f.user_label_attr "" # default
+  f.user_email_attr "" # default
+
   f.contact_name { fake(:name, :name) }
   f.contact_email { fake(:internet, :email) }
   f.contact_phone { fake(:phone_number, :phone_number) }
@@ -32,10 +36,6 @@ end
 
 Factory.define(config_without_description: :config) do |f|
   f.description ""
-end
-
-Factory.define(config_without_domain: :config) do |f|
-  f.domain ""
 end
 
 Factory.define(config_without_contact: :config) do |f|

@@ -5,6 +5,8 @@ Factory.define(:affiliation) do |f|
   f.label { fake(:name, :name) }
   f.note { fake(:lorem, :paragraph) }
 
+  f.attrs({}) # default
+
   f.timestamps
 end
 

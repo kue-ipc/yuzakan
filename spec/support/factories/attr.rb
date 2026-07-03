@@ -12,8 +12,9 @@ Factory.define(:attr) do |f|
 
   f.order 1
   f.hidden false # default
-  f.readonly false # default
 
+  f.readonly false # default
+  f.forced false # default
   f.code "" # default
 
   f.timestamps

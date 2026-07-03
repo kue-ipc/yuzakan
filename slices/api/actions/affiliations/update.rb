@@ -14,15 +14,16 @@ module API
         params do
           required(:id).filled(:name, max_size?: MAX_STRING_SIZE)
 
-          optional(:label).value(:str?, max_size?: MAX_STRING_SIZE)
           optional(:note).value(:str?, max_size?: MAX_TEXT_SIZE)
+          optional(:attrs).value(:hash?)
         end
 
         def handle(request, response)
           check_params(request, response)
 
           name = request.params[:id]
-          params = request.params.to_h.slice(:label, :note)
+          params = request.params.to_h.slice(:note, :attrs)
+          # TODO: complete_affilationを呼び出してattrsなどを保管する。
 
           affiliation = affiliation_repo.put!(name, **params)
 

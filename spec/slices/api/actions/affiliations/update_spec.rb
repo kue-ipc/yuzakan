@@ -9,7 +9,12 @@ RSpec.describe API::Actions::Affiliations::Update do
   }
   let(:action_params) { {id: affiliation.name, **affiliation_params} }
 
-  let(:affiliation_params) { struct_to_hash(affiliation, except: [:name]) }
+  let(:affiliation_params) {
+    {
+      note: affiliation.note,
+      attrs: affiliation.attrs,
+    }
+  }
 
   shared_context "when not exist" do
     let(:action_opts) {
@@ -31,6 +36,7 @@ RSpec.describe API::Actions::Affiliations::Update do
         name: affiliation.name,
         label: affiliation.label,
         note: affiliation.note,
+        attrs: affiliation.attrs,
       })
     end
   end

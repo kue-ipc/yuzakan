@@ -4,7 +4,5 @@ Factory.define(:managed_group) do |f|
   f.association :service
   f.association :group
 
-  f.unmanageable false # default
-
   f.timestamps
 end
