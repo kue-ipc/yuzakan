@@ -77,9 +77,7 @@ Hanami 2 へアップデート中です。
 
 ### データベース
 
-* [x] PostgreSQL >= 16
-* [ ] MariaDB >= 10.11
-* [ ] SQLite 3
+* PostgreSQL >= 16
 
 現在はPostgreSQLのみ対応しています。
 PostgreSQLに依存した型を使用しているため、他のDBのサポートについては未定です。
