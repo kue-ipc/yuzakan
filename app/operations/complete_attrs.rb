@@ -2,13 +2,13 @@
 
 module Yuzakan
   module Operations
-    include Deps[
-      "repos.attr_repo",
-      "handlebars",
-    ]
-
     # Complete attrs
     class CompleteAttrs < Yuzakan::Operation
+      include Deps[
+        "repos.attr_repo",
+        "handlebars",
+      ]
+
       def call(category, data)
         category = step validate_category(category)
         step complete_attrs(category, data)

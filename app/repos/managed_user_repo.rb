@@ -22,7 +22,7 @@ module Yuzakan
       def exist_for_user_and_service?(user, service) = for_user_and_service(user, service).exist?
 
       def set_services_for_user(user, services)
-        service_ids = services.map(&:first).map(&:id)
+        service_ids = services.map(&:id)
         managed_users.transaction do
           for_user(user).exclude(service_id: service_ids).command(:delete).call
           current_service_ids = for_user(user).pluck(:service_id)

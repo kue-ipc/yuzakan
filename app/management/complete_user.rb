@@ -4,8 +4,8 @@ module Yuzakan
   module Management
     class CompleteUser < Yuzakan::Operation
       include Deps[
-        "repo.config_repo",
-        "repo.affiliation_repo",
+        "repos.config_repo",
+        "repos.affiliation_repo",
         "operations.complete_attrs",
       ]
 
@@ -16,13 +16,17 @@ module Yuzakan
             primary_group.affiliation || affiliation_repo.find(primary_group.affiliation_id)
           end
 
-        attrs = step complete_attrs.call(:user, {name:, attrs:,
+        attrs = step complete_attrs.call("user", {
+          name:,
+          attrs:,
           affiliation: affiliation&.to_h&.slice(:name, :attrs),
           primary_group: primary_group&.to_h&.slice(:name, :attrs),
-          groups: groups.map { |group| group&.to_h&.slice(:name, :attrs) }.compact})
+          groups: groups.map { |group| group&.to_h&.slice(:name, :attrs) }.compact,
+        })
         label = step get_label(attrs)
         label = name if label.nil? || label.empty?
         email = step get_email(attrs)
+        email ||= ""
 
         {label:, email:, attrs:}
       end

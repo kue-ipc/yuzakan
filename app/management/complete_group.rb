@@ -4,14 +4,14 @@ module Yuzakan
   module Management
     class CompleteGroup < Yuzakan::Operation
       include Deps[
-        "repo.config_repo",
+        "repos.config_repo",
         "operations.complete_attrs",
       ]
 
       def call(name, attrs, affiliation)
         name = step validate_name(name)
-        attrs = step complete_attrs.call(:group, {name:, attrs:,
-          affiliation: affiliation&.to_h&.slice(:name, :attrs)})
+        attrs = step complete_attrs.call("group",
+          {name:, attrs:, affiliation: affiliation&.to_h&.slice(:name, :attrs)})
         label = step get_label(attrs)
         label = name if label.nil? || label.empty?
 

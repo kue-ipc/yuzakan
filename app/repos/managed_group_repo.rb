@@ -22,7 +22,7 @@ module Yuzakan
       def exist_for_group_and_service?(group, service) = for_group_and_service(group, service).exist?
 
       def set_services_for_group(group, services)
-        service_ids = services.map(&:first).map(&:id)
+        service_ids = services.map(&:id)
         managed_groups.transaction do
           for_group(group).exclude(service_id: service_ids).command(:delete).call
           current_service_ids = for_group(group).pluck(:service_id)

@@ -18,7 +18,7 @@ module Yuzakan
       ].freeze
 
       include Deps[
-        "repo.config_repo",
+        "repos.config_repo",
       ]
 
       def call

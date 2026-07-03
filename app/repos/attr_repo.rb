@@ -34,6 +34,8 @@ module Yuzakan
 
       def exposed_all = attrs.where(hidden: false).to_a
 
+      def all_for_category(category) = attrs.by_category(category).to_a
+
       # TODO: 個々から下は未整理
 
       # def gets(names) = by_name(names).to_a

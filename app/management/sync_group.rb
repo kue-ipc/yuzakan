@@ -28,7 +28,7 @@ module Yuzakan
           result = read_group.call(service, groupname).value_or { return Failure(_1) }
           next unless result
 
-          params[:attrs].merge!(result[:attrs]) { |_, v, _| v } if result.key?(:attrs)
+          params[:attrs] = result[:attrs].merge(params[:attrs]) if result[:attrs]
           params[:services] << service
         end
 

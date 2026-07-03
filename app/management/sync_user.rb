@@ -35,7 +35,7 @@ module Yuzakan
             params[:groups] |= [result[:primary_group]]
           end
           params[:groups] |= result[:groups] if result.key?(:groups)
-          params[:attrs].merge!(result[:attrs]) { |_, v, _| v } if result.key?(:attrs)
+          params[:attrs] = result[:attrs].merge(params[:attrs]) if result[:attrs]
           params[:locked_count] += 1 if result[:locked]
           params[:services] << service
         end
