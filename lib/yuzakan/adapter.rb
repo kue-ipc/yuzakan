@@ -102,6 +102,7 @@ module Yuzakan
     group false
     primary_group false
 
+    # TODO: ここでは名前を持たない。
     def self.adapter_name
       @adapter_name ||= Hanami::Utils::String.underscore(Hanami::Utils::String.demodulize(name))
     end

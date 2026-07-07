@@ -7,14 +7,9 @@ module Yuzakan
       # Define your view context here. See https://guides.hanamirb.org/views/context/ for details.
 
       include Deps[
-        "i18n",
         app_assets: "assets",
         app_routes: "routes",
       ]
-
-      # I18n
-      def t(...) = i18n.t(...)
-      def l(...) = i18n.l(...)
     end
   end
 end

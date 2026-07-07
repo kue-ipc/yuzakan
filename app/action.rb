@@ -14,7 +14,6 @@ module Yuzakan
     # Other modules
     include Yuzakan::Actions::Flash
     include Yuzakan::Actions::Connection
-    include Yuzakan::Actions::I18n
 
     # HACK: HanamiのコードではDry::Vlaidation::Contractにハードコードされている
     #        ため、configを設定した任意のサブクラスでContractが作られない。

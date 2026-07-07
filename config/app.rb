@@ -9,6 +9,10 @@ module Yuzakan
   class App < Hanami::App
     config.views.default_template_engine = "slim"
 
+    config.i18n.default_locale = settings.locale.intern
+    config.i18n.available_locales = [:ja, :en]
+    config.i18n.fallbacks = true
+
     config.middleware.use :body_parser, :json
 
     config.actions.formats.accept :html

@@ -11,9 +11,6 @@ admin_username = ENV.fetch("ADMIN_USERNAME", "admin")
 admin_password = ENV.fetch("ADMIN_PASSWORD", admin_username)
 admin_groupname = ENV.fetch("ADMIN_GROUPNAME", admin_username)
 
-# FIXME: 予めi18nをロードしておかないと、jaが読み込まれない。バグ？
-Hanami.app["i18n"]
-
 # cache clear
 Hanami.app["cache_store"].clear
 
