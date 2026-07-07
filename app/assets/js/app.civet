@@ -10,7 +10,7 @@ initializeBootstrap(Bootstrap)
 
 // I18n
 // TODO: 現在のところ日本語のみ対応
-localeJa from ../../../config/locales/ja.yml
+localeJa from ../../../config/i18n/shared/ja.yml
 
 {loadTranslations, type Translations} from ~/common/i18n.civet
 loadTranslations(localeJa as Translations)
