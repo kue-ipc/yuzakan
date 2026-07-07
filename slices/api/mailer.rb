@@ -1,0 +1,8 @@
+# auto_register: false
+# frozen_string_literal: true
+
+module API
+  class Mailer < Yuzakan::Mailer
+    # Add common mailer behavior here. See https://hanakai.org/learn/hanami/mailers for details.
+  end
+end

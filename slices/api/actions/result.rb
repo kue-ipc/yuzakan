@@ -3,8 +3,6 @@
 module API
   module Actions
     module Result
-      include Dry::Monads[:result]
-
       private def take_result(request, response, result)
         case result
         in Success[value]

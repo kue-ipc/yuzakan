@@ -7,8 +7,6 @@ module API
     module Users
       module Password
         class Update < API::Action
-          include Dry::Monads[:result]
-
           include Deps[
             "management.authenticate",
             "management.change_password",

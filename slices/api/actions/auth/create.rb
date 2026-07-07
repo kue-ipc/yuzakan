@@ -4,8 +4,6 @@ module API
   module Actions
     module Auth
       class Create < API::Action
-        include Dry::Monads[:result]
-
         include Deps[
           "repos.auth_log_repo",
           "repos.user_repo",
