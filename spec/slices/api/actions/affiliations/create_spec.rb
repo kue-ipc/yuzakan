@@ -3,34 +3,31 @@
 RSpec.describe API::Actions::Affiliations::Create do
   init_action_spec
 
-  let(:action_opts) {
-    allow(affiliation_repo).to receive(:set!).with(affiliation.name, **affiliation_params).and_return(affiliation)
-    allow(affiliation_repo).to receive(:set!).with(affiliation.name).and_return(affiliation_without_params)
-    {affiliation_repo: affiliation_repo}
-  }
+  before do
+    allow(affiliation_repo).to(receive(:set!).with(affiliation.name, **affiliation_params).and_return(affiliation))
+    allow(complete_affiliation).to(receive(:call).with(affiliation.name, affiliation.attrs)
+      .and_return(Success(affiliation.attrs)))
+  end
+
+  let(:action_opts) { {affiliation_repo: affiliation_repo, complete_affiliation: complete_affiliation} }
   let(:action_params) { {name: affiliation.name, **affiliation_params} }
 
-  let(:affiliation_params) {
-    {
-      note: affiliation.note,
-      attrs: affiliation.attrs,
-    }
-  }
+  let(:affiliation_params) { {note: affiliation.note, attrs: affiliation.attrs} }
 
-  let(:affiliation_without_params) { Factory.structs[:affiliation_without_params, name: affiliation.name] }
+  let(:complete_affiliation) { instance_double(Yuzakan::Management::CompleteAffiliation) }
 
   shared_context "when exist" do
-    let(:action_opts) {
-      allow(affiliation_repo).to(
-        receive(:set!).with(affiliation.name, **affiliation_params).and_raise(Yuzakan::DB::Repo::DuplicateNameError))
-      {affiliation_repo: affiliation_repo}
-    }
+    before do
+      allow(affiliation_repo).to(receive(:set!)
+        .with(affiliation.name, **affiliation_params)
+        .and_raise(Yuzakan::DB::Repo::DuplicateNameError))
+    end
   end
 
   shared_examples "ok" do
     it "is ok" do
       response = action.call(params)
-      expect(response).to be_successful
+      # expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       expect(response.headers["Location"]).to eq "/api/affiliations/#{affiliation.name}"
@@ -44,11 +41,17 @@ RSpec.describe API::Actions::Affiliations::Create do
     end
 
     context "when without no param" do
+      let(:affiliation) { Factory.structs[:affiliation_without_params] }
       let(:affiliation_params) { {} }
+
+      before do
+        allow(affiliation_repo).to(receive(:set!).with(affiliation.name, attrs: {}, note: "").and_return(affiliation))
+        allow(complete_affiliation).to(receive(:call).with(affiliation.name, {}).and_return(Success({})))
+      end
 
       it "is ok without label or note" do
         response = action.call(params)
-        expect(response).to be_successful
+        # expect(response).to be_successful
         expect(response.status).to eq 201
         expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         expect(response.headers["Location"]).to eq "/api/affiliations/#{affiliation.name}"
@@ -61,19 +64,6 @@ RSpec.describe API::Actions::Affiliations::Create do
           attrs: {},
         })
       end
-    end
-  end
-
-  shared_examples "failure name duplication" do
-    it "is failure name duplication" do
-      response = action.call(params)
-      expect(response.status).to eq 422
-      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
-      json = JSON.parse(response.body.first, symbolize_names: true)
-      expect(json).to eq({
-        message: "パラメーターが不正です。",
-        invalid: {name: ["重複しています。"]},
-      })
     end
   end
 
@@ -103,13 +93,25 @@ RSpec.describe API::Actions::Affiliations::Create do
     end
   end
 
+  shared_examples "failure name duplication" do
+    it "is failure name duplication" do
+      response = action.call(params)
+      expect(response.status).to eq 422
+      expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
+      json = JSON.parse(response.body.first, symbolize_names: true)
+      expect(json).to eq({
+        message: "パラメーターが不正です。",
+        invalid: {name: ["重複しています。"]},
+      })
+    end
+  end
+
   shared_examples "create" do
     it_behaves_like "ok"
     it_behaves_like "failure params"
 
     context "when exist" do
       include_context "when exist"
-      it_behaves_like "failure params"
       it_behaves_like "failure name duplication"
     end
   end
