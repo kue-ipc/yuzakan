@@ -28,8 +28,8 @@ module API
           affiliation = affiliation_repo.get!(request.params[:id])
 
           note = request.params[:note] || affiliation.note
-          attrs = take_result(request, response,
-            complete_affiliation.call(affiliation.name, request.params[:attrs] || affiliation.attrs))
+          result = complete_affiliation.call(affiliation.name, request.params[:attrs] || affiliation.attrs)
+          attrs = take_result(request, response, result)
 
           affiliation = affiliation_repo.put!(affiliation.name, note:, attrs:)
 

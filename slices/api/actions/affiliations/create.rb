@@ -27,7 +27,8 @@ module API
 
           name = request.params[:name]
           note = request.params[:note] || ""
-          attrs = take_result(request, response, complete_affiliation.call(name, request.params[:attrs] || {}))
+          result = complete_affiliation.call(name, request.params[:attrs] || {})
+          attrs = take_result(request, response, result)
 
           affiliation = affiliation_repo.set!(name, note:, attrs:)
 

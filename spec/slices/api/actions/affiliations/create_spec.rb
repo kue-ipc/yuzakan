@@ -4,9 +4,9 @@ RSpec.describe API::Actions::Affiliations::Create do
   init_action_spec
 
   before do
-    allow(affiliation_repo).to(receive(:set!).with(affiliation.name, **affiliation_params).and_return(affiliation))
-    allow(complete_affiliation).to(receive(:call).with(affiliation.name, affiliation.attrs)
-      .and_return(Success(affiliation.attrs)))
+    allow(affiliation_repo).to receive(:set!).with(affiliation.name, **affiliation_params).and_return(affiliation)
+    allow(complete_affiliation).to \
+      receive(:call).with(affiliation.name, affiliation.attrs).and_return(Success(affiliation.attrs))
   end
 
   let(:action_opts) { {affiliation_repo: affiliation_repo, complete_affiliation: complete_affiliation} }
