@@ -7,7 +7,7 @@ RSpec.describe API::Actions::Session::Show do
     begin_time = Time.now
     response = action.call(params)
     end_time = Time.now
-    expect(response).to be_successful
+    # expect(response).to be_successful
     expect(response.status).to eq 200
     expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
@@ -26,7 +26,7 @@ RSpec.describe API::Actions::Session::Show do
       begin_time = Time.now
       response = action.call(params)
       end_time = Time.now
-      expect(response).to be_successful
+      # expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -46,7 +46,7 @@ RSpec.describe API::Actions::Session::Show do
       begin_time = Time.now
       response = action.call(params)
       end_time = Time.now
-      expect(response).to be_successful
+      # expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)

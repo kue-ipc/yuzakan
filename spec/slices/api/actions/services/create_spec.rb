@@ -24,7 +24,7 @@ RSpec.describe API::Actions::Services::Create do
   shared_examples "ok" do
     it "is ok" do
       response = action.call(params)
-      expect(response).to be_successful
+      # expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       expect(response.headers["Content-Location"]).to eq "/api/services/#{service.name}"
@@ -35,7 +35,7 @@ RSpec.describe API::Actions::Services::Create do
 
     it "is ok without order param" do
       response = action.call(params.except(:order))
-      expect(response).to be_successful
+      # expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       expect(response.headers["Content-Location"]).to eq "/api/services/#{service.name}"
@@ -47,7 +47,7 @@ RSpec.describe API::Actions::Services::Create do
     it "is ok with minimum params" do
       response = action.call(params.except(:lable, :description, :order, :readable, :writable, :authenticatable,
         :password_changeable, :lockable, :group, :individual_password, :self_management))
-      expect(response).to be_successful
+      # expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       expect(response.headers["Content-Location"]).to eq "/api/services/#{service.name}"
@@ -60,7 +60,7 @@ RSpec.describe API::Actions::Services::Create do
   shared_examples "failure params" do
     it "is failure without name" do
       response = action.call(params.except(:name))
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -69,7 +69,7 @@ RSpec.describe API::Actions::Services::Create do
 
     it "is failure with bad name pattern" do
       response = action.call({**params, name: "!"})
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)

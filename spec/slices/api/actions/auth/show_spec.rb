@@ -6,7 +6,7 @@ RSpec.describe API::Actions::Auth::Show do
   shared_examples "ok" do
     it "is ok" do
       response = action.call(params)
-      expect(response).to be_successful
+      # expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -17,7 +17,7 @@ RSpec.describe API::Actions::Auth::Show do
   shared_examples "not found" do
     it "is not found" do
       response = action.call(params)
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 404
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -67,7 +67,7 @@ RSpec.describe API::Actions::Auth::Show do
 
     it "is failure" do
       response = action.call(params)
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 404
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)

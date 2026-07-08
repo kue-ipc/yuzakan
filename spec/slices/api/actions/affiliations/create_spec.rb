@@ -70,7 +70,7 @@ RSpec.describe API::Actions::Affiliations::Create do
   shared_examples "failure params" do
     it "is failure without name" do
       response = action.call(params.except(:name))
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -82,7 +82,7 @@ RSpec.describe API::Actions::Affiliations::Create do
 
     it "is failure with bad name pattern" do
       response = action.call({**params, name: "!"})
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)

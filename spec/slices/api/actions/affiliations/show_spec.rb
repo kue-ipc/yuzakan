@@ -19,7 +19,7 @@ RSpec.describe API::Actions::Affiliations::Show do
   shared_examples "ok" do
     it "is ok" do
       response = action.call(params)
-      expect(response).to be_successful
+      # expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       expect(response.headers["Last-Modified"]).to eq affiliation.updated_at.httpdate
@@ -36,7 +36,7 @@ RSpec.describe API::Actions::Affiliations::Show do
   shared_examples "ok restricted" do
     it "is ok restricted" do
       response = action.call(params)
-      expect(response).to be_successful
+      # expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       expect(response.headers["Last-Modified"]).to eq affiliation.updated_at.httpdate
@@ -51,7 +51,7 @@ RSpec.describe API::Actions::Affiliations::Show do
   shared_examples "ok current nil" do
     it "is ok with tilda id" do
       response = action.call({**params, id: "~"})
-      expect(response).to be_successful
+      # expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       expect(response.headers["Last-Modified"]).to eq affiliation.updated_at.httpdate

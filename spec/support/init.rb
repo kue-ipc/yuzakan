@@ -45,7 +45,7 @@ def init_action_spec
   shared_examples "unauthenticated" do
     it "is unauthorized due to unauthenticated" do
       response = action.call(params)
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 401
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -58,7 +58,7 @@ def init_action_spec
   shared_examples "untrusted" do
     it "is unauthorized due to untrusted" do
       response = action.call(params)
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 401
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -71,7 +71,7 @@ def init_action_spec
   shared_examples "unauthorized" do
     it "is forbidden due to unauthorized" do
       response = action.call(params)
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 403
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -84,7 +84,7 @@ def init_action_spec
   shared_examples "non-existent" do
     it "is not found due to non-existent" do
       response = action.call(params)
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 404
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -109,7 +109,7 @@ def init_action_spec
   shared_examples "bad id param" do
     it "is failure due to tilda id" do
       response = action.call({**params, id: "~"})
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -121,7 +121,7 @@ def init_action_spec
 
     it "is failure due to exclamation id" do
       response = action.call({**params, id: "!"})
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -133,7 +133,7 @@ def init_action_spec
 
     it "is failure due to over 255 id" do
       response = action.call({**params, id: "a" * 256})
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -147,7 +147,7 @@ def init_action_spec
   shared_examples "bad id param without tilda" do
     it "is failure due to exclamation id" do
       response = action.call({**params, id: "!"})
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -159,7 +159,7 @@ def init_action_spec
 
     it "is failure due to over 255 id" do
       response = action.call({**params, id: "a" * 256})
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)

@@ -14,7 +14,7 @@ RSpec.describe API::Actions::Groups::Create do
   shared_examples "ok" do
     it "is ok" do
       response = action.call(params)
-      expect(response).to be_successful
+      # expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       expect(response.headers["Content-Location"]).to eq "/api/groups/#{group.name}"

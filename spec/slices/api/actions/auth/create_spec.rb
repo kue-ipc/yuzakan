@@ -28,7 +28,7 @@ RSpec.describe API::Actions::Auth::Create do
   shared_examples "created" do
     it "is created" do
       response = action.call(params)
-      expect(response).to be_successful
+      # expect(response).to be_successful
       expect(response.status).to eq 201
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -39,7 +39,7 @@ RSpec.describe API::Actions::Auth::Create do
   shared_examples "redirection" do
     it "is redirection" do
       response = action.call(params)
-      expect(response).to be_redirection
+      # expect(response).to be_redirection
       expect(response.status).to eq 303
       expect(response.headers["Location"]).to eq "/api/auth"
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
@@ -82,7 +82,7 @@ RSpec.describe API::Actions::Auth::Create do
 
     it "is failed without username" do
       response = action.call(params.except(:username))
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -91,7 +91,7 @@ RSpec.describe API::Actions::Auth::Create do
 
     it "is failed with empty username" do
       response = action.call({**params, username: ""})
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -100,7 +100,7 @@ RSpec.describe API::Actions::Auth::Create do
 
     it "is failed with invalid username" do
       response = action.call({**params, username: "#{user.name}!"})
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -109,7 +109,7 @@ RSpec.describe API::Actions::Auth::Create do
 
     it "is failed with too long username" do
       response = action.call({**params, username: "a" * 256})
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -118,7 +118,7 @@ RSpec.describe API::Actions::Auth::Create do
 
     it "is failed without password" do
       response = action.call(params.except(:password))
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -127,7 +127,7 @@ RSpec.describe API::Actions::Auth::Create do
 
     it "is failed with empty password" do
       response = action.call({**params, password: ""})
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -136,7 +136,7 @@ RSpec.describe API::Actions::Auth::Create do
 
     it "is failed with too long password" do
       response = action.call({**params, password: "a" * 256})
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -145,7 +145,7 @@ RSpec.describe API::Actions::Auth::Create do
 
     it "is failed without both username and password" do
       response = action.call(params.except(:username, :password))
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -160,7 +160,7 @@ RSpec.describe API::Actions::Auth::Create do
 
       it "is failed" do
         response = action.call(params)
-        expect(response).to be_client_error
+        # expect(response).to be_client_error
         expect(response.status).to eq 422
         expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
@@ -181,7 +181,7 @@ RSpec.describe API::Actions::Auth::Create do
 
       it "is failure" do
         response = action.call(params)
-        expect(response).to be_client_error
+        # expect(response).to be_client_error
         expect(response.status).to eq 403
         expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)
@@ -197,7 +197,7 @@ RSpec.describe API::Actions::Auth::Create do
 
       it "is failure" do
         response = action.call(params)
-        expect(response).to be_client_error
+        # expect(response).to be_client_error
         expect(response.status).to eq 403
         expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)

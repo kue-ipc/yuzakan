@@ -12,7 +12,7 @@ RSpec.describe API::Actions::Services::Update do
   shared_examples "ok" do
     it "is ok" do
       response = action.call(params)
-      expect(response).to be_successful
+      # expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -21,7 +21,7 @@ RSpec.describe API::Actions::Services::Update do
 
     it "is ok with same name" do
       response = action.call({**params, name: id})
-      expect(response).to be_successful
+      # expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -46,7 +46,7 @@ RSpec.describe API::Actions::Services::Update do
 
       it "is failure name duplication" do
         response = action.call(params)
-        expect(response).to be_client_error
+        # expect(response).to be_client_error
         expect(response.status).to eq 422
         expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
         json = JSON.parse(response.body.first, symbolize_names: true)

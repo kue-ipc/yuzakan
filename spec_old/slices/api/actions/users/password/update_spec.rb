@@ -32,7 +32,7 @@ RSpec.describe API::Actions::Users::Password::Update do
 
   it "is successful" do
     response = action.call(params)
-    expect(response).to be_successful
+    # expect(response).to be_successful
     expect(response.status).to eq 200
     expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
@@ -47,7 +47,7 @@ RSpec.describe API::Actions::Users::Password::Update do
 
   it "is failed without user id" do
     response = action.call(params.except(:id))
-    expect(response).to be_client_error
+    # expect(response).to be_client_error
     expect(response.status).to eq 422
     expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
@@ -56,7 +56,7 @@ RSpec.describe API::Actions::Users::Password::Update do
 
   it "is failed without current password" do
     response = action.call(params.except(:password_current))
-    expect(response).to be_client_error
+    # expect(response).to be_client_error
     expect(response.status).to eq 422
     expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
@@ -65,7 +65,7 @@ RSpec.describe API::Actions::Users::Password::Update do
 
   it "is failed without new password" do
     response = action.call(params.except(:password))
-    expect(response).to be_client_error
+    # expect(response).to be_client_error
     expect(response.status).to eq 422
     expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
@@ -74,7 +74,7 @@ RSpec.describe API::Actions::Users::Password::Update do
 
   it "is failed without confirm password" do
     response = action.call(params.except(:password_confirmation))
-    expect(response).to be_client_error
+    # expect(response).to be_client_error
     expect(response.status).to eq 422
     expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
@@ -83,7 +83,7 @@ RSpec.describe API::Actions::Users::Password::Update do
 
   it "is failed without all passwords" do
     response = action.call(params.except(:password_current, :password, :password_confirmation))
-    expect(response).to be_client_error
+    # expect(response).to be_client_error
     expect(response.status).to eq 422
     expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
@@ -96,7 +96,7 @@ RSpec.describe API::Actions::Users::Password::Update do
 
   it "is failed with wrong user id" do
     response = action.call(**params, id: "wrong_id")
-    expect(response).to be_client_error
+    # expect(response).to be_client_error
     expect(response.status).to eq 422
     expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
@@ -105,7 +105,7 @@ RSpec.describe API::Actions::Users::Password::Update do
 
   it "is failed with all wrong passwords" do
     response = action.call(**params, password_current: "あ", password: "い", password_confirmation: "う")
-    expect(response).to be_client_error
+    # expect(response).to be_client_error
     expect(response.status).to eq 422
     expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
@@ -118,7 +118,7 @@ RSpec.describe API::Actions::Users::Password::Update do
 
   it "is failed with different password confirmation" do
     response = action.call(params.merge(password_confirmation: "different_password"))
-    expect(response).to be_client_error
+    # expect(response).to be_client_error
     expect(response.status).to eq 422
     expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
     json = JSON.parse(response.body.first, symbolize_names: true)
@@ -133,7 +133,7 @@ RSpec.describe API::Actions::Users::Password::Update do
 
     it "is failed" do
       response = action.call(params)
-      expect(response).to be_client_error
+      # expect(response).to be_client_error
       expect(response.status).to eq 422
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -148,7 +148,7 @@ RSpec.describe API::Actions::Users::Password::Update do
 
     it "is successful" do
       response = action.call(params)
-      expect(response).to be_successful
+      # expect(response).to be_successful
       expect(response.status).to eq 200
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
@@ -170,7 +170,7 @@ RSpec.describe API::Actions::Users::Password::Update do
 
     it "is failed" do
       response = action.call(params)
-      expect(response).to be_server_error
+      # expect(response).to be_server_error
       expect(response.status).to eq 500
       expect(response.headers["Content-Type"]).to eq "application/json; charset=utf-8"
       json = JSON.parse(response.body.first, symbolize_names: true)
