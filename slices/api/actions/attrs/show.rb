@@ -6,12 +6,14 @@ module API
       class Show < API::Action
         include Deps["repos.attr_repo"]
 
-        params do
-          required(:category_id).filled(:str?, included_in?: Yuzakan::Relations::Attrs::CATEGORIES)
+        contract do
+          params do
+            required(:category_id).filled(:str?, included_in?: Yuzakan::Relations::Attrs::CATEGORIES)
+            required(:id).filled(:str?, max_size?: MAX_STRING_SIZE)
+          end
 
-          required(:id).filled(:name, max_size?: 255)
+          rule(:id).validate(:name)
         end
-
         def handle(request, response)
           check_params(request, response)
 

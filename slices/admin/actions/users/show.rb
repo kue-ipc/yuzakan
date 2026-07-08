@@ -4,8 +4,12 @@ module Admin
   module Actions
     module Users
       class Show < Admin::Action
-        params do
-          required(:id) { filled(:name, max_size?: 255) | eql?("~") }
+        contract do
+          params do
+            required(:id).filled(:str?, max_size?: 255)
+          end
+
+          rule(:id).validate(:name_or_current)
         end
 
         def initialize(user_repository: UserRepository.new, **opts)

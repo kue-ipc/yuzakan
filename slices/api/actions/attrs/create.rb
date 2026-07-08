@@ -13,28 +13,35 @@ module API
 
         security_level 5
 
-        params do
-          required(:category_id).filled(:str?, included_in?: Yuzakan::Relations::Attrs::CATEGORIES)
+        contract do
+          params do
+            required(:category_id).filled(:str?, included_in?: Yuzakan::Relations::Attrs::CATEGORIES)
 
-          required(:name).filled(:name, max_size?: MAX_STRING_SIZE)
-          optional(:label).value(:str?, max_size?: MAX_STRING_SIZE)
-          optional(:description).value(:str?, max_size?: MAX_TEXT_SIZE)
+            required(:name).filled(:str?, max_size?: MAX_STRING_SIZE)
+            optional(:label).value(:str?, max_size?: MAX_STRING_SIZE)
+            optional(:description).value(:str?, max_size?: MAX_TEXT_SIZE)
 
-          required(:type).filled(:str?, included_in?: Yuzakan::Relations::Attrs::TYPES)
+            required(:type).filled(:str?, included_in?: Yuzakan::Relations::Attrs::TYPES)
 
-          optional(:order).filled(:int?)
-          optional(:hidden).filled(:bool?)
-          optional(:readonly).filled(:bool?)
+            optional(:order).filled(:int?)
+            optional(:hidden).filled(:bool?)
+            optional(:readonly).filled(:bool?)
 
-          optional(:code).maybe(:str?, max_size?: MAX_TEXT_SIZE)
+            optional(:code).maybe(:str?, max_size?: MAX_TEXT_SIZE)
 
-          optional(:mappings).array(:hash) do
-            required(:service).filled(:name, max_size?: MAX_STRING_SIZE)
-            required(:key).filled(:str?, max_size?: MAX_STRING_SIZE)
-            required(:type).filled(:str?, included_in?: Yuzakan::Relations::Mappings::TYPES)
-            optional(:params).value(:hash)
+            optional(:mappings).array(:hash) do
+              required(:service).filled(:str?, max_size?: MAX_STRING_SIZE)
+              required(:key).filled(:str?, max_size?: MAX_STRING_SIZE)
+              required(:type).filled(:str?, included_in?: Yuzakan::Relations::Mappings::TYPES)
+              optional(:params).value(:hash)
+            end
           end
+
+          rule(:name).validate(:name)
+          rule(mappings: :service).validate(:name)
         end
+
+
 
         def handle(request, response)
           check_params(request, response)

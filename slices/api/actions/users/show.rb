@@ -11,9 +11,7 @@ module API
 
         security_level 2
 
-        params do
-          required(:id).filled(:name, max_size?: 255)
-        end
+        contract Validation::IdContract
 
         def handle(request, response) # rubocop:disable Lint/UnusedMethodArgument
           halt_json 400, errors: [params.errors] unless params.valid?

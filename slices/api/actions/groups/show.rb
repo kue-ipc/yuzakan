@@ -11,8 +11,12 @@ module API
 
         security_level 2
 
-        params do
-          required(:id).filled(:name, max_size?: 255)
+        contract do
+          params do
+            required(:id).filled(:str?, max_size?: MAX_STRING_SIZE)
+          end
+
+          rule(:id).validate(:name)
         end
 
         def handle(request, response)

@@ -8,9 +8,7 @@ module API
       class Show < API::Action
         include Deps["adapter_repo"]
 
-        params do
-          required(:id).filled(:name, max_size?: MAX_STRING_SIZE)
-        end
+        contract Validation::IdContract
 
         def handle(request, response)
           check_params(request, response)

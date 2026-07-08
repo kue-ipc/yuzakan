@@ -6,8 +6,12 @@ module Admin
       class Show < Admin::Action
         security_level 5
 
-        params do
-          required(:id).filled(:name, max_size?: 255)
+        contract do
+          params do
+            required(:id).filled(:str?, max_size?: 255)
+          end
+
+          rule(:id).validate(:name)
         end
 
         def initialize(service_repository: ServiceRepository.new, **)

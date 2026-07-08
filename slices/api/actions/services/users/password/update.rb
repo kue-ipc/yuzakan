@@ -14,9 +14,18 @@ module API
 
             security_level 3
 
-            params do
-              required(:service_id).filled(:name, max_size?: MAX_STRING_SIZE)
-              required(:user_id).filled(:name, max_size?: MAX_STRING_SIZE)
+            contract do
+              params do
+                required(:service_id).filled(:str?, max_size?: MAX_STRING_SIZE)
+                required(:user_id).filled(:str?, max_size?: MAX_STRING_SIZE)
+
+                required(:password).filled(:password, max_size?: MAX_STRING_SIZE)
+              end
+
+              rule(:service_id).validate(:name)
+              rule(:user_id).validate(:name)
+
+              rule(:password).validate(:password)
             end
 
             def handle(request, response)

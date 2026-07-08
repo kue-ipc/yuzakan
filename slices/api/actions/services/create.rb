@@ -12,27 +12,32 @@ module API
 
         security_level 5
 
-        params do
-          required(:name).filled(:name, max_size?: MAX_STRING_SIZE)
-          optional(:label).value(:str?, max_size?: MAX_STRING_SIZE)
-          optional(:description).value(:str?, max_size?: MAX_TEXT_SIZE)
+        contract do
+          params do
+            required(:name).filled(:str?, max_size?: MAX_STRING_SIZE)
+            optional(:label).value(:str?, max_size?: MAX_STRING_SIZE)
+            optional(:description).value(:str?, max_size?: MAX_TEXT_SIZE)
 
-          optional(:order).filled(:int?)
+            optional(:order).filled(:int?)
 
-          required(:adapter).filled(:name, max_size?: MAX_STRING_SIZE)
-          required(:params) { hash? }
+            required(:adapter).filled(:str?, max_size?: MAX_STRING_SIZE)
+            required(:params) { hash? }
 
-          optional(:readable).filled(:bool?)
-          optional(:writable).filled(:bool?)
+            optional(:readable).filled(:bool?)
+            optional(:writable).filled(:bool?)
 
-          optional(:authenticatable).filled(:bool?)
-          optional(:password_changeable).filled(:bool?)
-          optional(:lockable).filled(:bool?)
+            optional(:authenticatable).filled(:bool?)
+            optional(:password_changeable).filled(:bool?)
+            optional(:lockable).filled(:bool?)
 
-          optional(:group).filled(:bool?)
+            optional(:group).filled(:bool?)
 
-          optional(:individual_password).filled(:bool?)
-          optional(:self_management).filled(:bool?)
+            optional(:individual_password).filled(:bool?)
+            optional(:self_management).filled(:bool?)
+          end
+
+          rule(:name).validate(:name)
+          rule(:adapter).validate(:name)
         end
 
         def handle(request, response)

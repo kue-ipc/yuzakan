@@ -14,10 +14,7 @@ module API
 
             security_level 1
 
-            params do
-              required(:service_id).filled(:name, max_size?: MAX_STRING_SIZE)
-              required(:user_id) { filled(:name, max_size?: 255) | eql?("~") }
-            end
+            contract Validation::CurrentUserServiceContract
 
             def handle(request, response)
               check_params(request, response)

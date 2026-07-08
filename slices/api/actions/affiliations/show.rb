@@ -8,14 +8,7 @@ module API
           "repos.affiliation_repo",
         ]
 
-        contract do
-          params do
-            # required(:id).filled(:name, max_size?: MAX_STRING_SIZE)
-            required(:id).filled(:string, max_size?: MAX_STRING_SIZE)
-          end
-
-          rule(:id).validate(:name)
-        end
+        contract Validation::IdContract
 
         def handle(request, response)
           check_params(request, response)

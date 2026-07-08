@@ -5,6 +5,8 @@ module API
     module Services
       module Users
         class Show < API::Action
+          contract Validation::CurrentUserServiceContract
+
           def handle(request, response)
           end
         end

@@ -12,17 +12,20 @@ module API
 
         security_level 4
 
-        params do
-          required(:name).filled(:name, max_size?: MAX_STRING_SIZE)
-          optional(:label).value(:str?, max_size?: MAX_STRING_SIZE)
-          optional(:note).value(:str?, max_size?: MAX_TEXT_SIZE)
+        contract do
+          params do
+            required(:name).filled(:str?, max_size?: MAX_STRING_SIZE)
+            optional(:label).value(:str?, max_size?: MAX_STRING_SIZE)
+            optional(:note).value(:str?, max_size?: MAX_TEXT_SIZE)
 
-          optional(:basic).filled(:bool?)
-          optional(:prohibited).filled(:bool?)
+            optional(:basic).filled(:bool?)
+            optional(:prohibited).filled(:bool?)
 
-          optional(:affiliation).maybe(:name, max_size?: MAX_STRING_SIZE)
+            optional(:affiliation).maybe(:name, max_size?: MAX_STRING_SIZE)
 
-          optional(:attrs) { hash? }
+            optional(:attrs) { hash? }
+          end
+          rule(:name).validate(:name)
         end
 
         def handle(request, response)

@@ -98,7 +98,7 @@ RSpec.describe API::Actions::Affiliations::Create do
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         message: "パラメーターが不正です。",
-        invalid: {name: ["形式が間違っています。"]},
+        invalid: {name: ["名前付けの規則に違反しています。"]},
       })
     end
   end

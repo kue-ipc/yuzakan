@@ -7,8 +7,12 @@ module API
         class Destroy < API::Action
           security_level 3
 
-          params do
-            required(:user_id).filled(:name, max_size?: 255)
+          contract do
+            params do
+              required(:user_id).filled(:str?, max_size?: MAX_STRING_SIZE)
+            end
+
+            rule(:user_id).validate(:name)
           end
 
           def initialize(service_repository: ServiceRepository.new,

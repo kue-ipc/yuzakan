@@ -16,9 +16,14 @@ module API
         security_level 0
         required_authentication false
 
-        params do
-          required(:username).filled(:name, max_size?: MAX_STRING_SIZE)
-          required(:password).filled(:string, max_size?: MAX_STRING_SIZE)
+        contract do
+          params do
+            required(:username).filled(:str?, max_size?: MAX_STRING_SIZE)
+            required(:password).filled(:str?, max_size?: MAX_STRING_SIZE)
+          end
+
+          rule(:username).validate(:name)
+          rule(:password).validate(:password)
         end
 
         def handle(request, response)

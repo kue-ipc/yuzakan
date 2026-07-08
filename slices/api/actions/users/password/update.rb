@@ -13,15 +13,25 @@ module API
             view: "views.users.password.show",
           ]
 
-          params do
-            # NOTE: id is always "~" (current user)
-            required(:user_id).value(eql?: "~")
-            required(:password_current).filled(:password, max_size?: 255)
-            required(:password).filled(:password, max_size?: 255)
-            required(:password_confirmation).filled(:password, max_size?: 255)
+          contract do
+            params do
+              required(:user_id).filled(:str?, max_size?: MAX_STRING_SIZE)
+              required(:password_current).filled(:str?, max_size?: MAX_STRING_SIZE)
+              required(:password).filled(:str?, max_size?: MAX_STRING_SIZE)
+              required(:password_confirmation).filled(:str?, max_size?: MAX_STRING_SIZE)
+            end
+
+            rule(:user_id).validate(:name_or_current)
+
+            rule(:password_current).validate(:password)
+            rule(:password).validate(:password)
+            rule(:password_confirmation).validate(:password)
           end
 
+
+
           def handle(request, response)
+            # TODO: カレントユーザー以外のパスワード設定
             halt_json request, response, 422, invalid: request.params.errors unless request.params.valid?
 
             if request.params[:password] != request.params[:password_confirmation]

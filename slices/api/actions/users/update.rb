@@ -6,24 +6,28 @@ module API
       class Update < API::Action
         security_level 4
 
-        params do
-          required(:id).filled(:name, max_size?: 255)
-          optional(:name).filled(:name, max_size?: 255)
-          optional(:label).maybe(:str?, max_size?: 255)
-          optional(:email).maybe(:email, max_size?: 255)
+        contract do
+          params do
+            required(:id).filled(:str?, max_size?: 255)
 
-          optional(:note).maybe(:str?, max_size?: 4096)
-          optional(:clearance_level).filled(:int?)
-          optional(:prohibited).filled(:bool?)
-          optional(:deleted).filled(:bool?)
-          optional(:deleted_at).maybe(:date_time?)
+            optional(:label).maybe(:str?, max_size?: 255)
+            optional(:email).maybe(:email, max_size?: 255)
 
-          optional(:primary_group).maybe(:name, max_size?: 255)
-          optional(:groups).each(:name, max_size?: 255)
+            optional(:note).maybe(:str?, max_size?: 4096)
+            optional(:clearance_level).filled(:int?)
+            optional(:prohibited).filled(:bool?)
+            optional(:deleted).filled(:bool?)
+            optional(:deleted_at).maybe(:date_time?)
 
-          optional(:attrs) { hash? }
+            optional(:primary_group).maybe(:name, max_size?: 255)
+            optional(:groups).each(:name, max_size?: 255)
 
-          optional(:services).each(:name, max_size?: 255)
+            optional(:attrs) { hash? }
+
+            optional(:services).each(:name, max_size?: 255)
+          end
+
+          rule(:id).validate(:name)
         end
 
         def handle(_request, _response)

@@ -14,16 +14,13 @@ module API
 
             security_level 3
 
-            params do
-              required(:service_id).filled(:name, max_size?: MAX_STRING_SIZE)
-              required(:user_id).filled(:name, max_size?: MAX_STRING_SIZE)
-            end
+            contract Validation::UserServiceContract
 
             def handle(request, response)
               check_params(request, response)
 
               service = srevice_repo.get!(request.params[:service_id])
-              user = user_repo.get!(request.params[:usner_id])
+              user = user_repo.get!(request.params[:user_id])
 
               result = lock_user.call(service, user.name)
               lock = take_result(request, response, result)

@@ -14,9 +14,14 @@ module API
 
           security_level 4
 
-          params do
-            required(:service_id).filled(:name, max_size?: MAX_STRING_SIZE)
-            required(:name).filled(:name, max_size?: MAX_STRING_SIZE)
+          contract do
+            params do
+              required(:service_id).filled(:str?, max_size?: MAX_STRING_SIZE)
+              required(:name).filled(:str?, max_size?: MAX_STRING_SIZE)
+            end
+
+            rule(:service_id).validate(:name)
+            rule(:name).validate(:name)
           end
 
           def handle(request, response)

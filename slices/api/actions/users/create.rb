@@ -12,22 +12,26 @@ module API
 
         security_level 4
 
-        params do
-          required(:name).filled(:name, max_size?: MAX_STRING_SIZE)
-          optional(:password).filled(:str?, max_size?: MAX_STRING_SIZE)
-          optional(:label).value(:str?, max_size?: MAX_STRING_SIZE)
-          optional(:email).value(:email, max_size?: MAX_STRING_SIZE)
+        contract do
+          params do
+            required(:name).filled(:str?, max_size?: MAX_STRING_SIZE)
+            optional(:password).filled(:str?, max_size?: MAX_STRING_SIZE)
+            optional(:label).value(:str?, max_size?: MAX_STRING_SIZE)
+            optional(:email).value(:email, max_size?: MAX_STRING_SIZE)
 
-          optional(:note).value(:str?, max_size?: 4096)
-          optional(:clearance_level).filled(:int?)
-          optional(:prohibited).filled(:bool?)
-          optional(:deleted).filled(:bool?)
-          optional(:deleted_at).filled(:date_time?)
+            optional(:note).value(:str?, max_size?: 4096)
+            optional(:clearance_level).filled(:int?)
+            optional(:prohibited).filled(:bool?)
+            optional(:deleted).filled(:bool?)
+            optional(:deleted_at).filled(:date_time?)
 
-          optional(:primary_group).maybe(:name, max_size?: MAX_STRING_SIZE)
-          optional(:groups).each(:name, max_size?: MAX_STRING_SIZE)
+            optional(:primary_group).maybe(:name, max_size?: MAX_STRING_SIZE)
+            optional(:groups).each(:name, max_size?: MAX_STRING_SIZE)
 
-          optional(:attrs) { hash? }
+            optional(:attrs) { hash? }
+          end
+
+          rule(:name).validate(:name)
         end
 
         def handle(_request, _response)

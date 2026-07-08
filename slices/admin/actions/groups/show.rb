@@ -4,8 +4,12 @@ module Admin
   module Actions
     module Groups
       class Show < Admin::Action
-        params do
-          required(:id).filled(:name, max_size?: 255)
+        contract do
+          params do
+            required(:id).filled(:str?, max_size?: 255)
+          end
+
+          rule(:id).validate(:name)
         end
 
         params Params

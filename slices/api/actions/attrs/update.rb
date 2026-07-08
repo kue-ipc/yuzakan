@@ -13,35 +13,38 @@ module API
 
         security_level 5
 
-        params do
-          required(:category_id).filled(:str?, included_in?: Yuzakan::Relations::Attrs::CATEGORIES)
+        contract do
+          params do
+            required(:category_id).filled(:str?, included_in?: Yuzakan::Relations::Attrs::CATEGORIES)
+            required(:id).filled(:str?, max_size?: 255)
 
-          required(:id).filled(:name, max_size?: 255)
+            optional(:label).maybe(:str?, max_size?: 255)
+            optional(:description).maybe(:str?, max_size?: 16383)
 
-          optional(:name).filled(:name, max_size?: 255)
-          optional(:label).maybe(:str?, max_size?: 255)
-          optional(:description).maybe(:str?, max_size?: 16383)
+            optional(:type).filled(:str?, included_in?: Yuzakan::Relations::Attrs::TYPES)
 
-          optional(:type).filled(:str?, included_in?: Yuzakan::Relations::Attrs::TYPES)
+            optional(:order).filled(:int?)
+            optional(:hidden).filled(:bool?)
+            optional(:readonly).filled(:bool?)
 
-          optional(:order).filled(:int?)
-          optional(:hidden).filled(:bool?)
-          optional(:readonly).filled(:bool?)
+            optional(:code).maybe(:str?, max_size?: 16383)
 
-          optional(:code).maybe(:str?, max_size?: 16383)
-
-          optional(:mappings).array(:hash) do
-            required(:service).filled(:name, max_size?: 255)
-            required(:key).filled(:str?, max_size?: 255)
-            required(:type).filled(:str?, included_in?: Yuzakan::Relations::Mappings::TYPES)
-            optional(:params).value(:hash)
+            optional(:mappings).array(:hash) do
+              required(:service).filled(:str?, max_size?: 255)
+              required(:key).filled(:str?, max_size?: 255)
+              required(:type).filled(:str?, included_in?: Yuzakan::Relations::Mappings::TYPES)
+              optional(:params).value(:hash)
+            end
           end
+
+          rule(:id).validate(:name)
+          rule(mappings: :service).validate(:name)
         end
 
         def handle(request, response)
           check_params(request, response)
           take_exist_id(request, response, attr_repo)
-          take_unique_name(request, response, attr_repo)
+          # take_unique_name(request, response, attr_repo)
 
           attr = nil
           attr_repo.transaction do

@@ -11,18 +11,20 @@ module API
 
         security_level 4
 
-        params do
-          required(:id).filled(:name, max_size?: 255)
+        contract do
+          params do
+            required(:id).filled(:str?, max_size?: MAX_STRING_SIZE)
 
-          # cannot change name
-          # optional(:name).filled(:name, max_size?: 255)
-          optional(:label).value(:str?, max_size?: 255)
-          optional(:note).value(:str?, max_size?: 4096)
+            optional(:label).value(:str?, max_size?: 255)
+            optional(:note).value(:str?, max_size?: 4096)
 
-          optional(:basic).filled(:bool?)
-          optional(:prohibited).filled(:bool?)
+            optional(:basic).filled(:bool?)
+            optional(:prohibited).filled(:bool?)
 
-          opional(:affiliation).maybe(:name, max_size?: 255)
+            opional(:affiliation).maybe(:name, max_size?: 255)
+          end
+
+          rule(:id).validate(:name)
         end
 
         def handle(request, response)

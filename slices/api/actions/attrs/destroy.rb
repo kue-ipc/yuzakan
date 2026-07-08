@@ -11,10 +11,13 @@ module API
 
         security_level 5
 
-        params do
-          required(:category_id).filled(:str?, included_in?: Yuzakan::Relations::Attrs::CATEGORIES)
+        contract do
+          params do
+            required(:category_id).filled(:str?, included_in?: Yuzakan::Relations::Attrs::CATEGORIES)
+            required(:id).filled(:str?, max_size?: MAX_STRING_SIZE)
+          end
 
-          required(:id).filled(:name, max_size?: 255)
+          rule(:id).validate(:name)
         end
 
         def handle(request, response)

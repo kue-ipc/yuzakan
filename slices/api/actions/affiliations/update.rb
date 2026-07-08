@@ -11,11 +11,14 @@ module API
 
         security_level 4
 
-        params do
-          required(:id).filled(:name, max_size?: MAX_STRING_SIZE)
+        contract do
+          params do
+            required(:id).filled(:str?, max_size?: MAX_STRING_SIZE)
+            optional(:note).value(:str?, max_size?: MAX_TEXT_SIZE)
+            optional(:attrs).value(:hash?)
+          end
 
-          optional(:note).value(:str?, max_size?: MAX_TEXT_SIZE)
-          optional(:attrs).value(:hash?)
+          rule(:id).validate(:name)
         end
 
         def handle(request, response)

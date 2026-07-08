@@ -6,9 +6,12 @@ module API
       class Destroy < API::Action
         security_level 4
 
-        params do
-          required(:id).filled(:name, max_size?: 255)
-          optional(:permanent).maybe(:bool?)
+        contract do
+          params do
+            required(:id).filled(:str?, max_size?: MAX_STRING_SIZE)
+          end
+
+          rule(:id).validate(:name)
         end
 
         def initialize(user_repository: UserRepository.new,
@@ -23,7 +26,7 @@ module API
             sync_user({username: @name})
           end
 
-          @user_repository.delete(@user.id) if params[:permanent]
+          @user_repository.delete(@user.id)
 
           self.body = user_json
         end

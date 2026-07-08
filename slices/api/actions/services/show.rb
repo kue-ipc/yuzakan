@@ -6,8 +6,12 @@ module API
       class Show < API::Action
         include Deps["repos.service_repo"]
 
-        params do
-          required(:id).filled(:name, max_size?: MAX_STRING_SIZE)
+        contract do
+          params do
+            required(:id).filled(:str?, max_size?: MAX_STRING_SIZE)
+          end
+
+          rule(:id).validate(:name)
         end
 
         def handle(request, response)
