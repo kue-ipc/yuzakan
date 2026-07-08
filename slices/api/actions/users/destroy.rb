@@ -6,13 +6,7 @@ module API
       class Destroy < API::Action
         security_level 4
 
-        contract do
-          params do
-            required(:id).filled(:str?, max_size?: MAX_STRING_SIZE)
-          end
-
-          rule(:id).validate(:name)
-        end
+        contract Validation::IdContract
 
         def initialize(user_repository: UserRepository.new,
           **opts)

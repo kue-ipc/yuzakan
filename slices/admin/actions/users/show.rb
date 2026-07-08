@@ -4,13 +4,7 @@ module Admin
   module Actions
     module Users
       class Show < Admin::Action
-        contract do
-          params do
-            required(:id).filled(:str?, max_size?: 255)
-          end
-
-          rule(:id).validate(:name_or_current)
-        end
+        contract Validation::IdContract
 
         def initialize(user_repository: UserRepository.new, **opts)
           super

@@ -4,15 +4,7 @@ module Admin
   module Actions
     module Groups
       class Show < Admin::Action
-        contract do
-          params do
-            required(:id).filled(:str?, max_size?: 255)
-          end
-
-          rule(:id).validate(:name)
-        end
-
-        params Params
+        contract Validation::IdContract
 
         def handle(_request, _response)
           halt 400 unless params.valid?

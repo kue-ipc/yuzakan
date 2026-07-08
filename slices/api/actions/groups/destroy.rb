@@ -11,13 +11,7 @@ module API
 
         security_level 4
 
-        contract do
-          params do
-            required(:id).filled(:str?, max_size?: MAX_STRING_SIZE)
-          end
-
-          rule(:id).validate(:name)
-        end
+        contract Validation::IdContract
 
         def handle(request, response)
           check_params(request, response)
