@@ -11,10 +11,6 @@ module Yuzakan
 
     include Deps["logger"]
 
-    # Other modules
-    include Yuzakan::Actions::Flash
-    include Yuzakan::Actions::Connection
-
     # HACK: HanamiのコードではDry::Vlaidation::Contractにハードコードされている
     #       ため、configを設定した任意のサブクラスでContractが作られない。
     #       参照: hanami-action-3.0.1/lib/hanami/action/validation.rb
@@ -29,6 +25,10 @@ module Yuzakan
 
       config.contract_class = contract_class
     end
+
+    # Other modules
+    include Yuzakan::Actions::Flash
+    include Yuzakan::Actions::Connection
 
     # override methods
 

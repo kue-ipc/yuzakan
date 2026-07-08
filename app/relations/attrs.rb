@@ -4,8 +4,9 @@ module Yuzakan
   module Relations
     class Attrs < Yuzakan::DB::Relation
       CATEGORIES = %w[
-        user
+        affiliation
         group
+        user
       ].freeze
 
       TYPES = %w[

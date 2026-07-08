@@ -5,6 +5,7 @@ module API
     module Affiliations
       class Update < API::Action
         include Deps[
+          "management.complete_affiliation",
           "repos.affiliation_repo",
           view: "views.affiliations.show",
         ]
@@ -24,11 +25,13 @@ module API
         def handle(request, response)
           check_params(request, response)
 
-          name = request.params[:id]
-          params = request.params.to_h.slice(:note, :attrs)
-          # TODO: complete_affilationを呼び出してattrsなどを保管する。
+          affiliation = affiliation_repo.get!(request.params[:id])
 
-          affiliation = affiliation_repo.put!(name, **params)
+          note = request.params[:note] || affiliation.note
+          attrs = take_result(request, response,
+            complete_affiliation.call(affiliation.name, request.params[:attrs] || affiliation.attrs))
+
+          affiliation = affiliation_repo.put!(affiliation.name, note:, attrs:)
 
           response.fresh last_modified: affiliation.updated_at
           response.format = :json

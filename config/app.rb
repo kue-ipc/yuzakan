@@ -1,5 +1,19 @@
 # frozen_string_literal: true
 
+require "dry/core/equalizer"
+
+class Dry::Core::Equalizer < ::Module
+  # override
+  def define_inspect_method
+    keys = @keys
+    define_method(:inspect) do
+      klass = self.class
+      name  = klass.name || klass.inspect
+      "#<#{name}#{keys.map { |key| " #{key}=#{__send__(key).to_s}" }.join}>"
+    end
+  end
+end
+
 require "hanami"
 
 # Sequel timezone
@@ -51,6 +65,10 @@ module Yuzakan
       "repos.user_repo",
       "management.authenticate",
       "management.change_password",
+      "management.complete_affiliation",
+      "management.complete_group",
+      "management.complete_user",
+      "management.sync_group",
       "management.sync_user",
     ]
   end

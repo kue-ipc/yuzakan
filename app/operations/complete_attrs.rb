@@ -7,6 +7,7 @@ module Yuzakan
       include Deps[
         "repos.attr_repo",
         "handlebars",
+        "i18n",
       ]
 
       def call(category, data)
@@ -19,7 +20,7 @@ module Yuzakan
           Success(category)
         else
           Failure[:invalid,
-            {category: [t("errors.included_in?", list: Yuzakan::Relations::Attrs::CATEGORIES.join(", "))]}]
+            {category: [i18n.t("errors.included_in?", list: Yuzakan::Relations::Attrs::CATEGORIES.join(", "))]}]
         end
       end
 
