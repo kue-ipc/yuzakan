@@ -4,7 +4,6 @@ ja:
     errors:
       acceptance: "%{key} の受諾が必要です。"
       unexpected_key: "許されないキーです。"
-
       array?: "配列を入力してください。"
       empty?: "空を入力してください。"
       excludes?: "%{value}を含んではいけません。"

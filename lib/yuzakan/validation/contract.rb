@@ -8,9 +8,6 @@ module Yuzakan
       Hanami.app.root.glob("config/i18n/dry_validation/*.yml").each do |path|
         config.messages.load_paths << path
       end
-      Hanami.app.root.glob("config/i18n/shared/*.yml").each do |path|
-        config.messages.load_paths << path
-      end
     end
   end
 end

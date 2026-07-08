@@ -17,14 +17,15 @@ module Yuzakan
 
     # HACK: HanamiのコードではDry::Vlaidation::Contractにハードコードされている
     #       ため、configを設定した任意のサブクラスでContractが作られない。
+    #       参照: hanami-action-3.0.1/lib/hanami/action/validation.rb
     def self.params(klass = nil, &block)
       contract_class = klass || Class.new(Yuzakan::Validation::ActionContract) { params(&block) }
 
       config.contract_class = contract_class
     end
 
-    def self.contract(klass = nil, &block)
-      contract_class = klass || Class.new(Yuzakan::Validation::ActionContract, &block)
+    def self.contract(klass = nil, &)
+      contract_class = klass || Class.new(Yuzakan::Validation::ActionContract, &)
 
       config.contract_class = contract_class
     end

@@ -115,7 +115,7 @@ def init_action_spec
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         message: "パラメーターが不正です。",
-        invalid: {id: ["形式が間違っています。"]},
+        invalid: {id: ["名前付けの規則に違反しています。"]},
       })
     end
 
@@ -127,7 +127,7 @@ def init_action_spec
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         message: "パラメーターが不正です。",
-        invalid: {id: ["形式が間違っています。"]},
+        invalid: {id: ["名前付けの規則に違反しています。"]},
       })
     end
 
@@ -153,7 +153,7 @@ def init_action_spec
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         message: "パラメーターが不正です。",
-        invalid: {id: ["形式が間違っています。 または ~と値が一致しません。"]},
+        invalid: {id: ["名前付けの規則に違反しています。"]},
       })
     end
 
@@ -165,7 +165,7 @@ def init_action_spec
       json = JSON.parse(response.body.first, symbolize_names: true)
       expect(json).to eq({
         message: "パラメーターが不正です。",
-        invalid: {id: ["形式が間違っています。 または ~と値が一致しません。"]},
+        invalid: {id: ["名前付けの規則に違反しています。"]},
       })
     end
   end
