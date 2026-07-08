@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-# Handlebars
-
-Hanami.app.register_provider(:handlebars) do
+Hanami.app.register_provider :handlebars do
   prepare do
     require "handlebars-engine"
     require "digest"

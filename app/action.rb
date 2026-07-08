@@ -16,30 +16,15 @@ module Yuzakan
     include Yuzakan::Actions::Connection
 
     # HACK: HanamiのコードではDry::Vlaidation::Contractにハードコードされている
-    #        ため、configを設定した任意のサブクラスでContractが作られない。
-    # TODO: Hanami::Action::Paramsは削除されるため、他の手段も考える。
-    class Params < Hanami::Action::Params
-      def self.params(&block)
-        @_contract = Class.new(Yuzakan::Validation::ActionContract) { params(&block || -> {}) }.new
-      end
-    end
-
+    #       ため、configを設定した任意のサブクラスでContractが作られない。
     def self.params(klass = nil, &block)
-      contract_class =
-        if klass.nil?
-          Class.new(Yuzakan::Validation::ActionContract) { params(&block) }
-        elsif klass < Hanami::Action::Params
-          # Handle subclasses of Hanami::Action::Params.
-          klass._contract.class
-        else
-          klass
-        end
+      contract_class = klass || Class.new(Yuzakan::Validation::ActionContract) { params(&block) }
 
       config.contract_class = contract_class
     end
 
-    def self.contract(klass = nil, &)
-      contract_class = klass || Class.new(Yuzakan::ValidationContract, &)
+    def self.contract(klass = nil, &block)
+      contract_class = klass || Class.new(Yuzakan::Validation::ActionContract, &block)
 
       config.contract_class = contract_class
     end

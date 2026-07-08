@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Hanami.app.register_provider(:adapter_repo) do
+Hanami.app.register_provider :adapter_repo do
   start do
     adapter_repo = Yuzakan::AdapterRepo.new
 

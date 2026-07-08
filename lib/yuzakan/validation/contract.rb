@@ -3,9 +3,14 @@
 module Yuzakan
   module Validation
     class Contract < Dry::Validation::Contract
-      config.messages.top_namespace = ""
       config.messages.backend = :i18n
       config.messages.default_locale = Hanami.app["settings"].locale.intern
+      Hanami.app.root.glob("config/i18n/dry_validation/*.yml").each do |path|
+        config.messages.load_paths << path
+      end
+      Hanami.app.root.glob("config/i18n/shared/*.yml").each do |path|
+        config.messages.load_paths << path
+      end
     end
   end
 end

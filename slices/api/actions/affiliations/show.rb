@@ -8,8 +8,11 @@ module API
           "repos.affiliation_repo",
         ]
 
-        params do
-          required(:id).filled(:name, max_size?: MAX_STRING_SIZE)
+        contract do
+          params do
+            # required(:id).filled(:name, max_size?: MAX_STRING_SIZE)
+            required(:id).filled(:string, format?: Yuzakan::Patterns[:name].ruby, max_size?: MAX_STRING_SIZE)
+          end
         end
 
         def handle(request, response)
