@@ -3,19 +3,19 @@
 RSpec.describe API::Actions::Affiliations::Update do
   init_action_spec
 
-  before do
-    allow(affiliation_repo).to receive(:get!).with(affiliation.name).and_return(affiliation)
-    allow(affiliation_repo).to receive(:put!).with(affiliation.name, **affiliation_params).and_return(affiliation)
-    allow(complete_affiliation).to \
-      receive(:call).with(affiliation.name, affiliation.attrs).and_return(Success(affiliation.attrs))
-  end
-
   let(:action_opts) { {affiliation_repo: affiliation_repo, complete_affiliation: complete_affiliation} }
   let(:action_params) { {id: affiliation.name, **affiliation_params} }
 
   let(:affiliation_params) { {note: affiliation.note, attrs: affiliation.attrs} }
 
   let(:complete_affiliation) { instance_double(Yuzakan::Management::CompleteAffiliation) }
+
+  before do
+    allow(affiliation_repo).to receive(:get!).with(affiliation.name).and_return(affiliation)
+    allow(affiliation_repo).to receive(:put!).with(affiliation.name, **affiliation_params).and_return(affiliation)
+    allow(complete_affiliation).to \
+      receive(:call).with(affiliation.name, affiliation.attrs).and_return(Success(affiliation.attrs))
+  end
 
   shared_context "when not exist" do
     before do

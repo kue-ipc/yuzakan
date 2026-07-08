@@ -3,17 +3,17 @@
 RSpec.describe API::Actions::Affiliations::Show do
   init_action_spec
 
-  let(:action_opts) {
-    allow(affiliation_repo).to receive(:get!).with(affiliation.name).and_return(affiliation)
-    {affiliation_repo: affiliation_repo}
-  }
+  let(:action_opts) { {affiliation_repo: affiliation_repo} }
   let(:action_params) { {id: affiliation.name} }
 
+  before do
+    allow(affiliation_repo).to receive(:get!).with(affiliation.name).and_return(affiliation)
+  end
+
   shared_context "when not exist" do
-    let(:action_opts) {
+    before do
       allow(affiliation_repo).to receive(:get!).with(affiliation.name).and_raise(Yuzakan::DB::Repo::NotFoundNameError)
-      {affiliation_repo: affiliation_repo}
-    }
+    end
   end
 
   shared_examples "ok" do

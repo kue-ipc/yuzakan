@@ -3,11 +3,12 @@
 RSpec.describe API::Actions::Affiliations::Destroy do
   init_action_spec
 
-  let(:action_opts) {
-    allow(affiliation_repo).to receive(:unset!).with(affiliation.name).and_return(affiliation)
-    {affiliation_repo: affiliation_repo}
-  }
+  let(:action_opts) { {affiliation_repo: affiliation_repo} }
   let(:action_params) { {id: affiliation.name} }
+
+  before do
+    allow(affiliation_repo).to receive(:unset!).with(affiliation.name).and_return(affiliation)
+  end
 
   shared_context "when not exist" do
     let(:action_opts) {

@@ -4,10 +4,11 @@ RSpec.describe API::Actions::Affiliations::Index do
   init_action_spec
   let_pager
 
-  let(:action_opts) {
+  let(:action_opts) { {affiliation_repo: affiliation_repo} }
+
+  before do
     allow(affiliation_repo).to receive(:index).and_return([[affiliation], pager])
-    {affiliation_repo: affiliation_repo}
-  }
+  end
 
   shared_examples "ok" do
     it "is ok" do
