@@ -1,20 +1,16 @@
 # frozen_string_literal: true
 
-require "dry/core/equalizer"
+require "hanami"
 
-class Dry::Core::Equalizer < ::Module
-  # override
-  def define_inspect_method
-    keys = @keys
-    define_method(:inspect) do
-      klass = self.class
-      name  = klass.name || klass.inspect
-      "#<#{name}#{keys.map { |key| " #{key}=#{__send__(key).to_s}" }.join}>"
-    end
+# FIXME: Exposureの@objectは親のViewになるため、inspectがループする。
+class Hanami::View::Exposure
+  def inspect
+    keys = [:name, :proc, :options]
+    klass = self.class
+    name  = klass.name || klass.inspect
+    "#<#{name}#{keys.map { |key| " #{key}=#{__send__(key).inspect}" }.join}>"
   end
 end
-
-require "hanami"
 
 # Sequel timezone
 Sequel.default_timezone = :local
