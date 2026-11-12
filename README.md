@@ -67,6 +67,8 @@ Hanami 2 へアップデート中です。
     * [ ] Ansible
     * [x] Google Workspace
     * [ ] Office 365
+* ツール
+    * [ ] stylelint(古すぎるため一旦削除)
 
 ## 動作環境
 
